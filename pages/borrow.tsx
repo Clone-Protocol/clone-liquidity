@@ -2,14 +2,13 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
-import WelcomeMsg from '~/components/Overview/WelcomeMsg'
-import AssetList from '~/containers/Overview/AssetList'
+import BorrowBox from '~/containers/Borrow/BorrowBox'
 
-const Overview: NextPage = () => {
+const Borrow: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Incept Liquidity Protocol</title>
+        <title>Borrow - Incept Liquidity Protocol</title>
         <meta name="description" content="Incept Liquidity Protocol" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -17,9 +16,8 @@ const Overview: NextPage = () => {
       <main>
         <StyledSection>
           <Container>
-            <WelcomeMsg />
             <Box sx={{ marginTop: '40px' }}>
-              <AssetList />
+              <BorrowBox />
             </Box>
           </Container>
         </StyledSection>
@@ -37,4 +35,4 @@ const StyledSection = styled('section')`
 	}
 `
 
-export default Overview
+export default Borrow

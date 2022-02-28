@@ -2,24 +2,21 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
-import WelcomeMsg from '~/components/Overview/WelcomeMsg'
-import AssetList from '~/containers/Overview/AssetList'
 
-const Overview: NextPage = () => {
+const MyLiquidity: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Incept Liquidity Protocol</title>
-        <meta name="description" content="Incept Liquidity Protocol" />
+        <title>My Liquidity - Incept Liquidity Protocol</title>
+        <meta name="description" content="My Liquidity - Incept Liquidity Protocol" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
         <StyledSection>
           <Container>
-            <WelcomeMsg />
             <Box sx={{ marginTop: '40px' }}>
-              <AssetList />
+              My Liquidity
             </Box>
           </Container>
         </StyledSection>
@@ -37,4 +34,4 @@ const StyledSection = styled('section')`
 	}
 `
 
-export default Overview
+export default MyLiquidity
