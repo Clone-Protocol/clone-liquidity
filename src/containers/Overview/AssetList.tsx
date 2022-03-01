@@ -89,7 +89,9 @@ let columns: GridColDef[] = [
     flex: 1, 
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        <Button>+/-</Button>
+        <Link href="/assets/1/asset">
+          <Button>+/-</Button>
+        </Link>
       )
     }
   },

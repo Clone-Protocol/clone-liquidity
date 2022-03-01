@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
+import TipMsg from '~/components/Common/TipMsg'
 import BorrowBox from '~/containers/Borrow/BorrowBox'
 
 const Borrow: NextPage = () => {
@@ -17,6 +18,7 @@ const Borrow: NextPage = () => {
         <StyledSection>
           <Container>
             <Box sx={{ marginTop: '40px' }}>
+              <TipMsg>💡 Tip: Read about how borrowing works and the strategies here.</TipMsg>
               <BorrowBox />
             </Box>
           </Container>
