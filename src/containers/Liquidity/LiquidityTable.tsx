@@ -1,7 +1,9 @@
 import { Box, Stack, RadioGroup, FormControlLabel, Radio, Button, Tabs, Tab } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
-import { FilterType, FilterTypeMap, usePoolsQuery } from '~/features/MyLiquidity/Pools.query'
+// import { FilterType, FilterTypeMap, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
+// import { FilterType, FilterTypeMap, useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { FilterType, FilterTypeMap, useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import GridComet from '~/components/Liquidity/GridComet'
 import GridUnconcentrated from '~/components/Liquidity/GridUnconcentrated'
 import GridBorrow from '~/components/Liquidity/GridBorrow'
@@ -35,10 +37,16 @@ const TabPanel = (props: TabPanelProps) => {
 const LiquidityTable = () => {
   const [tab, setTab] = useState(0)
   const [filter, setFilter] = useState<FilterType>('all')
-  const { data: assets } = usePoolsQuery({
-    filter,
-    refetchOnMount: 'always'
+  // const { data: cometPools } = useCometPoolsQuery({
+  //   filter
+  // })
+  // const { data: unconcentPools } = useUnconcentPoolsQuery({
+  //   filter
+  // })
+  const { data: borrowAssets } = useBorrowQuery({
+    filter
   })
+
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -72,13 +80,13 @@ const LiquidityTable = () => {
 				</RadioGroup>
       </Stack>
       <TabPanel value={tab} index={0}>
-        <GridComet assets={assets} />
+        {/* <GridComet pools={cometPools} /> */}
       </TabPanel>
       <TabPanel value={tab} index={1}>
-        <GridUnconcentrated />
+        {/* <GridUnconcentrated pools={unconcentPools} /> */}
       </TabPanel>
       <TabPanel value={tab} index={2}>
-        <GridBorrow />
+        <GridBorrow assets={borrowAssets} />
       </TabPanel>
     </Box>
   )

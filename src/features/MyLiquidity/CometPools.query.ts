@@ -1,7 +1,7 @@
 import { QueryObserverOptions, useQuery } from "react-query"
 
 const fetchPools = async ({ filter }: GetPoolsProps) => {
-  const result: AssetList[] = [
+  const result: PoolList[] = [
     {
       id: 1,
       tickerName: 'iSolana',
@@ -30,7 +30,7 @@ const fetchPools = async ({ filter }: GetPoolsProps) => {
   return result
 }
 
-export function usePoolsQuery({ filter, refetchOnMount }: GetPoolsProps) {
+export function useCometPoolsQuery({ filter, refetchOnMount }: GetPoolsProps) {
   return useQuery(
     ['pools', filter],
     () => fetchPools({ filter }),
@@ -59,7 +59,7 @@ export type FilterType = keyof typeof FilterTypeMap
 //   total: number;
 // }
 
-export interface AssetList {
+export interface PoolList {
   id: number
   tickerName: string
   tickerSymbol: string

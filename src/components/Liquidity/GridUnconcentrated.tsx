@@ -3,13 +3,13 @@ import Image from 'next/image'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { AssetList } from '~/features/Overview/Assets.query'
+import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 
 interface Props {
-  assets: AssetList[] | undefined
+  pools: PoolList[] | undefined
 }
 
-const GridUnconcentrated: React.FC<Props> = ({ assets }) => {
+const GridUnconcentrated: React.FC<Props> = ({ pools }) => {
 
   return (
     <DataGrid
@@ -27,7 +27,7 @@ const GridUnconcentrated: React.FC<Props> = ({ assets }) => {
       rowHeight={100}
       autoHeight
       columns={columns}
-      rows={assets || []}
+      rows={pools || []}
     />
   )
 }
@@ -44,27 +44,22 @@ let columns: GridColDef[] = [
       </Box>
     )
   } },
-	{ field: 'iPrice', headerName: 'Indicator price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'price', headerName: 'iAsset price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'cPrice', headerName: 'Center price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'liquidityAsset', headerName: 'Liquidity (iAsset)', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'priceRange', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
-    return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.row.fromPriceRange} - {params.row.toPriceRange}</Box>
-    )
-  }},
-	{ field: 'collateral', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'liquidityUSD', headerName: 'Liquidity (USDi)', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'ild', headerName: 'ILD', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'liquidityVal', headerName: 'Liquidity value', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
@@ -75,8 +70,8 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <RiskButton>Recenter</RiskButton>
-          <RiskButton>Manage</RiskButton>
+          <RiskButton>Deposit</RiskButton>
+          <RiskButton>Withdraw</RiskButton>
         </Box>
       )
     }

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { AssetList } from '~/features/Overview/Assets.query'
+import { AssetList } from '~/features/MyLiquidity/Borrow.query'
 
 interface Props {
   assets: AssetList[] | undefined
@@ -33,7 +33,7 @@ const GridBorrow: React.FC<Props> = ({ assets }) => {
 }
 
 let columns: GridColDef[] = [
-	{ field: 'pools', headerName: 'Pools', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'asset', headerName: 'iAsset', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box display="flex" justifyContent="flex-start">
         <Image src={params.row.tickerIcon} width="40px" height="40px" />
@@ -44,19 +44,14 @@ let columns: GridColDef[] = [
       </Box>
     )
   } },
-	{ field: 'iPrice', headerName: 'Indicator price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'oPrice', headerName: 'Oracle price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'cPrice', headerName: 'Center price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'borrowed', headerName: 'Borrowed', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
-    )
-  }},
-  { field: 'priceRange', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
-    return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.row.fromPriceRange} - {params.row.toPriceRange}</Box>
     )
   }},
 	{ field: 'collateral', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
@@ -64,7 +59,7 @@ let columns: GridColDef[] = [
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'ild', headerName: 'ILD', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'collateralRatio', headerName: 'Collateral Ratio', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
     )
@@ -75,7 +70,6 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <RiskButton>Recenter</RiskButton>
           <RiskButton>Manage</RiskButton>
         </Box>
       )

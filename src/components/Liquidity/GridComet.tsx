@@ -3,13 +3,13 @@ import Image from 'next/image'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { AssetList } from '~/features/Overview/Assets.query'
+import { PoolList } from '~/features/MyLiquidity/CometPools.query'
 
 interface Props {
-  assets: AssetList[] | undefined
+  pools: PoolList[] | undefined
 }
 
-const GridComet: React.FC<Props> = ({ assets }) => {
+const GridComet: React.FC<Props> = ({ pools }) => {
 
   return (
     <DataGrid
@@ -27,7 +27,7 @@ const GridComet: React.FC<Props> = ({ assets }) => {
       rowHeight={100}
       autoHeight
       columns={columns}
-      rows={assets || []}
+      rows={pools || []}
     />
   )
 }
