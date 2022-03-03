@@ -2,6 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
+import MyStatus from '~/containers/Liquidity/MyStatus'
+import LiquidityTable from '~/containers/Liquidity/LiquidityTable'
 
 const MyLiquidity: NextPage = () => {
   return (
@@ -16,7 +18,8 @@ const MyLiquidity: NextPage = () => {
         <StyledSection>
           <Container>
             <Box sx={{ marginTop: '40px' }}>
-              My Liquidity
+              <MyStatus />
+              <LiquidityTable />
             </Box>
           </Container>
         </StyledSection>

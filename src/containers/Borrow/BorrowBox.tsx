@@ -26,7 +26,7 @@ const BorrowBox = () => {
       <Box>
         <SubTitle>(1) Choose a collateral asset</SubTitle>
         <SubTitleComment>The collateral asset may affert the minimum collateral ratio.</SubTitleComment>
-        <PairInput title="Total" tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+        <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
       </Box>
       <StyledDivider />
 
@@ -40,7 +40,7 @@ const BorrowBox = () => {
       <Box>
         <SubTitle>(3) Borrow Amount</SubTitle>
         <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
-        <PairInput title="Total" tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} />
+        <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} />
         <Stack sx={{ border: '1px solid #9d9d9d', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px' }} direction="row" justifyContent="space-between">
           <Box>Price of asset bring borrowed</Box>
           <Box>1 iSOL - 100.00 USDi</Box>
