@@ -28,7 +28,7 @@ const fetchPools = async ({ filter }: GetPoolsProps) => {
 
 export function useUnconcentPoolsQuery({ filter, refetchOnMount }: GetPoolsProps) {
   return useQuery(
-    ['pools', filter],
+    ['unConcentPools', filter],
     () => fetchPools({ filter }),
     {
       refetchOnMount,

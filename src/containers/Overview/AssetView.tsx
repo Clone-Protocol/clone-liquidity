@@ -6,12 +6,57 @@ import PairInput from '~/components/Borrow/PairInput'
 import ethLogo from '../../../public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
+import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
+
+interface StyledTabsProps {
+  children?: React.ReactNode;
+  value: number;
+  onChange: (event: React.SyntheticEvent, newValue: number) => void;
+}
+
+interface StyledTabProps {
+  label: string;
+}
+
+const StyledTabs = styled((props: StyledTabsProps) => (
+  <Tabs
+    {...props}
+    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
+  />
+))({
+  '& .MuiTabs-indicator': {
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  '& .MuiTabs-indicatorSpan': {
+    maxWidth: 40,
+    width: '100%',
+    backgroundColor: '#635ee7',
+  },
+});
+
+const StyledTab = styled((props: StyledTabProps) => (
+  <Tab disableRipple {...props} />
+))(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: '500',
+  fontSize: '18px',
+  marginRight: theme.spacing(1),
+  color: '#989898',
+  '&.Mui-selected': {
+    color: '#fff',
+  },
+  '&.Mui-focusVisible': {
+    backgroundColor: '#3d3d3d',
+  },
+}));
 
 const AssetView = () => {
   const [tab, setTab] = useState(0)
@@ -60,10 +105,10 @@ const AssetView = () => {
   return (
     <StyledPaper variant="outlined">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
-          <Tab label="Commet Liquidity" />
-          <Tab label="Unconcentrated Liquidity" />
-        </Tabs>
+        <StyledTabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
+          <StyledTab label="Commet Liquidity" />
+          <StyledTab label="Unconcentrated Liquidity" />
+        </StyledTabs>
       </Box>
       <TabPanel value={tab} index={0}>
         <Box>
@@ -89,8 +134,34 @@ const AssetView = () => {
 
           <Box>
             <SubTitle>(3) Liquidity concentration range</SubTitle>
+
+            <ConcentrationRange />
             
-            
+            <Stack direction="row" spacing={2} justifyContent="space-around">
+              <Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff' }}>Lower Limit</Box>
+                <Box sx={{ borderRadius: '10px', border: 'solid 1px #00f0ff', padding: '27px' }}>
+                  <div>80.95</div>
+                  <div>USD / SOL</div>
+                </Box>
+              </Box>
+              <Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF' }}>Center Price</Box>
+                <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '27px' }}>
+                  <div>110.78</div>
+                  <div>USD / SOL</div>
+                </Box>
+              </Box>
+              <Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff' }}>Upper Limit</Box>
+                <Box sx={{ borderRadius: '10px', border: 'solid 1px #809cff', padding: '27px' }}>
+                  <div>120.95</div>
+                  <div>USD / SOL</div>
+                </Box>
+              </Box>
+            </Stack>
+
+            <Button sx={{ width: '100%', color: '#fff', borderRadius: '10px', border: 'solid 1px #fff', marginTop: '26px'}}>Unconcentrated Liquidity</Button>
           </Box>
           <StyledDivider />
 
@@ -165,9 +236,9 @@ const SubTitleComment = styled('div')`
 
 const ActionButton = styled(Button)`
   width: 100%;
-  background: #7d7d7d;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
   color: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 15px;
 `
 

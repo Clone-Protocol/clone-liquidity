@@ -28,7 +28,7 @@ const fetchAssets = async ({ filter }: GetPoolsProps) => {
 
 export function useBorrowQuery({ filter, refetchOnMount }: GetPoolsProps) {
   return useQuery(
-    ['assets', filter],
+    ['borrowAssets', filter],
     () => fetchAssets({ filter }),
     {
       refetchOnMount,

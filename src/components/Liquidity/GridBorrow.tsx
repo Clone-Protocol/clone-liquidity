@@ -4,6 +4,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { AssetList } from '~/features/MyLiquidity/Borrow.query'
+import Link from 'next/link'
 
 interface Props {
   assets: AssetList[] | undefined
@@ -70,7 +71,7 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <RiskButton>Manage</RiskButton>
+          <Link href="/liquidity/borrow/1/manage"><RiskButton>Manage</RiskButton></Link>
         </Box>
       )
     }

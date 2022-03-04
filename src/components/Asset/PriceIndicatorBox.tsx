@@ -11,17 +11,24 @@ interface Props {
 const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value }) => {
   
   return (
-    <Stack direction='row' justifyContent='space-between'>
-      <Box>
+    <StyledStack direction='row' justifyContent='space-between'>
+      <Box display="flex">
         <Image src={tickerIcon} width="28px" height="28px" />
-        {tickerName} ({tickerSymbol})
+        <Box sx={{ margin: '10px' }}>{tickerName} ({tickerSymbol})</Box>
       </Box>
       <Box>
-        <Box>iAsset Price</Box>
-        <Box>{value} USDi</Box>
+        <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#6c6c6c' }}>Indicator Price</Box>
+        <Box sx={{ fontSize: '20px', fontWeight: '500' }}>{value} USD</Box>
       </Box>
-    </Stack>
+    </StyledStack>
   )
 }
+
+const StyledStack = styled(Stack)`
+  border-radius: 10px;
+  border: solid 1px #535353;
+  background-color: #171717;
+  padding: 20px;
+`
 
 export default PriceIndicatorBox

@@ -1,9 +1,9 @@
 import { Box, Stack, RadioGroup, FormControlLabel, Radio, Button, Tabs, Tab } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
-// import { FilterType, FilterTypeMap, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
-// import { FilterType, FilterTypeMap, useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
-import { FilterType, FilterTypeMap, useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
+import { FilterType, FilterTypeMap, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
+import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import GridComet from '~/components/Liquidity/GridComet'
 import GridUnconcentrated from '~/components/Liquidity/GridUnconcentrated'
 import GridBorrow from '~/components/Liquidity/GridBorrow'
@@ -13,6 +13,51 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+interface StyledTabsProps {
+  children?: React.ReactNode;
+  value: number;
+  onChange: (event: React.SyntheticEvent, newValue: number) => void;
+}
+
+interface StyledTabProps {
+  label: string;
+  value: number;
+}
+
+const StyledTabs = styled((props: StyledTabsProps) => (
+  <Tabs
+    {...props}
+    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
+  />
+))({
+  '& .MuiTabs-indicator': {
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  '& .MuiTabs-indicatorSpan': {
+    maxWidth: 40,
+    width: '100%',
+    backgroundColor: '#635ee7',
+  },
+});
+
+const StyledTab = styled((props: StyledTabProps) => (
+  <Tab disableRipple {...props} />
+))(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: '500',
+  fontSize: '18px',
+  marginRight: theme.spacing(1),
+  color: '#989898',
+  '&.Mui-selected': {
+    color: '#fff',
+  },
+  '&.Mui-focusVisible': {
+    backgroundColor: '#3d3d3d',
+  },
+}));
 
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
@@ -37,16 +82,15 @@ const TabPanel = (props: TabPanelProps) => {
 const LiquidityTable = () => {
   const [tab, setTab] = useState(0)
   const [filter, setFilter] = useState<FilterType>('all')
-  // const { data: cometPools } = useCometPoolsQuery({
-  //   filter
-  // })
-  // const { data: unconcentPools } = useUnconcentPoolsQuery({
-  //   filter
-  // })
+  const { data: cometPools } = useCometPoolsQuery({
+    filter
+  })
+  const { data: unconcentPools } = useUnconcentPoolsQuery({
+    filter
+  })
   const { data: borrowAssets } = useBorrowQuery({
     filter
   })
-
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -58,14 +102,14 @@ const LiquidityTable = () => {
 
   return (
     <Box sx={{ background: '#171717', color: '#fff' }}>
-      <Tabs
+      <StyledTabs
         value={tab}
         onChange={handleChangeTab}
       >
-        <Tab value={0} label="Comet" />
-        <Tab value={1} label="Unconcentrated" />
-        <Tab value={2} label="Borrow" />
-      </Tabs>
+        <StyledTab value={0} label="Comet" />
+        <StyledTab value={1} label="Unconcentrated" />
+        <StyledTab value={2} label="Borrow" />
+      </StyledTabs>
 
       <Stack mb={2} direction="row" justifyContent="space-between">
         <RadioGroup row value={filter} onChange={handleFilterChange}>
@@ -80,10 +124,10 @@ const LiquidityTable = () => {
 				</RadioGroup>
       </Stack>
       <TabPanel value={tab} index={0}>
-        {/* <GridComet pools={cometPools} /> */}
+        <GridComet pools={cometPools} />
       </TabPanel>
       <TabPanel value={tab} index={1}>
-        {/* <GridUnconcentrated pools={unconcentPools} /> */}
+        <GridUnconcentrated pools={unconcentPools} />
       </TabPanel>
       <TabPanel value={tab} index={2}>
         <GridBorrow assets={borrowAssets} />

@@ -32,7 +32,7 @@ const fetchPools = async ({ filter }: GetPoolsProps) => {
 
 export function useCometPoolsQuery({ filter, refetchOnMount }: GetPoolsProps) {
   return useQuery(
-    ['pools', filter],
+    ['cometPools', filter],
     () => fetchPools({ filter }),
     {
       refetchOnMount,

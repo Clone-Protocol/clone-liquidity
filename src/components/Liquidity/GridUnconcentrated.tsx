@@ -1,9 +1,13 @@
+import React, { useState } from 'react'
 import { Box, Stack, RadioGroup, FormControlLabel, Radio, Button, Tabs, Tab } from '@mui/material'
 import Image from 'next/image'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import Link from 'next/link'
+import DepositDialog from '~/containers/Liquidity/unconcentrated/DepositDialog'
+import WithdrawDialog from '~/containers/Liquidity/unconcentrated/WithdrawDialog'
 
 interface Props {
   pools: PoolList[] | undefined
@@ -12,23 +16,25 @@ interface Props {
 const GridUnconcentrated: React.FC<Props> = ({ pools }) => {
 
   return (
-    <DataGrid
-      sx={{
-        border: 0,
-        color: '#fff'
-      }}
-      disableColumnFilter
-      disableSelectionOnClick
-      disableColumnSelector
-      disableColumnMenu
-      disableDensitySelector
-      disableExtendRowFullWidth
-      hideFooter
-      rowHeight={100}
-      autoHeight
-      columns={columns}
-      rows={pools || []}
-    />
+    <>
+      <DataGrid
+        sx={{
+          border: 0,
+          color: '#fff'
+        }}
+        disableColumnFilter
+        disableSelectionOnClick
+        disableColumnSelector
+        disableColumnMenu
+        disableDensitySelector
+        disableExtendRowFullWidth
+        hideFooter
+        rowHeight={100}
+        autoHeight
+        columns={columns}
+        rows={pools || []}
+      />
+    </>
   )
 }
 
@@ -68,10 +74,15 @@ let columns: GridColDef[] = [
     headerName: '', 
     flex: 2, 
     renderCell(params: GridRenderCellParams<string>) {
+      const [openDeposit, setOpenDeposit] = React.useState(false)
+      const [openWithdraw, setOpenWithdraw] = React.useState(false)
       return (
         <Box display="flex">
-          <RiskButton>Deposit</RiskButton>
-          <RiskButton>Withdraw</RiskButton>
+          <RiskButton onClick={() => setOpenDeposit(true)}>Deposit</RiskButton>
+          <RiskButton onClick={() => setOpenWithdraw(true)}>Withdraw</RiskButton>
+
+          <DepositDialog open={openDeposit} handleClose={() => setOpenDeposit(false)} />
+          <WithdrawDialog open={openWithdraw} handleClose={() => setOpenWithdraw(false)} />
         </Box>
       )
     }

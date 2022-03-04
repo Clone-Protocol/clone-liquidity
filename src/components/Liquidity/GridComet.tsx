@@ -4,6 +4,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PoolList } from '~/features/MyLiquidity/CometPools.query'
+import Link from 'next/link'
 
 interface Props {
   pools: PoolList[] | undefined
@@ -76,7 +77,9 @@ let columns: GridColDef[] = [
       return (
         <Box display="flex">
           <RiskButton>Recenter</RiskButton>
-          <RiskButton>Manage</RiskButton>
+          <Link href="/liquidity/comet/1/manage">
+            <RiskButton>Manage</RiskButton>
+          </Link>
         </Box>
       )
     }
