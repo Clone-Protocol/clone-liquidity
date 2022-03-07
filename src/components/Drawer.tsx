@@ -2,20 +2,28 @@ import MuiDrawer from '@mui/material/Drawer';
 import { styled, List, ListItemButton, ListItemIcon, ListItemText, Box, Stack } from '@mui/material'
 import Link from 'next/link'
 import Image from 'next/image'
-import menuOverviewIcon from '../../public/images/menu/overview-icon.png'
-import menuLiquidityIcon from '../../public/images/menu/position-icon.png'
-import menuBorrowIcon from '../../public/images/menu/borrow-icon.png'
+import menuOverviewIcon from 'public/images/menu/overview-icon.png'
+import menuLiquidityIcon from 'public/images/menu/position-icon.png'
+import menuBorrowIcon from 'public/images/menu/borrow-icon.png'
+import menuOverviewIconSelected from 'public/images/menu/overview-icon-selected.png'
+import menuLiquidityIconSelected from 'public/images/menu/position-icon-selected.png'
+import menuBorrowIconSelected from 'public/images/menu/borrow-icon-selected.png'
+import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 
 const Drawer: React.FC = () => {
-
+  const router = useRouter()
+  console.log('dd', router.asPath)
   return (
     <StyledDrawer variant="permanent" open={true}>
       <List component="nav">
         <Link href="/">
           <ListItemButton>
             <ListItemIcon sx={{ marginLeft: '20px'}}>
-              <Image src={menuOverviewIcon} alt="overview" />
+              {router.asPath === '/' ?
+                <Image src={menuOverviewIconSelected} alt="overview" /> :
+                <Image src={menuOverviewIcon} alt="overview" />
+              }
             </ListItemIcon>
             <StyledListItemText>Overview</StyledListItemText>
           </ListItemButton>
@@ -23,7 +31,10 @@ const Drawer: React.FC = () => {
         <Link href="/liquidity">
           <ListItemButton>
             <ListItemIcon sx={{ marginLeft: '20px'}}>
-              <Image src={menuLiquidityIcon} alt="portfolio" />
+              {router.asPath === '/liquidity' ?
+                <Image src={menuLiquidityIconSelected} alt="portfolio" /> :
+                <Image src={menuLiquidityIcon} alt="portfolio" />
+              }
             </ListItemIcon>
             <StyledListItemText>My Liquidity</StyledListItemText>
           </ListItemButton>
@@ -31,7 +42,10 @@ const Drawer: React.FC = () => {
         <Link href="/borrow">
           <ListItemButton>
             <ListItemIcon sx={{ marginLeft: '20px'}}>
-              <Image src={menuBorrowIcon} alt="markets" />
+              {router.asPath === '/borrow' ?
+                <Image src={menuBorrowIconSelected} alt="markets" /> :
+                <Image src={menuBorrowIcon} alt="markets" />
+              }
             </ListItemIcon>
             <StyledListItemText>Borrow</StyledListItemText>
           </ListItemButton>

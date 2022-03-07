@@ -3,7 +3,7 @@ import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
-import ethLogo from '../../../../public/images/assets/ethereum-eth-logo.svg'
+import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 
