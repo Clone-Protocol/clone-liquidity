@@ -2,19 +2,40 @@ import { Box, Stack, RadioGroup, FormControlLabel, Radio, Tabs, Tab, Button } fr
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useState } from 'react'
-import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
+import { useEffect, useState } from 'react'
+// import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
+import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.png'
 import ChangePositionIcon from 'public/images/change-position-icon.png'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const AssetList = () => {
   const [filter, setFilter] = useState<FilterType>('all')
-  const { data: assets } = useAssetsQuery({
-    filter,
-    refetchOnMount: 'always'
-  })
+  const [assets, setAssets] = useState<AssetListType[]>([])
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
+
+  // const { data: assets } = useAssetsQuery({
+  //   filter,
+  //   refetchOnMount: 'always'
+  // })
+
+  useEffect(() => {
+    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+
+    async function fetch() {
+      const data = await fetchAssets({
+        program,
+        userPubKey: publicKey,
+        filter
+      })
+      setAssets(data)
+    }
+    fetch()
+  }, [publicKey])
 
   const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
@@ -127,6 +148,6 @@ const TradeButton = styled(Box)`
   cursor: pointer;
 `
 
-columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, resizable: true, filterable: false }))
+columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
 export default AssetList

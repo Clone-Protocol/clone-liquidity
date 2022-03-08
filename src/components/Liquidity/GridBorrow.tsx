@@ -91,6 +91,6 @@ const RiskButton = styled(Button)`
   font-weight: 600;
 `
 
-columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, resizable: true, filterable: false }))
+columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
 export default withCsrOnly(GridBorrow)

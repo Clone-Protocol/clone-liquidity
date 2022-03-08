@@ -17,6 +17,10 @@ import CancelIcon from './Icons/CancelIcon'
 import MenuIcon from './Icons/MenuIcon'
 import { useScroll } from '~/hooks/useScroll'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
+import { shortenAddress } from '~/utils/address'
+import { useWalletDialog } from '~/hooks/useWalletDialog'
+import { useIncept } from '~/hooks/useIncept'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -79,10 +83,52 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu = () => {
+  const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const wallet = useAnchorWallet()
+	const { setOpen } = useWalletDialog()
+  const { Program, getInceptApp } = useIncept()
+
+  const inceptConstructor = () => {
+		const inceptProgramID = '9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR'
+    const program = getInceptApp(inceptProgramID)
+    console.log(program.managerAddress[0].toString())
+	}
+
+  const handleWalletClick = () => {
+		try {
+			if (!connected) {
+				if (!wallet) {
+					setOpen(true)
+				} else {
+					connect()
+				}
+			} else {
+				disconnect()
+			}
+		} catch (error) {
+			console.log('Error connecting to the wallet: ', (error as any).message)
+		}
+	}
+
   return (
     <Box display="flex">
-      <HeaderButton variant="outlined" sx={{width: '86px', marginRight: '16px'}}>Get USDi</HeaderButton>
-      <HeaderButton variant="outlined" sx={{width: '163px'}} startIcon={<Image src={walletIcon} alt="wallet" />}>Connect Wallet</HeaderButton>
+      <HeaderButton onClick={inceptConstructor} variant="outlined" sx={{width: '86px', marginRight: '16px'}}>Get USDi</HeaderButton>
+      <HeaderButton onClick={handleWalletClick} variant="outlined" sx={{width: '163px'}} disabled={connecting} startIcon={<Image src={walletIcon} alt="wallet" />}>
+        {!connected ? (
+          <>Connect Wallet</>
+        ) : (
+          <>
+            Disconnect Wallet{' '}
+            {publicKey ? (
+              <Box sx={{ marginLeft: '10px', color: '#6c6c6c' }}>
+                {shortenAddress(publicKey.toString())}
+              </Box>
+            ) : (
+              <></>
+            )}
+          </>
+        )}
+      </HeaderButton>
       {/* <Button variant="outlined">...</Button> */}
     </Box>
   )
