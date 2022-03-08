@@ -1,6 +1,6 @@
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
-import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
+import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 
 const ClosePanel = () => {
   const onClose = () => {
@@ -17,11 +17,11 @@ const ClosePanel = () => {
             <DetailHeader>Collateral</DetailHeader>
             <DetailValue>80,450.86 USDC</DetailValue>
           </Stack>
-          <Stack direction="row" justifyContent="space-between">
+          <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
             <DetailHeader>ILD</DetailHeader>
             <DetailValue>450.87 USDC</DetailValue>
           </Stack>
-          <Stack direction="row" justifyContent="space-between">
+          <Stack sx={{ marginTop: '30px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Withdraw amount</DetailHeader>
             <DetailValue>79,999.98 USDC</DetailValue>
           </Stack>
@@ -41,13 +41,13 @@ const StyledDivider = styled(Divider)`
 `
 
 const DetailHeader = styled('div')`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #989898;
 `
 
 const DetailValue = styled('div')`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #fff;
 `

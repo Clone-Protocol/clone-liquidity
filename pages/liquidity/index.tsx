@@ -19,6 +19,7 @@ const MyLiquidity: NextPage = () => {
           <Container>
             <Box sx={{ marginTop: '40px' }}>
               <MyStatus />
+              <Box sx={{ marginBottom: '30px' }} />
               <LiquidityTable />
             </Box>
           </Container>

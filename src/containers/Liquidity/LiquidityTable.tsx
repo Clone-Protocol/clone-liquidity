@@ -7,57 +7,8 @@ import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import GridComet from '~/components/Liquidity/GridComet'
 import GridUnconcentrated from '~/components/Liquidity/GridUnconcentrated'
 import GridBorrow from '~/components/Liquidity/GridBorrow'
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-interface StyledTabsProps {
-  children?: React.ReactNode;
-  value: number;
-  onChange: (event: React.SyntheticEvent, newValue: number) => void;
-}
-
-interface StyledTabProps {
-  label: string;
-  value: number;
-}
-
-const StyledTabs = styled((props: StyledTabsProps) => (
-  <Tabs
-    {...props}
-    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
-  />
-))({
-  '& .MuiTabs-indicator': {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  '& .MuiTabs-indicatorSpan': {
-    maxWidth: 40,
-    width: '100%',
-    backgroundColor: '#635ee7',
-  },
-});
-
-const StyledTab = styled((props: StyledTabProps) => (
-  <Tab disableRipple {...props} />
-))(({ theme }) => ({
-  textTransform: 'none',
-  fontWeight: '500',
-  fontSize: '18px',
-  marginRight: theme.spacing(1),
-  color: '#989898',
-  '&.Mui-selected': {
-    color: '#fff',
-  },
-  '&.Mui-focusVisible': {
-    backgroundColor: '#3d3d3d',
-  },
-}));
+import { PageTabs, PageTab } from '~/components/Overview/Tabs'
+import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
@@ -96,12 +47,12 @@ const LiquidityTable = () => {
     setTab(newValue);
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setFilter((event.target as HTMLInputElement).value as FilterType)
+  const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
+		setFilter(newValue)
 	}
 
   return (
-    <Box sx={{ background: '#171717', color: '#fff' }}>
+    <Box sx={{ background: '#171717', color: '#fff', '& .super-app-theme--header': {color: '#9d9d9d', fontSize: '13px'}, '& .super-app-theme--row': { border: 'solid 1px #535353'}, '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353'} }}>
       <StyledTabs
         value={tab}
         onChange={handleChangeTab}
@@ -111,17 +62,16 @@ const LiquidityTable = () => {
         <StyledTab value={2} label="Borrow" />
       </StyledTabs>
 
-      <Stack mb={2} direction="row" justifyContent="space-between">
-        <RadioGroup row value={filter} onChange={handleFilterChange}>
-					{Object.keys(FilterTypeMap).map((f) => (
-						<FormControlLabel
-							key={f}
+      <Stack mt={4} mb={2} direction="row" justifyContent="space-between">
+        <PageTabs value={filter} onChange={handleFilterChange}>
+          {Object.keys(FilterTypeMap).map((f) => (
+            <PageTab 
+            	key={f}
 							value={f}
-							control={<Radio />}
-							label={FilterTypeMap[f as FilterType]}
-						/>
+              label={FilterTypeMap[f as FilterType]}
+            />
 					))}
-				</RadioGroup>
+        </PageTabs>
       </Stack>
       <TabPanel value={tab} index={0}>
         <GridComet pools={cometPools} />

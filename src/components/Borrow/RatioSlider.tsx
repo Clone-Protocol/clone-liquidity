@@ -9,6 +9,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   color: '#FFF',
   height: 3,
   padding: '13px 0',
+  marginTop: '5px',
   '& .MuiSlider-thumb': {
     height: 27,
     width: 27,
@@ -63,8 +64,8 @@ const RatioSlider: React.FC<Props> = ({ value, onChange }) => {
 
 const ValueBox = styled(Box)`
   background-color: #333;
-  border-radius: 10px
-  width: 111px;
+  border-radius: 10px;
+  width: 91px;
   height: 45px;
   line-height: 23px;
   font-size: 18px;

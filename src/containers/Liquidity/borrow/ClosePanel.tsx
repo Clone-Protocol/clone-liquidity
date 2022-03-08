@@ -13,7 +13,7 @@ const ClosePanel = () => {
       </Grid>
       <Grid item xs={12} md={8}>
         <Box sx={{ padding: '30px' }}>
-          <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row" justifyContent="space-between" sx={{ marginBottom: '15px' }}>
             <DetailHeader>Repay-Burn amount</DetailHeader>
             <DetailValue>1.00 iLTC</DetailValue>
           </Stack>
@@ -37,13 +37,13 @@ const StyledDivider = styled(Divider)`
 `
 
 const DetailHeader = styled('div')`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #989898;
 `
 
 const DetailValue = styled('div')`
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 500;
   color: #fff;
 `

@@ -13,7 +13,7 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 
 const Drawer: React.FC = () => {
   const router = useRouter()
-  console.log('dd', router.asPath)
+
   return (
     <StyledDrawer variant="permanent" open={true}>
       <List component="nav">

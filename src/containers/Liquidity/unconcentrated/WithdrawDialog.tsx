@@ -55,6 +55,7 @@ const SubTitle = styled('div')`
 
 const InputAmount = styled(`input`)`
   width: 100%;
+  height: 60px;
   text-align: right;
   border: 0px;
   background-color: #333333;

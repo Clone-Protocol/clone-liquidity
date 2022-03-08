@@ -4,7 +4,6 @@ import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
-import RatioSlider from '~/components/Borrow/RatioSlider'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 
 const EditPanel = () => {
@@ -42,24 +41,24 @@ const EditPanel = () => {
 
             <Stack direction="row" spacing={2} justifyContent="space-around">
               <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff' }}>Lower Limit</Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff', textAlign: 'center' }}>Lower Limit</Box>
                 <Box sx={{ borderRadius: '10px', border: 'solid 1px #00f0ff', padding: '27px' }}>
-                  <div>80.95</div>
-                  <div>USD / SOL</div>
+                  <PriceValue>80.95</PriceValue>
+                  <RangePair>USD / SOL</RangePair>
                 </Box>
               </Box>
               <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF' }}>Center Price</Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF', textAlign: 'center' }}>Center Price</Box>
                 <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '27px' }}>
-                  <div>110.78</div>
-                  <div>USD / SOL</div>
+                  <PriceValue>110.78</PriceValue>
+                  <RangePair>USD / SOL</RangePair>
                 </Box>
               </Box>
               <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff' }}>Upper Limit</Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff', textAlign: 'center' }}>Upper Limit</Box>
                 <Box sx={{ borderRadius: '10px', border: 'solid 1px #809cff', padding: '27px' }}>
-                  <div>120.95</div>
-                  <div>USD / SOL</div>
+                  <PriceValue>120.95</PriceValue>
+                  <RangePair>USD / SOL</RangePair>
                 </Box>
               </Box>
             </Stack>
@@ -92,6 +91,17 @@ const SubTitleComment = styled('div')`
   font-weight: 500;
   color: #989898;
   marginBottom: 18px;
+`
+
+const PriceValue = styled('div')`
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+`
+
+const RangePair = styled('div')`
+  font-size: 13px;
+  font-weight: 500;
 `
 
 const ActionButton = styled(Button)`

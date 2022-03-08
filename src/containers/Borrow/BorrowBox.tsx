@@ -33,7 +33,9 @@ const BorrowBox = () => {
       <Box>
         <SubTitle>(2) Set collateral ratio</SubTitle>
         <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
-        <RatioSlider value={collRatio} onChange={handleChangeCollRatio} />
+        <Box sx={{ marginTop: '20px' }}>
+          <RatioSlider value={collRatio} onChange={handleChangeCollRatio} />
+        </Box>
       </Box>
       <StyledDivider />
 
@@ -63,7 +65,7 @@ const StyledPaper = styled(Paper)`
   text-align: left;
   background: #171717;
   padding-left: 53px;
-  padding-top: 56px;
+  padding-top: 26px;
   padding-bottom: 42px;
   padding-right: 54px;
 `
@@ -77,14 +79,13 @@ const StyledDivider = styled(Divider)`
 const SubTitle = styled('div')`
   font-size: 18px;
   font-weight: 500;
-  marginBottom: 17px;
+  margin-bottom: 17px;
 `
 
 const SubTitleComment = styled('div')`
   font-size: 14px;
   font-weight: 500;
   color: #989898;
-  marginBottom: 18px;
 `
 
 const ActionButton = styled(Button)`

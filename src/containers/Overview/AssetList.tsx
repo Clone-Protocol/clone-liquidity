@@ -21,7 +21,7 @@ const AssetList = () => {
 	}
 
   return (
-    <Box sx={{ background: '#171717', color: '#fff', '& .super-app-theme--header': {color: '#9d9d9d', fontSize: '13px'} }}>
+    <Box sx={{ background: '#171717', color: '#fff', '& .super-app-theme--header': {color: '#9d9d9d', fontSize: '13px'}, '& .super-app-theme--row': { border: 'solid 1px #535353'}, '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353'} }}>
       <Stack mb={2} direction="row" justifyContent="space-between">
         <PageTabs value={filter} onChange={handleFilterChange}>
           {Object.keys(FilterTypeMap).map((f) => (
@@ -38,6 +38,7 @@ const AssetList = () => {
           border: 0,
           color: '#fff'
         }}
+        getRowClassName={(params) => "super-app-theme--row"}
 				disableColumnFilter
 				disableSelectionOnClick
 				disableColumnSelector
@@ -55,7 +56,7 @@ const AssetList = () => {
 }
 
 let columns: GridColDef[] = [
-	{ field: 'iAsset', headerClassName: 'super-app-theme--header', headerName: 'iAsset', flex: 2, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'iAsset', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'iAsset', flex: 2, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box display="flex" justifyContent="flex-start">
         <Image src={params.row.tickerIcon} width="40px" height="40px" />
@@ -66,27 +67,29 @@ let columns: GridColDef[] = [
       </Box>
     )
   } },
-	{ field: 'price', headerClassName: 'super-app-theme--header', headerName: 'Price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'price', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'liquidity', headerClassName: 'super-app-theme--header', headerName: 'Liquidity', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'liquidity', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Liquidity', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: '24hVolume', headerClassName: 'super-app-theme--header', headerName: '24h Volume', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: '24hVolume', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: '24h Volume', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.volume24h.toLocaleString()} USDi</Box>
     )
   }},
-	{ field: 'baselineAPY', headerClassName: 'super-app-theme--header', headerName: 'Baseline APY', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'baselineAPY', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Baseline APY', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} %</Box>
     )
   }},
-  { field: 'action', 
+  { field: 'action',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell', 
     headerName: '', 
     flex: 1, 
     renderCell(params: GridRenderCellParams<string>) {

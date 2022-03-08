@@ -5,6 +5,7 @@ import { styled } from '@mui/system'
 import Container from '@mui/material/Container'
 import TipMsg from '~/components/Common/TipMsg'
 import AssetView from '~/containers/Overview/AssetView'
+import { Box } from '@mui/material'
 
 const AssetPage: NextPage = () => {
 	return (
@@ -15,8 +16,10 @@ const AssetPage: NextPage = () => {
 			<main>
         <StyledSection>
           <Container>
-            <TipMsg>💡 Tip: Learn about our Comet Liquidity System that allows our LPs to maximize their concentraed liquidity expereince. </TipMsg>
-            <AssetView />
+            <TipMsg>💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to maximize their concentraed liquidity expereince. </TipMsg>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <AssetView />
+            </Box>
           </Container>
         </StyledSection>
 			</main>
@@ -31,6 +34,10 @@ const StyledSection = styled('section')`
 	${(props) => props.theme.breakpoints.down('md')} {
 		padding: 50px 0px;
 	}
+`
+
+const BoldText = styled('span')`
+  color: #fff;
 `
 
 export default AssetPage

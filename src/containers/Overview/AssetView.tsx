@@ -3,60 +3,13 @@ import React, { useState } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Borrow/PairInput'
-import ethLogo from '../../../public/images/assets/ethereum-eth-logo.svg'
+import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-interface StyledTabsProps {
-  children?: React.ReactNode;
-  value: number;
-  onChange: (event: React.SyntheticEvent, newValue: number) => void;
-}
-
-interface StyledTabProps {
-  label: string;
-}
-
-const StyledTabs = styled((props: StyledTabsProps) => (
-  <Tabs
-    {...props}
-    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
-  />
-))({
-  '& .MuiTabs-indicator': {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  '& .MuiTabs-indicatorSpan': {
-    maxWidth: 40,
-    width: '100%',
-    backgroundColor: '#635ee7',
-  },
-});
-
-const StyledTab = styled((props: StyledTabProps) => (
-  <Tab disableRipple {...props} />
-))(({ theme }) => ({
-  textTransform: 'none',
-  fontWeight: '500',
-  fontSize: '18px',
-  marginRight: theme.spacing(1),
-  color: '#989898',
-  '&.Mui-selected': {
-    color: '#fff',
-  },
-  '&.Mui-focusVisible': {
-    backgroundColor: '#3d3d3d',
-  },
-}));
+import InfoBookIcon from 'public/images/info-book-icon.png'
+import WarningIcon from 'public/images/warning-icon.png'
+import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 
 const AssetView = () => {
   const [tab, setTab] = useState(0)
@@ -114,8 +67,8 @@ const AssetView = () => {
         <Box>
           <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
 
-          <Stack sx={{ border: '1px solid #9d9d9d', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px' }} direction="row">
-            <Box>xx</Box>
+          <Stack sx={{ border: '1px solid #00d0dd', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
+            <Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}><Image src={InfoBookIcon} /></Box>
             <Box>Fill in two of the three parts and the third part will automatically generate. Learn more here.</Box>
           </Stack>
 
@@ -139,24 +92,24 @@ const AssetView = () => {
             
             <Stack direction="row" spacing={2} justifyContent="space-around">
               <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff' }}>Lower Limit</Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff', textAlign: 'center' }}>Lower Limit</Box>
                 <Box sx={{ borderRadius: '10px', border: 'solid 1px #00f0ff', padding: '27px' }}>
-                  <div>80.95</div>
-                  <div>USD / SOL</div>
+                  <PriceValue>80.95</PriceValue>
+                  <RangePair>USD / SOL</RangePair>
                 </Box>
               </Box>
               <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF' }}>Center Price</Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF', textAlign: 'center' }}>Center Price</Box>
                 <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '27px' }}>
-                  <div>110.78</div>
-                  <div>USD / SOL</div>
+                  <PriceValue>110.78</PriceValue>
+                  <RangePair>USD / SOL</RangePair>
                 </Box>
               </Box>
               <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff' }}>Upper Limit</Box>
+                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff', textAlign: 'center' }}>Upper Limit</Box>
                 <Box sx={{ borderRadius: '10px', border: 'solid 1px #809cff', padding: '27px' }}>
-                  <div>120.95</div>
-                  <div>USD / SOL</div>
+                  <PriceValue>120.95</PriceValue>
+                  <RangePair>USD / SOL</RangePair>
                 </Box>
               </Box>
             </Stack>
@@ -165,15 +118,15 @@ const AssetView = () => {
           </Box>
           <StyledDivider />
 
-          <ActionButton onClick={onComet}>Create Comet Position</ActionButton>
+          <CometButton onClick={onComet}>Create Comet Position</CometButton>
         </Box>
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <Box>
           <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
 
-          <Stack sx={{ border: '1px solid #9d9d9d', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px' }} direction="row">
-            <Box>xx</Box>
+          <Stack sx={{ border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
+            <Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}><Image src={WarningIcon} /></Box>
             <Box>Unconcentrated liquidity positions are less capital efficent than coment liquidity. Learn more here.</Box>
           </Stack>
 
@@ -191,11 +144,9 @@ const AssetView = () => {
           </Box>
           <StyledDivider />
 
-          <ActionButton onClick={onLiquidity}>Create Liquidity Position</ActionButton>
+          <LiquidityButton onClick={onLiquidity}>Create Liquidity Position</LiquidityButton>
         </Box>
       </TabPanel>
-      
-      
     </StyledPaper>
   )
 }
@@ -209,10 +160,10 @@ const StyledPaper = styled(Paper)`
   border-radius: 8px;
   text-align: left;
   background: #171717;
-  padding-left: 53px;
-  padding-top: 56px;
+  padding-left: 30px;
+  padding-top: 36px;
   padding-bottom: 42px;
-  padding-right: 54px;
+  padding-right: 33px;
 `
 const StyledDivider = styled(Divider)`
   background-color: #535353;
@@ -224,22 +175,40 @@ const StyledDivider = styled(Divider)`
 const SubTitle = styled('div')`
   font-size: 18px;
   font-weight: 500;
-  marginBottom: 17px;
+  margin-bottom: 17px;
 `
 
 const SubTitleComment = styled('div')`
   font-size: 14px;
   font-weight: 500;
   color: #989898;
-  marginBottom: 18px;
 `
 
-const ActionButton = styled(Button)`
+const PriceValue = styled('div')`
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+`
+
+const RangePair = styled('div')`
+  font-size: 13px;
+  font-weight: 500;
+`
+
+const CometButton = styled(Button)`
   width: 100%;
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
   color: #fff;
   border-radius: 10px;
   margin-bottom: 15px;
 `
+const LiquidityButton = styled(Button)`
+  width: 100%;
+  background-color: #7d7d7d;
+  color: #fff;
+  border-radius: 10px;
+  margin-bottom: 15px;
+`
+
 
 export default AssetView

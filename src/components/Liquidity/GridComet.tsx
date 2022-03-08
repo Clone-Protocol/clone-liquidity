@@ -5,6 +5,7 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PoolList } from '~/features/MyLiquidity/CometPools.query'
 import Link from 'next/link'
+import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
 
 interface Props {
   pools: PoolList[] | undefined
@@ -18,6 +19,7 @@ const GridComet: React.FC<Props> = ({ pools }) => {
         border: 0,
         color: '#fff'
       }}
+      getRowClassName={(params) => "super-app-theme--row"}
       disableColumnFilter
       disableSelectionOnClick
       disableColumnSelector
@@ -34,7 +36,7 @@ const GridComet: React.FC<Props> = ({ pools }) => {
 }
 
 let columns: GridColDef[] = [
-	{ field: 'pools', headerName: 'Pools', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'pools', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Pools', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box display="flex" justifyContent="flex-start">
         <Image src={params.row.tickerIcon} width="40px" height="40px" />
@@ -45,32 +47,34 @@ let columns: GridColDef[] = [
       </Box>
     )
   } },
-	{ field: 'iPrice', headerName: 'Indicator price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'iPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Indicator price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
     )
   }},
-  { field: 'cPrice', headerName: 'Center price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'cPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Center price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
     )
   }},
-  { field: 'priceRange', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'priceRange', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.row.fromPriceRange} - {params.row.toPriceRange}</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.fromPriceRange} - {params.row.toPriceRange}</Box>
     )
   }},
-	{ field: 'collateral', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'collateral', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDC</Box>
     )
   }},
-  { field: 'ild', headerName: 'ILD', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'ild', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'ILD', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDC</Box>
     )
   }},
   { field: 'action', 
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
     headerName: '', 
     flex: 2, 
     renderCell(params: GridRenderCellParams<string>) {
@@ -85,17 +89,6 @@ let columns: GridColDef[] = [
     }
   },
 ]
-
-const RiskButton = styled(Button)`
-  width: 84px;
-  height: 33px;
-  margin: 6px;
-  border-radius: 8px;
-  border: solid 1px #ff2929;
-  color: #FFF;
-  font-size: 12px;
-  font-weight: 600;
-`
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, resizable: true, filterable: false }))
 

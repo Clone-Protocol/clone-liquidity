@@ -34,7 +34,7 @@ const GridBorrow: React.FC<Props> = ({ assets }) => {
 }
 
 let columns: GridColDef[] = [
-	{ field: 'asset', headerName: 'iAsset', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'asset', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'iAsset', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box display="flex" justifyContent="flex-start">
         <Image src={params.row.tickerIcon} width="40px" height="40px" />
@@ -45,27 +45,29 @@ let columns: GridColDef[] = [
       </Box>
     )
   } },
-	{ field: 'oPrice', headerName: 'Oracle price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'oPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Oracle price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'borrowed', headerName: 'Borrowed', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'borrowed', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Borrowed', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-	{ field: 'collateral', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'collateral', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'collateralRatio', headerName: 'Collateral Ratio', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+  { field: 'collateralRatio', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Collateral Ratio', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '16px', fontWeight: '500' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
-  { field: 'action', 
+  { field: 'action',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
     headerName: '', 
     flex: 2, 
     renderCell(params: GridRenderCellParams<string>) {

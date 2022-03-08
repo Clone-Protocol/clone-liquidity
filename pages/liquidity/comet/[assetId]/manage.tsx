@@ -5,12 +5,7 @@ import { styled } from '@mui/system'
 import { Container, Box, Tabs, Tab } from '@mui/material'
 import EditPanel from '~/containers/Liquidity/comet/EditPanel'
 import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
+import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
@@ -50,12 +45,12 @@ const Manage: NextPage = () => {
         <StyledSection>
           <Container>
             <Box sx={{ marginTop: '40px' }}>
-              <Tabs 
+              <StyledTabs 
                 value={tab}
                 onChange={handleChangeTab}>
-                <Tab value={0} label="Edit"></Tab>
-                <Tab value={1} label="Close"></Tab>
-              </Tabs>
+                <StyledTab value={0} label="Edit"></StyledTab>
+                <StyledTab value={1} label="Close"></StyledTab>
+              </StyledTabs>
             </Box>
             <TabPanel value={tab} index={0}>
               <EditPanel />

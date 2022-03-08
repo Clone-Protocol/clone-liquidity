@@ -1,8 +1,10 @@
 import { Box, Stack, Button, Divider, Card } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import ethLogo from '../../../../public/images/assets/ethereum-eth-logo.svg'
+import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
+import WarningIcon from 'public/images/warning-icon-red.png'
+import Image from 'next/image'
 
 interface Props {
 }
@@ -13,101 +15,57 @@ const PositionInfo: React.FC = () => {
     <Box sx={{ background: '#000', color: '#fff' }}>
       <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
 
-      <Box>
-        <Title>Comet Position</Title>
+      <Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
+        <WarningBox><Image src={WarningIcon} /> High liquidation risk</WarningBox>
+
+        <Title>Borrow Position</Title>
         <Box>
           <Box>
-            <SubTitle>Collateral</SubTitle>
-            <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              80,450.85 USDC
+            <SubTitle>Current collateral</SubTitle>
+            <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
+              179.49 USDC
             </Box>
-            <Box>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Contributed USDi</DetailHeader>
-                <DetailValue>100,000.00 USDi</DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Contributed iAsset</DetailHeader>
-                <DetailValue>1,000.00 iSOL</DetailValue>
-              </Stack>
+            
+            <SubTitle>Current collateral ratio</SubTitle>
+            <Box sx={{ fontSize: '16px', fontWeight: '500', color: '#ff2929' }}>
+              121.74% (min: 120%)
+            </Box>
+
+            <SubTitle>Borrowed amount</SubTitle>
+            <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
+              1.00 iLTC
             </Box>
           </Box>
-          <StyledDivider />
-
-          <Box>
-            <SubTitle>Price Range</SubTitle>
-            <Box>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Center price</DetailHeader>
-                <DetailValue>100.58 USD</DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Lower limit</DetailHeader>
-                <DetailValue>50.43 USD</DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Upper limit</DetailHeader>
-                <DetailValue>150.89 USD</DetailValue>
-              </Stack>
-            </Box>
-          </Box>
-          <StyledDivider />
-
-          <Box>
-            <SubTitle>Price Range</SubTitle>
-            <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              450.87 USDC
-            </Box>
-          </Box>
-          <StyledDivider />
-
-          <ActionButton>Recenter</ActionButton>
         </Box>
       </Box>
     </Box>
   )
 }
 
-const StyledDivider = styled(Divider)`
-  background-color: #535353;
-  margin-bottom: 39px;
-  margin-top: 39px;
-  height: 1px;
+const WarningBox = styled(Box)`
+  font-size: 12px;
+  font-weight: 500;
+  color: #ff2929;
+  padding: 3px 29px 2px 46px;
+  border-radius: 10px;
+  border: solid 1px #f00;
+  text-align: center;
+  margin-bottom: 20px;
 `
 
 const Title = styled('div')`
   font-size: 20px;
   font-weight: 600;
   color: #FFF;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `
 
 const SubTitle = styled('div')`
-  font-size: 16px;
-  font-weight: 600;
-  color: #989898;
-`
-
-const DetailHeader = styled('div')`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #989898;
-`
-
-const DetailValue = styled('div')`
-  font-size: 12px;
-  font-weight: 500;
-  color: #fff;
-`
-
-const ActionButton = styled(Button)`
-  width: 100%;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-  border-image-source: linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
-  border-image-slice: 1;
-  color: #fff;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `
 
 export default withCsrOnly(PositionInfo)

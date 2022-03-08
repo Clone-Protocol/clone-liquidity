@@ -24,7 +24,7 @@ const DepositDialog = ({ open, handleClose }: any) => {
             <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} />
           </Box>
           <StyledDivider />
-          <ActionButton onClick={handleClose}>Edit</ActionButton>
+          <ActionButton onClick={handleClose}>Deposit</ActionButton>
         </Box>
       </DialogContent>
     </Dialog>

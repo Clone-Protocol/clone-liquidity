@@ -13,7 +13,7 @@ const PositionInfo: React.FC = () => {
     <Box sx={{ background: '#000', color: '#fff' }}>
       <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
 
-      <Box>
+      <Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
         <Title>Comet Position</Title>
         <Box>
           <Box>
@@ -21,7 +21,7 @@ const PositionInfo: React.FC = () => {
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
               80,450.85 USDC
             </Box>
-            <Box>
+            <Box sx={{ marginTop: '10px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
                 <DetailValue>100,000.00 USDi</DetailValue>
@@ -36,7 +36,7 @@ const PositionInfo: React.FC = () => {
 
           <Box>
             <SubTitle>Price Range</SubTitle>
-            <Box>
+            <Box sx={{ marginTop: '20px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price</DetailHeader>
                 <DetailValue>100.58 USD</DetailValue>
@@ -54,7 +54,7 @@ const PositionInfo: React.FC = () => {
           <StyledDivider />
 
           <Box>
-            <SubTitle>Price Range</SubTitle>
+            <SubTitle>ILD</SubTitle>
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
               450.87 USDC
             </Box>
@@ -70,8 +70,8 @@ const PositionInfo: React.FC = () => {
 
 const StyledDivider = styled(Divider)`
   background-color: #535353;
-  margin-bottom: 39px;
-  margin-top: 39px;
+  margin-bottom: 15px;
+  margin-top: 15px;
   height: 1px;
 `
 
@@ -79,7 +79,7 @@ const Title = styled('div')`
   font-size: 20px;
   font-weight: 600;
   color: #FFF;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `
 
 const SubTitle = styled('div')`

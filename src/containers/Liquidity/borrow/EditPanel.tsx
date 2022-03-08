@@ -58,14 +58,14 @@ const EditPanel = () => {
 const StyledDivider = styled(Divider)`
   background-color: #535353;
   margin-bottom: 39px;
-  margin-top: 39px;
+  margin-top: 20px;
   height: 1px;
 `
 
 const SubTitle = styled('div')`
   font-size: 18px;
   font-weight: 500;
-  marginBottom: 17px;
+  margin-bottom: 17px;
   color: #fff;
 `
 
@@ -73,7 +73,7 @@ const SubTitleComment = styled('div')`
   font-size: 14px;
   font-weight: 500;
   color: #989898;
-  marginBottom: 18px;
+  margin-bottom: 10px;
 `
 
 const ActionButton = styled(Button)`

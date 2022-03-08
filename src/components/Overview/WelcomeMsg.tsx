@@ -8,7 +8,7 @@ const WelcomeMsg = () => {
   }
 	return (
 		<StyledPaper variant="outlined">
-      👋 Hi and welcome to Incept Liquidity. Here is where anyone can be a liquidity provider (LP) of the Incept Trading Platform and earn trading fees and rewards. 
+      👋 Hi and welcome to <BoldText>Incept Liquidity</BoldText>. Here is where anyone can be a liquidity provider (LP) of the <BoldText>Incept Trading Platform</BoldText> and earn trading fees and rewards. 
     </StyledPaper>
 	)
 }
@@ -25,6 +25,10 @@ const StyledPaper = styled(Paper)`
   color: #606060;
   padding: 17px 37px 17px 46px;
   border-radius: 8px;
+`
+
+const BoldText = styled('span')`
+  color: #fff;
 `
 
 export default WelcomeMsg
