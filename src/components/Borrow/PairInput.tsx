@@ -9,7 +9,7 @@ interface Props {
   onChange?: () => void
 }
 
-const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, onChange }) => {
+const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, onChange}) => {
   
   return (
     <FormControl variant='standard'>

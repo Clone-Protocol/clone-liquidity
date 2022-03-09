@@ -1,17 +1,43 @@
 import { Box, Stack, Button, Paper, Divider } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Borrow/PairInput'
 import ethLogo from '../../../public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAsset } from '~/web3/Overview/Assets'
 
 const BorrowBox = () => {
   const [fromAmount, setFromAmount] = useState(0.0)
   const [toAmount, setToAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(150)
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
+  const [asset, setAsset] = useState<AssetListType>()
+  const [assetIndex, setAssetIndex] = useState(0)
+
+  useEffect(() => {
+    const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv') 
+
+    async function fetch() {
+      const assetData = await fetchAsset({
+        program,
+        userPubKey: publicKey,
+        index: assetIndex
+      })
+      setAsset(assetData)
+    }
+    fetch()
+  }, [publicKey])
 
   const onBorrow = () => {
+
+  }
+
+  const handleAssetChange = (index: number) => {
+    setAssetIndex(index)
   }
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
