@@ -105,11 +105,55 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
   return result
 }
 
+export const fetchAsset = async ({ program, userPubKey, index }: GetPoolProps) => {
+	if (!userPubKey) return 
+
+	await program.loadManager()
+	const data = await program.getMintiAssetData(index)
+	let tickerName = ''
+	let tickerSymbol = ''
+	let tickerIcon = ''
+	let assetType: number
+	switch (index) {
+		case Asset.Solana:
+			tickerName = 'iSolana'
+			tickerSymbol = 'iSOL'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		case Asset.Ethereum:
+			tickerName = 'iEthereum'
+			tickerSymbol = 'iETH'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		default:
+			throw new Error('Not supported')
+	}
+	return {
+		id: index,
+		tickerName: tickerName,
+		tickerSymbol: tickerSymbol,
+		tickerIcon: tickerIcon,
+		assetType: assetType,
+		aPrice: data[0],
+		oPrice: data[1],
+		stableCollateralRatio: data[2],
+		cryptoCollateralRatio: data[3]
+	}
+}
+
 interface GetPoolsProps {
   program: Incept,
   userPubKey: PublicKey | null,
   filter: FilterType,
 }
+
+interface GetPoolProps {
+	program: Incept,
+	userPubKey: PublicKey | null,
+	index: number,
+  }
 
 export enum FilterTypeMap {
 	'all' = 'All',
@@ -139,3 +183,14 @@ export interface AssetList {
   collateralRatio: number
   minCollateralRatio: number
 }
+export interface MintAsset {
+	id: number
+	tickerName: string
+	tickerSymbol: string
+	tickerIcon: string
+	assetType: number
+	aPrice: number
+	oPrice: number
+	stableCollateralRatio: number
+	cryptoCollateralRatio: number
+  }

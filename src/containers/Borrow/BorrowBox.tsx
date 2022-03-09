@@ -7,7 +7,7 @@ import ethLogo from '../../../public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAsset } from '~/web3/Overview/Assets'
+import { MintAsset as MintAssetType, fetchAsset } from '~/web3/MyLiquidity/Borrow'
 
 const BorrowBox = () => {
   const [fromAmount, setFromAmount] = useState(0.0)
@@ -15,7 +15,7 @@ const BorrowBox = () => {
   const [collRatio, setCollRatio] = useState(150)
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
-  const [asset, setAsset] = useState<AssetListType>()
+  const [assetData, setAssetData] = useState<MintAssetType>()
   const [assetIndex, setAssetIndex] = useState(0)
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const BorrowBox = () => {
         userPubKey: publicKey,
         index: assetIndex
       })
-      setAsset(assetData)
+      setAssetData(assetData)
     }
     fetch()
   }, [publicKey])

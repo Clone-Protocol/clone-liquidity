@@ -81,54 +81,10 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProp
 	return result
 }
 
-export const fetchAsset = async ({ program, userPubKey, index }: GetAssetProps) => {
-	if (!userPubKey) return 
-
-	await program.loadManager()
-	const price = await program.getiAssetPrice(index)
-	let tickerName = ''
-	let tickerSymbol = ''
-	let tickerIcon = ''
-	let assetType: number
-	switch (index) {
-		case Asset.Solana:
-			tickerName = 'iSolana'
-			tickerSymbol = 'iSOL'
-			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
-			assetType = AssetType.Crypto
-			break
-		case Asset.Ethereum:
-			tickerName = 'iEthereum'
-			tickerSymbol = 'iETH'
-			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
-			assetType = AssetType.Crypto
-			break
-		default:
-			throw new Error('Not supported')
-	}
-	return {
-		id: index,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
-		tickerIcon: tickerIcon,
-		price: price,
-		assetType: assetType,
-		liquidity: 0, //coming soon
-		volume24h: 0, //coming soon
-		baselineAPY: 0, //coming soon
-	}
-}
-
 interface GetAssetsProps {
 	program: Incept
 	userPubKey: PublicKey | null
 	filter: FilterType
-}
-
-interface GetAssetProps {
-	program: Incept
-	userPubKey: PublicKey | null
-	index: number
 }
 
 export enum FilterTypeMap {

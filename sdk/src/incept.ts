@@ -262,7 +262,7 @@ export class Incept {
 
 	public async getiAssetInfos() {
 		const iassetInfo = []
-		for (let i = 1; i < Number((await this.getTokenData()).numPools)+1; i++) {
+		for (let i = 1; i < Number((await this.getTokenData()).numPools) + 1; i++) {
 			let poolBalances = await this.getPoolBalances(i)
 			let price = poolBalances[1] / poolBalances[0]
 			iassetInfo.push([i, price])
@@ -270,10 +270,16 @@ export class Incept {
 		return iassetInfo
 	}
 
-	public async getiAssetPrice(index: number) {
+	public async getMintiAssetData(index: number) {
+		let assetInfo = await this.getAssetInfo(index)
 		let poolBalances = await this.getPoolBalances(index)
 		let price = poolBalances[1] / poolBalances[0]
-		return price
+		return [
+			price,
+			toScaledNumber(assetInfo.price),
+			toScaledNumber(assetInfo.stableCollateralRatio),
+			toScaledNumber(assetInfo.cryptoCollateralRatio),
+		]
 	}
 
 	public async getUseriAssetInfo() {
@@ -346,15 +352,9 @@ export class Incept {
 			let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
 			// @ts-ignore
 			let liquidityTokenSupply = await this.connection.getTokenSupply(pool.liquidityTokenMint).value.uiAmount
-			let iassetValue = poolBalances[0] * liquidityTokenAmount / liquidityTokenSupply
-			let usdiValue = poolBalances[1] * liquidityTokenAmount / liquidityTokenSupply
-			liquidityInfos.push([
-				poolIndex,
-				price,
-				iassetValue,
-				usdiValue,
-				liquidityTokenAmount
-			])
+			let iassetValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
+			let usdiValue = (poolBalances[1] * liquidityTokenAmount) / liquidityTokenSupply
+			liquidityInfos.push([poolIndex, price, iassetValue, usdiValue, liquidityTokenAmount])
 		}
 		return liquidityInfos
 	}
@@ -371,7 +371,12 @@ export class Incept {
 			let oraclePrice = toScaledNumber(assetInfo.price)
 			let poolBalances = await this.getPoolBalances(poolIndex)
 			let ammPrice = poolBalances[1] / poolBalances[0]
-			let minGap = Math.min(oraclePrice - lowerPriceRange, ammPrice - lowerPriceRange, upperPriceRange - oraclePrice, upperPriceRange - ammPrice)
+			let minGap = Math.min(
+				oraclePrice - lowerPriceRange,
+				ammPrice - lowerPriceRange,
+				upperPriceRange - oraclePrice,
+				upperPriceRange - ammPrice
+			)
 			let indicatorPrice: number
 			switch (minGap) {
 				case oraclePrice - lowerPriceRange:
@@ -393,8 +398,8 @@ export class Incept {
 			let liquidityTokenAmount = toScaledNumber(cometPosition.liquidityTokenValue)
 			// @ts-ignore
 			let liquidityTokenSupply = await this.connection.getTokenSupply(pool.liquidityTokenMint).value.uiAmount
-			let iassetValue = poolBalances[0] * liquidityTokenAmount / liquidityTokenSupply
-			let usdiValue = poolBalances[0] * liquidityTokenAmount / liquidityTokenSupply
+			let iassetValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
+			let usdiValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
 			let borrowedIasset = toScaledNumber(cometPosition.borrowedIasset)
 			let borrowedUsdi = toScaledNumber(cometPosition.borrowedIasset)
 			let ildIsIasset: boolean
