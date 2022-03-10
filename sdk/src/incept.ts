@@ -274,11 +274,20 @@ export class Incept {
 		let assetInfo = await this.getAssetInfo(index)
 		let poolBalances = await this.getPoolBalances(index)
 		let price = poolBalances[1] / poolBalances[0]
+		let associatedTokenAddress = (
+			await PublicKey.findProgramAddress(
+				[this.provider.wallet.publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), assetInfo.iassetMint.toBuffer()],
+				SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+			)
+		)[0]
+		let amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount
 		return [
 			price,
 			toScaledNumber(assetInfo.price),
 			toScaledNumber(assetInfo.stableCollateralRatio),
 			toScaledNumber(assetInfo.cryptoCollateralRatio),
+			amount
+
 		]
 	}
 
@@ -559,10 +568,9 @@ export class Incept {
 		})) as TransactionInstruction
 	}
 
-	public async initializeMintPositions(
+	public async initializeMintPosition(
 		iassetAmount: BN,
 		collateralAmount: BN,
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		poolIndex: number,
@@ -570,8 +578,8 @@ export class Incept {
 		signers: Array<Keypair>
 	) {
 		const updatePricesIx = await this.updatePricesInstruction()
-		const initializeMintPositionsIx = await this.initializeMintPositionsInstruction(
-			user,
+		const initializeMintPositionIx = await this.initializeMintPositionInstruction(
+			this.provider.wallet.publicKey,
 			userCollateralTokenAccount,
 			userIassetTokenAccount,
 			iassetAmount,
@@ -580,12 +588,12 @@ export class Incept {
 			collateralIndex
 		)
 		await signAndSend(
-			new Transaction().add(updatePricesIx).add(initializeMintPositionsIx),
+			new Transaction().add(updatePricesIx).add(initializeMintPositionIx),
 			signers,
 			this.connection
 		)
 	}
-	public async initializeMintPositionsInstruction(
+	public async initializeMintPositionInstruction(
 		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,

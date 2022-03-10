@@ -136,10 +136,11 @@ export const fetchAsset = async ({ program, userPubKey, index }: GetPoolProps) =
 		tickerSymbol: tickerSymbol,
 		tickerIcon: tickerIcon,
 		assetType: assetType,
-		aPrice: data[0],
-		oPrice: data[1],
-		stableCollateralRatio: data[2],
-		cryptoCollateralRatio: data[3]
+		aPrice: data[0]!,
+		oPrice: data[1]!,
+		stableCollateralRatio: data[2]!,
+		cryptoCollateralRatio: data[3]!,
+		balance: data[4]!
 	}
 }
 
@@ -188,4 +189,5 @@ export interface MintAsset {
 	oPrice: number
 	stableCollateralRatio: number
 	cryptoCollateralRatio: number
+	balance: number
 }
