@@ -153,7 +153,7 @@ interface GetPoolProps {
 	program: Incept,
 	userPubKey: PublicKey | null,
 	index: number,
-  }
+}
 
 export enum FilterTypeMap {
 	'all' = 'All',
@@ -163,11 +163,6 @@ export enum FilterTypeMap {
   'commodities' = 'Commodities'
 }
 export type FilterType = keyof typeof FilterTypeMap
-
-// export interface AssetsData {
-//   list: AssetList[];
-//   total: number;
-// }
 
 export interface AssetList {
   id: number
@@ -193,4 +188,4 @@ export interface MintAsset {
 	oPrice: number
 	stableCollateralRatio: number
 	cryptoCollateralRatio: number
-  }
+}
