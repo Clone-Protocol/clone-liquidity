@@ -87,6 +87,7 @@ const BorrowBox = () => {
     console.log(fromPair)
     console.log(collRatio)
     console.log(borrowAmount)
+    console.log(assetData)
     // TODO: call contract
     const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv')
     await callBorrow({ program, userPubKey: publicKey })
