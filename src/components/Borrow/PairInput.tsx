@@ -6,15 +6,19 @@ interface Props {
   tickerName: string | null,
   tickerSymbol: string | null,
   value?: number,
-  onChange?: () => void
+  balance?: number,
+  balanceDisabled?: boolean,
+  onChange?: any
 }
 
-const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, onChange}) => {
+const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, balance, balanceDisabled = false, onChange }) => {
   
   return (
     <FormControl variant='standard'>
       <Stack direction="row" justifyContent="flex-end">
-        <Box sx={{ fontSize: '12px', fontWeight: '500' }}>Balance: _</Box>
+        {!balanceDisabled ?
+          (<Box sx={{ fontSize: '12px', fontWeight: '500' }}>Balance: {balance}</Box>)
+          : <></>}
       </Stack>
       <FormStack direction="row" justifyContent="space-between" alignItems="center">
         <Box display="flex">

@@ -1,30 +1,35 @@
 import { styled, Box, Paper, Stack } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import { Status } from '~/web3/MyLiquidity/status'
 
-const StatusView: React.FC = () => {
+interface Props {
+  status: Status
+}
 
-  return (
+const StatusView: React.FC<Props> = ({ status }) => {
+
+  return status? (
     <StyledPaper variant="outlined">
       <Box sx={{ marginBottom: '40px' }}>
         <Title>Total Value</Title>
-        <BalanceValue><NumValue>100000</NumValue> USDi</BalanceValue>
+        <BalanceValue><NumValue>{status.totalVal.toLocaleString()}</NumValue> USDi</BalanceValue>
       </Box>
       <Stack spacing={2}>
         <Box>
           <SubHeader>Comet:</SubHeader>
-          <SubValue>45,000.00 USDi (45%)</SubValue>
+          <SubValue>{status.comet.toLocaleString()} USDi ({status.cometPercent}%)</SubValue>
         </Box>
         <Box>
           <SubHeader>Unconcentrated:</SubHeader>
-          <SubValue>45,000.00 USDi (45%)</SubValue>
+          <SubValue>{status.unconcentrated.toLocaleString()} USDi ({status.unconcentratedPercent}%)</SubValue>
         </Box>
         <Box>
           <SubHeader>Borrow:</SubHeader>
-          <SubValue>10,000.00 USDi (10%)</SubValue>
+          <SubValue>{status.borrow.toLocaleString()} USDi ({status.borrowPercent}%)</SubValue>
         </Box>
       </Stack>
     </StyledPaper>
-  )
+  ) : <></>
 }
 
 export default withCsrOnly(StatusView)
@@ -37,7 +42,6 @@ const StyledPaper = styled(Paper)`
   padding: 49px 48px 49px 51px;
   border-radius: 8px;
   border: solid 1px #e4e9ed;
-  width: 675px;
   height: 357px;
 `
 const Title = styled('div')`

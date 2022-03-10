@@ -1,3 +1,4 @@
+import React, { ReactElement, ReactNode } from 'react'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import QueryProvider from '~/hocs/QueryClient'
 import type { AppProps } from 'next/app'
@@ -9,6 +10,7 @@ import Drawer from '~/components/Drawer'
 import Box from '@mui/material/Box'
 import { SnackbarProvider } from 'notistack'
 import { NextPage } from 'next'
+import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import './styles.css'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -17,24 +19,28 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <QueryProvider>
       <ThemeProvider theme={theme}>
-        <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
-          <CssBaseline />
-          <GNB />
-          <Drawer />
+        <SnackbarProvider maxSnack={3}>
+          <ClientWalletProvider>
+            <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
+            
+              <CssBaseline />
+              <GNB />
+              <Drawer />
 
-          <SnackbarProvider maxSnack={3}>
-            <Box
-              component="main"
-              sx={{
-                flexGrow: 1,
-                height: '100vh',
-                overflow: 'auto',
-              }}
-            >
-              {getLayout(<Component {...pageProps} />)}
+            
+              <Box
+                component="main"
+                sx={{
+                  flexGrow: 1,
+                  height: '100vh',
+                  overflow: 'auto',
+                }}
+              >
+                {getLayout(<Component {...pageProps} />)}
+              </Box>          
             </Box>
-          </SnackbarProvider>
-        </Box>
+          </ClientWalletProvider>
+        </SnackbarProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryProvider>
