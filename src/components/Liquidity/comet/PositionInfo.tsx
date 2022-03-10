@@ -1,17 +1,18 @@
 import { Box, Stack, Button, Divider, Card } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import ethLogo from '../../../../public/images/assets/ethereum-eth-logo.svg'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
+import { PositionInfo as PI } from '~/web3/MyLiquidity/CometPosition'
 
 interface Props {
+  positionInfo: PI
 }
 
-const PositionInfo: React.FC = () => {
+const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
 
-  return (
+  return positionInfo ? (
     <Box sx={{ background: '#000', color: '#fff' }}>
-      <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
+      <PriceIndicatorBox tickerIcon={positionInfo.tickerIcon} tickerName={positionInfo.tickerName} tickerSymbol={positionInfo.tickerSymbol} value={positionInfo.price} />
 
       <Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
         <Title>Comet Position</Title>
@@ -19,16 +20,16 @@ const PositionInfo: React.FC = () => {
           <Box>
             <SubTitle>Collateral</SubTitle>
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              80,450.85 USDC
+              {positionInfo.collateral} USDC
             </Box>
             <Box sx={{ marginTop: '10px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
-                <DetailValue>100,000.00 USDi</DetailValue>
+                <DetailValue>{positionInfo.contributedUSD} USDi</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
-                <DetailValue>1,000.00 iSOL</DetailValue>
+                <DetailValue>{positionInfo.contributedAsset} iSOL</DetailValue>
               </Stack>
             </Box>
           </Box>
@@ -39,15 +40,15 @@ const PositionInfo: React.FC = () => {
             <Box sx={{ marginTop: '20px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price</DetailHeader>
-                <DetailValue>100.58 USD</DetailValue>
+                <DetailValue>{positionInfo.centerPriceRange} USD</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Lower limit</DetailHeader>
-                <DetailValue>50.43 USD</DetailValue>
+                <DetailValue>{positionInfo.lowerLimitPriceRange} USD</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Upper limit</DetailHeader>
-                <DetailValue>150.89 USD</DetailValue>
+                <DetailValue>{positionInfo.upperLimitPriceRange} USD</DetailValue>
               </Stack>
             </Box>
           </Box>
@@ -56,7 +57,7 @@ const PositionInfo: React.FC = () => {
           <Box>
             <SubTitle>ILD</SubTitle>
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              450.87 USDC
+              {positionInfo.ild} USDC
             </Box>
           </Box>
           <StyledDivider />
@@ -65,7 +66,7 @@ const PositionInfo: React.FC = () => {
         </Box>
       </Box>
     </Box>
-  )
+  ) : <></>
 }
 
 const StyledDivider = styled(Divider)`

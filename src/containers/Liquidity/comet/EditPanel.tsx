@@ -1,18 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
+import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
 
 const EditPanel = () => {
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
   const [fromAmount, setFromAmount] = useState(0.0)
   const [toAmount, setToAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(150)
+  const [positionInfo, setPositionInfo] = useState<PI>()
 
-  const onEdit = () => {
-  }
+  useEffect(() => {
+    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+
+    async function fetch() {
+      const data = await fetchCometDetail({
+        program,
+        userPubKey: publicKey,
+      })
+      if (data) {
+        setPositionInfo(data)
+      }
+    }
+    fetch()
+  }, [publicKey])
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
@@ -20,10 +38,13 @@ const EditPanel = () => {
     }
   }
 
+  const onEdit = () => {
+  }
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={4}>
-        <PositionInfo />
+        <PositionInfo positionInfo={positionInfo} />
       </Grid>
       <Grid item xs={12} md={8}>
         <Box sx={{ padding: '30px', color: '#fff' }}>

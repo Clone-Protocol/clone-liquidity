@@ -1,17 +1,45 @@
 import { Box, Stack, Button, Paper, Divider } from '@mui/material'
 import React, { useState } from 'react'
 import { styled } from '@mui/system'
-import Image from 'next/image'
 import PairInput from '~/components/Borrow/PairInput'
-import ethLogo from '../../../public/images/assets/ethereum-eth-logo.svg'
+import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { callBorrow } from '~/web3/Borrow/borrow'
 
 const BorrowBox = () => {
-  const [fromAmount, setFromAmount] = useState(0.0)
-  const [toAmount, setToAmount] = useState(0.0)
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
+  const [fromPair, setFromPair] = useState<PairData>({
+    tickerIcon: ethLogo,
+    tickerName: 'USD Coin',
+    tickerSymbol: 'USDC',
+    balance: 0.0,
+    amount: 0.0
+  })
+  const [borrowPair, setBorrowPair] = useState<PairData>({
+    tickerIcon: ethLogo,
+    tickerName: 'Incept USD',
+    tickerSymbol: 'USDi',
+    balance: 0.0,
+    amount: 0.0
+  })
   const [collRatio, setCollRatio] = useState(150)
+  const [price, setPrice] = useState(100.00)
 
-  const onBorrow = () => {
+  const onChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFromVal = e.currentTarget.value
+		if (newFromVal) {
+      setFromPair({...fromPair, amount: parseFloat(newFromVal)})
+    }
+  }
+
+  const onChangeBorrow = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.currentTarget.value
+		if (newVal) {
+      setBorrowPair({...borrowPair, amount: parseFloat(newVal)})
+    }
   }
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
@@ -20,13 +48,23 @@ const BorrowBox = () => {
     }
   }
 
+
+  const onBorrow = async () => {
+    console.log(fromPair)
+    console.log(collRatio)
+    console.log(borrowPair)
+    // call contract
+    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+    await callBorrow({ program, userPubKey: publicKey })
+  }
+
   return (
     <StyledPaper variant="outlined">
       <Box sx={{ fontSize: '24px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
       <Box>
         <SubTitle>(1) Choose a collateral asset</SubTitle>
         <SubTitleComment>The collateral asset may affert the minimum collateral ratio.</SubTitleComment>
-        <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+        <PairInput tickerIcon={fromPair.tickerIcon} tickerName={fromPair.tickerName} tickerSymbol={fromPair.tickerSymbol} value={fromPair.amount} balance={fromPair.balance} onChange={onChangeFrom} />
       </Box>
       <StyledDivider />
 
@@ -42,10 +80,10 @@ const BorrowBox = () => {
       <Box>
         <SubTitle>(3) Borrow Amount</SubTitle>
         <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
-        <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} />
+        <PairInput tickerIcon={borrowPair.tickerIcon} tickerName={borrowPair.tickerName} tickerSymbol={borrowPair.tickerSymbol} value={borrowPair.amount} balanceDisabled onChange={onChangeBorrow} />
         <Stack sx={{ border: '1px solid #9d9d9d', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px' }} direction="row" justifyContent="space-between">
           <Box>Price of asset bring borrowed</Box>
-          <Box>1 iSOL - 100.00 USDi</Box>
+          <Box>1 {borrowPair.tickerSymbol} - {price} USDi</Box>
         </Stack>
       </Box>
       <StyledDivider />
@@ -53,6 +91,14 @@ const BorrowBox = () => {
       <ActionButton onClick={onBorrow}>Create Borrow Position</ActionButton>
     </StyledPaper>
   )
+}
+
+export interface PairData {
+  tickerIcon: string
+	tickerName: string
+	tickerSymbol: string
+  balance: number
+	amount: number
 }
 
 const StyledPaper = styled(Paper)`

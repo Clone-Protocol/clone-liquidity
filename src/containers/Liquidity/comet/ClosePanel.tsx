@@ -1,15 +1,38 @@
+import React, { useEffect, useState } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
 
 const ClosePanel = () => {
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
+  const [positionInfo, setPositionInfo] = useState<PI>()
+
+  useEffect(() => {
+    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+
+    async function fetch() {
+      const data = await fetchCometDetail({
+        program,
+        userPubKey: publicKey,
+      })
+      if (data) {
+        setPositionInfo(data)
+      }
+    }
+    fetch()
+  }, [publicKey])
+
   const onClose = () => {
   }
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={4}>
-        <PositionInfo />
+        <PositionInfo positionInfo={positionInfo} />
       </Grid>
       <Grid item xs={12} md={8}>
         <Box sx={{ padding: '30px' }}>
