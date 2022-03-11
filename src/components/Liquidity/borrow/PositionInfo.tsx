@@ -1,19 +1,20 @@
-import { Box, Stack, Button, Divider, Card } from '@mui/material'
+import { Box } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import WarningIcon from 'public/images/warning-icon-red.png'
 import Image from 'next/image'
+import { PositionInfo as PI } from '~/web3/MyLiquidity/BorrowPosition'
 
 interface Props {
+  positionInfo: PI
 }
 
-const PositionInfo: React.FC = () => {
+const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
 
-  return (
+  return positionInfo ? (
     <Box sx={{ background: '#000', color: '#fff' }}>
-      <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
+      <PriceIndicatorBox tickerIcon={positionInfo.tickerIcon} tickerName={positionInfo.tickerName} tickerSymbol={positionInfo.tickerSymbol} value={positionInfo.price} />
 
       <Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
         <WarningBox><Image src={WarningIcon} /> High liquidation risk</WarningBox>
@@ -23,23 +24,23 @@ const PositionInfo: React.FC = () => {
           <Box>
             <SubTitle>Current collateral</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-              179.49 USDC
+              {positionInfo.collateral} USDC
             </Box>
             
             <SubTitle>Current collateral ratio</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500', color: '#ff2929' }}>
-              121.74% (min: 120%)
+              {positionInfo.collateralRatio}% (min: 120%)
             </Box>
 
             <SubTitle>Borrowed amount</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-              1.00 iLTC
+              {positionInfo.borrowedAmount} {positionInfo.tickerSymbol}
             </Box>
           </Box>
         </Box>
       </Box>
     </Box>
-  )
+  ) : <></>
 }
 
 const WarningBox = styled(Box)`

@@ -1,18 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
-import ethLogo from '../../../../public/images/assets/ethereum-eth-logo.svg'
+import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
+import { PositionInfo as PI, fetchBorrowDetail } from '~/web3/MyLiquidity/BorrowPosition'
 
 const EditPanel = () => {
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
   const [fromAmount, setFromAmount] = useState(0.0)
   const [toAmount, setToAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(150)
+  const [positionInfo, setPositionInfo] = useState<PI>()
 
-  const onEdit = () => {
-  }
+  useEffect(() => {
+    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+
+    async function fetch() {
+      const data = await fetchBorrowDetail({
+        program,
+        userPubKey: publicKey,
+      })
+      if (data) {
+        setPositionInfo(data)
+      }
+    }
+    fetch()
+  }, [publicKey])
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
@@ -20,10 +38,13 @@ const EditPanel = () => {
     }
   }
 
+  const onEdit = () => {
+  }
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={4}>
-        <PositionInfo />
+        <PositionInfo positionInfo={positionInfo} />
       </Grid>
       <Grid item xs={12} md={8}>
         <Box sx={{ padding: '30px', color: '#fff' }}>
@@ -37,14 +58,14 @@ const EditPanel = () => {
           <Box>
             <SubTitle>(2) Edit collateral ratio</SubTitle>
             <SubTitleComment>To avoid liquidation, collateral ratio above safe point is reccommended</SubTitleComment>
-            <RatioSlider value={collRatio} onChange={handleChangeCollRatio} />
+            <RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
           </Box>
           <StyledDivider />
 
           <Box>
             <SubTitle>(3) Borrow Amount</SubTitle>
             <SubTitleComment>Borrowed amount can’t be edited</SubTitleComment>
-            <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} />
+            <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} disabled />
           </Box>
           <StyledDivider />
 
