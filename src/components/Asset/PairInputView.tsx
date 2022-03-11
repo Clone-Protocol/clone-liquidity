@@ -3,32 +3,25 @@ import Image from 'next/image'
 
 interface Props {
   tickerIcon: string,
-  tickerName: string | null,
   tickerSymbol: string | null,
-  value?: number,
-  onChange?: () => void
+  value?: number
 }
 
-const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, onChange }) => {
+const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => {
   
   return (
     <FormControl variant='standard' sx={{ width: '100%' }}>
-      <Stack direction="row" justifyContent="flex-end">
-        <Box sx={{ fontSize: '13px', fontWeight: '500' }}>Balance: _</Box>
-      </Stack>
       <FormStack direction="row" justifyContent="space-between" alignItems="center">
         <Box display="flex">
           <Image src={tickerIcon} width="28px" height="28px" />
           <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
             <TickerSymbol>{tickerSymbol}</TickerSymbol>
-            <TickerName>{tickerName}</TickerName>
           </Box>
         </Box>
         <InputAmount
           id="ip-amount"
           type='number'
-          value={value}
-          onChange={onChange}
+          defaultValue={value}
           />
       </FormStack>
     </FormControl>
@@ -38,22 +31,17 @@ const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, valu
 const FormStack = styled(Stack)`
   display: flex;
   width: 100%;
-  height: 65px;
-  padding: 15px 25px 14px 34px;
+  height: 60px;
+  padding: 11px 23px 12px 19px;
   border-radius: 8px;
-  background-color: #333333;
+  border: solid 1px #5c5c5c;
+  background-color: #171717;
 `
 
 const TickerSymbol = styled('div')`
   font-size: 15px;
   font-weight: 600;
-`
-
-const TickerName = styled('div')`
-  color: #757a7f;
-  font-size: 9px;
-  font-weight: 600;
-  line-height: 5px;
+  color: #5c5c5c;
 `
 
 const InputAmount = styled(`input`)`
@@ -61,10 +49,10 @@ const InputAmount = styled(`input`)`
   margin-left: 30px;
   text-align: right;
   border: 0px;
-  background-color: #333333;
-  font-size: 20px;
-  font-weight: 500;
-  color: #FFF;
+  background-color: #171717;
+  font-size: 18px;
+  font-weight: 600;
+  color: #5c5c5c;
 `
 
-export default PairInput
+export default PairInputView

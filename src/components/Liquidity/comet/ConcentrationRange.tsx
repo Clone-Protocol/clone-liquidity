@@ -3,7 +3,7 @@ import { styled } from '@mui/system'
 import Slider, { SliderThumb } from '@mui/material/Slider';
 
 const RangeSlider = styled(Slider)(({ theme }) => ({
-  color: '#3a8589',
+  color: '#0038ff',
   height: 3,
   padding: '13px 0',
   '& .MuiSlider-thumb': {
@@ -26,7 +26,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
     height: 3,
   },
   '& .MuiSlider-rail': {
-    color: theme.palette.mode === 'dark' ? '#bfbfbf' : '#d8d8d8',
+    color: theme.palette.mode === 'dark' ? '#bfbfbf' : '#333333',
     opacity: theme.palette.mode === 'dark' ? undefined : 1,
     height: 3,
   },

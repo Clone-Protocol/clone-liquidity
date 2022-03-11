@@ -16,7 +16,7 @@ const AssetPage: NextPage = () => {
 			<main>
         <StyledSection>
           <Container>
-            <TipMsg>💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to maximize their concentraed liquidity expereince. </TipMsg>
+            <TipMsg>💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to maximize their concentraed liquidity experience. </TipMsg>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <AssetView />
             </Box>
