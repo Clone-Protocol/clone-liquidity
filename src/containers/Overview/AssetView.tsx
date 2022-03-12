@@ -15,10 +15,9 @@ import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
-import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import { AssetData } from '~/features/Overview/Asset.query'
 
-const AssetView: React.FC = () => {
+const AssetView = () => {
   const [tab, setTab] = useState(0)
   const [assetData, setAssetData] = useState<AssetData>({
     collAmount: 0.0,
@@ -85,26 +84,6 @@ const AssetView: React.FC = () => {
 
   }
 
-  const TabPanel = (props: TabPanelProps) => {
-    const { children, value, index, ...other } = props;
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 2 }}>
-            <div>{children}</div>
-          </Box>
-        )}
-      </div>
-    );
-  }
-
   return (
     <StyledBox>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -117,7 +96,8 @@ const AssetView: React.FC = () => {
           <UnconcentTab onClick={() => changeTab(1)}><Image src={UnconcentIcon} /><span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span></UnconcentTab>
         </Box>
       </Box>
-      <TabPanel value={tab} index={0}>
+      <Box sx={{ paddingY: '20px' }}>
+      { tab === 0 ?
         <Box>
           <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
 
@@ -183,9 +163,7 @@ const AssetView: React.FC = () => {
             <CometButton onClick={onComet}>Create Comet Position</CometButton>
           </Box>
         </Box>
-      </TabPanel>
-      <TabPanel value={tab} index={1}>
-        <Box>
+      : <Box>
           <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
 
           <Box sx={{ background: '#171717', paddingX: '61px', paddingY: '20px', marginTop: '28px' }}>
@@ -211,7 +189,8 @@ const AssetView: React.FC = () => {
             <LiquidityButton onClick={onLiquidity}>Create Liquidity Position</LiquidityButton>
           </Box>
         </Box>
-      </TabPanel>
+      }
+      </Box>
     </StyledBox>
   )
 }
