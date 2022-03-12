@@ -34,7 +34,6 @@ const AssetView: React.FC = () => {
   }
 
   const handleChangeFromAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('dd', parseFloat(e.currentTarget.value))
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
