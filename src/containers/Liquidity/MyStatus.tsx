@@ -11,7 +11,7 @@ const MyStatus = () => {
   const [status, setStatus] = useState<Status>()
 
   useEffect(() => {
-    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+    const program = getInceptApp()
 
     async function fetch() {
       const data = await fetchStatus({

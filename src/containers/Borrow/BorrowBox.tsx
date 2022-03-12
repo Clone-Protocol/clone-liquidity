@@ -41,7 +41,7 @@ const BorrowBox = () => {
   const [price, setPrice] = useState(100.00)
 
   useEffect(() => {
-    const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv') 
+    const program = getInceptApp() 
 
     console.log('fetchAsset')
     async function fetch() {
@@ -89,7 +89,7 @@ const BorrowBox = () => {
     console.log(borrowAmount)
     console.log(assetData)
     // TODO: call contract
-    const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv')
+    const program = getInceptApp()
     await callBorrow({ program, userPubKey: publicKey })
   }
 

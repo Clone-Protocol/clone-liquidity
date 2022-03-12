@@ -18,7 +18,7 @@ const EditPanel = () => {
   const [positionInfo, setPositionInfo] = useState<PI>()
 
   useEffect(() => {
-    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+    const program = getInceptApp()
 
     async function fetch() {
       const data = await fetchBorrowDetail({
