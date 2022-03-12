@@ -56,7 +56,7 @@ const LiquidityTable = () => {
   // })
 
   useEffect(() => {
-    const program = getInceptApp('9MccekuZVBMDsz2ijjkYCBXyzfj8fZvgEu11zToXAnRR')
+    const program = getInceptApp()
 
     async function fetch() {
       const data1 = await fetchCometPools({
