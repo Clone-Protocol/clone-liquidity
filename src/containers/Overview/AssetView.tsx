@@ -128,7 +128,7 @@ const AssetView = () => {
             <Box>
               <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box></SubTitle>
 
-              <Box sx={{ marginY: '25px'}}>
+              <Box sx={{ marginTop: '110px', marginBottom: '15px'}}>
                 <ConcentrationRange />
               </Box>
               
