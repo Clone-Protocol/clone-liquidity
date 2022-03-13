@@ -1,14 +1,21 @@
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tooltip, Box } from '@mui/material';
 import Slider, { SliderThumb } from '@mui/material/Slider';
+import { AssetData } from '~/features/Overview/Asset.query';
 
 const BACKGROUND_VALID_RANGE_COLOR = 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)'
 const BACKGROUND_WARNING_RANGE_COLOR = '#e9d100'
 
 const LEFT_SLIDER_THUMB_COLOR = '#00f0ff'
 const RIGHT_SLIDER_THUMB_COLOR = '#0038ff'
+
+interface Props {
+  assetData: AssetData,
+  tightDistance: number,
+  onChange?: (isTight: boolean, lowerLimit: number, upperLimit: number) => void
+}
 
 const RangeSlider = styled(Slider)(({ theme }) => ({
   color: '#0038ff',
@@ -109,7 +116,7 @@ interface ThumbComponentProps extends React.HTMLAttributes<unknown> {}
 
 function ThumbComponent(props: ThumbComponentProps) {
   const { children, ...other } = props;
-  console.log('other',other)
+  // console.log('other',other)
   return (
     <SliderThumb {...other}>
       {children}
@@ -135,13 +142,13 @@ function ValueLabelComponent(props: {
   );
 }
 
-const ConcentrationRange: React.FC = () => {
-  const center_price = 100.00
-  const min_distance = 30
+const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, onChange }) => {
+  const [centerPrice, setCenterPrice] = useState(assetData.centerPrice)
   const minLimit = 0
   const maxLimit = 200
 
-  const [value, setValue] = useState<number[]>([20, 180])
+  // const [value, setValue] = useState<number[]>([20, 180])
+  const [value, setValue] = useState<number[]>([assetData.lowerLimit, assetData.upperLimit])
   const [trackCss, setTrackCss] = useState({
     '& .MuiSlider-track': {
       background: BACKGROUND_VALID_RANGE_COLOR
@@ -173,13 +180,16 @@ const ConcentrationRange: React.FC = () => {
     }
   
     if (activeThumb === 0) {
-      const leftValFromCenter = Math.abs(center_price - newValue[0])
+      const leftValFromCenter = Math.abs(centerPrice - newValue[0])
       const rightVal = maxLimit - newValue[0]
-      if (newValue[1] - newValue[0] <= min_distance) {
+      setValue([newValue[0], rightVal])
+
+      // Tight Concentration
+      if (newValue[1] - newValue[0] <= tightDistance) {
           // const clamped = Math.min(newValue[0], 100 - minDistance);
           // setValue([clamped, clamped + minDistance]);
         // setValue(newValue as number[]);
-        setValue([newValue[0], rightVal])
+        
         setTrackCss({
           '& .MuiSlider-track': {
             background: BACKGROUND_WARNING_RANGE_COLOR
@@ -198,8 +208,9 @@ const ConcentrationRange: React.FC = () => {
             }
           }
         })
+
+        onChange(true, newValue[0], newValue[1])
       } else {
-        setValue([newValue[0], rightVal])
         setTrackCss({
           '& .MuiSlider-track': {
             background: BACKGROUND_VALID_RANGE_COLOR
@@ -218,7 +229,9 @@ const ConcentrationRange: React.FC = () => {
             }
           }
         })
+        onChange(false, newValue[0], newValue[1])
       }
+
     }
   };
 
@@ -230,13 +243,13 @@ const ConcentrationRange: React.FC = () => {
         max={maxLimit}
         components={{ Thumb: ThumbComponent }}
         onChange={handleChange}
-        defaultValue={[20, 40]}
+        defaultValue={[20, 180]}
         disableSwap
         valueLabelDisplay="on"
         value={value}
       />
       <CenterPriceBox>
-        {center_price}
+        {centerPrice}
         <Stick />
       </CenterPriceBox>
     </Box>
