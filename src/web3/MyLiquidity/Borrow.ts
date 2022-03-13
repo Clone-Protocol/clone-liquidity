@@ -1,8 +1,7 @@
-import { PublicKey } from "@solana/web3.js"
-import { Incept } from "sdk/src"
+import { PublicKey } from '@solana/web3.js'
+import { Incept } from 'sdk/src'
 
 enum Collateral {
-	mockUSDC,
 	USDi,
 }
 
@@ -19,24 +18,24 @@ enum AssetType {
 }
 
 export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps) => {
-  if (!userPubKey) return []
+	if (!userPubKey) return []
 
-  await program.loadManager()
-  const mintInfos = await program.getUserMintInfos()
+	await program.loadManager()
+	const mintInfos = await program.getUserMintInfos()
 
 	const result: AssetList[] = []
 
-  let i = 0
+	let i = 0
 
 	for (var info of mintInfos) {
-    i++
+		i++
 		let tickerName = ''
 		let collateralName = ''
 		let tickerSymbol = ''
 		let tickerIcon = ''
 		let assetType: number
 		let collateralType: number
-		switch (info[0]) {
+		switch (Number(info[0])) {
 			case Asset.Solana:
 				tickerName = 'iSolana'
 				tickerSymbol = 'iSOL'
@@ -52,11 +51,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
 			default:
 				throw new Error('Not supported')
 		}
-    switch (info[1]) {
-			case Collateral.mockUSDC:
-				collateralName = 'mockUSDC'
-				collateralType = Collateral.mockUSDC
-				break
+		switch (Number(info[1])) {
 			case Collateral.USDi:
 				collateralName = 'USDi'
 				collateralType = Collateral.USDi
@@ -69,44 +64,44 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
-      collateralName: collateralName,
+			collateralName: collateralName,
 			oPrice: info[2],
 			assetType: assetType,
 			collateralType: collateralType,
-      borrowed: info[4],
-      collateral: info[5],
-      collateralRatio: info[6],
-      minCollateralRatio: info[7]
+			borrowed: info[3],
+			collateral: info[4],
+			collateralRatio: info[5],
+			minCollateralRatio: info[6],
 		})
 	}
 
-  // const result: AssetList[] = [
-  //   {
-  //     id: 1,
-  //     tickerName: 'iSolana',
-  //     tickerSymbol: 'iSOL',
-  //     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-  //     oPrice: 160.51,
-  //     borrowed: 90.11,
-  //     collateral: 111.48,
-  //     collateralRatio: 15898343,
-  //   },
-  //   {
-  //     id: 2,
-  //     tickerName: 'iEthereum',
-  //     tickerSymbol: 'iETH',
-  //     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-  //     oPrice: 2300.53,
-  //     borrowed: 100.20,
-  //     collateral: 90.11,
-  //     collateralRatio: 111.48,
-  //   }
-  // ]
-  return result
+	// const result: AssetList[] = [
+	//   {
+	//     id: 1,
+	//     tickerName: 'iSolana',
+	//     tickerSymbol: 'iSOL',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+	//     oPrice: 160.51,
+	//     borrowed: 90.11,
+	//     collateral: 111.48,
+	//     collateralRatio: 15898343,
+	//   },
+	//   {
+	//     id: 2,
+	//     tickerName: 'iEthereum',
+	//     tickerSymbol: 'iETH',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+	//     oPrice: 2300.53,
+	//     borrowed: 100.20,
+	//     collateral: 90.11,
+	//     collateralRatio: 111.48,
+	//   }
+	// ]
+	return result
 }
 
 export const fetchAsset = async ({ program, userPubKey, index }: GetPoolProps) => {
-	if (!userPubKey) return 
+	if (!userPubKey) return
 
 	await program.loadManager()
 	const data = await program.getMintiAssetData(index)
@@ -140,20 +135,20 @@ export const fetchAsset = async ({ program, userPubKey, index }: GetPoolProps) =
 		oPrice: data[1]!,
 		stableCollateralRatio: data[2]!,
 		cryptoCollateralRatio: data[3]!,
-		balance: data[4]!
+		balance: data[4]!,
 	}
 }
 
 interface GetPoolsProps {
-  program: Incept,
-  userPubKey: PublicKey | null,
-  filter: FilterType,
+	program: Incept
+	userPubKey: PublicKey | null
+	filter: FilterType
 }
 
 interface GetPoolProps {
-	program: Incept,
-	userPubKey: PublicKey | null,
-	index: number,
+	program: Incept
+	userPubKey: PublicKey | null
+	index: number
 }
 
 export enum FilterTypeMap {
@@ -161,23 +156,23 @@ export enum FilterTypeMap {
 	'crypto' = 'Crypto',
 	'stocks' = 'Stocks',
 	'fx' = 'FX',
-  'commodities' = 'Commodities'
+	'commodities' = 'Commodities',
 }
 export type FilterType = keyof typeof FilterTypeMap
 
 export interface AssetList {
-  id: number
-  tickerName: string
-  tickerSymbol: string
-  tickerIcon: string
-  collateralName: string
-  oPrice: number
-  assetType: number
-  collateralType: number
-  borrowed: number
-  collateral: number
-  collateralRatio: number
-  minCollateralRatio: number
+	id: number
+	tickerName: string
+	tickerSymbol: string
+	tickerIcon: string
+	collateralName: string
+	oPrice: number
+	assetType: number
+	collateralType: number
+	borrowed: number
+	collateral: number
+	collateralRatio: number
+	minCollateralRatio: number
 }
 export interface MintAsset {
 	id: number

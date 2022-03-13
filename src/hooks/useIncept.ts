@@ -5,7 +5,7 @@ import { Incept } from 'sdk/src';
 
 export interface InceptContextState {
     Program: any;
-    getInceptApp: (inceptProgramID: string) => Incept;
+    getInceptApp: () => Incept;
 }
 
 export const InceptContext = createContext<InceptContextState>({} as InceptContextState);

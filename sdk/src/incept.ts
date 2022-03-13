@@ -1,11 +1,10 @@
 import * as anchor from '@project-serum/anchor'
-import { BN, Program, Provider, Wallet } from '@project-serum/anchor'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { BN, Program, Provider } from '@project-serum/anchor'
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress,createAssociatedTokenAccountInstruction,  getAccount, TokenAccountNotFoundError } from '@solana/spl-token'
 import { Incept as InceptProgram, IDL } from './idl/incept'
-import { signAndSend, sleep } from './utils'
-import { Network, TEST_NET, DEV_NET, MAIN_NET } from './network'
+import { sleep, mul, div, toScaledNumber, toScaledPercent } from './utils'
+import { Network } from './network'
 import { PublicKey, Connection, ConfirmOptions, TransactionInstruction, Transaction, Keypair } from '@solana/web3.js'
-import { mul, div, toScaledNumber } from './utils'
 
 const RENT_PUBKEY = anchor.web3.SYSVAR_RENT_PUBKEY
 const SYSTEM_PROGRAM_ID = anchor.web3.SystemProgram.programId
@@ -30,8 +29,7 @@ export class Incept {
 
 	public constructor(
 		connection: Connection,
-		network: Network,
-		programId = PublicKey.default,
+		programId: PublicKey,
 		provider: Provider,
 		opts?: ConfirmOptions
 	) {
@@ -39,32 +37,10 @@ export class Incept {
 		this.manager = {} as Manager
 		this.tokenData = {} as TokenData
 		this.connection = connection
-		this.network = network
 		this.opts = opts
 		this.provider = provider
-		switch (network) {
-			case Network.LOCAL:
-				console.log('test')
-				this.programId = programId
-				console.log('test')
-				this.program = new Program<InceptProgram>(IDL, this.programId, provider)
-				console.log('test')
-				break
-			case Network.TEST:
-				this.programId = TEST_NET.incept
-				this.program = new Program<InceptProgram>(IDL, this.programId, provider)
-				break
-			case Network.DEV:
-				this.programId = DEV_NET.incept
-				this.program = new Program<InceptProgram>(IDL, this.programId, provider)
-				break
-			case Network.MAIN:
-				this.programId = MAIN_NET.incept
-				this.program = new Program<InceptProgram>(IDL, this.programId, provider)
-				break
-			default:
-				throw new Error('Not supported')
-		}
+		this.programId = programId
+		this.program = new Program<InceptProgram>(IDL, this.programId, provider)
 	}
 	public async initializeManager(admin: PublicKey) {
 		const managerPubkeyAndBump = await this.getManagerAddress()
@@ -97,7 +73,7 @@ export class Incept {
 	public async loadManager() {
 		this.managerAddress = await this.getManagerAddress()
 		// @ts-ignore
-		this.manager = (await this.program.account.manager.fetch(this.managerAddress[0])) as Manager
+		this.manager = await this.getManagerAccount() as Manager
 	}
 
 	public onManagerAccountChange(fn: (state: Manager) => void) {
@@ -159,7 +135,6 @@ export class Incept {
 
 	public async addCollateral(admin: PublicKey, scale: number, stable: Boolean, collateral_mint: PublicKey) {
 		const [managerPubkey, managerBump] = await this.getManagerAddress()
-		// const managerAccount = await this.getManagerAccount();
 		const vaultAccount = anchor.web3.Keypair.generate()
 
 		await this.program.rpc.addCollateral(managerBump, scale, Number(stable), {
@@ -227,45 +202,48 @@ export class Incept {
 
 	public async getPoolBalances(poolIndex: number) {
 		let pool = await this.getPool(poolIndex)
-		let iasset = Number(
-			(await this.connection.getTokenAccountBalance(pool.iassetTokenAccount, 'confirmed')).value!.uiAmount
-		)
-		let usdi = Number(
-			(await this.connection.getTokenAccountBalance(pool.usdiTokenAccount, 'confirmed')).value!.uiAmount
-		)
+		let iasset = 0;
+		let usdi = 0;
+
+		try {
+			iasset = Number((await this.connection.getTokenAccountBalance(pool.iassetTokenAccount, 'confirmed')).value!.amount)
+		} catch {}
+
+		try {
+			usdi = Number((await this.connection.getTokenAccountBalance(pool.usdiTokenAccount, 'confirmed')).value!.amount)
+		} catch {}
+
 		return [iasset, usdi]
 	}
 
-	public async getUsdiBalance(walletAddress: PublicKey) {
-		let associatedTokenAddress = (
-			await PublicKey.findProgramAddress(
-				[walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), this.manager.usdiMint.toBuffer()],
-				SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-			)
-		)[0]
+	public async getUsdiBalance() {
 
-		let amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount
-		if (amount > 0) {
-			return amount
-		}
-		throw new Error('No USDi Balance')
+		let associatedTokenAccount = await this.getOrCreateUsdiAssociatedTokenAccount();
+
+		return Number(associatedTokenAccount.amount) / 1000000000000;
 	}
 
 	public async getiAssetMints() {
 		const tokenData = await this.getTokenData()
 		let mints: PublicKey[] = []
-		for (var pool of tokenData.pools) {
+		for (const [index, pool] of tokenData.pools.entries()) {
+			if (index === Number(tokenData.numPools)) {
+				break;
+			}
 			mints.push(pool.assetInfo.iassetMint)
 		}
 		return mints
 	}
 
-	public async getiAssetInfos() {
+	public async getiAssetInfo() {
+		const mints = await this.getiAssetMints()
 		const iassetInfo = []
-		for (let i = 1; i < Number((await this.getTokenData()).numPools) + 1; i++) {
+		let i = 0
+		for (var mint of mints) {
 			let poolBalances = await this.getPoolBalances(i)
 			let price = poolBalances[1] / poolBalances[0]
 			iassetInfo.push([i, price])
+			i++
 		}
 		return iassetInfo
 	}
@@ -274,18 +252,15 @@ export class Incept {
 		let assetInfo = await this.getAssetInfo(index)
 		let poolBalances = await this.getPoolBalances(index)
 		let price = poolBalances[1] / poolBalances[0]
-		let associatedTokenAddress = (
-			await PublicKey.findProgramAddress(
-				[this.provider.wallet.publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), assetInfo.iassetMint.toBuffer()],
-				SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-			)
-		)[0]
+		let associatedTokenAddress = (await this.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)).address
 		let amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount
+		console.log(Number(assetInfo.price.val))
+		console.log(Number(assetInfo.price.scale))
 		return [
 			price,
 			toScaledNumber(assetInfo.price),
-			toScaledNumber(assetInfo.stableCollateralRatio),
-			toScaledNumber(assetInfo.cryptoCollateralRatio),
+			Number(assetInfo.stableCollateralRatio.val),
+			Number(assetInfo.cryptoCollateralRatio.val),
 			amount
 
 		]
@@ -302,8 +277,13 @@ export class Incept {
 					SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
 				)
 			)[0]
-			let amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!
-				.uiAmount
+			let amount;
+			try {
+				amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount;
+			} catch {
+				amount = 0;
+			}
+
 			if (amount > 0) {
 				let poolBalances = await this.getPoolBalances(i)
 				let price = poolBalances[1] / poolBalances[0]
@@ -315,9 +295,10 @@ export class Incept {
 	}
 
 	public async getUserMintInfos() {
-		const mintPositions = (await this.getMintPositions()).mintPositions
+		const mintPositions = (await this.getMintPositions())
 		const mintInfos = []
-		for (var mintPosition of mintPositions) {
+		for (let i = 0; i < Number(mintPositions.numPositions); i++) {
+			let mintPosition = mintPositions.mintPositions[i]
 			let poolIndex = mintPosition.poolIndex
 			let collateralIndex = mintPosition.collateralIndex
 			let assetInfo = await this.getAssetInfo(poolIndex)
@@ -343,17 +324,18 @@ export class Incept {
 				toScaledNumber(price),
 				toScaledNumber(borrowedIasset),
 				toScaledNumber(collateralAmount),
-				toScaledNumber(collateralRatio),
-				toScaledNumber(minCollateralRatio),
+				toScaledPercent(collateralRatio),
+				toScaledPercent(minCollateralRatio),
 			])
 		}
 		return mintInfos
 	}
 
 	public async getUserLiquidityInfos() {
-		const liquidityPositions = (await this.getLiquidityPositions()).liquidityPositions
+		const liquidityPositions = (await this.getLiquidityPositions())
 		const liquidityInfos = []
-		for (var liquidityPosition of liquidityPositions) {
+		for (let i = 0; i < Number(liquidityPositions.numPositions); i++) {
+			let liquidityPosition = liquidityPositions.liquidityPositions[i]
 			let poolIndex = liquidityPosition.poolIndex
 			let pool = await this.getPool(poolIndex)
 			let poolBalances = await this.getPoolBalances(poolIndex)
@@ -369,9 +351,10 @@ export class Incept {
 	}
 
 	public async getUserCometInfos() {
-		const cometPositions = (await this.getCometPositions()).cometPositions
+		const cometPositions = await this.getCometPositions()
 		const cometInfos = []
-		for (var cometPosition of cometPositions) {
+		for (let i = 0; i < Number(cometPositions.numPositions); i++) {
+			let cometPosition = cometPositions.cometPositions[i]
 			let poolIndex = cometPosition.poolIndex
 			let collateralIndex = cometPosition.collateralIndex
 			let assetInfo = await this.getAssetInfo(poolIndex)
@@ -441,14 +424,25 @@ export class Incept {
 		return cometInfos
 	}
 
+
 	public async getAssetInfo(poolIndex: number) {
 		const tokenData = (await this.getTokenData()) as TokenData
 		return tokenData.pools[poolIndex].assetInfo
 	}
 
+	public async getiAssetInfos() {
+		const iassetInfo = []
+		for (let i = 1; i < Number((await this.getTokenData()).numPools) + 1; i++) {
+			let poolBalances = await this.getPoolBalances(i)
+			let price = poolBalances[1] / poolBalances[0]
+			iassetInfo.push([i, price])
+		}
+		return iassetInfo
+	}
+
 	public async updatePrices(signers: Array<Keypair>) {
 		const updatePricesIx = await this.updatePricesInstruction()
-		await signAndSend(new Transaction().add(updatePricesIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(updatePricesIx), signers);
 	}
 	public async updatePricesInstruction() {
 		const tokenData = await this.getTokenData()
@@ -463,17 +457,21 @@ export class Incept {
 				}
 			})
 		console.log(`TOKEN DATA POOLS:`)
-		console.log(priceFeeds[0].pubkey)
-		return (await this.program.instruction.updatePrices({
-			remainingAccounts: priceFeeds,
+		console.log(this.managerAddress[0].toString())
+		return (await this.program.instruction.updatePrices(this.managerAddress[1], {
 			accounts: {
 				manager: this.managerAddress[0],
 				tokenData: this.manager.tokenData,
 			},
+			remainingAccounts: priceFeeds,
 		})) as TransactionInstruction
 	}
 
 	public async getTokenData() {
+		// TODO: Probably a hacky fix, should find a better place to do this.
+		if (Object.keys(this.manager).length === 0) {
+			await this.loadManager();
+		}
 		// @ts-ignore
 		return (await this.program.account.tokenData.fetch(this.manager.tokenData)) as TokenData
 	}
@@ -530,7 +528,6 @@ export class Incept {
 
 	public async mintUsdi(
 		amount: BN,
-		user: PublicKey,
 		userUsdiTokenAccount: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralIndex: number,
@@ -538,12 +535,12 @@ export class Incept {
 	) {
 		const mintUsdiIx = await this.mintUsdiInstruction(
 			amount,
-			user,
+			this.provider.wallet.publicKey,
 			userUsdiTokenAccount,
 			userCollateralTokenAccount,
 			collateralIndex
 		)
-		await signAndSend(new Transaction().add(mintUsdiIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(mintUsdiIx), signers);
 	}
 
 	public async mintUsdiInstruction(
@@ -578,8 +575,7 @@ export class Incept {
 		signers: Array<Keypair>
 	) {
 		const updatePricesIx = await this.updatePricesInstruction()
-		const initializeMintPositionIx = await this.initializeMintPositionInstruction(
-			this.provider.wallet.publicKey,
+		const initializeMintPositionsIx = await this.initializeMintPositionsInstruction(
 			userCollateralTokenAccount,
 			userIassetTokenAccount,
 			iassetAmount,
@@ -587,14 +583,12 @@ export class Incept {
 			poolIndex,
 			collateralIndex
 		)
-		await signAndSend(
-			new Transaction().add(updatePricesIx).add(initializeMintPositionIx),
-			signers,
-			this.connection
+		await this.provider.send(
+			new Transaction().add(updatePricesIx).add(initializeMintPositionsIx),
+			signers
 		)
 	}
-	public async initializeMintPositionInstruction(
-		user: PublicKey,
+	public async initializeMintPositionsInstruction(
 		userCollateralTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		iassetAmount: BN,
@@ -613,7 +607,7 @@ export class Incept {
 			collateralAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					mintPositions: userAccount.mintPositions,
@@ -641,7 +635,7 @@ export class Incept {
 			collateralAmount,
 			collateralIndex
 		)
-		await signAndSend(new Transaction().add(addCollateralToMintIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(addCollateralToMintIx), signers)
 	}
 
 	public async addCollateralToMintInstruction(
@@ -686,7 +680,7 @@ export class Incept {
 			collateralAmount,
 			collateralIndex
 		)
-		await signAndSend(new Transaction().add(withdrawCollateralFromMintIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(withdrawCollateralFromMintIx), signers)
 	}
 	public async withdrawCollateralFromMintInstruction(
 		user: PublicKey,
@@ -732,7 +726,7 @@ export class Incept {
 			poolIndex,
 			collateralIndex
 		)
-		await signAndSend(new Transaction().add(payBackiAssetToMintIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(payBackiAssetToMintIx), signers)
 	}
 	public async payBackiAssetToMintInstruction(
 		user: PublicKey,
@@ -782,7 +776,7 @@ export class Incept {
 			poolIndex,
 			collateralIndex
 		)
-		await signAndSend(new Transaction().add(updatePricesIx).add(addiAssetToMintIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(updatePricesIx).add(addiAssetToMintIx), signers)
 	}
 	public async addiAssetToMintInstruction(
 		user: PublicKey,
@@ -831,7 +825,7 @@ export class Incept {
 			iassetAmount,
 			poolIndex
 		)
-		await signAndSend(new Transaction().add(initializeLiquidityPositionIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(initializeLiquidityPositionIx), signers)
 	}
 	public async initializeLiquidityPositionInstruction(
 		user: PublicKey,
@@ -883,7 +877,7 @@ export class Incept {
 			iassetAmount,
 			poolIndex
 		)
-		await signAndSend(new Transaction().add(provideLiquidityIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(provideLiquidityIx), signers)
 	}
 	public async provideLiquidityInstruction(
 		user: PublicKey,
@@ -935,7 +929,6 @@ export class Incept {
 
 	public async withdrawLiquidity(
 		iassetAmount: BN,
-		user: PublicKey,
 		userUsdiTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userLiquidityTokenAccount: PublicKey,
@@ -943,17 +936,15 @@ export class Incept {
 		signers: Array<Keypair>
 	) {
 		const withdrawLiquidityIx = await this.withdrawLiquidityInstruction(
-			user,
 			userUsdiTokenAccount,
 			userIassetTokenAccount,
 			userLiquidityTokenAccount,
 			iassetAmount,
 			poolIndex
 		)
-		await signAndSend(new Transaction().add(withdrawLiquidityIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(withdrawLiquidityIx), signers)
 	}
 	public async withdrawLiquidityInstruction(
-		user: PublicKey,
 		userUsdiTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userLiquidityTokenAccount: PublicKey,
@@ -969,7 +960,7 @@ export class Incept {
 			iassetAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					liquidityPositions: userAccount.liquidityPositions,
@@ -1015,7 +1006,7 @@ export class Incept {
 			iassetAmount,
 			poolIndex
 		)
-		await signAndSend(new Transaction().add(buySynthIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(buySynthIx), signers)
 	}
 	public async buySynthInstruction(
 		user: PublicKey,
@@ -1055,7 +1046,7 @@ export class Incept {
 			iassetAmount,
 			poolIndex
 		)
-		await signAndSend(new Transaction().add(buySynthIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(buySynthIx), signers)
 	}
 	public async sellSynthInstruction(
 		user: PublicKey,
@@ -1097,7 +1088,7 @@ export class Incept {
 			poolIndex,
 			collateralIndex
 		)
-		await signAndSend(new Transaction().add(initializeCometIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(initializeCometIx), signers)
 	}
 	public async initializeCometInstruction(
 		user: PublicKey,
@@ -1152,7 +1143,7 @@ export class Incept {
 			collateralAmount,
 			cometIndex
 		)
-		await signAndSend(new Transaction().add(addCollateralToCometIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(addCollateralToCometIx), signers)
 	}
 	public async addCollateralToCometInstruction(
 		user: PublicKey,
@@ -1189,22 +1180,19 @@ export class Incept {
 	}
 
 	public async withdrawCollateralFromComet(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		cometIndex: number,
 		signers: Array<Keypair>
 	) {
 		const withdrawCollateralFromCometIx = await this.withdrawCollateralFromCometInstruction(
-			user,
 			userCollateralTokenAccount,
 			collateralAmount,
 			cometIndex
 		)
-		await signAndSend(new Transaction().add(withdrawCollateralFromCometIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(withdrawCollateralFromCometIx), signers)
 	}
 	public async withdrawCollateralFromCometInstruction(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		cometIndex: number
@@ -1221,7 +1209,7 @@ export class Incept {
 			collateralAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					cometPositions: userAccount.cometPositions,
@@ -1238,7 +1226,6 @@ export class Incept {
 	}
 
 	public async closeComet(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userUsdiTokenAccount: PublicKey,
@@ -1246,16 +1233,14 @@ export class Incept {
 		signers: Array<Keypair>
 	) {
 		const closeCometIx = await this.closeCometInstruction(
-			user,
 			userCollateralTokenAccount,
 			userIassetTokenAccount,
 			userUsdiTokenAccount,
 			cometIndex
 		)
-		await signAndSend(new Transaction().add(closeCometIx), signers, this.connection)
+		await this.provider.send(new Transaction().add(closeCometIx), signers)
 	}
 	public async closeCometInstruction(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userUsdiTokenAccount: PublicKey,
@@ -1268,7 +1253,7 @@ export class Incept {
 
 		return (await this.program.instruction.closeComet(this.managerAddress[1], userAddress[1], cometIndex, {
 			accounts: {
-				user: user,
+				user: this.provider.wallet.publicKey,
 				manager: this.managerAddress[0],
 				tokenData: this.manager.tokenData,
 				usdiMint: this.manager.usdiMint,
@@ -1288,15 +1273,14 @@ export class Incept {
 	}
 
 	public async recenterComet(
-		user: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		cometIndex: number,
 		signers: Array<Keypair>
 	) {
-		const recenterCometIx = await this.recenterCometInstruction(user, userIassetTokenAccount, cometIndex)
-		await signAndSend(new Transaction().add(recenterCometIx), signers, this.connection)
+		const recenterCometIx = await this.recenterCometInstruction(userIassetTokenAccount, cometIndex)
+		await this.provider.send(new Transaction().add(recenterCometIx), signers)
 	}
-	public async recenterCometInstruction(user: PublicKey, userIassetTokenAccount: PublicKey, cometIndex: number) {
+	public async recenterCometInstruction(userIassetTokenAccount: PublicKey, cometIndex: number) {
 		let tokenData = await this.getTokenData()
 		let userAddress = await this.getUserAddress()
 		let userAccount = await this.getUserAccount()
@@ -1304,7 +1288,7 @@ export class Incept {
 
 		return (await this.program.instruction.recenterComet(this.managerAddress[1], userAddress[1], cometIndex, {
 			accounts: {
-				user: user,
+				user: this.provider.wallet.publicKey,
 				manager: this.managerAddress[0],
 				tokenData: this.manager.tokenData,
 				usdiMint: this.manager.usdiMint,
@@ -1318,6 +1302,84 @@ export class Incept {
 				tokenProgram: TOKEN_PROGRAM_ID,
 			},
 		})) as TransactionInstruction
+	}
+
+	// Hackathon ONLY!
+
+	public async hackathonMintUsdiInstruction(userUsdiTokenAccount: PublicKey, amount: number) {
+
+		const [managerPubkey, managerBump] = await this.getManagerAddress();
+		
+		return (
+			this.program.instruction.mintUsdiHackathon(
+				managerBump,
+				new BN(amount),
+				{
+					accounts: {
+						user: this.provider.wallet.publicKey,
+						manager: managerPubkey,
+						tokenData: this.manager.tokenData,
+						usdiMint: this.manager.usdiMint,
+						userUsdiTokenAccount: userUsdiTokenAccount,
+						tokenProgram: TOKEN_PROGRAM_ID
+					}
+				}
+			)
+		)
+	}
+
+	public async hackathonMintUsdi(userUsdiTokenAccount: PublicKey, amount: number) {
+
+		const mintUsdiTx = await this.hackathonMintUsdiInstruction(
+			userUsdiTokenAccount,
+			amount
+		);
+		await this.provider.send(
+			new Transaction().add(mintUsdiTx)
+		);
+	}
+
+	public async getOrCreateAssociatedTokenAccount(mint: PublicKey) {
+		const associatedToken = await getAssociatedTokenAddress(
+			mint,
+			this.provider.wallet.publicKey,
+			false,
+			TOKEN_PROGRAM_ID,
+			ASSOCIATED_TOKEN_PROGRAM_ID
+		);
+
+		let account;
+		try {
+			account = await getAccount(this.connection, associatedToken, "finalized", TOKEN_PROGRAM_ID);
+		} catch (error: unknown) {
+			if (error instanceof TokenAccountNotFoundError) {
+				const transaction = new Transaction().add(
+					createAssociatedTokenAccountInstruction(
+						this.provider.wallet.publicKey,
+						associatedToken,
+						this.provider.wallet.publicKey,
+						mint,
+						TOKEN_PROGRAM_ID,
+						ASSOCIATED_TOKEN_PROGRAM_ID
+					)
+				);
+
+				await this.provider.send(transaction);
+				await sleep(200);
+				account = await getAccount(this.connection, associatedToken, "finalized", TOKEN_PROGRAM_ID);
+			} else {
+				throw error;
+			}
+		}
+
+		if (!account) {
+			throw Error("Could not create account!");
+		}
+		return account;
+	}
+
+	public async getOrCreateUsdiAssociatedTokenAccount() {
+		return await this.getOrCreateAssociatedTokenAccount(this.manager.usdiMint);
 	}
 
 	public async liquidateComet() {}

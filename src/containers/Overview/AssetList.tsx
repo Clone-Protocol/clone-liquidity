@@ -24,7 +24,7 @@ const AssetList = () => {
   // })
 
   useEffect(() => {
-    const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv') 
+    const program = getInceptApp() 
 
     async function fetch() {
       const data = await fetchAssets({

@@ -1,4 +1,4 @@
-import { Box, Stack, Button, Divider, Card } from '@mui/material'
+import { Box, Stack, Button, Divider } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'

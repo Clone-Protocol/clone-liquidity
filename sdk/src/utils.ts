@@ -38,3 +38,7 @@ export const div = (value1: Value, value2: Value) => {
 export const toScaledNumber = (value: Value) => {
 	return Number(value.val.div(new BN(Math.pow(10, value.scale))))
 }
+
+export const toScaledPercent = (value: Value) => {
+	return Number(value.val.div(new BN(Math.pow(10, value.scale - 2))))
+}

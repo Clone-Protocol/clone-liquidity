@@ -2,8 +2,8 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 
 enum Asset {
-	Solana,
-	Ethereum,
+	Solana = 1,
+	Ethereum = 2,
 }
 
 enum AssetType {
@@ -15,9 +15,9 @@ enum AssetType {
 
 export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProps) => {
 	if (!userPubKey) return []
-	console.log('hi')
+	
 	await program.loadManager()
-	console.log('hi')
+	
 	const iassetInfos = await program.getiAssetInfos()
 
 	const result: AssetList[] = []

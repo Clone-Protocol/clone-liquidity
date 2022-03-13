@@ -8,8 +8,9 @@ import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { MintAsset as MintAssetType, fetchAsset } from '~/web3/MyLiquidity/Borrow'
+import { PositionInfo as PositionInfoType, fetchBorrowDetail } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
+import { fetchBalance } from '~/web3/Borrow/balance'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -32,30 +33,37 @@ const BorrowBox = () => {
 		{
 			tickerName: 'iEthereum',
 			tickerSymbol: 'iETH',
-			tickerIcon: ethLogo,
-		},
-	]
-	const [assetData, setAssetData] = useState<MintAssetType>()
-	const [assetIndex, setAssetIndex] = useState(0)
-	const [borrowAmount, setBorrowAmount] = useState(0.0)
+			tickerIcon: ethLogo
+    }
+  ]
+  const [assetData, setAssetData] = useState<PositionInfoType>()
+  const [assetIndex, setAssetIndex] = useState(0)
+  const [borrowAmount, setBorrowAmount] = useState(0.0)
 
-	useEffect(() => {
-		const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv')
+  useEffect(() => {
+    const program = getInceptApp() 
 
-		console.log('fetchAsset')
-		async function fetch() {
-			const assetData = await fetchAsset({
-				program,
-				userPubKey: publicKey,
-				index: assetIndex,
-			})
-			setAssetData(assetData)
-		}
-		fetch()
-	}, [publicKey, assetIndex])
+    console.log('fetchBorrowDetail')
+    async function fetch() {
+      const assetData = await fetchBorrowDetail({
+        program,
+        userPubKey: publicKey,
+        index: assetIndex
+      })
+      setAssetData(assetData)
+	  const usdiBalance = await fetchBalance({
+		  program,
+		  userPubKey: publicKey,
+	  })
+	  try {
+	  	setFromPair({...fromPair, balance: usdiBalance!.balanceVal})
+	  } catch {}
+    }
+    fetch()
+  }, [publicKey, assetIndex])
 
-	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newVal = e.currentTarget.value
+  const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.currentTarget.value
 		if (newVal) {
 			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
 		}
@@ -74,95 +82,72 @@ const BorrowBox = () => {
 	const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
-			setBorrowAmount(parseFloat(newVal))
-		}
-	}
+      setBorrowAmount(parseFloat(newVal))
+    }
+  }
 
-	const onRefresh = async () => {
-		// recall Data
-	}
+  const onRefresh = async () => {
+    // recall Data
+  }
 
-	const onBorrow = async () => {
-		console.log(fromPair)
-		console.log(collRatio)
-		console.log(borrowAmount)
-		console.log(assetData)
-		// TODO: call contract
-		const program = getInceptApp('EwZEhz1NLbzSKLQ6jhu2kk6784Ly2EWJo4BK3HTmFvEv')
-		await callBorrow({
-			program,
-			userPubKey: publicKey,
-			collateralIndex: 1,
-			iassetIndex: assetIndex,
-			collateralAmount: fromPair.amount,
-			iassetAmount: borrowAmount,
-		})
-	}
+  const onBorrow = async () => {
+    console.log(fromPair)
+    console.log(collRatio)
+    console.log(borrowAmount)
+    console.log(assetIndex)
+    console.log(assetData)
+    // TODO: call contract
+    const program = getInceptApp()
+    await callBorrow({
+		program,
+		userPubKey: publicKey,
+		collateralIndex: 0,
+		iassetIndex: assetIndex,
+		iassetAmount: borrowAmount,
+		collateralAmount: fromPair.amount,
+	})
+  }
 
-	return (
-		<StyledPaper variant="outlined">
-			<Box sx={{ fontSize: '24px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
-			<Box>
-				<SubTitle>(1) Choose a collateral asset</SubTitle>
-				<SubTitleComment>The collateral asset may affert the minimum collateral ratio.</SubTitleComment>
-				<PairInput
-					tickerIcon={fromPair.tickerIcon}
-					tickerName={fromPair.tickerName}
-					tickerSymbol={fromPair.tickerSymbol}
-					value={fromPair.amount}
-					balance={fromPair.balance}
-					onChange={handleChangeFrom}
-				/>
-			</Box>
-			<StyledDivider />
+  return (
+    <StyledPaper variant="outlined">
+      <Box sx={{ fontSize: '24px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
+      <Box>
+        <SubTitle>(1) Choose a collateral asset</SubTitle>
+        <SubTitleComment>The collateral asset may affert the minimum collateral ratio.</SubTitleComment>
+        <PairInput tickerIcon={fromPair.tickerIcon} tickerName={fromPair.tickerName} tickerSymbol={fromPair.tickerSymbol} value={fromPair.amount} balance={fromPair.balance} onChange={handleChangeFrom} />
+      </Box>
+      <StyledDivider />
 
-			<Box>
-				<SubTitle>(2) Set collateral ratio</SubTitle>
-				<SubTitleComment>
-					Liquidation will be triggerd when the position’s collateral ratio is below minimum.
-				</SubTitleComment>
-				<Box sx={{ marginTop: '20px' }}>
-					<RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
-				</Box>
-			</Box>
-			<StyledDivider />
+      <Box>
+        <SubTitle>(2) Set collateral ratio</SubTitle>
+        <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
+        <Box sx={{ marginTop: '20px' }}>
+          <RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
+        </Box>
+      </Box>
+      <StyledDivider />
 
-			<Box>
-				<SubTitle>(3) Borrow Amount</SubTitle>
-				<SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
-				<SelectPairInput
-					assets={ASSETS}
-					selAssetId={assetIndex}
-					value={borrowAmount}
-					onChangeAsset={handleChangeAsset}
-					onChangeAmount={handleChangeBorrowAmount}
-				/>
-				<Stack
-					sx={{
-						border: '1px solid #9d9d9d',
-						borderRadius: '10px',
-						color: '#9d9d9d',
-						padding: '12px',
-						marginTop: '19px',
-					}}
-					direction="row"
-					justifyContent="space-between">
-					<Box>Price of asset bring borrowed</Box>
-					<Box sx={{ display: 'flex' }}>
-						<Box sx={{ marginRight: '10px' }}>
-							1 {assetData?.tickerSymbol} - {assetData?.oPrice} USDi
-						</Box>
-						<IconButton size="small" onClick={onRefresh}>
-							<RefreshIcon></RefreshIcon>
-						</IconButton>
-					</Box>
-				</Stack>
-			</Box>
-			<StyledDivider />
+      <Box>
+        <SubTitle>(3) Borrow Amount</SubTitle>
+        <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
+        <Box sx={{ marginTop: '20px' }}>
+          <SelectPairInput assets={ASSETS} selAssetId={assetIndex} value={borrowAmount} onChangeAsset={handleChangeAsset} onChangeAmount={handleChangeBorrowAmount} />
+        </Box>
+        <Stack sx={{ border: '1px solid #9d9d9d', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px' }} direction="row" justifyContent="space-between">
+          <Box>Price of asset bring borrowed</Box>
+          <Box sx={{ display: 'flex' }}>
+            <Box sx={{ marginRight: '10px' }}>1 {assetData?.tickerSymbol} - {assetData?.oPrice} USDi</Box>
+            <IconButton size="small" onClick={onRefresh}>
+              <RefreshIcon></RefreshIcon>
+            </IconButton>
+          </Box>
+        </Stack>
+      </Box>
+      <StyledDivider />
 
-			<ActionButton onClick={onBorrow}>Create Borrow Position</ActionButton>
-		</StyledPaper>
-	)
+      <ActionButton onClick={onBorrow}>Create Borrow Position</ActionButton>
+    </StyledPaper>
+  )
 }
 
 export interface PairData {
