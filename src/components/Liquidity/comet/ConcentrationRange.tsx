@@ -43,9 +43,9 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
       marginRight: 1,
     },
     '& .MuiSlider-valueLabel': {
-      fontSize: 12,
-      fontWeight: 'normal',
-      top: 24,
+      fontSize: '15px',
+      fontWeight: '500',
+      top: 28,
       left: 24,
       backgroundColor: 'unset',
       color: '#fff',
@@ -60,12 +60,13 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
   },
   //rightThumb
   '& .MuiSlider-thumb[data-index="1"]': {
-    height: 27,
-    width: 27,
-    backgroundColor: RIGHT_SLIDER_THUMB_COLOR,
+    height: 31,
+    width: 88,
+    backgroundColor: '#171717',
     border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
-    marginTop: '-46px',
-    marginLeft: '11px',
+    borderRadius: '8px',
+    marginTop: '-44px',
+    marginLeft: '43px',
     '&::after': {
       border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
       borderRadius: 0,
@@ -73,14 +74,14 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
       width: '1px',
       height: '50px',
       position: 'absolute',
-      left: '0px',
+      left: '-1px',
       top: '35px'
     },
     '& .MuiSlider-valueLabel': {
-      fontSize: 12,
-      fontWeight: 'normal',
-      top: 24,
-      left: 24,
+      fontSize: '15px',
+      fontWeight: '500',
+      top: 28,
+      left: 16,
       backgroundColor: 'unset',
       color: '#fff',
       '&:before': {
@@ -142,7 +143,22 @@ const ConcentrationRange: React.FC = () => {
 
   const [value, setValue] = useState<number[]>([20, 180])
   const [trackCss, setTrackCss] = useState({
-    background: BACKGROUND_VALID_RANGE_COLOR
+    '& .MuiSlider-track': {
+      background: BACKGROUND_VALID_RANGE_COLOR
+    },
+    '& .MuiSlider-thumb[data-index="0"]': {
+      backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+      border: `solid 2px ${LEFT_SLIDER_THUMB_COLOR}`,
+      '&::after': {
+        border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`
+      }
+    },
+    '& .MuiSlider-thumb[data-index="1"]': {
+      border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
+      '&::after': {
+        border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
+      }
+    }
   })
 
   const handleChange = (
@@ -159,19 +175,48 @@ const ConcentrationRange: React.FC = () => {
     if (activeThumb === 0) {
       const leftValFromCenter = Math.abs(center_price - newValue[0])
       const rightVal = maxLimit - newValue[0]
-      if (newValue[1] - newValue[0] < min_distance) {
+      if (newValue[1] - newValue[0] <= min_distance) {
           // const clamped = Math.min(newValue[0], 100 - minDistance);
           // setValue([clamped, clamped + minDistance]);
-                
         // setValue(newValue as number[]);
         setValue([newValue[0], rightVal])
         setTrackCss({
-          background: BACKGROUND_WARNING_RANGE_COLOR
+          '& .MuiSlider-track': {
+            background: BACKGROUND_WARNING_RANGE_COLOR
+          },
+          '& .MuiSlider-thumb[data-index="0"]': {
+            backgroundColor: BACKGROUND_WARNING_RANGE_COLOR,
+            border: `solid 2px ${BACKGROUND_WARNING_RANGE_COLOR}`,
+            '&::after': {
+              border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`
+            }
+          },
+          '& .MuiSlider-thumb[data-index="1"]': {
+            border: `solid 2px ${BACKGROUND_WARNING_RANGE_COLOR}`,
+            '&::after': {
+              border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`,
+            }
+          }
         })
       } else {
         setValue([newValue[0], rightVal])
         setTrackCss({
-          background: BACKGROUND_VALID_RANGE_COLOR
+          '& .MuiSlider-track': {
+            background: BACKGROUND_VALID_RANGE_COLOR
+          },
+          '& .MuiSlider-thumb[data-index="0"]': {
+            backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+            border: `solid 2px ${LEFT_SLIDER_THUMB_COLOR}`,
+            '&::after': {
+              border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`
+            }
+          },
+          '& .MuiSlider-thumb[data-index="1"]': {
+            border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
+            '&::after': {
+              border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
+            }
+          }
         })
       }
     }
@@ -180,9 +225,7 @@ const ConcentrationRange: React.FC = () => {
   return (
     <Box sx={{ position: 'relative' }}>
       <RangeSlider
-        sx={{
-          '& .MuiSlider-track': trackCss
-        }}
+        sx={trackCss}
         min={minLimit}
         max={maxLimit}
         components={{ Thumb: ThumbComponent }}
