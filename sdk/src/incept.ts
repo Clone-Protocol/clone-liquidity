@@ -246,19 +246,6 @@ export class Incept {
 		return mints
 	}
 
-	public async getiAssetInfo() {
-		const mints = await this.getiAssetMints()
-		const iassetInfo = []
-		let i = 0
-		for (var mint of mints) {
-			let poolBalances = await this.getPoolBalances(i)
-			let price = poolBalances[1] / poolBalances[0]
-			iassetInfo.push([i, price])
-			i++
-		}
-		return iassetInfo
-	}
-
 	public async getMintiAssetData(index: number) {
 		let assetInfo = await this.getAssetInfo(index)
 		let associatedTokenAddress = (await this.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)).address
@@ -445,10 +432,11 @@ export class Incept {
 
 	public async getiAssetInfos() {
 		const iassetInfo = []
-		for (let i = 1; i < Number((await this.getTokenData()).numPools) + 1; i++) {
+		for (let i = 0; i < Number((await this.getTokenData()).numPools); i++) {
 			let poolBalances = await this.getPoolBalances(i)
 			let price = poolBalances[1] / poolBalances[0]
-			iassetInfo.push([i, price])
+			let liquidity = poolBalances[1] * 2
+			iassetInfo.push([i + 1, price, liquidity])
 		}
 		return iassetInfo
 	}

@@ -48,9 +48,9 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProp
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
-			price: info[1]!,
+			price: info[1],
 			assetType: assetType,
-			liquidity: 0, //coming soon
+			liquidity: info[2],
 			volume24h: 0, //coming soon
 			baselineAPY: 0, //coming soon
 		})
