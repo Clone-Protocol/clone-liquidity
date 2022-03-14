@@ -73,11 +73,11 @@ const BorrowBox = () => {
 		setAssetIndex(index)
 	}
 
-	const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number') {
-			setCollRatio(newValue)
-		}
-	}
+	// const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+	// 	if (typeof newValue === 'number') {
+	// 		setCollRatio(newValue)
+	// 	}
+	// }
 
 	const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -118,17 +118,17 @@ const BorrowBox = () => {
       </Box>
       <StyledDivider />
 
-      <Box>
+      {/* <Box>
         <SubTitle>(2) Set collateral ratio</SubTitle>
         <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
         <Box sx={{ marginTop: '20px' }}>
           <RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
         </Box>
       </Box>
-      <StyledDivider />
+      <StyledDivider /> */}
 
       <Box>
-        <SubTitle>(3) Borrow Amount</SubTitle>
+        <SubTitle>(2) Borrow Amount</SubTitle>
         <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
         <Box sx={{ marginTop: '20px' }}>
           <SelectPairInput assets={ASSETS} selAssetId={assetIndex} value={borrowAmount} onChangeAsset={handleChangeAsset} onChangeAmount={handleChangeBorrowAmount} />

@@ -6,27 +6,25 @@ interface Props {
   tickerName: string | null,
   tickerSymbol: string | null,
   value?: number,
-  balance?: number,
-  balanceDisabled?: boolean,
-  disabled?: boolean,
+  headerTitle?: string,
+  headerValue?: number,
   onChange?: any
 }
 
-const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, balance, balanceDisabled = false, disabled = false, onChange }) => {
+const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, headerTitle, headerValue, onChange }) => {
   
   return (
     <FormControl variant='standard' sx={{ width: '100%' }}>
-      <Stack direction="row" justifyContent="flex-end">
-        {!balanceDisabled ?
-          (<Box sx={{ fontSize: '12px', fontWeight: '500' }}>Balance: {balance}</Box>)
-          : <></>}
-      </Stack>
+      { headerTitle ?
+        <Stack direction="row" justifyContent="flex-end">
+          <Box sx={{ fontSize: '13px', fontWeight: '500', marginBottom: '2px' }}>{headerTitle}: {headerValue}</Box>
+        </Stack> : <></>
+      }
       <FormStack direction="row" justifyContent="space-between" alignItems="center">
         <Box display="flex">
           <Image src={tickerIcon} width="28px" height="28px" />
           <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
             <TickerSymbol>{tickerSymbol}</TickerSymbol>
-            <TickerName>{tickerName}</TickerName>
           </Box>
         </Box>
         <InputAmount
@@ -34,7 +32,6 @@ const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, valu
           type='number'
           value={value}
           onChange={onChange}
-          disabled={disabled}
           />
       </FormStack>
     </FormControl>
@@ -44,8 +41,8 @@ const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, valu
 const FormStack = styled(Stack)`
   display: flex;
   width: 100%;
-  height: 65px;
-  padding: 15px 25px 14px 34px;
+  height: 60px;
+  padding: 11px 23px 12px 19px;
   border-radius: 8px;
   background-color: #333333;
 `

@@ -16,6 +16,14 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 	let tickerIcon = ''
 	let tickerName = ''
 	let tickerSymbol = ''
+  let isTight = false
+  let tightRange = 10
+  let collAmount = 0.0
+  let collRatio = 50
+  let mintAmount = 0.0
+  let lowerLimit = 20.0
+  let centerPrice = 100.0
+  let upperLimit = 180.0
 	switch (index) {
 		case Asset.Solana:
 			tickerIcon = ethLogo
@@ -34,7 +42,15 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 		tickerIcon: ethLogo,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
-		aPrice: price,
+		price,
+    isTight,
+    tightRange,
+    collAmount,
+    collRatio,
+    mintAmount,
+    lowerLimit,
+    centerPrice,
+    upperLimit
 	}
 }
 
@@ -45,8 +61,16 @@ interface GetProps {
 }
 
 export interface PositionInfo {
-  tickerIcon: string,
-  tickerName: string,
-  tickerSymbol: string | null,
-  aPrice: number,
+  tickerIcon: string
+	tickerName: string
+	tickerSymbol: string | null
+  price: number
+  isTight: boolean
+  tightRange: number
+  collAmount: number
+  collRatio: number
+  mintAmount: number
+  lowerLimit: number
+  centerPrice: number
+  upperLimit: number 
 }
