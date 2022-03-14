@@ -1,6 +1,13 @@
 import * as anchor from '@project-serum/anchor'
 import { BN, Program, Provider } from '@project-serum/anchor'
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress,createAssociatedTokenAccountInstruction,  getAccount, TokenAccountNotFoundError } from '@solana/spl-token'
+import {
+	TOKEN_PROGRAM_ID,
+	ASSOCIATED_TOKEN_PROGRAM_ID,
+	getAssociatedTokenAddress,
+	createAssociatedTokenAccountInstruction,
+	getAccount,
+	TokenAccountNotFoundError,
+} from '@solana/spl-token'
 import { Incept as InceptProgram, IDL } from './idl/incept'
 import { sleep, mul, div, toScaledNumber, toScaledPercent } from './utils'
 import { Network } from './network'
@@ -27,12 +34,7 @@ export class Incept {
 	managerAddress: [PublicKey, number]
 	provider: Provider
 
-	public constructor(
-		connection: Connection,
-		programId: PublicKey,
-		provider: Provider,
-		opts?: ConfirmOptions
-	) {
+	public constructor(connection: Connection, programId: PublicKey, provider: Provider, opts?: ConfirmOptions) {
 		this.managerAddress = [PublicKey.default, 0]
 		this.manager = {} as Manager
 		this.tokenData = {} as TokenData
@@ -73,7 +75,7 @@ export class Incept {
 	public async loadManager() {
 		this.managerAddress = await this.getManagerAddress()
 		// @ts-ignore
-		this.manager = await this.getManagerAccount() as Manager
+		this.manager = (await this.getManagerAccount()) as Manager
 	}
 
 	public onManagerAccountChange(fn: (state: Manager) => void) {
@@ -202,25 +204,28 @@ export class Incept {
 
 	public async getPoolBalances(poolIndex: number) {
 		let pool = await this.getPool(poolIndex)
-		let iasset = 0;
-		let usdi = 0;
+		let iasset = 0
+		let usdi = 0
 
 		try {
-			iasset = Number((await this.connection.getTokenAccountBalance(pool.iassetTokenAccount, 'confirmed')).value!.amount)
+			iasset = Number(
+				(await this.connection.getTokenAccountBalance(pool.iassetTokenAccount, 'confirmed')).value!.amount
+			)
 		} catch {}
 
 		try {
-			usdi = Number((await this.connection.getTokenAccountBalance(pool.usdiTokenAccount, 'confirmed')).value!.amount)
+			usdi = Number(
+				(await this.connection.getTokenAccountBalance(pool.usdiTokenAccount, 'confirmed')).value!.amount
+			)
 		} catch {}
 
 		return [iasset, usdi]
 	}
 
 	public async getUsdiBalance() {
+		let associatedTokenAccount = await this.getOrCreateUsdiAssociatedTokenAccount()
 
-		let associatedTokenAccount = await this.getOrCreateUsdiAssociatedTokenAccount();
-
-		return Number(associatedTokenAccount.amount) / 1000000000000;
+		return Number(associatedTokenAccount.amount) / 1000000000000
 	}
 
 	public async getiAssetMints() {
@@ -228,7 +233,7 @@ export class Incept {
 		let mints: PublicKey[] = []
 		for (const [index, pool] of tokenData.pools.entries()) {
 			if (index === Number(tokenData.numPools)) {
-				break;
+				break
 			}
 			mints.push(pool.assetInfo.iassetMint)
 		}
@@ -250,19 +255,15 @@ export class Incept {
 
 	public async getMintiAssetData(index: number) {
 		let assetInfo = await this.getAssetInfo(index)
-		let poolBalances = await this.getPoolBalances(index)
-		let price = poolBalances[1] / poolBalances[0]
 		let associatedTokenAddress = (await this.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)).address
 		let amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount
 		console.log(Number(assetInfo.price.val))
 		console.log(Number(assetInfo.price.scale))
 		return [
-			price,
 			toScaledNumber(assetInfo.price),
 			Number(assetInfo.stableCollateralRatio.val),
 			Number(assetInfo.cryptoCollateralRatio.val),
-			amount
-
+			amount,
 		]
 	}
 
@@ -277,11 +278,12 @@ export class Incept {
 					SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
 				)
 			)[0]
-			let amount;
+			let amount
 			try {
-				amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount;
+				amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!
+					.uiAmount
 			} catch {
-				amount = 0;
+				amount = 0
 			}
 
 			if (amount > 0) {
@@ -295,7 +297,7 @@ export class Incept {
 	}
 
 	public async getUserMintInfos() {
-		const mintPositions = (await this.getMintPositions())
+		const mintPositions = await this.getMintPositions()
 		const mintInfos = []
 		for (let i = 0; i < Number(mintPositions.numPositions); i++) {
 			let mintPosition = mintPositions.mintPositions[i]
@@ -332,7 +334,7 @@ export class Incept {
 	}
 
 	public async getUserLiquidityInfos() {
-		const liquidityPositions = (await this.getLiquidityPositions())
+		const liquidityPositions = await this.getLiquidityPositions()
 		const liquidityInfos = []
 		for (let i = 0; i < Number(liquidityPositions.numPositions); i++) {
 			let liquidityPosition = liquidityPositions.liquidityPositions[i]
@@ -424,7 +426,6 @@ export class Incept {
 		return cometInfos
 	}
 
-
 	public async getAssetInfo(poolIndex: number) {
 		const tokenData = (await this.getTokenData()) as TokenData
 		return tokenData.pools[poolIndex].assetInfo
@@ -442,7 +443,7 @@ export class Incept {
 
 	public async updatePrices(signers: Array<Keypair>) {
 		const updatePricesIx = await this.updatePricesInstruction()
-		await this.provider.send(new Transaction().add(updatePricesIx), signers);
+		await this.provider.send(new Transaction().add(updatePricesIx), signers)
 	}
 	public async updatePricesInstruction() {
 		const tokenData = await this.getTokenData()
@@ -470,7 +471,7 @@ export class Incept {
 	public async getTokenData() {
 		// TODO: Probably a hacky fix, should find a better place to do this.
 		if (Object.keys(this.manager).length === 0) {
-			await this.loadManager();
+			await this.loadManager()
 		}
 		// @ts-ignore
 		return (await this.program.account.tokenData.fetch(this.manager.tokenData)) as TokenData
@@ -540,7 +541,7 @@ export class Incept {
 			userCollateralTokenAccount,
 			collateralIndex
 		)
-		await this.provider.send(new Transaction().add(mintUsdiIx), signers);
+		await this.provider.send(new Transaction().add(mintUsdiIx), signers)
 	}
 
 	public async mintUsdiInstruction(
@@ -583,10 +584,7 @@ export class Incept {
 			poolIndex,
 			collateralIndex
 		)
-		await this.provider.send(
-			new Transaction().add(updatePricesIx).add(initializeMintPositionsIx),
-			signers
-		)
+		await this.provider.send(new Transaction().add(updatePricesIx).add(initializeMintPositionsIx), signers)
 	}
 	public async initializeMintPositionsInstruction(
 		userCollateralTokenAccount: PublicKey,
@@ -1272,11 +1270,7 @@ export class Incept {
 		})) as TransactionInstruction
 	}
 
-	public async recenterComet(
-		userIassetTokenAccount: PublicKey,
-		cometIndex: number,
-		signers: Array<Keypair>
-	) {
+	public async recenterComet(userIassetTokenAccount: PublicKey, cometIndex: number, signers: Array<Keypair>) {
 		const recenterCometIx = await this.recenterCometInstruction(userIassetTokenAccount, cometIndex)
 		await this.provider.send(new Transaction().add(recenterCometIx), signers)
 	}
@@ -1307,36 +1301,23 @@ export class Incept {
 	// Hackathon ONLY!
 
 	public async hackathonMintUsdiInstruction(userUsdiTokenAccount: PublicKey, amount: number) {
+		const [managerPubkey, managerBump] = await this.getManagerAddress()
 
-		const [managerPubkey, managerBump] = await this.getManagerAddress();
-		
-		return (
-			this.program.instruction.mintUsdiHackathon(
-				managerBump,
-				new BN(amount),
-				{
-					accounts: {
-						user: this.provider.wallet.publicKey,
-						manager: managerPubkey,
-						tokenData: this.manager.tokenData,
-						usdiMint: this.manager.usdiMint,
-						userUsdiTokenAccount: userUsdiTokenAccount,
-						tokenProgram: TOKEN_PROGRAM_ID
-					}
-				}
-			)
-		)
+		return this.program.instruction.mintUsdiHackathon(managerBump, new BN(amount), {
+			accounts: {
+				user: this.provider.wallet.publicKey,
+				manager: managerPubkey,
+				tokenData: this.manager.tokenData,
+				usdiMint: this.manager.usdiMint,
+				userUsdiTokenAccount: userUsdiTokenAccount,
+				tokenProgram: TOKEN_PROGRAM_ID,
+			},
+		})
 	}
 
 	public async hackathonMintUsdi(userUsdiTokenAccount: PublicKey, amount: number) {
-
-		const mintUsdiTx = await this.hackathonMintUsdiInstruction(
-			userUsdiTokenAccount,
-			amount
-		);
-		await this.provider.send(
-			new Transaction().add(mintUsdiTx)
-		);
+		const mintUsdiTx = await this.hackathonMintUsdiInstruction(userUsdiTokenAccount, amount)
+		await this.provider.send(new Transaction().add(mintUsdiTx))
 	}
 
 	public async getOrCreateAssociatedTokenAccount(mint: PublicKey) {
@@ -1346,11 +1327,11 @@ export class Incept {
 			false,
 			TOKEN_PROGRAM_ID,
 			ASSOCIATED_TOKEN_PROGRAM_ID
-		);
+		)
 
-		let account;
+		let account
 		try {
-			account = await getAccount(this.connection, associatedToken, "finalized", TOKEN_PROGRAM_ID);
+			account = await getAccount(this.connection, associatedToken, 'finalized', TOKEN_PROGRAM_ID)
 		} catch (error: unknown) {
 			if (error instanceof TokenAccountNotFoundError) {
 				const transaction = new Transaction().add(
@@ -1362,24 +1343,66 @@ export class Incept {
 						TOKEN_PROGRAM_ID,
 						ASSOCIATED_TOKEN_PROGRAM_ID
 					)
-				);
+				)
 
-				await this.provider.send(transaction);
-				await sleep(200);
-				account = await getAccount(this.connection, associatedToken, "finalized", TOKEN_PROGRAM_ID);
+				await this.provider.send(transaction)
+				await sleep(200)
+				account = await getAccount(this.connection, associatedToken, 'finalized', TOKEN_PROGRAM_ID)
 			} else {
-				throw error;
+				throw error
 			}
 		}
 
 		if (!account) {
-			throw Error("Could not create account!");
+			throw Error('Could not create account!')
 		}
-		return account;
+		return account
 	}
 
 	public async getOrCreateUsdiAssociatedTokenAccount() {
-		return await this.getOrCreateAssociatedTokenAccount(this.manager.usdiMint);
+		return await this.getOrCreateAssociatedTokenAccount(this.manager.usdiMint)
+	}
+
+	public async calculateMaxUSDiAmountFromCollateral(
+		collateralIndex: number,
+		poolIndex: number,
+		collateralAmount: number
+	) {
+		// Coming soon
+	}
+
+	public async calculateRangeFromUSDiAndCollateral(
+		collateralIndex: number,
+		poolIndex: number,
+		collateralAmount: number,
+		usdiAmount: number
+	) {
+		let collateral = await this.getCollateral(collateralIndex)
+		let pool = await this.getPool(poolIndex)
+		let balances = await this.getPoolBalances(poolIndex)
+		if (collateral.stable) {
+			let liquidityTokenSupplyBeforeComet = (
+				await this.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed')
+			).value!.uiAmount
+			let cometLiquidityTokenAmount = (usdiAmount * liquidityTokenSupplyBeforeComet) / balances[0]
+			let updatedliquidityTokenSupply = liquidityTokenSupplyBeforeComet + cometLiquidityTokenAmount
+			let yUnder = ((usdiAmount - collateralAmount) * updatedliquidityTokenSupply) / cometLiquidityTokenAmount
+			let xUnder =
+				((balances[0] + usdiAmount) * (balances[1] + usdiAmount / (balances[1] / balances[0]))) / yUnder
+			return (yUnder / xUnder) * 2
+		} else {
+			//coming soon...
+			return
+		}
+	}
+
+	public async calculateUSDiAmountAndUpperRangeFromLowerRange(
+		collateralIndex: number,
+		poolIndex: number,
+		collateralAmount: number,
+		lowerRange: number
+	) {
+		// Coming soon
 	}
 
 	public async liquidateComet() {}

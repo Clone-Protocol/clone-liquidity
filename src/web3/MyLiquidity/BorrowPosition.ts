@@ -12,22 +12,26 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: GetProps
 
 	await program.loadManager()
 	const data = await program.getMintiAssetData(index)
+	let tickerIcon = ''
 	let tickerSymbol = ''
 	switch (index) {
 		case Asset.Solana:
+			tickerIcon = ethLogo
 			tickerSymbol = 'iSOL'
 			break
 		case Asset.Ethereum:
+			tickerIcon = ethLogo
 			tickerSymbol = 'iETH'
 			break
 		default:
 			throw new Error('Not supported')
 	}
 	return {
+		tickerIcon: ethLogo,
 		tickerSymbol: tickerSymbol,
-		oPrice: data[1]!,
-		stableCollateralRatio: data[2]!,
-		cryptoCollateralRatio: data[3]!,
+		oPrice: data[0]!,
+		stableCollateralRatio: data[1]!,
+		cryptoCollateralRatio: data[2]!,
 	}
 }
 
@@ -38,6 +42,7 @@ interface GetProps {
 }
 
 export interface PositionInfo {
+	tickerIcon: string
 	tickerSymbol: string
 	oPrice: number
 	stableCollateralRatio: number

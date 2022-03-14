@@ -16,6 +16,9 @@ const EditPanel = () => {
   const [toAmount, setToAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(150)
   const [positionInfo, setPositionInfo] = useState<PI>()
+  const [assetIndex, setAssetIndex] = useState(0)
+
+  console.log("jhkafjoaewhnogawijh")
 
   useEffect(() => {
     const program = getInceptApp()
@@ -24,6 +27,7 @@ const EditPanel = () => {
       const data = await fetchBorrowDetail({
         program,
         userPubKey: publicKey,
+        index: assetIndex
       })
       if (data) {
         setPositionInfo(data)

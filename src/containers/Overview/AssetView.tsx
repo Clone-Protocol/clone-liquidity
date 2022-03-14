@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Paper, Divider, Tabs, Tab } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Borrow/PairInput'
@@ -10,12 +10,45 @@ import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import InfoBookIcon from 'public/images/info-book-icon.png'
 import WarningIcon from 'public/images/warning-icon.png'
 import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
+import { fetchBalance } from '~/web3/Comet/balance'
 
 const AssetView = () => {
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
+  const [positionInfo, setPositionInfo] = useState<PI>()
   const [tab, setTab] = useState(0)
   const [fromAmount, setFromAmount] = useState(0.0)
   const [toAmount, setToAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(150)
+  const [assetIndex, setAssetIndex] = useState(0)
+  const [usdiBalance, setUsdiBalance] = useState(0)
+
+  useEffect(() => {
+    const program = getInceptApp()
+
+    async function fetch() {
+      const data = await fetchCometDetail({
+        program,
+        userPubKey: publicKey,
+        index: assetIndex
+      })
+      if (data) {
+        setPositionInfo(data)
+      }
+
+      const balance = await fetchBalance({
+        program,
+        userPubKey: publicKey
+      })
+      if (balance) {
+        setUsdiBalance(balance.balanceVal)
+      }
+    }
+    fetch()
+  }, [publicKey])
 
   const handleChangeTab = (event: React.SyntheticEvent, newVal: number) => {
     setTab(newVal)
@@ -65,7 +98,7 @@ const AssetView = () => {
       </Box>
       <TabPanel value={tab} index={0}>
         <Box>
-          <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
+          <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={positionInfo?.aPrice} />
 
           <Stack sx={{ border: '1px solid #00d0dd', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
             <Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}><Image src={InfoBookIcon} /></Box>
@@ -74,14 +107,14 @@ const AssetView = () => {
 
           <Box>
             <SubTitle>(1) Provide stable coins to collateralize</SubTitle>
-            <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+            <PairInput tickerIcon={ethLogo} tickerName="USDi Coin" tickerSymbol="USDi" value={fromAmount}  balance={usdiBalance}/>
           </Box>
           <StyledDivider />
 
           <Box>
             <SubTitle>(2) Amount of USDi-iSOL to mint into iSOL AMM</SubTitle>
-            <RatioSlider value={collRatio} onChange={handleChangeCollRatio} />
-            <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} />
+            {/* <RatioSlider min={0} max={100} value={collRatio} onChange={handleChangeCollRatio} /> */}
+            <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount}  balance={usdiBalance}/>
           </Box>
           <StyledDivider />
 
@@ -123,7 +156,7 @@ const AssetView = () => {
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <Box>
-          <PriceIndicatorBox tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={111.01} />
+          <PriceIndicatorBox tickerIcon={positionInfo?.tickerIcon} tickerName={positionInfo?.tickerName} tickerSymbol={positionInfo?.tickerSymbol} value={positionInfo?.aPrice} />
 
           <Stack sx={{ border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
             <Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}><Image src={WarningIcon} /></Box>
@@ -133,14 +166,14 @@ const AssetView = () => {
           <Box>
             <SubTitle>(1) Provide iSOL</SubTitle>
             <SubTitleComment>Acquire iSOL by Borrowing</SubTitleComment>
-            <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+            <PairInput tickerIcon={ethLogo} tickerName="USDi Coin" tickerSymbol="USDi" value={fromAmount} />
           </Box>
           <StyledDivider />
 
           <Box>
             <SubTitle>(2) Provide USDi</SubTitle>
             <SubTitleComment>An equivalent USDi amount must be provided</SubTitleComment>
-            <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+            <PairInput tickerIcon={ethLogo} tickerName="USDi Coin" tickerSymbol="USDi" value={fromAmount} />
           </Box>
           <StyledDivider />
 

@@ -2,39 +2,51 @@ import { PublicKey } from "@solana/web3.js"
 import { Incept } from "sdk/src"
 import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 
-export const fetchCometDetail = async ({ program, userPubKey }: GetProps) => {
-  if (!userPubKey) return null
+enum Asset {
+	Solana,
+	Ethereum,
+}
 
+export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps) => {
+  if (!userPubKey) return 
+
+	await program.loadManager()
+	const balances = await program.getPoolBalances(index)
+  let price = balances[1] / balances[0]
+	let tickerIcon = ''
+	let tickerName = ''
+	let tickerSymbol = ''
+	switch (index) {
+		case Asset.Solana:
+			tickerIcon = ethLogo
+			tickerName = 'iSolana'
+			tickerSymbol = 'iSOL'
+			break
+		case Asset.Ethereum:
+			tickerIcon = ethLogo
+			tickerName = 'iEthereum'
+			tickerSymbol = 'iETH'
+			break
+		default:
+			throw new Error('Not supported')
+	}
 	return {
-    tickerIcon: ethLogo,
-    tickerName: 'Solana',
-    tickerSymbol: 'SOL',
-    price: 110.78,
-    collateral: 80450.85,
-    contributedUSD: 100000.00,
-    contributedAsset: 1000.00,
-    lowerLimitPriceRange: 50.43,
-    upperLimitPriceRange: 150.89,
-    centerPriceRange: 110.28,
-    ild: 450.87
-  }
+		tickerIcon: ethLogo,
+		tickerName: tickerName,
+		tickerSymbol: tickerSymbol,
+		aPrice: price,
+	}
 }
 
 interface GetProps {
   program: Incept,
   userPubKey: PublicKey | null,
+  index: number
 }
 
 export interface PositionInfo {
   tickerIcon: string,
-  tickerName: string | null,
+  tickerName: string,
   tickerSymbol: string | null,
-  price: number,
-  collateral: number,
-  contributedUSD: number,
-  contributedAsset: number,
-  lowerLimitPriceRange: number,
-  upperLimitPriceRange: number,
-  centerPriceRange: number,
-  ild: number
+  aPrice: number,
 }

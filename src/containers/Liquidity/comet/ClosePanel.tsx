@@ -10,6 +10,7 @@ const ClosePanel = () => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const [positionInfo, setPositionInfo] = useState<PI>()
+  const [assetIndex, setAssetIndex] = useState(0)
 
   useEffect(() => {
     const program = getInceptApp()
@@ -18,6 +19,7 @@ const ClosePanel = () => {
       const data = await fetchCometDetail({
         program,
         userPubKey: publicKey,
+        index: assetIndex
       })
       if (data) {
         setPositionInfo(data)
