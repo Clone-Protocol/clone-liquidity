@@ -1,4 +1,4 @@
-import { FormControl, Input, InputAdornment, InputLabel, styled, Stack, Box } from '@mui/material'
+import { FormControl, styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 
 interface Props {
@@ -6,15 +6,20 @@ interface Props {
   tickerName: string | null,
   tickerSymbol: string | null,
   value?: number,
-  onChange?: () => void
+  balance?: number,
+  balanceDisabled?: boolean,
+  disabled?: boolean,
+  onChange?: any
 }
 
-const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, onChange }) => {
+const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, value, balance, balanceDisabled = false, disabled = false, onChange }) => {
   
   return (
     <FormControl variant='standard' sx={{ width: '100%' }}>
       <Stack direction="row" justifyContent="flex-end">
-        <Box sx={{ fontSize: '13px', fontWeight: '500' }}>Balance: _</Box>
+        {!balanceDisabled ?
+          (<Box sx={{ fontSize: '12px', fontWeight: '500' }}>Balance: {balance}</Box>)
+          : <></>}
       </Stack>
       <FormStack direction="row" justifyContent="space-between" alignItems="center">
         <Box display="flex">
@@ -29,6 +34,7 @@ const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, valu
           type='number'
           value={value}
           onChange={onChange}
+          disabled={disabled}
           />
       </FormStack>
     </FormControl>

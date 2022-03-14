@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { styled } from '@mui/system'
 import Container from '@mui/material/Container'
@@ -8,6 +9,9 @@ import AssetView from '~/containers/Overview/AssetView'
 import { Box } from '@mui/material'
 
 const AssetPage: NextPage = () => {
+  const router = useRouter()
+  const { assetId } = router.query
+
 	return (
 		<div>
 			<Head>
@@ -18,7 +22,7 @@ const AssetPage: NextPage = () => {
           <Container>
             <TipMsg>💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to maximize their concentraed liquidity experience. </TipMsg>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <AssetView />
+              <AssetView assetId={assetId} />
             </Box>
           </Container>
         </StyledSection>

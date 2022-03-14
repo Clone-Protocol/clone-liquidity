@@ -22,7 +22,7 @@ const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => 
           id="ip-amount"
           type='number'
           disabled
-          defaultValue={value}
+          value={value}
           />
       </FormStack>
     </FormControl>

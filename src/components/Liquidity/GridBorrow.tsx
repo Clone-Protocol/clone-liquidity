@@ -62,7 +62,7 @@ let columns: GridColDef[] = [
   }},
   { field: 'collateralRatio', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Collateral Ratio', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()}%</Box>
     )
   }},
   { field: 'action',
@@ -91,6 +91,6 @@ const RiskButton = styled(Button)`
   font-weight: 600;
 `
 
-columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, resizable: true, filterable: false }))
+columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
 export default withCsrOnly(GridBorrow)

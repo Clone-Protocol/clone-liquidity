@@ -2,9 +2,9 @@ import { FormControl, Input, InputAdornment, InputLabel, styled, Stack, Box } fr
 import Image from 'next/image'
 
 interface Props {
-  tickerIcon: string,
-  tickerName: string | null,
-  tickerSymbol: string | null,
+  tickerIcon?: string,
+  tickerName?: string | null,
+  tickerSymbol?: string | null,
   value?: number
 }
 

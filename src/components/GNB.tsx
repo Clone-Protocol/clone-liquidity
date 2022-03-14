@@ -17,6 +17,10 @@ import CancelIcon from './Icons/CancelIcon'
 import MenuIcon from './Icons/MenuIcon'
 import { useScroll } from '~/hooks/useScroll'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
+import { shortenAddress } from '~/utils/address'
+import { useWalletDialog } from '~/hooks/useWalletDialog'
+import { useIncept } from '~/hooks/useIncept'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -79,13 +83,105 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu = () => {
-  return (
-    <Box display="flex">
-      <HeaderButton variant="outlined" sx={{width: '86px', marginRight: '16px'}}>Get USDi</HeaderButton>
-      <HeaderButton variant="outlined" sx={{width: '163px'}} startIcon={<Image src={walletIcon} alt="wallet" />}>Connect Wallet</HeaderButton>
-      {/* <Button variant="outlined">...</Button> */}
-    </Box>
-  )
+	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const wallet = useAnchorWallet()
+	const { setOpen } = useWalletDialog()
+	const { Program, getInceptApp } = useIncept()
+	const [ mintUsdi, setMintUsdi ] = useState(false);
+
+	const inceptConstructor = () => {
+		const program = getInceptApp()
+		console.log(program.managerAddress[0].toString())
+	}
+
+	useEffect(() => {
+
+		async function userMintUsdi() {
+			if (connected && publicKey && mintUsdi) {
+		
+				const program = getInceptApp();
+				await program.loadManager();
+	
+				try {
+					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount();
+					await program.hackathonMintUsdi(usdiAccount.address, 100000000000000);
+
+				} finally {
+					setMintUsdi(false);
+				}
+			}
+		}
+		userMintUsdi()
+	}, [mintUsdi, connected, publicKey])
+
+	const handleGetUsdiClick = () => {
+		setMintUsdi(true)
+	}
+
+	useEffect(() => {
+		async function getAccount() {
+		  if (connected && publicKey && wallet) {
+	
+			const program = getInceptApp();
+			await program.loadManager();
+
+			if (!program.provider.wallet) {
+				console.log("NO PROVIDER WALLET!");
+				return;
+			}
+
+			try {
+			  console.log("GETTING USER ACCOUNT!");
+			  const userAccount = await program.getUserAccount()
+			  console.log('acc', userAccount)
+			} catch (error) {
+				console.log(error);
+				const response = await program.initializeUser()
+				console.log('initialized:', response)
+			}
+		  }
+		}
+		getAccount()
+	}, [connected, publicKey])
+
+	const handleWalletClick = () => {
+		try {
+			if (!connected) {
+				if (!wallet) {
+					setOpen(true)
+				} else {
+					connect()
+				}
+			} else {
+				disconnect()
+			}
+		} catch (error) {
+			console.log('Error connecting to the wallet: ', (error as any).message)
+		}
+	}
+
+	return (
+		<Box display="flex">
+			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{width: '86px', marginRight: '16px'}}>Get USDi</HeaderButton>
+			<HeaderButton onClick={handleWalletClick} variant="outlined" sx={{width: '163px'}} disabled={connecting} startIcon={<Image src={walletIcon} alt="wallet" />}>
+			{!connected ? (
+				<>Connect Wallet</>
+			) : (
+				<>
+				Disconnect Wallet{' '}
+				{publicKey ? (
+					<Box sx={{ marginLeft: '10px', color: '#6c6c6c' }}>
+					{shortenAddress(publicKey.toString())}
+					</Box>
+				) : (
+					<></>
+				)}
+				</>
+			)}
+			</HeaderButton>
+			{/* <Button variant="outlined">...</Button> */}
+		</Box>
+	)
 }
 
 const LiquidityTitle = styled('div')`

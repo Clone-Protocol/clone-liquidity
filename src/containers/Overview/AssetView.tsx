@@ -1,5 +1,5 @@
-import { Box, Stack, Button, Paper, Divider, Tabs, Tab, Grid } from '@mui/material'
-import React, { useState } from 'react'
+import { Box, Stack, Button, Paper, Divider, Grid } from '@mui/material'
+import React, { useState, useEffect } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
@@ -10,19 +10,56 @@ import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import InfoBookIcon from 'public/images/info-book-icon.png'
 import WarningIcon from 'public/images/warning-icon.png'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { fetchBalance } from '~/web3/Comet/balance'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
-import { AssetData, fetchAsset, UnconcentratedData, fetchUnconcentrated } from '~/features/Overview/Asset.query'
+import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
+import { UnconcentratedData as UnconcentPI, fetchUnconcentDetail } from '~/web3/MyLiquidity/UnconcentPosition'
+import { fetchAsset, fetchUnconcentrated } from '~/features/Overview/Asset.query'
 
-const AssetView = () => {
+const AssetView = ({ assetId } : { assetId: string}) => {
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
   const [tab, setTab] = useState(0)
+
   //comet liquidity
-  const [assetData, setAssetData] = useState<AssetData>(fetchAsset())
+  const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
   //unconcentrated liquidity
-  const [unconcentData, setUnconcentData] = useState<UnconcentratedData>(fetchUnconcentrated())
+  const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated())
+  const [usdiBalance, setUsdiBalance] = useState(0)
+
+  useEffect(() => {
+    const program = getInceptApp()
+
+    async function fetch() {
+      if (assetId) {
+        const data = await fetchCometDetail({
+          program,
+          userPubKey: publicKey,
+          index: parseInt(assetId)
+        })
+        if (data) {
+          setAssetData(data)
+        }
+
+        const balance = await fetchBalance({
+          program,
+          userPubKey: publicKey
+        })
+        if (balance) {
+          setUsdiBalance(balance.balanceVal)
+        }
+      } else {
+        console.error('wrong asset Id')
+      }
+    }
+    fetch()
+  }, [publicKey, assetId])
 
   const changeTab = (newVal: number) => {
     setTab(newVal)
@@ -53,21 +90,21 @@ const AssetView = () => {
     setAssetData(newData)
 	}
 
-  const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === 'number') {
-      // TODO: to bind with contract
-      const lowerLimit = 20
-      const upperLimit = 160
+  // const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+  //   if (typeof newValue === 'number') {
+  //     // TODO: to bind with contract
+  //     const lowerLimit = 20
+  //     const upperLimit = 160
 
-      const newData = {
-        ...assetData,
-        collRatio: newValue,
-        lowerLimit,
-        upperLimit
-      }
-      setAssetData(newData)
-    }
-  }
+  //     const newData = {
+  //       ...assetData,
+  //       collRatio: newValue,
+  //       lowerLimit,
+  //       upperLimit
+  //     }
+  //     setAssetData(newData)
+  //   }
+  // }
 
   const handleChangeToAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
@@ -150,10 +187,6 @@ const AssetView = () => {
   return (
     <StyledBox>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        {/* <StyledTabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
-          <StyledTab label="Commet Liquidity" />
-          <StyledTab label="Unconcentrated Liquidity" />
-        </StyledTabs> */}
         <Box sx={{ display: 'flex' }}>
           <CometTab onClick={() => changeTab(0)}><Image src={CometIcon} /> <span style={{ marginLeft: '8px' }}>Comet Liquidity</span></CometTab>
           <UnconcentTab onClick={() => changeTab(1)}><Image src={UnconcentIcon} /><span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span></UnconcentTab>
@@ -162,7 +195,7 @@ const AssetView = () => {
       <Box sx={{ paddingY: '20px' }}>
       { tab === 0 ?
         <Box>
-          <PriceIndicatorBox tickerIcon={assetData.tickerIcon} tickerName={assetData.tickerName} tickerSymbol={assetData.tickerSymbol} value={assetData.price} />
+          <PriceIndicatorBox tickerIcon={assetData?.tickerIcon} tickerName={assetData?.tickerName} tickerSymbol={assetData?.tickerSymbol} value={assetData?.price} />
 
           <Box sx={{ background: '#171717', paddingX: '61px', paddingY: '36px', marginTop: '28px' }}>
             <Stack sx={{ border: '1px solid #00d0dd', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginBottom: '26px' }} direction="row">
@@ -172,19 +205,19 @@ const AssetView = () => {
 
             <Box>
               <SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box></SubTitle>
-              <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={assetData.collAmount} headerTitle="Balance" headerValue={0} onChange={handleChangeFromAmount} />
+              <PairInput tickerIcon={ethLogo} tickerName="USDi Coin" tickerSymbol="USDi" value={assetData?.collAmount} headerTitle="Balance" headerValue={usdiBalance} onChange={handleChangeFromAmount} />
             </Box>
             <StyledDivider />
 
             <Box>
               <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Amount of USDi-iSOL to mint into iSOL AMM</Box></SubTitle>
-              <Box sx={{ marginTop: '15px' }}>
-                <RatioSlider min={0} max={100} value={assetData.collRatio} onChange={handleChangeCollRatio} />
-              </Box>
+              {/* <Box sx={{ marginTop: '15px' }}>
+                <RatioSlider min={0} max={100} value={assetData?.collRatio} onChange={handleChangeCollRatio} />
+              </Box> */}
               <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
-                <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={assetData.mintAmount} onChange={handleChangeToAmount} />
+                <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={assetData?.mintAmount} onChange={handleChangeToAmount} />
               </Box>
-              <PairInputView tickerIcon={ethLogo} tickerSymbol="iSOL" value={assetData.mintAmount} />
+              <PairInputView tickerIcon={ethLogo} tickerSymbol="iSOL" value={assetData?.mintAmount} />
             </Box>
             <StyledDivider />
 
@@ -199,21 +232,21 @@ const AssetView = () => {
                 <Grid item xs>
                   <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff', textAlign: 'center', marginBottom: '5px' }}>Lower Limit</Box>
                   <Box sx={{ background: 'linear-gradient(180deg, #333333 55%, #171717 45%)', borderRadius: '10px', border: 'solid 1px #00f0ff', padding: '18px' }}>
-                    <PriceValue>{assetData.lowerLimit}</PriceValue>
+                    <PriceValue>{assetData?.lowerLimit}</PriceValue>
                     <RangePair>USD / SOL</RangePair>
                   </Box>
                 </Grid>
                 <Grid item xs={3}>
                   <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF', textAlign: 'center', marginBottom: '5px' }}>Center Price</Box>
                   <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
-                    <PriceValue>{assetData.centerPrice}</PriceValue>
+                    <PriceValue>{assetData?.centerPrice}</PriceValue>
                     <RangePair>USD / SOL</RangePair>
                   </Box>
                 </Grid>
                 <Grid item xs>
                   <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff', textAlign: 'center', marginBottom: '5px' }}>Upper Limit</Box>
                   <Box sx={{ background: 'linear-gradient(180deg, #333333 55%, #171717 45%)', borderRadius: '10px', border: 'solid 1px #809cff', padding: '18px' }}>
-                    <PriceValue>{assetData.upperLimit}</PriceValue>
+                    <PriceValue>{assetData?.upperLimit}</PriceValue>
                     <RangePair>USD / SOL</RangePair>
                   </Box>
                 </Grid>
@@ -221,7 +254,7 @@ const AssetView = () => {
 
               <Button onClick={() => changeTab(1)} sx={{ width: '100%', color: '#fff', background: '#171717', borderRadius: '10px', border: 'solid 1px #fff', marginTop: '26px', height: '40px', fontSize: '15px'}}>Unconcentrated Liquidity</Button>
 
-              { assetData.isTight ? <Stack sx={{ maxWidht: '653px', border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
+              { assetData?.isTight ? <Stack sx={{ maxWidht: '653px', border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
                 <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}><Image src={WarningIcon} /></Box>
                 <WarningBox>Liquidity concentration range for this position is very slim, this results in higher potential yield and high probabily of liqudiation.</WarningBox>
               </Stack> : <></>
@@ -233,7 +266,7 @@ const AssetView = () => {
           </Box>
         </Box>
       : <Box>
-          <PriceIndicatorBox tickerIcon={assetData.tickerIcon} tickerName={assetData.tickerName} tickerSymbol={assetData.tickerSymbol} value={assetData.price} />
+          <PriceIndicatorBox tickerIcon={assetData?.tickerIcon} tickerName={assetData?.tickerName} tickerSymbol={assetData?.tickerSymbol} value={assetData?.price} />
 
           <Box sx={{ background: '#171717', paddingX: '61px', paddingY: '20px', marginTop: '28px' }}>
             <Stack sx={{ border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
