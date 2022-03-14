@@ -17,7 +17,7 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
         <Box sx={{ marginLeft: '14px', fontSize: '20px' }}>{tickerName} ({tickerSymbol})</Box>
       </Box>
       <Box sx={{ textAlign: 'right' }}>
-        <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#6c6c6c' }}>Indicator Price</Box>
+        <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#6c6c6c' }}>iAsset Price</Box>
         <Box sx={{ fontSize: '18px', fontWeight: '500' }}>{value} <span style={{ fontSize: '14px' }}>USD</span></Box>
       </Box>
     </StyledStack>

@@ -6,7 +6,7 @@ interface Props {
   tickerName: string | null,
   tickerSymbol: string | null,
   value?: number,
-  headerTitle: string,
+  headerTitle?: string,
   headerValue?: number,
   onChange?: any
 }
@@ -15,9 +15,11 @@ const PairInput: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymbol, valu
   
   return (
     <FormControl variant='standard' sx={{ width: '100%' }}>
-      <Stack direction="row" justifyContent="flex-end">
-        <Box sx={{ fontSize: '13px', fontWeight: '500', marginBottom: '2px' }}>{headerTitle}: {headerValue}</Box>
-      </Stack>
+      { headerTitle ?
+        <Stack direction="row" justifyContent="flex-end">
+          <Box sx={{ fontSize: '13px', fontWeight: '500', marginBottom: '2px' }}>{headerTitle}: {headerValue}</Box>
+        </Stack> : <></>
+      }
       <FormStack direction="row" justifyContent="space-between" alignItems="center">
         <Box display="flex">
           <Image src={tickerIcon} width="28px" height="28px" />

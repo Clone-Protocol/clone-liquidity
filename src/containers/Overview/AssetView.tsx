@@ -34,9 +34,15 @@ const AssetView = () => {
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
+      // TODO: to bind with contract
+      const lowerLimit = 20
+      const upperLimit = 160
+
       newData = {
         ...assetData,
-        collAmount: amount
+        collAmount: amount,
+        lowerLimit,
+        upperLimit
       }
 		} else {
       newData = {
@@ -49,9 +55,15 @@ const AssetView = () => {
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
+      // TODO: to bind with contract
+      const lowerLimit = 20
+      const upperLimit = 160
+
       const newData = {
         ...assetData,
-        collRatio: newValue
+        collRatio: newValue,
+        lowerLimit,
+        upperLimit
       }
       setAssetData(newData)
     }
@@ -61,9 +73,15 @@ const AssetView = () => {
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
+      // TODO: to bind with contract
+      const lowerLimit = 20
+      const upperLimit = 160
+
       newData = {
         ...assetData,
-        mintAmount: amount
+        mintAmount: amount,
+        lowerLimit,
+        upperLimit
       }
 		} else {
       newData = {
@@ -163,8 +181,8 @@ const AssetView = () => {
               <Box sx={{ marginTop: '15px' }}>
                 <RatioSlider min={0} max={100} value={assetData.collRatio} onChange={handleChangeCollRatio} />
               </Box>
-              <Box sx={{ marginBottom: '25px' }}>
-                <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={assetData.mintAmount} headerTitle="Max amount mintable" headerValue={0} onChange={handleChangeToAmount} />
+              <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
+                <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={assetData.mintAmount} onChange={handleChangeToAmount} />
               </Box>
               <PairInputView tickerIcon={ethLogo} tickerSymbol="iSOL" value={assetData.mintAmount} />
             </Box>
@@ -174,7 +192,7 @@ const AssetView = () => {
               <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box></SubTitle>
 
               <Box sx={{ marginTop: '110px', marginBottom: '15px'}}>
-                <ConcentrationRange assetData={assetData} tightDistance={30} onChange={handleChangeConcentRange} />
+                <ConcentrationRange assetData={assetData} onChange={handleChangeConcentRange} />
               </Box>
               
               <Grid container spacing={2}>

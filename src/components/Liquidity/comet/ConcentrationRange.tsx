@@ -13,7 +13,6 @@ const RIGHT_SLIDER_THUMB_COLOR = '#0038ff'
 
 interface Props {
   assetData: AssetData,
-  tightDistance: number,
   onChange?: (isTight: boolean, lowerLimit: number, upperLimit: number) => void
 }
 
@@ -142,10 +141,11 @@ function ValueLabelComponent(props: {
   );
 }
 
-const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, onChange }) => {
+const ConcentrationRange: React.FC<Props> = ({ assetData, onChange }) => {
   const [centerPrice, setCenterPrice] = useState(assetData.centerPrice)
   const minLimit = 0
   const maxLimit = 200
+  const centerPricePercent = assetData.centerPrice * 100 / maxLimit
 
   // const [value, setValue] = useState<number[]>([20, 180])
   const [value, setValue] = useState<number[]>([assetData.lowerLimit, assetData.upperLimit])
@@ -168,6 +168,12 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, on
     }
   })
 
+  useEffect(() => {
+    if (assetData.lowerLimit && assetData.upperLimit) {
+      setValue([assetData.lowerLimit, assetData.upperLimit])
+    }
+  }, [assetData.lowerLimit, assetData.upperLimit])
+
   const handleChange = (
     event: Event,
     newValue: number | number[],
@@ -180,12 +186,13 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, on
     }
   
     if (activeThumb === 0) {
-      const leftValFromCenter = Math.abs(centerPrice - newValue[0])
-      const rightVal = maxLimit - newValue[0]
+      // const leftValFromCenter = Math.abs(centerPrice - newValue[0])
+      // const rightVal = maxLimit - newValue[0]
+      const rightVal = newValue[1]
       setValue([newValue[0], rightVal])
 
       // Tight Concentration
-      if (newValue[1] - newValue[0] <= tightDistance) {
+      if (newValue[1] - newValue[0] <= assetData.tightRange) {
           // const clamped = Math.min(newValue[0], 100 - minDistance);
           // setValue([clamped, clamped + minDistance]);
         // setValue(newValue as number[]);
@@ -209,7 +216,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, on
           }
         })
 
-        onChange(true, newValue[0], newValue[1])
+        onChange && onChange(true, newValue[0], newValue[1])
       } else {
         setTrackCss({
           '& .MuiSlider-track': {
@@ -229,7 +236,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, on
             }
           }
         })
-        onChange(false, newValue[0], newValue[1])
+        onChange && onChange(false, newValue[0], newValue[1])
       }
 
     }
@@ -248,7 +255,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, tightDistance = 10, on
         valueLabelDisplay="on"
         value={value}
       />
-      <CenterPriceBox>
+      <CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 43px)` }}>
         {centerPrice}
         <Stick />
       </CenterPriceBox>
