@@ -31,7 +31,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 		let tickerSymbol = ''
 		let tickerIcon = ''
 		let assetType: number
-		switch (info[0]) {
+		switch (Number(info[0])) {
 			case Asset.Solana:
 				tickerName = 'iSolana'
 				tickerSymbol = 'iSOL'

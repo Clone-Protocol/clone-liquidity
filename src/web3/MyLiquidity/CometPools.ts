@@ -1,8 +1,7 @@
-import { PublicKey } from "@solana/web3.js"
-import { Incept } from "sdk/src"
+import { PublicKey } from '@solana/web3.js'
+import { Incept } from 'sdk/src'
 
 enum Collateral {
-	mockUSDC,
 	USDi,
 }
 
@@ -19,24 +18,24 @@ enum AssetType {
 }
 
 export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps) => {
-  if (!userPubKey) return []
+	if (!userPubKey) return []
 
-  await program.loadManager()
-  const cometInfos = await program.getUserCometInfos()
+	await program.loadManager()
+	const cometInfos = await program.getUserCometInfos()
 
 	const result: PoolList[] = []
 
-  let i = 0
+	let i = 0
 
 	for (var info of cometInfos) {
-    i++
+		i++
 		let tickerName = ''
 		let collateralName = ''
 		let tickerSymbol = ''
 		let tickerIcon = ''
 		let assetType: number
 		let collateralType: number
-		switch (info[0]) {
+		switch (Number(info[0])) {
 			case Asset.Solana:
 				tickerName = 'iSolana'
 				tickerSymbol = 'iSOL'
@@ -52,11 +51,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 			default:
 				throw new Error('Not supported')
 		}
-    switch (info[1]) {
-			case Collateral.mockUSDC:
-				collateralName = 'mockUSDC'
-				collateralType = Collateral.mockUSDC
-				break
+		switch (Number(info[1])) {
 			case Collateral.USDi:
 				collateralName = 'USDi'
 				collateralType = Collateral.USDi
@@ -69,55 +64,55 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
-      collateralName: collateralName,
+			collateralName: collateralName,
 			assetType: assetType,
 			collateralType: collateralType,
 			iPrice: Number(info[2]),
 			cPrice: Number(info[3]),
-      fromPriceRange: Number(info[4]),
-      toPriceRange: Number(info[5]),
-      collateral: Number(info[6]),
-      ildIsIasset: Boolean(info[7]),
-      ild: Number(info[8]),
-      borrowedIasset: Number(info[9]),
-      borrowedUsdi: Number(info[10]),
-      liquidityTokenAmount: Number(info[11]),
+			fromPriceRange: Number(info[4]),
+			toPriceRange: Number(info[5]),
+			collateral: Number(info[6]),
+			ildIsIasset: Boolean(info[7]),
+			ild: Number(info[8]),
+			borrowedIasset: Number(info[9]),
+			borrowedUsdi: Number(info[10]),
+			liquidityTokenAmount: Number(info[11]),
 		})
 	}
 
-  // const result: PoolList[] = [
-  //   {
-  //     id: 1,
-  //     tickerName: 'iSolana',
-  //     tickerSymbol: 'iSOL',
-  //     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-  //     iPrice: 160.51,
-  //     cPrice: 100.20,
-  //     fromPriceRange: 90.11,
-  //     toPriceRange: 111.48,
-  //     collateral: 15898343,
-  //     ild: 28.9
-  //   },
-  //   {
-  //     id: 2,
-  //     tickerName: 'iEthereum',
-  //     tickerSymbol: 'iETH',
-  //     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-  //     iPrice: 2300.53,
-  //     cPrice: 100.20,
-  //     fromPriceRange: 90.11,
-  //     toPriceRange: 111.48,
-  //     collateral: 15898343,
-  //     ild: 28.9
-  //   }
-  // ]
-  return result
+	// const result: PoolList[] = [
+	//   {
+	//     id: 1,
+	//     tickerName: 'iSolana',
+	//     tickerSymbol: 'iSOL',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+	//     iPrice: 160.51,
+	//     cPrice: 100.20,
+	//     fromPriceRange: 90.11,
+	//     toPriceRange: 111.48,
+	//     collateral: 15898343,
+	//     ild: 28.9
+	//   },
+	//   {
+	//     id: 2,
+	//     tickerName: 'iEthereum',
+	//     tickerSymbol: 'iETH',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+	//     iPrice: 2300.53,
+	//     cPrice: 100.20,
+	//     fromPriceRange: 90.11,
+	//     toPriceRange: 111.48,
+	//     collateral: 15898343,
+	//     ild: 28.9
+	//   }
+	// ]
+	return result
 }
 
 interface GetPoolsProps {
-  program: Incept,
-  userPubKey: PublicKey | null,
-  filter: FilterType
+	program: Incept
+	userPubKey: PublicKey | null
+	filter: FilterType
 }
 
 export enum FilterTypeMap {
@@ -125,7 +120,7 @@ export enum FilterTypeMap {
 	'crypto' = 'Crypto',
 	'stocks' = 'Stocks',
 	'fx' = 'FX',
-  'commodities' = 'Commodities'
+	'commodities' = 'Commodities',
 }
 export type FilterType = keyof typeof FilterTypeMap
 
@@ -135,21 +130,21 @@ export type FilterType = keyof typeof FilterTypeMap
 // }
 
 export interface PoolList {
-  id: number
-  tickerName: string
-  tickerSymbol: string
-  tickerIcon: string
-  collateralName: string
-  assetType: number
-  collateralType: number
-  iPrice: number
-  cPrice: number
-  fromPriceRange: number
-  toPriceRange: number
-  collateral: number
-  ildIsIasset: boolean
-  ild: number
-  borrowedIasset: number
-  borrowedUsdi: number
-  liquidityTokenAmount: number
+	id: number
+	tickerName: string
+	tickerSymbol: string
+	tickerIcon: string
+	collateralName: string
+	assetType: number
+	collateralType: number
+	iPrice: number
+	cPrice: number
+	fromPriceRange: number
+	toPriceRange: number
+	collateral: number
+	ildIsIasset: boolean
+	ild: number
+	borrowedIasset: number
+	borrowedUsdi: number
+	liquidityTokenAmount: number
 }

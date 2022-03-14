@@ -14,6 +14,9 @@ const RIGHT_SLIDER_THUMB_COLOR = '#0038ff'
 interface Props {
   assetData: AssetData,
   onChange?: (isTight: boolean, lowerLimit: number, upperLimit: number) => void
+  max: number,
+  defaultLower: number,
+  defaultUpper: number
 }
 
 const RangeSlider = styled(Slider)(({ theme }) => ({
@@ -141,10 +144,10 @@ function ValueLabelComponent(props: {
   );
 }
 
-const ConcentrationRange: React.FC<Props> = ({ assetData, onChange }) => {
+const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, defaultLower, defaultUpper }) => {
   const [centerPrice, setCenterPrice] = useState(assetData.centerPrice)
   const minLimit = 0
-  const maxLimit = 200
+  const maxLimit = max
   const centerPricePercent = assetData.centerPrice * 100 / maxLimit
 
   // const [value, setValue] = useState<number[]>([20, 180])
@@ -250,7 +253,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange }) => {
         max={maxLimit}
         components={{ Thumb: ThumbComponent }}
         onChange={handleChange}
-        defaultValue={[20, 180]}
+        defaultValue={[defaultLower, defaultUpper]}
         disableSwap
         valueLabelDisplay="on"
         value={value}

@@ -1,5 +1,6 @@
-import { PublicKey } from "@solana/web3.js"
-import { Incept } from "sdk/src"
+import { PriceChangeOutlined } from '@mui/icons-material'
+import { PublicKey } from '@solana/web3.js'
+import { Incept } from 'sdk/src'
 import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 
 enum Asset {
@@ -8,22 +9,16 @@ enum Asset {
 }
 
 export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps) => {
-  if (!userPubKey) return 
+	if (!userPubKey) return
 
 	await program.loadManager()
 	const balances = await program.getPoolBalances(index)
-  let price = balances[1] / balances[0]
+	let price = balances[1] / balances[0]
 	let tickerIcon = ''
 	let tickerName = ''
 	let tickerSymbol = ''
-  let isTight = false
-  let tightRange = 10
-  let collAmount = 0.0
-  let collRatio = 50
-  let mintAmount = 0.0
-  let lowerLimit = 20.0
-  let centerPrice = 100.0
-  let upperLimit = 180.0
+	let tightRange = price * 0.1
+	let maxRange = 2 * price
 	switch (index) {
 		case Asset.Solana:
 			tickerIcon = ethLogo
@@ -43,34 +38,29 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
 		price,
-    isTight,
-    tightRange,
-    collAmount,
-    collRatio,
-    mintAmount,
-    lowerLimit,
-    centerPrice,
-    upperLimit
+		tightRange,
+		maxRange,
 	}
 }
 
 interface GetProps {
-  program: Incept,
-  userPubKey: PublicKey | null,
-  index: number
+	program: Incept
+	userPubKey: PublicKey | null
+	index: number
 }
 
 export interface PositionInfo {
-  tickerIcon: string
+	tickerIcon: string
 	tickerName: string
 	tickerSymbol: string | null
-  price: number
-  isTight: boolean
-  tightRange: number
-  collAmount: number
-  collRatio: number
-  mintAmount: number
-  lowerLimit: number
-  centerPrice: number
-  upperLimit: number 
+	price: number
+	isTight: boolean
+	tightRange: number
+	maxRange: number
+	collAmount: number
+	collRatio: number
+	mintAmount: number
+	lowerLimit: number
+	centerPrice: number
+	upperLimit: number
 }

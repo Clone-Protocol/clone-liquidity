@@ -19,374 +19,577 @@ import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
 import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
-import { UnconcentratedData as UnconcentPI, fetchUnconcentDetail } from '~/web3/MyLiquidity/UnconcentPosition'
+import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
 import { fetchAsset, fetchUnconcentrated } from '~/features/Overview/Asset.query'
+import { callComet } from '~/web3/Comet/comet'
+import { callLiquidity } from '~/web3/UnconcentratedLiquidity/liquidity'
 
-const AssetView = ({ assetId } : { assetId: string}) => {
-  const { publicKey } = useWallet()
-  const { getInceptApp } = useIncept()
-  const [tab, setTab] = useState(0)
+const AssetView = ({ assetId }: { assetId: string }) => {
+	const { publicKey } = useWallet()
+	const { getInceptApp } = useIncept()
+	const [tab, setTab] = useState(0)
 
-  //comet liquidity
-  const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
-  //unconcentrated liquidity
-  const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated())
-  const [usdiBalance, setUsdiBalance] = useState(0)
+	//comet liquidity
+	const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
+	//unconcentrated liquidity
+	const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated())
 
-  useEffect(() => {
-    const program = getInceptApp()
+	useEffect(() => {
+		const program = getInceptApp()
 
-    async function fetch() {
-      if (assetId) {
-        const data = await fetchCometDetail({
-          program,
-          userPubKey: publicKey,
-          index: parseInt(assetId)
-        })
-        if (data) {
-          setAssetData(data)
-        }
+		async function fetch() {
+			if (assetId) {
+				const data = (await fetchCometDetail({
+					program,
+					userPubKey: publicKey,
+					index: parseInt(assetId) - 1,
+				})) as PI
+				if (data) {
+					data.lowerLimit = data.price / 2
+					data.upperLimit = (data.price * 3) / 2
+					setAssetData(data)
+				}
 
-        const balance = await fetchBalance({
-          program,
-          userPubKey: publicKey
-        })
-        if (balance) {
-          setUsdiBalance(balance.balanceVal)
-        }
-      } else {
-        console.error('wrong asset Id')
-      }
-    }
-    fetch()
-  }, [publicKey, assetId])
+				const balances = await fetchBalance({
+					program,
+					userPubKey: publicKey,
+					index: parseInt(assetId) - 1,
+				})
+				if (balances) {
+					setUnconcentData({
+						...unconcentData,
+						borrowToBalance: balances.usdiVal,
+						borrowFromBalance: balances.iassetVal,
+					})
+				}
+			} else {
+				console.error('wrong asset Id')
+			}
+		}
+		fetch()
+	}, [publicKey, assetId])
 
-  const changeTab = (newVal: number) => {
-    setTab(newVal)
-  }
+	const changeTab = (newVal: number) => {
+		setTab(newVal)
+	}
 
-  /** Comet Liquidity */
+	/** Comet Liquidity */
 
-  const handleChangeFromAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeFromAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-      // TODO: to bind with contract
-      const lowerLimit = 20
-      const upperLimit = 160
+			// TODO: to bind with contract
 
-      newData = {
-        ...assetData,
-        collAmount: amount,
-        lowerLimit,
-        upperLimit
-      }
+			newData = {
+				...assetData,
+				collAmount: amount,
+			}
 		} else {
-      newData = {
-        ...assetData,
-        collAmount: 0.0
-      }
+			newData = {
+				...assetData,
+				collAmount: 0.0,
+			}
 		}
-    setAssetData(newData)
+		setAssetData(newData)
 	}
 
-  // const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-  //   if (typeof newValue === 'number') {
-  //     // TODO: to bind with contract
-  //     const lowerLimit = 20
-  //     const upperLimit = 160
+	// const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+	//   if (typeof newValue === 'number') {
+	//     // TODO: to bind with contract
+	//     const lowerLimit = 20
+	//     const upperLimit = 160
 
-  //     const newData = {
-  //       ...assetData,
-  //       collRatio: newValue,
-  //       lowerLimit,
-  //       upperLimit
-  //     }
-  //     setAssetData(newData)
-  //   }
-  // }
+	//     const newData = {
+	//       ...assetData,
+	//       collRatio: newValue,
+	//       lowerLimit,
+	//       upperLimit
+	//     }
+	//     setAssetData(newData)
+	//   }
+	// }
 
-  const handleChangeToAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeToAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-      // TODO: to bind with contract
-      const lowerLimit = 20
-      const upperLimit = 160
 
-      newData = {
-        ...assetData,
-        mintAmount: amount,
-        lowerLimit,
-        upperLimit
-      }
+			const program = getInceptApp()
+			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+				0,
+				parseInt(assetId) - 1,
+				assetData.collAmount,
+				amount
+			))!
+			if (lowerLimit && upperLimit) {
+				newData = {
+					...assetData,
+					mintAmount: amount,
+					lowerLimit,
+					upperLimit
+				}
+			} else {
+				newData = {
+					...assetData,
+					mintAmount: amount,
+				}
+			}
 		} else {
-      newData = {
-        ...assetData,
-        mintAmount: 0.0
-      }
+			newData = {
+				...assetData,
+				mintAmount: 0.0,
+			}
 		}
-    setAssetData(newData)
+		setAssetData(newData)
 	}
 
-  const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
-    const newData = {
-      ...assetData,
-      isTight,
-      lowerLimit,
-      upperLimit
-    }
-    setAssetData(newData)
-  }
+	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
+		const newData = {
+			...assetData,
+			isTight,
+			lowerLimit,
+			upperLimit,
+		}
+		setAssetData(newData)
+	}
 
-  const onComet = () => {
-    console.log('assetData', assetData)
-  }
+	const onComet = async () => {
+		const program = getInceptApp()
+		await callComet({
+			program,
+			userPubKey: publicKey,
+			collateralIndex: 0,
+			iassetIndex: parseInt(assetId) - 1,
+			usdiAmount: assetData.mintAmount,
+			collateralAmount: assetData.collAmount,
+		})
+	}
 
+	/** Unconcentrated Liquidity */
 
-  /** Unconcentrated Liquidity */
-
-  const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newData
+	const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-      newData = {
-        ...unconcentData,
-        borrowFrom: amount
-      }
+			newData = {
+				...unconcentData,
+				borrowFrom: amount,
+				borrowTo: amount * assetData.price,
+			}
 		} else {
-      newData = {
-        ...unconcentData,
-        borrowFrom: 0.0
-      }
+			newData = {
+				...unconcentData,
+				borrowFrom: 0.0,
+			}
 		}
-    setUnconcentData(newData)
-  }
+		setUnconcentData(newData)
+	}
 
-  const handleBorrowTo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newData
+	const handleBorrowTo = (e: React.ChangeEvent<HTMLInputElement>) => {
+		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-      newData = {
-        ...unconcentData,
-        borrowTo: amount
-      }
+			newData = {
+				...unconcentData,
+				borrowTo: amount,
+				borrowFrom: amount / assetData.price,
+			}
 		} else {
-      newData = {
-        ...unconcentData,
-        borrowTo: 0.0
-      }
+			newData = {
+				...unconcentData,
+				borrowTo: 0.0,
+			}
 		}
-    setUnconcentData(newData)
-  }
+		setUnconcentData(newData)
+	}
 
-  const onLiquidity = () => {
-    console.log('unconcentData', unconcentData)
-  }
+	const onLiquidity = async () => {
+		const program = getInceptApp()
+		await callLiquidity({
+			program,
+			userPubKey: publicKey,
+			iassetIndex: parseInt(assetId) - 1,
+			iassetAmount: unconcentData.borrowFrom,
+		})
+	}
 
-  return (
-    <StyledBox>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Box sx={{ display: 'flex' }}>
-          <CometTab onClick={() => changeTab(0)}><Image src={CometIcon} /> <span style={{ marginLeft: '8px' }}>Comet Liquidity</span></CometTab>
-          <UnconcentTab onClick={() => changeTab(1)}><Image src={UnconcentIcon} /><span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span></UnconcentTab>
-        </Box>
-      </Box>
-      <Box sx={{ paddingY: '20px' }}>
-      { tab === 0 ?
-        <Box>
-          <PriceIndicatorBox tickerIcon={assetData?.tickerIcon} tickerName={assetData?.tickerName} tickerSymbol={assetData?.tickerSymbol} value={assetData?.price} />
+	return (
+		<StyledBox>
+			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+				<Box sx={{ display: 'flex' }}>
+					<CometTab onClick={() => changeTab(0)}>
+						<Image src={CometIcon} /> <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
+					</CometTab>
+					<UnconcentTab onClick={() => changeTab(1)}>
+						<Image src={UnconcentIcon} />
+						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span>
+					</UnconcentTab>
+				</Box>
+			</Box>
+			<Box sx={{ paddingY: '20px' }}>
+				{tab === 0 ? (
+					<Box>
+						<PriceIndicatorBox
+							tickerIcon={assetData?.tickerIcon}
+							tickerName={assetData?.tickerName}
+							tickerSymbol={assetData?.tickerSymbol}
+							value={assetData?.price}
+						/>
 
-          <Box sx={{ background: '#171717', paddingX: '61px', paddingY: '36px', marginTop: '28px' }}>
-            <Stack sx={{ border: '1px solid #00d0dd', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginBottom: '26px' }} direction="row">
-              <Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}><Image src={InfoBookIcon} /></Box>
-              <WarningBox>Fill in two of the three parts and the third part will automatically generate. <br /> Learn more here.</WarningBox>
-            </Stack>
+						<Box sx={{ background: '#171717', paddingX: '61px', paddingY: '36px', marginTop: '28px' }}>
+							<Stack
+								sx={{
+									border: '1px solid #00d0dd',
+									borderRadius: '10px',
+									color: '#9d9d9d',
+									padding: '12px',
+									marginBottom: '26px',
+								}}
+								direction="row">
+								<Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}>
+									<Image src={InfoBookIcon} />
+								</Box>
+								<WarningBox>
+									Fill in two of the three parts and the third part will automatically generate.{' '}
+									<br /> Learn more here.
+								</WarningBox>
+							</Stack>
 
-            <Box>
-              <SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box></SubTitle>
-              <PairInput tickerIcon={ethLogo} tickerName="USDi Coin" tickerSymbol="USDi" value={assetData?.collAmount} headerTitle="Balance" headerValue={usdiBalance} onChange={handleChangeFromAmount} />
-            </Box>
-            <StyledDivider />
+							<Box>
+								<SubTitle>
+									<Image src={OneIcon} />{' '}
+									<Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box>
+								</SubTitle>
+								<PairInput
+									tickerIcon={ethLogo}
+									tickerName="USDi Coin"
+									tickerSymbol="USDi"
+									value={assetData?.collAmount}
+									headerTitle="Balance"
+									headerValue={unconcentData.borrowToBalance}
+									onChange={handleChangeFromAmount}
+								/>
+							</Box>
+							<StyledDivider />
 
-            <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Amount of USDi-iSOL to mint into iSOL AMM</Box></SubTitle>
-              {/* <Box sx={{ marginTop: '15px' }}>
+							<Box>
+								<SubTitle>
+									<Image src={TwoIcon} />{' '}
+									<Box sx={{ marginLeft: '9px' }}>
+										Amount of USDi-{assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
+										AMM
+									</Box>
+								</SubTitle>
+								{/* <Box sx={{ marginTop: '15px' }}>
                 <RatioSlider min={0} max={100} value={assetData?.collRatio} onChange={handleChangeCollRatio} />
               </Box> */}
-              <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
-                <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={assetData?.mintAmount} onChange={handleChangeToAmount} />
-              </Box>
-              <PairInputView tickerIcon={ethLogo} tickerSymbol="iSOL" value={assetData?.mintAmount} />
-            </Box>
-            <StyledDivider />
+								<Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
+									<PairInput
+										tickerIcon={ethLogo}
+										tickerName="Incept USD"
+										tickerSymbol="USDi"
+										value={assetData?.mintAmount}
+										onChange={handleChangeToAmount}
+									/>
+								</Box>
+								<PairInputView
+									tickerIcon={ethLogo}
+									tickerSymbol={assetData.tickerSymbol}
+									value={assetData?.mintAmount / assetData.price}
+								/>
+							</Box>
+							<StyledDivider />
 
-            <Box>
-              <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box></SubTitle>
+							<Box>
+								<SubTitle>
+									<Image src={ThreeIcon} />{' '}
+									<Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box>
+								</SubTitle>
 
-              <Box sx={{ marginTop: '110px', marginBottom: '15px'}}>
-                <ConcentrationRange assetData={assetData} onChange={handleChangeConcentRange} />
-              </Box>
-              
-              <Grid container spacing={2}>
-                <Grid item xs>
-                  <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff', textAlign: 'center', marginBottom: '5px' }}>Lower Limit</Box>
-                  <Box sx={{ background: 'linear-gradient(180deg, #333333 55%, #171717 45%)', borderRadius: '10px', border: 'solid 1px #00f0ff', padding: '18px' }}>
-                    <PriceValue>{assetData?.lowerLimit}</PriceValue>
-                    <RangePair>USD / SOL</RangePair>
-                  </Box>
-                </Grid>
-                <Grid item xs={3}>
-                  <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF', textAlign: 'center', marginBottom: '5px' }}>Center Price</Box>
-                  <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
-                    <PriceValue>{assetData?.centerPrice}</PriceValue>
-                    <RangePair>USD / SOL</RangePair>
-                  </Box>
-                </Grid>
-                <Grid item xs>
-                  <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff', textAlign: 'center', marginBottom: '5px' }}>Upper Limit</Box>
-                  <Box sx={{ background: 'linear-gradient(180deg, #333333 55%, #171717 45%)', borderRadius: '10px', border: 'solid 1px #809cff', padding: '18px' }}>
-                    <PriceValue>{assetData?.upperLimit}</PriceValue>
-                    <RangePair>USD / SOL</RangePair>
-                  </Box>
-                </Grid>
-              </Grid>
+								<Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
+									<ConcentrationRange
+										assetData={assetData}
+										onChange={handleChangeConcentRange}
+										max={assetData.maxRange}
+										defaultLower={assetData.lowerLimit}
+										defaultUpper={assetData.upperLimit}
+									/>
+								</Box>
 
-              <Button onClick={() => changeTab(1)} sx={{ width: '100%', color: '#fff', background: '#171717', borderRadius: '10px', border: 'solid 1px #fff', marginTop: '26px', height: '40px', fontSize: '15px'}}>Unconcentrated Liquidity</Button>
+								<Grid container spacing={2}>
+									<Grid item xs>
+										<Box
+											sx={{
+												fontSize: '15px',
+												fontWeight: '500',
+												color: '#00f0ff',
+												textAlign: 'center',
+												marginBottom: '5px',
+											}}>
+											Lower Limit
+										</Box>
+										<Box
+											sx={{
+												background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
+												borderRadius: '10px',
+												border: 'solid 1px #00f0ff',
+												padding: '18px',
+											}}>
+											<PriceValue>{assetData?.lowerLimit}</PriceValue>
+											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
+										</Box>
+									</Grid>
+									<Grid item xs={3}>
+										<Box
+											sx={{
+												fontSize: '15px',
+												fontWeight: '500',
+												color: '#FFF',
+												textAlign: 'center',
+												marginBottom: '5px',
+											}}>
+											Center Price
+										</Box>
+										<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
+											<PriceValue>{assetData?.centerPrice}</PriceValue>
+											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
+										</Box>
+									</Grid>
+									<Grid item xs>
+										<Box
+											sx={{
+												fontSize: '15px',
+												fontWeight: '500',
+												color: '#809cff',
+												textAlign: 'center',
+												marginBottom: '5px',
+											}}>
+											Upper Limit
+										</Box>
+										<Box
+											sx={{
+												background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
+												borderRadius: '10px',
+												border: 'solid 1px #809cff',
+												padding: '18px',
+											}}>
+											<PriceValue>{assetData?.upperLimit}</PriceValue>
+											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
+										</Box>
+									</Grid>
+								</Grid>
 
-              { assetData?.isTight ? <Stack sx={{ maxWidht: '653px', border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
-                <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}><Image src={WarningIcon} /></Box>
-                <WarningBox>Liquidity concentration range for this position is very slim, this results in higher potential yield and high probabily of liqudiation.</WarningBox>
-              </Stack> : <></>
-              }
-            </Box>
-            <StyledDivider />
+								<Button
+									onClick={() => changeTab(1)}
+									sx={{
+										width: '100%',
+										color: '#fff',
+										background: '#171717',
+										borderRadius: '10px',
+										border: 'solid 1px #fff',
+										marginTop: '26px',
+										height: '40px',
+										fontSize: '15px',
+									}}>
+									Unconcentrated Liquidity
+								</Button>
 
-            <CometButton onClick={onComet}>Create Comet Position</CometButton>
-          </Box>
-        </Box>
-      : <Box>
-          <PriceIndicatorBox tickerIcon={assetData?.tickerIcon} tickerName={assetData?.tickerName} tickerSymbol={assetData?.tickerSymbol} value={assetData?.price} />
+								{assetData?.isTight ? (
+									<Stack
+										sx={{
+											maxWidht: '653px',
+											border: '1px solid #e9d100',
+											borderRadius: '10px',
+											color: '#9d9d9d',
+											padding: '12px',
+											marginTop: '19px',
+											marginBottom: '30px',
+										}}
+										direction="row">
+										<Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
+											<Image src={WarningIcon} />
+										</Box>
+										<WarningBox>
+											Liquidity concentration range for this position is very slim, this results
+											in higher potential yield and high probabily of liqudiation.
+										</WarningBox>
+									</Stack>
+								) : (
+									<></>
+								)}
+							</Box>
+							<StyledDivider />
 
-          <Box sx={{ background: '#171717', paddingX: '61px', paddingY: '20px', marginTop: '28px' }}>
-            <Stack sx={{ border: '1px solid #e9d100', borderRadius: '10px', color: '#9d9d9d', padding: '12px', marginTop: '19px', marginBottom: '30px' }} direction="row">
-              <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}><Image src={WarningIcon} /></Box>
-              <WarningBox>Unconcentrated liquidity positions are less capital efficent than coment liquidity. Learn more here.</WarningBox>
-            </Stack>
+							<CometButton onClick={onComet}>Create Comet Position</CometButton>
+						</Box>
+					</Box>
+				) : (
+					<Box>
+						<PriceIndicatorBox
+							tickerIcon={assetData?.tickerIcon}
+							tickerName={assetData?.tickerName}
+							tickerSymbol={assetData?.tickerSymbol}
+							value={assetData?.price}
+						/>
 
-            <Box>
-              <SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}> Provide iSOL</Box></SubTitle>
-              <SubTitleComment>Acquire iSOL by <span style={{color: '#fff'}}>Borrowing</span></SubTitleComment>
-              <PairInput tickerIcon={ethLogo} tickerName="iSolana" tickerSymbol="iSOL" value={unconcentData.borrowFrom} headerTitle="balance" headerValue={unconcentData.borrowFromBalance} onChange={handleBorrowFrom} />
-            </Box>
-            <StyledDivider />
+						<Box sx={{ background: '#171717', paddingX: '61px', paddingY: '20px', marginTop: '28px' }}>
+							<Stack
+								sx={{
+									border: '1px solid #e9d100',
+									borderRadius: '10px',
+									color: '#9d9d9d',
+									padding: '12px',
+									marginTop: '19px',
+									marginBottom: '30px',
+								}}
+								direction="row">
+								<Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
+									<Image src={WarningIcon} />
+								</Box>
+								<WarningBox>
+									Unconcentrated liquidity positions are less capital efficent than coment liquidity.
+									Learn more here.
+								</WarningBox>
+							</Stack>
 
-            <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}> Provide USDi</Box></SubTitle>
-              <SubTitleComment>An equivalent USDi amount must be provided</SubTitleComment>
-              <PairInput tickerIcon={ethLogo} tickerName="USDi" tickerSymbol="USDi" value={unconcentData.borrowTo} headerTitle="balance" headerValue={unconcentData.borrowToBalance} onChange={handleBorrowTo} />
-            </Box>
-            <StyledDivider />
+							<Box>
+								<SubTitle>
+									<Image src={OneIcon} />{' '}
+									<Box sx={{ marginLeft: '9px' }}> Provide {assetData.tickerSymbol}</Box>
+								</SubTitle>
+								<SubTitleComment>
+									Acquire {assetData.tickerSymbol} by <span style={{ color: '#fff' }}>Borrowing</span>
+								</SubTitleComment>
+								<PairInput
+									tickerIcon={ethLogo}
+									tickerName={assetData.tickerName}
+									tickerSymbol={assetData.tickerSymbol}
+									value={unconcentData.borrowFrom}
+									headerTitle="balance"
+									headerValue={unconcentData.borrowFromBalance}
+									onChange={handleBorrowFrom}
+								/>
+							</Box>
+							<StyledDivider />
 
-            <LiquidityButton onClick={onLiquidity}>Create Liquidity Position</LiquidityButton>
-          </Box>
-        </Box>
-      }
-      </Box>
-    </StyledBox>
-  )
+							<Box>
+								<SubTitle>
+									<Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}> Provide USDi</Box>
+								</SubTitle>
+								<SubTitleComment>An equivalent USDi amount must be provided</SubTitleComment>
+								<PairInput
+									tickerIcon={ethLogo}
+									tickerName="USDi"
+									tickerSymbol="USDi"
+									value={unconcentData.borrowTo}
+									headerTitle="balance"
+									headerValue={unconcentData.borrowToBalance}
+									onChange={handleBorrowTo}
+								/>
+							</Box>
+							<StyledDivider />
+
+							<LiquidityButton onClick={onLiquidity}>Create Liquidity Position</LiquidityButton>
+						</Box>
+					</Box>
+				)}
+			</Box>
+		</StyledBox>
+	)
 }
 
 const StyledBox = styled(Paper)`
-  maxWidth: 768px;
-  font-size: 14px;
-  font-weight: 500; 
-  text-align: center;
-  color: #fff;
-  border-radius: 8px;
-  text-align: left;
-  background: #000;
-  padding-left: 30px;
-  padding-top: 36px;
-  padding-bottom: 42px;
-  padding-right: 33px;
+	maxwidth: 768px;
+	font-size: 14px;
+	font-weight: 500;
+	text-align: center;
+	color: #fff;
+	border-radius: 8px;
+	text-align: left;
+	background: #000;
+	padding-left: 30px;
+	padding-top: 36px;
+	padding-bottom: 42px;
+	padding-right: 33px;
 `
 const StyledDivider = styled(Divider)`
-  background-color: #535353;
-  margin-bottom: 30px;
-  margin-top: 30px;
-  height: 1px;
+	background-color: #535353;
+	margin-bottom: 30px;
+	margin-top: 30px;
+	height: 1px;
 `
 
 const CometTab = styled(Button)`
-  width: 224px;
-  height: 40px;
-  padding: 9px 24px 9px 24.5px;
-  border-radius: 10px;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+	width: 224px;
+	height: 40px;
+	padding: 9px 24px 9px 24.5px;
+	border-radius: 10px;
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+		linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
+	font-size: 14px;
+	font-weight: 600;
+	color: #fff;
 `
 
 const UnconcentTab = styled(Button)`
-  width: 284px;
-  height: 40px;
-  border-radius: 10px;
-  background-color: #171717;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+	width: 284px;
+	height: 40px;
+	border-radius: 10px;
+	background-color: #171717;
+	font-size: 14px;
+	font-weight: 600;
+	color: #fff;
 `
 
 const SubTitle = styled(Box)`
-  display: flex;
-  font-size: 18px;
-  font-weight: 500;
+	display: flex;
+	font-size: 18px;
+	font-weight: 500;
 `
 
 const SubTitleComment = styled('div')`
-  font-size: 14px;
-  font-weight: 500;
-  color: #989898;
-  margin-top: 10px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #989898;
+	margin-top: 10px;
 `
 
 const WarningBox = styled(Box)`
-  max-width: 500px;
-  padding-right: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #989898;
+	max-width: 500px;
+	padding-right: 10px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #989898;
 `
 
 const PriceValue = styled('div')`
-  font-size: 20px;
-  font-weight: 500;
-  text-align: center;
+	font-size: 20px;
+	font-weight: 500;
+	text-align: center;
 `
 
 const RangePair = styled('div')`
-  font-size: 13px;
-  font-weight: 500;
-  padding-top: 10px;
-  text-align: center;
+	font-size: 13px;
+	font-weight: 500;
+	padding-top: 10px;
+	text-align: center;
 `
 
 const CometButton = styled(Button)`
-  width: 100%;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
-  color: #fff;
-  border-radius: 10px;
-  margin-bottom: 15px;
+	width: 100%;
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+		linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
+	color: #fff;
+	border-radius: 10px;
+	margin-bottom: 15px;
 `
 const LiquidityButton = styled(Button)`
-  width: 100%;
-  background-color: #575757;
-  color: #fff;
-  border-radius: 10px;
-  margin-bottom: 15px;
+	width: 100%;
+	background-color: #575757;
+	color: #fff;
+	border-radius: 10px;
+	margin-bottom: 15px;
 `
-
 
 export default AssetView

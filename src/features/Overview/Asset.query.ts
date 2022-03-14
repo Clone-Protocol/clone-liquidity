@@ -9,6 +9,7 @@ export const fetchAsset = () => {
     price: 110.78,
     isTight: false,
     tightRange: 30,
+    maxRange: 200.0,
     collAmount: 0.0,
     collRatio: 50,
     mintAmount: 0.0,
@@ -25,6 +26,7 @@ export interface AssetData {
   price: number
   isTight: boolean
   tightRange: number
+  maxRange: number
   collAmount: number
   collRatio: number
   mintAmount: number
