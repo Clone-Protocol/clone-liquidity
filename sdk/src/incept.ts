@@ -1123,14 +1123,12 @@ export class Incept {
 	}
 
 	public async addCollateralToComet(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		cometIndex: number,
 		signers: Array<Keypair>
 	) {
 		const addCollateralToCometIx = await this.addCollateralToCometInstruction(
-			user,
 			userCollateralTokenAccount,
 			collateralAmount,
 			cometIndex
@@ -1138,7 +1136,6 @@ export class Incept {
 		await this.provider.send(new Transaction().add(addCollateralToCometIx), signers)
 	}
 	public async addCollateralToCometInstruction(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		cometIndex: number
@@ -1155,7 +1152,7 @@ export class Incept {
 			collateralAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					cometPositions: userAccount.cometPositions,

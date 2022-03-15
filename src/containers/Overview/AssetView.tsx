@@ -44,6 +44,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 					program,
 					userPubKey: publicKey,
 					index: parseInt(assetId) - 1,
+					cometIndex: -1
 				})) as PI
 				if (data) {
 					data.lowerLimit = data.price / 2
@@ -77,13 +78,30 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 	/** Comet Liquidity */
 
-	const handleChangeFromAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeFromAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-			newData = {
-				...assetData,
-				collAmount: amount,
+
+			const program = getInceptApp()
+			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+				0,
+				parseInt(assetId) - 1,
+				amount,
+				assetData.mintAmount
+			))!
+			if (lowerLimit && upperLimit) {
+				newData = {
+					...assetData,
+					collAmount: amount,
+					lowerLimit,
+					upperLimit,
+				}
+			} else {
+				newData = {
+					...assetData,
+					collAmount: amount,
+				}
 			}
 		} else {
 			newData = {

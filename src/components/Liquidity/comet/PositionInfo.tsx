@@ -32,7 +32,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
-                <DetailValue>{positionInfo.mintAmount} iSOL</DetailValue>
+                <DetailValue>{positionInfo.mintAmount} {positionInfo.tickerSymbol}</DetailValue>
               </Stack>
             </Box>
           </Box>
@@ -43,15 +43,15 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
             <Box sx={{ marginTop: '20px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price</DetailHeader>
-                <DetailValue>{positionInfo?.centerPrice.toFixed(2)} USD</DetailValue>
+                <DetailValue>{positionInfo?.centerPrice.toFixed(2)} USDi</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Lower limit</DetailHeader>
-                <DetailValue>{positionInfo?.lowerLimit.toFixed(2)} USD</DetailValue>
+                <DetailValue>{positionInfo?.lowerLimit.toFixed(2)} USDi</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Upper limit</DetailHeader>
-                <DetailValue>{positionInfo?.upperLimit.toFixed(2)} USD</DetailValue>
+                <DetailValue>{positionInfo?.upperLimit.toFixed(2)} USDi</DetailValue>
               </Stack>
             </Box>
           </Box>

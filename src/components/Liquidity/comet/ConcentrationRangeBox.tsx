@@ -45,8 +45,8 @@ const ConcentrationRangeBox: React.FC<Props> = ({ positionInfo }) => {
           Center Price
         </Box>
         <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
-          <PriceValue>{positionInfo.centerPrice.toFixed(2)}</PriceValue>
-          <RangePair>USD / {positionInfo.tickerSymbol}</RangePair>
+          <PriceValue>{positionInfo.price.toFixed(2)}</PriceValue>
+          <RangePair>USDi / {positionInfo.tickerSymbol}</RangePair>
         </Box>
       </Grid>
       <Grid item xs>
@@ -68,7 +68,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ positionInfo }) => {
             padding: '18px',
           }}>
           <PriceValue>{positionInfo.upperLimit.toFixed(2)}</PriceValue>
-          <RangePair>USD / {positionInfo.tickerSymbol}</RangePair>
+          <RangePair>USDi / {positionInfo.tickerSymbol}</RangePair>
         </Box>
       </Grid>
     </Grid>

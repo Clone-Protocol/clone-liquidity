@@ -8,7 +8,7 @@ enum Asset {
 	Ethereum,
 }
 
-export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps) => {
+export const fetchCometDetail = async ({ program, userPubKey, index, cometIndex }: GetProps) => {
 	if (!userPubKey) return
 
 	await program.loadManager()
@@ -19,6 +19,11 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 	let tickerSymbol = ''
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
+	let centerPrice = price
+	if (cometIndex != -1) {
+		let comet = await program.getCometPosition(cometIndex)
+		centerPrice = Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
+	}
 	switch (index) {
 		case Asset.Solana:
 			tickerIcon = ethLogo
@@ -40,13 +45,15 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 		price,
 		tightRange,
 		maxRange,
+		centerPrice
 	}
 }
 
 interface GetProps {
 	program: Incept
 	userPubKey: PublicKey | null
-	index: number
+	index: number,
+	cometIndex: number
 }
 
 export interface PositionInfo {

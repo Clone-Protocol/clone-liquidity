@@ -49,12 +49,12 @@ let columns: GridColDef[] = [
   } },
 	{ field: 'iPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Indicator price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
   { field: 'cPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Center price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
   { field: 'priceRange', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
