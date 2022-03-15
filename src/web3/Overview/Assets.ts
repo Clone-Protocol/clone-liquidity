@@ -2,16 +2,97 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 
 enum Asset {
-	Solana = 1,
-	Ethereum = 2,
+	Euro = 1,
+	Gold = 2,
+	Solana = 3,
+	Ethereum = 4,
+	Bitcoin = 5,
+	Luna = 6,
+	Avalanche = 7,
+	Tesla = 8,
+	Apple = 9,
+	Amazon = 10
 }
 
 enum AssetType {
 	Crypto,
 	Stocks,
 	Fx,
-	Comodotities,
+	Commodities,
 }
+
+const assetMapping = (index: number) => {
+	let tickerName = ''
+	let tickerSymbol = ''
+	let tickerIcon = ''
+	let assetType: number
+	switch (index) {
+		case Asset.Euro:
+			tickerName = 'iEuro'
+			tickerSymbol = 'iEUR'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Fx
+			break
+		case Asset.Gold:
+			tickerName = 'iSPTSGD (GOLD INDEX)'
+			tickerSymbol = 'iSPTSGD'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Commodities
+			break
+		case Asset.Solana:
+			tickerName = 'iSolana'
+			tickerSymbol = 'iSOL'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		case Asset.Ethereum:
+			tickerName = 'iEthereum'
+			tickerSymbol = 'iETH'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		case Asset.Bitcoin:
+			tickerName = 'iBitcoin'
+			tickerSymbol = 'iBTC'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		case Asset.Luna:
+			tickerName = 'iLuna'
+			tickerSymbol = 'iLUNA'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		case Asset.Avalanche:
+			tickerName = 'iAvalanche'
+			tickerSymbol = 'iAVAX'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Crypto
+			break
+		case Asset.Tesla:
+			tickerName = 'iTesla'
+			tickerSymbol = 'iTLSA'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Stocks
+			break
+		case Asset.Apple:
+			tickerName = 'iApple'
+			tickerSymbol = 'iAAPL'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Stocks
+			break
+		case Asset.Amazon:
+			tickerName = 'iAmazon'
+			tickerSymbol = 'iAMZN'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			assetType = AssetType.Stocks
+			break
+		default:
+			throw new Error('Not supported')
+	}
+
+	return { tickerName, tickerSymbol, tickerIcon, assetType }
+} 
 
 export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProps) => {
 	if (!userPubKey) return []
@@ -23,26 +104,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProp
 	const result: AssetList[] = []
 
 	for (var info of iassetInfos) {
-		let tickerName = ''
-		let tickerSymbol = ''
-		let tickerIcon = ''
-		let assetType: number
-		switch (info[0]) {
-			case Asset.Solana:
-				tickerName = 'iSolana'
-				tickerSymbol = 'iSOL'
-				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
-				assetType = AssetType.Crypto
-				break
-			case Asset.Ethereum:
-				tickerName = 'iEthereum'
-				tickerSymbol = 'iETH'
-				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
-				assetType = AssetType.Crypto
-				break
-			default:
-				throw new Error('Not supported')
-		}
+		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0]);
 		result.push({
 			id: info[0],
 			tickerName: tickerName,
