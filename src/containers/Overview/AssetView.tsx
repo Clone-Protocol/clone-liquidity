@@ -127,7 +127,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 					...assetData,
 					mintAmount: amount,
 					lowerLimit,
-					upperLimit
+					upperLimit,
 				}
 			} else {
 				newData = {
@@ -144,10 +144,9 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		setAssetData(newData)
 	}
 
-	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
+	const handleChangeConcentRange = (lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...assetData,
-			isTight,
 			lowerLimit,
 			upperLimit,
 		}
@@ -395,7 +394,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									Unconcentrated Liquidity
 								</Button>
 
-								{assetData?.isTight ? (
+								{(assetData?.tightRange > assetData.price - assetData.lowerLimit ||
+								assetData?.tightRange > assetData.upperLimit - assetData.price) ? (
 									<Stack
 										sx={{
 											maxWidht: '653px',
