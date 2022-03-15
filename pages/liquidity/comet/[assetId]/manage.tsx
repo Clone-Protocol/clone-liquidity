@@ -2,7 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
 import { styled } from '@mui/system'
-import { Container, Box, Tabs, Tab } from '@mui/material'
+import { useRouter } from 'next/router'
+import { Container, Box } from '@mui/material'
 import EditPanel from '~/containers/Liquidity/comet/EditPanel'
 import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
@@ -28,6 +29,8 @@ const TabPanel = (props: TabPanelProps) => {
 }
 
 const Manage: NextPage = () => {
+  const router = useRouter()
+  const { assetId } = router.query
   const [tab, setTab] = useState(0)
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -53,10 +56,10 @@ const Manage: NextPage = () => {
               </StyledTabs>
             </Box>
             <TabPanel value={tab} index={0}>
-              <EditPanel />
+              <EditPanel assetId={assetId} />
             </TabPanel>
             <TabPanel value={tab} index={1}>
-              <ClosePanel />
+              <ClosePanel assetId={assetId} />
             </TabPanel>
           </Container>
         </StyledSection>

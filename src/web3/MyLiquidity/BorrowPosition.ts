@@ -48,3 +48,11 @@ export interface PositionInfo {
 	stableCollateralRatio: number
 	cryptoCollateralRatio: number
 }
+
+export interface PairData {
+	tickerIcon: string
+	tickerName: string
+	tickerSymbol: string
+	balance: number
+	amount: number
+}

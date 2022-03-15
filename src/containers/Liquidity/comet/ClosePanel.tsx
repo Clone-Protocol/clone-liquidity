@@ -6,7 +6,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
 
-const ClosePanel = () => {
+const ClosePanel = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const [positionInfo, setPositionInfo] = useState<PI>()

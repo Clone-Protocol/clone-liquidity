@@ -1,46 +1,72 @@
 import React, { useEffect, useState } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
+import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
+import { fetchAsset } from '~/features/Overview/Asset.query'
 import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
+import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
+import OneIcon from 'public/images/one-icon.png'
+import TwoIcon from 'public/images/two-icon.png'
 
-const EditPanel = () => {
+const EditPanel = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
-  const [fromAmount, setFromAmount] = useState(0.0)
-  const [toAmount, setToAmount] = useState(0.0)
-  const [collRatio, setCollRatio] = useState(150)
-  const [positionInfo, setPositionInfo] = useState<PI>()
-  const [assetIndex, setAssetIndex] = useState(0)
+  const [positionInfo, setPositionInfo] = useState<PI>(fetchAsset()) // set default
 
   useEffect(() => {
     const program = getInceptApp()
 
     async function fetch() {
-      const data = await fetchCometDetail({
-        program,
-        userPubKey: publicKey,
-        index: assetIndex
-      })
-      if (data) {
-        setPositionInfo(data)
+      if (assetId) {
+        const data = await fetchCometDetail({
+          program,
+          userPubKey: publicKey,
+          index: parseInt(assetId) - 1
+        }) as PI
+        if (data) {
+          setPositionInfo(data)
+        }
       }
     }
     fetch()
-  }, [publicKey])
+  }, [publicKey, assetId])
 
-  const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === 'number') {
-      setCollRatio(newValue)
-    }
-  }
+  const handleChangeFromAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+		let newData
+		if (e.currentTarget.value) {
+			const amount = parseFloat(e.currentTarget.value)
+			newData = {
+				...positionInfo,
+				collAmount: amount,
+			}
+		} else {
+			newData = {
+				...positionInfo,
+				collAmount: 0.0,
+			}
+		}
+		setPositionInfo(newData)
+	}
+
+  const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
+		const newData = {
+			...positionInfo,
+      isTight,
+			lowerLimit,
+			upperLimit,
+		}
+		setPositionInfo(newData)
+	}
 
   const onEdit = () => {
+    console.log(positionInfo)
+
   }
 
   return (
@@ -51,40 +77,27 @@ const EditPanel = () => {
       <Grid item xs={12} md={8}>
         <Box sx={{ padding: '30px', color: '#fff' }}>
           <Box>
-            <SubTitle>(1) Edit collateral amount</SubTitle>
+            <SubTitle><Image src={OneIcon} />{' '} <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box></SubTitle>
             <SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
-            <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+            <PairInput tickerIcon={ethLogo} tickerName="USDi Coin" tickerSymbol="USDi" value={positionInfo?.collAmount} onChange={handleChangeFromAmount} />
           </Box>
           <StyledDivider />
 
           <Box>
-            <SubTitle>(2) Edit liquidity concentration range</SubTitle>
+            <SubTitle><Image src={TwoIcon} />{' '} <Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box></SubTitle>
             <SubTitleComment>Editing concentration range will effect the collateral amount</SubTitleComment>
-            <ConcentrationRange />
 
-            <Stack direction="row" spacing={2} justifyContent="space-around">
-              <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#00f0ff', textAlign: 'center' }}>Lower Limit</Box>
-                <Box sx={{ borderRadius: '10px', border: 'solid 1px #00f0ff', padding: '27px' }}>
-                  <PriceValue>80.95</PriceValue>
-                  <RangePair>USD / SOL</RangePair>
-                </Box>
-              </Box>
-              <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#FFF', textAlign: 'center' }}>Center Price</Box>
-                <Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '27px' }}>
-                  <PriceValue>110.78</PriceValue>
-                  <RangePair>USD / SOL</RangePair>
-                </Box>
-              </Box>
-              <Box>
-                <Box sx={{ fontSize: '15px', fontWeight: '500', color: '#809cff', textAlign: 'center' }}>Upper Limit</Box>
-                <Box sx={{ borderRadius: '10px', border: 'solid 1px #809cff', padding: '27px' }}>
-                  <PriceValue>120.95</PriceValue>
-                  <RangePair>USD / SOL</RangePair>
-                </Box>
-              </Box>
-            </Stack>
+            <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
+              <ConcentrationRange 
+                assetData={positionInfo}
+                onChange={handleChangeConcentRange}
+                max={positionInfo.maxRange}
+                defaultLower={positionInfo.lowerLimit}
+                defaultUpper={positionInfo.upperLimit}
+              />
+            </Box>
+
+            <ConcentrationRangeBox positionInfo={positionInfo} />
           </Box>
           <StyledDivider />
 
@@ -97,12 +110,13 @@ const EditPanel = () => {
 
 const StyledDivider = styled(Divider)`
   background-color: #535353;
-  margin-bottom: 39px;
-  margin-top: 39px;
+  margin-bottom: 30px;
+  margin-top: 30px;
   height: 1px;
 `
 
 const SubTitle = styled('div')`
+  display: flex;
   font-size: 18px;
   font-weight: 500;
   marginBottom: 17px;
@@ -114,17 +128,7 @@ const SubTitleComment = styled('div')`
   font-weight: 500;
   color: #989898;
   marginBottom: 18px;
-`
-
-const PriceValue = styled('div')`
-  font-size: 20px;
-  font-weight: 500;
-  text-align: center;
-`
-
-const RangePair = styled('div')`
-  font-size: 13px;
-  font-weight: 500;
+  margin-top: 10px;
 `
 
 const ActionButton = styled(Button)`

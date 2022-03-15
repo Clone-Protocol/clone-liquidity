@@ -10,6 +10,9 @@ interface Props {
 
 const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
 
+  const onRecenter = () => {
+  }
+
   return positionInfo ? (
     <Box sx={{ background: '#000', color: '#fff' }}>
       <PriceIndicatorBox tickerIcon={positionInfo.tickerIcon} tickerName={positionInfo.tickerName} tickerSymbol={positionInfo.tickerSymbol} value={positionInfo.price} />
@@ -20,16 +23,16 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
           <Box>
             <SubTitle>Collateral</SubTitle>
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              {positionInfo.collateral} USDC
+              {positionInfo.collAmount} USDi
             </Box>
             <Box sx={{ marginTop: '10px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
-                <DetailValue>{positionInfo.contributedUSD} USDi</DetailValue>
+                <DetailValue>{positionInfo.collAmount} USDi</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
-                <DetailValue>{positionInfo.contributedAsset} iSOL</DetailValue>
+                <DetailValue>{positionInfo.mintAmount} iSOL</DetailValue>
               </Stack>
             </Box>
           </Box>
@@ -40,29 +43,29 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
             <Box sx={{ marginTop: '20px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price</DetailHeader>
-                <DetailValue>{positionInfo.centerPriceRange} USD</DetailValue>
+                <DetailValue>{positionInfo?.centerPrice.toFixed(2)} USD</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Lower limit</DetailHeader>
-                <DetailValue>{positionInfo.lowerLimitPriceRange} USD</DetailValue>
+                <DetailValue>{positionInfo?.lowerLimit.toFixed(2)} USD</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Upper limit</DetailHeader>
-                <DetailValue>{positionInfo.upperLimitPriceRange} USD</DetailValue>
+                <DetailValue>{positionInfo?.upperLimit.toFixed(2)} USD</DetailValue>
               </Stack>
             </Box>
           </Box>
           <StyledDivider />
 
-          <Box>
+          {/* <Box>
             <SubTitle>ILD</SubTitle>
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              {positionInfo.ild} USDC
+              {positionInfo.ild} USDi
             </Box>
           </Box>
-          <StyledDivider />
+          <StyledDivider /> */}
 
-          <ActionButton>Recenter</ActionButton>
+          <ActionButton onClick={onRecenter}>Recenter</ActionButton>
         </Box>
       </Box>
     </Box>

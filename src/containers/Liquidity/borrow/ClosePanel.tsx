@@ -2,7 +2,7 @@ import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 
-const ClosePanel = () => {
+const ClosePanel = ({ assetId }: { assetId: string }) => {
   const onClose = () => {
   }
 

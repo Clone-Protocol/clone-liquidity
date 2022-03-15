@@ -1,13 +1,14 @@
-import { Box, Stack, Button, Paper, Divider, Grid } from '@mui/material'
+import { Box, Stack, Button, Paper, Divider } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
 import PairInputView from '~/components/Asset/PairInputView'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
-import RatioSlider from '~/components/Borrow/RatioSlider'
+// import RatioSlider from '~/components/Borrow/RatioSlider'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
+import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import InfoBookIcon from 'public/images/info-book-icon.png'
 import WarningIcon from 'public/images/warning-icon.png'
 import { useIncept } from '~/hooks/useIncept'
@@ -56,6 +57,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 					index: parseInt(assetId) - 1,
 				})
 				if (balances) {
+          // TODO: need refactor this.
 					setUnconcentData({
 						...unconcentData,
 						borrowToBalance: balances.usdiVal,
@@ -79,8 +81,6 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-			// TODO: to bind with contract
-
 			newData = {
 				...assetData,
 				collAmount: amount,
@@ -317,68 +317,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									/>
 								</Box>
 
-								<Grid container spacing={2}>
-									<Grid item xs>
-										<Box
-											sx={{
-												fontSize: '15px',
-												fontWeight: '500',
-												color: '#00f0ff',
-												textAlign: 'center',
-												marginBottom: '5px',
-											}}>
-											Lower Limit
-										</Box>
-										<Box
-											sx={{
-												background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
-												borderRadius: '10px',
-												border: 'solid 1px #00f0ff',
-												padding: '18px',
-											}}>
-											<PriceValue>{assetData?.lowerLimit.toFixed(2)}</PriceValue>
-											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
-										</Box>
-									</Grid>
-									<Grid item xs={3}>
-										<Box
-											sx={{
-												fontSize: '15px',
-												fontWeight: '500',
-												color: '#FFF',
-												textAlign: 'center',
-												marginBottom: '5px',
-											}}>
-											Center Price
-										</Box>
-										<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
-											<PriceValue>{assetData?.centerPrice.toFixed(2)}</PriceValue>
-											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
-										</Box>
-									</Grid>
-									<Grid item xs>
-										<Box
-											sx={{
-												fontSize: '15px',
-												fontWeight: '500',
-												color: '#809cff',
-												textAlign: 'center',
-												marginBottom: '5px',
-											}}>
-											Upper Limit
-										</Box>
-										<Box
-											sx={{
-												background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
-												borderRadius: '10px',
-												border: 'solid 1px #809cff',
-												padding: '18px',
-											}}>
-											<PriceValue>{assetData?.upperLimit.toFixed(2)}</PriceValue>
-											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
-										</Box>
-									</Grid>
-								</Grid>
+								<ConcentrationRangeBox positionInfo={assetData} />
 
 								<Button
 									onClick={() => changeTab(1)}
@@ -562,19 +501,6 @@ const WarningBox = styled(Box)`
 	font-size: 14px;
 	font-weight: 500;
 	color: #989898;
-`
-
-const PriceValue = styled('div')`
-	font-size: 20px;
-	font-weight: 500;
-	text-align: center;
-`
-
-const RangePair = styled('div')`
-	font-size: 13px;
-	font-weight: 500;
-	padding-top: 10px;
-	text-align: center;
 `
 
 const CometButton = styled(Button)`

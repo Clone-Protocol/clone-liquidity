@@ -6,70 +6,87 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
-import RatioSlider from '~/components/Borrow/RatioSlider'
-import { PositionInfo as PI, fetchBorrowDetail } from '~/web3/MyLiquidity/BorrowPosition'
+// import RatioSlider from '~/components/Borrow/RatioSlider'
+import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 
-const EditPanel = () => {
+const EditPanel = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
-  const [fromAmount, setFromAmount] = useState(0.0)
-  const [toAmount, setToAmount] = useState(0.0)
-  const [collRatio, setCollRatio] = useState(150)
-  const [positionInfo, setPositionInfo] = useState<PI>()
-  const [assetIndex, setAssetIndex] = useState(0)
-
-  console.log("jhkafjoaewhnogawijh")
+  const [fromPair, setFromPair] = useState<PairData>({
+		tickerIcon: ethLogo,
+		tickerName: 'USDi Coin',
+		tickerSymbol: 'USDi',
+		balance: 0.0,
+		amount: 0.0,
+	})
+  
+  // const [collRatio, setCollRatio] = useState(150)
+  const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
+  const [borrowAmount, setBorrowAmount] = useState(0.0)
 
   useEffect(() => {
     const program = getInceptApp()
 
     async function fetch() {
-      const data = await fetchBorrowDetail({
-        program,
-        userPubKey: publicKey,
-        index: assetIndex
-      })
-      if (data) {
-        setPositionInfo(data)
+      if (assetId) {
+        const data = await fetchBorrowDetail({
+          program,
+          userPubKey: publicKey,
+          index: parseInt(assetId) - 1
+        })
+        if (data) {
+          setPositionInfo(data)
+        }
       }
     }
     fetch()
-  }, [publicKey])
+  }, [publicKey, assetId])
 
-  const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === 'number') {
-      setCollRatio(newValue)
-    }
-  }
+  const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.currentTarget.value
+		if (newVal) {
+			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
+		}
+	}
+
+  // const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+  //   if (typeof newValue === 'number') {
+  //     setCollRatio(newValue)
+  //   }
+  // }
 
   const onEdit = () => {
+    // console.log(collRatio)
+    console.log(borrowAmount)
+    console.log(positionInfo)
+    // TODO: call contract
   }
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={4}>
-        <PositionInfo positionInfo={positionInfo} />
+        <PositionInfo positionInfo={positionInfo} fromPair={fromPair} borrowAmount={borrowAmount} />
       </Grid>
       <Grid item xs={12} md={8}>
         <Box sx={{ padding: '30px', color: '#fff' }}>
           <Box>
             <SubTitle>(1) Edit collateral amount</SubTitle>
             <SubTitleComment>Editing collateral will effect the collateral ratio</SubTitleComment>
-            <PairInput tickerIcon={ethLogo} tickerName="USD Coin" tickerSymbol="USDC" value={fromAmount} />
+            <PairInput tickerIcon={fromPair.tickerIcon} tickerName={fromPair.tickerName} tickerSymbol={fromPair.tickerSymbol} value={fromPair.amount} balance={fromPair.balance} onChange={handleChangeFrom} />
           </Box>
           <StyledDivider />
 
-          <Box>
+          {/* <Box>
             <SubTitle>(2) Edit collateral ratio</SubTitle>
             <SubTitleComment>To avoid liquidation, collateral ratio above safe point is reccommended</SubTitleComment>
             <RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
           </Box>
-          <StyledDivider />
+          <StyledDivider /> */}
 
           <Box>
-            <SubTitle>(3) Borrow Amount</SubTitle>
+            <SubTitle>(2) Borrow Amount</SubTitle>
             <SubTitleComment>Borrowed amount can’t be edited</SubTitleComment>
-            <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={toAmount} disabled />
+            <PairInput tickerIcon={ethLogo} tickerName="Incept USD" tickerSymbol="USDi" value={borrowAmount} disabled balanceDisabled />
           </Box>
           <StyledDivider />
 

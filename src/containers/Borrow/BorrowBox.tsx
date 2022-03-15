@@ -5,10 +5,10 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import PairInput from '~/components/Borrow/PairInput'
 import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
-import RatioSlider from '~/components/Borrow/RatioSlider'
+// import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PositionInfo as PositionInfoType, fetchBorrowDetail } from '~/web3/MyLiquidity/BorrowPosition'
+import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
 import { fetchBalance } from '~/web3/Borrow/balance'
 
@@ -22,7 +22,7 @@ const BorrowBox = () => {
 		balance: 0.0,
 		amount: 0.0,
 	})
-	const [collRatio, setCollRatio] = useState(250)
+	// const [collRatio, setCollRatio] = useState(250)
 	// TODO : link to contract Overview::Assets::fetchAssets
 	const ASSETS = [
 		{
@@ -92,20 +92,20 @@ const BorrowBox = () => {
 
   const onBorrow = async () => {
     console.log(fromPair)
-    console.log(collRatio)
+    // console.log(collRatio)
     console.log(borrowAmount)
     console.log(assetIndex)
     console.log(assetData)
-    // TODO: call contract
+    
     const program = getInceptApp()
     await callBorrow({
-		program,
-		userPubKey: publicKey,
-		collateralIndex: 0,
-		iassetIndex: assetIndex,
-		iassetAmount: borrowAmount,
-		collateralAmount: fromPair.amount,
-	})
+      program,
+      userPubKey: publicKey,
+      collateralIndex: 0,
+      iassetIndex: assetIndex,
+      iassetAmount: borrowAmount,
+      collateralAmount: fromPair.amount,
+    })
   }
 
   return (
@@ -148,14 +148,6 @@ const BorrowBox = () => {
       <ActionButton onClick={onBorrow}>Create Borrow Position</ActionButton>
     </StyledPaper>
   )
-}
-
-export interface PairData {
-	tickerIcon: string
-	tickerName: string
-	tickerSymbol: string
-	balance: number
-	amount: number
 }
 
 const StyledPaper = styled(Paper)`

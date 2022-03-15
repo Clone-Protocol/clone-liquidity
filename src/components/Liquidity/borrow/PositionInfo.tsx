@@ -4,17 +4,19 @@ import { styled } from '@mui/system'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import WarningIcon from 'public/images/warning-icon-red.png'
 import Image from 'next/image'
-import { PositionInfo as PI } from '~/web3/MyLiquidity/BorrowPosition'
+import { PositionInfo as PI, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 
 interface Props {
   positionInfo: PI
+  fromPair: PairData
+  borrowAmount: number
 }
 
-const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
+const PositionInfo: React.FC<Props> = ({ positionInfo, fromPair, borrowAmount }) => {
 
   return positionInfo ? (
     <Box sx={{ background: '#000', color: '#fff' }}>
-      <PriceIndicatorBox tickerIcon={positionInfo.tickerIcon} tickerName={positionInfo.tickerName} tickerSymbol={positionInfo.tickerSymbol} value={positionInfo.price} />
+      <PriceIndicatorBox tickerIcon={positionInfo.tickerIcon} tickerSymbol={positionInfo.tickerSymbol} value={positionInfo.oPrice} />
 
       <Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
         <WarningBox><Image src={WarningIcon} /> High liquidation risk</WarningBox>
@@ -24,17 +26,17 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
           <Box>
             <SubTitle>Current collateral</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-              {positionInfo.collateral} USDC
+              {fromPair.amount.toFixed(2)} USDi
             </Box>
             
-            <SubTitle>Current collateral ratio</SubTitle>
+            {/* <SubTitle>Current collateral ratio</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500', color: '#ff2929' }}>
-              {positionInfo.collateralRatio}% (min: 120%)
-            </Box>
+              {positionInfo.cryptoCollateralRatio.toFixed(2)}% (min: {positionInfo.stableCollateralRatio.toFixed(2)}%)
+            </Box> */}
 
             <SubTitle>Borrowed amount</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-              {positionInfo.borrowedAmount} {positionInfo.tickerSymbol}
+              {borrowAmount.toFixed(2)} {positionInfo.tickerSymbol}
             </Box>
           </Box>
         </Box>
