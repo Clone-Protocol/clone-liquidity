@@ -64,6 +64,7 @@ const LiquidityTable = () => {
         userPubKey: publicKey,
         filter
       })
+      console.log(data1)
       setCometPools(data1)
 
       const data2 = await fetchUnconcentPools({
