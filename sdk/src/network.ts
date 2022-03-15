@@ -13,7 +13,7 @@ export const LOCAL_NET = {
   endpoint: "http://127.0.0.1:8899"
 };
 export const DEV_NET = {
-  incept: new PublicKey("DhCxHrB6LarA8r8kbBD2jUfEUTLTmVab4xkzRjpv5Jd3"),
+  incept: new PublicKey("3Pn6bqVndJuBKyBQTo7jdSvVv37mXWR6oJUvX4Pfh8Zm"),
   oracle: new PublicKey("Aw4gPAFKNV9hQpSZB9pdkBnniVDR13uidY3D5NMKKFUi"),
   endpoint: "https://explorer-api.devnet.solana.com"
 };
