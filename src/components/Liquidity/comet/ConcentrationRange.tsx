@@ -123,7 +123,7 @@ function ThumbComponent(props: ThumbComponentProps) {
     <SliderThumb {...other}>
       {children}
       <span className="slider-bar" />
-      <span className="slider-bar" />      
+      <span className="slider-bar" />
     </SliderThumb>
   );
 }
@@ -139,7 +139,6 @@ function ValueLabelComponent(props: {
       <Tooltip enterTouchDelay={0} placement="top" title={value}>
         {children}
       </Tooltip>
-      123
     </Box>
   );
 }
@@ -173,7 +172,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
 
   useEffect(() => {
     if (assetData.lowerLimit && assetData.upperLimit) {
-      setValue([assetData.lowerLimit, assetData.upperLimit])
+      setValue([parseFloat(assetData.lowerLimit.toFixed(2)), parseFloat(assetData.upperLimit.toFixed(2))])
     }
   }, [assetData.lowerLimit, assetData.upperLimit])
 
@@ -251,6 +250,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
         sx={trackCss}
         min={minLimit}
         max={maxLimit}
+        step={0.01}
         components={{ Thumb: ThumbComponent }}
         onChange={handleChange}
         defaultValue={[defaultLower, defaultUpper]}

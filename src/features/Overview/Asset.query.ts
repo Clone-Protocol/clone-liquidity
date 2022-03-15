@@ -13,9 +13,9 @@ export const fetchAsset = () => {
     collAmount: 0.0,
     collRatio: 50,
     mintAmount: 0.0,
-    lowerLimit: 20.0,
+    lowerLimit: 40.1635123,
     centerPrice: 100.00,
-    upperLimit: 180.0
+    upperLimit: 180.8392343
   }
 }
 

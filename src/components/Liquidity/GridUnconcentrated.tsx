@@ -58,7 +58,7 @@ let columns: GridColDef[] = [
   }},
   { field: 'liquidityAsset', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Liquidity (iAsset)', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} iSOL</Box>
     )
   }},
   { field: 'liquidityUSD', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Liquidity (USDi)', flex: 1, renderCell(params: GridRenderCellParams<string>) {

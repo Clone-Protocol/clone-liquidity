@@ -144,9 +144,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		setAssetData(newData)
 	}
 
-	const handleChangeConcentRange = (lowerLimit: number, upperLimit: number) => {
+	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...assetData,
+      isTight,
 			lowerLimit,
 			upperLimit,
 		}
@@ -335,7 +336,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 												border: 'solid 1px #00f0ff',
 												padding: '18px',
 											}}>
-											<PriceValue>{assetData?.lowerLimit}</PriceValue>
+											<PriceValue>{assetData?.lowerLimit.toFixed(2)}</PriceValue>
 											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 										</Box>
 									</Grid>
@@ -351,7 +352,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 											Center Price
 										</Box>
 										<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
-											<PriceValue>{assetData?.centerPrice}</PriceValue>
+											<PriceValue>{assetData?.centerPrice.toFixed(2)}</PriceValue>
 											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 										</Box>
 									</Grid>
@@ -373,7 +374,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 												border: 'solid 1px #809cff',
 												padding: '18px',
 											}}>
-											<PriceValue>{assetData?.upperLimit}</PriceValue>
+											<PriceValue>{assetData?.upperLimit.toFixed(2)}</PriceValue>
 											<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 										</Box>
 									</Grid>

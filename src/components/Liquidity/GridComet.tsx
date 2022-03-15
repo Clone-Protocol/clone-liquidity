@@ -59,17 +59,17 @@ let columns: GridColDef[] = [
   }},
   { field: 'priceRange', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.fromPriceRange} - {params.row.toPriceRange}</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.fromPriceRange.toFixed(2)} - {params.row.toPriceRange.toFixed(2)}</Box>
     )
   }},
 	{ field: 'collateral', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDC</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
   { field: 'ild', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'ILD', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDC</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
   { field: 'action', 
