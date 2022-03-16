@@ -20,6 +20,7 @@ export const StyledTabs = styled(Tabs)`
 export const PageTab = styled(Tab)`
   font-size: 12px;
   font-weight: 600;
+  text-transform: none;
 	&.MuiTab-root {
 		padding: 3px 9px 4px 8px;
 		height: 21px;
@@ -29,13 +30,14 @@ export const PageTab = styled(Tab)`
     color: #989898;
     text-transform: none;
 	}
-	&.MuiTab-root.Mui-selected {
+	&.Mui-selected {
 		font-weight: bold;
 		color: #fff;
     border: solid 1px #fff;
 	}
-  &.MuiTab-root.Mui-focusVisible {
+  &.Mui-focusVisible {
     background-color: #fff;
+    color: #fff;
   }
 	.highlight {
 		color: #fff;
