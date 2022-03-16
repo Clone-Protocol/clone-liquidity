@@ -17,7 +17,19 @@ const GridComet: React.FC<Props> = ({ pools }) => {
     <DataGrid
       sx={{
         border: 0,
-        color: '#fff'
+        color: '#fff',
+        '& .MuiDataGrid-columnHeaders': {
+          borderBottom: '1px solid #535353'
+        },
+        '& .MuiDataGrid-columnSeparator': {
+          display: 'none'
+        },
+        '& .MuiDataGrid-row': {
+          border: '1px solid #535353'
+        },
+        '& .MuiDataGrid-cell': {
+          borderBottom: '1px solid #535353'
+        }
       }}
       getRowClassName={(params) => "super-app-theme--row"}
       disableColumnFilter
@@ -80,9 +92,9 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <RiskButton>Recenter</RiskButton>
+          <StableButton>Recenter</StableButton>
           <Link href={`/liquidity/comet/${params.row.id}/manage`}>
-            <RiskButton>Manage</RiskButton>
+            <InactiveButton>Manage</InactiveButton>
           </Link>
         </Box>
       )

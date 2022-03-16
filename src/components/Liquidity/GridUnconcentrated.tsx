@@ -20,7 +20,19 @@ const GridUnconcentrated: React.FC<Props> = ({ pools }) => {
       <DataGrid
         sx={{
           border: 0,
-          color: '#fff'
+          color: '#fff',
+          '& .MuiDataGrid-columnHeaders': {
+            borderBottom: '1px solid #535353'
+          },
+          '& .MuiDataGrid-columnSeparator': {
+            display: 'none'
+          },
+          '& .MuiDataGrid-row': {
+            border: '1px solid #535353'
+          },
+          '& .MuiDataGrid-cell': {
+            borderBottom: '1px solid #535353'
+          }
         }}
         disableColumnFilter
         disableSelectionOnClick
