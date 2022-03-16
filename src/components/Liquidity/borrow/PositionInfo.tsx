@@ -12,31 +12,31 @@ interface Props {
   borrowAmount: number
 }
 
-const PositionInfo: React.FC<Props> = ({ positionInfo, fromPair, borrowAmount }) => {
+const PositionInfo: React.FC<Props> = ({ positionInfo, fromPair }) => {
 
   return positionInfo ? (
     <Box sx={{ background: '#000', color: '#fff' }}>
       <PriceIndicatorBox tickerIcon={positionInfo.tickerIcon} tickerSymbol={positionInfo.tickerSymbol} value={positionInfo.oPrice} />
 
       <Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
-        <WarningBox><Image src={WarningIcon} /> High liquidation risk</WarningBox>
+        {/* <WarningBox><Image src={WarningIcon} /> High liquidation risk</WarningBox> */}
 
         <Title>Borrow Position</Title>
         <Box>
           <Box>
             <SubTitle>Current collateral</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-              {fromPair.amount.toFixed(2)} USDi
+              {positionInfo.collateralAmount} USDi
             </Box>
             
-            {/* <SubTitle>Current collateral ratio</SubTitle>
+            <SubTitle>Current collateral ratio</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500', color: '#ff2929' }}>
-              {positionInfo.cryptoCollateralRatio.toFixed(2)}% (min: {positionInfo.stableCollateralRatio.toFixed(2)}%)
-            </Box> */}
+              {positionInfo.collateralRatio.toFixed(2)}% (min: {positionInfo.minCollateralRatio.toFixed(2)}%)
+            </Box>
 
             <SubTitle>Borrowed amount</SubTitle>
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-              {borrowAmount.toFixed(2)} {positionInfo.tickerSymbol}
+              {positionInfo.borrowedIasset.toFixed(2)} {positionInfo.tickerSymbol}
             </Box>
           </Box>
         </Box>

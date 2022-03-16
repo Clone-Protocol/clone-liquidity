@@ -144,7 +144,6 @@ function ValueLabelComponent(props: {
 }
 
 const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, defaultLower, defaultUpper }) => {
-  const [centerPrice, setCenterPrice] = useState(assetData.centerPrice)
   const minLimit = 0
   const maxLimit = max
   const centerPricePercent = assetData.centerPrice * 100 / maxLimit
@@ -243,7 +242,6 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
 
     }
   };
-
   return (
     <Box sx={{ position: 'relative' }}>
       <RangeSlider
@@ -259,7 +257,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
         value={value}
       />
       <CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 43px)` }}>
-        {centerPrice}
+        {assetData.centerPrice}
         <Stick />
       </CenterPriceBox>
     </Box>

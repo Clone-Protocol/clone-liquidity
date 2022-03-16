@@ -5,23 +5,23 @@ import { toScaledNumber } from 'sdk/src/utils'
 export const fetchStatus = async ({ program, userPubKey }: GetProps) => {
 	if (!userPubKey) return null
 
-	let mintPositions = (await program.getMintPositions())
-	let liquidityPositions = (await program.getLiquidityPositions())
-	let cometPositions = (await program.getCometPositions())
+	let mintPositions = await program.getMintPositions()
+	let liquidityPositions = await program.getLiquidityPositions()
+	let cometPositions = await program.getCometPositions()
 	let totalVal = 0
 	let borrow = 0
 	let unconcentrated = 0
 	let comet = 0
 
 	for (var i = 0; i < Number(mintPositions.numPositions); i++) {
-    let mintPosition = mintPositions.mintPositions[i]
+		let mintPosition = mintPositions.mintPositions[i]
 		let collateralAmount = toScaledNumber(mintPosition.collateralAmount)
 		totalVal += collateralAmount
 		borrow += collateralAmount
 	}
 
 	for (var i = 0; i < Number(liquidityPositions.numPositions); i++) {
-    let liquidityPosition = liquidityPositions.liquidityPositions[i]
+		let liquidityPosition = liquidityPositions.liquidityPositions[i]
 		let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
 		let poolIndex = liquidityPosition.poolIndex
 		let pool = await program.getPool(poolIndex)
@@ -34,15 +34,15 @@ export const fetchStatus = async ({ program, userPubKey }: GetProps) => {
 	}
 
 	for (var i = 0; i < Number(cometPositions.numPositions); i++) {
-    let cometPosition = cometPositions.cometPositions[i]
+		let cometPosition = cometPositions.cometPositions[i]
 		let collateralAmount = toScaledNumber(cometPosition.collateralAmount)
 		totalVal += collateralAmount
 		comet += collateralAmount
 	}
 
-  let borrowPercent = (borrow / totalVal) * 100
-  let unconcentratedPercent = (unconcentrated / totalVal) * 100
-  let cometPercent = (comet / totalVal) * 100
+	let borrowPercent = (borrow / totalVal) * 100
+	let unconcentratedPercent = (unconcentrated / totalVal) * 100
+	let cometPercent = (comet / totalVal) * 100
 
 	return {
 		totalVal,

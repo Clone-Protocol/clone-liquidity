@@ -26,15 +26,55 @@ const BorrowBox = () => {
 	// TODO : link to contract Overview::Assets::fetchAssets
 	const ASSETS = [
 		{
+			tickerName: 'iEuro',
+			tickerSymbol: 'iEUR',
+			tickerIcon: ethLogo
+    },
+		{
+			tickerName: 'iSPTSGD (GOLD INDEX)',
+			tickerSymbol: 'iSPTSGD',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
 			tickerName: 'iSolana',
 			tickerSymbol: 'iSOL',
-			tickerIcon: ethLogo,
-		},
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
 		{
 			tickerName: 'iEthereum',
 			tickerSymbol: 'iETH',
-			tickerIcon: ethLogo
-    }
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
+			tickerName: 'iBitcoin',
+			tickerSymbol: 'iBTC',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
+			tickerName: 'iLuna',
+			tickerSymbol: 'iLUNA',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
+			tickerName: 'iAvalanche',
+			tickerSymbol: 'iAVAX',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
+			tickerName: 'iTesla',
+			tickerSymbol: 'iTLSA',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
+			tickerName: 'iApple',
+			tickerSymbol: 'iAAPL',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
+		{
+			tickerName: 'iAmazon',
+			tickerSymbol: 'iAMZN',
+			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
+    },
   ]
   const [assetData, setAssetData] = useState<PositionInfoType>()
   const [assetIndex, setAssetIndex] = useState(0)
@@ -49,7 +89,7 @@ const BorrowBox = () => {
         program,
         userPubKey: publicKey,
         index: assetIndex
-      })
+      }) as PositionInfoType
       setAssetData(assetData)
 	  const usdiBalance = await fetchBalance({
 		  program,

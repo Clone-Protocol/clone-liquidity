@@ -225,13 +225,17 @@ export class Incept {
 	public async getUsdiBalance() {
 		let associatedTokenAccount = await this.getOrCreateUsdiAssociatedTokenAccount()
 
-		return Number(associatedTokenAccount.amount) / 1000000000000
+		return Number(associatedTokenAccount.amount) / 100000000
 	}
 
 	public async getiAssetBalance(index: number) {
-		let associatedTokenAccount = await this.getOrCreateAssociatedTokenAccount((await this.getPool(index)).assetInfo.iassetMint)
+		let associatedTokenAccount = await this.getOrCreateAssociatedTokenAccount(
+			(
+				await this.getPool(index)
+			).assetInfo.iassetMint
+		)
 
-		return Number(associatedTokenAccount.amount) / 1000000000000
+		return Number(associatedTokenAccount.amount) / 100000000
 	}
 
 	public async getiAssetMints() {
@@ -324,6 +328,36 @@ export class Incept {
 			])
 		}
 		return mintInfos
+	}
+
+	public async getUserMintInfo(index: number) {
+		const mintPositions = await this.getMintPositions()
+		let mintPosition = mintPositions.mintPositions[index]
+		let poolIndex = mintPosition.poolIndex
+		let collateralIndex = mintPosition.collateralIndex
+		let assetInfo = await this.getAssetInfo(poolIndex)
+		let collateral = await this.getCollateral(collateralIndex)
+		let collateralAmount = mintPosition.collateralAmount
+		let price = assetInfo.price
+		let borrowedIasset = mintPosition.borrowedIasset
+		let collateralRatio: Value
+		let minCollateralRatio: Value
+		if (collateral.stable) {
+			collateralRatio = div(collateralAmount, mul(price, borrowedIasset))
+			minCollateralRatio = assetInfo.stableCollateralRatio
+		} else {
+			let collateralAssetInfo = await this.getAssetInfo(collateral.poolIndex)
+			let collateralPrice = collateralAssetInfo.price
+			let collateralAmount = mintPosition.collateralAmount
+			collateralRatio = div(mul(collateralPrice, collateralAmount), mul(price, borrowedIasset))
+			minCollateralRatio = assetInfo.cryptoCollateralRatio
+		}
+		return [
+			toScaledNumber(borrowedIasset),
+			toScaledNumber(collateralAmount),
+			toScaledPercent(collateralRatio),
+			toScaledPercent(minCollateralRatio),
+		]
 	}
 
 	public async getUserLiquidityInfos() {
@@ -621,14 +655,12 @@ export class Incept {
 	}
 
 	public async addCollateralToMint(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		collateralIndex: number,
 		signers: Array<Keypair>
 	) {
 		const addCollateralToMintIx = await this.addCollateralToMintInstruction(
-			user,
 			userCollateralTokenAccount,
 			collateralAmount,
 			collateralIndex
@@ -637,7 +669,6 @@ export class Incept {
 	}
 
 	public async addCollateralToMintInstruction(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		collateralIndex: number
@@ -653,7 +684,7 @@ export class Incept {
 			collateralAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					mintPositions: userAccount.mintPositions,
@@ -666,22 +697,20 @@ export class Incept {
 	}
 
 	public async withdrawCollateralFromMint(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		collateralIndex: number,
 		signers: Array<Keypair>
 	) {
+		const updatePricesIx = await this.updatePricesInstruction()
 		const withdrawCollateralFromMintIx = await this.withdrawCollateralFromMintInstruction(
-			user,
 			userCollateralTokenAccount,
 			collateralAmount,
 			collateralIndex
 		)
-		await this.provider.send(new Transaction().add(withdrawCollateralFromMintIx), signers)
+		await this.provider.send(new Transaction().add(updatePricesIx).add(withdrawCollateralFromMintIx), signers)
 	}
 	public async withdrawCollateralFromMintInstruction(
-		user: PublicKey,
 		userCollateralTokenAccount: PublicKey,
 		collateralAmount: BN,
 		collateralIndex: number
@@ -697,7 +726,7 @@ export class Incept {
 			collateralAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					mintPositions: userAccount.mintPositions,
@@ -710,7 +739,6 @@ export class Incept {
 	}
 
 	public async payBackiAssetToMint(
-		user: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		iassetAmount: BN,
 		poolIndex: number,
@@ -718,7 +746,6 @@ export class Incept {
 		signers: Array<Keypair>
 	) {
 		const payBackiAssetToMintIx = await this.payBackiAssetToMintInstruction(
-			user,
 			userIassetTokenAccount,
 			iassetAmount,
 			poolIndex,
@@ -727,7 +754,6 @@ export class Incept {
 		await this.provider.send(new Transaction().add(payBackiAssetToMintIx), signers)
 	}
 	public async payBackiAssetToMintInstruction(
-		user: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		iassetAmount: BN,
 		poolIndex: number,
@@ -744,7 +770,7 @@ export class Incept {
 			iassetAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					mintPositions: userAccount.mintPositions,
@@ -1384,13 +1410,13 @@ export class Incept {
 			let xUnder = invariant / yUnder
 			// console.log(xUnder)
 			let pLower = (yUnder / xUnder) * 2
-			
+
 			let a = collateralAmount / invariant
-			let b =  cometLiquidityTokenAmount / updatedliquidityTokenSupply
+			let b = cometLiquidityTokenAmount / updatedliquidityTokenSupply
 			let c = iassetAmount
-			let xUpper = (Math.sqrt((b ** 2) + (4 * a * c)) - b) / (2 * a)
+			let xUpper = (Math.sqrt(b ** 2 + 4 * a * c) - b) / (2 * a)
 			let yUpper = invariant / xUpper
-			let pUpper = (yUpper / xUpper) * 2 / 3
+			let pUpper = ((yUpper / xUpper) * 2) / 3
 
 			return [pLower, pUpper]
 		} else {

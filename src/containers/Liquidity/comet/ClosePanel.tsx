@@ -16,12 +16,12 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const [positionInfo, setPositionInfo] = useState<PI>()
 	const [collateralAmount, setCollateralAmount] = useState(0)
 	const [ild, setILD] = useState(0)
+	const [cometIndex, _] = useState(0)
 
 	useEffect(() => {
 		const program = getInceptApp()
 
 		async function fetch() {
-			let cometIndex = 0
 			if (assetId) {
 				const data = (await fetchCometDetail({
 					program,
@@ -52,7 +52,6 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 
 	const onClose = async () => {
 		const program = getInceptApp()
-		let cometIndex = 0
 		await callClose(program, publicKey!, parseInt(assetId) - 1, cometIndex)
 	}
 

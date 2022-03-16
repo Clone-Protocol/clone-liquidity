@@ -19,6 +19,7 @@ const MyStatus = () => {
         userPubKey: publicKey,
       })
       if (data) {
+        console.log(data)
         setStatus(data)
       }
     }

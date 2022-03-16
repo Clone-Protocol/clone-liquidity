@@ -23,12 +23,12 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { getInceptApp } = useIncept()
 	const [positionInfo, setPositionInfo] = useState<PI>(fetchAsset()) // set default
 	const [usdiBalance, setUsdiBalance] = useState(0)
+	const [cometIndex, _] = useState(0)
 
 	useEffect(() => {
 		const program = getInceptApp()
 
 		async function fetch() {
-			let cometIndex = 0
 			if (assetId) {
 				const data = (await fetchCometDetail({
 					program,
@@ -104,7 +104,6 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 	const onEdit = async () => {
 		const program = getInceptApp()
-		let cometIndex = 0
 		await callEdit(program, publicKey!, cometIndex, positionInfo.collAmount)
 	}
 

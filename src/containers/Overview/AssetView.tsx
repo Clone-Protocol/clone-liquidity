@@ -424,7 +424,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									tickerName={assetData.tickerName}
 									tickerSymbol={assetData.tickerSymbol}
 									value={unconcentData.borrowFrom}
-									headerTitle="balance"
+									headerTitle="Balance"
 									headerValue={unconcentData.borrowFromBalance}
 									onChange={handleBorrowFrom}
 								/>
@@ -441,7 +441,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									tickerName="USDi"
 									tickerSymbol="USDi"
 									value={unconcentData.borrowTo}
-									headerTitle="balance"
+									headerTitle="Balance"
 									headerValue={unconcentData.borrowToBalance}
 									onChange={handleBorrowTo}
 								/>

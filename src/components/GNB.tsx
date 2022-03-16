@@ -104,7 +104,7 @@ const RightMenu = () => {
 	
 				try {
 					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount();
-					await program.hackathonMintUsdi(usdiAccount.address, 100000000000000);
+					await program.hackathonMintUsdi(usdiAccount.address, 10000000000);
 
 				} finally {
 					setMintUsdi(false);
