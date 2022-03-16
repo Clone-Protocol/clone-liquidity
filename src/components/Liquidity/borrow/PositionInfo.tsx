@@ -8,11 +8,9 @@ import { PositionInfo as PI, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 
 interface Props {
   positionInfo: PI
-  fromPair: PairData
-  borrowAmount: number
 }
 
-const PositionInfo: React.FC<Props> = ({ positionInfo, fromPair }) => {
+const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
 
   return positionInfo ? (
     <Box sx={{ background: '#000', color: '#fff' }}>

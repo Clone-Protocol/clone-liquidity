@@ -16,7 +16,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const [positionInfo, setPositionInfo] = useState<PI>()
 	const [collateralAmount, setCollateralAmount] = useState(0)
 	const [ild, setILD] = useState(0)
-	const [cometIndex, _] = useState(0)
+	const [cometIndex, _] = useState(parseInt(assetId) - 1)
 
 	useEffect(() => {
 		const program = getInceptApp()
@@ -26,8 +26,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 				const data = (await fetchCometDetail({
 					program,
 					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
-					cometIndex,
+					index: cometIndex,
 				})) as PI
 				let comet = await program.getCometPosition(cometIndex)
 				data.lowerLimit = toScaledNumber(comet.lowerPriceRange)
@@ -52,7 +51,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 
 	const onClose = async () => {
 		const program = getInceptApp()
-		await callClose(program, publicKey!, parseInt(assetId) - 1, cometIndex)
+		await callClose(program, publicKey!, cometIndex)
 	}
 
 	return (

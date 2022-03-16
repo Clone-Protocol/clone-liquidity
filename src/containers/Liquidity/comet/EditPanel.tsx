@@ -22,8 +22,11 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [positionInfo, setPositionInfo] = useState<PI>(fetchAsset()) // set default
+	const [collAmount, setCollAmount] = useState(0)
+	const [lowerLimit, setLowerLimit] = useState(0)
+	const [upperLimit, setUpperLimit] = useState(0)
 	const [usdiBalance, setUsdiBalance] = useState(0)
-	const [cometIndex, _] = useState(0)
+	const [cometIndex, _] = useState(parseInt(assetId) - 1)
 
 	useEffect(() => {
 		const program = getInceptApp()
@@ -33,8 +36,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				const data = (await fetchCometDetail({
 					program,
 					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
-					cometIndex,
+					index: cometIndex,
 				})) as PI
 				if (data) {
 					let comet = await program.getCometPosition(cometIndex)
@@ -43,6 +45,9 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					data.mintAmount = toScaledNumber(comet.borrowedUsdi)
 					data.collAmount = toScaledNumber(comet.collateralAmount)
 					setPositionInfo(data)
+					setCollAmount(data.collAmount)
+					setLowerLimit(data.lowerLimit)
+					setUpperLimit(data.upperLimit)
 				}
 
 				const balances = await fetchBalance({
@@ -66,7 +71,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 			const program = getInceptApp()
 			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
 				0,
-				parseInt(assetId) - 1,
+				(await program.getCometPosition(cometIndex)).poolIndex,
 				amount,
 				positionInfo.mintAmount
 			))!
@@ -110,7 +115,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-				<PositionInfo positionInfo={positionInfo} />
+				<PositionInfo positionInfo={positionInfo} collateralAmount={collAmount} lowerLimit={lowerLimit} upperLimit={upperLimit} />
 			</Grid>
 			<Grid item xs={12} md={8}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>

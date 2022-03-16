@@ -22,44 +22,55 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: GetProps
 	const data = await program.getMintiAssetData(index)
 	let tickerIcon = ''
 	let tickerSymbol = ''
-	switch (index) {
+	let tickerName = ''
+	switch (Number(index)) {
 		case Asset.Euro:
+			tickerName = 'iEuro'
 			tickerSymbol = 'iEUR'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Gold:
+			tickerName = 'iSPTSGD (GOLD INDEX)'
 			tickerSymbol = 'iSPTSGD'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Solana:
+			tickerName = 'iSolana'
 			tickerSymbol = 'iSOL'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Ethereum:
+			tickerName = 'iEthereum'
 			tickerSymbol = 'iETH'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Bitcoin:
+			tickerName = 'iBitcoin'
 			tickerSymbol = 'iBTC'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Luna:
+			tickerName = 'iLuna'
 			tickerSymbol = 'iLUNA'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Avalanche:
+			tickerName = 'iAvalanche'
 			tickerSymbol = 'iAVAX'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Tesla:
+			tickerName = 'iTesla'
 			tickerSymbol = 'iTLSA'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Apple:
+			tickerName = 'iApple'
 			tickerSymbol = 'iAAPL'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Amazon:
+			tickerName = 'iAmazon'
 			tickerSymbol = 'iAMZN'
 			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
@@ -67,7 +78,8 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: GetProps
 			throw new Error('Not supported')
 	}
 	return {
-		tickerIcon: ethLogo,
+		tickerIcon: tickerIcon,
+		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
 		oPrice: data[0]!,
 		stableCollateralRatio: data[1]!,
@@ -95,6 +107,7 @@ interface GetProps {
 
 export interface PositionInfo {
 	tickerIcon: string
+	tickerName: string
 	tickerSymbol: string
 	oPrice: number
 	stableCollateralRatio: number

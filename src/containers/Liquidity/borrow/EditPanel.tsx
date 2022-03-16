@@ -8,6 +8,7 @@ import PairInput from '~/components/Borrow/PairInput'
 import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import { callEdit } from '~/web3/Borrow/borrow'
+import { fetchAsset } from '~/features/Overview/Asset.query'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import {
 	PositionInfo as PositionInfoType,
@@ -15,7 +16,7 @@ import {
 	PairData,
 	fetchPositionDetail,
 } from '~/web3/MyLiquidity/BorrowPosition'
-import { fetchBalance } from '~/web3/Borrow/balance'
+import { fetchBalance } from '~/web3/Comet/balance'
 import { ASSETS } from '~/features/assetData'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
@@ -31,19 +32,20 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 	// const [collRatio, setCollRatio] = useState(150)
 	const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
-  const [assetIndex, setAssetIndex] = useState(0)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
-	const [borrowIndex, _] = useState(0)
+	const [borrowIndex, _] = useState(parseInt(assetId) - 1)
+	const [iassetBalance, setIassetBalance] = useState(0.0)
 
 	useEffect(() => {
 		const program = getInceptApp()
 
 		async function fetch() {
 			if (assetId) {
+				let mint = await program.getMintPosition(borrowIndex)
 				const data = (await fetchBorrowDetail({
 					program,
 					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
+					index: mint.poolIndex,
 				})) as PositionInfoType
 				if (data) {
 					const positionData = await fetchPositionDetail(program, publicKey!, borrowIndex)
@@ -56,14 +58,15 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				const balance = await fetchBalance({
 					program,
 					userPubKey: publicKey,
+					index: mint.poolIndex
 				})
 				if (balance) {
+					setFromPair({
+						...fromPair,
+						balance: balance!.usdiVal,
+					})
+					setIassetBalance(balance!.iassetVal)
 				}
-        setAssetIndex(parseInt(assetId) - 1)
-				setFromPair({
-					...fromPair,
-					balance: balance!.balanceVal,
-				})
 			}
 		}
 		fetch()
@@ -72,13 +75,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
-			let data = {
-				...positionInfo,
-				collateralAmount: parseFloat(newVal),
-				collateralRatio: parseFloat(newVal) / (positionInfo!.borrowedIasset * positionInfo!.oPrice) * 100,
-			} as PositionInfoType
-			setPositionInfo(data)
-			setFromPair({...fromPair, amount: parseFloat(newVal)})
+			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
 		}
 	}
 
@@ -88,27 +85,27 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	//   }
 	// }
 
-  const handleChangeAsset = (index: number) => {
-		setAssetIndex(index)
+	const handleChangeAsset = (index: number) => {
+		// setAssetIndex(index)
 	}
 
-  const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
-      setBorrowAmount(parseFloat(newVal))
-    }
-  }
+			setBorrowAmount(parseFloat(newVal))
+		}
+	}
 
 	const onEdit = async () => {
 		const program = getInceptApp()
 		let cometIndex = 0
-		await callEdit(program, publicKey!, cometIndex, positionInfo!.collateralAmount)
+		await callEdit(program, publicKey!, cometIndex, fromPair.amount)
 	}
 
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-				<PositionInfo positionInfo={positionInfo} fromPair={fromPair} borrowAmount={borrowAmount} />
+				<PositionInfo positionInfo={positionInfo} />
 			</Grid>
 			<Grid item xs={12} md={8}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
@@ -135,10 +132,19 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 					<Box>
 						<SubTitle>(2) Borrow Amount</SubTitle>
-						<SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
-            <Box sx={{ marginTop: '20px' }}>
-              <SelectPairInput assets={ASSETS} selAssetId={assetIndex} value={borrowAmount} onChangeAsset={handleChangeAsset} onChangeAmount={handleChangeBorrowAmount} />
-            </Box>
+						<SubTitleComment>
+							The position can be closed when the full borrowed amount is repayed
+						</SubTitleComment>
+						<Box sx={{ marginTop: '20px' }}>
+							<PairInput
+								tickerIcon={positionInfo ? positionInfo!.tickerIcon : '/images/assets/ethereum-eth-logo.svg'}
+								tickerName={positionInfo ? positionInfo!.tickerName : ''}
+								tickerSymbol={positionInfo ? positionInfo!.tickerSymbol : ''}
+								balance={iassetBalance}
+								value={borrowAmount}
+								onChange={handleChangeBorrowAmount}
+							/>
+						</Box>
 
 						{/* <PairInput
 							tickerIcon={ethLogo}

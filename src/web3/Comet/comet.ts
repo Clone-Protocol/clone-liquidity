@@ -3,12 +3,13 @@ import { Incept } from 'sdk/src'
 import { toScaledNumber } from 'sdk/src/utils'
 import { BN } from '@project-serum/anchor'
 
-export const callClose = async (program: Incept, userPubKey: PublicKey, poolIndex: number, cometIndex: number) => {
+export const callClose = async (program: Incept, userPubKey: PublicKey, cometIndex: number) => {
 	if (!userPubKey) return null
 
 	await program.loadManager()
 
-	let pool = await program.getPool(poolIndex)
+	let comet = await program.getCometPosition(cometIndex)
+	let pool = await program.getPool(comet.poolIndex)
 
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)

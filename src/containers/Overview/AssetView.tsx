@@ -19,7 +19,7 @@ import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
-import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
+import { PositionInfo as PI, fetchInitializeCometDetail } from '~/web3/MyLiquidity/CometPosition'
 import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
 import { fetchAsset, fetchUnconcentrated } from '~/features/Overview/Asset.query'
 import { callComet } from '~/web3/Comet/comet'
@@ -40,11 +40,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 		async function fetch() {
 			if (assetId) {
-				const data = (await fetchCometDetail({
+				const data = (await fetchInitializeCometDetail({
 					program,
 					userPubKey: publicKey,
 					index: parseInt(assetId) - 1,
-					cometIndex: -1
 				})) as PI
 				if (data) {
 					data.lowerLimit = data.price / 2

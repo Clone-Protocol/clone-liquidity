@@ -47,12 +47,12 @@ let columns: GridColDef[] = [
   } },
 	{ field: 'oPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Oracle price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
     )
   }},
   { field: 'borrowed', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Borrowed', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} {params.row.tickerSymbol}</Box>
     )
   }},
 	{ field: 'collateral', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Collateral', flex: 1, renderCell(params: GridRenderCellParams<string>) {
