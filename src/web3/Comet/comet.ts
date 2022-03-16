@@ -39,14 +39,14 @@ export const callEdit = async (
 	let comet = await program.getCometPosition(cometIndex)
 
 	if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
-		program.addCollateralToComet(
+		await program.addCollateralToComet(
 			collateralAssociatedTokenAccount.address,
 			new BN(totalCollateralAmount * 10 ** 8).sub(comet.collateralAmount.val),
 			cometIndex,
 			[]
 		)
 	} else if (totalCollateralAmount < toScaledNumber(comet.collateralAmount)) {
-		program.withdrawCollateralFromComet(
+		await program.withdrawCollateralFromComet(
 			collateralAssociatedTokenAccount.address,
 			comet.collateralAmount.val.sub(new BN(totalCollateralAmount * 10 ** 8)),
 			cometIndex,
@@ -71,7 +71,7 @@ export const callComet = async ({
 
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-	program.initializeComet(
+	await program.initializeComet(
 		collateralAssociatedTokenAccount.address,
 		new BN(collateralAmount * 10 ** 8),
 		new BN(usdiAmount * 10 ** 8),

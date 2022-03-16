@@ -6,7 +6,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import SelectPairInput from '~/components/Borrow/SelectPairInput'
-import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import { callEdit } from '~/web3/Borrow/borrow'
 import { fetchAsset } from '~/features/Overview/Asset.query'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
@@ -16,14 +15,14 @@ import {
 	PairData,
 	fetchPositionDetail,
 } from '~/web3/MyLiquidity/BorrowPosition'
-import { fetchBalance } from '~/web3/Comet/balance'
+import { fetchBalance } from '~/web3/Borrow/balance'
 import { ASSETS } from '~/features/assetData'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [fromPair, setFromPair] = useState<PairData>({
-		tickerIcon: ethLogo,
+		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
 		tickerSymbol: 'USDi',
 		balance: 0.0,
@@ -85,10 +84,6 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	//   }
 	// }
 
-	const handleChangeAsset = (index: number) => {
-		// setAssetIndex(index)
-	}
-
 	const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
@@ -98,8 +93,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 	const onEdit = async () => {
 		const program = getInceptApp()
-		let cometIndex = 0
-		await callEdit(program, publicKey!, cometIndex, fromPair.amount)
+		await callEdit(program, publicKey!, borrowIndex, fromPair.amount, borrowAmount)
 	}
 
 	return (

@@ -6,14 +6,13 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Asset/PairInput'
-import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import { fetchAsset } from '~/features/Overview/Asset.query'
 import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
-import { fetchBalance } from '~/web3/Borrow/balance'
+import { fetchBalance } from '~/web3/Comet/balance'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callEdit } from '~/web3/Comet/comet'
 import { BalanceSharp } from '@mui/icons-material'
@@ -125,7 +124,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 						</SubTitle>
 						<SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
 						<PairInput
-							tickerIcon={ethLogo}
+							tickerIcon={'/images/assets/USDi.png'}
 							tickerName="USDi Coin"
 							tickerSymbol="USDi"
 							value={positionInfo?.collAmount}

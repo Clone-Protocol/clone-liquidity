@@ -38,6 +38,10 @@ export interface AssetData {
 /* Unconcentrated Liquidity */
 export const fetchUnconcentrated = () => {
   return {
+    tickerIcon: ethLogo,
+    tickerSymbol: '',
+    tickerName: '',
+    price: 0.0,
     borrowFrom: 0.0,
     borrowFromBalance: 0,
     borrowTo: 0.0,
