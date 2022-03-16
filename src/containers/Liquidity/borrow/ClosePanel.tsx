@@ -16,17 +16,18 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [positionInfo, setPositionInfo] = useState<PI>()
-  const [borrowIndex, _] = useState(0)
+  const [borrowIndex, _] = useState(parseInt(assetId) - 1)
 
   useEffect(() => {
 		const program = getInceptApp()
 
 		async function fetch() {
 			if (assetId) {
+				let mint = await program.getMintPosition(borrowIndex)
 				const data = (await fetchBorrowDetail({
 					program,
 					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
+					index: mint.poolIndex,
 				})) as PositionInfoType
 				if (data) {
 					const positionData = await fetchPositionDetail(program, publicKey!, borrowIndex)

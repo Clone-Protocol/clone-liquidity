@@ -13,7 +13,7 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
   return (
     <StyledStack direction='row' justifyContent='space-between' alignItems="center">
       <Box display="flex">
-        <Image src={tickerIcon} width="28px" height="28px" />
+        <Image src={tickerIcon!} width="28px" height="28px" />
         <Box sx={{ marginLeft: '14px', fontSize: '20px' }}>{tickerName} ({tickerSymbol})</Box>
       </Box>
       <Box sx={{ textAlign: 'right' }}>

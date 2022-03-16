@@ -6,14 +6,13 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Asset/PairInput'
-import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import { fetchAsset } from '~/features/Overview/Asset.query'
 import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
-import { fetchBalance } from '~/web3/Borrow/balance'
+import { fetchBalance } from '~/web3/Comet/balance'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callEdit } from '~/web3/Comet/comet'
 import { BalanceSharp } from '@mui/icons-material'
@@ -22,8 +21,11 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [positionInfo, setPositionInfo] = useState<PI>(fetchAsset()) // set default
+	const [collAmount, setCollAmount] = useState(0)
+	const [lowerLimit, setLowerLimit] = useState(0)
+	const [upperLimit, setUpperLimit] = useState(0)
 	const [usdiBalance, setUsdiBalance] = useState(0)
-	const [cometIndex, _] = useState(0)
+	const [cometIndex, _] = useState(parseInt(assetId) - 1)
 
 	useEffect(() => {
 		const program = getInceptApp()
@@ -33,8 +35,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				const data = (await fetchCometDetail({
 					program,
 					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
-					cometIndex,
+					index: cometIndex,
 				})) as PI
 				if (data) {
 					let comet = await program.getCometPosition(cometIndex)
@@ -43,6 +44,9 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					data.mintAmount = toScaledNumber(comet.borrowedUsdi)
 					data.collAmount = toScaledNumber(comet.collateralAmount)
 					setPositionInfo(data)
+					setCollAmount(data.collAmount)
+					setLowerLimit(data.lowerLimit)
+					setUpperLimit(data.upperLimit)
 				}
 
 				const balances = await fetchBalance({
@@ -66,7 +70,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 			const program = getInceptApp()
 			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
 				0,
-				parseInt(assetId) - 1,
+				(await program.getCometPosition(cometIndex)).poolIndex,
 				amount,
 				positionInfo.mintAmount
 			))!
@@ -110,7 +114,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-				<PositionInfo positionInfo={positionInfo} />
+				<PositionInfo positionInfo={positionInfo} collateralAmount={collAmount} lowerLimit={lowerLimit} upperLimit={upperLimit} />
 			</Grid>
 			<Grid item xs={12} md={8}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
@@ -120,7 +124,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 						</SubTitle>
 						<SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
 						<PairInput
-							tickerIcon={ethLogo}
+							tickerIcon={'/images/assets/USDi.png'}
 							tickerName="USDi Coin"
 							tickerSymbol="USDi"
 							value={positionInfo?.collAmount}

@@ -6,9 +6,12 @@ import { PositionInfo as PI } from '~/web3/MyLiquidity/CometPosition'
 
 interface Props {
   positionInfo: PI
+  collateralAmount: number
+  lowerLimit: number
+  upperLimit: number
 }
 
-const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
+const PositionInfo: React.FC<Props> = ({ positionInfo, collateralAmount, lowerLimit, upperLimit }) => {
 
   const onRecenter = () => {
   }
@@ -23,12 +26,12 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
           <Box>
             <SubTitle>Collateral</SubTitle>
             <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-              {positionInfo.collAmount} USDi
+              {collateralAmount ? collateralAmount : positionInfo.collAmount} USDi
             </Box>
             <Box sx={{ marginTop: '10px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
-                <DetailValue>{positionInfo.collAmount} USDi</DetailValue>
+                <DetailValue>{collateralAmount ? collateralAmount : positionInfo.collAmount} USDi</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
@@ -47,11 +50,11 @@ const PositionInfo: React.FC<Props> = ({ positionInfo }) => {
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Lower limit</DetailHeader>
-                <DetailValue>{positionInfo?.lowerLimit.toFixed(2)} USDi</DetailValue>
+                <DetailValue>{lowerLimit ? lowerLimit.toFixed(2) : positionInfo.lowerLimit.toFixed(2)} USDi</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Upper limit</DetailHeader>
-                <DetailValue>{positionInfo?.upperLimit.toFixed(2)} USDi</DetailValue>
+                <DetailValue>{upperLimit ? upperLimit.toFixed(2) : positionInfo.upperLimit.toFixed(2)} USDi</DetailValue>
               </Stack>
             </Box>
           </Box>

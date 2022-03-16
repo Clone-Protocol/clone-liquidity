@@ -3,12 +3,13 @@ import { Incept } from 'sdk/src'
 import { toScaledNumber } from 'sdk/src/utils'
 import { BN } from '@project-serum/anchor'
 
-export const callClose = async (program: Incept, userPubKey: PublicKey, poolIndex: number, cometIndex: number) => {
+export const callClose = async (program: Incept, userPubKey: PublicKey, cometIndex: number) => {
 	if (!userPubKey) return null
 
 	await program.loadManager()
 
-	let pool = await program.getPool(poolIndex)
+	let comet = await program.getCometPosition(cometIndex)
+	let pool = await program.getPool(comet.poolIndex)
 
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
@@ -38,14 +39,14 @@ export const callEdit = async (
 	let comet = await program.getCometPosition(cometIndex)
 
 	if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
-		program.addCollateralToComet(
+		await program.addCollateralToComet(
 			collateralAssociatedTokenAccount.address,
 			new BN(totalCollateralAmount * 10 ** 8).sub(comet.collateralAmount.val),
 			cometIndex,
 			[]
 		)
 	} else if (totalCollateralAmount < toScaledNumber(comet.collateralAmount)) {
-		program.withdrawCollateralFromComet(
+		await program.withdrawCollateralFromComet(
 			collateralAssociatedTokenAccount.address,
 			comet.collateralAmount.val.sub(new BN(totalCollateralAmount * 10 ** 8)),
 			cometIndex,
@@ -70,7 +71,7 @@ export const callComet = async ({
 
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-	program.initializeComet(
+	await program.initializeComet(
 		collateralAssociatedTokenAccount.address,
 		new BN(collateralAmount * 10 ** 8),
 		new BN(usdiAmount * 10 ** 8),

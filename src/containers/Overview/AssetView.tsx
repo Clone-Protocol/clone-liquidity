@@ -4,7 +4,6 @@ import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
 import PairInputView from '~/components/Asset/PairInputView'
-import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
@@ -19,7 +18,7 @@ import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
-import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
+import { PositionInfo as PI, fetchInitializeCometDetail } from '~/web3/MyLiquidity/CometPosition'
 import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
 import { fetchAsset, fetchUnconcentrated } from '~/features/Overview/Asset.query'
 import { callComet } from '~/web3/Comet/comet'
@@ -40,11 +39,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 		async function fetch() {
 			if (assetId) {
-				const data = (await fetchCometDetail({
+				const data = (await fetchInitializeCometDetail({
 					program,
 					userPubKey: publicKey,
 					index: parseInt(assetId) - 1,
-					cometIndex: -1
 				})) as PI
 				if (data) {
 					data.lowerLimit = data.price / 2
@@ -280,7 +278,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									<Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box>
 								</SubTitle>
 								<PairInput
-									tickerIcon={ethLogo}
+									tickerIcon={'/images/assets/USDi.png'}
 									tickerName="USDi Coin"
 									tickerSymbol="USDi"
 									value={assetData?.collAmount}
@@ -304,15 +302,15 @@ const AssetView = ({ assetId }: { assetId: string }) => {
               </Box> */}
 								<Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
 									<PairInput
-										tickerIcon={ethLogo}
-										tickerName="Incept USD"
+										tickerIcon={'/images/assets/USDi.png'}
+										tickerName="USDi Coin"
 										tickerSymbol="USDi"
 										value={assetData?.mintAmount}
 										onChange={handleChangeToAmount}
 									/>
 								</Box>
 								<PairInputView
-									tickerIcon={ethLogo}
+									tickerIcon={assetData.tickerIcon}
 									tickerSymbol={assetData.tickerSymbol}
 									value={assetData?.mintAmount / assetData.price}
 								/>
@@ -420,7 +418,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									Acquire {assetData.tickerSymbol} by <span style={{ color: '#fff' }}>Borrowing</span>
 								</SubTitleComment>
 								<PairInput
-									tickerIcon={ethLogo}
+									tickerIcon={assetData.tickerIcon}
 									tickerName={assetData.tickerName}
 									tickerSymbol={assetData.tickerSymbol}
 									value={unconcentData.borrowFrom}
@@ -437,8 +435,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								</SubTitle>
 								<SubTitleComment>An equivalent USDi amount must be provided</SubTitleComment>
 								<PairInput
-									tickerIcon={ethLogo}
-									tickerName="USDi"
+									tickerIcon={'/images/assets/USDi.png'}
+									tickerName="USDi Coin"
 									tickerSymbol="USDi"
 									value={unconcentData.borrowTo}
 									headerTitle="Balance"

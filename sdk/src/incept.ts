@@ -254,8 +254,6 @@ export class Incept {
 		let assetInfo = await this.getAssetInfo(index)
 		let associatedTokenAddress = (await this.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)).address
 		let amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!.uiAmount
-		console.log(Number(assetInfo.price.val))
-		console.log(Number(assetInfo.price.scale))
 		return [
 			toScaledNumber(assetInfo.price),
 			Number(assetInfo.stableCollateralRatio.val),
@@ -324,7 +322,8 @@ export class Incept {
 				toScaledNumber(borrowedIasset),
 				toScaledNumber(collateralAmount),
 				toScaledPercent(collateralRatio),
-				toScaledPercent(minCollateralRatio),
+				150,
+				// toScaledPercent(minCollateralRatio),
 			])
 		}
 		return mintInfos
@@ -356,7 +355,8 @@ export class Incept {
 			toScaledNumber(borrowedIasset),
 			toScaledNumber(collateralAmount),
 			toScaledPercent(collateralRatio),
-			toScaledPercent(minCollateralRatio),
+			150,
+			// toScaledPercent(minCollateralRatio),
 		]
 	}
 
@@ -741,32 +741,30 @@ export class Incept {
 	public async payBackiAssetToMint(
 		userIassetTokenAccount: PublicKey,
 		iassetAmount: BN,
-		poolIndex: number,
-		collateralIndex: number,
+		mintIndex: number,
 		signers: Array<Keypair>
 	) {
 		const payBackiAssetToMintIx = await this.payBackiAssetToMintInstruction(
 			userIassetTokenAccount,
 			iassetAmount,
-			poolIndex,
-			collateralIndex
+			mintIndex
 		)
 		await this.provider.send(new Transaction().add(payBackiAssetToMintIx), signers)
 	}
 	public async payBackiAssetToMintInstruction(
 		userIassetTokenAccount: PublicKey,
 		iassetAmount: BN,
-		poolIndex: number,
-		collateralIndex: number
+		mintIndex: number
 	) {
-		let tokenData = await this.getTokenData()
+		let mint = await this.getMintPosition(mintIndex)
+		let assetInfo = await this.getAssetInfo(mint.poolIndex)
 		let userAddress = await this.getUserAddress()
 		let userAccount = await this.getUserAccount()
 
 		return (await this.program.instruction.payBackMint(
 			this.managerAddress[1],
 			userAddress[1],
-			collateralIndex,
+			mintIndex,
 			iassetAmount,
 			{
 				accounts: {
@@ -774,7 +772,7 @@ export class Incept {
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					mintPositions: userAccount.mintPositions,
-					iassetMint: tokenData.pools[poolIndex].assetInfo.iassetMint,
+					iassetMint: assetInfo.iassetMint,
 					userIassetTokenAccount: userIassetTokenAccount,
 					tokenProgram: TOKEN_PROGRAM_ID,
 				},
@@ -783,48 +781,33 @@ export class Incept {
 	}
 
 	public async addiAssetToMint(
-		iassetAmount: BN,
-		collateralAmount: BN,
-		user: PublicKey,
-		userCollateralTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
-		poolIndex: number,
-		collateralIndex: number,
+		iassetAmount: BN,
+		mintIndex: number,
 		signers: Array<Keypair>
 	) {
 		const updatePricesIx = await this.updatePricesInstruction()
-		const addiAssetToMintIx = await this.addiAssetToMintInstruction(
-			user,
-			userIassetTokenAccount,
-			iassetAmount,
-			poolIndex,
-			collateralIndex
-		)
+		const addiAssetToMintIx = await this.addiAssetToMintInstruction(userIassetTokenAccount, iassetAmount, mintIndex)
 		await this.provider.send(new Transaction().add(updatePricesIx).add(addiAssetToMintIx), signers)
 	}
-	public async addiAssetToMintInstruction(
-		user: PublicKey,
-		userIassetTokenAccount: PublicKey,
-		iassetAmount: BN,
-		poolIndex: number,
-		collateralIndex: number
-	) {
-		let tokenData = await this.getTokenData()
+	public async addiAssetToMintInstruction(userIassetTokenAccount: PublicKey, iassetAmount: BN, mintIndex: number) {
+		let mint = await this.getMintPosition(mintIndex)
+		let assetInfo = await this.getAssetInfo(mint.poolIndex)
 		let userAddress = await this.getUserAddress()
 		let userAccount = await this.getUserAccount()
 
 		return (await this.program.instruction.addIassetToMint(
 			this.managerAddress[1],
 			userAddress[1],
-			collateralIndex,
+			mintIndex,
 			iassetAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					mintPositions: userAccount.mintPositions,
-					iassetMint: tokenData.pools[poolIndex].assetInfo.iassetMint,
+					iassetMint: assetInfo.iassetMint,
 					userIassetTokenAccount: userIassetTokenAccount,
 					tokenProgram: TOKEN_PROGRAM_ID,
 				},
@@ -883,25 +866,22 @@ export class Incept {
 
 	public async provideLiquidity(
 		iassetAmount: BN,
-		user: PublicKey,
 		userUsdiTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userLiquidityTokenAccount: PublicKey,
-		poolIndex: number,
+		liquidityIndex: number,
 		signers: Array<Keypair>
 	) {
 		const provideLiquidityIx = await this.provideLiquidityInstruction(
-			user,
 			userUsdiTokenAccount,
 			userIassetTokenAccount,
 			userLiquidityTokenAccount,
 			iassetAmount,
-			poolIndex
+			liquidityIndex
 		)
 		await this.provider.send(new Transaction().add(provideLiquidityIx), signers)
 	}
 	public async provideLiquidityInstruction(
-		user: PublicKey,
 		userUsdiTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userLiquidityTokenAccount: PublicKey,
@@ -917,7 +897,7 @@ export class Incept {
 			iassetAmount,
 			{
 				accounts: {
-					user: user,
+					user: this.provider.wallet.publicKey,
 					manager: this.managerAddress[0],
 					tokenData: this.manager.tokenData,
 					liquidityPositions: userAccount.liquidityPositions,
@@ -949,19 +929,19 @@ export class Incept {
 	}
 
 	public async withdrawLiquidity(
-		iassetAmount: BN,
+		liquidityTokenAmount: BN,
 		userUsdiTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userLiquidityTokenAccount: PublicKey,
-		poolIndex: number,
+		liquidityIndex: number,
 		signers: Array<Keypair>
 	) {
 		const withdrawLiquidityIx = await this.withdrawLiquidityInstruction(
 			userUsdiTokenAccount,
 			userIassetTokenAccount,
 			userLiquidityTokenAccount,
-			iassetAmount,
-			poolIndex
+			liquidityTokenAmount,
+			liquidityIndex
 		)
 		await this.provider.send(new Transaction().add(withdrawLiquidityIx), signers)
 	}
@@ -969,7 +949,7 @@ export class Incept {
 		userUsdiTokenAccount: PublicKey,
 		userIassetTokenAccount: PublicKey,
 		userLiquidityTokenAccount: PublicKey,
-		iassetAmount: BN,
+		liquidityTokenAmount: BN,
 		liquidityPositionIndex: number
 	) {
 		let tokenData = await this.getTokenData()
@@ -978,7 +958,7 @@ export class Incept {
 		return (await this.program.instruction.withdrawLiquidity(
 			this.managerAddress[1],
 			liquidityPositionIndex,
-			iassetAmount,
+			liquidityTokenAmount,
 			{
 				accounts: {
 					user: this.provider.wallet.publicKey,
