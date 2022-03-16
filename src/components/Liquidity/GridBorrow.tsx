@@ -73,7 +73,7 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <Link href="/liquidity/borrow/1/manage"><RiskButton>Manage</RiskButton></Link>
+          <Link href={`/liquidity/borrow/${params.row.id}/manage`}><RiskButton>Manage</RiskButton></Link>
         </Box>
       )
     }

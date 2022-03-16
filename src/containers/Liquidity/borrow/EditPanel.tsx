@@ -5,6 +5,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
+import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import ethLogo from 'public/images/assets/ethereum-eth-logo.svg'
 import { callEdit } from '~/web3/Borrow/borrow'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
@@ -15,6 +16,7 @@ import {
 	fetchPositionDetail,
 } from '~/web3/MyLiquidity/BorrowPosition'
 import { fetchBalance } from '~/web3/Borrow/balance'
+import { ASSETS } from '~/features/assetData'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -29,6 +31,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 	// const [collRatio, setCollRatio] = useState(150)
 	const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
+  const [assetIndex, setAssetIndex] = useState(0)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
 	const [borrowIndex, _] = useState(0)
 
@@ -56,6 +59,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				})
 				if (balance) {
 				}
+        setAssetIndex(parseInt(assetId) - 1)
 				setFromPair({
 					...fromPair,
 					balance: balance!.balanceVal,
@@ -83,6 +87,17 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	//     setCollRatio(newValue)
 	//   }
 	// }
+
+  const handleChangeAsset = (index: number) => {
+		setAssetIndex(index)
+	}
+
+  const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newVal = e.currentTarget.value
+		if (newVal) {
+      setBorrowAmount(parseFloat(newVal))
+    }
+  }
 
 	const onEdit = async () => {
 		const program = getInceptApp()
@@ -120,15 +135,19 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 					<Box>
 						<SubTitle>(2) Borrow Amount</SubTitle>
-						<SubTitleComment>Borrowed amount can’t be edited</SubTitleComment>
-						<PairInput
+						<SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
+            <Box sx={{ marginTop: '20px' }}>
+              <SelectPairInput assets={ASSETS} selAssetId={assetIndex} value={borrowAmount} onChangeAsset={handleChangeAsset} onChangeAmount={handleChangeBorrowAmount} />
+            </Box>
+
+						{/* <PairInput
 							tickerIcon={ethLogo}
 							tickerName="Incept USD"
 							tickerSymbol="USDi"
 							value={borrowAmount}
 							disabled
 							balanceDisabled
-						/>
+						/> */}
 					</Box>
 					<StyledDivider />
 

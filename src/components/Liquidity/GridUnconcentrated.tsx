@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { Box, Stack, RadioGroup, FormControlLabel, Radio, Button, Tabs, Tab } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import Image from 'next/image'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
-import Link from 'next/link'
 import DepositDialog from '~/containers/Liquidity/unconcentrated/DepositDialog'
 import WithdrawDialog from '~/containers/Liquidity/unconcentrated/WithdrawDialog'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
@@ -58,7 +57,7 @@ let columns: GridColDef[] = [
   }},
   { field: 'liquidityAsset', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Liquidity (iAsset)', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} iSOL</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} {params.row.tickerSymbol}</Box>
     )
   }},
   { field: 'liquidityUSD', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Liquidity (USDi)', flex: 1, renderCell(params: GridRenderCellParams<string>) {
@@ -84,8 +83,8 @@ let columns: GridColDef[] = [
           <StableButton onClick={() => setOpenDeposit(true)}>Deposit</StableButton>
           <InactiveButton onClick={() => setOpenWithdraw(true)}>Withdraw</InactiveButton>
 
-          <DepositDialog open={openDeposit} handleClose={() => setOpenDeposit(false)} />
-          <WithdrawDialog open={openWithdraw} handleClose={() => setOpenWithdraw(false)} />
+          <DepositDialog assetId={params.row.id} open={openDeposit} handleClose={() => setOpenDeposit(false)} />
+          <WithdrawDialog assetId={params.row.id} open={openWithdraw} handleClose={() => setOpenWithdraw(false)} />
         </Box>
       )
     }

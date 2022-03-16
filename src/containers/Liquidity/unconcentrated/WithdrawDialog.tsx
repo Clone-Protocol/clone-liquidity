@@ -2,37 +2,51 @@ import React, { useState } from 'react'
 import { Box, Stack, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 
-const WithdrawDialog = ({ open, handleClose }: any) => {
-  const [amount, setAmount] = useState(50)
-  const [value, setValue] = useState(0.0)
+const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
+  const [amount, setAmount] = useState(0.0)
+  const [percent, setPercent] = useState(50)
+  const [maxValue, setMaxValue] = useState(0.0)
 
-  const handleChangeAmount = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === 'number') {
-      setAmount(newValue)
+  const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value) {
+      const amt = parseFloat(e.currentTarget.value)
+      setAmount(amt)
     }
   }
 
-  const onChange = () => {
+  const handleChangePercent = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
+      setPercent(newValue)
+    }
+  }
 
+  const onWithdraw = () => {
+    handleClose()
+
+    console.log(amount)
+    console.log(percent)
   }
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353'}}>
+      <DialogContent sx={{ width: '570px', backgroundColor: '#171717', border: 'solid 1px #535353'}}>
         <Box sx={{ padding: '30px', color: '#fff' }}>
           <Box>
             <SubTitle>Select withdrawal amount</SubTitle>
+            <Stack direction="row" justifyContent="flex-end">
+              <Box sx={{ fontSize: '13px', fontWeight: '500' }}>Max value: {maxValue}</Box>
+            </Stack>
             <InputAmount
               id="ip-amount"
               type='number'
-              value={value}
-              onChange={onChange}
+              value={amount}
+              onChange={handleChangeAmount}
               />
-            <RatioSlider value={amount} onChange={handleChangeAmount} />
+            <RatioSlider min={0} max={100} value={percent} onChange={handleChangePercent} />
           </Box>
           <StyledDivider />
 
-          <ActionButton onClick={handleClose}>Withdraw</ActionButton>
+          <ActionButton onClick={onWithdraw}>Withdraw</ActionButton>
         </Box>
       </DialogContent>
     </Dialog>
@@ -59,10 +73,10 @@ const InputAmount = styled(`input`)`
   text-align: right;
   border: 0px;
   background-color: #333333;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  color: #757a7f;
-  margin-top: 20px;
+  color: #fff;
+  margin-top: 5px;
   margin-bottom: 20px;
 `
 

@@ -11,6 +11,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
 import { fetchBalance } from '~/web3/Borrow/balance'
+import { ASSETS } from '~/features/assetData'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -23,59 +24,7 @@ const BorrowBox = () => {
 		amount: 0.0,
 	})
 	// const [collRatio, setCollRatio] = useState(250)
-	// TODO : link to contract Overview::Assets::fetchAssets
-	const ASSETS = [
-		{
-			tickerName: 'iEuro',
-			tickerSymbol: 'iEUR',
-			tickerIcon: ethLogo
-    },
-		{
-			tickerName: 'iSPTSGD (GOLD INDEX)',
-			tickerSymbol: 'iSPTSGD',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iSolana',
-			tickerSymbol: 'iSOL',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iEthereum',
-			tickerSymbol: 'iETH',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iBitcoin',
-			tickerSymbol: 'iBTC',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iLuna',
-			tickerSymbol: 'iLUNA',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iAvalanche',
-			tickerSymbol: 'iAVAX',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iTesla',
-			tickerSymbol: 'iTLSA',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iApple',
-			tickerSymbol: 'iAAPL',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-		{
-			tickerName: 'iAmazon',
-			tickerSymbol: 'iAMZN',
-			tickerIcon: '/images/assets/ethereum-eth-logo.svg'
-    },
-  ]
+
   const [assetData, setAssetData] = useState<PositionInfoType>()
   const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAmount, setBorrowAmount] = useState(0.0)

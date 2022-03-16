@@ -116,10 +116,10 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Stack direction="row" spacing={2}>
-          <Link href="/assets/1/asset">
+          <Link href={`/assets/${params.row.id}/asset`}>
             <ChangePositionButton><Image src={ChangePositionIcon} /></ChangePositionButton>
           </Link>
-          <Link href="/assets/1/asset">
+          <Link href={`/assets/${params.row.id}/asset`}>
             <TradeButton><Image src={TradeIcon} /></TradeButton>
           </Link>
         </Stack>

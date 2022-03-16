@@ -81,7 +81,7 @@ let columns: GridColDef[] = [
       return (
         <Box display="flex">
           <RiskButton>Recenter</RiskButton>
-          <Link href="/liquidity/comet/1/manage">
+          <Link href={`/liquidity/comet/${params.row.id}/manage`}>
             <RiskButton>Manage</RiskButton>
           </Link>
         </Box>

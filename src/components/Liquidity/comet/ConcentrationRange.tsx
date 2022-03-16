@@ -257,7 +257,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
         value={value}
       />
       <CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 43px)` }}>
-        {assetData.centerPrice}
+        {assetData.centerPrice.toFixed(2)}
         <Stick />
       </CenterPriceBox>
     </Box>
