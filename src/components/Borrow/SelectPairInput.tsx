@@ -18,7 +18,7 @@ interface Props {
 const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeAsset, onChangeAmount }) => {
   
   return (
-    <FormControl variant='standard'>
+    <FormControl variant='standard' sx={{ width: '100%' }}>
       <FormStack direction="row" justifyContent="space-between" alignItems="center">
         <Select
           sx={{ color: '#fff' }}

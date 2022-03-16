@@ -106,9 +106,9 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			white: '#ffffff',
 		},
 		primary: {
-			light: '#ffd992',
+			light: '#bfbdba',
 			main: '#000000',
-			dark: '#ce8600',
+			dark: '#595957',
 			contrastText: '#3C3336',
 		},
 		secondary: {

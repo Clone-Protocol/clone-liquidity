@@ -17,7 +17,19 @@ const GridComet: React.FC<Props> = ({ pools }) => {
     <DataGrid
       sx={{
         border: 0,
-        color: '#fff'
+        color: '#fff',
+        '& .MuiDataGrid-columnHeaders': {
+          borderBottom: '1px solid #535353'
+        },
+        '& .MuiDataGrid-columnSeparator': {
+          display: 'none'
+        },
+        '& .MuiDataGrid-row': {
+          border: '1px solid #535353'
+        },
+        '& .MuiDataGrid-cell': {
+          borderBottom: '1px solid #535353'
+        }
       }}
       getRowClassName={(params) => "super-app-theme--row"}
       disableColumnFilter
@@ -49,12 +61,12 @@ let columns: GridColDef[] = [
   } },
 	{ field: 'iPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Indicator price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
   { field: 'cPrice', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Center price', flex: 1, renderCell(params: GridRenderCellParams<string>) {
     return (
-      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USD</Box>
+      <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
     )
   }},
   { field: 'priceRange', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Price range', flex: 1, renderCell(params: GridRenderCellParams<string>) {
@@ -80,9 +92,9 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <RiskButton>Recenter</RiskButton>
-          <Link href="/liquidity/comet/1/manage">
-            <RiskButton>Manage</RiskButton>
+          <StableButton>Recenter</StableButton>
+          <Link href={`/liquidity/comet/${params.row.id}/manage`}>
+            <InactiveButton>Manage</InactiveButton>
           </Link>
         </Box>
       )

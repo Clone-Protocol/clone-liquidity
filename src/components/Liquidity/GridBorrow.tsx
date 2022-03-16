@@ -16,7 +16,19 @@ const GridBorrow: React.FC<Props> = ({ assets }) => {
     <DataGrid
       sx={{
         border: 0,
-        color: '#fff'
+        color: '#fff',
+        '& .MuiDataGrid-columnHeaders': {
+          borderBottom: '1px solid #535353'
+        },
+        '& .MuiDataGrid-columnSeparator': {
+          display: 'none'
+        },
+        '& .MuiDataGrid-row': {
+          border: '1px solid #535353'
+        },
+        '& .MuiDataGrid-cell': {
+          borderBottom: '1px solid #535353'
+        }
       }}
       disableColumnFilter
       disableSelectionOnClick
@@ -73,7 +85,7 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex">
-          <Link href="/liquidity/borrow/1/manage"><RiskButton>Manage</RiskButton></Link>
+          <Link href={`/liquidity/borrow/${params.row.id}/manage`}><RiskButton>Manage</RiskButton></Link>
         </Box>
       )
     }

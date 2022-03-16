@@ -3,18 +3,27 @@ import { Incept } from 'sdk/src'
 
 enum Collateral {
 	USDi,
+	mockUSDC,
 }
 
 enum Asset {
+	Euro,
+	Gold,
 	Solana,
 	Ethereum,
+	Bitcoin,
+	Luna,
+	Avalanche,
+	Tesla,
+	Apple,
+	Amazon,
 }
 
 enum AssetType {
 	Crypto,
 	Stocks,
 	Fx,
-	Comodotities,
+	Commodities,
 }
 
 export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps) => {
@@ -36,6 +45,18 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
 		let assetType: number
 		let collateralType: number
 		switch (Number(info[0])) {
+			case Asset.Euro:
+				tickerName = 'iEuro'
+				tickerSymbol = 'iEUR'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Fx
+				break
+			case Asset.Gold:
+				tickerName = 'iSPTSGD (GOLD INDEX)'
+				tickerSymbol = 'iSPTSGD'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Commodities
+				break
 			case Asset.Solana:
 				tickerName = 'iSolana'
 				tickerSymbol = 'iSOL'
@@ -48,6 +69,42 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
 				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 				assetType = AssetType.Crypto
 				break
+			case Asset.Bitcoin:
+				tickerName = 'iBitcoin'
+				tickerSymbol = 'iBTC'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Crypto
+				break
+			case Asset.Luna:
+				tickerName = 'iLuna'
+				tickerSymbol = 'iLUNA'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Crypto
+				break
+			case Asset.Avalanche:
+				tickerName = 'iAvalanche'
+				tickerSymbol = 'iAVAX'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Crypto
+				break
+			case Asset.Tesla:
+				tickerName = 'iTesla'
+				tickerSymbol = 'iTLSA'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Stocks
+				break
+			case Asset.Apple:
+				tickerName = 'iApple'
+				tickerSymbol = 'iAAPL'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Stocks
+				break
+			case Asset.Amazon:
+				tickerName = 'iAmazon'
+				tickerSymbol = 'iAMZN'
+				tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+				assetType = AssetType.Stocks
+				break
 			default:
 				throw new Error('Not supported')
 		}
@@ -55,6 +112,10 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
 			case Collateral.USDi:
 				collateralName = 'USDi'
 				collateralType = Collateral.USDi
+				break
+			case Collateral.mockUSDC:
+				collateralName = 'USDC'
+				collateralType = Collateral.mockUSDC
 				break
 			default:
 				throw new Error('Not supported')

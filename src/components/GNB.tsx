@@ -104,7 +104,7 @@ const RightMenu = () => {
 	
 				try {
 					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount();
-					await program.hackathonMintUsdi(usdiAccount.address, 100000000000000);
+					await program.hackathonMintUsdi(usdiAccount.address, 10000000000);
 
 				} finally {
 					setMintUsdi(false);
@@ -197,8 +197,10 @@ const LiquidityTitle = styled('div')`
 const StyledAppBar = styled(AppBar)`
 	z-index: 200;
 	background-color: #000;
+  height: 60px;
 	position: fixed;
 	z-index: 300;
+  border-bottom: 1px solid #3f3f3f;
 	top: 0px;
 	left: 0px;
 	.MuiContainer-root,

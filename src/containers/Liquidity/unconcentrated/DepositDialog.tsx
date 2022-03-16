@@ -7,7 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
 import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
 
-const DepositDialog = ({ open, handleClose }: any) => {
+const DepositDialog = ({ assetId, open, handleClose }: any) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated()) // set default
@@ -21,7 +21,7 @@ const DepositDialog = ({ open, handleClose }: any) => {
 			}
 		}
 		fetch()
-	}, [open, publicKey])
+	}, [open, publicKey, assetId])
 
   const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData

@@ -4,11 +4,19 @@ import { Incept } from 'sdk/src'
 import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 
 enum Asset {
+	Euro,
+	Gold,
 	Solana,
 	Ethereum,
+	Bitcoin,
+	Luna,
+	Avalanche,
+	Tesla,
+	Apple,
+	Amazon,
 }
 
-export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps) => {
+export const fetchCometDetail = async ({ program, userPubKey, index, cometIndex }: GetProps) => {
 	if (!userPubKey) return
 
 	await program.loadManager()
@@ -19,16 +27,61 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 	let tickerSymbol = ''
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
+	let centerPrice = price
+	if (cometIndex != -1) {
+		let comet = await program.getCometPosition(cometIndex)
+		centerPrice = Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
+	}
 	switch (index) {
+		case Asset.Euro:
+			tickerName = 'iEuro'
+			tickerSymbol = 'iEUR'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Gold:
+			tickerName = 'iSPTSGD (GOLD INDEX)'
+			tickerSymbol = 'iSPTSGD'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
 		case Asset.Solana:
-			tickerIcon = ethLogo
 			tickerName = 'iSolana'
 			tickerSymbol = 'iSOL'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		case Asset.Ethereum:
-			tickerIcon = ethLogo
 			tickerName = 'iEthereum'
 			tickerSymbol = 'iETH'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Bitcoin:
+			tickerName = 'iBitcoin'
+			tickerSymbol = 'iBTC'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Luna:
+			tickerName = 'iLuna'
+			tickerSymbol = 'iLUNA'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Avalanche:
+			tickerName = 'iAvalanche'
+			tickerSymbol = 'iAVAX'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Tesla:
+			tickerName = 'iTesla'
+			tickerSymbol = 'iTLSA'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Apple:
+			tickerName = 'iApple'
+			tickerSymbol = 'iAAPL'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
+			break
+		case Asset.Amazon:
+			tickerName = 'iAmazon'
+			tickerSymbol = 'iAMZN'
+			tickerIcon = '/images/assets/ethereum-eth-logo.svg'
 			break
 		default:
 			throw new Error('Not supported')
@@ -40,13 +93,15 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 		price,
 		tightRange,
 		maxRange,
+		centerPrice
 	}
 }
 
 interface GetProps {
 	program: Incept
 	userPubKey: PublicKey | null
-	index: number
+	index: number,
+	cometIndex: number
 }
 
 export interface PositionInfo {

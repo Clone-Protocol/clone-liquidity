@@ -11,6 +11,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
 import { fetchBalance } from '~/web3/Borrow/balance'
+import { ASSETS } from '~/features/assetData'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -23,19 +24,7 @@ const BorrowBox = () => {
 		amount: 0.0,
 	})
 	// const [collRatio, setCollRatio] = useState(250)
-	// TODO : link to contract Overview::Assets::fetchAssets
-	const ASSETS = [
-		{
-			tickerName: 'iSolana',
-			tickerSymbol: 'iSOL',
-			tickerIcon: ethLogo,
-		},
-		{
-			tickerName: 'iEthereum',
-			tickerSymbol: 'iETH',
-			tickerIcon: ethLogo
-    }
-  ]
+
   const [assetData, setAssetData] = useState<PositionInfoType>()
   const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAmount, setBorrowAmount] = useState(0.0)
@@ -49,7 +38,7 @@ const BorrowBox = () => {
         program,
         userPubKey: publicKey,
         index: assetIndex
-      })
+      }) as PositionInfoType
       setAssetData(assetData)
 	  const usdiBalance = await fetchBalance({
 		  program,

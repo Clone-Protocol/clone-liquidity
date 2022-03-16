@@ -57,7 +57,19 @@ const AssetList = () => {
       <DataGrid
         sx={{
           border: 0,
-          color: '#fff'
+          color: '#fff',
+          '& .MuiDataGrid-columnHeaders': {
+            borderBottom: '1px solid #535353'
+          },
+          '& .MuiDataGrid-columnSeparator': {
+            display: 'none'
+          },
+          '& .MuiDataGrid-row': {
+            border: '1px solid #535353'
+          },
+          '& .MuiDataGrid-cell': {
+            borderBottom: '1px solid #535353'
+          }
         }}
         getRowClassName={(params) => "super-app-theme--row"}
 				disableColumnFilter
@@ -116,10 +128,10 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Stack direction="row" spacing={2}>
-          <Link href="/assets/1/asset">
+          <Link href={`/assets/${params.row.id}/asset`}>
             <ChangePositionButton><Image src={ChangePositionIcon} /></ChangePositionButton>
           </Link>
-          <Link href="/assets/1/asset">
+          <Link href={`/assets/${params.row.id}/asset`}>
             <TradeButton><Image src={TradeIcon} /></TradeButton>
           </Link>
         </Stack>

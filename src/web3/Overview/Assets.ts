@@ -100,6 +100,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProp
 	await program.loadManager()
 	
 	const iassetInfos = await program.getiAssetInfos()
+	console.log(iassetInfos)
 
 	const result: AssetList[] = []
 
