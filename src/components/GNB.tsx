@@ -62,9 +62,8 @@ const GNB: React.FC = () => {
 				<Container maxWidth="xl">
 					<Toolbar disableGutters sx={{ paddingLeft: '10px' }}>
 						<Image src={logoIcon} alt="incept" />
-            <LiquidityTitle>Liquidity</LiquidityTitle>
-						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
-						</Box>
+						<LiquidityTitle>Liquidity</LiquidityTitle>
+						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
 						</Box>
@@ -87,27 +86,23 @@ const RightMenu = () => {
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const { Program, getInceptApp } = useIncept()
-	const [ mintUsdi, setMintUsdi ] = useState(false);
+	const [mintUsdi, setMintUsdi] = useState(false)
 
 	const inceptConstructor = () => {
 		const program = getInceptApp()
-		console.log(program.managerAddress[0].toString())
 	}
 
 	useEffect(() => {
-
 		async function userMintUsdi() {
 			if (connected && publicKey && mintUsdi) {
-		
-				const program = getInceptApp();
-				await program.loadManager();
-	
-				try {
-					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount();
-					await program.hackathonMintUsdi(usdiAccount.address, 10000000000);
+				const program = getInceptApp()
+				await program.loadManager()
 
+				try {
+					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+					await program.hackathonMintUsdi(usdiAccount.address, 10000000000)
 				} finally {
-					setMintUsdi(false);
+					setMintUsdi(false)
 				}
 			}
 		}
@@ -120,26 +115,20 @@ const RightMenu = () => {
 
 	useEffect(() => {
 		async function getAccount() {
-		  if (connected && publicKey && wallet) {
-	
-			const program = getInceptApp();
-			await program.loadManager();
+			if (connected && publicKey && wallet) {
+				const program = getInceptApp()
+				await program.loadManager()
 
-			if (!program.provider.wallet) {
-				console.log("NO PROVIDER WALLET!");
-				return;
-			}
+				if (!program.provider.wallet) {
+					return
+				}
 
-			try {
-			  console.log("GETTING USER ACCOUNT!");
-			  const userAccount = await program.getUserAccount()
-			  console.log('acc', userAccount)
-			} catch (error) {
-				console.log(error);
-				const response = await program.initializeUser()
-				console.log('initialized:', response)
+				try {
+					const userAccount = await program.getUserAccount()
+				} catch (error) {
+					const response = await program.initializeUser()
+				}
 			}
-		  }
 		}
 		getAccount()
 	}, [connected, publicKey])
@@ -162,22 +151,29 @@ const RightMenu = () => {
 
 	return (
 		<Box display="flex">
-			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{width: '86px', marginRight: '16px'}}>Get USDi</HeaderButton>
-			<HeaderButton onClick={handleWalletClick} variant="outlined" sx={{width: '163px'}} disabled={connecting} startIcon={<Image src={walletIcon} alt="wallet" />}>
-			{!connected ? (
-				<>Connect Wallet</>
-			) : (
-				<>
-				Disconnect Wallet{' '}
-				{publicKey ? (
-					<Box sx={{ marginLeft: '10px', color: '#6c6c6c' }}>
-					{shortenAddress(publicKey.toString())}
-					</Box>
+			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px', marginRight: '16px' }}>
+				Get USDi
+			</HeaderButton>
+			<HeaderButton
+				onClick={handleWalletClick}
+				variant="outlined"
+				sx={{ width: '163px' }}
+				disabled={connecting}
+				startIcon={<Image src={walletIcon} alt="wallet" />}>
+				{!connected ? (
+					<>Connect Wallet</>
 				) : (
-					<></>
+					<>
+						Disconnect Wallet{' '}
+						{publicKey ? (
+							<Box sx={{ marginLeft: '10px', color: '#6c6c6c' }}>
+								{shortenAddress(publicKey.toString())}
+							</Box>
+						) : (
+							<></>
+						)}
+					</>
 				)}
-				</>
-			)}
 			</HeaderButton>
 			{/* <Button variant="outlined">...</Button> */}
 		</Box>
@@ -185,22 +181,22 @@ const RightMenu = () => {
 }
 
 const LiquidityTitle = styled('div')`
-  font-size: 21px;
-  font-weight: bold;
-  background-image: linear-gradient(91deg, #00f0ff -1%, #0038ff 109%);
-  -webkit-background-clip: text;
-  margin-left: 7px;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+	font-size: 21px;
+	font-weight: bold;
+	background-image: linear-gradient(91deg, #00f0ff -1%, #0038ff 109%);
+	-webkit-background-clip: text;
+	margin-left: 7px;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 `
 
 const StyledAppBar = styled(AppBar)`
 	z-index: 200;
 	background-color: #000;
-  height: 60px;
+	height: 60px;
 	position: fixed;
 	z-index: 300;
-  border-bottom: 1px solid #3f3f3f;
+	border-bottom: 1px solid #3f3f3f;
 	top: 0px;
 	left: 0px;
 	.MuiContainer-root,
@@ -236,15 +232,14 @@ const NavPlaceholder = styled('div')`
 `
 
 const HeaderButton = styled(Button)`
-  border: 1px solid #fff;
-  padding: 14px 11px 12px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #fff;
-  height: 41px;
+	border: 1px solid #fff;
+	padding: 14px 11px 12px 14px;
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #fff;
+	height: 41px;
 `
-
 
 const useStyles = makeStyles(({ palette }: Theme) => ({
 	indicator: {

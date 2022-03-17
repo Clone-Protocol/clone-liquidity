@@ -25,17 +25,16 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 					index: unconcentratedIndex,
 				})) as UnconcentPI
 				if (data) {
-					// console.log(unconcentData)
 					const balances = await fetchBalance({
 						program,
 						userPubKey: publicKey,
+						// @ts-ignore
 						index: unconcentratedIndex,
 					})
 					if (balances) {
-            data.borrowFromBalance = balances.usdiVal
-            data.borrowToBalance = balances.iassetVal
+						data.borrowFromBalance = balances.usdiVal
+						data.borrowToBalance = balances.iassetVal
 						setUnconcentData(data)
-						console.log(unconcentData)
 					}
 				}
 			}

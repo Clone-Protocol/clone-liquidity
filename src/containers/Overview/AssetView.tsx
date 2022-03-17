@@ -56,7 +56,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 					index: parseInt(assetId) - 1,
 				})
 				if (balances) {
-          // TODO: need refactor this.
+					// TODO: need refactor this.
 					setUnconcentData({
 						...unconcentData,
 						borrowToBalance: balances.usdiVal,
@@ -163,7 +163,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...assetData,
-      isTight,
+			isTight,
 			lowerLimit,
 			upperLimit,
 		}
@@ -350,8 +350,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									Unconcentrated Liquidity
 								</Button>
 
-								{(assetData?.tightRange > assetData.price - assetData.lowerLimit ||
-								assetData?.tightRange > assetData.upperLimit - assetData.price) ? (
+								{assetData?.tightRange > assetData.price - assetData.lowerLimit ||
+								assetData?.tightRange > assetData.upperLimit - assetData.price ? (
 									<Stack
 										sx={{
 											maxWidht: '653px',

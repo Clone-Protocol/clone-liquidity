@@ -6,28 +6,28 @@ import TipMsg from '~/components/Common/TipMsg'
 import BorrowBox from '~/containers/Borrow/BorrowBox'
 
 const Borrow: NextPage = () => {
-  return (
-    <div>
-      <Head>
-        <title>Borrow - Incept Liquidity Protocol</title>
-        <meta name="description" content="Incept Liquidity Protocol" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+	return (
+		<div>
+			<Head>
+				<title>Borrow - Incept Liquidity Protocol</title>
+				<meta name="description" content="Incept Liquidity Protocol" />
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
 
-      <main>
-        <StyledSection>
-          <Container>
-            <Box sx={{ marginTop: '40px' }}>
-              <TipMsg>💡 Tip: Read about how borrowing works and the strategies here.</TipMsg>
-              <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
-                <BorrowBox />
-              </Box>
-            </Box>
-          </Container>
-        </StyledSection>
-      </main>
-    </div>
-  )
+			<main>
+				<StyledSection>
+					<Container>
+						<Box sx={{ marginTop: '40px' }}>
+							<TipMsg>💡 Tip: Read about how borrowing works and the strategies here.</TipMsg>
+							<Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+								<BorrowBox />
+							</Box>
+						</Box>
+					</Container>
+				</StyledSection>
+			</main>
+		</div>
+	)
 }
 
 const StyledSection = styled('section')`

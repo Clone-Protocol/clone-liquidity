@@ -36,18 +36,18 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 		if (e.currentTarget.value) {
 			const amt = parseFloat(e.currentTarget.value)
 			setAmount(amt)
-			setPercent(amt * 100 / maxValue)
+			setPercent((amt * 100) / maxValue)
 		}
 	}
 
 	const handleChangePercent = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setPercent(newValue)
-      setAmount(maxValue * percent / 100)
+			setAmount((maxValue * percent) / 100)
 		}
 	}
 
-	const onWithdraw = async() => {
+	const onWithdraw = async () => {
 		const program = getInceptApp()
 		await callWithdraw(program, publicKey!, unconcentratedIndex, amount)
 
@@ -64,7 +64,12 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 							<Box sx={{ fontSize: '13px', fontWeight: '500' }}>Max Value: {maxValue}</Box>
 						</Stack>
 						<InputAmount id="ip-amount" type="number" value={amount} onChange={handleChangeAmount} />
-						<RatioSlider min={0} max={100} value={Number(percent.toFixed(0))} onChange={handleChangePercent} />
+						<RatioSlider
+							min={0}
+							max={100}
+							value={Number(percent.toFixed(0))}
+							onChange={handleChangePercent}
+						/>
 					</Box>
 					<StyledDivider />
 

@@ -1,5 +1,5 @@
-import { PublicKey } from "@solana/web3.js"
-import { Incept } from "sdk/src"
+import { PublicKey } from '@solana/web3.js'
+import { Incept } from 'sdk/src'
 
 enum Asset {
 	Euro,
@@ -11,15 +11,15 @@ enum Asset {
 	Avalanche,
 	Tesla,
 	Apple,
-	Amazon
+	Amazon,
 }
 
 export const fetchUnconcentDetail = async ({ program, userPubKey, index }: GetProps) => {
-  if (!userPubKey) return 
+	if (!userPubKey) return
 
 	await program.loadManager()
 	const balances = await program.getPoolBalances(index)
-  let price = balances[1] / balances[0]
+	let price = balances[1] / balances[0]
 	let tickerIcon = ''
 	let tickerSymbol = ''
 	let tickerName = ''
@@ -86,18 +86,18 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: GetPr
 }
 
 interface GetProps {
-  program: Incept,
-  userPubKey: PublicKey | null,
-  index: number
+	program: Incept
+	userPubKey: PublicKey | null
+	index: number
 }
 
 export interface UnconcentratedData {
 	tickerIcon: string
 	tickerName: string
 	tickerSymbol: string
-  price: number
-  borrowFrom: number
-  borrowFromBalance: number
-  borrowTo: number
-  borrowToBalance: number
+	price: number
+	borrowFrom: number
+	borrowFromBalance: number
+	borrowTo: number
+	borrowToBalance: number
 }

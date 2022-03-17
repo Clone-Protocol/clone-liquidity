@@ -11,7 +11,7 @@ enum Asset {
 	Avalanche = 7,
 	Tesla = 8,
 	Apple = 9,
-	Amazon = 10
+	Amazon = 10,
 }
 
 enum AssetType {
@@ -92,20 +92,19 @@ const assetMapping = (index: number) => {
 	}
 
 	return { tickerName, tickerSymbol, tickerIcon, assetType }
-} 
+}
 
 export const fetchAssets = async ({ program, userPubKey, filter }: GetAssetsProps) => {
 	if (!userPubKey) return []
-	
+
 	await program.loadManager()
-	
+
 	const iassetInfos = await program.getiAssetInfos()
-	console.log(iassetInfos)
 
 	const result: AssetList[] = []
 
 	for (var info of iassetInfos) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0]);
+		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0])
 		result.push({
 			id: info[0],
 			tickerName: tickerName,

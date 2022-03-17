@@ -57,7 +57,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				const balance = await fetchBalance({
 					program,
 					userPubKey: publicKey,
-					index: mint.poolIndex
+					index: mint.poolIndex,
 				})
 				if (balance) {
 					setFromPair({
@@ -131,7 +131,9 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 						</SubTitleComment>
 						<Box sx={{ marginTop: '20px' }}>
 							<PairInput
-								tickerIcon={positionInfo ? positionInfo!.tickerIcon : '/images/assets/ethereum-eth-logo.svg'}
+								tickerIcon={
+									positionInfo ? positionInfo!.tickerIcon : '/images/assets/ethereum-eth-logo.svg'
+								}
 								tickerName={positionInfo ? positionInfo!.tickerName : ''}
 								tickerSymbol={positionInfo ? positionInfo!.tickerSymbol : ''}
 								balance={iassetBalance}

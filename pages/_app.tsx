@@ -14,37 +14,34 @@ import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import './styles.css'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? ((page) => page)
+	const getLayout = Component.getLayout ?? ((page) => page)
 
-  return (
-    <QueryProvider>
-      <ThemeProvider theme={theme}>
-        <SnackbarProvider maxSnack={3}>
-          <ClientWalletProvider>
-            <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
-            
-              <CssBaseline />
-              <GNB />
-              <Drawer />
+	return (
+		<QueryProvider>
+			<ThemeProvider theme={theme}>
+				<SnackbarProvider maxSnack={3}>
+					<ClientWalletProvider>
+						<Box sx={{ display: 'flex', backgroundColor: '#000' }}>
+							<CssBaseline />
+							<GNB />
+							<Drawer />
 
-            
-              <Box
-                component="main"
-                sx={{
-                  flexGrow: 1,
-                  height: '100vh',
-                  overflow: 'auto',
-                }}
-              >
-                {getLayout(<Component {...pageProps} />)}
-              </Box>          
-            </Box>
-          </ClientWalletProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryProvider>
-  )
+							<Box
+								component="main"
+								sx={{
+									flexGrow: 1,
+									height: '100vh',
+									overflow: 'auto',
+								}}>
+								{getLayout(<Component {...pageProps} />)}
+							</Box>
+						</Box>
+					</ClientWalletProvider>
+				</SnackbarProvider>
+			</ThemeProvider>
+			<ReactQueryDevtools initialIsOpen={false} />
+		</QueryProvider>
+	)
 }
 
 type NextPageWithLayout = NextPage & {

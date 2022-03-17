@@ -1,27 +1,27 @@
-import { PublicKey } from "@solana/web3.js"
-import { Incept } from "sdk/src"
+import { PublicKey } from '@solana/web3.js'
+import { Incept } from 'sdk/src'
 
 export const fetchBalance = async ({ program, userPubKey }: GetProps) => {
-  if (!userPubKey) return null
+	if (!userPubKey) return null
 
-  await program.loadManager();
+	await program.loadManager()
 
-  let balanceVal = 0.0;
+	let balanceVal = 0.0
 
-  try {
-    balanceVal = await program.getUsdiBalance();
-  } catch {}
+	try {
+		balanceVal = await program.getUsdiBalance()
+	} catch {}
 
 	return {
-    balanceVal: balanceVal
-  }
+		balanceVal: balanceVal,
+	}
 }
 
 interface GetProps {
-  program: Incept,
-  userPubKey: PublicKey | null,
+	program: Incept
+	userPubKey: PublicKey | null
 }
 
 export interface Balance {
-  balanceVal: number
+	balanceVal: number
 }

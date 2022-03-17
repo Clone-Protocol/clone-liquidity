@@ -22,8 +22,8 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 	'& .MuiDialog-paper': {
 		width: theme.spacing(40),
 		margin: 0,
-    color: '#fff',
-    border: '1px solid #fff'
+		color: '#fff',
+		border: '1px solid #fff',
 	},
 	'& .MuiDialogTitle-root': {
 		backgroundColor: '#000',

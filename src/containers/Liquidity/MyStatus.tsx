@@ -6,31 +6,30 @@ import { fetchStatus, Status } from '~/web3/MyLiquidity/status'
 import { Box } from '@mui/material'
 
 const MyStatus = () => {
-  const { publicKey } = useWallet()
-  const { getInceptApp } = useIncept()
-  const [status, setStatus] = useState<Status>()
+	const { publicKey } = useWallet()
+	const { getInceptApp } = useIncept()
+	const [status, setStatus] = useState<Status>()
 
-  useEffect(() => {
-    const program = getInceptApp()
+	useEffect(() => {
+		const program = getInceptApp()
 
-    async function fetch() {
-      const data = await fetchStatus({
-        program,
-        userPubKey: publicKey,
-      })
-      if (data) {
-        console.log(data)
-        setStatus(data)
-      }
-    }
-    fetch()
-  }, [publicKey])
+		async function fetch() {
+			const data = await fetchStatus({
+				program,
+				userPubKey: publicKey,
+			})
+			if (data) {
+				setStatus(data)
+			}
+		}
+		fetch()
+	}, [publicKey])
 
-  return (
-    <Box sx={{ maxWidth: '675px' }}>
-      <StatusView status={status} />
-    </Box>
-  )
+	return (
+		<Box sx={{ maxWidth: '675px' }}>
+			<StatusView status={status} />
+		</Box>
+	)
 }
 
 export default MyStatus

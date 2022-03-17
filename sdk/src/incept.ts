@@ -322,8 +322,7 @@ export class Incept {
 				toScaledNumber(borrowedIasset),
 				toScaledNumber(collateralAmount),
 				toScaledPercent(collateralRatio),
-				150,
-				// toScaledPercent(minCollateralRatio),
+				toScaledPercent(minCollateralRatio),
 			])
 		}
 		return mintInfos
@@ -355,8 +354,7 @@ export class Incept {
 			toScaledNumber(borrowedIasset),
 			toScaledNumber(collateralAmount),
 			toScaledPercent(collateralRatio),
-			150,
-			// toScaledPercent(minCollateralRatio),
+			toScaledPercent(minCollateralRatio),
 		]
 	}
 
@@ -372,9 +370,6 @@ export class Incept {
 			let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
 			// @ts-ignore
 			let liquidityTokenSupply = (await this.connection.getTokenSupply(pool.liquidityTokenMint)).value!.uiAmount
-			console.log(poolBalances[0])
-			console.log(liquidityTokenAmount)
-			console.log(liquidityTokenSupply)
 			let iassetValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
 			let usdiValue = (poolBalances[1] * liquidityTokenAmount) / liquidityTokenSupply
 			liquidityInfos.push([poolIndex, price, iassetValue, usdiValue, liquidityTokenAmount])
@@ -420,8 +415,6 @@ export class Incept {
 					throw new Error('Not supported')
 			}
 			let centerPrice = div(cometPosition.borrowedUsdi, cometPosition.borrowedIasset)
-			console.log(Number(centerPrice.val))
-			console.log(Number(centerPrice.scale))
 			let liquidityTokenAmount = toScaledNumber(cometPosition.liquidityTokenValue)
 			// @ts-ignore
 			let liquidityTokenSupply = (await this.connection.getTokenSupply(pool.liquidityTokenMint)).value!.uiAmount
@@ -491,8 +484,6 @@ export class Incept {
 					isSigner: false,
 				}
 			})
-		console.log(`TOKEN DATA POOLS:`)
-		console.log(this.managerAddress[0].toString())
 		return (await this.program.instruction.updatePrices(this.managerAddress[1], {
 			accounts: {
 				manager: this.managerAddress[0],
@@ -1384,11 +1375,9 @@ export class Incept {
 			let cometLiquidityTokenAmount = (usdiAmount * liquidityTokenSupplyBeforeComet) / balances[1]
 			let updatedliquidityTokenSupply = liquidityTokenSupplyBeforeComet + cometLiquidityTokenAmount
 			let yUnder = ((usdiAmount - collateralAmount) * updatedliquidityTokenSupply) / cometLiquidityTokenAmount
-			// console.log(yUnder)
 			let iassetAmount = usdiAmount / (balances[1] / balances[0])
 			let invariant = (balances[1] + usdiAmount) * (balances[0] + iassetAmount)
 			let xUnder = invariant / yUnder
-			// console.log(xUnder)
 			let pLower = (yUnder / xUnder) * 2
 
 			let a = collateralAmount / invariant

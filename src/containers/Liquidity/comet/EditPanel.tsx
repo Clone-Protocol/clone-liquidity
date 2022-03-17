@@ -70,7 +70,9 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 			const program = getInceptApp()
 			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
 				0,
-				(await program.getCometPosition(cometIndex)).poolIndex,
+				(
+					await program.getCometPosition(cometIndex)
+				).poolIndex,
 				amount,
 				positionInfo.mintAmount
 			))!
@@ -114,7 +116,12 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-				<PositionInfo positionInfo={positionInfo} collateralAmount={collAmount} lowerLimit={lowerLimit} upperLimit={upperLimit} />
+				<PositionInfo
+					positionInfo={positionInfo}
+					collateralAmount={collAmount}
+					lowerLimit={lowerLimit}
+					upperLimit={upperLimit}
+				/>
 			</Grid>
 			<Grid item xs={12} md={8}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>

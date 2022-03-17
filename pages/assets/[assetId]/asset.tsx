@@ -9,8 +9,8 @@ import AssetView from '~/containers/Overview/AssetView'
 import { Box } from '@mui/material'
 
 const AssetPage: NextPage = () => {
-  const router = useRouter()
-  const { assetId } = router.query
+	const router = useRouter()
+	const { assetId } = router.query
 
 	return (
 		<div>
@@ -18,14 +18,17 @@ const AssetPage: NextPage = () => {
 				<title>Asset</title>
 			</Head>
 			<main>
-        <StyledSection>
-          <Container>
-            <TipMsg>💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to maximize their concentraed liquidity experience. </TipMsg>
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <AssetView assetId={assetId} />
-            </Box>
-          </Container>
-        </StyledSection>
+				<StyledSection>
+					<Container>
+						<TipMsg>
+							💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to
+							maximize their concentrated liquidity experience.{' '}
+						</TipMsg>
+						<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+							<AssetView assetId={assetId} />
+						</Box>
+					</Container>
+				</StyledSection>
 			</main>
 		</div>
 	)
@@ -41,7 +44,7 @@ const StyledSection = styled('section')`
 `
 
 const BoldText = styled('span')`
-  color: #fff;
+	color: #fff;
 `
 
 export default AssetPage

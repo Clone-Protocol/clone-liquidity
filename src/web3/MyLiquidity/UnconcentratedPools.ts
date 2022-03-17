@@ -31,8 +31,6 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 
 	let i = 0
 
-	console.log(iassetInfos)
-
 	for (var info of iassetInfos) {
 		i++
 		let tickerName = ''
@@ -112,7 +110,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 			assetType: assetType,
 			liquidityAsset: info[2],
 			liquidityUSD: info[3],
-			liquidityVal: info[3]*2,
+			liquidityVal: info[3] * 2,
 		})
 	}
 
