@@ -90,7 +90,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 		price,
 		tightRange,
 		maxRange,
-		centerPrice
+		centerPrice,
 	}
 }
 
@@ -169,7 +169,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 		price,
 		tightRange,
 		maxRange,
-		centerPrice
+		centerPrice,
 	}
 }
 

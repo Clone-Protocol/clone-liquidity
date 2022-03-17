@@ -110,7 +110,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 			assetType: assetType,
 			liquidityAsset: info[2],
 			liquidityUSD: info[3],
-			liquidityVal: info[3]*2,
+			liquidityVal: info[3] * 2,
 		})
 	}
 

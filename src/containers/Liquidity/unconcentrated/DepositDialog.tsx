@@ -32,8 +32,8 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 						index: unconcentratedIndex,
 					})
 					if (balances) {
-            data.borrowFromBalance = balances.usdiVal
-            data.borrowToBalance = balances.iassetVal
+						data.borrowFromBalance = balances.usdiVal
+						data.borrowToBalance = balances.iassetVal
 						setUnconcentData(data)
 					}
 				}

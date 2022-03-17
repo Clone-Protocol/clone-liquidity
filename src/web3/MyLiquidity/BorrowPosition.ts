@@ -1,5 +1,5 @@
-import { PublicKey } from "@solana/web3.js"
-import { Incept } from "sdk/src"
+import { PublicKey } from '@solana/web3.js'
+import { Incept } from 'sdk/src'
 import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 
 enum Asset {
@@ -12,11 +12,11 @@ enum Asset {
 	Avalanche,
 	Tesla,
 	Apple,
-	Amazon
+	Amazon,
 }
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: GetProps) => {
-  if (!userPubKey) return 
+	if (!userPubKey) return
 
 	await program.loadManager()
 	const data = await program.getMintiAssetData(index)
@@ -87,22 +87,20 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: GetProps
 	}
 }
 
-export const fetchPositionDetail = async ( program: Incept, userPubKey: PublicKey, index: number ) => {
-	if (!userPubKey) return 
-  
-	  await program.loadManager()
+export const fetchPositionDetail = async (program: Incept, userPubKey: PublicKey, index: number) => {
+	if (!userPubKey) return
 
-	  const data = await program.getUserMintInfo(index)
+	await program.loadManager()
 
-	  return data
-  }
+	const data = await program.getUserMintInfo(index)
 
-
+	return data
+}
 
 interface GetProps {
-  program: Incept,
-  userPubKey: PublicKey | null,
-  index: number
+	program: Incept
+	userPubKey: PublicKey | null
+	index: number
 }
 
 export interface PositionInfo {

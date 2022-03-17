@@ -1,12 +1,12 @@
 export const GNB_ROUTES = [
-  {
-    label: 'Home',
-    path: '/',
-  }
+	{
+		label: 'Home',
+		path: '/',
+	},
 ]
 
 const ROUTES = {
-  Home: '/',
+	Home: '/',
 }
 
 export default ROUTES
