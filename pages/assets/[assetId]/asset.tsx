@@ -22,7 +22,7 @@ const AssetPage: NextPage = () => {
 					<Container>
 						<TipMsg>
 							💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to
-							maximize their concentraed liquidity experience.{' '}
+							maximize their concentrated liquidity experience.{' '}
 						</TipMsg>
 						<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 							<AssetView assetId={assetId} />
