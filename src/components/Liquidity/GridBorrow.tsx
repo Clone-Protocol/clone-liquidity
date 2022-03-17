@@ -46,7 +46,7 @@ const GridBorrow: React.FC<Props> = ({ assets }) => {
 }
 
 let columns: GridColDef[] = [
-	{ field: 'asset', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'iAsset', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'asset', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'iAsset', flex: 2, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box display="flex" justifyContent="flex-start">
         <Image src={params.row.tickerIcon} width="40px" height="40px" />

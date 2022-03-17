@@ -44,7 +44,7 @@ const AssetList = () => {
   return (
     <Box sx={{ background: '#171717', color: '#fff', '& .super-app-theme--header': {color: '#9d9d9d', fontSize: '13px'}, '& .super-app-theme--row': { border: 'solid 1px #535353'}, '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353'} }}>
       <Stack mb={2} direction="row" justifyContent="space-between">
-        <PageTabs value={filter} onChange={handleFilterChange}>
+        <PageTabs value={filter} onChange={handleFilterChange} disableRipple>
           {Object.keys(FilterTypeMap).map((f) => (
             <PageTab 
             	key={f}
