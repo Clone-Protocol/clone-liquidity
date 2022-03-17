@@ -48,7 +48,7 @@ const GridComet: React.FC<Props> = ({ pools }) => {
 }
 
 let columns: GridColDef[] = [
-	{ field: 'pools', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Pools', flex: 1, renderCell(params: GridRenderCellParams<string>) {
+	{ field: 'pools', headerClassName: 'super-app-theme--header', cellClassName: 'super-app-theme--cell', headerName: 'Pools', flex: 2, renderCell(params: GridRenderCellParams<string>) {
     return (
       <Box display="flex" justifyContent="flex-start">
         <Image src={params.row.tickerIcon} width="40px" height="40px" />
