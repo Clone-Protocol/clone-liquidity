@@ -118,7 +118,6 @@ interface ThumbComponentProps extends React.HTMLAttributes<unknown> {}
 
 function ThumbComponent(props: ThumbComponentProps) {
   const { children, ...other } = props;
-  // console.log('other',other)
   return (
     <SliderThumb {...other}>
       {children}

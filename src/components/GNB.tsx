@@ -91,7 +91,6 @@ const RightMenu = () => {
 
 	const inceptConstructor = () => {
 		const program = getInceptApp()
-		console.log(program.managerAddress[0].toString())
 	}
 
 	useEffect(() => {
@@ -126,18 +125,13 @@ const RightMenu = () => {
 			await program.loadManager();
 
 			if (!program.provider.wallet) {
-				console.log("NO PROVIDER WALLET!");
 				return;
 			}
 
 			try {
-			  console.log("GETTING USER ACCOUNT!");
 			  const userAccount = await program.getUserAccount()
-			  console.log('acc', userAccount)
 			} catch (error) {
-				console.log(error);
 				const response = await program.initializeUser()
-				console.log('initialized:', response)
 			}
 		  }
 		}

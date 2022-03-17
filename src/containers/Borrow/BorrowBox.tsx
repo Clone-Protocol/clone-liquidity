@@ -31,7 +31,6 @@ const BorrowBox = () => {
   useEffect(() => {
     const program = getInceptApp() 
 
-    console.log('fetchBorrowDetail')
     async function fetch() {
       const assetData = await fetchBorrowDetail({
         program,
@@ -79,12 +78,6 @@ const BorrowBox = () => {
   }
 
   const onBorrow = async () => {
-    console.log(fromPair)
-    // console.log(collRatio)
-    console.log(borrowAmount)
-    console.log(assetIndex)
-    console.log(assetData)
-    
     const program = getInceptApp()
     await callBorrow({
       program,

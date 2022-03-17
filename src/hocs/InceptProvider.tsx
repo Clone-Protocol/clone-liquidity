@@ -30,7 +30,6 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 
   const getInceptApp = () : Incept | null => {
     if (AnchorProvider) {
-      console.log('ffffff')
       const network = getNetworkDetailsFromEnv();
       const incept = new Incept(AnchorProvider.connection, network.incept, AnchorProvider)
       setProgram(incept)
@@ -43,6 +42,7 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
     <InceptContext.Provider
         value={{
           Program,
+          // @ts-ignore
           getInceptApp
         }}
     >

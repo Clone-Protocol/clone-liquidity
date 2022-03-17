@@ -31,8 +31,6 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 
 	let i = 0
 
-	console.log(iassetInfos)
-
 	for (var info of iassetInfos) {
 		i++
 		let tickerName = ''
