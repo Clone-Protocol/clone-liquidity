@@ -354,8 +354,7 @@ export class Incept {
 			toScaledNumber(borrowedIasset),
 			toScaledNumber(collateralAmount),
 			toScaledPercent(collateralRatio),
-			150,
-			// toScaledPercent(minCollateralRatio),
+			toScaledPercent(minCollateralRatio),
 		]
 	}
 
