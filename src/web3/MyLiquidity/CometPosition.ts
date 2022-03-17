@@ -84,7 +84,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 			throw new Error('Not supported')
 	}
 	return {
-		tickerIcon: ethLogo,
+		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
 		price,
