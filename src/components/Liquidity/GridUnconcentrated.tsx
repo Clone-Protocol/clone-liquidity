@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
-import { Box, Stack } from '@mui/material'
-import Image from 'next/image'
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { useState } from 'react'
+import { Box } from '@mui/material'
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { withCsrOnly } from '~/hocs/CsrOnly'
-import { styled } from '@mui/system'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import DepositDialog from '~/containers/Liquidity/unconcentrated/DepositDialog'
 import WithdrawDialog from '~/containers/Liquidity/unconcentrated/WithdrawDialog'
+import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
 
 interface Props {
@@ -15,37 +14,10 @@ interface Props {
 
 const GridUnconcentrated: React.FC<Props> = ({ pools }) => {
 	return (
-		<>
-			<DataGrid
-				sx={{
-					border: 0,
-					color: '#fff',
-					'& .MuiDataGrid-columnHeaders': {
-						borderBottom: '1px solid #535353',
-					},
-					'& .MuiDataGrid-columnSeparator': {
-						display: 'none',
-					},
-					'& .MuiDataGrid-row': {
-						border: '1px solid #535353',
-					},
-					'& .MuiDataGrid-cell': {
-						borderBottom: '1px solid #535353',
-					},
-				}}
-				disableColumnFilter
-				disableSelectionOnClick
-				disableColumnSelector
-				disableColumnMenu
-				disableDensitySelector
-				disableExtendRowFullWidth
-				hideFooter
-				rowHeight={100}
-				autoHeight
-				columns={columns}
-				rows={pools || []}
-			/>
-		</>
+		<Grid
+      headers={columns}
+      rows={pools || []}
+    />
 	)
 }
 
@@ -58,15 +30,7 @@ let columns: GridColDef[] = [
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box display="flex" justifyContent="flex-start">
-					<Image src={params.row.tickerIcon} width="40px" height="40px" />
-					<Stack sx={{ marginLeft: '32px' }}>
-						<Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.tickerName}</Box>
-						<Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500' }}>
-							{params.row.tickerSymbol}
-						</Box>
-					</Stack>
-				</Box>
+				<CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
 			)
 		},
 	},
@@ -77,7 +41,7 @@ let columns: GridColDef[] = [
 		headerName: 'iAsset price',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -88,9 +52,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box sx={{ fontSize: '14px', fontWeight: '600' }}>
-					{params.value.toLocaleString()} {params.row.tickerSymbol}
-				</Box>
+        <CellDigitValue value={params.value} symbol={params.row.tickerSymbol} />
 			)
 		},
 	},
@@ -101,7 +63,7 @@ let columns: GridColDef[] = [
 		headerName: 'Liquidity (USDi)',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -111,7 +73,7 @@ let columns: GridColDef[] = [
 		headerName: 'Liquidity value',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -121,8 +83,8 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
-			const [openDeposit, setOpenDeposit] = React.useState(false)
-			const [openWithdraw, setOpenWithdraw] = React.useState(false)
+			const [openDeposit, setOpenDeposit] = useState(false)
+			const [openWithdraw, setOpenWithdraw] = useState(false)
 			return (
 				<Box display="flex">
 					<StableButton onClick={() => setOpenDeposit(true)}>Deposit</StableButton>
