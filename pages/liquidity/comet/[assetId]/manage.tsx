@@ -6,26 +6,7 @@ import { useRouter } from 'next/router'
 import { Container, Box } from '@mui/material'
 import EditPanel from '~/containers/Liquidity/comet/EditPanel'
 import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
-import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
-
-const TabPanel = (props: TabPanelProps) => {
-	const { children, value, index, ...other } = props
-
-	return (
-		<div
-			role="tabpanel"
-			hidden={value !== index}
-			id={`simple-tabpanel-${index}`}
-			aria-labelledby={`simple-tab-${index}`}
-			{...other}>
-			{value === index && (
-				<Box sx={{ p: 3 }}>
-					<div>{children}</div>
-				</Box>
-			)}
-		</div>
-	)
-}
+import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 
 const Manage: NextPage = () => {
 	const router = useRouter()
@@ -46,7 +27,7 @@ const Manage: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-						<Box sx={{ marginTop: '40px' }}>
+						<Box sx={{ marginTop: '40px', marginLeft: '24px' }}>
 							<StyledTabs value={tab} onChange={handleChangeTab}>
 								<StyledTab value={0} label="Edit"></StyledTab>
 								<StyledTab value={1} label="Close"></StyledTab>

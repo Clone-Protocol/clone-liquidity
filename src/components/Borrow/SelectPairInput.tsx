@@ -45,8 +45,8 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeA
 
 const FormStack = styled(Stack)`
 	display: flex;
-	width: 95%;
-	height: 65px;
+	width: 100%;
+	height: 60px;
 	padding: 15px 25px 14px 34px;
 	border-radius: 8px;
 	background-color: #333333;
@@ -72,7 +72,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 20px;
 	font-weight: 500;
-	color: #757a7f;
+	color: #fff;
 `
 
 export default SelectPairInput

@@ -142,7 +142,8 @@ function ValueLabelComponent(props: { children: React.ReactElement; value: numbe
 const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, defaultLower, defaultUpper }) => {
 	const minLimit = 0
 	const maxLimit = max
-	const centerPricePercent = (assetData.centerPrice * 100) / maxLimit
+
+	const centerPricePercent = (assetData.price * 100) / maxLimit
 
 	// const [value, setValue] = useState<number[]>([20, 180])
 	const [value, setValue] = useState<number[]>([assetData.lowerLimit, assetData.upperLimit])
@@ -248,7 +249,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
 				value={value}
 			/>
 			<CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 43px)` }}>
-				{assetData.centerPrice.toFixed(2)}
+				{assetData.price.toFixed(2)}
 				<Stick />
 			</CenterPriceBox>
 		</Box>

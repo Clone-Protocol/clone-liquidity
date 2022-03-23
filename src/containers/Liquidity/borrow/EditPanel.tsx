@@ -5,9 +5,12 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
+import Image from 'next/image'
 import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import { callEdit } from '~/web3/Borrow/borrow'
 import { fetchAsset } from '~/features/Overview/Asset.query'
+import OneIcon from 'public/images/one-icon.png'
+import TwoIcon from 'public/images/two-icon.png'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import {
 	PositionInfo as PositionInfoType,
@@ -104,7 +107,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 			<Grid item xs={12} md={8}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
 					<Box>
-						<SubTitle>(1) Edit collateral amount</SubTitle>
+						<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box></SubTitle>
 						<SubTitleComment>Editing collateral will effect the collateral ratio</SubTitleComment>
 						<PairInput
 							tickerIcon={fromPair.tickerIcon}
@@ -125,7 +128,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
           <StyledDivider /> */}
 
 					<Box>
-						<SubTitle>(2) Borrow Amount</SubTitle>
+						<SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
 						<SubTitleComment>
 							The position can be closed when the full borrowed amount is repayed
 						</SubTitleComment>
@@ -168,6 +171,7 @@ const StyledDivider = styled(Divider)`
 `
 
 const SubTitle = styled('div')`
+  display: flex;
 	font-size: 18px;
 	font-weight: 500;
 	margin-bottom: 17px;

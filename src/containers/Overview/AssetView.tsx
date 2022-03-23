@@ -234,13 +234,13 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		<StyledBox>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 				<Box sx={{ display: 'flex' }}>
-					<CometTab onClick={() => changeTab(0)}>
+					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
 						<Image src={CometIcon} /> <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
-					</CometTab>
-					<UnconcentTab onClick={() => changeTab(1)}>
+					</CometTabBtn>
+					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
 						<Image src={UnconcentIcon} />
 						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span>
-					</UnconcentTab>
+					</UnconcentTabBtn>
 				</Box>
 			</Box>
 			<Box sx={{ paddingY: '20px' }}>
@@ -476,17 +476,35 @@ const StyledDivider = styled(Divider)`
 	height: 1px;
 `
 
+const CometTabBtn = styled((props: any) => (
+  <CometTab {...props} />
+))(({ active }: { active: boolean}) => ({
+  background: active? 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),linear-gradient(to right, #00f0ff -1%, #0038ff 109%)' : '#171717'
+}))
+
 const CometTab = styled(Button)`
 	width: 224px;
 	height: 40px;
 	padding: 9px 24px 9px 24.5px;
 	border-radius: 10px;
-	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
 		linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
 	font-size: 14px;
 	font-weight: 600;
 	color: #fff;
+  &:hover {
+    opacity: 0.8;
+  }
+  &:active {
+    background: #171717;
+  }
 `
+
+const UnconcentTabBtn = styled((props: any) => (
+  <UnconcentTab {...props} />
+))(({ active }: { active: boolean}) => ({
+  background: active? '#3d3d3d' : '#171717'
+}))
 
 const UnconcentTab = styled(Button)`
 	width: 284px;
@@ -496,6 +514,9 @@ const UnconcentTab = styled(Button)`
 	font-size: 14px;
 	font-weight: 600;
 	color: #fff;
+  &:active {
+    background: #3d3d3d;
+  }
 `
 
 const SubTitle = styled(Box)`

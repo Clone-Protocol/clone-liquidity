@@ -19,28 +19,9 @@ import GridComet from '~/components/Liquidity/GridComet'
 import GridUnconcentrated from '~/components/Liquidity/GridUnconcentrated'
 import GridBorrow from '~/components/Liquidity/GridBorrow'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
-import { TabPanelProps, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-const TabPanel = (props: TabPanelProps) => {
-	const { children, value, index, ...other } = props
-
-	return (
-		<div
-			role="tabpanel"
-			hidden={value !== index}
-			id={`simple-tabpanel-${index}`}
-			aria-labelledby={`simple-tab-${index}`}
-			{...other}>
-			{value === index && (
-				<Box sx={{ p: 3 }}>
-					<div>{children}</div>
-				</Box>
-			)}
-		</div>
-	)
-}
 
 const LiquidityTable = () => {
 	const [tab, setTab] = useState(0)
