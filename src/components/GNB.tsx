@@ -85,12 +85,8 @@ const RightMenu = () => {
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
-	const { Program, getInceptApp } = useIncept()
+	const { getInceptApp } = useIncept()
 	const [mintUsdi, setMintUsdi] = useState(false)
-
-	const inceptConstructor = () => {
-		const program = getInceptApp()
-	}
 
 	useEffect(() => {
 		async function userMintUsdi() {
