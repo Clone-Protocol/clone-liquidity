@@ -96,8 +96,7 @@ const assetMapping = (index: number) => {
 	return { tickerName, tickerSymbol, tickerIcon, assetType }
 }
 
-export const fetchAssets = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey, filter: string}) => {
-  console.log('ddd', userPubKey)
+export const fetchAssets = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
 	if (!userPubKey) return []
     
 	await program.loadManager()
@@ -178,7 +177,6 @@ export function useAssetsQuery({ userPubKey, filter, refetchOnMount, enabled = t
   const { getInceptApp } = useIncept()
   return useQuery(['assets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, filter }), {
     refetchOnMount,
-    suspense: false,
     enabled
   })
 }

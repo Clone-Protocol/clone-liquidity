@@ -3,6 +3,8 @@ import { styled } from '@mui/system'
 import Image from 'next/image'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useState } from 'react'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
 // import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 import Divider from '@mui/material/Divider';
@@ -153,4 +155,4 @@ const TradeButton = styled(Box)`
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default AssetList
+export default withSuspense(AssetList, <LoadingProgress />)
