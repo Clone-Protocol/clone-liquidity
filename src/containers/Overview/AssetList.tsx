@@ -2,81 +2,27 @@ import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useEffect, useState, useReducer, useRef } from 'react'
-// import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
-import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
+import { useState } from 'react'
+import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
+// import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 import Divider from '@mui/material/Divider';
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.png'
 import ChangePositionIcon from 'public/images/change-position-icon.png'
-import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 
-const AssetList = () => {
+const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
-	const [assets, setAssets] = useState<AssetListType[]>([])
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
-  const cache = useRef<any>({});
 
-	// const { data: assets } = useAssetsQuery({
-	//   filter,
-	//   refetchOnMount: 'always'
-	// })
-
-  const initialState = {
-    status: 'idle',
-    error: null,
-    data: [],
-  };
-
-  const [state, dispatch] = useReducer((state: any, action: {type: string, payload?: any }) => {
-    switch (action.type) {
-        case 'FETCHING':
-            return { ...initialState, status: 'fetching' };
-        case 'FETCHED':
-            return { ...initialState, status: 'fetched', data: action.payload };
-        case 'FETCH_ERROR':
-            return { ...initialState, status: 'error', error: action.payload };
-        default:
-            return state;
-    }
-  }, initialState);
-
-	useEffect(() => {
-		const program = getInceptApp()
-
-		async function fetch() {
-      dispatch({ type: 'FETCHING' });
-      console.log(cache.current['asset'])
-      if (cache.current['asset']) {
-        const data = cache.current['asset'];
-        console.log('cached')
-        dispatch({ type: 'FETCHED', payload: data });
-        setAssets(data)
-      } else {
-        try {
-          const data = await fetchAssets({
-            program,
-            userPubKey: publicKey,
-            filter,
-          })
-
-          if (data.length > 0) {
-            cache.current['asset'] = data
-            dispatch({ type: 'FETCHED', payload: data });
-            console.log('fetched', data)
-            setAssets(data)
-          }
-        } catch (error: any) {
-          dispatch({ type: 'FETCH_ERROR', payload: error.message });
-        }
-      }
-		}
-		fetch()
-	}, [publicKey])
+	const { data: assets } = useAssetsQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: 'always',
+    enabled: publicKey != null
+	})
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)

@@ -1,6 +1,26 @@
 import { useEffect, useRef, useReducer } from 'react';
 import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 
+
+export const getFetch = async (program: any, publicKey: any, filter: any, cache: any, tag: string) => {
+  console.log('cache', cache.current[tag])
+  if (cache.current[tag]) {
+    const data = cache.current[tag]
+    return data
+  } else {
+    const data = await fetchAssets({
+      program,
+      userPubKey: publicKey,
+      filter,
+    })
+    console.log('dd', data)
+    if (data.length > 0) {
+      cache.current[tag] = data
+    }
+    return data
+  }
+}
+
 export const useFetch = (program: any, publicKey: any, filter: any, tag: string) => {
 	const cache = useRef<any>({})
 
