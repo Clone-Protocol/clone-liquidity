@@ -13,7 +13,7 @@ export interface InceptProviderProps {
 
 export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
 	const [AnchorProvider, setProvider] = useState<Provider>()
-	const [Program, setProgram] = useState<Incept>()
+	const [InceptSDK, setInceptSDK] = useState<Incept>()
 	const wallet = useAnchorWallet()
 	const { connection } = useConnection()
 
@@ -32,7 +32,7 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 		if (AnchorProvider) {
 			const network = getNetworkDetailsFromEnv()
 			const incept = new Incept(AnchorProvider.connection, network.incept, AnchorProvider)
-			setProgram(incept)
+			setInceptSDK(incept)
 			return incept
 		}
 		return null
@@ -41,7 +41,7 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 	return (
 		<InceptContext.Provider
 			value={{
-				Program,
+				InceptSDK,
 				// @ts-ignore
 				getInceptApp,
 			}}>

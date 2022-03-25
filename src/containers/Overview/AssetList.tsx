@@ -2,42 +2,29 @@ import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useEffect, useState } from 'react'
-// import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
-import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
+import { useState } from 'react'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
+import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
+// import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 import Divider from '@mui/material/Divider';
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.png'
 import ChangePositionIcon from 'public/images/change-position-icon.png'
-import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 
-const AssetList = () => {
+const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
-	const [assets, setAssets] = useState<AssetListType[]>([])
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
 
-	// const { data: assets } = useAssetsQuery({
-	//   filter,
-	//   refetchOnMount: 'always'
-	// })
-
-	useEffect(() => {
-		const program = getInceptApp()
-
-		async function fetch() {
-			const data = await fetchAssets({
-				program,
-				userPubKey: publicKey,
-				filter,
-			})
-			setAssets(data)
-		}
-		fetch()
-	}, [publicKey])
+	const { data: assets } = useAssetsQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: 'always',
+    enabled: publicKey != null
+	})
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
@@ -168,4 +155,4 @@ const TradeButton = styled(Box)`
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default AssetList
+export default withSuspense(AssetList, <LoadingProgress />)
