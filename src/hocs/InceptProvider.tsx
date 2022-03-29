@@ -12,30 +12,38 @@ export interface InceptProviderProps {
 }
 
 export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
-	const [AnchorProvider, setProvider] = useState<Provider>()
+	// const [AnchorProvider, setProvider] = useState<Provider>()
 	const [InceptSDK, setInceptSDK] = useState<Incept>()
 	const wallet = useAnchorWallet()
-	const { connection } = useConnection()
+	// const { connection } = useConnection()
 
-	useEffect(() => {
-		const opts = {
-			preflightCommitment: 'processed',
-		}
-		const network = getNetworkDetailsFromEnv()
-		let new_connection = new Connection(network.endpoint)
-		// @ts-ignore
-		const provider = new Provider(new_connection, wallet, opts.preflightCommitment)
-		setProvider(provider)
-	}, [connection])
+	// useEffect(() => {
+  //   if (wallet) {
+  //     const opts = {
+  //       preflightCommitment: 'processed',
+  //     }
+  //     const network = getNetworkDetailsFromEnv()
+  //     let new_connection = new Connection(network.endpoint)
+  //     // @ts-ignore
+  //     const provider = new Provider(new_connection, wallet, opts.preflightCommitment)
+  //     setProvider(provider)
+  //   }
+	// }, [connection, wallet])
 
 	const getInceptApp = (): Incept | null => {
-		if (AnchorProvider) {
-			const network = getNetworkDetailsFromEnv()
-			const incept = new Incept(AnchorProvider.connection, network.incept, AnchorProvider)
-			setInceptSDK(incept)
-			return incept
-		}
-		return null
+		// if (AnchorProvider) {
+    const opts = {
+      preflightCommitment: 'processed',
+    }
+    const network = getNetworkDetailsFromEnv()
+    let new_connection = new Connection(network.endpoint)
+    // @ts-ignore
+    const provider = new Provider(new_connection, wallet, opts.preflightCommitment)
+    const incept = new Incept(provider.connection, network.incept, provider)
+    setInceptSDK(incept)
+
+    console.log('anchor-wallet', provider.wallet)
+    return incept
 	}
 
 	return (
