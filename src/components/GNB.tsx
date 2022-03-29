@@ -21,6 +21,7 @@ import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { useIncept } from '~/hooks/useIncept'
+import MoreMenu from '~/components/Common/MoreMenu';
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -87,6 +88,7 @@ const RightMenu = () => {
 	const { setOpen } = useWalletDialog()
 	const { getInceptApp } = useIncept()
 	const [mintUsdi, setMintUsdi] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -108,6 +110,10 @@ const RightMenu = () => {
 	const handleGetUsdiClick = () => {
 		setMintUsdi(true)
 	}
+
+  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  }
 
 	useEffect(() => {
 		async function getAccount() {
@@ -147,7 +153,7 @@ const RightMenu = () => {
 
 	return (
 		<Box display="flex">
-			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px', marginRight: '16px' }}>
+			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
 				Get USDi
 			</HeaderButton>
 			<HeaderButton
@@ -171,7 +177,8 @@ const RightMenu = () => {
 					</>
 				)}
 			</HeaderButton>
-			{/* <Button variant="outlined">...</Button> */}
+			<HeaderButton sx={{ fontSize: '20px', fontWeight: 'bold', paddingBottom: '24px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
+      <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 		</Box>
 	)
 }
@@ -233,6 +240,7 @@ const HeaderButton = styled(Button)`
 	border-radius: 8px;
 	font-size: 12px;
 	font-weight: 600;
+  margin-left: 16px;
 	color: #fff;
 	height: 41px;
 `
