@@ -541,7 +541,7 @@ export class Incept {
 	}
 
 	public async getUserAddress() {
-    console.log('dd', this.provider.wallet);
+    console.log('getUserAddress', this.provider.wallet);
 		const [userPubkey, bump] = await PublicKey.findProgramAddress(
 			[Buffer.from('user'), this.provider.wallet.publicKey.toBuffer()],
 			this.program.programId

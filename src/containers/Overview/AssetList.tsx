@@ -22,7 +22,7 @@ const AssetList: React.FC = () => {
 	const { data: assets } = useAssetsQuery({
     userPubKey: publicKey,
     filter,
-	  refetchOnMount: 'always',
+	  refetchOnMount: true,
     enabled: publicKey != null
 	})
 

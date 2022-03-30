@@ -1,76 +1,45 @@
 import { Box, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
-// import { FilterType, FilterTypeMap, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
-import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
-// import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
-import {
-	FilterType,
-	FilterTypeMap,
-	fetchPools as fetchCometPools,
-	PoolList as CometPoolList,
-} from '~/web3/MyLiquidity/CometPools'
-import {
-	fetchPools as fetchUnconcentPools,
-	PoolList as UnconcentPoolList,
-} from '~/web3/MyLiquidity/UnconcentratedPools'
-import { fetchAssets as fetchBorrowAssets, AssetList as BorrowAssetList } from '~/web3/MyLiquidity/Borrow'
-
-import GridComet from '~/components/Liquidity/GridComet'
-import GridUnconcentrated from '~/components/Liquidity/GridUnconcentrated'
-import GridBorrow from '~/components/Liquidity/GridBorrow'
+import { FilterType, FilterTypeMap } from '~/features/MyLiquidity/CometPools.query'
+import GridComet from '~/containers/Liquidity/comet/GridComet'
+import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
+import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
-import { useIncept } from '~/hooks/useIncept'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 const LiquidityTable = () => {
 	const [tab, setTab] = useState(0)
 	const [filter, setFilter] = useState<FilterType>('all')
-	const [cometPools, setCometPools] = useState<CometPoolList[]>([])
-	const [unconcentPools, setUnconcentPools] = useState<UnconcentPoolList[]>([])
-	const [borrowAssets, setBorrowAssets] = useState<BorrowAssetList[]>([])
-	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
 
-	// const { data: cometPools } = useCometPoolsQuery({
-	//   filter
-	// })
-	// const { data: unconcentPools } = useUnconcentPoolsQuery({
-	//   filter
-	// })
-	// const { data: borrowAssets } = useBorrowQuery({
-	//   filter
-	// })
+	// useEffect(() => {
+	// 	const program = getInceptApp()
 
-	useEffect(() => {
-		const program = getInceptApp()
+	// 	async function fetch() {
+	// 		const data1 = await fetchCometPools({
+	// 			program,
+	// 			userPubKey: publicKey,
+	// 			filter,
+	// 		})
+	// 		console.log(data1)
+	// 		setCometPools(data1)
 
-		async function fetch() {
-			const data1 = await fetchCometPools({
-				program,
-				userPubKey: publicKey,
-				filter,
-			})
-			console.log(data1)
-			setCometPools(data1)
+	// 		const data2 = await fetchUnconcentPools({
+	// 			program,
+	// 			userPubKey: publicKey,
+	// 			filter,
+	// 		})
+	// 		setUnconcentPools(data2)
 
-			const data2 = await fetchUnconcentPools({
-				program,
-				userPubKey: publicKey,
-				filter,
-			})
-			setUnconcentPools(data2)
-
-			const data3 = await fetchBorrowAssets({
-				program,
-				userPubKey: publicKey,
-				filter,
-			})
-			setBorrowAssets(data3)
-			console.log(data3)
-		}
-		fetch()
-	}, [publicKey])
+	// 		const data3 = await fetchBorrowAssets({
+	// 			program,
+	// 			userPubKey: publicKey,
+	// 			filter,
+	// 		})
+	// 		setBorrowAssets(data3)
+	// 		console.log(data3)
+	// 	}
+	// 	fetch()
+	// }, [publicKey])
 
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)
@@ -103,13 +72,13 @@ const LiquidityTable = () => {
 				</PageTabs>
 			</Stack>
 			<TabPanel value={tab} index={0}>
-				<GridComet pools={cometPools} />
+        <GridComet filter={filter} />
 			</TabPanel>
 			<TabPanel value={tab} index={1}>
-				<GridUnconcentrated pools={unconcentPools} />
+				<GridUnconcentrated filter={filter} />
 			</TabPanel>
 			<TabPanel value={tab} index={2}>
-				<GridBorrow assets={borrowAssets} />
+				<GridBorrow filter={filter} />
 			</TabPanel>
 		</Box>
 	)
