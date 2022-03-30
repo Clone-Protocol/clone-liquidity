@@ -12,7 +12,6 @@ export interface InceptProviderProps {
 }
 
 export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
-	const [InceptSDK, setInceptSDK] = useState<Incept>()
 	const wallet = useAnchorWallet()
 	// const { connection } = useConnection()
 
@@ -27,7 +26,6 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
     // @ts-ignore
     const provider = new Provider(new_connection, wallet, opts.preflightCommitment)
     const incept = new Incept(provider.connection, network.incept, provider)
-    setInceptSDK(incept)
 
     console.log('anchor-wallet', provider.wallet)
     return incept
@@ -36,7 +34,6 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 	return (
 		<InceptContext.Provider
 			value={{
-				InceptSDK,
 				// @ts-ignore
 				getInceptApp,
 			}}>
