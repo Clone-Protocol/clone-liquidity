@@ -158,11 +158,6 @@ export enum FilterTypeMap {
 }
 export type FilterType = keyof typeof FilterTypeMap
 
-// export interface AssetsData {
-//   list: AssetList[];
-//   total: number;
-// }
-
 export interface AssetList {
 	id: number
 	tickerName: string

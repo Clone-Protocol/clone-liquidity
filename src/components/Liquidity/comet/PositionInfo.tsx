@@ -23,13 +23,13 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, collateralAmount, lowerLi
 				value={positionInfo.price}
 			/>
 
-			<Box sx={{ background: '#171717', color: '#fff', padding: '25px', marginTop: '15px' }}>
+			<Box sx={{ background: '#171717', color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
 				<Title>Comet Position</Title>
 				<Box>
 					<Box>
 						<SubTitle>Collateral</SubTitle>
 						<Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-							{collateralAmount ? collateralAmount : positionInfo.collAmount} USDi
+							{collateralAmount ? collateralAmount : positionInfo.collAmount} <span style={{ fontSize: '14px' }}>USDi</span>
 						</Box>
 						<Box sx={{ marginTop: '10px' }}>
 							<Stack direction="row" justifyContent="space-between">

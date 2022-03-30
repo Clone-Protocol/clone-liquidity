@@ -1,4 +1,4 @@
-import { FormControl, Input, InputAdornment, InputLabel, styled, Stack, Box } from '@mui/material'
+import { styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 
 interface Props {
@@ -13,7 +13,7 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
 		<StyledStack direction="row" justifyContent="space-between" alignItems="center">
 			<Box display="flex">
 				<Image src={tickerIcon!} width="28px" height="28px" />
-				<Box sx={{ marginLeft: '14px', fontSize: '20px' }}>
+				<Box sx={{ marginLeft: '14px', fontSize: '18px', fontWeight: '500' }}>
 					{tickerName} ({tickerSymbol})
 				</Box>
 			</Box>
@@ -31,8 +31,8 @@ const StyledStack = styled(Stack)`
 	border-radius: 10px;
 	border: solid 1px #535353;
 	background-color: #171717;
-	padding-left: 40px;
-	padding-right: 40px;
+	padding-left: 25px;
+	padding-right: 25px;
 	height: 87px;
 `
 

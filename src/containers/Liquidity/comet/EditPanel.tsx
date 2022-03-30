@@ -15,7 +15,6 @@ import TwoIcon from 'public/images/two-icon.png'
 import { fetchBalance } from '~/web3/Comet/balance'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callEdit } from '~/web3/Comet/comet'
-import { BalanceSharp } from '@mui/icons-material'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -115,7 +114,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={12} md={4}>
+			<Grid item xs={12} md={5}>
 				<PositionInfo
 					positionInfo={positionInfo}
 					collateralAmount={collAmount}
@@ -123,7 +122,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					upperLimit={upperLimit}
 				/>
 			</Grid>
-			<Grid item xs={12} md={8}>
+			<Grid item xs={12} md={7}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
 					<Box>
 						<SubTitle>
@@ -144,8 +143,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 					<Box>
 						<SubTitle>
-							<Image src={TwoIcon} />{' '}
-							<Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box>
+							<Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box>
 						</SubTitle>
 						<SubTitleComment>Editing concentration range will effect the collateral amount</SubTitleComment>
 

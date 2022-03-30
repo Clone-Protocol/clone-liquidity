@@ -3,7 +3,6 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import WarningIcon from 'public/images/warning-icon-red.png'
-import Image from 'next/image'
 import { PositionInfo as PI, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 
 interface Props {

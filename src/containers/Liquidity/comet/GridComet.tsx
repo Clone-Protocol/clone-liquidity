@@ -1,48 +1,32 @@
-import { Box, Stack, RadioGroup, FormControlLabel, Radio, Button, Tabs, Tab } from '@mui/material'
-import Image from 'next/image'
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { withCsrOnly } from '~/hocs/CsrOnly'
-import { styled } from '@mui/system'
-import { PoolList } from '~/features/MyLiquidity/CometPools.query'
+import { Box } from '@mui/material'
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import Link from 'next/link'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
+import { FilterType, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
-	pools: PoolList[] | undefined
+	filter: FilterType
 }
 
-const GridComet: React.FC<Props> = ({ pools }) => {
+const GridComet: React.FC<Props> = ({ filter }) => {
+	const { publicKey } = useWallet()
+
+  const { data: cometPools } = useCometPoolsQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
+  
 	return (
-		<DataGrid
-			sx={{
-				border: 0,
-				color: '#fff',
-				'& .MuiDataGrid-columnHeaders': {
-					borderBottom: '1px solid #535353',
-				},
-				'& .MuiDataGrid-columnSeparator': {
-					display: 'none',
-				},
-				'& .MuiDataGrid-row': {
-					border: '1px solid #535353',
-				},
-				'& .MuiDataGrid-cell': {
-					borderBottom: '1px solid #535353',
-				},
-			}}
-			getRowClassName={(params) => 'super-app-theme--row'}
-			disableColumnFilter
-			disableSelectionOnClick
-			disableColumnSelector
-			disableColumnMenu
-			disableDensitySelector
-			disableExtendRowFullWidth
-			hideFooter
-			rowHeight={100}
-			autoHeight
-			columns={columns}
-			rows={pools || []}
-		/>
+    <Grid
+      headers={columns}
+      rows={cometPools || []}
+    />
 	)
 }
 
@@ -55,15 +39,7 @@ let columns: GridColDef[] = [
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box display="flex" justifyContent="flex-start">
-					<Image src={params.row.tickerIcon} width="40px" height="40px" />
-					<Stack sx={{ marginLeft: '32px' }}>
-						<Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.tickerName}</Box>
-						<Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500' }}>
-							{params.row.tickerSymbol}
-						</Box>
-					</Stack>
-				</Box>
+        <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
 			)
 		},
 	},
@@ -74,7 +50,7 @@ let columns: GridColDef[] = [
 		headerName: 'Indicator price',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -84,7 +60,7 @@ let columns: GridColDef[] = [
 		headerName: 'Center price',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -108,7 +84,7 @@ let columns: GridColDef[] = [
 		headerName: 'Collateral',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -118,7 +94,7 @@ let columns: GridColDef[] = [
 		headerName: 'ILD',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+      return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -142,4 +118,4 @@ let columns: GridColDef[] = [
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default withCsrOnly(GridComet)
+export default withSuspense(GridComet, <LoadingProgress />)

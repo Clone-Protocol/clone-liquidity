@@ -7,6 +7,9 @@ import { fetchUnconcentDetail, UnconcentratedData as UnconcentPI } from '~/web3/
 import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
 import { fetchBalance } from '~/web3/Borrow/balance'
 import { callDeposit } from '~/web3/UnconcentratedLiquidity/liquidity'
+import Image from 'next/image'
+import OneIcon from 'public/images/one-icon.png'
+import TwoIcon from 'public/images/two-icon.png'
 
 const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
@@ -90,7 +93,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 			<DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353' }}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
 					<Box>
-						<SubTitle>(1) Provide additional {unconcentData.tickerSymbol} to deposit</SubTitle>
+						<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional {unconcentData.tickerSymbol} to deposit</Box></SubTitle>
 						<SubTitleComment>Acquire {unconcentData.tickerSymbol} by Borrowing</SubTitleComment>
 						<PairInput
 							tickerIcon={unconcentData.tickerIcon}
@@ -104,7 +107,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 					<StyledDivider />
 
 					<Box>
-						<SubTitle>(2) Provide additional USDi to deposit</SubTitle>
+						<SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional USDi to deposit</Box></SubTitle>
 						<SubTitleComment>Equivalent value of USDi must be provided</SubTitleComment>
 						<PairInput
 							tickerIcon={'/images/assets/USDi.png'}
@@ -131,6 +134,7 @@ const StyledDivider = styled(Divider)`
 `
 
 const SubTitle = styled('div')`
+  display: flex;
 	font-size: 18px;
 	font-weight: 500;
 	marginbottom: 17px;

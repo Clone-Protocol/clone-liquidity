@@ -1,12 +1,15 @@
 import { Box, Stack, Button, Paper, Divider } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { styled } from '@mui/system'
+import Image from 'next/image'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import PairInput from '~/components/Borrow/PairInput'
 import SelectPairInput from '~/components/Borrow/SelectPairInput'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
+import OneIcon from 'public/images/one-icon.png'
+import TwoIcon from 'public/images/two-icon.png'
 import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
 import { fetchBalance } from '~/web3/Comet/balance'
@@ -93,7 +96,7 @@ const BorrowBox = () => {
 		<StyledPaper variant="outlined">
 			<Box sx={{ fontSize: '24px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
 			<Box>
-				<SubTitle>(1) Choose a collateral asset</SubTitle>
+				<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Choose a collateral asset</Box></SubTitle>
 				<SubTitleComment>The collateral asset may affert the minimum collateral ratio.</SubTitleComment>
 				<PairInput
 					tickerIcon={fromPair.tickerIcon}
@@ -116,7 +119,7 @@ const BorrowBox = () => {
       <StyledDivider /> */}
 
 			<Box>
-				<SubTitle>(2) Borrow Amount</SubTitle>
+				<SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
 				<SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
 				<Box sx={{ marginTop: '20px' }}>
 					<SelectPairInput
@@ -177,6 +180,7 @@ const StyledDivider = styled(Divider)`
 `
 
 const SubTitle = styled('div')`
+  display: flex;
 	font-size: 18px;
 	font-weight: 500;
 	margin-bottom: 17px;
@@ -188,11 +192,13 @@ const SubTitleComment = styled('div')`
 	color: #989898;
 `
 
-const IconButton = styled(Button)`
+const IconButton = styled('div')`
 	width: 22px;
 	height: 22px;
 	background: #00f0ff;
 	color: #000;
+  cursor: pointer;
+  border-radius: 20px;
 `
 
 const ActionButton = styled(Button)`

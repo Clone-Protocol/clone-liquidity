@@ -44,7 +44,7 @@ const PairInput: React.FC<Props> = ({
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
-	height: 65px;
+	height: 60px;
 	padding: 15px 25px 14px 34px;
 	border-radius: 8px;
 	background-color: #333333;

@@ -1,41 +1,30 @@
-import { Box, Stack, RadioGroup, FormControlLabel, Radio, Tabs, Tab, Button } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useEffect, useState } from 'react'
-// import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
-import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { useState } from 'react'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
+import { FilterType, FilterTypeMap, useAssetsQuery } from '~/features/Overview/Assets.query'
+// import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
+import Divider from '@mui/material/Divider';
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.png'
 import ChangePositionIcon from 'public/images/change-position-icon.png'
-import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 
-const AssetList = () => {
+const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
-	const [assets, setAssets] = useState<AssetListType[]>([])
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
 
-	// const { data: assets } = useAssetsQuery({
-	//   filter,
-	//   refetchOnMount: 'always'
-	// })
-
-	useEffect(() => {
-		const program = getInceptApp()
-
-		async function fetch() {
-			const data = await fetchAssets({
-				program,
-				userPubKey: publicKey,
-				filter,
-			})
-			setAssets(data)
-		}
-		fetch()
-	}, [publicKey])
+	const { data: assets } = useAssetsQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
@@ -46,47 +35,21 @@ const AssetList = () => {
 			sx={{
 				background: '#171717',
 				color: '#fff',
-				'& .super-app-theme--header': { color: '#9d9d9d', fontSize: '13px' },
-				'& .super-app-theme--row': { border: 'solid 1px #535353' },
-				'& .super-app-theme--cell': { borderBottom: 'solid 1px #535353' },
+        padding: '30px',
+        borderRadius: '4px'
 			}}>
 			<Stack mb={2} direction="row" justifyContent="space-between">
-				<PageTabs value={filter} onChange={handleFilterChange} disableRipple>
+				<PageTabs value={filter} onChange={handleFilterChange}>
 					{Object.keys(FilterTypeMap).map((f) => (
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
 				</PageTabs>
 			</Stack>
-			<DataGrid
-				sx={{
-					border: 0,
-					color: '#fff',
-					'& .MuiDataGrid-columnHeaders': {
-						borderBottom: '1px solid #535353',
-					},
-					'& .MuiDataGrid-columnSeparator': {
-						display: 'none',
-					},
-					'& .MuiDataGrid-row': {
-						border: '1px solid #535353',
-					},
-					'& .MuiDataGrid-cell': {
-						borderBottom: '1px solid #535353',
-					},
-				}}
-				getRowClassName={(params) => 'super-app-theme--row'}
-				disableColumnFilter
-				disableSelectionOnClick
-				disableColumnSelector
-				disableColumnMenu
-				disableDensitySelector
-				disableExtendRowFullWidth
-				hideFooter
-				rowHeight={100}
-				autoHeight
-				columns={columns}
+      <Divider sx={{ backgroundColor: '#fff' }} />
+      <Grid
+        headers={columns}
 				rows={assets || []}
-			/>
+      />
 		</Box>
 	)
 }
@@ -100,15 +63,7 @@ let columns: GridColDef[] = [
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box display="flex" justifyContent="flex-start">
-					<Image src={params.row.tickerIcon} width="40px" height="40px" />
-					<Stack sx={{ marginLeft: '32px' }}>
-						<Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.tickerName}</Box>
-						<Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500' }}>
-							{params.row.tickerSymbol}
-						</Box>
-					</Stack>
-				</Box>
+        <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
 			)
 		},
 	},
@@ -119,7 +74,7 @@ let columns: GridColDef[] = [
 		headerName: 'Price',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -129,7 +84,7 @@ let columns: GridColDef[] = [
 		headerName: 'Liquidity',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} USDi</Box>
+			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
 	{
@@ -139,39 +94,39 @@ let columns: GridColDef[] = [
 		headerName: '24h Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.row.volume24h.toLocaleString()} USDi</Box>
+			return <CellDigitValue value={params.row.volume24h} symbol="USDi" />
 		},
 	},
 	{
 		field: 'baselineAPY',
-		headerClassName: 'super-app-theme--header',
+		headerClassName: 'last--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Baseline APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()} %</Box>
+			return <Box sx={{ fontSize: '14px', fontWeight: '600', textAlign: 'center', margin: '0 auto' }}>{params.value.toLocaleString()} %</Box>
 		},
 	},
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'last--cell',
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Stack direction="row" spacing={2}>
-					<Link href={`/assets/${params.row.id}/asset`}>
-						<ChangePositionButton>
-							<Image src={ChangePositionIcon} />
-						</ChangePositionButton>
-					</Link>
-					<Link href={`/assets/${params.row.id}/asset`}>
-						<TradeButton>
-							<Image src={TradeIcon} />
-						</TradeButton>
-					</Link>
-				</Stack>
+        <Stack direction="row" spacing={1}>
+          <Link href={`/assets/${params.row.id}/asset`}>
+            <ChangePositionButton>
+              <Image src={ChangePositionIcon} />
+            </ChangePositionButton>
+          </Link>
+          <Link href={`/assets/${params.row.id}/asset`}>
+            <TradeButton>
+              <Image src={TradeIcon} />
+            </TradeButton>
+          </Link>
+        </Stack>
 			)
 		},
 	},
@@ -182,6 +137,7 @@ const ChangePositionButton = styled(Box)`
 	height: 25px;
 	flex-grow: 0;
 	padding: 5.6px 5px 5.6px;
+  line-height: 10px;
 	border-radius: 4px;
 	border: solid 1px #00f0ff;
 	cursor: pointer;
@@ -199,4 +155,4 @@ const TradeButton = styled(Box)`
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default AssetList
+export default withSuspense(AssetList, <LoadingProgress />)
