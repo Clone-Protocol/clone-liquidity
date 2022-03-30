@@ -1,18 +1,29 @@
 import { useState } from 'react'
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { withCsrOnly } from '~/hocs/CsrOnly'
-import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import DepositDialog from '~/containers/Liquidity/unconcentrated/DepositDialog'
 import WithdrawDialog from '~/containers/Liquidity/unconcentrated/WithdrawDialog'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
+import { FilterType, useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
-	pools: PoolList[] | undefined
+	filter: FilterType
 }
 
-const GridUnconcentrated: React.FC<Props> = ({ pools }) => {
+const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
+  const { publicKey } = useWallet()
+
+  const { data: pools } = useUnconcentPoolsQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
+
 	return (
 		<Grid
       headers={columns}
@@ -106,6 +117,6 @@ let columns: GridColDef[] = [
 	},
 ]
 
-columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, resizable: true, filterable: false }))
+columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default withCsrOnly(GridUnconcentrated)
+export default withSuspense(GridUnconcentrated, <LoadingProgress />)

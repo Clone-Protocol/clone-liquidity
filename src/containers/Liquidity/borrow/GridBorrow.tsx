@@ -1,16 +1,27 @@
 import { Box, Button } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { AssetList } from '~/features/MyLiquidity/Borrow.query'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import Link from 'next/link'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
+import { FilterType, useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
-	assets: AssetList[] | undefined
+	filter: FilterType
 }
 
-const GridBorrow: React.FC<Props> = ({ assets }) => {
+const GridBorrow: React.FC<Props> = ({ filter }) => {
+  const { publicKey } = useWallet()
+
+  const { data: assets } = useBorrowQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
+
 	return (
     <Grid
       headers={columns}
@@ -103,4 +114,4 @@ const RiskButton = styled(Button)`
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default withCsrOnly(GridBorrow)
+export default withSuspense(GridBorrow, <LoadingProgress />)

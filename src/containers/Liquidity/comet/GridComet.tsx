@@ -1,20 +1,31 @@
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { withCsrOnly } from '~/hocs/CsrOnly'
-import { PoolList } from '~/features/MyLiquidity/CometPools.query'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import Link from 'next/link'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
+import { FilterType, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
-	pools: PoolList[] | undefined
+	filter: FilterType
 }
 
-const GridComet: React.FC<Props> = ({ pools }) => {
+const GridComet: React.FC<Props> = ({ filter }) => {
+	const { publicKey } = useWallet()
+
+  const { data: cometPools } = useCometPoolsQuery({
+    userPubKey: publicKey,
+    filter,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
+  
 	return (
     <Grid
       headers={columns}
-      rows={pools || []}
+      rows={cometPools || []}
     />
 	)
 }
@@ -107,4 +118,4 @@ let columns: GridColDef[] = [
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default withCsrOnly(GridComet)
+export default withSuspense(GridComet, <LoadingProgress />)

@@ -131,16 +131,6 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 	//     volume24h: 15898343,
 	//     baselineAPY: 28.9
 	//   },
-	//   {
-	//     id: 2,
-	//     tickerName: 'iEthereum',
-	//     tickerSymbol: 'iETH',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     price: 2300.53,
-	//     liquidity: 2551,
-	//     volume24h: 15898343,
-	//     baselineAPY: 28.9
-	//   }
 	// ]
 	return result
 }
