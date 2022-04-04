@@ -35,7 +35,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	// const [collRatio, setCollRatio] = useState(150)
 	const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
-	const [borrowIndex, _] = useState(parseInt(assetId) - 1)
+	const borrowIndex = parseInt(assetId) - 1
 	const [iassetBalance, setIassetBalance] = useState(0.0)
 
 	useEffect(() => {

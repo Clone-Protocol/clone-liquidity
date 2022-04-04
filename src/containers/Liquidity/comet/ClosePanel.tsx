@@ -16,7 +16,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const [positionInfo, setPositionInfo] = useState<PI>()
 	const [collateralAmount, setCollateralAmount] = useState(0)
 	const [ild, setILD] = useState(0)
-	const [cometIndex, _] = useState(parseInt(assetId) - 1)
+	const cometIndex = parseInt(assetId) - 1
 
 	useEffect(() => {
 		const program = getInceptApp()

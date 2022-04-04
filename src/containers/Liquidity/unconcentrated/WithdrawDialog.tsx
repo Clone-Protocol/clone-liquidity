@@ -3,7 +3,7 @@ import { Box, Stack, Divider, styled, Button, Dialog, DialogContent } from '@mui
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchMax } from '~/web3/UnconcentratedLiquidity/balance'
+import { fetchMax } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { callWithdraw } from '~/web3/UnconcentratedLiquidity/liquidity'
 
 const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
@@ -12,7 +12,7 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 	const [amount, setAmount] = useState(0.0)
 	const [percent, setPercent] = useState(50)
 	const [maxValue, setMaxValue] = useState(0.0)
-	const [unconcentratedIndex, _] = useState(parseInt(assetId) - 1)
+	const unconcentratedIndex = parseInt(assetId) - 1
 
 	useEffect(() => {
 		const program = getInceptApp()

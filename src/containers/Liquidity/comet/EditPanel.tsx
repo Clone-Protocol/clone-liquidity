@@ -24,7 +24,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const [lowerLimit, setLowerLimit] = useState(0)
 	const [upperLimit, setUpperLimit] = useState(0)
 	const [usdiBalance, setUsdiBalance] = useState(0)
-	const [cometIndex, _] = useState(parseInt(assetId) - 1)
+	const cometIndex = parseInt(assetId) - 1
 
 	useEffect(() => {
 		const program = getInceptApp()

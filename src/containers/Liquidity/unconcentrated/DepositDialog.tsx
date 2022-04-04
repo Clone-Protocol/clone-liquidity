@@ -15,7 +15,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated()) // set default
-	const [unconcentratedIndex, _] = useState(parseInt(assetId) - 1)
+	const unconcentratedIndex = parseInt(assetId) - 1
 
 	useEffect(() => {
 		const program = getInceptApp()

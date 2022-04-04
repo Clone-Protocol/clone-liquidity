@@ -16,7 +16,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [positionInfo, setPositionInfo] = useState<PI>()
-	const [borrowIndex, _] = useState(parseInt(assetId) - 1)
+	const borrowIndex = parseInt(assetId) - 1
 
 	useEffect(() => {
 		const program = getInceptApp()
