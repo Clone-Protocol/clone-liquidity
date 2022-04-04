@@ -6,9 +6,13 @@ import { AssetData } from '~/features/Overview/Asset.query'
 interface Props {
 	assetData: AssetData
 	max: number
+  hasRisk: boolean
 }
 
-const MiniPriceRange: React.FC<Props> = ({ assetData, max }) => {
+const BG_BAR_WARNING = '#ff2929'
+const BG_BAR_NORMAL = 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)'
+
+const MiniPriceRange: React.FC<Props> = ({ assetData, max, hasRisk }) => {
 	const maxLimit = max
 
 	const centerPricePercent = (assetData.price * 100) / maxLimit
@@ -21,7 +25,7 @@ const MiniPriceRange: React.FC<Props> = ({ assetData, max }) => {
       </Box>
       <Box sx={{ position: 'relative' }}>
         <Box>
-          <RangeBar />
+          <RangeBar sx={hasRisk? { background: BG_BAR_WARNING} : { background: BG_BAR_NORMAL}} />
         </Box>
         <CenterBar sx={{ left: `calc(${centerPricePercent}% - 20px)` }} />
       </Box>
@@ -54,10 +58,6 @@ const RangeBar = styled('div')`
   width: 173px;
   height: 5px;  
   background: linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
-
-  &:after {
-    
-  }
 `
 
 export default withCsrOnly(MiniPriceRange)
