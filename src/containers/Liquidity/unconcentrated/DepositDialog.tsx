@@ -5,7 +5,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { fetchUnconcentDetail, UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
 import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
-import { fetchBalance } from '~/web3/Borrow/balance'
+import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { callDeposit } from '~/web3/UnconcentratedLiquidity/liquidity'
 import Image from 'next/image'
 import OneIcon from 'public/images/one-icon.png'
@@ -153,6 +153,8 @@ const ActionButton = styled(Button)`
 	background: #7d7d7d;
 	color: #fff;
 	border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
 	margin-bottom: 15px;
 `
 

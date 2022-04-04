@@ -2,6 +2,7 @@ import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 import { useIncept } from '~/hooks/useIncept'
+import { FilterType } from '~/data/filter'
 
 enum Collateral {
 	USDi,
@@ -165,15 +166,6 @@ interface GetPoolsProps {
   refetchOnMount?: QueryObserverOptions['refetchOnMount']
   enabled?: boolean
 }
-
-export enum FilterTypeMap {
-	'all' = 'All',
-	'crypto' = 'Crypto',
-	'stocks' = 'Stocks',
-	'fx' = 'FX',
-	'commodities' = 'Commodities',
-}
-export type FilterType = keyof typeof FilterTypeMap
 
 export interface PoolList {
 	id: number

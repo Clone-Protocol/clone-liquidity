@@ -112,6 +112,8 @@ const ActionButton = styled(Button)`
 	background: #7d7d7d;
 	color: #fff;
 	border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
 	margin-bottom: 15px;
 `
 

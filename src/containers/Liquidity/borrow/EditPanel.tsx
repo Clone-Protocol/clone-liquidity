@@ -18,7 +18,7 @@ import {
 	PairData,
 	fetchPositionDetail,
 } from '~/web3/MyLiquidity/BorrowPosition'
-import { fetchBalance } from '~/web3/Borrow/balance'
+import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { ASSETS } from '~/features/assetData'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
@@ -190,6 +190,8 @@ const ActionButton = styled(Button)`
 	background: #7d7d7d;
 	color: #fff;
 	border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
 	margin-bottom: 15px;
 `
 

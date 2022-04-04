@@ -1,29 +1,20 @@
 import StatusView from '~/components/Liquidity/StatusView'
-import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useEffect, useState } from 'react'
 import { fetchStatus, Status } from '~/web3/MyLiquidity/status'
 import { Box } from '@mui/material'
+import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const MyStatus = () => {
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
-	const [status, setStatus] = useState<Status>()
 
-	useEffect(() => {
-		const program = getInceptApp()
+  const { data: status } = useStatusQuery({
+    userPubKey: publicKey,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
 
-		async function fetch() {
-			const data = await fetchStatus({
-				program,
-				userPubKey: publicKey,
-			})
-			if (data) {
-				setStatus(data)
-			}
-		}
-		fetch()
-	}, [publicKey])
 
 	return (
 		<Box sx={{ maxWidth: '675px' }}>
@@ -32,4 +23,5 @@ const MyStatus = () => {
 	)
 }
 
-export default MyStatus
+export default withSuspense(MyStatus, <LoadingProgress />)
+

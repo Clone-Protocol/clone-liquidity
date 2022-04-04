@@ -12,7 +12,7 @@ import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
-import { fetchBalance } from '~/web3/Comet/balance'
+import { fetchBalance } from '~/features/Comet/Balance.query'
 import { ASSETS } from '~/features/assetData'
 
 const BorrowBox = () => {

@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
+import { FilterType } from '~/data/filter'
 
 enum Asset {
 	Euro,
@@ -125,16 +126,6 @@ export const fetchPools = async ({ program, userPubKey, filter }: GetPoolsProps)
 	//     liquidityUSD: 111.48,
 	//     liquidityVal: 15898343,
 	//   },
-	//   {
-	//     id: 2,
-	//     tickerName: 'iEthereum',
-	//     tickerSymbol: 'iETH',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     price: 2300.53,
-	//     liquidityAsset: 100.20,
-	//     liquidityUSD: 90.11,
-	//     liquidityVal: 111.48,
-	//   }
 	// ]
 	return result
 }
@@ -144,20 +135,6 @@ interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
 }
-
-export enum FilterTypeMap {
-	'all' = 'All',
-	'crypto' = 'Crypto',
-	'stocks' = 'Stocks',
-	'fx' = 'FX',
-	'commodities' = 'Commodities',
-}
-export type FilterType = keyof typeof FilterTypeMap
-
-// export interface AssetsData {
-//   list: AssetList[];
-//   total: number;
-// }
 
 export interface PoolList {
 	id: number

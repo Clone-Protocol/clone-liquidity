@@ -1,45 +1,15 @@
 import { Box, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { FilterType, FilterTypeMap } from '~/features/MyLiquidity/CometPools.query'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { FilterType, FilterTypeMap } from '~/data/filter'
 
 const LiquidityTable = () => {
 	const [tab, setTab] = useState(0)
 	const [filter, setFilter] = useState<FilterType>('all')
-
-	// useEffect(() => {
-	// 	const program = getInceptApp()
-
-	// 	async function fetch() {
-	// 		const data1 = await fetchCometPools({
-	// 			program,
-	// 			userPubKey: publicKey,
-	// 			filter,
-	// 		})
-	// 		console.log(data1)
-	// 		setCometPools(data1)
-
-	// 		const data2 = await fetchUnconcentPools({
-	// 			program,
-	// 			userPubKey: publicKey,
-	// 			filter,
-	// 		})
-	// 		setUnconcentPools(data2)
-
-	// 		const data3 = await fetchBorrowAssets({
-	// 			program,
-	// 			userPubKey: publicKey,
-	// 			filter,
-	// 		})
-	// 		setBorrowAssets(data3)
-	// 		console.log(data3)
-	// 	}
-	// 	fetch()
-	// }, [publicKey])
 
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)

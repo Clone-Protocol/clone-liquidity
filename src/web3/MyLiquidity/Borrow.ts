@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
+import { FilterType } from '~/data/filter'
 
 enum Collateral {
 	USDi,
@@ -147,16 +148,6 @@ export const fetchAssets = async ({ program, userPubKey, filter }: GetPoolsProps
 	//     collateral: 111.48,
 	//     collateralRatio: 15898343,
 	//   },
-	//   {
-	//     id: 2,
-	//     tickerName: 'iEthereum',
-	//     tickerSymbol: 'iETH',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     oPrice: 2300.53,
-	//     borrowed: 100.20,
-	//     collateral: 90.11,
-	//     collateralRatio: 111.48,
-	//   }
 	// ]
 	return result
 }
@@ -166,15 +157,6 @@ interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
 }
-
-export enum FilterTypeMap {
-	'all' = 'All',
-	'crypto' = 'Crypto',
-	'stocks' = 'Stocks',
-	'fx' = 'FX',
-	'commodities' = 'Commodities',
-}
-export type FilterType = keyof typeof FilterTypeMap
 
 export interface AssetList {
 	id: number
