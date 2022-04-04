@@ -3,6 +3,7 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import { PositionInfo as PI } from '~/web3/MyLiquidity/CometPosition'
+import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 
 interface Props {
 	positionInfo: PI
@@ -51,6 +52,10 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, collateralAmount, lowerLi
 					<Box>
 						<SubTitle>Price Range</SubTitle>
 						<Box sx={{ marginTop: '20px' }}>
+              <ConcentrationRangeView 
+                assetData={positionInfo}
+                max={positionInfo.maxRange}
+              />
 							<Stack direction="row" justifyContent="space-between">
 								<DetailHeader>Center price</DetailHeader>
 								<DetailValue>{positionInfo?.centerPrice.toFixed(2)} USDi</DetailValue>
@@ -127,6 +132,8 @@ const ActionButton = styled(Button)`
 	border-width: 2px;
 	border-image-source: linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
 	border-image-slice: 1;
+  font-size: 18px;
+  font-weight: 500;
 	color: #fff;
 `
 
