@@ -4,8 +4,9 @@ import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
-import { FilterType, fetchPools, PoolList } from '~/web3/MyLiquidity/CometPools'
+import { PositionInfo as PI, fetchCometDetail } from '~/features/MyLiquidity/CometPosition.query'
+import { FilterType } from '~/data/filter'
+import { fetchPools, PoolList } from '~/web3/MyLiquidity/CometPools'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callClose } from '~/web3/Comet/comet'
 
@@ -16,7 +17,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const [positionInfo, setPositionInfo] = useState<PI>()
 	const [collateralAmount, setCollateralAmount] = useState(0)
 	const [ild, setILD] = useState(0)
-	const cometIndex = parseInt(assetId) - 1
+	const cometIndex = parseInt(assetId)
 
 	useEffect(() => {
 		const program = getInceptApp()

@@ -8,13 +8,15 @@ import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Asset/PairInput'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import { fetchAsset } from '~/features/Overview/Asset.query'
-import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
+import { PositionInfo as PI, fetchCometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
-import { fetchBalance } from '~/features/Comet/Balance.query'
+import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callEdit } from '~/web3/Comet/comet'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -23,8 +25,14 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const [collAmount, setCollAmount] = useState(0)
 	const [lowerLimit, setLowerLimit] = useState(0)
 	const [upperLimit, setUpperLimit] = useState(0)
-	const [usdiBalance, setUsdiBalance] = useState(0)
-	const cometIndex = parseInt(assetId) - 1
+
+	const cometIndex = parseInt(assetId)
+
+  const { data: usdiBalance } = useBalanceQuery({ 
+    userPubKey: publicKey, 
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
 
 	useEffect(() => {
 		const program = getInceptApp()
@@ -38,6 +46,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				})) as PI
 				if (data) {
 					let comet = await program.getCometPosition(cometIndex)
+          console.log('sss', data)
 					data.lowerLimit = toScaledNumber(comet.lowerPriceRange)
 					data.upperLimit = toScaledNumber(comet.upperPriceRange)
 					data.mintAmount = toScaledNumber(comet.borrowedUsdi)
@@ -46,15 +55,6 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					setCollAmount(data.collAmount)
 					setLowerLimit(data.lowerLimit)
 					setUpperLimit(data.upperLimit)
-				}
-
-				const balances = await fetchBalance({
-					program,
-					userPubKey: publicKey,
-				})
-				if (balances) {
-					// TODO: need refactor this.
-					setUsdiBalance(balances.balanceVal)
 				}
 			}
 		}
@@ -135,7 +135,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 							tickerSymbol="USDi"
 							value={positionInfo?.collAmount}
 							headerTitle="Balance"
-							headerValue={usdiBalance}
+							headerValue={usdiBalance?.balanceVal}
 							onChange={handleChangeFromAmount}
 						/>
 					</Box>
@@ -201,4 +201,4 @@ const ActionButton = styled(Button)`
 	margin-bottom: 15px;
 `
 
-export default EditPanel
+export default withSuspense(EditPanel, <LoadingProgress />)

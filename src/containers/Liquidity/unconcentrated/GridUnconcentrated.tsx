@@ -6,7 +6,8 @@ import WithdrawDialog from '~/containers/Liquidity/unconcentrated/WithdrawDialog
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { FilterType, useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { FilterType } from '~/data/filter'
+import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
 

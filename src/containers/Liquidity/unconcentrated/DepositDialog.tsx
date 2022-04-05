@@ -3,9 +3,9 @@ import { Box, Divider, styled, Button, Dialog, DialogContent } from '@mui/materi
 import PairInput from '~/components/Borrow/PairInput'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchUnconcentDetail, UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
+import { fetchUnconcentDetail, UnconcentratedData as UnconcentPI, useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
-import { fetchBalance } from '~/features/Borrow/Balance.query'
+import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { callDeposit } from '~/web3/UnconcentratedLiquidity/liquidity'
 import Image from 'next/image'
 import OneIcon from 'public/images/one-icon.png'
@@ -14,36 +14,23 @@ import TwoIcon from 'public/images/two-icon.png'
 const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
-	const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated()) // set default
-	const unconcentratedIndex = parseInt(assetId) - 1
+	// const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated()) // set default
+	const unconcentratedIndex = parseInt(assetId)
+  console.log('unconcentratedIndex', unconcentratedIndex)
 
-	useEffect(() => {
-		const program = getInceptApp()
+  const { data: balances } = useBalanceQuery({
+    userPubKey: publicKey,
+    index: unconcentratedIndex,
+	  refetchOnMount: true,
+    enabled: open && publicKey != null
+	})
 
-		async function fetch() {
-			if (open && assetId) {
-				const data = (await fetchUnconcentDetail({
-					program,
-					userPubKey: publicKey,
-					index: unconcentratedIndex,
-				})) as UnconcentPI
-				if (data) {
-					const balances = await fetchBalance({
-						program,
-						userPubKey: publicKey,
-						// @ts-ignore
-						index: unconcentratedIndex,
-					})
-					if (balances) {
-						data.borrowFromBalance = balances.usdiVal
-						data.borrowToBalance = balances.iassetVal
-						setUnconcentData(data)
-					}
-				}
-			}
-		}
-		fetch()
-	}, [open, publicKey, assetId])
+  const { data: unconcentData } = useUnconcentDetailQuery({
+    userPubKey: publicKey,
+    index: unconcentratedIndex,
+	  refetchOnMount: true,
+    enabled: open && publicKey != null
+	})
 
 	const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
@@ -100,7 +87,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 							tickerName={unconcentData.tickerName}
 							tickerSymbol={unconcentData.tickerSymbol}
 							value={unconcentData.borrowFrom}
-							balance={unconcentData.borrowFromBalance}
+							balance={balances?.usdiVal}
 							onChange={handleBorrowFrom}
 						/>
 					</Box>
@@ -114,7 +101,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 							tickerName="USDi Coin"
 							tickerSymbol="USDi"
 							value={unconcentData.borrowTo}
-							balance={unconcentData.borrowToBalance}
+							balance={balances?.iassetVal}
 							onChange={handleBorrowTo}
 						/>
 					</Box>

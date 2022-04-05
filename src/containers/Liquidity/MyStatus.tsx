@@ -1,6 +1,5 @@
 import StatusView from '~/components/Liquidity/StatusView'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchStatus, Status } from '~/web3/MyLiquidity/status'
 import { Box } from '@mui/material'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { LoadingProgress } from '~/components/Common/Loading'

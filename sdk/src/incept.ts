@@ -463,7 +463,7 @@ export class Incept {
 			let poolBalances = await this.getPoolBalances(i)
 			let price = poolBalances[1] / poolBalances[0]
 			let liquidity = poolBalances[1] * 2
-			iassetInfo.push([i + 1, price, liquidity])
+			iassetInfo.push([i, price, liquidity])
 		}
 		return iassetInfo
 	}

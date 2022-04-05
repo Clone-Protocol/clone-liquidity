@@ -3,31 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
-
-enum Collateral {
-	USDi,
-	mockUSDC,
-}
-
-enum Asset {
-	Euro,
-	Gold,
-	Solana,
-	Ethereum,
-	Bitcoin,
-	Luna,
-	Avalanche,
-	Tesla,
-	Apple,
-	Amazon,
-}
-
-enum AssetType {
-	Crypto,
-	Stocks,
-	Fx,
-	Commodities,
-}
+import { assetMapping, collateralMapping } from '~/data/assets'
 
 export const fetchAssets = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
 	if (!userPubKey) return []
@@ -38,91 +14,10 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 	const result: AssetList[] = []
 
 	let i = 0
+	for (const info of mintInfos) {
+    const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+    const { collateralName, collateralType } = collateralMapping(Number(info[1]))
 
-	for (var info of mintInfos) {
-		i++
-		let tickerName = ''
-		let collateralName = ''
-		let tickerSymbol = ''
-		let tickerIcon = ''
-		let assetType: number
-		let collateralType: number
-		switch (Number(info[0])) {
-			case Asset.Euro:
-				tickerName = 'iEuro'
-				tickerSymbol = 'iEUR'
-				tickerIcon = '/images/assets/euro.png'
-				assetType = AssetType.Fx
-				break
-			case Asset.Gold:
-				tickerName = 'iSPTSGD (GOLD INDEX)'
-				tickerSymbol = 'iSPTSGD'
-				tickerIcon = '/images/assets/gold.png'
-				assetType = AssetType.Commodities
-				break
-			case Asset.Solana:
-				tickerName = 'iSolana'
-				tickerSymbol = 'iSOL'
-				tickerIcon = '/images/assets/solana.png'
-				assetType = AssetType.Crypto
-				break
-			case Asset.Ethereum:
-				tickerName = 'iEthereum'
-				tickerSymbol = 'iETH'
-				tickerIcon = '/images/assets/ethereum.png'
-				assetType = AssetType.Crypto
-				break
-			case Asset.Bitcoin:
-				tickerName = 'iBitcoin'
-				tickerSymbol = 'iBTC'
-				tickerIcon = '/images/assets/bitcoin.png'
-				assetType = AssetType.Crypto
-				break
-			case Asset.Luna:
-				tickerName = 'iLuna'
-				tickerSymbol = 'iLUNA'
-				tickerIcon = '/images/assets/terra.png'
-				assetType = AssetType.Crypto
-				break
-			case Asset.Avalanche:
-				tickerName = 'iAvalanche'
-				tickerSymbol = 'iAVAX'
-				tickerIcon = '/images/assets/avalanche.png'
-				assetType = AssetType.Crypto
-				break
-			case Asset.Tesla:
-				tickerName = 'iTesla'
-				tickerSymbol = 'iTLSA'
-				tickerIcon = '/images/assets/tesla.png'
-				assetType = AssetType.Stocks
-				break
-			case Asset.Apple:
-				tickerName = 'iApple'
-				tickerSymbol = 'iAAPL'
-				tickerIcon = '/images/assets/apple.png'
-				assetType = AssetType.Stocks
-				break
-			case Asset.Amazon:
-				tickerName = 'iAmazon'
-				tickerSymbol = 'iAMZN'
-				tickerIcon = '/images/assets/amazon.png'
-				assetType = AssetType.Stocks
-				break
-			default:
-				throw new Error('Not supported')
-		}
-		switch (Number(info[1])) {
-			case Collateral.USDi:
-				collateralName = 'USDi'
-				collateralType = Collateral.USDi
-				break
-			case Collateral.mockUSDC:
-				collateralName = 'USDC'
-				collateralType = Collateral.mockUSDC
-				break
-			default:
-				throw new Error('Not supported')
-		}
 		result.push({
 			id: i,
 			tickerName: tickerName,
@@ -137,6 +32,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 			collateralRatio: info[5],
 			minCollateralRatio: info[6],
 		})
+    i++
 	}
 
 	// const result: AssetList[] = [

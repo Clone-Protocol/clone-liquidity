@@ -9,14 +9,14 @@ import {
 	PositionInfo as PositionInfoType,
 	fetchBorrowDetail,
 	fetchPositionDetail,
-} from '~/web3/MyLiquidity/BorrowPosition'
+} from '~/features/MyLiquidity/BorrowPosition.query'
 import { callClose } from '~/web3/Borrow/borrow'
 
 const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [positionInfo, setPositionInfo] = useState<PI>()
-	const borrowIndex = parseInt(assetId) - 1
+	const borrowIndex = parseInt(assetId)
 
 	useEffect(() => {
 		const program = getInceptApp()
@@ -27,10 +27,10 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 				const data = (await fetchBorrowDetail({
 					program,
 					userPubKey: publicKey,
-					index: mint.poolIndex,
+					index: Number(mint.poolIndex),
 				})) as PositionInfoType
 				if (data) {
-					const positionData = await fetchPositionDetail(program, publicKey!, borrowIndex)
+					const positionData = await fetchPositionDetail({ program, userPubKey: publicKey, index: borrowIndex})
 					data.borrowedIasset = positionData![0]
 					data.collateralAmount = positionData![1]
 					data.collateralRatio = positionData![2]

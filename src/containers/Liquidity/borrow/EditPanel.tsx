@@ -6,9 +6,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import Image from 'next/image'
-import SelectPairInput from '~/components/Borrow/SelectPairInput'
+// import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import { callEdit } from '~/web3/Borrow/borrow'
-import { fetchAsset } from '~/features/Overview/Asset.query'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
@@ -17,9 +16,8 @@ import {
 	fetchBorrowDetail,
 	PairData,
 	fetchPositionDetail,
-} from '~/web3/MyLiquidity/BorrowPosition'
-import { fetchBalance } from '~/features/Borrow/Balance.query'
-import { ASSETS } from '~/features/assetData'
+} from '~/features/MyLiquidity/BorrowPosition.query'
+import { fetchBalance, useBalanceQuery } from '~/features/Borrow/Balance.query'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -28,29 +26,31 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
 		tickerSymbol: 'USDi',
-		balance: 0.0,
 		amount: 0.0,
 	})
 
 	// const [collRatio, setCollRatio] = useState(150)
 	const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
-	const borrowIndex = parseInt(assetId) - 1
+	const borrowIndex = parseInt(assetId)
+  const [usdiBalance, setUsdiBalance] = useState(0.0)
 	const [iassetBalance, setIassetBalance] = useState(0.0)
 
 	useEffect(() => {
 		const program = getInceptApp()
 
 		async function fetch() {
-			if (assetId) {
+			if (assetId && publicKey) {
 				let mint = await program.getMintPosition(borrowIndex)
+        console.log('fff', Number(mint.poolIndex))
+
 				const data = (await fetchBorrowDetail({
 					program,
 					userPubKey: publicKey,
-					index: mint.poolIndex,
+					index: Number(mint.poolIndex),
 				})) as PositionInfoType
 				if (data) {
-					const positionData = await fetchPositionDetail(program, publicKey!, borrowIndex)
+					const positionData = await fetchPositionDetail({ program, userPubKey: publicKey, index: borrowIndex})
 					data.borrowedIasset = positionData![0]
 					data.collateralAmount = positionData![1]
 					data.collateralRatio = positionData![2]
@@ -63,11 +63,8 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					index: mint.poolIndex,
 				})
 				if (balance) {
-					setFromPair({
-						...fromPair,
-						balance: balance!.usdiVal,
-					})
-					setIassetBalance(balance!.iassetVal)
+          setUsdiBalance(balance.usdiVal)
+					setIassetBalance(balance.iassetVal)
 				}
 			}
 		}
@@ -114,7 +111,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 							tickerName={fromPair.tickerName}
 							tickerSymbol={fromPair.tickerSymbol}
 							value={fromPair.amount}
-							balance={fromPair.balance}
+							balance={usdiBalance}
 							onChange={handleChangeFrom}
 						/>
 					</Box>

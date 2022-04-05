@@ -98,7 +98,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 	if (!userPubKey) return
 
 	await program.loadManager()
-console.log('dfdf', index)
+
 	let comet = await program.getCometPosition(index)
 	const balances = await program.getPoolBalances(comet.poolIndex)
 	let price = balances[1] / balances[0]

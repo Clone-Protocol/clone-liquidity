@@ -5,7 +5,8 @@ import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import Link from 'next/link'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { FilterType, useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
+import { FilterType } from '~/data/filter'
+import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
