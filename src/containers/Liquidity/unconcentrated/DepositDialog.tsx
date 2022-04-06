@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
 import PairInput from '~/components/Borrow/PairInput'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchUnconcentDetail, UnconcentratedData as UnconcentPI, useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
-import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
+import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { callDeposit } from '~/web3/UnconcentratedLiquidity/liquidity'
 import Image from 'next/image'
@@ -16,7 +15,8 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { getInceptApp } = useIncept()
 	// const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated()) // set default
 	const unconcentratedIndex = parseInt(assetId)
-  console.log('unconcentratedIndex', unconcentratedIndex)
+  const [borrowFrom, setBorrowFrom] = useState(0.0)
+  const [borrowTo, setBorrowTo] = useState(0.0)
 
   const { data: balances } = useBalanceQuery({
     userPubKey: publicKey,
@@ -33,49 +33,33 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	})
 
 	const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let newData
-		if (e.currentTarget.value) {
+		if (e.currentTarget.value && unconcentData) {
 			const amount = parseFloat(e.currentTarget.value)
-			newData = {
-				...unconcentData,
-				borrowFrom: amount,
-				borrowTo: amount * unconcentData.price,
-			}
+      setBorrowFrom(amount)
+      setBorrowTo(amount * unconcentData.price)
 		} else {
-			newData = {
-				...unconcentData,
-				borrowFrom: 0.0,
-			}
+      setBorrowFrom(0.0)
 		}
-		setUnconcentData(newData)
 	}
 
 	const handleBorrowTo = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let newData
-		if (e.currentTarget.value) {
+		if (e.currentTarget.value && unconcentData) {
 			const amount = parseFloat(e.currentTarget.value)
-			newData = {
-				...unconcentData,
-				borrowTo: amount,
-				borrowFrom: amount / unconcentData.price,
-			}
+      setBorrowFrom(amount / unconcentData.price)
+      setBorrowTo(amount)
 		} else {
-			newData = {
-				...unconcentData,
-				borrowTo: 0.0,
-			}
+      setBorrowTo(0.0)
 		}
-		setUnconcentData(newData)
 	}
 
 	const onDeposit = async () => {
 		const program = getInceptApp()
-		await callDeposit(program, publicKey!, unconcentratedIndex, unconcentData.borrowFrom)
+		await callDeposit(program, publicKey!, unconcentratedIndex, borrowFrom)
 
 		handleClose()
 	}
 
-	return (
+	return unconcentData ? (
 		<Dialog open={open} onClose={handleClose}>
 			<DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353' }}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
@@ -86,7 +70,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 							tickerIcon={unconcentData.tickerIcon}
 							tickerName={unconcentData.tickerName}
 							tickerSymbol={unconcentData.tickerSymbol}
-							value={unconcentData.borrowFrom}
+							value={borrowFrom}
 							balance={balances?.usdiVal}
 							onChange={handleBorrowFrom}
 						/>
@@ -100,7 +84,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 							tickerIcon={'/images/assets/USDi.png'}
 							tickerName="USDi Coin"
 							tickerSymbol="USDi"
-							value={unconcentData.borrowTo}
+							value={borrowTo}
 							balance={balances?.iassetVal}
 							onChange={handleBorrowTo}
 						/>
@@ -110,7 +94,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 				</Box>
 			</DialogContent>
 		</Dialog>
-	)
+	) : <></>
 }
 
 const StyledDivider = styled(Divider)`

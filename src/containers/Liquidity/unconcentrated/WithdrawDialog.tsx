@@ -30,6 +30,8 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 
 	const handleChangePercent = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number' && data?.maxVal) {
+      // console.log('n', newValue)
+      // console.log('m', (data?.maxVal * percent) / 100)
 			setPercent(newValue)
 			setAmount((data?.maxVal * percent) / 100)
 		}

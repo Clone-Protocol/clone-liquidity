@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Paper, Divider } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
@@ -12,103 +12,108 @@ import InfoBookIcon from 'public/images/info-book-icon.png'
 import WarningIcon from 'public/images/warning-icon.png'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchBalance } from '~/features/Borrow/Balance.query'
+import { fetchBalance, useBalanceQuery } from '~/features/Borrow/Balance.query'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
-import { PositionInfo as PI, fetchInitializeCometDetail } from '~/features/MyLiquidity/CometPosition.query'
+import { PositionInfo as PI, fetchInitializeCometDetail, useInitCometDetailQuery, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
 import { fetchAsset, fetchUnconcentrated } from '~/features/Overview/Asset.query'
 import { callComet } from '~/web3/Comet/comet'
 import { callLiquidity } from '~/web3/UnconcentratedLiquidity/liquidity'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
 	const [tab, setTab] = useState(0)
+  const assetIndex = parseInt(assetId)
 
-	//comet liquidity
-	const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
+	// const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
+  const [cometData, setCometData] = useState<CometInfo>({
+    isTight: false,
+    // collAmount: 0.0,
+    collRatio: 50,
+    // mintAmount: 0.0,
+    lowerLimit: 40.0,
+    upperLimit: 180.0
+  })
+  const [collAmount, setCollAmount] = useState(0.0)
+  const [mintAmount, setMintAmount] = useState(0.0)
+
 	//unconcentrated liquidity
 	const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated())
 
-	useEffect(() => {
-		const program = getInceptApp()
+  const { data: balances } = useBalanceQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
 
-		async function fetch() {
-			if (assetId) {
-				const data = (await fetchInitializeCometDetail({
-					program,
-					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
-				})) as PI
-				if (data) {
-					data.lowerLimit = data.price / 2
-					data.upperLimit = (data.price * 3) / 2
-					setAssetData(data)
-				}
+  const { data: assetData } = useInitCometDetailQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+	  refetchOnMount: true,
+    enabled: publicKey != null
+	})
 
-				const balances = await fetchBalance({
-					program,
-					userPubKey: publicKey,
-					index: parseInt(assetId) - 1,
-				})
-				if (balances) {
-					// TODO: need refactor this.
-					setUnconcentData({
-						...unconcentData,
-						borrowToBalance: balances.usdiVal,
-						borrowFromBalance: balances.iassetVal,
-					})
-				}
-			} else {
-				console.error('wrong asset Id')
-			}
-		}
-		fetch()
-	}, [publicKey, assetId])
+  useEffect(() => {
+    if (assetData) {
+      setCometData({
+        ...cometData,
+        lowerLimit: assetData.price / 2,
+        upperLimit: (assetData.price * 3) / 2
+      })
+    }
+  }, [assetData])
+
+  useEffect(() => {
+    async function fetch() {
+      if (collAmount && mintAmount) {
+        console.log('calculateRange', collAmount +"/"+mintAmount)
+        const program = getInceptApp()
+        let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+          0,
+          assetIndex,
+          collAmount,
+          mintAmount
+        ))!
+
+        console.log('l', lowerLimit)
+        console.log('u', upperLimit)
+        // if (lowerLimit && upperLimit) {
+          setCometData({
+            ...cometData,
+            lowerLimit,
+            upperLimit
+          })
+        // }
+      }
+    }
+    fetch()
+  }, [collAmount, mintAmount])
 
 	const changeTab = (newVal: number) => {
 		setTab(newVal)
 	}
 
 	/** Comet Liquidity */
-
-	const handleChangeFromAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		let newData
+	const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
 
-			const program = getInceptApp()
-			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-				0,
-				parseInt(assetId) - 1,
-				amount,
-				assetData.mintAmount
-			))!
-			if (lowerLimit && upperLimit) {
-				newData = {
-					...assetData,
-					collAmount: amount,
-					lowerLimit,
-					upperLimit,
-				}
-			} else {
-				newData = {
-					...assetData,
-					collAmount: amount,
-				}
-			}
+      console.log('a', amount)
+      console.log('b', mintAmount)
+
+      setCollAmount(amount)
 		} else {
-			newData = {
-				...assetData,
-				collAmount: 0.0,
-			}
+      setCollAmount(0.0)
 		}
-		setAssetData(newData)
-	}
+	}, [collAmount])
 
 	// const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 	//   if (typeof newValue === 'number') {
@@ -117,76 +122,55 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	//     const upperLimit = 160
 
 	//     const newData = {
-	//       ...assetData,
+	//       ...cometData,
 	//       collRatio: newValue,
 	//       lowerLimit,
 	//       upperLimit
 	//     }
-	//     setAssetData(newData)
+	//     setCometData(newData)
 	//   }
 	// }
 
-	const handleChangeToAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		let newData
+	const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
 
-			const program = getInceptApp()
-			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-				0,
-				parseInt(assetId) - 1,
-				assetData.collAmount,
-				amount
-			))!
-			if (lowerLimit && upperLimit) {
-				newData = {
-					...assetData,
-					mintAmount: amount,
-					lowerLimit,
-					upperLimit,
-				}
-			} else {
-				newData = {
-					...assetData,
-					mintAmount: amount,
-				}
-			}
-		} else {
-			newData = {
-				...assetData,
-				mintAmount: 0.0,
-			}
-		}
-		setAssetData(newData)
-	}
+      console.log('c', amount)
+      console.log('d', mintAmount)
 
-	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
+			setMintAmount(amount)
+		} else {
+			setMintAmount(0.0)
+		}
+	}, [mintAmount])
+
+
+	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
-			...assetData,
+			...cometData,
 			isTight,
 			lowerLimit,
 			upperLimit,
 		}
-		setAssetData(newData)
-	}
+		setCometData(newData)
+	}, [cometData])
 
 	const onComet = async () => {
-		const program = getInceptApp()
-		await callComet({
-			program,
-			userPubKey: publicKey,
-			collateralIndex: 0,
-			iassetIndex: parseInt(assetId) - 1,
-			usdiAmount: assetData.mintAmount,
-			collateralAmount: assetData.collAmount,
-		})
+    const program = getInceptApp()
+    await callComet({
+      program,
+      userPubKey: publicKey,
+      collateralIndex: 0,
+      iassetIndex: assetIndex,
+      usdiAmount: mintAmount,
+      collateralAmount: collAmount,
+    })
 	}
 
 	/** Unconcentrated Liquidity */
-
 	const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
-		if (e.currentTarget.value) {
+		if (e.currentTarget.value && assetData) {
 			const amount = parseFloat(e.currentTarget.value)
 			newData = {
 				...unconcentData,
@@ -204,7 +188,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 	const handleBorrowTo = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
-		if (e.currentTarget.value) {
+		if (e.currentTarget.value && assetData) {
 			const amount = parseFloat(e.currentTarget.value)
 			newData = {
 				...unconcentData,
@@ -230,7 +214,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		})
 	}
 
-	return (
+	return assetData ? (
 		<StyledBox>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 				<Box sx={{ display: 'flex' }}>
@@ -247,10 +231,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				{tab === 0 ? (
 					<Box>
 						<PriceIndicatorBox
-							tickerIcon={assetData?.tickerIcon}
-							tickerName={assetData?.tickerName}
-							tickerSymbol={assetData?.tickerSymbol}
-							value={assetData?.price}
+							tickerIcon={assetData.tickerIcon}
+							tickerName={assetData.tickerName}
+							tickerSymbol={assetData.tickerSymbol}
+							value={assetData.price}
 						/>
 
 						<Box sx={{ background: '#171717', paddingX: '61px', paddingY: '36px', marginTop: '28px' }}>
@@ -281,9 +265,9 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									tickerIcon={'/images/assets/USDi.png'}
 									tickerName="USDi Coin"
 									tickerSymbol="USDi"
-									value={assetData?.collAmount}
+									value={collAmount}
 									headerTitle="Balance"
-									headerValue={unconcentData.borrowToBalance}
+									headerValue={balances?.usdiVal}
 									onChange={handleChangeFromAmount}
 								/>
 							</Box>
@@ -305,14 +289,14 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 										tickerIcon={'/images/assets/USDi.png'}
 										tickerName="USDi Coin"
 										tickerSymbol="USDi"
-										value={assetData?.mintAmount}
+										value={mintAmount}
 										onChange={handleChangeToAmount}
 									/>
 								</Box>
 								<PairInputView
 									tickerIcon={assetData.tickerIcon}
 									tickerSymbol={assetData.tickerSymbol}
-									value={assetData?.mintAmount / assetData.price}
+									value={mintAmount / assetData.price}
 								/>
 							</Box>
 							<StyledDivider />
@@ -325,15 +309,16 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 								<Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
 									<ConcentrationRange
-										assetData={assetData}
+                    assetData={assetData}
+										cometData={cometData}
 										onChange={handleChangeConcentRange}
 										max={assetData.maxRange}
-										defaultLower={assetData.lowerLimit}
-										defaultUpper={assetData.upperLimit}
+										defaultLower={(assetData.price / 2)}
+										defaultUpper={((assetData.price * 3) / 2)}
 									/>
 								</Box>
 
-								<ConcentrationRangeBox positionInfo={assetData} />
+								<ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
 
 								<Button
 									onClick={() => changeTab(1)}
@@ -350,8 +335,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									Unconcentrated Liquidity
 								</Button>
 
-								{assetData?.tightRange > assetData.price - assetData.lowerLimit ||
-								assetData?.tightRange > assetData.upperLimit - assetData.price ? (
+								{assetData.tightRange > assetData.price - cometData.lowerLimit ||
+								assetData.tightRange > cometData.upperLimit - assetData.price ? (
 									<Stack
 										sx={{
 											maxWidht: '653px',
@@ -383,10 +368,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				) : (
 					<Box>
 						<PriceIndicatorBox
-							tickerIcon={assetData?.tickerIcon}
-							tickerName={assetData?.tickerName}
-							tickerSymbol={assetData?.tickerSymbol}
-							value={assetData?.price}
+							tickerIcon={assetData.tickerIcon}
+							tickerName={assetData.tickerName}
+							tickerSymbol={assetData.tickerSymbol}
+							value={assetData.price}
 						/>
 
 						<Box sx={{ background: '#171717', paddingX: '61px', paddingY: '20px', marginTop: '28px' }}>
@@ -423,7 +408,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									tickerSymbol={assetData.tickerSymbol}
 									value={unconcentData.borrowFrom}
 									headerTitle="Balance"
-									headerValue={unconcentData.borrowFromBalance}
+									headerValue={balances?.iassetVal}
 									onChange={handleBorrowFrom}
 								/>
 							</Box>
@@ -440,7 +425,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									tickerSymbol="USDi"
 									value={unconcentData.borrowTo}
 									headerTitle="Balance"
-									headerValue={unconcentData.borrowToBalance}
+									headerValue={balances?.usdiVal}
 									onChange={handleBorrowTo}
 								/>
 							</Box>
@@ -452,7 +437,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				)}
 			</Box>
 		</StyledBox>
-	)
+	) : <></>
 }
 
 const StyledBox = styled(Paper)`
@@ -556,4 +541,4 @@ const LiquidityButton = styled(Button)`
 	margin-bottom: 15px;
 `
 
-export default AssetView
+export default withSuspense(AssetView, <LoadingProgress />)

@@ -1,8 +1,10 @@
+import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 import { assetMapping } from 'src/data/assets'
+import { useIncept } from '~/hooks/useIncept'
 
-export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: GetProps) => {
+export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
 	await program.loadManager()
@@ -25,7 +27,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	}
 }
 
-export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps) => {
+export const fetchCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
 	await program.loadManager()
@@ -50,9 +52,10 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: GetProps)
 }
 
 interface GetProps {
-	program: Incept
 	userPubKey: PublicKey | null
 	index: number
+  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  enabled?: boolean
 }
 
 export interface PositionInfo {
@@ -60,14 +63,24 @@ export interface PositionInfo {
 	tickerName: string
 	tickerSymbol: string | null
 	price: number
-	isTight: boolean
 	tightRange: number
 	maxRange: number
-	collAmount: number
-	collRatio: number
-	mintAmount: number
-	lowerLimit: number
 	centerPrice: number
-	upperLimit: number
 }
 
+export interface CometInfo {
+  isTight: boolean
+  // collAmount: number
+	collRatio: number
+	// mintAmount: number
+	lowerLimit: number
+  upperLimit: number
+}
+
+export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const { getInceptApp } = useIncept()
+  return useQuery(['initComet', userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(), userPubKey, index }), {
+    refetchOnMount,
+    enabled
+  })
+}

@@ -43,9 +43,7 @@ export const fetchUnconcentrated = () => {
 		tickerName: '',
 		price: 0.0,
 		borrowFrom: 0.0,
-		borrowFromBalance: 0,
 		borrowTo: 0.0,
-		borrowToBalance: 0,
 	}
 }
 
