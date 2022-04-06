@@ -12,15 +12,15 @@ import InfoBookIcon from 'public/images/info-book-icon.png'
 import WarningIcon from 'public/images/warning-icon.png'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchBalance, useBalanceQuery } from '~/features/Borrow/Balance.query'
+import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
 import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
-import { PositionInfo as PI, fetchInitializeCometDetail, useInitCometDetailQuery, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
+import { useInitCometDetailQuery, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
-import { fetchAsset, fetchUnconcentrated } from '~/features/Overview/Asset.query'
+import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
 import { callComet } from '~/web3/Comet/comet'
 import { callLiquidity } from '~/web3/UnconcentratedLiquidity/liquidity'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -35,9 +35,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	// const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
-    // collAmount: 0.0,
     collRatio: 50,
-    // mintAmount: 0.0,
     lowerLimit: 40.0,
     upperLimit: 180.0
   })

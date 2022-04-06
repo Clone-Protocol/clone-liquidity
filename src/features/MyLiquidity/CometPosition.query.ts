@@ -70,9 +70,7 @@ export interface PositionInfo {
 
 export interface CometInfo {
   isTight: boolean
-  // collAmount: number
 	collRatio: number
-	// mintAmount: number
 	lowerLimit: number
   upperLimit: number
 }

@@ -8,7 +8,7 @@ import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Asset/PairInput'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import { fetchAsset } from '~/features/Overview/Asset.query'
-import { PositionInfo as PI, fetchCometDetail } from '~/features/MyLiquidity/CometPosition.query'
+import { PositionInfo as PI, CometInfo, fetchCometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
@@ -21,10 +21,15 @@ import withSuspense from '~/hocs/withSuspense'
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
-	const [positionInfo, setPositionInfo] = useState<PI>(fetchAsset()) // set default
-	const [collAmount, setCollAmount] = useState(0)
-	const [lowerLimit, setLowerLimit] = useState(0)
-	const [upperLimit, setUpperLimit] = useState(0)
+	const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
+  const [cometData, setCometData] = useState<CometInfo>({
+    isTight: false,
+    collRatio: 50,
+    lowerLimit: 40.0,
+    upperLimit: 180.0
+  })
+  const [mintAmount, setMintAmount] = useState(0.0)
+	const [collAmount, setCollAmount] = useState(0.0)
 
 	const cometIndex = parseInt(assetId)
 
@@ -45,16 +50,17 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					index: cometIndex,
 				})) as PI
 				if (data) {
-					let comet = await program.getCometPosition(cometIndex)
+					const comet = await program.getCometPosition(cometIndex)
           console.log('sss', data)
-					data.lowerLimit = toScaledNumber(comet.lowerPriceRange)
-					data.upperLimit = toScaledNumber(comet.upperPriceRange)
-					data.mintAmount = toScaledNumber(comet.borrowedUsdi)
-					data.collAmount = toScaledNumber(comet.collateralAmount)
-					setPositionInfo(data)
-					setCollAmount(data.collAmount)
-					setLowerLimit(data.lowerLimit)
-					setUpperLimit(data.upperLimit)
+					
+          setAssetData(data)
+          setMintAmount(toScaledNumber(comet.borrowedUsdi))
+					setCollAmount(toScaledNumber(comet.collateralAmount))
+          setCometData({
+            ...cometData,
+            lowerLimit: toScaledNumber(comet.lowerPriceRange),
+            upperLimit: toScaledNumber(comet.upperPriceRange)
+          })
 				}
 			}
 		}
@@ -62,7 +68,6 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	}, [publicKey, assetId])
 
 	const handleChangeFromAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		let newData
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
 
@@ -73,53 +78,46 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 					await program.getCometPosition(cometIndex)
 				).poolIndex,
 				amount,
-				positionInfo.mintAmount
+				mintAmount
 			))!
 			if (lowerLimit && upperLimit) {
-				newData = {
-					...positionInfo,
-					collAmount: amount,
-					lowerLimit,
-					upperLimit,
-				}
+        setCometData({
+          ...cometData,
+          lowerLimit,
+          upperLimit
+        })
+        setCollAmount(amount)
 			} else {
-				newData = {
-					...positionInfo,
-					collAmount: amount,
-				}
+				setCollAmount(amount)
 			}
 		} else {
-			newData = {
-				...positionInfo,
-				collAmount: 0.0,
-			}
+			setCollAmount(0.0)
 		}
-		setPositionInfo(newData)
 	}
 
 	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
-			...positionInfo,
+			...cometData,
 			isTight,
 			lowerLimit,
 			upperLimit,
 		}
-		setPositionInfo(newData)
+		setCometData(newData)
 	}
 
 	const onEdit = async () => {
 		const program = getInceptApp()
-		await callEdit(program, publicKey!, cometIndex, positionInfo.collAmount)
+		await callEdit(program, publicKey!, cometIndex, collAmount)
 	}
 
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={5}>
 				<PositionInfo
-					positionInfo={positionInfo}
+          assetData={assetData}
+          cometData={cometData}
+          mintAmount={mintAmount}
 					collateralAmount={collAmount}
-					lowerLimit={lowerLimit}
-					upperLimit={upperLimit}
 				/>
 			</Grid>
 			<Grid item xs={12} md={7}>
@@ -133,7 +131,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 							tickerIcon={'/images/assets/USDi.png'}
 							tickerName="USDi Coin"
 							tickerSymbol="USDi"
-							value={positionInfo?.collAmount}
+							value={collAmount}
 							headerTitle="Balance"
 							headerValue={usdiBalance?.balanceVal}
 							onChange={handleChangeFromAmount}
@@ -149,15 +147,16 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 						<Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
 							<ConcentrationRange
-								assetData={positionInfo}
+								assetData={assetData}
+                cometData={cometData}
 								onChange={handleChangeConcentRange}
-								max={positionInfo.maxRange}
-								defaultLower={positionInfo.lowerLimit}
-								defaultUpper={positionInfo.upperLimit}
+								max={assetData.maxRange}
+								defaultLower={(assetData.price / 2)}
+								defaultUpper={((assetData.price * 3) / 2)}
 							/>
 						</Box>
 
-						<ConcentrationRangeBox positionInfo={positionInfo} />
+						<ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
 					</Box>
 					<StyledDivider />
 

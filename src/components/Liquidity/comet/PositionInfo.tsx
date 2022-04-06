@@ -2,26 +2,26 @@ import { Box, Stack, Button, Divider } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
-import { PositionInfo as PI } from '~/web3/MyLiquidity/CometPosition'
+import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 
 interface Props {
-	positionInfo: PI
+	assetData: PI
+	cometData: CometInfo
+  mintAmount: number
 	collateralAmount: number
-	lowerLimit: number
-	upperLimit: number
 }
 
-const PositionInfo: React.FC<Props> = ({ positionInfo, collateralAmount, lowerLimit, upperLimit }) => {
+const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, collateralAmount }) => {
 	const onRecenter = () => {}
 
-	return positionInfo ? (
+	return assetData ? (
 		<Box sx={{ background: '#000', color: '#fff' }}>
 			<PriceIndicatorBox
-				tickerIcon={positionInfo.tickerIcon}
-				tickerName={positionInfo.tickerName}
-				tickerSymbol={positionInfo.tickerSymbol}
-				value={positionInfo.price}
+				tickerIcon={assetData.tickerIcon}
+				tickerName={assetData.tickerName}
+				tickerSymbol={assetData.tickerSymbol}
+				value={assetData.price}
 			/>
 
 			<Box sx={{ background: '#171717', color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
@@ -30,19 +30,19 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, collateralAmount, lowerLi
 					<Box>
 						<SubTitle>Collateral</SubTitle>
 						<Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-							{collateralAmount ? collateralAmount : positionInfo.collAmount} <span style={{ fontSize: '14px' }}>USDi</span>
+							{collateralAmount} <span style={{ fontSize: '14px' }}>USDi</span>
 						</Box>
 						<Box sx={{ marginTop: '10px' }}>
 							<Stack direction="row" justifyContent="space-between">
 								<DetailHeader>Contributed USDi</DetailHeader>
 								<DetailValue>
-									{collateralAmount ? collateralAmount : positionInfo.collAmount} USDi
+									{collateralAmount} USDi
 								</DetailValue>
 							</Stack>
 							<Stack direction="row" justifyContent="space-between">
 								<DetailHeader>Contributed iAsset</DetailHeader>
 								<DetailValue>
-									{positionInfo.mintAmount} {positionInfo.tickerSymbol}
+									{mintAmount} {assetData.tickerSymbol}
 								</DetailValue>
 							</Stack>
 						</Box>
@@ -53,23 +53,24 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, collateralAmount, lowerLi
 						<SubTitle>Price Range</SubTitle>
 						<Box sx={{ marginTop: '20px' }}>
               <ConcentrationRangeView 
-                assetData={positionInfo}
-                max={positionInfo.maxRange}
+                assetData={assetData}
+                cometData={cometData}
+                max={assetData.maxRange}
               />
 							<Stack direction="row" justifyContent="space-between">
 								<DetailHeader>Center price</DetailHeader>
-								<DetailValue>{positionInfo?.centerPrice.toFixed(2)} USDi</DetailValue>
+								<DetailValue>{assetData?.centerPrice.toFixed(2)} USDi</DetailValue>
 							</Stack>
 							<Stack direction="row" justifyContent="space-between">
 								<DetailHeader>Lower limit</DetailHeader>
 								<DetailValue>
-									{lowerLimit ? lowerLimit.toFixed(2) : positionInfo.lowerLimit.toFixed(2)} USDi
+									{cometData.lowerLimit.toFixed(2)} USDi
 								</DetailValue>
 							</Stack>
 							<Stack direction="row" justifyContent="space-between">
 								<DetailHeader>Upper limit</DetailHeader>
 								<DetailValue>
-									{upperLimit ? upperLimit.toFixed(2) : positionInfo.upperLimit.toFixed(2)} USDi
+									{cometData.upperLimit.toFixed(2)} USDi
 								</DetailValue>
 							</Stack>
 						</Box>
