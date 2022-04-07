@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
+import { fetchBalance } from '~/features/Borrow/Balance.query'
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -31,6 +32,41 @@ export const fetchPositionDetail = async ({ program, userPubKey, index }: { prog
 	return data
 }
 
+const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
+  if (!userPubKey) return
+
+  await program.loadManager()
+
+  let mint = await program.getMintPosition(index)
+  const poolIndex = Number(mint.poolIndex)
+  
+	const data = await program.getMintiAssetData(poolIndex)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
+
+  const positionData = await program.getUserMintInfo(poolIndex)
+
+  const balance = await fetchBalance({
+    program,
+    userPubKey,
+    index: poolIndex,
+  })
+  
+  return {
+		tickerIcon: tickerIcon,
+		tickerName: tickerName,
+		tickerSymbol: tickerSymbol,
+		oPrice: data[0]!,
+		stableCollateralRatio: data[1]!,
+		cryptoCollateralRatio: data[2]!,
+    borrowedIasset: positionData![0],
+    collateralAmount: positionData![1],
+    collateralRatio: positionData![2],
+    minCollateralRatio: positionData![3],
+    usdiVal: balance?.usdiVal,
+    iassetVal: balance?.iassetVal
+	}
+}
+
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
@@ -49,6 +85,8 @@ export interface PositionInfo {
 	collateralAmount: number
 	collateralRatio: number
 	minCollateralRatio: number
+  usdiVal: number
+  iassetVal: number
 }
 
 export interface PairData {
@@ -66,9 +104,9 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
   })
 }
 
-export function usePositionDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['positionDetail', userPubKey, index], () => fetchPositionDetail({ program: getInceptApp(), userPubKey, index }), {
+  return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getInceptApp(), userPubKey, index }), {
     refetchOnMount,
     enabled
   })

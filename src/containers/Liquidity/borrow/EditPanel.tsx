@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Grid, Box, Stack, Divider, Button } from '@mui/material'
+import React, { useState } from 'react'
+import { Grid, Box, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -12,12 +12,11 @@ import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import {
-	PositionInfo as PositionInfoType,
-	fetchBorrowDetail,
 	PairData,
-	fetchPositionDetail,
+  useBorrowPositionQuery
 } from '~/features/MyLiquidity/BorrowPosition.query'
-import { fetchBalance, useBalanceQuery } from '~/features/Borrow/Balance.query'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -30,46 +29,16 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	})
 
 	// const [collRatio, setCollRatio] = useState(150)
-	const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
+
 	const borrowIndex = parseInt(assetId)
-  const [usdiBalance, setUsdiBalance] = useState(0.0)
-	const [iassetBalance, setIassetBalance] = useState(0.0)
 
-	useEffect(() => {
-		const program = getInceptApp()
-
-		async function fetch() {
-			if (assetId && publicKey) {
-				let mint = await program.getMintPosition(borrowIndex)
-        console.log('fff', Number(mint.poolIndex))
-
-				const data = (await fetchBorrowDetail({
-					program,
-					userPubKey: publicKey,
-					index: Number(mint.poolIndex),
-				})) as PositionInfoType
-				if (data) {
-					const positionData = await fetchPositionDetail({ program, userPubKey: publicKey, index: borrowIndex})
-					data.borrowedIasset = positionData![0]
-					data.collateralAmount = positionData![1]
-					data.collateralRatio = positionData![2]
-					data.minCollateralRatio = positionData![3]
-					setPositionInfo(data)
-				}
-				const balance = await fetchBalance({
-					program,
-					userPubKey: publicKey,
-					index: mint.poolIndex,
-				})
-				if (balance) {
-          setUsdiBalance(balance.usdiVal)
-					setIassetBalance(balance.iassetVal)
-				}
-			}
-		}
-		fetch()
-	}, [publicKey, assetId])
+  const { data: positionInfo } = useBorrowPositionQuery({ 
+    userPubKey: publicKey, 
+    index: borrowIndex,
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
 
 	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -111,7 +80,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 							tickerName={fromPair.tickerName}
 							tickerSymbol={fromPair.tickerSymbol}
 							value={fromPair.amount}
-							balance={usdiBalance}
+							balance={positionInfo?.usdiVal}
 							onChange={handleChangeFrom}
 						/>
 					</Box>
@@ -136,7 +105,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 								}
 								tickerName={positionInfo ? positionInfo!.tickerName : ''}
 								tickerSymbol={positionInfo ? positionInfo!.tickerSymbol : ''}
-								balance={iassetBalance}
+								balance={positionInfo?.iassetVal}
 								value={borrowAmount}
 								onChange={handleChangeBorrowAmount}
 							/>
@@ -192,4 +161,4 @@ const ActionButton = styled(Button)`
 	margin-bottom: 15px;
 `
 
-export default EditPanel
+export default withSuspense(EditPanel, <LoadingProgress />)

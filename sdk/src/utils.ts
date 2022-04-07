@@ -32,7 +32,9 @@ export const mul = (value1: Value, value2: Value) => {
 }
 
 export const div = (value1: Value, value2: Value) => {
-	return { val: value1.val.mul(new BN(Math.pow(10, value2.scale))).div(value2.val), scale: value1.scale } as Value
+	return value2.val.eqn(0) ? 
+  { val: new BN(0), scale: value1.scale } as Value :
+  { val: value1.val.mul(new BN(Math.pow(10, value2.scale))).div(value2.val), scale: value1.scale } as Value
 }
 
 export const toScaledNumber = (value: Value) => {
@@ -40,5 +42,7 @@ export const toScaledNumber = (value: Value) => {
 }
 
 export const toScaledPercent = (value: Value) => {
-	return Number(value.val.div(new BN(Math.pow(10, value.scale - 2))))
+  const denominator = new BN(Math.pow(10, Number(value.scale) - 2))
+	return denominator.toNumber() === 0 ? 0 :
+    Number(value.val.div(new BN(Math.pow(10, Number(value.scale) - 2))))
 }

@@ -6,7 +6,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, fetchCometDetail, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { FilterType } from '~/data/filter'
-import { fetchPools, PoolList } from '~/web3/MyLiquidity/CometPools'
+import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callClose } from '~/web3/Comet/comet'
 
@@ -47,15 +47,19 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
           lowerLimit: toScaledNumber(comet.lowerPriceRange),
           upperLimit: toScaledNumber(comet.upperPriceRange)
         })
+
+        const cometPools =  (await fetchPools({
+          program,
+          userPubKey: publicKey,
+          filter,
+        })) as PoolList[]
 				
-				const ild = (
-					(await fetchPools({
-						program,
-						userPubKey: publicKey,
-						filter,
-					})) as PoolList[]
-				)[cometIndex].ild
-				setILD(ild)
+        if (cometPools.length > 0) {
+          const ild = cometPools[cometIndex].ild
+				  setILD(ild)
+        } else {
+          console.log('no user comet pools')
+        }
 			}
 		}
 		fetch()

@@ -54,7 +54,7 @@ const Stick = styled('div')`
 	width: 1px;
 	height: 33px;
 	margin-top: 5px;
-	margin-left: 18px;
+	margin-left: calc(50%);
 `
 
 const LeftBox = styled(Box)`

@@ -37,7 +37,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: { program
 	let price = balances[1] / balances[0]
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
-	let centerPrice = Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
+	let centerPrice = Number(comet.borrowedIasset.val) === 0 ? 0 : Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
+
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(comet.poolIndex))
 
 	return {

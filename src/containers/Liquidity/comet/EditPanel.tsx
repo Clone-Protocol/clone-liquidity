@@ -7,7 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import PairInput from '~/components/Asset/PairInput'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
-import { fetchAsset } from '~/features/Overview/Asset.query'
+// import { fetchAsset } from '~/features/Overview/Asset.query'
 import { PositionInfo as PI, CometInfo, fetchCometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import OneIcon from 'public/images/one-icon.png'
@@ -21,7 +21,7 @@ import withSuspense from '~/hocs/withSuspense'
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
-	const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
+	const [assetData, setAssetData] = useState<PI>() // set default
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     collRatio: 50,
@@ -51,7 +51,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				})) as PI
 				if (data) {
 					const comet = await program.getCometPosition(cometIndex)
-          console.log('sss', data)
+          console.log('comet', data)
 					
           setAssetData(data)
           setMintAmount(toScaledNumber(comet.borrowedUsdi))
@@ -110,7 +110,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 		await callEdit(program, publicKey!, cometIndex, collAmount)
 	}
 
-	return (
+	return assetData ? (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={5}>
 				<PositionInfo
@@ -164,7 +164,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 				</Box>
 			</Grid>
 		</Grid>
-	)
+	) : <></>
 }
 
 const StyledDivider = styled(Divider)`
