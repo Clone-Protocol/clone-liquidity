@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from 'react'
-import { Grid, Box, Stack, Divider, Button } from '@mui/material'
+import React, { useState } from 'react'
+import { Grid, Box, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import Image from 'next/image'
-import SelectPairInput from '~/components/Borrow/SelectPairInput'
+// import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import { callEdit } from '~/web3/Borrow/borrow'
-import { fetchAsset } from '~/features/Overview/Asset.query'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import {
-	PositionInfo as PositionInfoType,
-	fetchBorrowDetail,
 	PairData,
-	fetchPositionDetail,
-} from '~/web3/MyLiquidity/BorrowPosition'
-import { fetchBalance } from '~/features/Borrow/Balance.query'
-import { ASSETS } from '~/features/assetData'
+  useBorrowPositionQuery
+} from '~/features/MyLiquidity/BorrowPosition.query'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -28,51 +25,20 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
 		tickerSymbol: 'USDi',
-		balance: 0.0,
 		amount: 0.0,
 	})
 
 	// const [collRatio, setCollRatio] = useState(150)
-	const [positionInfo, setPositionInfo] = useState<PositionInfoType>()
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
-	const borrowIndex = parseInt(assetId) - 1
-	const [iassetBalance, setIassetBalance] = useState(0.0)
 
-	useEffect(() => {
-		const program = getInceptApp()
+	const borrowIndex = parseInt(assetId)
 
-		async function fetch() {
-			if (assetId) {
-				let mint = await program.getMintPosition(borrowIndex)
-				const data = (await fetchBorrowDetail({
-					program,
-					userPubKey: publicKey,
-					index: mint.poolIndex,
-				})) as PositionInfoType
-				if (data) {
-					const positionData = await fetchPositionDetail(program, publicKey!, borrowIndex)
-					data.borrowedIasset = positionData![0]
-					data.collateralAmount = positionData![1]
-					data.collateralRatio = positionData![2]
-					data.minCollateralRatio = positionData![3]
-					setPositionInfo(data)
-				}
-				const balance = await fetchBalance({
-					program,
-					userPubKey: publicKey,
-					index: mint.poolIndex,
-				})
-				if (balance) {
-					setFromPair({
-						...fromPair,
-						balance: balance!.usdiVal,
-					})
-					setIassetBalance(balance!.iassetVal)
-				}
-			}
-		}
-		fetch()
-	}, [publicKey, assetId])
+  const { data: positionInfo } = useBorrowPositionQuery({ 
+    userPubKey: publicKey, 
+    index: borrowIndex,
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
 
 	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -114,7 +80,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 							tickerName={fromPair.tickerName}
 							tickerSymbol={fromPair.tickerSymbol}
 							value={fromPair.amount}
-							balance={fromPair.balance}
+							balance={positionInfo?.usdiVal}
 							onChange={handleChangeFrom}
 						/>
 					</Box>
@@ -139,7 +105,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 								}
 								tickerName={positionInfo ? positionInfo!.tickerName : ''}
 								tickerSymbol={positionInfo ? positionInfo!.tickerSymbol : ''}
-								balance={iassetBalance}
+								balance={positionInfo?.iassetVal}
 								value={borrowAmount}
 								onChange={handleChangeBorrowAmount}
 							/>
@@ -195,4 +161,4 @@ const ActionButton = styled(Button)`
 	margin-bottom: 15px;
 `
 
-export default EditPanel
+export default withSuspense(EditPanel, <LoadingProgress />)

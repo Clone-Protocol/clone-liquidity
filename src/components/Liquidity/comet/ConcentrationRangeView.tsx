@@ -1,21 +1,23 @@
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
-import { AssetData } from '~/features/Overview/Asset.query'
+// import { AssetData } from '~/features/Overview/Asset.query'
+import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
-	assetData: AssetData
+	assetData: PositionInfo
+  cometData: CometInfo
 	max: number
 }
 
-const ConcentrationRangeView: React.FC<Props> = ({ assetData, max }) => {
+const ConcentrationRangeView: React.FC<Props> = ({ assetData, cometData, max }) => {
 	const maxLimit = max
 
 	const centerPricePercent = (assetData.price * 100) / maxLimit
 	
 	return (
     <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px', marginBottom: '16px' }}>
-      <LeftBox>{assetData.lowerLimit.toFixed(2)}</LeftBox>
+      <LeftBox>{cometData.lowerLimit.toFixed(2)}</LeftBox>
       <Box sx={{ position: 'relative' }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
           <RangeBar />
@@ -25,7 +27,7 @@ const ConcentrationRangeView: React.FC<Props> = ({ assetData, max }) => {
           <Stick />
         </CenterPriceBox>
       </Box>
-      <RightBox>{assetData.upperLimit.toFixed(2)}</RightBox>
+      <RightBox>{cometData.upperLimit.toFixed(2)}</RightBox>
     </Box>
 	)
 }
@@ -52,7 +54,7 @@ const Stick = styled('div')`
 	width: 1px;
 	height: 33px;
 	margin-top: 5px;
-	margin-left: 18px;
+	margin-left: calc(50%);
 `
 
 const LeftBox = styled(Box)`

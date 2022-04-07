@@ -1,22 +1,80 @@
-enum Asset {
-	Euro = 1,
-	Gold = 2,
-	Solana = 3,
-	Ethereum = 4,
-	Bitcoin = 5,
-	Luna = 6,
-	Avalanche = 7,
-	Tesla = 8,
-	Apple = 9,
-	Amazon = 10,
+export enum Collateral {
+	USDi,
+	mockUSDC,
 }
 
-enum AssetType {
+export enum Asset {
+	Euro,
+	Gold,
+	Solana,
+	Ethereum,
+	Bitcoin,
+	Luna,
+	Avalanche,
+	Tesla,
+	Apple,
+	Amazon,
+}
+
+export enum AssetType {
 	Crypto,
 	Stocks,
 	Fx,
 	Commodities,
 }
+
+export const ASSETS = [
+	{
+		tickerName: 'iEuro',
+		tickerSymbol: 'iEUR',
+		tickerIcon: '/images/assets/euro.png',
+	},
+	{
+		tickerName: 'iSPTSGD (GOLD INDEX)',
+		tickerSymbol: 'iSPTSGD',
+		tickerIcon: '/images/assets/gold.png',
+	},
+	{
+		tickerName: 'iSolana',
+		tickerSymbol: 'iSOL',
+		tickerIcon: '/images/assets/solana.png',
+	},
+	{
+		tickerName: 'iEthereum',
+		tickerSymbol: 'iETH',
+		tickerIcon: '/images/assets/ethereum.png',
+	},
+	{
+		tickerName: 'iBitcoin',
+		tickerSymbol: 'iBTC',
+		tickerIcon: '/images/assets/bitcoin.png',
+	},
+	{
+		tickerName: 'iLuna',
+		tickerSymbol: 'iLUNA',
+		tickerIcon: '/images/assets/terra.png',
+	},
+	{
+		tickerName: 'iAvalanche',
+		tickerSymbol: 'iAVAX',
+		tickerIcon: '/images/assets/avalanche.png',
+	},
+	{
+		tickerName: 'iTesla',
+		tickerSymbol: 'iTLSA',
+		tickerIcon: '/images/assets/tesla.png',
+	},
+	{
+		tickerName: 'iApple',
+		tickerSymbol: 'iAAPL',
+		tickerIcon: '/images/assets/apple.png',
+	},
+	{
+		tickerName: 'iAmazon',
+		tickerSymbol: 'iAMZN',
+		tickerIcon: '/images/assets/amazon.png',
+	},
+]
 
 export const assetMapping = (index: number) => {
 	let tickerName = ''
@@ -89,4 +147,23 @@ export const assetMapping = (index: number) => {
 	}
 
 	return { tickerName, tickerSymbol, tickerIcon, assetType }
+}
+
+export const collateralMapping = (index: number) => {
+  let collateralName = ''
+  let collateralType: number
+  switch (index) {
+    case Collateral.USDi:
+      collateralName = 'USDi'
+      collateralType = Collateral.USDi
+      break
+    case Collateral.mockUSDC:
+      collateralName = 'USDC'
+      collateralType = Collateral.mockUSDC
+      break
+    default:
+      throw new Error('Not supported')
+  }
+
+  return { collateralName, collateralType }
 }

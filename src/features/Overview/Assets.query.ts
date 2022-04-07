@@ -14,7 +14,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 
 	const result: AssetList[] = []
 
-	for (var info of iassetInfos) {
+	for (const info of iassetInfos) {
 		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0])
 		result.push({
 			id: info[0],

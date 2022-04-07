@@ -1,6 +1,5 @@
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
-import ethLogo from '/public/images/assets/ethereum-eth-logo.svg'
 
 enum Asset {
 	Euro,

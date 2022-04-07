@@ -36,7 +36,7 @@ interface GetProps {
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['unconcentBalance', userPubKey], () => fetchMax({ program: getInceptApp(), userPubKey, index }), {
+  return useQuery(['unconcentBalance', userPubKey, index], () => fetchMax({ program: getInceptApp(), userPubKey, index }), {
     refetchOnMount,
     enabled
   })

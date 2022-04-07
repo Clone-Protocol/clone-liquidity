@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Box, Stack, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { fetchMax } from '~/features/UnconcentratedLiquidity/Balance.query'
+import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { callWithdraw } from '~/web3/UnconcentratedLiquidity/liquidity'
 
 const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
@@ -11,39 +11,29 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 	const { getInceptApp } = useIncept()
 	const [amount, setAmount] = useState(0.0)
 	const [percent, setPercent] = useState(50)
-	const [maxValue, setMaxValue] = useState(0.0)
-	const unconcentratedIndex = parseInt(assetId) - 1
+	const unconcentratedIndex = parseInt(assetId)
 
-	useEffect(() => {
-		const program = getInceptApp()
-
-		async function fetch() {
-			if (assetId) {
-				const data = await fetchMax({
-					program,
-					userPubKey: publicKey,
-					index: unconcentratedIndex,
-				})
-				if (data) {
-					setMaxValue(data.maxVal)
-				}
-			}
-		}
-		fetch()
-	}, [open, publicKey, assetId])
+  const { data } = useBalanceQuery({
+    userPubKey: publicKey,
+    index: unconcentratedIndex,
+	  refetchOnMount: true,
+    enabled: open && publicKey != null
+	})
 
 	const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.currentTarget.value) {
+		if (e.currentTarget.value && data?.maxVal) {
 			const amt = parseFloat(e.currentTarget.value)
 			setAmount(amt)
-			setPercent((amt * 100) / maxValue)
+			setPercent((amt * 100) / data?.maxVal)
 		}
 	}
 
 	const handleChangePercent = (event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number') {
+		if (typeof newValue === 'number' && data?.maxVal) {
+      // console.log('n', newValue)
+      // console.log('m', (data?.maxVal * percent) / 100)
 			setPercent(newValue)
-			setAmount((maxValue * percent) / 100)
+			setAmount((data?.maxVal * percent) / 100)
 		}
 	}
 
@@ -61,7 +51,7 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 					<Box>
 						<SubTitle>Select withdrawal amount</SubTitle>
 						<Stack direction="row" justifyContent="flex-end">
-							<Box sx={{ fontSize: '13px', fontWeight: '500' }}>Max Value: {maxValue}</Box>
+							<Box sx={{ fontSize: '13px', fontWeight: '500' }}>Max Value: {data?.maxVal}</Box>
 						</Stack>
 						<InputAmount id="ip-amount" type="number" value={amount} onChange={handleChangeAmount} />
 						<RatioSlider

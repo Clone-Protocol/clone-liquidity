@@ -2,45 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
-import { PositionInfo as PI } from '~/web3/MyLiquidity/BorrowPosition'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
-import {
-	PositionInfo as PositionInfoType,
-	fetchBorrowDetail,
-	fetchPositionDetail,
-} from '~/web3/MyLiquidity/BorrowPosition'
+import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
 import { callClose } from '~/web3/Borrow/borrow'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
-	const [positionInfo, setPositionInfo] = useState<PI>()
-	const borrowIndex = parseInt(assetId) - 1
+	const borrowIndex = parseInt(assetId)
 
-	useEffect(() => {
-		const program = getInceptApp()
-
-		async function fetch() {
-			if (assetId) {
-				let mint = await program.getMintPosition(borrowIndex)
-				const data = (await fetchBorrowDetail({
-					program,
-					userPubKey: publicKey,
-					index: mint.poolIndex,
-				})) as PositionInfoType
-				if (data) {
-					const positionData = await fetchPositionDetail(program, publicKey!, borrowIndex)
-					data.borrowedIasset = positionData![0]
-					data.collateralAmount = positionData![1]
-					data.collateralRatio = positionData![2]
-					data.minCollateralRatio = positionData![3]
-					setPositionInfo(data)
-				}
-			}
-		}
-		fetch()
-	}, [publicKey, assetId])
+  const { data: positionInfo } = useBorrowPositionQuery({ 
+    userPubKey: publicKey, 
+    index: borrowIndex,
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
 
 	const onClose = async () => {
 		const program = getInceptApp()

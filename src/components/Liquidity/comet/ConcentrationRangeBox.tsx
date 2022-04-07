@@ -1,14 +1,15 @@
 import { Box, Grid } from '@mui/material'
 import { styled } from '@mui/system'
 import { withCsrOnly } from '~/hocs/CsrOnly'
-import { PositionInfo as PI } from '~/web3/MyLiquidity/CometPosition'
+import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
-	positionInfo: PI
+  assetData: PI
+	cometData: CometInfo
 }
 
-const ConcentrationRangeBox: React.FC<Props> = ({ positionInfo }) => {
-	return positionInfo ? (
+const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
+	return cometData ? (
 		<Grid container spacing={2}>
 			<Grid item xs>
 				<Box
@@ -28,8 +29,8 @@ const ConcentrationRangeBox: React.FC<Props> = ({ positionInfo }) => {
 						border: 'solid 1px #00f0ff',
 						padding: '18px',
 					}}>
-					<PriceValue>{positionInfo.lowerLimit.toFixed(2)}</PriceValue>
-					<RangePair>USD / {positionInfo.tickerSymbol}</RangePair>
+					<PriceValue>{cometData.lowerLimit.toFixed(2)}</PriceValue>
+					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
 			<Grid item xs={3}>
@@ -44,8 +45,8 @@ const ConcentrationRangeBox: React.FC<Props> = ({ positionInfo }) => {
 					Center Price
 				</Box>
 				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
-					<PriceValue>{positionInfo.price.toFixed(2)}</PriceValue>
-					<RangePair>USDi / {positionInfo.tickerSymbol}</RangePair>
+					<PriceValue>{assetData.price.toFixed(2)}</PriceValue>
+					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
 			<Grid item xs>
@@ -66,8 +67,8 @@ const ConcentrationRangeBox: React.FC<Props> = ({ positionInfo }) => {
 						border: 'solid 1px #809cff',
 						padding: '18px',
 					}}>
-					<PriceValue>{positionInfo.upperLimit.toFixed(2)}</PriceValue>
-					<RangePair>USDi / {positionInfo.tickerSymbol}</RangePair>
+					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>
+					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
 		</Grid>

@@ -3,7 +3,8 @@ import { styled } from '@mui/system'
 import React, { useState, useEffect } from 'react'
 import { Tooltip, Box } from '@mui/material'
 import Slider, { SliderThumb } from '@mui/material/Slider'
-import { AssetData } from '~/features/Overview/Asset.query'
+import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
+// import { AssetData } from '~/features/Overview/Asset.query'
 
 const BACKGROUND_VALID_RANGE_COLOR = 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)'
 const BACKGROUND_WARNING_RANGE_COLOR = '#e9d100'
@@ -12,7 +13,8 @@ const LEFT_SLIDER_THUMB_COLOR = '#00f0ff'
 const RIGHT_SLIDER_THUMB_COLOR = '#0038ff'
 
 interface Props {
-	assetData: AssetData
+  assetData: PositionInfo
+	cometData: CometInfo
 	onChange?: (isTight: boolean, lowerLimit: number, upperLimit: number) => void
 	max: number
 	defaultLower: number
@@ -139,14 +141,18 @@ function ValueLabelComponent(props: { children: React.ReactElement; value: numbe
 	)
 }
 
-const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, defaultLower, defaultUpper }) => {
+const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, max, defaultLower, defaultUpper }) => {
 	const minLimit = 0
 	const maxLimit = max
 
 	const centerPricePercent = (assetData.price * 100) / maxLimit
 
+  console.log('max', maxLimit)
+  console.log('n', cometData.lowerLimit)
+  console.log('k', cometData.upperLimit)
+
 	// const [value, setValue] = useState<number[]>([20, 180])
-	const [value, setValue] = useState<number[]>([assetData.lowerLimit, assetData.upperLimit])
+	const [value, setValue] = useState<number[]>([cometData.lowerLimit, cometData.upperLimit])
 	const [trackCss, setTrackCss] = useState({
 		'& .MuiSlider-track': {
 			background: BACKGROUND_VALID_RANGE_COLOR,
@@ -167,10 +173,11 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, onChange, max, default
 	})
 
 	useEffect(() => {
-		if (assetData.lowerLimit && assetData.upperLimit) {
-			setValue([parseFloat(assetData.lowerLimit.toFixed(2)), parseFloat(assetData.upperLimit.toFixed(2))])
-		}
-	}, [assetData.lowerLimit, assetData.upperLimit])
+		// if (cometData.lowerLimit && cometData.upperLimit) {
+      console.log('f', parseFloat(cometData.upperLimit.toFixed(2)))
+			setValue([parseFloat(cometData.lowerLimit.toFixed(2)), parseFloat(cometData.upperLimit.toFixed(2))])
+		// }
+	}, [cometData.lowerLimit, cometData.upperLimit])
 
 	const handleChange = (event: Event, newValue: number | number[], activeThumb: number) => {
 		if (activeThumb == 1) return // rightThumb should be prevented

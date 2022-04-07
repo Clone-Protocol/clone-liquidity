@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Paper, Divider } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -10,10 +10,12 @@ import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
-import { PositionInfo as PositionInfoType, fetchBorrowDetail, PairData } from '~/web3/MyLiquidity/BorrowPosition'
 import { callBorrow } from '~/web3/Borrow/borrow'
-import { fetchBalance } from '~/features/Comet/Balance.query'
-import { ASSETS } from '~/features/assetData'
+import { useBalanceQuery } from '~/features/Comet/Balance.query'
+import { ASSETS } from '~/data/assets'
+import { useBorrowDetailQuery, PairData } from '~/features/MyLiquidity/BorrowPosition.query'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -21,36 +23,25 @@ const BorrowBox = () => {
 	const [fromPair, setFromPair] = useState<PairData>({
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
-		tickerSymbol: 'USDi',
-		balance: 0.0,
+		tickerSymbol: 'USDi',	
 		amount: 0.0,
 	})
 	// const [collRatio, setCollRatio] = useState(250)
-
-	const [assetData, setAssetData] = useState<PositionInfoType>()
 	const [assetIndex, setAssetIndex] = useState(0)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
 
-	useEffect(() => {
-		const program = getInceptApp()
+  const { data: assetData } = useBorrowDetailQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+    refetchOnMount: true,
+    enabled: publicKey != null
+  })
 
-		async function fetch() {
-			const assetData = (await fetchBorrowDetail({
-				program,
-				userPubKey: publicKey,
-				index: assetIndex,
-			})) as PositionInfoType
-			setAssetData(assetData)
-			const usdiBalance = await fetchBalance({
-				program,
-				userPubKey: publicKey,
-			})
-			try {
-				setFromPair({ ...fromPair, balance: usdiBalance!.balanceVal })
-			} catch {}
-		}
-		fetch()
-	}, [publicKey, assetIndex])
+  const { data: usdiBalance } = useBalanceQuery({ 
+    userPubKey: publicKey, 
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
 
 	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -103,7 +94,7 @@ const BorrowBox = () => {
 					tickerName={fromPair.tickerName}
 					tickerSymbol={fromPair.tickerSymbol}
 					value={fromPair.amount}
-					balance={fromPair.balance}
+					balance={usdiBalance?.balanceVal}
 					onChange={handleChangeFrom}
 				/>
 			</Box>
@@ -145,7 +136,7 @@ const BorrowBox = () => {
 						<Box sx={{ marginRight: '10px' }}>
 							1 {assetData?.tickerSymbol} - {assetData?.oPrice} USDi
 						</Box>
-						<IconButton size="small" onClick={onRefresh}>
+						<IconButton onClick={onRefresh}>
 							<RefreshIcon></RefreshIcon>
 						</IconButton>
 					</Box>
@@ -209,4 +200,4 @@ const ActionButton = styled(Button)`
 	margin-bottom: 15px;
 `
 
-export default BorrowBox
+export default withSuspense(BorrowBox, <LoadingProgress />)

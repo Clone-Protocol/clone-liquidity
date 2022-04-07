@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { FilterType, useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
+import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
+import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {

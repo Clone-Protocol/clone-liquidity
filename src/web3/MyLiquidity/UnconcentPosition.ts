@@ -97,7 +97,5 @@ export interface UnconcentratedData {
 	tickerSymbol: string
 	price: number
 	borrowFrom: number
-	borrowFromBalance: number
 	borrowTo: number
-	borrowToBalance: number
 }

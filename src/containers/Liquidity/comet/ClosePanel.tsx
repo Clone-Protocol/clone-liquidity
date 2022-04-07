@@ -4,8 +4,9 @@ import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PositionInfo as PI, fetchCometDetail } from '~/web3/MyLiquidity/CometPosition'
-import { FilterType, fetchPools, PoolList } from '~/web3/MyLiquidity/CometPools'
+import { PositionInfo as PI, fetchCometDetail, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
+import { FilterType } from '~/data/filter'
+import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 import { toScaledNumber } from 'sdk/src/utils'
 import { callClose } from '~/web3/Comet/comet'
 
@@ -13,10 +14,18 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const [filter, setFilter] = useState<FilterType>('all')
 	const { getInceptApp } = useIncept()
-	const [positionInfo, setPositionInfo] = useState<PI>()
-	const [collateralAmount, setCollateralAmount] = useState(0)
 	const [ild, setILD] = useState(0)
-	const cometIndex = parseInt(assetId) - 1
+  const [mintAmount, setMintAmount] = useState(0.0)
+	const [collAmount, setCollAmount] = useState(0.0)
+  const [assetData, setAssetData] = useState<PI>()
+  const [cometData, setCometData] = useState<CometInfo>({
+    isTight: false,
+    collRatio: 50,
+    lowerLimit: 40.0,
+    upperLimit: 180.0
+  })
+
+	const cometIndex = parseInt(assetId)
 
 	useEffect(() => {
 		const program = getInceptApp()
@@ -28,22 +37,29 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 					userPubKey: publicKey,
 					index: cometIndex,
 				})) as PI
-				let comet = await program.getCometPosition(cometIndex)
-				data.lowerLimit = toScaledNumber(comet.lowerPriceRange)
-				data.upperLimit = toScaledNumber(comet.upperPriceRange)
-				data.mintAmount = toScaledNumber(comet.borrowedUsdi)
-				data.collAmount = toScaledNumber(comet.collateralAmount)
-				setPositionInfo(data)
-				const collateralAmount = toScaledNumber(comet.collateralAmount)
-				setCollateralAmount(collateralAmount)
-				const ild = (
-					(await fetchPools({
-						program,
-						userPubKey: publicKey,
-						filter,
-					})) as PoolList[]
-				)[cometIndex].ild
-				setILD(ild)
+				const comet = await program.getCometPosition(cometIndex)
+
+        setAssetData(data)
+        setMintAmount(toScaledNumber(comet.borrowedUsdi))
+				setCollAmount(toScaledNumber(comet.collateralAmount))
+				setCometData({
+          ...cometData,
+          lowerLimit: toScaledNumber(comet.lowerPriceRange),
+          upperLimit: toScaledNumber(comet.upperPriceRange)
+        })
+
+        const cometPools =  (await fetchPools({
+          program,
+          userPubKey: publicKey,
+          filter,
+        })) as PoolList[]
+				
+        if (cometPools.length > 0) {
+          const ild = cometPools[cometIndex].ild
+				  setILD(ild)
+        } else {
+          console.log('no user comet pools')
+        }
 			}
 		}
 		fetch()
@@ -57,13 +73,17 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-				<PositionInfo positionInfo={positionInfo} />
+				<PositionInfo 
+          assetData={assetData}
+          cometData={cometData}
+          mintAmount={mintAmount}
+					collateralAmount={collAmount} />
 			</Grid>
 			<Grid item xs={12} md={8}>
 				<Box sx={{ padding: '30px' }}>
 					<Stack direction="row" justifyContent="space-between">
 						<DetailHeader>Collateral</DetailHeader>
-						<DetailValue>{collateralAmount} USDi</DetailValue>
+						<DetailValue>{collAmount} USDi</DetailValue>
 					</Stack>
 					<Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
 						<DetailHeader>ILD</DetailHeader>
@@ -71,7 +91,7 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 					</Stack>
 					<Stack sx={{ marginTop: '30px' }} direction="row" justifyContent="space-between">
 						<DetailHeader>Withdraw amount</DetailHeader>
-						<DetailValue>{collateralAmount - ild} USDi</DetailValue>
+						<DetailValue>{collAmount - ild} USDi</DetailValue>
 					</Stack>
 					<StyledDivider />
 					<ActionButton onClick={onClose}>Close</ActionButton>
