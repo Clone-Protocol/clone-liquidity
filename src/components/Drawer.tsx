@@ -18,8 +18,8 @@ const Drawer: React.FC = () => {
 		<StyledDrawer variant="permanent" open={true}>
 			<List component="nav">
 				<Link href="/">
-					<ListItemButton>
-						<ListItemIcon sx={{ marginLeft: '20px' }}>
+					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
+						<ListItemIcon sx={{ marginLeft: '10px' }}>
 							{router.asPath === '/' ? (
 								<Image src={menuOverviewIconSelected} alt="overview" />
 							) : (
@@ -27,11 +27,11 @@ const Drawer: React.FC = () => {
 							)}
 						</ListItemIcon>
 						<StyledListItemText>Overview</StyledListItemText>
-					</ListItemButton>
+					</StyledListItemButton>
 				</Link>
 				<Link href="/liquidity">
-					<ListItemButton>
-						<ListItemIcon sx={{ marginLeft: '20px' }}>
+					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
+						<ListItemIcon sx={{ marginLeft: '10px' }}>
 							{router.asPath === '/liquidity' ? (
 								<Image src={menuLiquidityIconSelected} alt="portfolio" />
 							) : (
@@ -39,11 +39,11 @@ const Drawer: React.FC = () => {
 							)}
 						</ListItemIcon>
 						<StyledListItemText>My Liquidity</StyledListItemText>
-					</ListItemButton>
+					</StyledListItemButton>
 				</Link>
 				<Link href="/borrow">
-					<ListItemButton>
-						<ListItemIcon sx={{ marginLeft: '20px' }}>
+					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
+						<ListItemIcon sx={{ marginLeft: '10px' }}>
 							{router.asPath === '/borrow' ? (
 								<Image src={menuBorrowIconSelected} alt="markets" />
 							) : (
@@ -51,7 +51,7 @@ const Drawer: React.FC = () => {
 							)}
 						</ListItemIcon>
 						<StyledListItemText>Borrow</StyledListItemText>
-					</ListItemButton>
+					</StyledListItemButton>
 				</Link>
 			</List>
 			<Stack
@@ -79,7 +79,7 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 		background: '#171717',
 		color: '#fff',
 		whiteSpace: 'nowrap',
-		width: 209,
+		width: 241,
 		marginTop: 60,
 		borderRight: '1px solid #3f3f3f',
 		transition: theme.transitions.create('width', {
@@ -101,9 +101,22 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 	},
 }))
 
+const StyledListItemButton = styled(ListItemButton)`
+  border-radius: 10px;
+  height: 41px;
+  margin-left: 12px;
+  margin-right: 11px;
+  margin-bottom: 13px;
+  .selected {
+    border: solid 1px #3f3f3f;
+    background-image: linear-gradient(to bottom, #000 0%, #000 100%); 
+  }
+`
+
 const StyledListItemText = styled(Box)`
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 12px;
+	font-weight: bold;
 	height: 44px;
 	line-height: 44px;
+  margin-left: -15px;
 `

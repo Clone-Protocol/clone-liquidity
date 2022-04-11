@@ -45,6 +45,7 @@ const StyledSection = styled('section')`
 
 const BoldText = styled('span')`
 	color: #fff;
+  text-decoration: underline;
 `
 
 export default AssetPage

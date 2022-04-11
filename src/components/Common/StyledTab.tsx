@@ -31,14 +31,15 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 })
 
 export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(({ theme }) => ({
-  height: '53px',
+  height: '35px',
   textTransform: 'none',
-	fontWeight: '500',
-	fontSize: '18px',
-  background: '#171717',
+	fontWeight: '600',
+	fontSize: '12px',
+  backgroundColor: 'rgba(21, 22, 24, 0.75)',
 	color: '#989898',
 	'&.Mui-selected': {
-    background: '#3d3d3d',
+    border: 'solid 1px rgba(128, 156, 255, 0.62)',
+    backgroundColor: '#000',
 		color: '#fff',
     borderRadius: '10px'
 	},

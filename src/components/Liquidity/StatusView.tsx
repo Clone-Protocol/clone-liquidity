@@ -15,7 +15,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 					<NumValue>{status.totalVal.toLocaleString()}</NumValue> USDi
 				</BalanceValue>
 			</Box>
-			<Stack spacing={2}>
+			{/* <Stack spacing={2}>
 				<Box>
 					<SubHeader>Comet:</SubHeader>
 					<SubValue>
@@ -34,7 +34,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 						{status.borrow.toLocaleString()} USDi ({status.borrowPercent}%)
 					</SubValue>
 				</Box>
-			</Stack>
+			</Stack> */}
 		</StyledPaper>
 	) : (
 		<></>
@@ -46,23 +46,26 @@ export default withCsrOnly(StatusView)
 const StyledPaper = styled(Paper)`
 	font-size: 14px;
 	font-weight: 500;
-	background: #000;
+	background-image: linear-gradient(to bottom, rgba(21, 22, 24, 0.75) 100%, #002888 -159%);
 	color: #fff;
 	padding: 49px 48px 49px 51px;
-	border-radius: 8px;
-	border: solid 1px #e4e9ed;
-	height: 357px;
+	border-radius: 10px;
+	height: 168px;
 `
 const Title = styled('div')`
-	font-size: 18px;
+	font-size: 14px;
 	font-weight: 500;
 	color: #989898;
 	margin-bottom: 10px;
 `
 
 const BalanceValue = styled('div')`
-	font-size: 20px;
-	font-weight: 600;
+	font-size: 24px;
+	font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
 `
 
 const NumValue = styled('span')`

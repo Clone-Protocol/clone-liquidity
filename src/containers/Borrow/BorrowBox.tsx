@@ -85,7 +85,7 @@ const BorrowBox = () => {
 
 	return (
 		<StyledPaper variant="outlined">
-			<Box sx={{ fontSize: '24px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
+			<Box sx={{ fontSize: '16px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
 			<Box>
 				<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Choose a collateral asset</Box></SubTitle>
 				<SubTitleComment>The collateral asset may affert the minimum collateral ratio.</SubTitleComment>
@@ -121,7 +121,7 @@ const BorrowBox = () => {
 						onChangeAmount={handleChangeBorrowAmount}
 					/>
 				</Box>
-				<Stack
+				{/* <Stack
 					sx={{
 						border: '1px solid #9d9d9d',
 						borderRadius: '10px',
@@ -140,7 +140,7 @@ const BorrowBox = () => {
 							<RefreshIcon></RefreshIcon>
 						</IconButton>
 					</Box>
-				</Stack>
+				</Stack> */}
 			</Box>
 			<StyledDivider />
 
@@ -158,10 +158,10 @@ const StyledPaper = styled(Paper)`
 	border-radius: 8px;
 	text-align: left;
 	background: #171717;
-	padding-left: 53px;
+	padding-left: 36px;
 	padding-top: 26px;
-	padding-bottom: 42px;
-	padding-right: 54px;
+	padding-bottom: 32px;
+	padding-right: 36px;
 `
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
@@ -172,13 +172,13 @@ const StyledDivider = styled(Divider)`
 
 const SubTitle = styled('div')`
   display: flex;
-	font-size: 18px;
+	font-size: 14px;
 	font-weight: 500;
-	margin-bottom: 17px;
+	margin-bottom: 12px;
 `
 
 const SubTitleComment = styled('div')`
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 500;
 	color: #989898;
 `
@@ -194,7 +194,8 @@ const IconButton = styled('div')`
 
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #7d7d7d;
+	background: #4e609f;
+  font-size: 13px;
 	color: #fff;
 	border-radius: 8px;
 	margin-bottom: 15px;

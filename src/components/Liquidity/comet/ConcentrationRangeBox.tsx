@@ -11,12 +11,12 @@ interface Props {
 const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 	return cometData ? (
 		<Grid container spacing={2}>
-			<Grid item xs>
+			<Grid item xs={4}>
 				<Box
 					sx={{
-						fontSize: '15px',
+						fontSize: '12px',
 						fontWeight: '500',
-						color: '#00f0ff',
+						color: '#809cff',
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
@@ -26,17 +26,17 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 					sx={{
 						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
 						borderRadius: '10px',
-						border: 'solid 1px #00f0ff',
-						padding: '18px',
+						border: 'solid 1px #809cff',
+						padding: '8px',
 					}}>
 					<PriceValue>{cometData.lowerLimit.toFixed(2)}</PriceValue>
 					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
-			<Grid item xs={3}>
+			<Grid item xs={4}>
 				<Box
 					sx={{
-						fontSize: '15px',
+						fontSize: '12px',
 						fontWeight: '500',
 						color: '#FFF',
 						textAlign: 'center',
@@ -44,17 +44,17 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 					}}>
 					Center Price
 				</Box>
-				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '18px' }}>
+				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '8px' }}>
 					<PriceValue>{assetData.price.toFixed(2)}</PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
-			<Grid item xs>
+			<Grid item xs={4}>
 				<Box
 					sx={{
-						fontSize: '15px',
+						fontSize: '12px',
 						fontWeight: '500',
-						color: '#809cff',
+						color: '#446dff',
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
@@ -64,8 +64,8 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 					sx={{
 						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
 						borderRadius: '10px',
-						border: 'solid 1px #809cff',
-						padding: '18px',
+						border: 'solid 1px #446dff',
+						padding: '8px',
 					}}>
 					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
@@ -78,16 +78,17 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 }
 
 const PriceValue = styled('div')`
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: 500;
 	text-align: center;
 `
 
 const RangePair = styled('div')`
-	font-size: 13px;
+	font-size: 12px;
 	font-weight: 500;
-	padding-top: 10px;
+	padding-top: 8px;
 	text-align: center;
+  color: #5c5c5c;
 `
 
 export default withCsrOnly(ConcentrationRangeBox)

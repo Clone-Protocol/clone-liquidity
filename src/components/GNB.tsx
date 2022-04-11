@@ -156,7 +156,7 @@ const RightMenu = () => {
 			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
 				Get USDi
 			</HeaderButton>
-			<HeaderButton
+			<ConnectButton
 				onClick={handleWalletClick}
 				variant="outlined"
 				sx={{ width: '163px' }}
@@ -176,7 +176,7 @@ const RightMenu = () => {
 						)}
 					</>
 				)}
-			</HeaderButton>
+			</ConnectButton>
 			<HeaderButton sx={{ fontSize: '20px', fontWeight: 'bold', paddingBottom: '24px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
       <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 		</Box>
@@ -235,14 +235,26 @@ const NavPlaceholder = styled('div')`
 `
 
 const HeaderButton = styled(Button)`
-	border: 1px solid #fff;
-	padding: 14px 11px 12px 14px;
+	border: 1px solid #404040;
+	padding: 12px 12px 10px 13px;
 	border-radius: 8px;
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 600;
   margin-left: 16px;
 	color: #fff;
-	height: 41px;
+	height: 35px;
+`
+
+const ConnectButton = styled(Button)`
+  border: solid 1px #00218f;
+  background-color: #001149;
+	padding: 12px 12px 10px 13px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+  margin-left: 16px;
+	color: #fff;
+	height: 35px;
 `
 
 const useStyles = makeStyles(({ palette }: Theme) => ({

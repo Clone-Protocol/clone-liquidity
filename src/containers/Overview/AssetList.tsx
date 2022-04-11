@@ -37,7 +37,10 @@ const AssetList: React.FC = () => {
 				background: '#171717',
 				color: '#fff',
         padding: '30px',
-        borderRadius: '4px'
+        borderRadius: '4px',
+        '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '11px' },
+				// '& .super-app-theme--row': { background: '#1b1b1b' },
+				// '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353' },
 			}}>
 			<Stack mb={2} direction="row" justifyContent="space-between">
 				<PageTabs value={filter} onChange={handleFilterChange}>

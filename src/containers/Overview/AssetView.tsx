@@ -235,17 +235,17 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 							value={assetData.price}
 						/>
 
-						<Box sx={{ background: '#171717', paddingX: '61px', paddingY: '36px', marginTop: '28px' }}>
+						<Box sx={{ background: '#171717', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
 							<Stack
 								sx={{
-									border: '1px solid #00d0dd',
+									border: '1px solid #809cff',
 									borderRadius: '10px',
-									color: '#9d9d9d',
+									color: '#809cff',
 									padding: '12px',
 									marginBottom: '26px',
 								}}
 								direction="row">
-								<Box sx={{ width: '73px', textAlign: 'center', marginTop: '11px' }}>
+								<Box sx={{ width: '73px', textAlign: 'center', marginTop: '6px' }}>
 									<Image src={InfoBookIcon} />
 								</Box>
 								<WarningBox>
@@ -279,9 +279,9 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 										AMM
 									</Box>
 								</SubTitle>
-								{/* <Box sx={{ marginTop: '15px' }}>
-                <RatioSlider min={0} max={100} value={assetData?.collRatio} onChange={handleChangeCollRatio} />
-              </Box> */}
+                <Box sx={{ marginTop: '15px' }}>
+                  {/* <RatioSlider min={0} max={100} value={cometData?.collRatio} onChange={handleChangeCollRatio} /> */}
+                </Box>
 								<Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
 									<PairInput
 										tickerIcon={'/images/assets/USDi.png'}
@@ -316,22 +316,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									/>
 								</Box>
 
-								<ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
-
-								<Button
-									onClick={() => changeTab(1)}
-									sx={{
-										width: '100%',
-										color: '#fff',
-										background: '#171717',
-										borderRadius: '10px',
-										border: 'solid 1px #fff',
-										marginTop: '26px',
-										height: '40px',
-										fontSize: '15px',
-									}}>
-									Unconcentrated Liquidity
-								</Button>
+								<ConcentrationRangeBox assetData={assetData} cometData={cometData} />
 
 								{assetData.tightRange > assetData.price - cometData.lowerLimit ||
 								assetData.tightRange > cometData.upperLimit - assetData.price ? (
@@ -372,14 +357,14 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 							value={assetData.price}
 						/>
 
-						<Box sx={{ background: '#171717', paddingX: '61px', paddingY: '20px', marginTop: '28px' }}>
+						<Box sx={{ background: '#171717', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
 							<Stack
 								sx={{
 									border: '1px solid #e9d100',
 									borderRadius: '10px',
 									color: '#9d9d9d',
 									padding: '12px',
-									marginTop: '19px',
+									marginTop: '10px',
 									marginBottom: '30px',
 								}}
 								direction="row">
@@ -429,7 +414,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 							</Box>
 							<StyledDivider />
 
-							<LiquidityButton onClick={onLiquidity}>Create Liquidity Position</LiquidityButton>
+							<LiquidityButton onClick={onLiquidity}>Create Unconcentrated Liquidity Position</LiquidityButton>
 						</Box>
 					</Box>
 				)}
@@ -462,17 +447,16 @@ const StyledDivider = styled(Divider)`
 const CometTabBtn = styled((props: any) => (
   <CometTab {...props} />
 ))(({ active }: { active: boolean}) => ({
-  background: active? 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),linear-gradient(to right, #00f0ff -1%, #0038ff 109%)' : '#171717'
+  border: active? '1px solid #0038ff' : '',
 }))
 
 const CometTab = styled(Button)`
-	width: 224px;
+	width: 199px;
 	height: 40px;
 	padding: 9px 24px 9px 24.5px;
 	border-radius: 10px;
-	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-		linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
-	font-size: 14px;
+	background-color: rgba(21, 22, 24, 0.75);
+	font-size: 12px;
 	font-weight: 600;
 	color: #fff;
   &:hover {
@@ -486,15 +470,15 @@ const CometTab = styled(Button)`
 const UnconcentTabBtn = styled((props: any) => (
   <UnconcentTab {...props} />
 ))(({ active }: { active: boolean}) => ({
-  background: active? '#3d3d3d' : '#171717'
+  border: active? '1px solid #0038ff' : '',
 }))
 
 const UnconcentTab = styled(Button)`
 	width: 284px;
 	height: 40px;
 	border-radius: 10px;
-	background-color: #171717;
-	font-size: 14px;
+	background-color: rgba(21, 22, 24, 0.75);
+	font-size: 12px;
 	font-weight: 600;
 	color: #fff;
   &:active {
@@ -504,12 +488,12 @@ const UnconcentTab = styled(Button)`
 
 const SubTitle = styled(Box)`
 	display: flex;
-	font-size: 18px;
+	font-size: 14px;
 	font-weight: 500;
 `
 
 const SubTitleComment = styled('div')`
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 500;
 	color: #989898;
 	margin-top: 10px;
@@ -518,23 +502,25 @@ const SubTitleComment = styled('div')`
 const WarningBox = styled(Box)`
 	max-width: 500px;
 	padding-right: 10px;
-	font-size: 14px;
+	font-size: 11px;
 	font-weight: 500;
 	color: #989898;
 `
 
 const CometButton = styled(Button)`
 	width: 100%;
-	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-		linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
+	background-color: #4e609f;
 	color: #fff;
 	border-radius: 10px;
 	margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: 600;
 `
 const LiquidityButton = styled(Button)`
 	width: 100%;
-	background-color: #575757;
+  background-color: #4e609f;
 	color: #fff;
+  font-size: 13px;
 	border-radius: 10px;
 	margin-bottom: 15px;
 `

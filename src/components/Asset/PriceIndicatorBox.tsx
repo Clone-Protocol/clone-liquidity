@@ -13,13 +13,13 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
 		<StyledStack direction="row" justifyContent="space-between" alignItems="center">
 			<Box display="flex">
 				<Image src={tickerIcon!} width="28px" height="28px" />
-				<Box sx={{ marginLeft: '14px', fontSize: '18px', fontWeight: '500' }}>
+				<Box sx={{ marginLeft: '14px', fontSize: '15px', fontWeight: '600', marginTop: '3px' }}>
 					{tickerName} ({tickerSymbol})
 				</Box>
 			</Box>
-			<Box sx={{ textAlign: 'right' }}>
+			<Box sx={{ textAlign: 'right', display: 'flex', alignItems: 'center' }}>
 				<Box sx={{ fontSize: '12px', fontWeight: '500', color: '#6c6c6c' }}>iAsset Price</Box>
-				<Box sx={{ fontSize: '18px', fontWeight: '500' }}>
+				<Box sx={{ fontSize: '18px', fontWeight: '500', marginLeft: '15px' }}>
 					{value?.toFixed(2)} <span style={{ fontSize: '14px' }}>USD</span>
 				</Box>
 			</Box>
@@ -33,7 +33,7 @@ const StyledStack = styled(Stack)`
 	background-color: #171717;
 	padding-left: 25px;
 	padding-right: 25px;
-	height: 87px;
+	height: 61px;
 `
 
 export default PriceIndicatorBox

@@ -6,10 +6,10 @@ import Slider, { SliderThumb } from '@mui/material/Slider'
 import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 // import { AssetData } from '~/features/Overview/Asset.query'
 
-const BACKGROUND_VALID_RANGE_COLOR = 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)'
+const BACKGROUND_VALID_RANGE_COLOR = 'linear-gradient(to right, #809cff -1%, #0038ff 109%)'
 const BACKGROUND_WARNING_RANGE_COLOR = '#e9d100'
 
-const LEFT_SLIDER_THUMB_COLOR = '#00f0ff'
+const LEFT_SLIDER_THUMB_COLOR = '#809cff'
 const RIGHT_SLIDER_THUMB_COLOR = '#0038ff'
 
 interface Props {
@@ -54,10 +54,10 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 			marginRight: 1,
 		},
 		'& .MuiSlider-valueLabel': {
-			fontSize: '15px',
+			fontSize: '11px',
 			fontWeight: '500',
-			top: 28,
-			left: 24,
+			top: 24,
+			left: 20,
 			backgroundColor: 'unset',
 			color: '#fff',
 			'&:before': {
@@ -71,13 +71,13 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 	},
 	//rightThumb
 	'& .MuiSlider-thumb[data-index="1"]': {
-		height: 31,
-		width: 88,
+		height: 30,
+		width: 75,
 		backgroundColor: '#171717',
 		border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
 		borderRadius: '8px',
 		marginTop: '-44px',
-		marginLeft: '43px',
+		marginLeft: '36px',
 		'&::after': {
 			border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
 			borderRadius: 0,
@@ -89,10 +89,10 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 			top: '35px',
 		},
 		'& .MuiSlider-valueLabel': {
-			fontSize: '15px',
+			fontSize: '11px',
 			fontWeight: '500',
-			top: 28,
-			left: 16,
+			top: 24,
+			left: 15,
 			backgroundColor: 'unset',
 			color: '#fff',
 			'&:before': {
@@ -265,14 +265,14 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 
 const CenterPriceBox = styled(Box)`
 	position: absolute;
-	left: calc(50% - 43px);
+	left: calc(50% - 30px);
 	bottom: 80px;
-	width: 87px;
-	height: 36px;
+	width: 74px;
+	height: 30px;
 	border-radius: 10px;
 	border: solid 2px #fffdfd;
 	text-align: center;
-	font-size: 15px;
+	font-size: 11px;
 	font-weight: 500;
 	color: #fff;
 	line-height: 28px;
@@ -284,8 +284,8 @@ const Stick = styled('div')`
 	background: #fff;
 	width: 1px;
 	height: 64px;
-	margin-top: 5px;
-	margin-left: 41px;
+	margin-top: 0px;
+	margin-left: 34px;
 `
 
 export default withCsrOnly(ConcentrationRange)
