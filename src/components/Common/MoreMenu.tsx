@@ -63,7 +63,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
 const StyledMenuItem = styled(MenuItem)`
   display: flex;
   justify-content: space-between;
-  width: 170px;
+  width: 219px;
   height: 35px;
   font-size: 12px;
   font-weight: 600;

@@ -15,6 +15,7 @@ interface StyledTabsProps {
 
 interface StyledTabProps {
 	label: string
+  icon: any
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (
@@ -28,13 +29,27 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	'& .MuiTabs-indicatorSpan': {
 		display: 'none'
 	},
+  backgroundColor: 'rgba(21, 22, 24, 0.75)',
+  maxWidth: '620px',
+  borderRadius: '10px',
+  height: '47px',
+  paddingLeft: '8px',
+  paddingTop: '6px'
 })
 
-export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(({ theme }) => ({
-  height: '35px',
+export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
+  '&.MuiTab-root': {
+    height: '35px',
+    minHeight: '0px',
+    maxHeight: '35px',
+    display: 'flex',
+    gap: '10px'
+  },
   textTransform: 'none',
 	fontWeight: '600',
 	fontSize: '12px',
+  marginLeft: '12px',
+  marginRight: '12px',
   backgroundColor: 'rgba(21, 22, 24, 0.75)',
 	color: '#989898',
 	'&.Mui-selected': {

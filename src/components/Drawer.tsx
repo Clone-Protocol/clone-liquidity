@@ -5,9 +5,6 @@ import Image from 'next/image'
 import menuOverviewIcon from 'public/images/menu/overview-icon.png'
 import menuLiquidityIcon from 'public/images/menu/position-icon.png'
 import menuBorrowIcon from 'public/images/menu/borrow-icon.png'
-import menuOverviewIconSelected from 'public/images/menu/overview-icon-selected.png'
-import menuLiquidityIconSelected from 'public/images/menu/position-icon-selected.png'
-import menuBorrowIconSelected from 'public/images/menu/borrow-icon-selected.png'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 
@@ -20,35 +17,23 @@ const Drawer: React.FC = () => {
 				<Link href="/">
 					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
 						<ListItemIcon sx={{ marginLeft: '10px' }}>
-							{router.asPath === '/' ? (
-								<Image src={menuOverviewIconSelected} alt="overview" />
-							) : (
-								<Image src={menuOverviewIcon} alt="overview" />
-							)}
+							<Image src={menuOverviewIcon} alt="overview" />
 						</ListItemIcon>
 						<StyledListItemText>Overview</StyledListItemText>
 					</StyledListItemButton>
 				</Link>
 				<Link href="/liquidity">
-					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
+					<StyledListItemButton className={router.asPath === '/liquidity' ? 'selected' : ''}>
 						<ListItemIcon sx={{ marginLeft: '10px' }}>
-							{router.asPath === '/liquidity' ? (
-								<Image src={menuLiquidityIconSelected} alt="portfolio" />
-							) : (
-								<Image src={menuLiquidityIcon} alt="portfolio" />
-							)}
+							<Image src={menuLiquidityIcon} alt="portfolio" />
 						</ListItemIcon>
 						<StyledListItemText>My Liquidity</StyledListItemText>
 					</StyledListItemButton>
 				</Link>
 				<Link href="/borrow">
-					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
+					<StyledListItemButton className={router.asPath === '/borrow' ? 'selected' : ''}>
 						<ListItemIcon sx={{ marginLeft: '10px' }}>
-							{router.asPath === '/borrow' ? (
-								<Image src={menuBorrowIconSelected} alt="markets" />
-							) : (
-								<Image src={menuBorrowIcon} alt="markets" />
-							)}
+							<Image src={menuBorrowIcon} alt="markets" />
 						</ListItemIcon>
 						<StyledListItemText>Borrow</StyledListItemText>
 					</StyledListItemButton>
@@ -107,7 +92,7 @@ const StyledListItemButton = styled(ListItemButton)`
   margin-left: 12px;
   margin-right: 11px;
   margin-bottom: 13px;
-  .selected {
+  &.selected {
     border: solid 1px #3f3f3f;
     background-image: linear-gradient(to bottom, #000 0%, #000 100%); 
   }

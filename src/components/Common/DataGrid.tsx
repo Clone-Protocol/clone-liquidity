@@ -33,10 +33,10 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
         display: 'none',
       },
       '& .MuiDataGrid-row': {
-        border: '1px solid #535353',
-        marginBottom: '32px',
+        marginBottom: '12px',
         marginRight: '10px',
-        borderRadius: '10px'
+        borderRadius: '10px',
+        background: '#1b1b1b'
       },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
@@ -81,5 +81,5 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
 )
 
 export const CellDigitValue = ({ value, symbol }: {value: string, symbol?: string}) => (
-  <Box sx={{ fontSize: '11px', fontWeight: '500' }}>{value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
+  <Box sx={{ fontSize: '12px', fontWeight: '500' }}>{value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
 )
