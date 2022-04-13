@@ -2,10 +2,14 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
+import dynamic from 'next/dynamic'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import AssetList from '~/containers/Overview/AssetList'
+// import LineChart from '~/components/Charts/LineChart'
 
 const Overview: NextPage = () => {
+  const LineChart = dynamic(() => import('~/components/Charts/LineChart'), { loading: () => <p>Loading ...</p>, ssr: false });
+
 	return (
 		<div>
 			<Head>
@@ -19,6 +23,10 @@ const Overview: NextPage = () => {
 					<Container>
 						<WelcomeMsg />
 						<Box sx={{ marginTop: '40px' }}>
+              <Box>
+                <LineChart />
+              </Box>
+
 							<AssetList />
 						</Box>
 					</Container>
