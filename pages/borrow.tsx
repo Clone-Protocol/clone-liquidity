@@ -17,7 +17,7 @@ const Borrow: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-						<Box sx={{ marginTop: '40px' }}>
+						<Box>
 							<TipMsg>💡 Tip: Read about how borrowing works and the strategies here.</TipMsg>
 							<Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
 								<BorrowBox />

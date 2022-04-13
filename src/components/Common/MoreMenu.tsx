@@ -64,6 +64,7 @@ const StyledMenuItem = styled(MenuItem)`
   display: flex;
   justify-content: space-between;
   width: 219px;
+  height: 35px;
   font-size: 12px;
   font-weight: 600;
   line-height: normal;

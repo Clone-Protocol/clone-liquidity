@@ -156,19 +156,19 @@ const RightMenu = () => {
 			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
 				Get USDi
 			</HeaderButton>
-			<HeaderButton
+			<ConnectButton
 				onClick={handleWalletClick}
 				variant="outlined"
 				sx={{ width: '163px' }}
 				disabled={connecting}
-				startIcon={<Image src={walletIcon} alt="wallet" />}>
+				startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
 				{!connected ? (
 					<>Connect Wallet</>
 				) : (
 					<>
-						Disconnect Wallet{' '}
+						<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
 						{publicKey ? (
-							<Box sx={{ marginLeft: '10px', color: '#6c6c6c' }}>
+							<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
 								{shortenAddress(publicKey.toString())}
 							</Box>
 						) : (
@@ -176,8 +176,8 @@ const RightMenu = () => {
 						)}
 					</>
 				)}
-			</HeaderButton>
-			<HeaderButton sx={{ fontSize: '20px', fontWeight: 'bold', paddingBottom: '24px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
+			</ConnectButton>
+			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '18px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
       <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 		</Box>
 	)
@@ -235,14 +235,33 @@ const NavPlaceholder = styled('div')`
 `
 
 const HeaderButton = styled(Button)`
-	border: 1px solid #fff;
-	padding: 14px 11px 12px 14px;
-	border-radius: 8px;
-	font-size: 12px;
+	border: 1px solid #404040;
+	padding: 12px 12px 10px 13px;
+	border-radius: 10px;
+	font-size: 11px;
 	font-weight: 600;
   margin-left: 16px;
 	color: #fff;
-	height: 41px;
+	height: 35px;
+`
+
+const ConnectButton = styled(Button)`
+  border: solid 1px #00218f;
+  background-color: #001149;
+	padding: 12px 12px 10px 13px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+  margin-left: 16px;
+	color: #fff;
+	height: 35px;
+  &:hover {
+    background-color: #00165f;
+  }
+  &:active {
+    border: solid 1px #003bff;
+    background-color: #00165f;
+  }
 `
 
 const useStyles = makeStyles(({ palette }: Theme) => ({

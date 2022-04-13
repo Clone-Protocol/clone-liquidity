@@ -8,6 +8,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import { FilterType } from '~/data/filter'
 import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 
 interface Props {
 	filter: FilterType
@@ -94,7 +95,7 @@ let columns: GridColDef[] = [
 			return (
 				<Box display="flex">
 					<Link href={`/liquidity/borrow/${params.row.id}/manage`}>
-						<RiskButton>Manage</RiskButton>
+						<DefaultButton>Manage</DefaultButton>
 					</Link>
 				</Box>
 			)

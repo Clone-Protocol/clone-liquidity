@@ -34,10 +34,13 @@ const AssetList: React.FC = () => {
 	return (
 		<Box
 			sx={{
-				background: '#171717',
+				background: 'rgba(21, 22, 24, 0.75)',
 				color: '#fff',
         padding: '30px',
-        borderRadius: '4px'
+        borderRadius: '10px',
+        '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '11px' },
+				// '& .super-app-theme--row': { background: '#1b1b1b' },
+				// '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353' },
 			}}>
 			<Stack mb={2} direction="row" justifyContent="space-between">
 				<PageTabs value={filter} onChange={handleFilterChange}>
@@ -105,7 +108,7 @@ let columns: GridColDef[] = [
 		headerName: 'Baseline APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600', textAlign: 'center', margin: '0 auto' }}>{params.value.toLocaleString()} %</Box>
+			return <Box sx={{ fontSize: '12px', fontWeight: '500', textAlign: 'center', margin: '0 auto' }}>{params.value.toLocaleString()} %</Box>
 		},
 	},
 	{
@@ -137,10 +140,11 @@ const ChangePositionButton = styled(Box)`
 	width: 25px;
 	height: 25px;
 	flex-grow: 0;
-	padding: 5.6px 5px 5.6px;
+	padding: 6px;
   line-height: 10px;
 	border-radius: 4px;
-	border: solid 1px #00f0ff;
+	border: solid 1px #535353;
+  background-color: #1b377b;
 	cursor: pointer;
 `
 
@@ -148,7 +152,7 @@ const TradeButton = styled(Box)`
 	width: 25px;
 	height: 25px;
 	flex-grow: 0;
-	padding: 4px 5.7px 3px 6px;
+	padding: 3px 5.7px 4px 8px;
 	border-radius: 4px;
 	border: solid 1px #fff;
 	cursor: pointer;

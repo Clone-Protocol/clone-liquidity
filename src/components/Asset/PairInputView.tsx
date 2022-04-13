@@ -26,8 +26,8 @@ const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => 
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
-	height: 60px;
-	padding: 11px 23px 12px 19px;
+	height: 54px;
+	padding: 13px 21px 13px 30px;
 	border-radius: 8px;
 	border: solid 1px #5c5c5c;
 	background-color: #171717;
@@ -37,6 +37,7 @@ const TickerSymbol = styled('div')`
 	font-size: 15px;
 	font-weight: 600;
 	color: #5c5c5c;
+  margin-top: 3px;
 `
 
 const InputAmount = styled(`input`)`
@@ -45,8 +46,8 @@ const InputAmount = styled(`input`)`
 	text-align: right;
 	border: 0px;
 	background-color: #171717;
-	font-size: 18px;
-	font-weight: 600;
+	font-size: 16px;
+	font-weight: 500;
 	color: #5c5c5c;
 `
 

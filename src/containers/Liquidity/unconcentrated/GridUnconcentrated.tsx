@@ -8,7 +8,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { FilterType } from '~/data/filter'
 import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
-import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
+import { RiskButton, DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
@@ -99,8 +99,8 @@ let columns: GridColDef[] = [
 			const [openWithdraw, setOpenWithdraw] = useState(false)
 			return (
 				<Box display="flex">
-					<StableButton onClick={() => setOpenDeposit(true)}>Deposit</StableButton>
-					<InactiveButton onClick={() => setOpenWithdraw(true)}>Withdraw</InactiveButton>
+					<DefaultButton onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>
+					<DefaultButton onClick={() => setOpenWithdraw(true)}>Withdraw</DefaultButton>
 
 					<DepositDialog
 						assetId={params.row.id}

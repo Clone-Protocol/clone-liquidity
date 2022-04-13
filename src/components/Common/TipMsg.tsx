@@ -6,7 +6,7 @@ const TipMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
 }
 
 const StyledPaper = styled(Paper)`
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 500;
 	font-stretch: normal;
 	font-style: normal;

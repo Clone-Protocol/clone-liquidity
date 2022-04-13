@@ -32,7 +32,7 @@ const PairInput: React.FC<Props> = ({
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-						<TickerName>{tickerName}</TickerName>
+						{/* <TickerName>{tickerName}</TickerName> */}
 					</Box>
 				</Box>
 				<InputAmount id="ip-amount" type="number" value={value} onChange={onChange} disabled={disabled} />
@@ -44,14 +44,14 @@ const PairInput: React.FC<Props> = ({
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
-	height: 60px;
-	padding: 15px 25px 14px 34px;
+	height: 54px;
+	padding: 9px 21px 8px 24px;
 	border-radius: 8px;
 	background-color: #333333;
 `
 
 const TickerSymbol = styled('div')`
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: 600;
 `
 
@@ -68,9 +68,9 @@ const InputAmount = styled(`input`)`
 	text-align: right;
 	border: 0px;
 	background-color: #333333;
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: 500;
-	color: #fff;
+	color: #adadad;
 `
 
 export default PairInput

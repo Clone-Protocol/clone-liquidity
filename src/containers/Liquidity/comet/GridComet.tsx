@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import Link from 'next/link'
-import { RiskButton, StableButton, InactiveButton } from '~/components/Liquidity/LiquidityButton'
+import { RiskButton, StableButton, DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
@@ -109,7 +109,7 @@ let columns: GridColDef[] = [
 				<Box display="flex">
 					<StableButton>Recenter</StableButton>
 					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
-						<InactiveButton>Manage</InactiveButton>
+						<DefaultButton>Manage</DefaultButton>
 					</Link>
 				</Box>
 			)

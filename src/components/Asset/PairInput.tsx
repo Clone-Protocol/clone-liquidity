@@ -24,7 +24,7 @@ const PairInput: React.FC<Props> = ({
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (
 				<Stack direction="row" justifyContent="flex-end">
-					<Box sx={{ fontSize: '13px', fontWeight: '500', marginBottom: '2px' }}>
+					<Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '2px' }}>
 						{headerTitle}: {headerValue}
 					</Box>
 				</Stack>
@@ -47,15 +47,16 @@ const PairInput: React.FC<Props> = ({
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
-	height: 60px;
-	padding: 11px 23px 12px 19px;
+	height: 54px;
+	padding: 9px 21px 8px 24px;
 	border-radius: 8px;
 	background-color: #333333;
 `
 
 const TickerSymbol = styled('div')`
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: 600;
+  margin-top: 3px;
 `
 
 const TickerName = styled('div')`
@@ -71,9 +72,9 @@ const InputAmount = styled(`input`)`
 	text-align: right;
 	border: 0px;
 	background-color: #333333;
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: 500;
-	color: #fff;
+	color: #adadad;
 `
 
 export default PairInput
