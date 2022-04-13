@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Borrow/PairInput'
-import AutoCompletePairInput from '~/components/Borrow/AutoCompletePairInput'
+import AutoCompletePairInput, { AssetType } from '~/components/Borrow/AutoCompletePairInput'
 import SelectPairInput from '~/components/Borrow/SelectPairInput'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
@@ -50,7 +50,12 @@ const BorrowBox = () => {
 		}
 	}
 
-	const handleChangeAsset = (index: number) => {
+  const handleChangeAsset = (data: AssetType) => {
+    const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
+    setAssetIndex(index)
+  }
+
+	const handleChangeAssetIdx = (index: number) => {
 		setAssetIndex(index)
 	}
 
@@ -118,12 +123,20 @@ const BorrowBox = () => {
             <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
             <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
             <Box sx={{ marginTop: '20px' }}>
-              <SelectPairInput
+              {/* <SelectPairInput
                 assets={ASSETS}
                 selAssetId={assetIndex}
                 value={borrowAmount}
-                onChangeAsset={handleChangeAsset}
+                onChangeAsset={handleChangeAssetIdx}
                 onChangeAmount={handleChangeBorrowAmount}
+              /> */}
+              <PairInput
+                tickerIcon={ASSETS[assetIndex].tickerIcon}
+                tickerName={ASSETS[assetIndex].tickerName}
+                tickerSymbol={ASSETS[assetIndex].tickerSymbol}
+                balanceDisabled
+                value={borrowAmount}
+                onChange={handleChangeBorrowAmount}
               />
             </Box>
             {/* <Stack

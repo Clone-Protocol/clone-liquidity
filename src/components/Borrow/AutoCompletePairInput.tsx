@@ -1,8 +1,8 @@
-import { FormControl, styled, Stack, Box, Select, MenuItem, Autocomplete, TextField, InputAdornment } from '@mui/material'
+import { FormControl, styled, Stack, Box, Autocomplete, TextField, Popper } from '@mui/material'
 import Image from 'next/image'
 import SearchIcon from 'public/images/search-icon.png'
 
-interface AssetType {
+export interface AssetType {
 	tickerIcon: string
 	tickerName: string
 	tickerSymbol: string
@@ -16,17 +16,32 @@ interface Props {
 	onChangeAmount?: any
 }
 
+const CustomPopper = function (props) {
+  return <StyledPopper {...props} placement="bottom" />;
+};
+
 const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset }) => {
 	return (
-		<Box>
+		<Box sx={{ display: 'flex'}}>
       <StyledAutocomplete
         selectOnFocus
         clearOnBlur
-        freeSolo
-        onChange={(e) => onChangeAsset(e.target.value)}
-        options={assets.map((asset) => asset.tickerName)}
-        renderInput={(params) => <StyledTextField {...params} label="Search for an iAsset" />}
+        onChange={(e, value) => onChangeAsset(value)}
+        getOptionLabel={(option) => option.tickerName}
+        options={assets}
+        PopperComponent={CustomPopper}
+        renderInput={(params) => <StyledTextField {...params} placeholder="Search for an iAsset" />}
+        renderOption={(props, option) => (
+          <SelectBox key={option.tickerSymbol} {...props}>
+            <Image src={option.tickerIcon} width="24px" height="24px" />
+            <TickerName>{option.tickerName} ({option.tickerSymbol})</TickerName>
+          </SelectBox>
+        )}
       />
+
+      <Box sx={{ position: 'relative', right: '30px', top: '5px' }}>
+        <Image src={SearchIcon} />
+      </Box>
 
       {/* <Select
         sx={{ color: '#fff' }}
@@ -48,19 +63,6 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
     </Box>
 	)
 }
-
-const FormStack = styled(Stack)`
-	display: flex;
-	width: 315px;
-	height: 54px;
-	padding-left: 20px;
-  padding-right: 20px;
-	border-radius: 8px;
-  border: solid 1px #809cff;
-  background-color: #151618;
-  font-size: 11px;
-  font-weight: 500;
-`
 
 const StyledAutocomplete = styled(Autocomplete)`
   width: 315px; 
@@ -91,23 +93,44 @@ const StyledAutocomplete = styled(Autocomplete)`
     width: 315px;
     height: 24px;
     color: #989898;
+    &::placeholder {
+      color: #fff;
+    }
   }
+`
+
+const StyledPopper = styled(Popper)`
+  background: #151618;
+  & .MuiAutocomplete-listbox {
+    background: #151618;
+    border-radius: 10px;
+    border: solid 1px #444;
+
+    & :hover {
+      background: #444444;
+    }
+  }
+`
+
+const SelectBox = styled(Box)`
+  display: flex;
+  padding: 13px 15px 17px;
+  background-color: #151618;
 `
 
 const StyledTextField = styled(TextField)`
   line-height: 3px;
 `
 
-const TickerSymbol = styled('div')`
-	font-size: 14px;
-	font-weight: 600;
-`
-
 const TickerName = styled('div')`
-	color: #757a7f;
-	font-size: 9px;
-	font-weight: 600;
-	line-height: 5px;
+  color: #fff;
+	font-size: 12px;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  margin: 5px;
 `
 
 export default SelectPairInput
