@@ -1,7 +1,6 @@
 import { createChart } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 import { withCsrOnly } from '~/hocs/CsrOnly'
-import { Box } from '@mui/material'
 
 interface Props {
 }
