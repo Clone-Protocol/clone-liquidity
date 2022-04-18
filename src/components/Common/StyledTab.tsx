@@ -43,7 +43,10 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
     minHeight: '0px',
     maxHeight: '35px',
     display: 'flex',
-    gap: '10px'
+    gap: '10px',
+    '&:hover': {
+      backgroundColor: 'rgba(38, 38, 38, 0.5)'
+    }
   },
   textTransform: 'none',
 	fontWeight: '600',

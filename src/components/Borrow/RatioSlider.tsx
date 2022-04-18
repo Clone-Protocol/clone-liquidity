@@ -4,43 +4,47 @@ interface Props {
 	min?: number
 	max?: number
 	value: number
+  hideValueBox?: boolean
 	onChange?: (event: Event, newValue: number | number[]) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
 	color: '#FFF',
-	height: 3,
+	height: 4,
 	padding: '13px 0',
-	marginTop: '5px',
+	marginTop: '13px',
 	'& .MuiSlider-thumb': {
-		height: 27,
-		width: 27,
+		height: 20,
+		width: 20,
 		backgroundColor: '#fff',
-		border: '1px solid currentColor',
+		border: '3px solid #809cff',
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
-		},
-		'& .airbnb-bar': {
-			height: 9,
-			width: 1,
-			backgroundColor: 'currentColor',
-			marginLeft: 1,
-			marginRight: 1,
 		},
 	},
 	'& .MuiSlider-track': {
 		height: 3,
+    border: 'none',
+    background: 'linear-gradient(to left, #f00 -12%, #809cff 66%)'
 	},
+  '& .MuiSlider-valueLabel': {
+    fontSize: '11px',
+    fontWeight: '600',
+    padding: '4px 8px 4px 8px',
+    borderRadius: '10px',
+    border: 'solid 1px #809cff',
+    backgroundColor: '#000',
+    '&:before': { display: 'none' },
+  },
 	'& .MuiSlider-rail': {
-		color: theme.palette.mode === 'dark' ? '#bfbfbf' : '#333',
-		opacity: theme.palette.mode === 'dark' ? undefined : 1,
+		color: '#444444',
 		height: 3,
 	},
 }))
 
-const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, onChange }) => {
+const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox = false, onChange }) => {
 	const valueLabelFormat = (value: number) => {
-		return `${value} %`
+		return `${value}%`
 	}
 
 	return (
@@ -48,7 +52,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, onChange }) =
 			sx={{
 				display: 'flex',
 			}}>
-			<ValueBox>{valueLabelFormat(value)}</ValueBox>
+			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
 			<Box width="100%">
 				<StyledSlider
 					value={value}
@@ -57,7 +61,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, onChange }) =
 					max={max}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
-					valueLabelDisplay="auto"
+					valueLabelDisplay="on"
 				/>
 			</Box>
 		</Box>
@@ -68,10 +72,10 @@ const ValueBox = styled(Box)`
 	text-align: center;
 	background-color: #333;
 	border-radius: 10px;
-	width: 111px;
-	height: 45px;
-	line-height: 23px;
-	font-size: 18px;
+	width: 102px;
+	height: 54px;
+	line-height: 28px;
+	font-size: 16px;
 	font-weight: 500;
 	color: #fff;
 	padding: 12px 18px 12px 26px;

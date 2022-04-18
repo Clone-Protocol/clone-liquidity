@@ -4,7 +4,7 @@ import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
 import PairInputView from '~/components/Asset/PairInputView'
-// import RatioSlider from '~/components/Borrow/RatioSlider'
+import RatioSlider from '~/components/Borrow/RatioSlider'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
@@ -113,21 +113,17 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		}
 	}, [collAmount])
 
-	// const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-	//   if (typeof newValue === 'number') {
-	//     // TODO: to bind with contract
-	//     const lowerLimit = 20
-	//     const upperLimit = 160
+	const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+	  if (typeof newValue === 'number') {
+	    // TODO: to bind with contrac	    
 
-	//     const newData = {
-	//       ...cometData,
-	//       collRatio: newValue,
-	//       lowerLimit,
-	//       upperLimit
-	//     }
-	//     setCometData(newData)
-	//   }
-	// }
+	    const newData = {
+	      ...cometData,
+	      collRatio: newValue
+	    }
+	    setCometData(newData)
+	  }
+	}
 
 	const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
@@ -280,7 +276,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									</Box>
 								</SubTitle>
                 <Box sx={{ marginTop: '15px' }}>
-                  {/* <RatioSlider min={0} max={100} value={cometData?.collRatio} onChange={handleChangeCollRatio} /> */}
+                  <RatioSlider min={0} max={100} value={cometData?.collRatio} hideValueBox onChange={handleChangeCollRatio} />
                 </Box>
 								<Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
 									<PairInput

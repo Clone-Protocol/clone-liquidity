@@ -27,7 +27,7 @@ const PairInput: React.FC<Props> = ({
 			<Stack direction="row" justifyContent="flex-end">
 				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500' }}>Balance: {balance}</Box> : <></>}
 			</Stack>
-			<FormStack direction="row" justifyContent="space-between" alignItems="center">
+			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
@@ -36,7 +36,7 @@ const PairInput: React.FC<Props> = ({
 					</Box>
 				</Box>
 				<InputAmount id="ip-amount" type="number" value={value} onChange={onChange} disabled={disabled} />
-			</FormStack>
+			</InputStack>
 		</FormControl>
 	)
 }
@@ -55,11 +55,10 @@ const TickerSymbol = styled('div')`
 	font-weight: 600;
 `
 
-const TickerName = styled('div')`
-	color: #757a7f;
-	font-size: 9px;
-	font-weight: 600;
-	line-height: 5px;
+const InputStack = styled(FormStack)`
+  &:hover {
+    border: solid 1px #809cff;
+  }
 `
 
 const InputAmount = styled(`input`)`
@@ -70,7 +69,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 16px;
 	font-weight: 500;
-	color: #adadad;
+	color: #fff;
 `
 
 export default PairInput

@@ -21,6 +21,9 @@ const StyledBox = styled(Box)`
   border-radius: 8px;
   border: solid 1px #444;
   background-color: #282828;
+  &:hover {
+    border: solid 1px #809cff;
+  }
 `
 
 const StyledInput = styled(Input)`

@@ -34,6 +34,9 @@ export const PageTab = styled(Tab)`
 		border-radius: 10px;
 		color: #989898;
 		text-transform: none;
+    &:hover {
+      background-color: rgba(100, 100, 100, 0.5);
+    }
 	}
 	&.Mui-selected {
     border: solid 1px #3f3f3f;
