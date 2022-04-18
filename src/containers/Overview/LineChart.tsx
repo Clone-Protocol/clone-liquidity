@@ -1,14 +1,24 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box, Stack } from '@mui/material'
 // import dynamic from 'next/dynamic'
 import LineChartAlt from '~/components/Charts/LineChartAlt'
-import SimpleBarChart from '~/components/Charts/SimpleBarChart'
 import { unixToDate } from '~/utils/date'
+import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
+import { TimeTabs, TimeTab, FilterTimeMap, FilterTime } from '~/components/Charts/TimeTabs'
 
-const Chart: React.FC = () => {
+const LineChart: React.FC = () => {
   // const LineChart = dynamic(() => import('~/components/Charts/LineChart'), { loading: () => <p>Loading ...</p>, ssr: false });
   // const SimpleBarChart = dynamic(() => import('~/components/Charts/SimpleBarChart'), { loading: () => <p>Loading ...</p>, ssr: false });
+
+  const [tab, setTab] = useState(0)
+  const [filterTime, setFilterTime] = useState<FilterTime>('24h')
+	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+		setTab(newValue)
+	}
+  const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterTime) => {
+		setFilterTime(newValue)
+	}
 
   const chartData = [
     {
@@ -47,16 +57,27 @@ const Chart: React.FC = () => {
   }, [chartData])
 
   return (
-    <Box display="flex">
-      <LineChartAlt
-        data={chartData}
-        topLeft={
+    <LineChartAlt
+      data={chartData}
+      topLeft={
+        <Box>
+          <Box>
+            <StyledTabs value={tab} onChange={handleChangeTab}>
+              <StyledTab value={0} label="Total Liquidity"></StyledTab>
+              <StyledTab value={1} label="Total Users"></StyledTab>
+            </StyledTabs>
+          </Box>
           <SelectValue>$480.6m</SelectValue>
-        }
-      />
-      {/* <LineChart /> */}
-      <SimpleBarChart />
-    </Box>
+        </Box>
+      }
+      topRight={
+        <TimeTabs value={filterTime} onChange={handleFilterChange}>
+          {Object.keys(FilterTimeMap).map((f) => (
+            <TimeTab key={f} value={f} label={FilterTimeMap[f as FilterTime]} />
+          ))}
+        </TimeTabs>
+      }
+    />
   )
 }
 
@@ -73,4 +94,4 @@ const SelectValue = styled(Box)`
   margin-top: 17px;
 `
 
-export default Chart
+export default LineChart

@@ -15,6 +15,7 @@ import TradeIcon from 'public/images/trade-icon.png'
 import ChangePositionIcon from 'public/images/change-position-icon.png'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
+import SearchInput from '~/components/Overview/SearchInput'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -42,12 +43,13 @@ const AssetList: React.FC = () => {
 				// '& .super-app-theme--row': { background: '#1b1b1b' },
 				// '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353' },
 			}}>
-			<Stack mb={2} direction="row" justifyContent="space-between">
+			<Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
 				<PageTabs value={filter} onChange={handleFilterChange}>
 					{Object.keys(FilterTypeMap).map((f) => (
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
 				</PageTabs>
+        <SearchInput />
 			</Stack>
       <Divider sx={{ backgroundColor: '#fff' }} />
       <Grid

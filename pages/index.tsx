@@ -3,7 +3,8 @@ import Head from 'next/head'
 import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
-import Chart from '~/containers/Overview/Chart'
+import LineChart from '~/containers/Overview/LineChart'
+import BarChart from '~/containers/Overview/BarChart'
 import AssetList from '~/containers/Overview/AssetList'
 
 const Overview: NextPage = () => {
@@ -20,7 +21,10 @@ const Overview: NextPage = () => {
 					<Container>
 						<WelcomeMsg />
 						<Box sx={{ marginTop: '40px' }}>
-              <Chart />
+              <Box display="flex">
+                <LineChart />
+                <BarChart />
+              </Box>
 							<AssetList />
 						</Box>
 					</Container>

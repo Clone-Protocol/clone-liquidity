@@ -1,12 +1,43 @@
-import React, { Dispatch, SetStateAction, ReactNode } from 'react';
-import { styled } from '@mui/system'
+import React, { Dispatch, SetStateAction, ReactNode } from 'react'
+import { BarChart, ResponsiveContainer, XAxis, Tooltip, Bar} from 'recharts';
 import { Card, Box } from '@mui/material'
-import { ResponsiveContainer, XAxis, Tooltip, AreaChart, Area } from 'recharts'
-import { withCsrOnly } from '~/hocs/CsrOnly'
+import { styled } from '@mui/system'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { darken } from 'polished'
+import { withCsrOnly } from '~/hocs/CsrOnly'
 dayjs.extend(utc)
+
+enum VolumeWindow {
+  daily,
+  weekly,
+  monthly,
+}
+
+const CustomBar = ({
+  x,
+  y,
+  width,
+  height,
+  fill,
+}: {
+  x: number
+  y: number
+  width: number
+  height: number
+  fill: string
+}) => {
+  return (
+    <g>
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="rgb(185, 185, 185)" stopOpacity={0.23} />
+          <stop offset="100%" stopColor="rgb(128, 156, 255)" stopOpacity={0.62} />
+        </linearGradient>
+      </defs>
+      <rect x={x} y={y} fill="url(#grad1)" width={width} height={height} stroke="#10162c" strokeWidth="1" rx="2" />
+    </g>
+  )
+}
 
 export type LineChartProps = {
   data: any[]
@@ -17,20 +48,21 @@ export type LineChartProps = {
   setLabel?: Dispatch<SetStateAction<string | undefined>> // used for label of valye
   value?: number
   label?: string
+  activeWindow?: VolumeWindow
   topLeft?: ReactNode | undefined
   topRight?: ReactNode | undefined
   bottomLeft?: ReactNode | undefined
   bottomRight?: ReactNode | undefined
 } & React.HTMLAttributes<HTMLDivElement>
 
-
-const LineChartAlt: React.FC<LineChartProps> = ({
+const BarChartAlt: React.FC<LineChartProps> = ({
   data,
-  color = '#809cff',
-  value,
-  label,
+  color = 'rgba(128, 156, 255, 0.62)',
   setValue,
   setLabel,
+  value,
+  label,
+  activeWindow,
   topLeft,
   topRight,
   bottomLeft,
@@ -39,6 +71,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
   ...rest
 }) => {
   const parsedValue = value
+  const now = dayjs()
 
   return (
     <Wrapper>
@@ -47,7 +80,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
         {topRight ?? null}
       </Box>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
+        <BarChart
           width={500}
           height={300}
           data={data}
@@ -62,34 +95,24 @@ const LineChartAlt: React.FC<LineChartProps> = ({
             setValue && setValue(undefined)
           }}
         >
-          <defs>
-            <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={darken(0.36, color)} stopOpacity={0.5} />
-              <stop offset="100%" stopColor={color} stopOpacity={0} />
-            </linearGradient>
-          </defs>
           <XAxis
             dataKey="time"
             axisLine={false}
             tickLine={false}
             color="#c9c9c9"
             fontSize="8px"
-            tickFormatter={(time) => dayjs(time).format('DD')}
+            tickFormatter={(time) => dayjs(time).format(activeWindow === VolumeWindow.monthly ? 'MMM' : 'DD')}
             minTickGap={10}
           />
-          <Tooltip
-            cursor={{ stroke: '#2C2F36' }}
-            contentStyle={{ display: 'none' }}
-            formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {
-              if (setValue && parsedValue !== props.payload.value) {
-                setValue(props.payload.value)
-              }
-              const formattedTime = dayjs(props.payload.time).format('MMM D, YYYY')
-              if (setLabel && label !== formattedTime) setLabel(formattedTime)
+          <Tooltip />
+          <Bar
+            dataKey="value"
+            fill={color}
+            shape={(props) => {
+              return <CustomBar height={props.height} width={props.width} x={props.x} y={props.y} fill={color} />
             }}
           />
-          <Area dataKey="value" type="monotone" stroke="#c9c9c9" fill="url(#gradient)" strokeWidth={2} />
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
     </Wrapper>
   )
@@ -109,4 +132,4 @@ const Wrapper = styled(Card)`
   }
 `
 
-export default withCsrOnly(LineChartAlt)
+export default withCsrOnly(BarChartAlt)
