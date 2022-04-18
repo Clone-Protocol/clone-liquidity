@@ -2,7 +2,15 @@ import { Tab, Tabs, TabsProps, SxProps } from '@mui/material'
 import { styled } from '@mui/system'
 import React from 'react'
 
-export const PageTabs: React.FC<Pick<TabsProps, 'value' | 'onChange' | 'sx' | 'variant' | 'scrollButtons'>> = ({
+export enum FilterTimeMap {
+	'24h' = '24h',
+	'7d' = '7d',
+	'30d' = '30d',
+	'1y' = '1y',
+}
+export type FilterTime = keyof typeof FilterTimeMap
+
+export const TimeTabs: React.FC<Pick<TabsProps, 'value' | 'onChange' | 'sx' | 'variant' | 'scrollButtons'>> = ({
 	children,
 	sx,
 	...props
@@ -13,33 +21,28 @@ export const PageTabs: React.FC<Pick<TabsProps, 'value' | 'onChange' | 'sx' | 'v
 )
 
 export const StyledTabs = styled(Tabs)`
-	height: 36px;
+	height: 23px;
   background-color: #282828;
   border-radius: 10px;
-  padding-left: 10px;
   padding-top: 4px;
-	min-height: 28px;
+  padding-left: 4px;
+	min-height: 23px;
 `
-export const PageTab = styled(Tab)`
-	font-size: 11px;
-	font-weight: 600;
+export const TimeTab = styled(Tab)`
+	font-size: 10px;
+	font-weight: 500;
 	text-transform: none;
-	height: 28px;
 	color: #fff;
 	&.MuiTab-root {
 		padding: 0px;
-		height: 28px;
-		min-height: 28px;
-		margin-right: 10px;
+    min-width: 39px;
+		height: 15px;
+		min-height: 15px;
 		border-radius: 10px;
 		color: #989898;
 		text-transform: none;
-    &:hover {
-      background-color: rgba(100, 100, 100, 0.5);
-    }
 	}
 	&.Mui-selected {
-    border: solid 1px #3f3f3f;
     background-color: #000;
 		color: #fff;
 	}

@@ -51,19 +51,15 @@ const FormStack = styled(Stack)`
 	padding: 9px 21px 8px 24px;
 	border-radius: 8px;
 	background-color: #333333;
+  &:hover {
+    border: solid 1px #809cff;
+  }
 `
 
 const TickerSymbol = styled('div')`
 	font-size: 14px;
 	font-weight: 600;
   margin-top: 3px;
-`
-
-const TickerName = styled('div')`
-	color: #757a7f;
-	font-size: 9px;
-	font-weight: 600;
-	line-height: 5px;
 `
 
 const InputAmount = styled(`input`)`
@@ -74,7 +70,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 16px;
 	font-weight: 500;
-	color: #adadad;
+	color: #fff;
 `
 
 export default PairInput

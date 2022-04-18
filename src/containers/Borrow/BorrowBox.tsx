@@ -1,21 +1,23 @@
-import { Box, Stack, Button, Paper, Divider, Grid } from '@mui/material'
+import { Box, Button, Paper, Divider, Grid } from '@mui/material'
 import React, { useState } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Borrow/PairInput'
 import AutoCompletePairInput, { AssetType } from '~/components/Borrow/AutoCompletePairInput'
-import SelectPairInput from '~/components/Borrow/SelectPairInput'
-// import RatioSlider from '~/components/Borrow/RatioSlider'
+// import SelectPairInput from '~/components/Borrow/SelectPairInput'
+import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
+import ThreeIcon from 'public/images/three-icon.png'
 import { callBorrow } from '~/web3/Borrow/borrow'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { ASSETS } from '~/data/assets'
 import { useBorrowDetailQuery, PairData } from '~/features/MyLiquidity/BorrowPosition.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
+import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -26,9 +28,11 @@ const BorrowBox = () => {
 		tickerSymbol: 'USDi',	
 		amount: 0.0,
 	})
-	// const [collRatio, setCollRatio] = useState(250)
 	const [assetIndex, setAssetIndex] = useState(0)
+  const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
+  const [borrowAssetPrice, setBorrowAssetPrice] = useState(160.51)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
+  const [collRatio, setCollRatio] = useState(250)
 
   const { data: assetData } = useBorrowDetailQuery({
     userPubKey: publicKey,
@@ -53,17 +57,15 @@ const BorrowBox = () => {
   const handleChangeAsset = (data: AssetType) => {
     const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
     setAssetIndex(index)
+    setBorrowAsset(ASSETS[index])
   }
 
-	const handleChangeAssetIdx = (index: number) => {
-		setAssetIndex(index)
+	const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+		if (typeof newValue === 'number') {
+			setCollRatio(newValue)
+      //TODO: binding web3
+		}
 	}
-
-	// const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-	// 	if (typeof newValue === 'number') {
-	// 		setCollRatio(newValue)
-	// 	}
-	// }
 
 	const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -84,6 +86,29 @@ const BorrowBox = () => {
 		})
 	}
 
+  const chartData = [
+    {
+      time: '2022-03-01',
+      value: 15
+    },
+    {
+      time: '2022-03-02',
+      value: 35
+    },
+    {
+      time: '2022-03-03',
+      value: 80
+    },
+    {
+      time: '2022-03-04',
+      value: 65
+    },
+    {
+      time: '2022-03-05',
+      value: 115
+    },
+  ]
+
 	return (
     <Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
@@ -92,6 +117,23 @@ const BorrowBox = () => {
           selAssetId={assetIndex}
           onChangeAsset={handleChangeAsset}
         />
+        <StyledBox>
+          <Box display="flex">
+            <Image src={borrowAsset.tickerIcon} width="30px" height="30px" />
+            <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
+              {borrowAsset.tickerName} ({borrowAsset.tickerSymbol})
+            </Box>
+          </Box>
+          <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
+            ${borrowAssetPrice.toFixed(2)}
+          </Box>
+          <MiniLineChartAlt 
+            data={chartData}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
+            Oracle Price
+          </Box>
+        </StyledBox>
       </Grid>
       <Grid item xs={12} md={8}>
         <StyledPaper variant="outlined">
@@ -110,17 +152,17 @@ const BorrowBox = () => {
           </Box>
           <StyledDivider />
 
-          {/* <Box>
-            <SubTitle>(2) Set collateral ratio</SubTitle>
+          <Box>
+            <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio</Box></SubTitle>
             <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
             <Box sx={{ marginTop: '20px' }}>
-              <RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
+              <RatioSlider min={100} max={250} value={collRatio} onChange={handleChangeCollRatio} />
             </Box>
           </Box>
-          <StyledDivider /> */}
+          <StyledDivider />
 
           <Box>
-            <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
+            <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
             <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
             <Box sx={{ marginTop: '20px' }}>
               {/* <SelectPairInput
@@ -168,6 +210,15 @@ const BorrowBox = () => {
     </Grid>
 	)
 }
+
+const StyledBox = styled(Box)`
+  width: 315px;
+  height: 290px;
+  padding: 17px 34px 18px 35px;
+  border-radius: 10px;
+  background: #171717;
+  margin-top: 22px;
+`
 
 const StyledPaper = styled(Paper)`
 	width: 620px;

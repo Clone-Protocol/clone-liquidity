@@ -96,6 +96,9 @@ const StyledListItemButton = styled(ListItemButton)`
     border: solid 1px #3f3f3f;
     background-image: linear-gradient(to bottom, #000 0%, #000 100%); 
   }
+  &:hover {
+    background-color: rgba(38, 38, 38, 0.5);
+  }
 `
 
 const StyledListItemText = styled(Box)`

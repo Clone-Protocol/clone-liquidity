@@ -67,7 +67,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
 const StyledAutocomplete = styled(Autocomplete)`
   width: 315px; 
   height: 36px;
-  border: solid 1px #809cff;
+  border: solid 1px #444;
   border-radius: 8px;
   & label {
     font-size: 11px;
@@ -76,6 +76,10 @@ const StyledAutocomplete = styled(Autocomplete)`
     padding: 0;
     line-height: 3px;
     overflow: initial;
+  }
+
+  &:hover {
+    border: solid 1px #809cff;
   }
 
   & .MuiOutlinedInput-root {
