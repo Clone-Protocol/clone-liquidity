@@ -1,7 +1,8 @@
 import { Box, Button, Paper, Divider, Grid } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import { useSnackbar } from 'notistack'
 import PairInput from '~/components/Borrow/PairInput'
 import AutoCompletePairInput, { AssetType } from '~/components/Borrow/AutoCompletePairInput'
 // import SelectPairInput from '~/components/Borrow/SelectPairInput'
@@ -18,9 +19,11 @@ import { useBorrowDetailQuery, PairData } from '~/features/MyLiquidity/BorrowPos
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
+import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
+  const { enqueueSnackbar } = useSnackbar()
 	const { getInceptApp } = useIncept()
 	const [fromPair, setFromPair] = useState<PairData>({
 		tickerIcon: '/images/assets/USDi.png',
@@ -33,6 +36,7 @@ const BorrowBox = () => {
   const [borrowAssetPrice, setBorrowAssetPrice] = useState(160.51)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(250)
+  const { mutateAsync } = useBorrowMutation(publicKey)
 
   const { data: assetData } = useBorrowDetailQuery({
     userPubKey: publicKey,
@@ -47,43 +51,54 @@ const BorrowBox = () => {
     enabled: publicKey != null
   });
 
-	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
 			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
 		}
-	}
+	}, [fromPair])
 
-  const handleChangeAsset = (data: AssetType) => {
+  const handleChangeAsset = useCallback((data: AssetType) => {
     const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
     setAssetIndex(index)
     setBorrowAsset(ASSETS[index])
-  }
+  }, [assetIndex, borrowAsset])
 
-	const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setCollRatio(newValue)
       //TODO: binding web3
 		}
-	}
+	}, [collRatio])
 
-	const handleChangeBorrowAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeBorrowAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
 			setBorrowAmount(parseFloat(newVal))
 		}
-	}
+	}, [borrowAmount])
 
 	const onBorrow = async () => {
-		const program = getInceptApp()
-		await callBorrow({
-			program,
-			userPubKey: publicKey,
-			collateralIndex: 0,
-			iassetIndex: assetIndex,
-			iassetAmount: borrowAmount,
-			collateralAmount: fromPair.amount,
-		})
+    await mutateAsync(
+      {
+        collateralIndex: 0,
+        iassetIndex: assetIndex,
+        iassetAmount: borrowAmount,
+        collateralAmount: fromPair.amount,
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to borrow')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to borrow')
+        }
+      }
+    )
 	}
 
   const chartData = [
