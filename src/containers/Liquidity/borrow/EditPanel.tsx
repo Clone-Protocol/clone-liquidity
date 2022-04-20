@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Grid, Box, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
-import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useSnackbar } from 'notistack'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import PairInput from '~/components/Borrow/PairInput'
 import Image from 'next/image'
 // import SelectPairInput from '~/components/Borrow/SelectPairInput'
-import { callEdit } from '~/web3/Borrow/borrow'
+import { useEditMutation } from '~/features/Borrow/Borrow.mutation'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
@@ -20,7 +20,7 @@ import withSuspense from '~/hocs/withSuspense'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
 	const [fromPair, setFromPair] = useState<PairData>({
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
@@ -30,8 +30,8 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 
 	// const [collRatio, setCollRatio] = useState(150)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
-
 	const borrowIndex = parseInt(assetId)
+  const { mutateAsync } = useEditMutation(publicKey)
 
   const { data: positionInfo } = useBorrowPositionQuery({ 
     userPubKey: publicKey, 
@@ -61,8 +61,25 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	}
 
 	const onEdit = async () => {
-		const program = getInceptApp()
-		await callEdit(program, publicKey!, borrowIndex, fromPair.amount, borrowAmount)
+    await mutateAsync(
+      {
+        borrowIndex,
+        totalCollateralAmount: fromPair.amount,
+        totalBorrowAmount: borrowAmount
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to edit')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to edit')
+        }
+      }
+    )
 	}
 
 	return (

@@ -7,12 +7,10 @@ import PairInput from '~/components/Borrow/PairInput'
 import AutoCompletePairInput, { AssetType } from '~/components/Borrow/AutoCompletePairInput'
 // import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import RatioSlider from '~/components/Borrow/RatioSlider'
-import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 import ThreeIcon from 'public/images/three-icon.png'
-import { callBorrow } from '~/web3/Borrow/borrow'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { ASSETS } from '~/data/assets'
 import { useBorrowDetailQuery, PairData } from '~/features/MyLiquidity/BorrowPosition.query'
@@ -24,7 +22,6 @@ import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
-	const { getInceptApp } = useIncept()
 	const [fromPair, setFromPair] = useState<PairData>({
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
@@ -38,12 +35,12 @@ const BorrowBox = () => {
   const [collRatio, setCollRatio] = useState(250)
   const { mutateAsync } = useBorrowMutation(publicKey)
 
-  const { data: assetData } = useBorrowDetailQuery({
-    userPubKey: publicKey,
-    index: assetIndex,
-    refetchOnMount: true,
-    enabled: publicKey != null
-  })
+  // const { data: assetData } = useBorrowDetailQuery({
+  //   userPubKey: publicKey,
+  //   index: assetIndex,
+  //   refetchOnMount: true,
+  //   enabled: publicKey != null
+  // })
 
   const { data: usdiBalance } = useBalanceQuery({ 
     userPubKey: publicKey, 

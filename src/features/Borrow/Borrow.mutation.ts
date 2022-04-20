@@ -5,10 +5,13 @@ import { BN } from '@project-serum/anchor'
 import { toScaledNumber } from 'sdk/src/utils'
 import { useIncept } from '~/hooks/useIncept'
 
-export const callClose = async (program: Incept, userPubKey: PublicKey, borrowIndex: number) => {
-	if (!userPubKey) return null
+export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
+  const { borrowIndex } = data
+
+  console.log('close input data', data)
 
 	let mint = await program.getMintPosition(borrowIndex)
 	let assetInfo = await program.getAssetInfo(mint.poolIndex)
@@ -21,18 +24,39 @@ export const callClose = async (program: Incept, userPubKey: PublicKey, borrowIn
 		Number(borrowIndex),
 		[]
 	)
+  return {
+    result: true
+  }
 }
 
-export const callEdit = async (
-	program: Incept,
-	userPubKey: PublicKey,
-	borrowIndex: number,
-	totalCollateralAmount: number,
-	totalBorrowAmount: number
-) => {
-	if (!userPubKey) return null
+type CloseFormData = {
+  borrowIndex: number,
+}
+interface CallCloseProps {
+	program: Incept
+	userPubKey: PublicKey | null
+  data: CloseFormData
+}
+export function useCloseMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data }))
+}
+
+export const callEdit = async ({
+	program,
+	userPubKey,
+	data
+}: CallEditProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
+  const {
+    borrowIndex,
+    totalCollateralAmount,
+    totalBorrowAmount
+  } = data
+
+  console.log('edit input data', data)
 
 	let mint = await program.getMintPosition(borrowIndex)
 	let assetInfo = await program.getAssetInfo(mint.poolIndex)
@@ -117,15 +141,32 @@ export const callEdit = async (
 			}
 		}
 	}
-
-	return
+  return {
+    result: true
+  }
 }
+
+type EditFormData = {
+  borrowIndex: number,
+	totalCollateralAmount: number,
+	totalBorrowAmount: number
+}
+interface CallEditProps {
+	program: Incept
+	userPubKey: PublicKey | null
+  data: EditFormData
+}
+export function useEditMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data }))
+}
+
 
 export const callBorrow = async ({
 	program,
 	userPubKey,
   data,
-}: GetProps) => {
+}: CallBorrowProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
   console.log('borrow input data', data)
@@ -153,19 +194,18 @@ export const callBorrow = async ({
   }
 }
 
-type FormData = {
+type BorrowFormData = {
   collateralIndex: number
 	iassetIndex: number
 	collateralAmount: number
 	iassetAmount: number
 }
-interface GetProps {
+interface CallBorrowProps {
 	program: Incept
 	userPubKey: PublicKey | null
-  data: FormData
+  data: BorrowFormData
 }
-
 export function useBorrowMutation(userPubKey : PublicKey | null ) {
   const { getInceptApp } = useIncept()
-  return useMutation((data: FormData) => callBorrow({ program: getInceptApp(), userPubKey, data }))
+  return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(), userPubKey, data }))
 }

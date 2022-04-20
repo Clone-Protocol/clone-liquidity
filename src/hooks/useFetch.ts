@@ -1,5 +1,5 @@
 import { useEffect, useRef, useReducer } from 'react';
-import { AssetList as AssetListType, fetchAssets } from '~/web3/Overview/Assets'
+import { AssetList as AssetListType, fetchAssets } from '~/features/Overview/Assets.query'
 
 
 export const getFetch = async (program: any, publicKey: any, filter: any, cache: any, tag: string) => {
