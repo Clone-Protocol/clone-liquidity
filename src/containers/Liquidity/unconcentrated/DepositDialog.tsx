@@ -1,22 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
 import PairInput from '~/components/Borrow/PairInput'
-import { useIncept } from '~/hooks/useIncept'
+import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
-import { callDeposit } from '~/web3/UnconcentratedLiquidity/liquidity'
+import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import Image from 'next/image'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 
 const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
-	// const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated()) // set default
+  const { enqueueSnackbar } = useSnackbar()
+
 	const unconcentratedIndex = parseInt(assetId)
   const [borrowFrom, setBorrowFrom] = useState(0.0)
   const [borrowTo, setBorrowTo] = useState(0.0)
+  const { mutateAsync } = useDepositMutation(publicKey)
 
   const { data: balances } = useBalanceQuery({
     userPubKey: publicKey,
@@ -32,7 +33,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
     enabled: open && publicKey != null
 	})
 
-	const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleBorrowFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value && unconcentData) {
 			const amount = parseFloat(e.currentTarget.value)
       setBorrowFrom(amount)
@@ -40,9 +41,9 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 		} else {
       setBorrowFrom(0.0)
 		}
-	}
+	}, [borrowFrom, borrowTo])
 
-	const handleBorrowTo = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleBorrowTo = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value && unconcentData) {
 			const amount = parseFloat(e.currentTarget.value)
       setBorrowFrom(amount / unconcentData.price)
@@ -50,13 +51,29 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 		} else {
       setBorrowTo(0.0)
 		}
-	}
+	}, [borrowFrom, borrowTo])
 
 	const onDeposit = async () => {
-		const program = getInceptApp()
-		await callDeposit(program, publicKey!, unconcentratedIndex, borrowFrom)
+    await mutateAsync(
+      {
+        index: unconcentratedIndex,
+        iassetAmount: borrowFrom
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to borrow')
 
-		handleClose()
+            handleClose()
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to borrow')
+        }
+      }
+    )
 	}
 
 	return unconcentData ? (

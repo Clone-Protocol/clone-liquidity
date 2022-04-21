@@ -2,6 +2,7 @@ import { Box, Stack, Button, Paper, Divider } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import { useSnackbar } from 'notistack'
 import PairInput from '~/components/Asset/PairInput'
 import PairInputView from '~/components/Asset/PairInputView'
 import RatioSlider from '~/components/Borrow/RatioSlider'
@@ -20,19 +21,18 @@ import CometIcon from 'public/images/comet-icon.png'
 import UnconcentIcon from 'public/images/ul-icon.png'
 import { useInitCometDetailQuery, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { UnconcentratedData as UnconcentPI } from '~/web3/MyLiquidity/UnconcentPosition'
-import { fetchUnconcentrated } from '~/features/Overview/Asset.query'
-import { callComet } from '~/web3/Comet/comet'
-import { callLiquidity } from '~/web3/UnconcentratedLiquidity/liquidity'
+import { useCometMutation } from '~/features/Comet/Comet.mutation'
+import { useLiquidityMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
 	const [tab, setTab] = useState(0)
   const assetIndex = parseInt(assetId)
 
-	// const [assetData, setAssetData] = useState<PI>(fetchAsset()) // set default
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     collRatio: 50,
@@ -42,8 +42,14 @@ const AssetView = ({ assetId }: { assetId: string }) => {
   const [collAmount, setCollAmount] = useState(0.0)
   const [mintAmount, setMintAmount] = useState(0.0)
 
+  const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
+
 	//unconcentrated liquidity
-	const [unconcentData, setUnconcentData] = useState<UnconcentPI>(fetchUnconcentrated())
+	const [unconcentData, setUnconcentData] = useState<UnconcentPI>({
+    borrowFrom: 0.0,
+    borrowTo: 0.0,
+  })
+  const { mutateAsync: mutateAsyncLiquidity } = useLiquidityMutation(publicKey)
 
   const { data: balances } = useBalanceQuery({
     userPubKey: publicKey,
@@ -113,7 +119,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		}
 	}, [collAmount])
 
-	const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+	const handleChangeCollRatio = useCallback( async (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
 	    // TODO: to bind with contrac	    
 
@@ -123,7 +129,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	    }
 	    setCometData(newData)
 	  }
-	}
+	}, [cometData])
 
 	const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
@@ -150,19 +156,30 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	}, [cometData])
 
 	const onComet = async () => {
-    const program = getInceptApp()
-    await callComet({
-      program,
-      userPubKey: publicKey,
-      collateralIndex: 0,
-      iassetIndex: assetIndex,
-      usdiAmount: mintAmount,
-      collateralAmount: collAmount,
-    })
+    await mutateAsyncComet(
+      {
+        collateralIndex: 0,
+        iassetIndex: assetIndex,
+        usdiAmount: mintAmount,
+        collateralAmount: collAmount,
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to comet')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to comet')
+        }
+      }
+    )
 	}
 
 	/** Unconcentrated Liquidity */
-	const handleBorrowFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleBorrowFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
 		if (e.currentTarget.value && assetData) {
 			const amount = parseFloat(e.currentTarget.value)
@@ -178,9 +195,9 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 			}
 		}
 		setUnconcentData(newData)
-	}
+	}, [unconcentData])
 
-	const handleBorrowTo = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleBorrowTo = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		let newData
 		if (e.currentTarget.value && assetData) {
 			const amount = parseFloat(e.currentTarget.value)
@@ -196,16 +213,27 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 			}
 		}
 		setUnconcentData(newData)
-	}
+	}, [unconcentData])
 
 	const onLiquidity = async () => {
-		const program = getInceptApp()
-		await callLiquidity({
-			program,
-			userPubKey: publicKey,
-			iassetIndex: parseInt(assetId) - 1,
-			iassetAmount: unconcentData.borrowFrom,
-		})
+    await mutateAsyncLiquidity(
+      {
+        iassetIndex: assetIndex,
+			  iassetAmount: unconcentData.borrowFrom,
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to liquidity')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to liquidity')
+        }
+      }
+    )
 	}
 
 	return assetData ? (

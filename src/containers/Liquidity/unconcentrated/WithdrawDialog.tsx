@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Box, Stack, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
 import RatioSlider from '~/components/Borrow/RatioSlider'
-import { useIncept } from '~/hooks/useIncept'
+import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
-import { callWithdraw } from '~/web3/UnconcentratedLiquidity/liquidity'
+import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 
 const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
 	const [amount, setAmount] = useState(0.0)
 	const [percent, setPercent] = useState(50)
 	const unconcentratedIndex = parseInt(assetId)
+  const { mutateAsync } = useWithdrawMutation(publicKey)
 
   const { data } = useBalanceQuery({
     userPubKey: publicKey,
@@ -20,28 +21,44 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
     enabled: open && publicKey != null
 	})
 
-	const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value && data?.maxVal) {
 			const amt = parseFloat(e.currentTarget.value)
 			setAmount(amt)
 			setPercent((amt * 100) / data?.maxVal)
 		}
-	}
+	}, [amount, percent])
 
-	const handleChangePercent = (event: Event, newValue: number | number[]) => {
+	const handleChangePercent = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number' && data?.maxVal) {
       // console.log('n', newValue)
       // console.log('m', (data?.maxVal * percent) / 100)
 			setPercent(newValue)
 			setAmount((data?.maxVal * percent) / 100)
 		}
-	}
+	}, [amount, percent])
 
 	const onWithdraw = async () => {
-		const program = getInceptApp()
-		await callWithdraw(program, publicKey!, unconcentratedIndex, amount)
+    await mutateAsync(
+      {
+        index: unconcentratedIndex,
+        amount
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to withdraw')
 
-		handleClose()
+            handleClose()
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to withdraw')
+        }
+      }
+    )
 	}
 
 	return (

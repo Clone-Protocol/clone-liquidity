@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
+import { useSnackbar } from 'notistack'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -8,12 +9,13 @@ import { PositionInfo as PI, fetchCometDetail, CometInfo } from '~/features/MyLi
 import { FilterType } from '~/data/filter'
 import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 import { toScaledNumber } from 'sdk/src/utils'
-import { callClose } from '~/web3/Comet/comet'
+import { useCloseMutation } from '~/features/Comet/Comet.mutation'
 
 const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const [filter, setFilter] = useState<FilterType>('all')
 	const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
 	const [ild, setILD] = useState(0)
   const [mintAmount, setMintAmount] = useState(0.0)
 	const [collAmount, setCollAmount] = useState(0.0)
@@ -24,6 +26,8 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
     lowerLimit: 40.0,
     upperLimit: 180.0
   })
+
+  const { mutateAsync } = useCloseMutation(publicKey)
 
 	const cometIndex = parseInt(assetId)
 
@@ -66,20 +70,35 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 	}, [publicKey, assetId])
 
 	const onClose = async () => {
-		const program = getInceptApp()
-		await callClose(program, publicKey!, cometIndex)
+    await mutateAsync(
+      {
+        cometIndex
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to close comet')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to close comet')
+        }
+      }
+    )
 	}
 
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={12} md={4}>
+			<Grid item xs={12} md={5}>
 				<PositionInfo 
           assetData={assetData}
           cometData={cometData}
           mintAmount={mintAmount}
 					collateralAmount={collAmount} />
 			</Grid>
-			<Grid item xs={12} md={8}>
+			<Grid item xs={12} md={7}>
 				<Box sx={{ padding: '30px' }}>
 					<Stack direction="row" justifyContent="space-between">
 						<DetailHeader>Collateral</DetailHeader>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
+import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -14,13 +15,14 @@ import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { toScaledNumber } from 'sdk/src/utils'
-import { callEdit } from '~/web3/Comet/comet'
+import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 
 const EditPanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
 	const [assetData, setAssetData] = useState<PI>() // set default
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
@@ -30,6 +32,8 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
   })
   const [mintAmount, setMintAmount] = useState(0.0)
 	const [collAmount, setCollAmount] = useState(0.0)
+
+  const { mutateAsync } = useEditMutation(publicKey)
 
 	const cometIndex = parseInt(assetId)
 
@@ -67,7 +71,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 		fetch()
 	}, [publicKey, assetId])
 
-	const handleChangeFromAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
 
@@ -93,9 +97,9 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 		} else {
 			setCollAmount(0.0)
 		}
-	}
+	}, [cometIndex, mintAmount, cometData])
 
-	const handleChangeConcentRange = (isTight: boolean, lowerLimit: number, upperLimit: number) => {
+	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...cometData,
 			isTight,
@@ -103,11 +107,27 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 			upperLimit,
 		}
 		setCometData(newData)
-	}
+	}, [cometData])
 
 	const onEdit = async () => {
-		const program = getInceptApp()
-		await callEdit(program, publicKey!, cometIndex, collAmount)
+    await mutateAsync(
+      {
+        cometIndex, 
+        totalCollateralAmount: collAmount
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to comet')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to comet')
+        }
+      }
+    )
 	}
 
 	return assetData ? (

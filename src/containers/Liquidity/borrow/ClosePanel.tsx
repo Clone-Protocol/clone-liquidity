@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react'
 import { Grid, Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
+import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useIncept } from '~/hooks/useIncept'
 import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
-import { callClose } from '~/web3/Borrow/borrow'
+import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 
 const ClosePanel = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
 	const borrowIndex = parseInt(assetId)
 
   const { data: positionInfo } = useBorrowPositionQuery({ 
@@ -20,10 +19,26 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
     refetchOnMount: true,
     enabled: publicKey != null
   });
+  const { mutateAsync } = useCloseMutation(publicKey)
 
 	const onClose = async () => {
-		const program = getInceptApp()
-		await callClose(program, publicKey!, borrowIndex)
+    await mutateAsync(
+      {
+        borrowIndex
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to close')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to close')
+        }
+      }
+    )
 	}
 
 	return (
@@ -80,4 +95,4 @@ const ActionButton = styled(Button)`
 	margin-bottom: 15px;
 `
 
-export default ClosePanel
+export default withSuspense(ClosePanel, <LoadingProgress />)

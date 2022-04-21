@@ -1,11 +1,14 @@
 import { PublicKey } from '@solana/web3.js'
+import { useMutation } from 'react-query'
 import { Incept } from 'sdk/src'
 import { BN } from '@project-serum/anchor'
+import { useIncept } from '~/hooks/useIncept'
 
-export const callWithdraw = async (program: Incept, userPubKey: PublicKey, index: number, amount: number) => {
-	if (!userPubKey) return null
+export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
+  const { index, amount } = data
 
 	let liquidityPosition = await program.getLiquidityPosition(index)
 
@@ -35,13 +38,31 @@ export const callWithdraw = async (program: Incept, userPubKey: PublicKey, index
 		[]
 	)
 
-	return
+	return {
+    result: true
+  }
 }
 
-export const callDeposit = async (program: Incept, userPubKey: PublicKey, index: number, iassetAmount: number) => {
-	if (!userPubKey) return null
+type WithdrawFormData = {
+  index: number
+  amount: number
+}
+interface CallWithdrawProps {
+	program: Incept
+	userPubKey: PublicKey | null
+  data: WithdrawFormData
+}
+export function useWithdrawMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(), userPubKey, data }))
+}
+
+
+export const callDeposit = async ({program, userPubKey, data} : CallDepositProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
+  const { index, iassetAmount } = data
 
 	let liquidityPosition = await program.getLiquidityPosition(index)
 
@@ -61,13 +82,31 @@ export const callDeposit = async (program: Incept, userPubKey: PublicKey, index:
 		[]
 	)
 
-	return
+	return {
+    result: true
+  }
 }
 
-export const callLiquidity = async ({ program, userPubKey, iassetIndex, iassetAmount }: GetProps) => {
-	if (!userPubKey) return null
+type DepositFormData = {
+  index: number
+  iassetAmount: number
+}
+interface CallDepositProps {
+	program: Incept
+	userPubKey: PublicKey | null
+  data: DepositFormData
+}
+export function useDepositMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(), userPubKey, data }))
+}
+
+
+export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidityProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
+  const { iassetIndex, iassetAmount } = data
 
 	let iassetMint = (await program.getAssetInfo(iassetIndex)).iassetMint
 	let liquidityTokenMint = (await program.getPool(iassetIndex)).liquidityTokenMint
@@ -85,12 +124,21 @@ export const callLiquidity = async ({ program, userPubKey, iassetIndex, iassetAm
 		[]
 	)
 
-	return
+	return {
+    result: true
+  }
 }
 
-interface GetProps {
+type LiquidityFormData = {
+  iassetIndex: number
+	iassetAmount: number
+}
+interface CallLiquidityProps {
 	program: Incept
 	userPubKey: PublicKey | null
-	iassetIndex: number
-	iassetAmount: number
+  data: LiquidityFormData
+}
+export function useLiquidityMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(), userPubKey, data }))
 }
