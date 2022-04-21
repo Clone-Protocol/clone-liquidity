@@ -17,7 +17,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, colla
 	return assetData ? (
     <Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
       <Title>Comet Position</Title>
-      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)', padding: '15px 20px'}}>
+      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)', padding: '15px 24px'}}>
         <Box>
           <SubTitle>Collateral</SubTitle>
           <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
