@@ -9,6 +9,7 @@ import {
 	IconButton,
 	List,
 	ListItem,
+  Box,
 	styled,
 	Theme,
 } from '@mui/material'
@@ -20,46 +21,48 @@ import { WalletListItem } from './WalletListItem'
 
 const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 	'& .MuiDialog-paper': {
-		width: theme.spacing(40),
+		width: 400,
 		margin: 0,
 		color: '#fff',
-		border: '1px solid #fff',
+    background: '#10141f',
+    boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
+    borderRadius: '10px'
 	},
 	'& .MuiDialogTitle-root': {
-		backgroundColor: '#000',
-		display: 'flex',
-		justifyContent: 'space-between',
+		background: '#10141f',
 		lineHeight: theme.spacing(5),
+    textAlign: 'center',
 		'& .MuiIconButton-root': {
-			flexShrink: 1,
 			padding: theme.spacing(),
 			marginRight: theme.spacing(-1),
-			color: '#fff',
+			color: '#777',
+      '&:hover': {
+        color: '#fff'
+      }
 		},
 	},
 	'& .MuiDialogContent-root': {
+    marginTop: 25,
 		padding: 0,
 		'& .MuiCollapse-root': {
 			'& .MuiList-root': {
-				background: '#000',
+				background: '#10141f',
 			},
 		},
 		'& .MuiList-root': {
-			background: '#000',
+			background: '#10141f',
 			padding: 0,
 		},
 		'& .MuiListItem-root': {
-			boxShadow: 'inset 0 1px 0 0 ' + 'rgba(255, 255, 255, 0.1)',
 			'&:hover': {
-				boxShadow:
-					'inset 0 1px 0 0 ' + 'rgba(255, 255, 255, 0.1)' + ', 0 1px 0 0 ' + 'rgba(255, 255, 255, 0.05)',
+				background: '#2d3858'
 			},
 			padding: 0,
 			'& .MuiButton-endIcon': {
 				margin: 0,
 			},
 			'& .MuiButton-root': {
-				background: '#000',
+				background: '#10141f',
 				color: '#f1f1f1',
 				flexGrow: 1,
 				justifyContent: 'space-between',
@@ -67,6 +70,10 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 				borderRadius: undefined,
 				fontSize: '1rem',
 				fontWeight: 400,
+
+        '&:hover': {
+          background: '#2d3858'
+        },
 			},
 			'& .MuiSvgIcon-root': {
 				color: theme.palette.grey[500],
@@ -81,8 +88,8 @@ export interface WalletDialogProps extends Omit<DialogProps, 'title' | 'open'> {
 }
 
 export const WalletDialog: FC<WalletDialogProps> = ({
-	title = 'Select your wallet',
-	featuredWallets = 3,
+	title = 'Connect a wallet on Solana to continue',
+	featuredWallets = 1,
 	onClose,
 	...props
 }) => {
@@ -116,10 +123,14 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 	return (
 		<RootDialog open={open} onClose={handleClose} {...props}>
 			<DialogTitle>
-				{title}
-				<IconButton onClick={handleClose} size="large">
-					<CloseIcon />
-				</IconButton>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
+          <IconButton onClick={handleClose} size="large">
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Box sx={{ margin: '0 auto', fontSize: '24px', fontWeight: 'bold', width: '250px' }}>
+          {title}
+        </Box>
 			</DialogTitle>
 			<DialogContent>
 				<List>
@@ -143,12 +154,12 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 									))}
 								</List>
 							</Collapse>
-							<ListItem>
-								<Button onClick={handleExpandClick}>
+							<Box sx={{ display: 'flex', justifyContent: 'end', marginTop: '15px', marginBottom: '15px' }}>
+								<Button sx={{ color: '#fff', fontWeight: 'bold', background: '#10141f' }} onClick={handleExpandClick}>
 									{expanded ? 'Less' : 'More'} options
 									{expanded ? <CollapseIcon /> : <ExpandIcon />}
 								</Button>
-							</ListItem>
+							</Box>
 						</>
 					) : null}
 				</List>
