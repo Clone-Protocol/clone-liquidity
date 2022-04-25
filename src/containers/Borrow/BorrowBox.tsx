@@ -56,9 +56,11 @@ const BorrowBox = () => {
 	}, [fromPair])
 
   const handleChangeAsset = useCallback((data: AssetType) => {
-    const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
-    setAssetIndex(index)
-    setBorrowAsset(ASSETS[index])
+    if (data) {
+      const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
+      setAssetIndex(index)
+      setBorrowAsset(ASSETS[index])
+    }
   }, [assetIndex, borrowAsset])
 
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
