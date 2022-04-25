@@ -1,14 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Toolbar from '@mui/material/Toolbar'
-import Container from '@mui/material/Container'
-// import Tab from '@mui/material/Tab'
-// import Tabs from '@mui/material/Tabs'
+import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/incept-logo.png'
 import walletIcon from 'public/images/wallet-icon.png'
+import { useSnackbar } from 'notistack'
 import { IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { GNB_ROUTES } from '~/routes'
@@ -22,6 +17,7 @@ import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { useIncept } from '~/hooks/useIncept'
 import MoreMenu from '~/components/Common/MoreMenu';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -30,18 +26,11 @@ const GNB: React.FC = () => {
 	const [mobileNavToggle, setMobileNavToggle] = useState(false)
 	const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'))
 
-	const classes = useStyles()
 	const { scrolled } = useScroll()
 
 	const firstPathname = useMemo(() => {
 		return pathname.split('/').slice(0, 2).join('/')
 	}, [pathname])
-
-	// const handleChange = (_: React.SyntheticEvent, path: string) => {
-	// 	if (firstPathname === path) return
-	// 	setPath(path)
-	// 	push({ pathname: path })
-	// }
 
 	const handleMobileNavBtn = () => setMobileNavToggle((prev) => !prev)
 
@@ -83,12 +72,14 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu = () => {
+  const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const { getInceptApp } = useIncept()
 	const [mintUsdi, setMintUsdi] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -143,40 +134,63 @@ const RightMenu = () => {
 				} else {
 					connect()
 				}
+        setShowWalletSelectPopup(false)
 			} else {
-				disconnect()
+        setShowWalletSelectPopup(!showWalletSelectPopup)
+				// disconnect()
 			}
 		} catch (error) {
 			console.log('Error connecting to the wallet: ', (error as any).message)
 		}
 	}
 
+  const handleChangeWallet = () => {
+    disconnect()
+    setShowWalletSelectPopup(false)
+    setOpen(true) 
+  }
+
+  const handleDisconnect = () => {
+    disconnect()
+    setShowWalletSelectPopup(false)
+  }
+
 	return (
 		<Box display="flex">
 			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
 				Get USDi
 			</HeaderButton>
-			<ConnectButton
-				onClick={handleWalletClick}
-				variant="outlined"
-				sx={{ width: '163px' }}
-				disabled={connecting}
-				startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-				{!connected ? (
-					<>Connect Wallet</>
-				) : (
-					<>
-						<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
-						{publicKey ? (
-							<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
-								{shortenAddress(publicKey.toString())}
-							</Box>
-						) : (
-							<></>
-						)}
-					</>
-				)}
-			</ConnectButton>
+      <Box>
+        <ConnectButton
+          onClick={handleWalletClick}
+          variant="outlined"
+          sx={{ width: '163px' }}
+          disabled={connecting}
+          startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+          {!connected ? (
+            <>Connect Wallet</>
+          ) : (
+            <>
+              <div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
+              {publicKey ? (
+                <Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
+                  {shortenAddress(publicKey.toString())}
+                </Box>
+              ) : (
+                <></>
+              )}
+            </>
+          )}
+        </ConnectButton>
+        { showWalletSelectPopup && <WalletSelectBox spacing={2}>
+          <CopyToClipboard text={publicKey!!.toString()}
+            onCopy={() => enqueueSnackbar('Copied address')}>
+            <PopupButton>Copy Address</PopupButton>
+          </CopyToClipboard>
+          <PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
+          <PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
+        </WalletSelectBox> }
+      </Box>
 			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '18px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
       <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 		</Box>
@@ -262,6 +276,31 @@ const ConnectButton = styled(Button)`
     border: solid 1px #003bff;
     background-color: #00165f;
   }
+`
+
+const WalletSelectBox = styled(Stack)`
+  position: absolute;
+  top: 60px;
+  right: 80px;
+  width: 163px;
+  height: 139px;
+  padding: 14px 17px 16px;
+  border-radius: 10px;
+  border: solid 1px #253b88;
+  background-color: #181818;
+  z-index: 99;
+`
+
+const PopupButton = styled(Button)`
+  width: 129px;
+  height: 25px;
+  padding: 6px 27px 7px 26px;
+  border-radius: 10px;
+  border: solid 1px #253b88;
+  background-color: #1d243d;
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
 `
 
 const useStyles = makeStyles(({ palette }: Theme) => ({

@@ -1,12 +1,16 @@
 import { WalletAdapterNetwork, WalletError } from '@solana/wallet-adapter-base'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import {
+  CloverWalletAdapter,
+	GlowWalletAdapter,
 	LedgerWalletAdapter,
+	MathWalletAdapter,
 	PhantomWalletAdapter,
 	SlopeWalletAdapter,
 	SolflareWalletAdapter,
 	SolletExtensionWalletAdapter,
 	SolletWalletAdapter,
+	SolongWalletAdapter,
 	TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets'
 import { WalletDialogProvider } from '~/hocs/WalletDialogProvider'
@@ -24,12 +28,16 @@ const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const wallets = useMemo(
 		() => [
 			new PhantomWalletAdapter(),
+      new SolflareWalletAdapter({ network }),
+      new SolletWalletAdapter({ network }),
+      new LedgerWalletAdapter(),
 			new SlopeWalletAdapter(),
-			new SolflareWalletAdapter({ network }),
+      new SolletExtensionWalletAdapter({ network }),
 			new TorusWalletAdapter(),
-			new LedgerWalletAdapter(),
-			new SolletWalletAdapter({ network }),
-			new SolletExtensionWalletAdapter({ network }),
+      new CloverWalletAdapter(),
+      new SolongWalletAdapter(),
+      new MathWalletAdapter(),
+      new GlowWalletAdapter(),
 		],
 		[network]
 	)

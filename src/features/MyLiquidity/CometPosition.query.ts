@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'sdk/src'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
+import { toScaledNumber } from 'sdk/src/utils'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -40,8 +41,18 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: { program
 	let centerPrice = Number(comet.borrowedIasset.val) === 0 ? 0 : Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
 
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(comet.poolIndex))
+  const mintAmount = toScaledNumber(comet.borrowedUsdi)
+  const collAmount = toScaledNumber(comet.collateralAmount)
+  const lowerLimit = toScaledNumber(comet.lowerPriceRange)
+  const upperLimit = toScaledNumber(comet.upperPriceRange)
+  const ild = 0
 
 	return {
+    mintAmount,
+    collAmount,
+    lowerLimit,
+    upperLimit,
+    ild,
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
@@ -76,9 +87,25 @@ export interface CometInfo {
   upperLimit: number
 }
 
+export interface CometDetail extends PositionInfo {
+  mintAmount: number
+  collAmount: number
+  lowerLimit: number
+  upperLimit: number
+  ild: number
+}
+
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
   return useQuery(['initComet', userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(), userPubKey, index }), {
+    refetchOnMount,
+    enabled
+  })
+}
+
+export function useCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const { getInceptApp } = useIncept()
+  return useQuery(['cometDetail', userPubKey, index], () => fetchCometDetail({ program: getInceptApp(), userPubKey, index }), {
     refetchOnMount,
     enabled
   })

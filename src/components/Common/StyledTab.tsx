@@ -84,3 +84,22 @@ export const TabPanel = (props: TabPanelProps) => {
 		</div>
 	)
 }
+
+export const TabPanelForEdit = (props: TabPanelProps) => {
+	const { children, value, index, ...other } = props
+
+	return (
+		<div
+			role="tabpanel"
+			hidden={value !== index}
+			id={`simple-tabpanel-${index}`}
+			aria-labelledby={`simple-tab-${index}`}
+			{...other}>
+			{value === index && (
+				<Box>
+					<div>{children}</div>
+				</Box>
+			)}
+		</div>
+	)
+}

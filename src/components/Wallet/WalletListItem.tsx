@@ -1,4 +1,4 @@
-import { Button, ListItem, ListItemProps } from '@mui/material'
+import { Button, ListItem, ListItemProps, Box } from '@mui/material'
 import { Wallet } from '@solana/wallet-adapter-react'
 import React, { FC, MouseEventHandler } from 'react'
 import { WalletIcon } from './WalletIcon'
@@ -11,8 +11,8 @@ interface WalletListItemProps extends Omit<ListItemProps, 'onClick' | 'button'> 
 export const WalletListItem: FC<WalletListItemProps> = ({ onClick, wallet, ...props }) => {
 	return (
 		<ListItem {...props}>
-			<Button onClick={onClick} endIcon={<WalletIcon wallet={wallet} />}>
-				{wallet.adapter.name}
+			<Button onClick={onClick} endIcon={<WalletIcon height={20} wallet={wallet} />}>
+				<div style={{ fontSize: '18px', fontWeight: '600' }}>{wallet.adapter.name}</div>
 			</Button>
 		</ListItem>
 	)
