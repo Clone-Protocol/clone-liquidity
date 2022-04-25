@@ -30,9 +30,14 @@ const BorrowBox = () => {
 	})
 	const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
-  const [borrowAssetPrice, setBorrowAssetPrice] = useState(160.51)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(250)
+  const [borrowAssetPriceData, setBorrowAssetPriceData] = useState({
+    assetPrice: 160.51,
+    rateOfPrice: -2.551,
+    percentOfRate: 1.58
+  })
+
   const { mutateAsync } = useBorrowMutation(publicKey)
 
   // const { data: assetData } = useBorrowDetailQuery({
@@ -101,11 +106,11 @@ const BorrowBox = () => {
   const chartData = [
     {
       time: '2022-03-01',
-      value: 15
+      value: 115
     },
     {
       time: '2022-03-02',
-      value: 35
+      value: 95
     },
     {
       time: '2022-03-03',
@@ -117,7 +122,7 @@ const BorrowBox = () => {
     },
     {
       time: '2022-03-05',
-      value: 115
+      value: 15
     },
   ]
 
@@ -137,10 +142,16 @@ const BorrowBox = () => {
             </Box>
           </Box>
           <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-            ${borrowAssetPrice.toFixed(2)}
+            ${borrowAssetPriceData.assetPrice.toFixed(2)}
+            {borrowAssetPriceData.rateOfPrice >= 0 ?
+              <TxtPriceRate>+${borrowAssetPriceData.rateOfPrice.toFixed(3)} (+{borrowAssetPriceData.percentOfRate}%) past 24h</TxtPriceRate>
+            :
+              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(borrowAssetPriceData.rateOfPrice).toFixed(3)} (-{borrowAssetPriceData.percentOfRate}%) past 24h</TxtPriceRate>
+            }
           </Box>
           <MiniLineChartAlt 
             data={chartData}
+            color={ borrowAssetPriceData.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
             Oracle Price
@@ -273,6 +284,17 @@ const IconButton = styled('div')`
 	color: #000;
   cursor: pointer;
   border-radius: 20px;
+`
+
+const TxtPriceRate = styled('div')`
+  font-size: 10px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #59c23a;
 `
 
 const ActionButton = styled(Button)`
