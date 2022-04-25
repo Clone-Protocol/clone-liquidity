@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction, ReactNode } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { styled } from '@mui/system'
-import { Card, Box } from '@mui/material'
-import { ResponsiveContainer, XAxis, Tooltip, AreaChart, Area } from 'recharts'
+import { Card } from '@mui/material'
+import { ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -56,7 +56,7 @@ const MiniLineChartAlt: React.FC<LineChartProps> = ({
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <Area dataKey="value" type="monotone" stroke="#59c23a" fill="url(#gradient)" strokeWidth={2} />
+          <Area dataKey="value" type="monotone" stroke={color} fill="url(#gradient)" strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     </Wrapper>
