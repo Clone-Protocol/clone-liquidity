@@ -64,9 +64,15 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
           </Box>
           <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
             ${cometDetail.price.toFixed(2)}
+            {cometDetail.rateOfPrice >= 0 ?
+              <TxtPriceRate>+${cometDetail.rateOfPrice.toFixed(3)} (+{cometDetail.percentOfRate}%) past 24h</TxtPriceRate>
+            :
+              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(cometDetail.rateOfPrice).toFixed(3)} (-{cometDetail.percentOfRate}%) past 24h</TxtPriceRate>
+            }
           </Box>
           <MiniLineChartAlt 
             data={chartData}
+            color={ cometDetail.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
             Indicator Price
@@ -98,6 +104,17 @@ const StyledBox = styled(Box)`
   border-radius: 10px;
   background: #171717;
   margin-top: 22px;
+`
+
+const TxtPriceRate = styled('div')`
+  font-size: 10px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #59c23a;
 `
 
 export default withSuspense(ManageComet, <LoadingProgress />)
