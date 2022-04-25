@@ -39,6 +39,7 @@ const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Com
   const mintAmount = cometDetail.mintAmount
 	const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
   const ild = cometDetail.ild
+  const [showEditForm, setShowEditForm] = useState(false)
 
   const { mutateAsync } = useEditMutation(publicKey)
 
@@ -117,47 +118,52 @@ const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Com
         mintAmount={mintAmount}
         collateralAmount={collAmount}
         ild={ild}
+        onShowEditForm={() => setShowEditForm(true)}
       />
 
-      <Box>
-        <SubTitle>
-          <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box>
-        </SubTitle>
-        <SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
-        <PairInput
-          tickerIcon={'/images/assets/USDi.png'}
-          tickerName="USDi Coin"
-          tickerSymbol="USDi"
-          value={collAmount}
-          headerTitle="Balance"
-          headerValue={usdiBalance?.balanceVal}
-          onChange={handleChangeFromAmount}
-        />
-      </Box>
-      <StyledDivider />
+      { showEditForm ?
+        <Box sx={{ padding: '25px 30px' }}>
+          <Box>
+            <SubTitle>
+              <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box>
+            </SubTitle>
+            <SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
+            <PairInput
+              tickerIcon={'/images/assets/USDi.png'}
+              tickerName="USDi Coin"
+              tickerSymbol="USDi"
+              value={collAmount}
+              headerTitle="Balance"
+              headerValue={usdiBalance?.balanceVal}
+              onChange={handleChangeFromAmount}
+            />
+          </Box>
+          <StyledDivider />
 
-      <Box>
-        <SubTitle>
-          <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box>
-        </SubTitle>
-        <SubTitleComment>Editing concentration range will effect the collateral amount</SubTitleComment>
+          <Box>
+            <SubTitle>
+              <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box>
+            </SubTitle>
+            <SubTitleComment>Editing concentration range will effect the collateral amount</SubTitleComment>
 
-        <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
-          <ConcentrationRange
-            assetData={assetData}
-            cometData={cometData}
-            onChange={handleChangeConcentRange}
-            max={assetData.maxRange}
-            defaultLower={(assetData.price / 2)}
-            defaultUpper={((assetData.price * 3) / 2)}
-          />
+            <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
+              <ConcentrationRange
+                assetData={assetData}
+                cometData={cometData}
+                onChange={handleChangeConcentRange}
+                max={assetData.maxRange}
+                defaultLower={(assetData.price / 2)}
+                defaultUpper={((assetData.price * 3) / 2)}
+              />
+            </Box>
+
+            <ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
+          </Box>
+          <StyledDivider />
+
+          <ActionButton onClick={onEdit}>Edit</ActionButton>
         </Box>
-
-        <ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
-      </Box>
-      <StyledDivider />
-
-      <ActionButton onClick={onEdit}>Edit</ActionButton>
+      : <></> }
     </Wrapper>
 	) : <></>
 }
@@ -177,14 +183,14 @@ const StyledDivider = styled(Divider)`
 
 const SubTitle = styled('div')`
 	display: flex;
-	font-size: 18px;
+	font-size: 14px;
 	font-weight: 500;
 	marginbottom: 17px;
 	color: #fff;
 `
 
 const SubTitleComment = styled('div')`
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 500;
 	color: #989898;
 	marginbottom: 18px;
@@ -196,8 +202,8 @@ const ActionButton = styled(Button)`
 	background: #7d7d7d;
 	color: #fff;
 	border-radius: 8px;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
 	margin-bottom: 15px;
 `
 

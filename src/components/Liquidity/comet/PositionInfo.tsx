@@ -3,68 +3,74 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
+import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 
 interface Props {
 	assetData: PI
 	cometData: CometInfo
   mintAmount: number
 	collateralAmount: number
+  ild: number
+  onShowEditForm: any
 }
 
-const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, collateralAmount, ild }) => {
+const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, collateralAmount, ild, onShowEditForm }) => {
 	const onRecenter = () => {}
 
 	return assetData ? (
     <Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
       <Title>Comet Position</Title>
-      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)', padding: '15px 24px'}}>
-        <Box>
-          <SubTitle>Collateral</SubTitle>
-          <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
-            {collateralAmount} <span style={{ fontSize: '14px' }}>USDi</span>
+      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)'}}>
+        <Box display="flex">
+          <Box sx={{ padding: '15px 15px' }}>
+            <SubTitle>Collateral</SubTitle>
+            <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
+              {collateralAmount} <span style={{ fontSize: '14px' }}>USDi</span>
+            </Box>
+            <Box sx={{ marginTop: '10px' }}>
+              <Stack direction="row" justifyContent="space-between">
+                <DetailHeader>Contributed USDi</DetailHeader>
+                <DetailValue>
+                  {collateralAmount} USDi
+                </DetailValue>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <DetailHeader>Contributed iAsset</DetailHeader>
+                <DetailValue>
+                  {mintAmount} {assetData.tickerSymbol}
+                </DetailValue>
+              </Stack>
+            </Box>
+            <StyledDivider />
+          
+            <SubTitle>Price Range</SubTitle>
+            <Box sx={{ marginTop: '20px' }}>
+              <ConcentrationRangeView 
+                assetData={assetData}
+                cometData={cometData}
+                max={assetData.maxRange}
+              />
+              <Stack direction="row" justifyContent="space-between">
+                <DetailHeader>Center price</DetailHeader>
+                <DetailValue>{assetData?.centerPrice.toFixed(2)} USDi</DetailValue>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <DetailHeader>Lower limit</DetailHeader>
+                <DetailValue>
+                  {cometData.lowerLimit.toFixed(2)} USDi
+                </DetailValue>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <DetailHeader>Upper limit</DetailHeader>
+                <DetailValue>
+                  {cometData.upperLimit.toFixed(2)} USDi
+                </DetailValue>
+              </Stack>
+            </Box>
           </Box>
-          <Box sx={{ marginTop: '10px' }}>
-            <Stack direction="row" justifyContent="space-between">
-              <DetailHeader>Contributed USDi</DetailHeader>
-              <DetailValue>
-                {collateralAmount} USDi
-              </DetailValue>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <DetailHeader>Contributed iAsset</DetailHeader>
-              <DetailValue>
-                {mintAmount} {assetData.tickerSymbol}
-              </DetailValue>
-            </Stack>
-          </Box>
-        </Box>
-        <StyledDivider />
-
-        <Box>
-          <SubTitle>Price Range</SubTitle>
-          <Box sx={{ marginTop: '20px' }}>
-            <ConcentrationRangeView 
-              assetData={assetData}
-              cometData={cometData}
-              max={assetData.maxRange}
-            />
-            <Stack direction="row" justifyContent="space-between">
-              <DetailHeader>Center price</DetailHeader>
-              <DetailValue>{assetData?.centerPrice.toFixed(2)} USDi</DetailValue>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <DetailHeader>Lower limit</DetailHeader>
-              <DetailValue>
-                {cometData.lowerLimit.toFixed(2)} USDi
-              </DetailValue>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <DetailHeader>Upper limit</DetailHeader>
-              <DetailValue>
-                {cometData.upperLimit.toFixed(2)} USDi
-              </DetailValue>
-            </Stack>
-          </Box>
+          <EditBox onClick={onShowEditForm}>
+            <NoteAltOutlinedIcon fontSize="small" />
+          </EditBox>
         </Box>
       </Box>
       <StyledDivider />
@@ -115,6 +121,17 @@ const DetailValue = styled('div')`
 	font-size: 11px;
 	font-weight: 500;
 	color: #fff;
+`
+
+const EditBox = styled(Box)`
+  width: 41px;
+  background-color: rgba(128, 156, 255, 0.2);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `
 
 const ActionButton = styled(Button)`

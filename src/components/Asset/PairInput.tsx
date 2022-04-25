@@ -24,7 +24,7 @@ const PairInput: React.FC<Props> = ({
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (
 				<Stack direction="row" justifyContent="flex-end">
-					<Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '2px' }}>
+					<Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '2px', color: '#949494' }}>
 						{headerTitle}: {headerValue}
 					</Box>
 				</Stack>

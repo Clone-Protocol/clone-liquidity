@@ -15,22 +15,10 @@ import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
   const [tab, setTab] = useState(0)
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)
 	}
-
-	// const [assetData, setAssetData] = useState<PI>() // set default
-  // const [cometData, setCometData] = useState<CometInfo>({
-  //   isTight: false,
-  //   collRatio: 50,
-  //   lowerLimit: 40.0,
-  //   upperLimit: 180.0
-  // })
-  // const [mintAmount, setMintAmount] = useState(0.0)
-	// const [collAmount, setCollAmount] = useState(0.0)
-  // const [ild, setILD] = useState(0)
 
 	const cometIndex = parseInt(assetId)
 
@@ -40,46 +28,6 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 	  refetchOnMount: true,
     enabled: publicKey != null
 	})
-
-	// useEffect(() => {
-	// 	const program = getInceptApp()
-
-	// 	async function fetch() {
-	// 		if (assetId) {
-	// 			const data = (await fetchCometDetail({
-	// 				program,
-	// 				userPubKey: publicKey,
-	// 				index: cometIndex,
-	// 			})) as PI
-	// 			if (data) {
-	// 				const comet = await program.getCometPosition(cometIndex)
-  //         console.log('comet', data)
-					
-  //         setAssetData(data)
-  //         setMintAmount(toScaledNumber(comet.borrowedUsdi))
-	// 				setCollAmount(toScaledNumber(comet.collateralAmount))
-  //         setCometData({
-  //           ...cometData,
-  //           lowerLimit: toScaledNumber(comet.lowerPriceRange),
-  //           upperLimit: toScaledNumber(comet.upperPriceRange)
-  //         })
-  //         // const cometPools =  (await fetchPools({
-  //         //   program,
-  //         //   userPubKey: publicKey,
-  //         //   filter,
-  //         // })) as PoolList[]
-          
-  //         // if (cometPools.length > 0) {
-  //         //   const ild = cometPools[cometIndex].ild
-  //         //   setILD(ild)
-  //         // } else {
-  //         //   console.log('no user comet pools')
-  //         // }
-	// 			}
-	// 		}
-	// 	}
-	// 	fetch()
-	// }, [publicKey, assetId])
   
   const chartData = [
     {
