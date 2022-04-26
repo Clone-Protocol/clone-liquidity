@@ -98,10 +98,10 @@ const StyledDivider = styled(Divider)`
 `
 
 const Title = styled('div')`
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: 600;
 	color: #fff;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 `
 
 const SubTitle = styled('div')`

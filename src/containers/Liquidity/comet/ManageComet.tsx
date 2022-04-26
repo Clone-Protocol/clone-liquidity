@@ -101,7 +101,7 @@ const StyledBox = styled(Box)`
   height: 290px;
   padding: 17px 34px 18px 35px;
   border-radius: 10px;
-  background: #171717;
+  background: rgba(21, 22, 24, 0.75);;
   margin-top: 22px;
 `
 

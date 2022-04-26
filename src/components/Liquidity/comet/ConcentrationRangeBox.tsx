@@ -54,7 +54,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 					sx={{
 						fontSize: '12px',
 						fontWeight: '500',
-						color: '#446dff',
+						color: '#0038ff',
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
@@ -64,7 +64,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 					sx={{
 						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
 						borderRadius: '10px',
-						border: 'solid 1px #446dff',
+						border: 'solid 1px #0038ff',
 						padding: '8px',
 					}}>
 					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>

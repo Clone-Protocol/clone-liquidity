@@ -18,7 +18,7 @@ const StyledPaper = styled(Paper)`
 	line-height: normal;
 	letter-spacing: normal;
 	text-align: center;
-	background: #171717;
+	background: rgba(21, 22, 24, 0.75);
 	color: #bfbebe;
 	padding: 17px 37px 17px 46px;
 	border-radius: 8px;

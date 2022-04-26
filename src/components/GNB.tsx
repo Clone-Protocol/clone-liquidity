@@ -255,6 +255,7 @@ const HeaderButton = styled(Button)`
 	font-weight: 600;
   margin-left: 16px;
 	color: #fff;
+  min-width: 40px;
 	height: 35px;
 `
 
@@ -280,7 +281,7 @@ const ConnectButton = styled(Button)`
 const WalletSelectBox = styled(Stack)`
   position: absolute;
   top: 60px;
-  right: 80px;
+  right: 59px;
   width: 163px;
   height: 139px;
   padding: 14px 17px 16px;

@@ -259,13 +259,14 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 							value={assetData.price}
 						/>
 
-						<Box sx={{ background: '#171717', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
+						<Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
 							<Stack
 								sx={{
+                  background: 'rgba(128, 156, 255, 0.09)',
 									border: '1px solid #809cff',
 									borderRadius: '10px',
 									color: '#809cff',
-									padding: '12px',
+									padding: '8px',
 									marginBottom: '26px',
 								}}
 								direction="row">
@@ -305,6 +306,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								</SubTitle>
                 <Box sx={{ marginTop: '15px' }}>
                   <RatioSlider min={0} max={100} value={cometData?.collRatio} hideValueBox onChange={handleChangeCollRatio} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
+                    <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
+                    <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
+                  </Box>
                 </Box>
 								<Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
 									<PairInput
@@ -346,7 +351,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								assetData.tightRange > cometData.upperLimit - assetData.price ? (
 									<Stack
 										sx={{
-											maxWidht: '653px',
+											maxWidth: '653px',
+                      background: 'rgba(128, 156, 255, 0.09)',
 											border: '1px solid #e9d100',
 											borderRadius: '10px',
 											color: '#9d9d9d',
@@ -381,13 +387,14 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 							value={assetData.price}
 						/>
 
-						<Box sx={{ background: '#171717', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
+						<Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
 							<Stack
 								sx={{
+                  background: 'rgba(233, 209, 0, 0.04)',
 									border: '1px solid #e9d100',
 									borderRadius: '10px',
 									color: '#9d9d9d',
-									padding: '12px',
+									padding: '8px',
 									marginTop: '10px',
 									marginBottom: '30px',
 								}}
@@ -396,7 +403,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									<Image src={WarningIcon} />
 								</Box>
 								<WarningBox>
-									Unconcentrated liquidity positions are less capital efficent than coment liquidity.
+									Unconcentrated liquidity positions are less capital efficent than coment liquidity. <br />
 									Learn more here.
 								</WarningBox>
 							</Stack>
@@ -472,6 +479,9 @@ const CometTabBtn = styled((props: any) => (
   <CometTab {...props} />
 ))(({ active }: { active: boolean}) => ({
   border: active? '1px solid #0038ff' : '',
+  // backgroundImage: active? 'linear-gradient(to bottom, #809cff 0%, #0038ff 100%)' : '',
+  // backgroundOrigin: active? 'border-box' : '',
+  // backgroundClip: active? 'content-box, border-box': ''
 }))
 
 const CometTab = styled(Button)`
@@ -495,10 +505,11 @@ const UnconcentTabBtn = styled((props: any) => (
   <UnconcentTab {...props} />
 ))(({ active }: { active: boolean}) => ({
   border: active? '1px solid #444' : '',
+  background: active? '#000': 'rgba(21, 22, 24, 0.75)',
 }))
 
 const UnconcentTab = styled(Button)`
-	width: 264px;
+	width: 254px;
 	height: 35px;
   margin-left: 8px;
 	border-radius: 10px;

@@ -14,7 +14,7 @@ const StyledPaper = styled(Paper)`
 	letter-spacing: normal;
 	text-align: center;
 	border-radius: 10px;
-	background-color: #171717;
+	background-color: rgba(21, 22, 24, 0.75);
 	color: #989898;
 	padding: 17px 37px 17px 46px;
 `

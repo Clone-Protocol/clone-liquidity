@@ -71,6 +71,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 const ValueBox = styled(Box)`
 	text-align: center;
 	background-color: #333;
+  border: solid 1px #444;
 	border-radius: 10px;
 	width: 102px;
 	height: 54px;

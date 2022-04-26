@@ -30,7 +30,6 @@ export const PageTab = styled(Tab)`
 		padding: 0px;
 		height: 28px;
 		min-height: 28px;
-		margin-right: 10px;
 		border-radius: 10px;
 		color: #989898;
 		text-transform: none;

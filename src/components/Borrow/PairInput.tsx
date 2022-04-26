@@ -25,7 +25,7 @@ const PairInput: React.FC<Props> = ({
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500' }}>Balance: {balance}</Box> : <></>}
+				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494' }}>Balance: {balance}</Box> : <></>}
 			</Stack>
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
@@ -46,6 +46,7 @@ const FormStack = styled(Stack)`
 	width: 100%;
 	height: 54px;
 	padding: 9px 21px 8px 24px;
+  border: solid 1px #444;
 	border-radius: 8px;
 	background-color: #333333;
 `

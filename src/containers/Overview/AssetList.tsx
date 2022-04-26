@@ -37,7 +37,7 @@ const AssetList: React.FC = () => {
 			sx={{
 				background: 'rgba(21, 22, 24, 0.75)',
 				color: '#fff',
-        padding: '30px',
+        padding: '18px 36px',
         borderRadius: '10px',
         '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '11px' },
 				// '& .super-app-theme--row': { background: '#1b1b1b' },
@@ -51,7 +51,7 @@ const AssetList: React.FC = () => {
 				</PageTabs>
         <SearchInput />
 			</Stack>
-      <Divider sx={{ backgroundColor: '#fff' }} />
+      <Divider sx={{ backgroundColor: '#535353' }} />
       <Grid
         headers={columns}
 				rows={assets || []}
@@ -66,7 +66,7 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'iAsset',
-		flex: 2,
+		flex: 3,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
         <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
@@ -156,7 +156,7 @@ const TradeButton = styled(Box)`
 	flex-grow: 0;
 	padding: 3px 5.7px 4px 8px;
 	border-radius: 4px;
-	border: solid 1px #fff;
+	border: solid 1px #535353;
 	cursor: pointer;
 `
 

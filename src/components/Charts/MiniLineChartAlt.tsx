@@ -64,7 +64,7 @@ const MiniLineChartAlt: React.FC<LineChartProps> = ({
 }
 
 const Wrapper = styled(Card)`
-  background: #171717;
+  background: rgba(21, 22, 24, 0.25);
   width: 246px;
   max-width: 560px;
   height: 109px;
