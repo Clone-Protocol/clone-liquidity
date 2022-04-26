@@ -99,7 +99,7 @@ let columns: GridColDef[] = [
 			const [openWithdraw, setOpenWithdraw] = useState(false)
 			return (
 				<Box display="flex">
-					<DefaultButton onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>
+					<DefaultButton sx={{ border: '1px solid #809cff'}} onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>
 					<DefaultButton onClick={() => setOpenWithdraw(true)}>Withdraw</DefaultButton>
 
 					<DepositDialog

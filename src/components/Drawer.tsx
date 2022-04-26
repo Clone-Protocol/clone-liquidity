@@ -61,12 +61,11 @@ export default withCsrOnly(Drawer)
 const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
 	'& .MuiDrawer-paper': {
 		position: 'relative',
-		background: '#171717',
+		background: 'rgba(20, 20, 20, 0.75)',
 		color: '#fff',
 		whiteSpace: 'nowrap',
 		width: 241,
 		marginTop: 60,
-		borderRight: '1px solid #3f3f3f',
 		transition: theme.transitions.create('width', {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.enteringScreen,

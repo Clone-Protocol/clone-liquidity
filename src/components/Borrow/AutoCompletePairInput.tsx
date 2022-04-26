@@ -39,7 +39,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
         )}
       />
 
-      <Box sx={{ position: 'relative', right: '30px', top: '5px' }}>
+      <Box sx={{ position: 'relative', right: '30px', top: '8px' }}>
         <Image src={SearchIcon} />
       </Box>
 
@@ -67,6 +67,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
 const StyledAutocomplete = styled(Autocomplete)`
   width: 315px; 
   height: 36px;
+  background-color: #151618;
   border: solid 1px #444;
   border-radius: 8px;
   & label {
@@ -93,12 +94,20 @@ const StyledAutocomplete = styled(Autocomplete)`
     padding-left: 20px;
   }
 
+  & .MuiAutocomplete-input {
+    padding: 0 !important;
+    padding-top: 5px !important;
+  }
+
   & input {
     width: 315px;
     height: 24px;
     color: #989898;
+    padding: 0;
     &::placeholder {
       color: #fff;
+      font-size: 11px;
+      margin-top: -5px;
     }
   }
 `
@@ -107,11 +116,11 @@ const StyledPopper = styled(Popper)`
   background: #151618;
   & .MuiAutocomplete-listbox {
     background: #151618;
-    border-radius: 10px;
+    // border-radius: 10px;
     border: solid 1px #444;
 
     & :hover {
-      background: #444444;
+      background: #1f1f1f;
     }
   }
 `

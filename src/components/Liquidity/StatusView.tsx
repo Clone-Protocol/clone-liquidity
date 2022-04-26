@@ -63,10 +63,10 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
 export default withCsrOnly(StatusView)
 
-const StyledPaper = styled(Paper)`
+const StyledPaper = styled(Box)`
 	font-size: 14px;
 	font-weight: 500;
-	background: linear-gradient(to bottom, rgba(21, 22, 24, 0.75) 100%, #002888 -159%);
+	background-image: linear-gradient(to bottom, rgba(21, 22, 24, 0.75) 100%, #002888 -159%);
 	color: #fff;
 	padding: 10px 18px;
 	border-radius: 10px;
@@ -121,14 +121,14 @@ const StyledTabs = styled((props: StyledTabsProps) => (
 	},
   maxWidth: '620px',
   borderRadius: '10px',
-  height: '47px',
+  height: '34px',
   paddingLeft: '8px',
   paddingTop: '6px'
 })
 
 const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
   '&.MuiTab-root': {
-    height: '35px',
+    height: '29px',
     minHeight: '0px',
     maxHeight: '35px',
     display: 'flex',
@@ -139,9 +139,8 @@ const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosit
   },
   textTransform: 'none',
 	fontWeight: '600',
-	fontSize: '12px',
+	fontSize: '11px',
   marginLeft: '6px',
-  marginRight: '6px',
 	color: '#989898',
 	'&.Mui-selected': {
     border: 'solid 1px #3f3f3f',

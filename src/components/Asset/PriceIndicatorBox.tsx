@@ -29,8 +29,7 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
 
 const StyledStack = styled(Stack)`
 	border-radius: 10px;
-	border: solid 1px #535353;
-	background-color: #171717;
+	background-color: rgba(21, 22, 24, 0.75);
 	padding-left: 25px;
 	padding-right: 25px;
 	height: 61px;

@@ -1,6 +1,5 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { styled } from '@mui/system'
-import { Box, Stack } from '@mui/material'
+import { Box } from '@mui/material'
 import Image from 'next/image'
 
 interface GridProps {
@@ -55,7 +54,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
     disableDensitySelector
     disableExtendRowFullWidth
     hideFooter
-    rowHeight={70}
+    headerHeight={40}
+    rowHeight={52}
     autoHeight
     columns={headers}
     rows={rows || []}

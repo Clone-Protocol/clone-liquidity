@@ -30,7 +30,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 27,
 		width: 27,
 		backgroundColor: LEFT_SLIDER_THUMB_COLOR,
-		border: `solid 2px ${LEFT_SLIDER_THUMB_COLOR}`,
+		border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 		marginTop: '-46px',
 		marginLeft: '-12px',
 		'&::after': {
@@ -74,7 +74,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 30,
 		width: 75,
 		backgroundColor: '#171717',
-		border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
+		border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
 		borderRadius: '8px',
 		marginTop: '-44px',
 		marginLeft: '36px',
@@ -105,14 +105,14 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		},
 	},
 	'& .MuiSlider-track': {
-		height: 6,
+		height: 3,
 		border: 0,
 		background: 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)',
 	},
 	'& .MuiSlider-rail': {
 		color: theme.palette.mode === 'dark' ? '#bfbfbf' : '#333333',
 		opacity: theme.palette.mode === 'dark' ? undefined : 1,
-		height: 6,
+		height: 3,
 	},
 }))
 
@@ -159,13 +159,13 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 		},
 		'& .MuiSlider-thumb[data-index="0"]': {
 			backgroundColor: LEFT_SLIDER_THUMB_COLOR,
-			border: `solid 2px ${LEFT_SLIDER_THUMB_COLOR}`,
+			border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
 				border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
 			},
 		},
 		'& .MuiSlider-thumb[data-index="1"]': {
-			border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
+			border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
 				border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
 			},
@@ -204,13 +204,13 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 					},
 					'& .MuiSlider-thumb[data-index="0"]': {
 						backgroundColor: BACKGROUND_WARNING_RANGE_COLOR,
-						border: `solid 2px ${BACKGROUND_WARNING_RANGE_COLOR}`,
+						border: `solid 1px ${BACKGROUND_WARNING_RANGE_COLOR}`,
 						'&::after': {
 							border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`,
 						},
 					},
 					'& .MuiSlider-thumb[data-index="1"]': {
-						border: `solid 2px ${BACKGROUND_WARNING_RANGE_COLOR}`,
+						border: `solid 1px ${BACKGROUND_WARNING_RANGE_COLOR}`,
 						'&::after': {
 							border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`,
 						},
@@ -225,13 +225,13 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 					},
 					'& .MuiSlider-thumb[data-index="0"]': {
 						backgroundColor: LEFT_SLIDER_THUMB_COLOR,
-						border: `solid 2px ${LEFT_SLIDER_THUMB_COLOR}`,
+						border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 						'&::after': {
 							border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
 						},
 					},
 					'& .MuiSlider-thumb[data-index="1"]': {
-						border: `solid 2px ${RIGHT_SLIDER_THUMB_COLOR}`,
+						border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
 						'&::after': {
 							border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
 						},
@@ -270,7 +270,7 @@ const CenterPriceBox = styled(Box)`
 	width: 74px;
 	height: 30px;
 	border-radius: 10px;
-	border: solid 2px #fffdfd;
+	border: solid 1px #fffdfd;
 	text-align: center;
 	font-size: 11px;
 	font-weight: 500;
@@ -279,7 +279,6 @@ const CenterPriceBox = styled(Box)`
 `
 
 const Stick = styled('div')`
-	border: 1px solid #fff;
 	border-radius: 0;
 	background: #fff;
 	width: 1px;

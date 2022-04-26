@@ -49,6 +49,7 @@ const FormStack = styled(Stack)`
 	width: 100%;
 	height: 54px;
 	padding: 9px 21px 8px 24px;
+  border: solid 1px #444444;
 	border-radius: 8px;
 	background-color: #333333;
   &:hover {

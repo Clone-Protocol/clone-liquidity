@@ -143,7 +143,7 @@ const BorrowBox = () => {
               {borrowAsset.tickerName} ({borrowAsset.tickerSymbol})
             </Box>
           </Box>
-          <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
+          <Box sx={{ marginTop: '10px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
             ${borrowAssetPriceData.assetPrice.toFixed(2)}
             {borrowAssetPriceData.rateOfPrice >= 0 ?
               <TxtPriceRate>+${borrowAssetPriceData.rateOfPrice.toFixed(3)} (+{borrowAssetPriceData.percentOfRate}%) past 24h</TxtPriceRate>
@@ -241,7 +241,7 @@ const StyledBox = styled(Box)`
   height: 290px;
   padding: 17px 34px 18px 35px;
   border-radius: 10px;
-  background: #171717;
+  background: rgba(21, 22, 24, 0.75);
   margin-top: 22px;
 `
 
@@ -253,7 +253,7 @@ const StyledPaper = styled(Paper)`
 	color: #fff;
 	border-radius: 8px;
 	text-align: left;
-	background: #171717;
+	background: rgba(21, 22, 24, 0.75);
 	padding-left: 36px;
 	padding-top: 26px;
 	padding-bottom: 32px;
@@ -261,8 +261,8 @@ const StyledPaper = styled(Paper)`
 `
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 39px;
-	margin-top: 39px;
+	margin-bottom: 30px;
+	margin-top: 30px;
 	height: 1px;
 `
 
