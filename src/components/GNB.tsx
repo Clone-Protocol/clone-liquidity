@@ -213,7 +213,6 @@ const StyledAppBar = styled(AppBar)`
 	height: 60px;
 	position: fixed;
 	z-index: 300;
-	border-bottom: 1px solid #3f3f3f;
 	top: 0px;
 	left: 0px;
 	.MuiContainer-root,
