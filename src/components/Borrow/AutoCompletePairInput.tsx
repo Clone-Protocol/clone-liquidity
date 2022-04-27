@@ -16,7 +16,7 @@ interface Props {
 	onChangeAmount?: any
 }
 
-const CustomPopper = function (props) {
+const CustomPopper = function (props : any) {
   return <StyledPopper {...props} placement="bottom" />;
 };
 
@@ -27,11 +27,11 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
         selectOnFocus
         clearOnBlur
         onChange={(e, value) => onChangeAsset(value)}
-        getOptionLabel={(option) => option.tickerName}
+        getOptionLabel={(option: any) => option.tickerName}
         options={assets}
         PopperComponent={CustomPopper}
         renderInput={(params) => <StyledTextField {...params} placeholder="Search for an iAsset" />}
-        renderOption={(props, option) => (
+        renderOption={(props: any, option: any) => (
           <SelectBox key={option.tickerSymbol} {...props}>
             <Image src={option.tickerIcon} width="24px" height="24px" />
             <TickerName>{option.tickerName} ({option.tickerSymbol})</TickerName>

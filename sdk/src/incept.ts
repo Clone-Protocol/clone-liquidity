@@ -25,7 +25,6 @@ const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey('AToken
 
 export class Incept {
 	connection: Connection
-	network: Network
 	programId: PublicKey
 	program: Program<InceptProgram>
 	manager: Manager
@@ -241,6 +240,7 @@ export class Incept {
 	public async getiAssetMints() {
 		const tokenData = await this.getTokenData()
 		let mints: PublicKey[] = []
+    // @ts-ignore
 		for (const [index, pool] of tokenData.pools.entries()) {
 			if (index === Number(tokenData.numPools)) {
 				break
@@ -273,15 +273,16 @@ export class Incept {
 					SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
 				)
 			)[0]
-			let amount
+			let amount = null
 			try {
 				amount = (await this.connection.getTokenAccountBalance(associatedTokenAddress, 'confirmed')).value!
 					.uiAmount
-			} catch {
-				amount = 0
+			} catch (e) {
+				console.error(e)
+        amount = 0
 			}
 
-			if (amount > 0) {
+			if (amount && amount > 0) {
 				let poolBalances = await this.getPoolBalances(i)
 				let price = poolBalances[1] / poolBalances[0]
 				userInfo.push([i, price, amount])
@@ -369,7 +370,7 @@ export class Incept {
 			let price = poolBalances[1] / poolBalances[0]
 			let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
 			// @ts-ignore
-			let liquidityTokenSupply = (await this.connection.getTokenSupply(pool.liquidityTokenMint)).value!.uiAmount
+			let liquidityTokenSupply = (await this.connection.getTokenSupply(pool.liquidityTokenMint)).value!.uiAmount || 1
 			let iassetValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
 			let usdiValue = (poolBalances[1] * liquidityTokenAmount) / liquidityTokenSupply
 			liquidityInfos.push([poolIndex, price, iassetValue, usdiValue, liquidityTokenAmount])
@@ -417,7 +418,7 @@ export class Incept {
 			let centerPrice = div(cometPosition.borrowedUsdi, cometPosition.borrowedIasset)
 			let liquidityTokenAmount = toScaledNumber(cometPosition.liquidityTokenValue)
 			// @ts-ignore
-			let liquidityTokenSupply = (await this.connection.getTokenSupply(pool.liquidityTokenMint)).value!.uiAmount
+			let liquidityTokenSupply = (await this.connection.getTokenSupply(pool.liquidityTokenMint)).value!.uiAmount || 1
 			let iassetValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
 			let usdiValue = (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply
 			let borrowedIasset = toScaledNumber(cometPosition.borrowedIasset)
@@ -1372,7 +1373,7 @@ export class Incept {
 		if (collateral.stable) {
 			let liquidityTokenSupplyBeforeComet = (
 				await this.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed')
-			).value!.uiAmount
+			).value!.uiAmount || 1
 			let cometLiquidityTokenAmount = (usdiAmount * liquidityTokenSupplyBeforeComet) / balances[1]
 			let updatedliquidityTokenSupply = liquidityTokenSupplyBeforeComet + cometLiquidityTokenAmount
 			let yUnder = ((usdiAmount - collateralAmount) * updatedliquidityTokenSupply) / cometLiquidityTokenAmount
