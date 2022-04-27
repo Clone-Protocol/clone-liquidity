@@ -15,7 +15,8 @@ interface StyledTabsProps {
 
 interface StyledTabProps {
 	label: string
-  icon: any
+  value: number
+  icon?: any
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (

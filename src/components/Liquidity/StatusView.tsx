@@ -1,7 +1,7 @@
 import { styled, Box, Paper, Stack, Tabs, Tab } from '@mui/material'
 import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
-import { Status } from '~/web3/MyLiquidity/status'
+import { Status } from '~/features/MyLiquidity/Status.query'
 
 interface Props {
 	status: Status
@@ -15,7 +15,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 	}
 
 	return status ? (
-		<StyledPaper variant="outlined">
+		<StyledPaper>
       <StyledTabs value={tab} onChange={handleChangeTab}>
         <StyledTab value={0} label="All" />
         <StyledTab value={1} label="Comet" />
@@ -106,6 +106,7 @@ interface StyledTabsProps {
 
 interface StyledTabProps {
 	label: string
+  value: number
 }
 
 const StyledTabs = styled((props: StyledTabsProps) => (
