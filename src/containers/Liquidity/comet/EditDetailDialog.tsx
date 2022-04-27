@@ -5,13 +5,15 @@ import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import PairInput from '~/components/Asset/PairInput'
-import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
-import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
+import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import { PositionInfo as PI, CometInfo, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
+import ThreeIcon from 'public/images/three-icon.png'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
+import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
+import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 
 const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }: any) => {
   const { publicKey } = useWallet()
@@ -63,6 +65,16 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 		}
 	}, [cometIndex, mintAmount, cometData])
 
+  const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
+		if (typeof newValue === 'number') {
+      setCometData({
+        ...cometData,
+        collRatio: newValue
+      })
+      //TODO: binding web3
+		}
+	}, [cometData])
+
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...cometData,
@@ -99,17 +111,15 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 			<DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353' }}>
 				<Box sx={{ padding: '30px', color: '#fff' }}>
           <WarningBox>
-            Fill in two of the three parts and the third part will automatically generate.{' '}
-            <br /> Learn more here.
+            If you are unclear about how to edit your Comet, click here to learn more.
           </WarningBox>
 
           <Box sx={{ padding: '25px 30px' }}>
             <Box>
               <SubTitle>
-                <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box>
+                <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust Collateral</Box>
               </SubTitle>
-              <SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
-              <PairInput
+              {/* <PairInput
                 tickerIcon={'/images/assets/USDi.png'}
                 tickerName="USDi Coin"
                 tickerSymbol="USDi"
@@ -117,32 +127,36 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
                 headerTitle="Balance"
                 headerValue={usdiBalance?.balanceVal}
                 onChange={handleChangeFromAmount}
+              /> */}
+              <EditCollateralInput 
+                tickerIcon={'/images/assets/USDi.png'}
+                tickerSymbol="USDi"
+                value={collAmount}
+                onChange={handleChangeFromAmount}
               />
             </Box>
             <StyledDivider />
 
             <Box>
               <SubTitle>
-                <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box>
+                <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust USDi-iSOL to minted into iSOL AMM</Box>
               </SubTitle>
-              <SubTitleComment>Editing concentration range will effect the collateral amount</SubTitleComment>
 
-              <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
-                <ConcentrationRange
-                  assetData={assetData}
-                  cometData={cometData}
-                  onChange={handleChangeConcentRange}
-                  max={assetData.maxRange}
-                  defaultLower={(assetData.price / 2)}
-                  defaultUpper={((assetData.price * 3) / 2)}
-                />
+              <Box sx={{ marginTop: '20px' }}>
+                <EditRatioSlider min={100} max={250} value={cometData.collRatio} assetData={assetData} mintAmount={mintAmount} onChange={handleChangeCollRatio} />
               </Box>
+            </Box>
 
-              <ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
+            <Box>
+              <SubTitle>
+                <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
+              </SubTitle>
+
+              <EditConcentrationRangeBox assetData={assetData} cometData={cometData} />
             </Box>
             <StyledDivider />
 
-            <ActionButton onClick={onEdit}>Edit</ActionButton>
+            <ActionButton onClick={onEdit}>Edit Collateral</ActionButton>
           </Box>
         </Box>
       </DialogContent>
@@ -151,14 +165,17 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 }
 
 const WarningBox = styled(Box)`
-	max-width: 500px;
-	padding-right: 10px;
+	max-width: 450px;
+  height: 42px;
 	font-size: 11px;
 	font-weight: 500;
+  line-height: 42px;
 	color: #989898;
   border-radius: 10px;
   border: solid 1px #809cff;
   background-color: rgba(128, 156, 255, 0.09);
+  text-align: center;
+  margin: 0 auto;
 `
 
 const StyledDivider = styled(Divider)`
@@ -176,17 +193,9 @@ const SubTitle = styled('div')`
 	color: #fff;
 `
 
-const SubTitleComment = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #989898;
-	marginbottom: 18px;
-	margin-top: 10px;
-`
-
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #7d7d7d;
+	background: #4e609f;
 	color: #fff;
 	border-radius: 8px;
   font-size: 13px;
