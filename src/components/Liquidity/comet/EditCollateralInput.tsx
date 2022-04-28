@@ -1,51 +1,57 @@
 import { FormControl, styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
-import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { StyledTabs, StyledTab } from '~/components/Liquidity/comet/StyledTab'
 import { useState } from 'react'
 
 interface Props {
+  editType: number
 	tickerIcon: string
 	tickerName?: string | null
 	tickerSymbol: string | null
-	value?: number
-	onChange?: any
+  maxCollVal: number
+	collAmount: number
+  currentCollAmount?: number
+  onChangeType?: any
+	onChangeAmount?: any
 }
 
 const EditCollateralInput: React.FC<Props> = ({
+  editType,
 	tickerIcon,
 	tickerSymbol,
-	value,
-	onChange,
+  maxCollVal,
+	collAmount,
+  currentCollAmount,
+  onChangeType,
+	onChangeAmount,
 }) => {
-  const [tab, setTab] = useState(0)
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
-	}
 
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
-      <Stack direction="row" justifyContent="flex-end">
-        <Box sx={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px', background: '#252627', border: '1px solid #444' }}>
-          <StyledTabs value={tab} onChange={handleChangeTab}>
+      <Stack sx={{ height: '40px' }} direction="row" justifyContent="space-between">
+        <Box sx={{ paddingTop: '5px', borderTopLeftRadius: '10px', borderTopRightRadius: '10px', background: '#252627', border: '1px solid #444' }}>
+          <StyledTabs value={editType} onChange={onChangeType}>
             <StyledTab value={0} label="Deposit"></StyledTab>
             <StyledTab value={1} label="Withdraw"></StyledTab>
           </StyledTabs>
         </Box>
-        <Box>
-          Max withdrawable: 60,000 USDC
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494'}}>
+          Max withdrawable: <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
         </Box>
       </Stack>
-			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex">
-					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
-						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-					</Box>
-				</Box>
-				<InputAmount id="ip-amount" type="number" value={value} onChange={onChange} />
-			</FormStack>
-      <Box>
-        Current Collateral: 80,450.85 USDC
+      <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', border: '1px solid #444444'}}>
+        <FormStack direction="row" justifyContent="space-between" alignItems="center">
+          <Box display="flex">
+            <Image src={tickerIcon} width="28px" height="28px" />
+            <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+              <TickerSymbol>{tickerSymbol}</TickerSymbol>
+            </Box>
+          </Box>
+          <InputAmount id="ip-amount" type="number" value={collAmount} onChange={onChangeAmount} />
+        </FormStack>
+        <BottomBox>
+          Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>
+        </BottomBox>
       </Box>
 		</FormControl>
 	)
@@ -56,8 +62,8 @@ const FormStack = styled(Stack)`
 	width: 100%;
 	height: 54px;
 	padding: 9px 21px 8px 24px;
-  border: solid 1px #444444;
-	border-radius: 8px;
+  border-bottom: solid 1px #444444;
+  border-top-right-radius: 10px;
 	background-color: #333333;
   &:hover {
     border: solid 1px #809cff;
@@ -79,6 +85,16 @@ const InputAmount = styled(`input`)`
 	font-size: 16px;
 	font-weight: 500;
 	color: #fff;
+`
+
+const BottomBox = styled(Box)`
+  background: #252627;
+  font-size: 11px;
+  font-weight: 500;
+  color: #949494;
+  text-align: center;
+  height: 28px;
+  padding-top: 6px;
 `
 
 export default EditCollateralInput

@@ -24,14 +24,12 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 				</Box>
 				<Box
 					sx={{
-						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
 						borderRadius: '10px',
 						border: 'solid 1px #809cff',
-						padding: '8px',
 					}}>
 					<PriceValue>{cometData.lowerLimit.toFixed(2)}</PriceValue>
-					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
-          <Box>Current: 90.12 USD</Box>
+					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
+          <CurrentPrice style={{ borderTop: '1px solid #809cff'}}><span style={{ fontSize: '9px' }}>Current:</span> 90.12 USD</CurrentPrice>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
@@ -45,10 +43,10 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 					}}>
 					Center Price
 				</Box>
-				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '8px' }}>
-					<PriceValue>{assetData.price.toFixed(2)}</PriceValue>
+				<Box sx={{ borderRadius: '10px', border: 'solid 1px #444'}}>
+					<PriceValue style={{ background: '#171717' }}>{assetData.price.toFixed(2)}</PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <Box>Current: 100.58 USD</Box>
+          <CurrentPrice style={{ borderTop: '1px solid #444'}}><span style={{ fontSize: '9px' }}>Current:</span> 100.58 USD</CurrentPrice>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
@@ -64,14 +62,12 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 				</Box>
 				<Box
 					sx={{
-						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
 						borderRadius: '10px',
 						border: 'solid 1px #0038ff',
-						padding: '8px',
 					}}>
 					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <Box>Current: 120.66 USD</Box>
+          <CurrentPrice style={{ borderTop: '1px solid #0038ff'}}><span style={{ fontSize: '9px' }}>Current:</span> 120.66 USD</CurrentPrice>
 				</Box>
 			</Grid>
 		</Grid>
@@ -81,17 +77,38 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 }
 
 const PriceValue = styled('div')`
+  background: #333333;
 	font-size: 16px;
 	font-weight: 500;
 	text-align: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 `
 
 const RangePair = styled('div')`
+  background: #171717;
+  border-top: 1px solid #444;
 	font-size: 12px;
 	font-weight: 500;
 	padding-top: 8px;
+  padding-bottom: 8px;
 	text-align: center;
-  color: #5c5c5c;
+  color: #9a9a9a;
+`
+
+const CurrentPrice = styled('div')`
+  font-size: 12px;
+  font-weight: 500;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #949494;
 `
 
 export default withCsrOnly(EditConcentrationRangeBox)

@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import PairInput from '~/components/Asset/PairInput'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import { PositionInfo as PI, CometInfo, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import OneIcon from 'public/images/one-icon.png'
@@ -19,23 +18,29 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
-  const { mutateAsync } = useEditMutation(publicKey)
-  const { data: usdiBalance } = useBalanceQuery({ 
-    userPubKey: publicKey, 
-    refetchOnMount: true,
-    enabled: publicKey != null
-  });
+  const cometIndex = parseInt(cometId)
 
+  const { mutateAsync } = useEditMutation(publicKey)
+  // const { data: usdiBalance } = useBalanceQuery({ 
+  //   userPubKey: publicKey, 
+  //   refetchOnMount: true,
+  //   enabled: publicKey != null
+  // });
+
+  const [editType, setEditType] = useState(0)
+  const maxCollVal = 60000
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     collRatio: 50,
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
-  const mintAmount = cometDetail.mintAmount
-	const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
+	const [collAmount, setCollAmount] = useState(cometDetail.collAmount)	
+  const [mintAmount, setMintAmount] = useState(cometDetail.mintAmount)
 
-	const cometIndex = parseInt(cometId)
+  const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
+		setEditType(newValue)
+	}, [editType])
 
 	const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
@@ -65,15 +70,14 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 		}
 	}, [cometIndex, mintAmount, cometData])
 
-  const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number') {
-      setCometData({
-        ...cometData,
-        collRatio: newValue
-      })
-      //TODO: binding web3
-		}
-	}, [cometData])
+  const handleChangeCollRatio = useCallback((newRatio: number, mintAmount: number) => {
+    setCometData({
+      ...cometData,
+      collRatio: newValue
+    })
+    setMintAmount(mintAmount)
+
+	}, [cometData, mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -109,30 +113,25 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
   return (
     <Dialog open={open} onClose={handleClose}>
 			<DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353' }}>
-				<Box sx={{ padding: '30px', color: '#fff' }}>
+				<Box sx={{ padding: '13px 10px', color: '#fff' }}>
           <WarningBox>
             If you are unclear about how to edit your Comet, click here to learn more.
           </WarningBox>
 
-          <Box sx={{ padding: '25px 30px' }}>
+          <Box sx={{ padding: '15px 10px' }}>
             <Box>
               <SubTitle>
                 <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust Collateral</Box>
               </SubTitle>
-              {/* <PairInput
-                tickerIcon={'/images/assets/USDi.png'}
-                tickerName="USDi Coin"
-                tickerSymbol="USDi"
-                value={collAmount}
-                headerTitle="Balance"
-                headerValue={usdiBalance?.balanceVal}
-                onChange={handleChangeFromAmount}
-              /> */}
-              <EditCollateralInput 
+              <EditCollateralInput
+                editType={editType}
                 tickerIcon={'/images/assets/USDi.png'}
                 tickerSymbol="USDi"
-                value={collAmount}
-                onChange={handleChangeFromAmount}
+                collAmount={collAmount}
+                maxCollVal={maxCollVal}
+                currentCollAmount={cometDetail.collAmount}
+                onChangeType={handleChangeType}
+                onChangeAmount={handleChangeFromAmount}
               />
             </Box>
             <StyledDivider />
@@ -143,9 +142,10 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
               </SubTitle>
 
               <Box sx={{ marginTop: '20px' }}>
-                <EditRatioSlider min={100} max={250} value={cometData.collRatio} assetData={assetData} mintAmount={mintAmount} onChange={handleChangeCollRatio} />
+                <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} assetData={assetData} mintAmount={mintAmount} onChange={handleChangeCollRatio} />
               </Box>
             </Box>
+            <StyledDivider />
 
             <Box>
               <SubTitle>
@@ -165,7 +165,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 }
 
 const WarningBox = styled(Box)`
-	max-width: 450px;
+	max-width: 507px;
   height: 42px;
 	font-size: 11px;
 	font-weight: 500;
@@ -180,8 +180,8 @@ const WarningBox = styled(Box)`
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 30px;
-	margin-top: 30px;
+	margin-bottom: 20px;
+	margin-top: 20px;
 	height: 1px;
 `
 
@@ -189,7 +189,7 @@ const SubTitle = styled('div')`
 	display: flex;
 	font-size: 14px;
 	font-weight: 500;
-	marginbottom: 17px;
+	margin-bottom: 17px;
 	color: #fff;
 `
 

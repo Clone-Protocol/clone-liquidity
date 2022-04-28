@@ -5,10 +5,10 @@ import Image from 'next/image'
 interface Props {
 	min?: number
 	max?: number
-	value: number
+	ratio: number
   assetData: PI
   mintAmount: number
-	onChange?: (event: Event, newValue: number | number[]) => void
+	onChange?: (newRatio: number, mintAmount: number) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
@@ -45,27 +45,40 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, assetData, mintAmount, onChange }) => {
+const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData, mintAmount, onChange }) => {
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
+
+  const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+		if (typeof newValue === 'number') {
+      onChange && onChange(newValue, mintAmount)
+		}
+	}
+
+  const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value) {
+			const amount = parseFloat(e.currentTarget.value)
+      onChange && onChange(ratio, amount)
+    }
+  }
 
 	return (
 		<Box>
 			<Box width="100%">
 				<StyledSlider
-					value={value}
+					value={ratio}
 					min={min}
 					step={10}
 					max={max}
 					valueLabelFormat={valueLabelFormat}
-					onChange={onChange}
+					onChange={handleChangeCollRatio}
 					valueLabelDisplay="on"
 				/>
 			</Box>
       <Stack direction="row" gap={2}>
         <StyledBox>
-          <Box>
+          <FormBox>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display="flex">
                 <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
@@ -73,13 +86,13 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, assetData
                   USDi
                 </Box>
               </Box>
-              <InputAmount id="ip-amount" type="number" value={mintAmount} onChange={onChange} />
+              <InputAmount id="ip-amount" type="number" value={mintAmount} onChange={handleChangeAmount} />
             </Stack>
-          </Box>
+          </FormBox>
           <BottomBox>Current: 30,000.00 USDi</BottomBox>
         </StyledBox>
-        <StyledBox sx={{ borderRadius: '10px', border: 'solid 1px #0038ff' }}>
-          <Box>
+        <StyledBox>
+          <FormBox sx={{ background: '#252627', color: '#9a9a9a'}}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display="flex">
                 <Image src={assetData.tickerIcon} width="28px" height="28px" />
@@ -87,9 +100,9 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, assetData
                   {assetData.tickerSymbol}
                 </Box>
               </Box>
-              <Box>{assetData.price}</Box>
+              <Box>{assetData.price.toFixed(2)}</Box>
             </Stack>
-          </Box>
+          </FormBox>
           <BottomBox>Current: 120.00 iSOL</BottomBox>
         </StyledBox>
       </Stack>
@@ -99,11 +112,25 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, assetData
 
 const StyledBox = styled(Box)`
   border-radius: 10px;
-  border: solid 1px #0038ff;
+  border: solid 1px #444;
+  width: 244px;
+  margin-top: 8px;
+`
+
+const FormBox = styled(Box)`
+  height: 54px; 
+  padding: 14px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-stretch: normal;
+  background: #323436;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 `
 
 const BottomBox = styled(Box)`
-  height: 21px;
+  height: 23px;
+  background: #252627;
   font-size: 11px;
   font-weight: 500;
   font-stretch: normal;
@@ -112,16 +139,18 @@ const BottomBox = styled(Box)`
   letter-spacing: normal;
   text-align: center;
   color: #949494;
+  padding-top: 3px;
+  border: 1px solid #444;
 `
 
 const InputAmount = styled(`input`)`
-	width: 130px;
+	width: 60px;
 	margin-left: 10px;
 	text-align: right;
 	border: 0px;
-	background-color: #333333;
-	font-size: 16px;
-	font-weight: 500;
+	background-color: #323436;
+	font-size: 14px;
+	font-weight: 600;
 	color: #fff;
 `
 
