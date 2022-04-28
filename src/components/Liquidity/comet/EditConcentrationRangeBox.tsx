@@ -6,9 +6,28 @@ import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosit
 interface Props {
   assetData: PI
 	cometData: CometInfo
+  currentLowerLimit: number
+  currentUpperLimit: number
+  onChange: any
 }
 
-const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
+const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, currentLowerLimit, currentUpperLimit, onChange }) => {
+
+  const handleChangeLowerLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value) {
+			const limit = parseFloat(e.currentTarget.value)
+      onChange(limit, cometData.upperLimit)
+    }
+  }
+
+  const handleChangeUpperLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value) {
+			const limit = parseFloat(e.currentTarget.value)
+      onChange(cometData.lowerLimit, limit)
+    }
+  }
+  
+
 	return cometData ? (
 		<Grid container spacing={2}>
 			<Grid item xs={4}>
@@ -26,10 +45,11 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 					sx={{
 						borderRadius: '10px',
 						border: 'solid 1px #809cff',
+            background: '#252627'
 					}}>
-					<PriceValue>{cometData.lowerLimit.toFixed(2)}</PriceValue>
+					<PriceValue><InputAmount type="number" value={cometData.lowerLimit} onChange={handleChangeLowerLimit} /></PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <CurrentPrice style={{ borderTop: '1px solid #809cff'}}><span style={{ fontSize: '9px' }}>Current:</span> 90.12 USD</CurrentPrice>
+          <CurrentPrice style={{ borderTop: '1px solid #809cff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentLowerLimit.toLocaleString()} USD</CurrentPrice>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
@@ -43,10 +63,10 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 					}}>
 					Center Price
 				</Box>
-				<Box sx={{ borderRadius: '10px', border: 'solid 1px #444'}}>
-					<PriceValue style={{ background: '#171717' }}>{assetData.price.toFixed(2)}</PriceValue>
+				<Box sx={{ borderRadius: '10px', border: 'solid 1px #444', background: '#252627'}}>
+					<PriceValue style={{ background: '#171717' }}>{assetData.price.toLocaleString()}</PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <CurrentPrice style={{ borderTop: '1px solid #444'}}><span style={{ fontSize: '9px' }}>Current:</span> 100.58 USD</CurrentPrice>
+          <CurrentPrice style={{ borderTop: '1px solid #444'}}><span style={{ fontSize: '9px' }}>Current:</span> {assetData.price.toLocaleString()} USD</CurrentPrice>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
@@ -54,7 +74,7 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 					sx={{
 						fontSize: '12px',
 						fontWeight: '500',
-						color: '#0038ff',
+						color: '#2e5cff',
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
@@ -63,11 +83,12 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) =>
 				<Box
 					sx={{
 						borderRadius: '10px',
-						border: 'solid 1px #0038ff',
+						border: 'solid 1px #2e5cff',
+            background: '#252627'
 					}}>
-					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>
+					<PriceValue><InputAmount type="number" value={cometData.upperLimit} onChange={handleChangeUpperLimit} /></PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <CurrentPrice style={{ borderTop: '1px solid #0038ff'}}><span style={{ fontSize: '9px' }}>Current:</span> 120.66 USD</CurrentPrice>
+          <CurrentPrice style={{ borderTop: '1px solid #0038ff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentUpperLimit.toLocaleString()} USD</CurrentPrice>
 				</Box>
 			</Grid>
 		</Grid>
@@ -85,6 +106,17 @@ const PriceValue = styled('div')`
   padding-bottom: 8px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+`
+
+const InputAmount = styled(`input`)`
+	width: 100px;
+	border: 0px;
+	background-color: #333333;
+	font-size: 16px;
+	font-weight: 500;
+	color: #fff;
+  text-align: center;
+  margin-left: 12px;
 `
 
 const RangePair = styled('div')`

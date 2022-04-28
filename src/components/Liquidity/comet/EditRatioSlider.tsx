@@ -8,6 +8,7 @@ interface Props {
 	ratio: number
   assetData: PI
   mintAmount: number
+  currentMintAmount: number
 	onChange?: (newRatio: number, mintAmount: number) => void
 }
 
@@ -45,7 +46,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData, mintAmount, onChange }) => {
+const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData, mintAmount, currentMintAmount, onChange }) => {
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
@@ -89,7 +90,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData
               <InputAmount id="ip-amount" type="number" value={mintAmount} onChange={handleChangeAmount} />
             </Stack>
           </FormBox>
-          <BottomBox>Current: 30,000.00 USDi</BottomBox>
+          <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
         </StyledBox>
         <StyledBox>
           <FormBox sx={{ background: '#252627', color: '#9a9a9a'}}>
@@ -100,10 +101,10 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData
                   {assetData.tickerSymbol}
                 </Box>
               </Box>
-              <Box>{assetData.price.toFixed(2)}</Box>
+              <Box>{(mintAmount/assetData.price).toLocaleString()}</Box>
             </Stack>
           </FormBox>
-          <BottomBox>Current: 120.00 iSOL</BottomBox>
+          <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
         </StyledBox>
       </Stack>
 		</Box>

@@ -73,16 +73,15 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
   const handleChangeCollRatio = useCallback((newRatio: number, mintAmount: number) => {
     setCometData({
       ...cometData,
-      collRatio: newValue
+      collRatio: newRatio
     })
     setMintAmount(mintAmount)
 
 	}, [cometData, mintAmount])
 
-	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
+	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...cometData,
-			isTight,
 			lowerLimit,
 			upperLimit,
 		}
@@ -142,7 +141,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
               </SubTitle>
 
               <Box sx={{ marginTop: '20px' }}>
-                <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} assetData={assetData} mintAmount={mintAmount} onChange={handleChangeCollRatio} />
+                <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChange={handleChangeCollRatio} />
               </Box>
             </Box>
             <StyledDivider />
@@ -152,7 +151,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
                 <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
               </SubTitle>
 
-              <EditConcentrationRangeBox assetData={assetData} cometData={cometData} />
+              <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometDetail.lowerLimit} currentUpperLimit={cometDetail.upperLimit} onChange={handleChangeConcentRange} />
             </Box>
             <StyledDivider />
 
