@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react'
 import { styled } from '@mui/system'
-import { Box, Stack } from '@mui/material'
+import { Box } from '@mui/material'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 // import dynamic from 'next/dynamic'
 import LineChartAlt from '~/components/Charts/LineChartAlt'
 // import { unixToDate } from '~/utils/date'
@@ -83,4 +85,4 @@ const SelectValue = styled(Box)`
   margin-top: 17px;
 `
 
-export default LineChart
+export default withSuspense(LineChart, <LoadingProgress />)

@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box, Stack } from '@mui/material'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 import BarChartAlt from '~/components/Charts/BarChartAlt'
 // import { unixToDate } from '~/utils/date'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
@@ -82,4 +84,4 @@ const SelectValue = styled(Box)`
   margin-top: 17px;
 `
 
-export default BarChart
+export default withSuspense(BarChart, <LoadingProgress />)
