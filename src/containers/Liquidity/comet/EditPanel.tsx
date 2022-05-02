@@ -37,7 +37,7 @@ const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Com
         cometId={cometIndex}
         assetData={assetData}
         cometDetail={cometDetail}
-        handleClose={() => setOpenEditDetail(false)}
+        onHideEditForm={() => setOpenEditDetail(false)}
       />
     </Wrapper>
 	) : <></>

@@ -46,9 +46,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: { program
   const lowerLimit = toScaledNumber(comet.lowerPriceRange)
   const upperLimit = toScaledNumber(comet.upperPriceRange)
   const ild = 0
+  const maxCollValue = 60000
   const collRatio = 50
-  const rateOfPrice = 2.551
-  const percentOfRate = 1.58
 
 	return {
     mintAmount,
@@ -56,6 +55,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: { program
     lowerLimit,
     upperLimit,
     ild,
+    maxCollValue,
     collRatio,
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
@@ -63,9 +63,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index }: { program
 		price,
 		tightRange,
 		maxRange,
-		centerPrice,
-    rateOfPrice,
-    percentOfRate
+		centerPrice
 	}
 }
 
@@ -99,8 +97,6 @@ export interface CometDetail extends PositionInfo {
   lowerLimit: number
   upperLimit: number
   ild: number
-  rateOfPrice: number
-  percentOfRate: number
 }
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {

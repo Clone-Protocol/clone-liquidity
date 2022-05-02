@@ -14,7 +14,7 @@ import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 
-const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }: any) => {
+const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditForm }: any) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
@@ -28,7 +28,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
   // });
 
   const [editType, setEditType] = useState(0)
-  const maxCollVal = 60000
+  const maxCollVal = cometDetail.maxCollValue
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     collRatio: cometDetail.collRatio,
@@ -99,7 +99,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to comet')
-            handleClose()
+            onHideEditForm()
           }
         },
         onError(err) {
@@ -111,7 +111,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 	}
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={onHideEditForm}>
 			<DialogContent sx={{ backgroundColor: '#16171a' }}>
 				<Box sx={{ padding: '13px 10px', color: '#fff' }}>
           <WarningBox>

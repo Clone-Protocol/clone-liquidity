@@ -9,7 +9,7 @@ interface Props {
 	assetData: PI
 	cometDetail: CometDetail
   onShowEditForm: any
-  onRecenter: void
+  onRecenter: any
 }
 
 const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm, onRecenter }) => {
