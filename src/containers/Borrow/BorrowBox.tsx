@@ -14,6 +14,7 @@ import ThreeIcon from 'public/images/three-icon.png'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { ASSETS } from '~/data/assets'
 import { useBorrowDetailQuery, PairData } from '~/features/MyLiquidity/BorrowPosition.query'
+import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
@@ -32,10 +33,11 @@ const BorrowBox = () => {
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(250)
-  const [borrowAssetPriceData, setBorrowAssetPriceData] = useState({
-    assetPrice: 160.51,
-    rateOfPrice: -2.551,
-    percentOfRate: 1.58
+
+  const { data: priceHistory } = usePriceHistoryQuery({
+    tickerSymbol: borrowAsset?.tickerSymbol,
+    refetchOnMount: false,
+    enabled: borrowAsset != null
   })
 
   const { mutateAsync } = useBorrowMutation(publicKey)
@@ -105,30 +107,7 @@ const BorrowBox = () => {
     )
 	}
 
-  const chartData = [
-    {
-      time: '2022-03-01',
-      value: 115
-    },
-    {
-      time: '2022-03-02',
-      value: 95
-    },
-    {
-      time: '2022-03-03',
-      value: 80
-    },
-    {
-      time: '2022-03-04',
-      value: 65
-    },
-    {
-      time: '2022-03-05',
-      value: 15
-    },
-  ]
-
-	return (
+	return priceHistory ? (
     <Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
         <AutoCompletePairInput 
@@ -144,16 +123,16 @@ const BorrowBox = () => {
             </Box>
           </Box>
           <Box sx={{ marginTop: '10px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-            ${borrowAssetPriceData.assetPrice.toFixed(2)}
-            {borrowAssetPriceData.rateOfPrice >= 0 ?
-              <TxtPriceRate>+${borrowAssetPriceData.rateOfPrice.toFixed(3)} (+{borrowAssetPriceData.percentOfRate}%) past 24h</TxtPriceRate>
+            ${priceHistory.assetPrice.toFixed(2)}
+            {priceHistory.rateOfPrice >= 0 ?
+              <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
             :
-              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(borrowAssetPriceData.rateOfPrice).toFixed(3)} (-{borrowAssetPriceData.percentOfRate}%) past 24h</TxtPriceRate>
+              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
             }
           </Box>
           <MiniLineChartAlt 
-            data={chartData}
-            color={ borrowAssetPriceData.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+            data={priceHistory?.chartData}
+            color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
             Oracle Price
@@ -233,7 +212,7 @@ const BorrowBox = () => {
         </StyledPaper>
       </Grid>
     </Grid>
-	)
+	) : <></>
 }
 
 const StyledBox = styled(Box)`

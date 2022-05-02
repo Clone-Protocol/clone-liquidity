@@ -1,21 +1,24 @@
 import { Box, Stack, Button, Divider } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
+import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 
 interface Props {
 	assetData: PI
-	cometData: CometInfo
-  mintAmount: number
-	collateralAmount: number
-  ild: number
+	cometDetail: CometDetail
   onShowEditForm: any
+  onRecenter: any
 }
 
-const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, collateralAmount, ild, onShowEditForm }) => {
-	const onRecenter = () => {}
+const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm, onRecenter }) => {
+  const cometData = {
+    isTight: false,
+    collRatio: 50,
+    lowerLimit: cometDetail.lowerLimit,
+    upperLimit: cometDetail.upperLimit
+  }
 
 	return assetData ? (
     <Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
@@ -25,19 +28,19 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, colla
           <Box sx={{ padding: '15px 15px', minWidth: '365px' }}>
             <SubTitle>Collateral</SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
-              {collateralAmount} <span style={{ fontSize: '14px' }}>USDi</span>
+              {cometDetail.collAmount} <span style={{ fontSize: '14px' }}>USDi</span>
             </Box>
             <Box sx={{ marginTop: '10px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
                 <DetailValue>
-                  {collateralAmount} USDi
+                  {cometDetail.collAmount} USDi
                 </DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
                 <DetailValue>
-                  {mintAmount} {assetData.tickerSymbol}
+                  {cometDetail.mintAmount} {assetData.tickerSymbol}
                 </DetailValue>
               </Stack>
             </Box>
@@ -78,7 +81,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometData, mintAmount, colla
       <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '17px 27px' }}>
         <SubTitle>ILD</SubTitle>
         <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
-          {ild} USDi
+          {cometDetail.ild} USDi
         </Box>
       </Box>
       <StyledDivider />

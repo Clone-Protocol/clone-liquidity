@@ -25,7 +25,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	'& .MuiSlider-track': {
 		height: 3,
     border: 'none',
-    background: 'linear-gradient(to right, #f00 -12%, #809cff 66%)'
+    background: 'linear-gradient(to left, #f00 -12%, #809cff 66%)'
 	},
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',

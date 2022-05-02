@@ -32,7 +32,7 @@ const MiniLineChartAlt: React.FC<LineChartProps> = ({
 }) => {
   const parsedValue = value
 
-  return (
+  return data ? (
     <Wrapper>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
@@ -60,7 +60,7 @@ const MiniLineChartAlt: React.FC<LineChartProps> = ({
         </AreaChart>
       </ResponsiveContainer>
     </Wrapper>
-  )
+  ) : <></>
 }
 
 const Wrapper = styled(Card)`

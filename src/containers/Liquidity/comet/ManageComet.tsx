@@ -10,6 +10,7 @@ import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
 import EditPanel from '~/containers/Liquidity/comet/EditPanel'
 import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
+import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 // import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
@@ -27,31 +28,14 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 	  refetchOnMount: true,
     enabled: publicKey != null
 	})
-  
-  const chartData = [
-    {
-      time: '2022-03-01',
-      value: 15
-    },
-    {
-      time: '2022-03-02',
-      value: 35
-    },
-    {
-      time: '2022-03-03',
-      value: 80
-    },
-    {
-      time: '2022-03-04',
-      value: 65
-    },
-    {
-      time: '2022-03-05',
-      value: 115
-    },
-  ]
 
-	return cometDetail ? (
+  const { data: priceHistory } = usePriceHistoryQuery({
+    tickerSymbol: cometDetail?.tickerSymbol,
+    refetchOnMount: false,
+    enabled: cometDetail != null
+  })
+
+	return (cometDetail && priceHistory) ? (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
         <StyledBox>
@@ -63,15 +47,15 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
           </Box>
           <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
             ${cometDetail.price.toFixed(2)}
-            {cometDetail.rateOfPrice >= 0 ?
-              <TxtPriceRate>+${cometDetail.rateOfPrice.toFixed(3)} (+{cometDetail.percentOfRate}%) past 24h</TxtPriceRate>
+            {priceHistory.rateOfPrice >= 0 ?
+              <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
             :
-              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(cometDetail.rateOfPrice).toFixed(3)} (-{cometDetail.percentOfRate}%) past 24h</TxtPriceRate>
+              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
             }
           </Box>
           <MiniLineChartAlt 
-            data={chartData}
-            color={ cometDetail.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+            data={priceHistory?.chartData}
+            color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
             Indicator Price
@@ -101,7 +85,7 @@ const StyledBox = styled(Box)`
   height: 290px;
   padding: 17px 34px 18px 35px;
   border-radius: 10px;
-  background: rgba(21, 22, 24, 0.75);;
+  background: rgba(21, 22, 24, 0.75);
   margin-top: 22px;
 `
 

@@ -4,36 +4,43 @@ import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
-import PairInput from '~/components/Asset/PairInput'
-import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
-import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
-import { PositionInfo as PI, CometInfo, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
+import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
+import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import OneIcon from 'public/images/one-icon.png'
 import TwoIcon from 'public/images/two-icon.png'
-import { useBalanceQuery } from '~/features/Comet/Balance.query'
+import ThreeIcon from 'public/images/three-icon.png'
+// import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
+import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
+import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 
-const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }: any) => {
+const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditForm }: any) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
-  const { mutateAsync } = useEditMutation(publicKey)
-  const { data: usdiBalance } = useBalanceQuery({ 
-    userPubKey: publicKey, 
-    refetchOnMount: true,
-    enabled: publicKey != null
-  });
+  const cometIndex = parseInt(cometId)
 
+  const { mutateAsync } = useEditMutation(publicKey)
+  // const { data: usdiBalance } = useBalanceQuery({ 
+  //   userPubKey: publicKey, 
+  //   refetchOnMount: true,
+  //   enabled: publicKey != null
+  // });
+
+  const [editType, setEditType] = useState(0)
+  const maxCollVal = cometDetail.maxCollValue
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
-    collRatio: 50,
+    collRatio: cometDetail.collRatio,
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
-  const mintAmount = cometDetail.mintAmount
 	const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
+  const [mintAmount, setMintAmount] = useState(cometDetail.mintAmount)
 
-	const cometIndex = parseInt(cometId)
+  const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
+		setEditType(newValue)
+	}, [editType])
 
 	const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
@@ -63,10 +70,18 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 		}
 	}, [cometIndex, mintAmount, cometData])
 
-	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
+  const handleChangeCollRatio = useCallback((newRatio: number, mintAmount: number) => {
+    setCometData({
+      ...cometData,
+      collRatio: newRatio
+    })
+    setMintAmount(mintAmount)
+
+	}, [cometData, mintAmount])
+
+	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...cometData,
-			isTight,
 			lowerLimit,
 			upperLimit,
 		}
@@ -84,6 +99,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to comet')
+            onHideEditForm()
           }
         },
         onError(err) {
@@ -95,54 +111,52 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 	}
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-			<DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353' }}>
-				<Box sx={{ padding: '30px', color: '#fff' }}>
+    <Dialog open={open} onClose={onHideEditForm}>
+			<DialogContent sx={{ backgroundColor: '#16171a' }}>
+				<Box sx={{ padding: '13px 10px', color: '#fff' }}>
           <WarningBox>
-            Fill in two of the three parts and the third part will automatically generate.{' '}
-            <br /> Learn more here.
+            If you are unclear about how to edit your Comet, click here to learn more.
           </WarningBox>
 
-          <Box sx={{ padding: '25px 30px' }}>
+          <Box sx={{ padding: '15px 10px' }}>
             <Box>
               <SubTitle>
-                <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box>
+                <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust Collateral</Box>
               </SubTitle>
-              <SubTitleComment>Editing collateral amount will change the concentration range</SubTitleComment>
-              <PairInput
+              <EditCollateralInput
+                editType={editType}
                 tickerIcon={'/images/assets/USDi.png'}
-                tickerName="USDi Coin"
                 tickerSymbol="USDi"
-                value={collAmount}
-                headerTitle="Balance"
-                headerValue={usdiBalance?.balanceVal}
-                onChange={handleChangeFromAmount}
+                collAmount={collAmount}
+                maxCollVal={maxCollVal}
+                currentCollAmount={cometDetail.collAmount}
+                onChangeType={handleChangeType}
+                onChangeAmount={handleChangeFromAmount}
               />
             </Box>
             <StyledDivider />
 
             <Box>
               <SubTitle>
-                <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit liquidity concentration range</Box>
+                <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>iSOL</TxtPair> to minted into <TxtPair>iSOL AMM</TxtPair></Box>
               </SubTitle>
-              <SubTitleComment>Editing concentration range will effect the collateral amount</SubTitleComment>
 
-              <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
-                <ConcentrationRange
-                  assetData={assetData}
-                  cometData={cometData}
-                  onChange={handleChangeConcentRange}
-                  max={assetData.maxRange}
-                  defaultLower={(assetData.price / 2)}
-                  defaultUpper={((assetData.price * 3) / 2)}
-                />
+              <Box sx={{ marginTop: '20px' }}>
+                <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} currentRatio={cometDetail.collRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChange={handleChangeCollRatio} />
               </Box>
-
-              <ConcentrationRangeBox assetData={assetData} positionInfo={cometData} />
             </Box>
             <StyledDivider />
 
-            <ActionButton onClick={onEdit}>Edit</ActionButton>
+            <Box>
+              <SubTitle>
+                <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
+              </SubTitle>
+
+              <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometDetail.lowerLimit} currentUpperLimit={cometDetail.upperLimit} onChange={handleChangeConcentRange} />
+            </Box>
+            <StyledDivider />
+
+            <ActionButton onClick={onEdit}>Edit Collateral</ActionButton>
           </Box>
         </Box>
       </DialogContent>
@@ -151,20 +165,23 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, handleClose }
 }
 
 const WarningBox = styled(Box)`
-	max-width: 500px;
-	padding-right: 10px;
+	max-width: 507px;
+  height: 42px;
 	font-size: 11px;
 	font-weight: 500;
+  line-height: 42px;
 	color: #989898;
   border-radius: 10px;
   border: solid 1px #809cff;
   background-color: rgba(128, 156, 255, 0.09);
+  text-align: center;
+  margin: 0 auto;
 `
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 30px;
-	margin-top: 30px;
+	margin-bottom: 20px;
+	margin-top: 20px;
 	height: 1px;
 `
 
@@ -172,26 +189,21 @@ const SubTitle = styled('div')`
 	display: flex;
 	font-size: 14px;
 	font-weight: 500;
-	marginbottom: 17px;
+	margin-bottom: 17px;
 	color: #fff;
 `
 
-const SubTitleComment = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #989898;
-	marginbottom: 18px;
-	margin-top: 10px;
+const TxtPair = styled('span')`
+  color: #809cff;
 `
 
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #7d7d7d;
+	background: #4e609f;
 	color: #fff;
 	border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-	margin-bottom: 15px;
 `
 
 export default EditDetailDialog

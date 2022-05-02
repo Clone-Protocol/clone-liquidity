@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box, Stack } from '@mui/material'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 import BarChartAlt from '~/components/Charts/BarChartAlt'
-import { unixToDate } from '~/utils/date'
+// import { unixToDate } from '~/utils/date'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
 import { TimeTabs, TimeTab, FilterTimeMap, FilterTime } from '~/components/Charts/TimeTabs'
+import { useTotalVolumeQuery, useTotalLiquidationQuery } from '~/features/Chart/Liquidity.query'
 
-const LineChart: React.FC = () => {
+const BarChart: React.FC = () => {
   // const LineChart = dynamic(() => import('~/components/Charts/LineChart'), { loading: () => <p>Loading ...</p>, ssr: false });
   // const SimpleBarChart = dynamic(() => import('~/components/Charts/SimpleBarChart'), { loading: () => <p>Loading ...</p>, ssr: false });
 
@@ -19,45 +22,33 @@ const LineChart: React.FC = () => {
 		setFilterTime(newValue)
 	}
 
-  const chartData = [
-    {
-      time: '2022-03-01',
-      value: 15
-    },
-    {
-      time: '2022-03-02',
-      value: 35
-    },
-    {
-      time: '2022-03-03',
-      value: 80
-    },
-    {
-      time: '2022-03-04',
-      value: 65
-    },
-    {
-      time: '2022-03-05',
-      value: 115
-    },
-  ]
+  const { data: totalVolume } = useTotalVolumeQuery({
+    timeframe: filterTime,
+    refetchOnMount: false,
+    enabled: tab === 0
+  })
+  const { data: totalLiquidation } = useTotalLiquidationQuery({
+    timeframe: filterTime,
+    refetchOnMount: false,
+    enabled: tab === 1
+  })
 
-  const formattedData = useMemo(() => {
-    if (chartData) {
-      return chartData.map((day: any) => {
-        return {
-          time: unixToDate(day.date),
-          value: day.liquidity,
-        }
-      })
-    } else {
-      return []
-    }
-  }, [chartData])
+  // const formattedData = useMemo(() => {
+  //   if (chartData) {
+  //     return chartData.map((day: any) => {
+  //       return {
+  //         time: unixToDate(day.date),
+  //         value: day.liquidity,
+  //       }
+  //     })
+  //   } else {
+  //     return []
+  //   }
+  // }, [chartData])
 
   return (
     <BarChartAlt
-      data={chartData}
+      data={tab === 0 ? totalVolume?.chartData : totalLiquidation?.chartData}
       topLeft={
         <Box>
           <Box>
@@ -93,4 +84,4 @@ const SelectValue = styled(Box)`
   margin-top: 17px;
 `
 
-export default LineChart
+export default withSuspense(BarChart, <LoadingProgress />)
