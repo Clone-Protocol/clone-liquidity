@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { Box, Slider, Stack, styled } from '@mui/material'
 import { PositionInfo as PI } from '~/features/MyLiquidity/CometPosition.query'
 import Image from 'next/image'
@@ -6,6 +7,7 @@ interface Props {
 	min?: number
 	max?: number
 	ratio: number
+  currentRatio: number
   assetData: PI
   mintAmount: number
   currentMintAmount: number
@@ -46,13 +48,17 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData, mintAmount, currentMintAmount, onChange }) => {
+const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChange }) => {
+  const [ratioArr, setRatioArr] = useState([currentRatio])
+
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
+      // setRatioArr([currentRatio, newValue])
+
       onChange && onChange(newValue, mintAmount)
 		}
 	}
@@ -66,7 +72,8 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData
 
 	return (
 		<Box>
-			<Box width="100%">
+			<Box width="100%" display="flex">
+        <SliderTxt sx={{ marginRight: '8px' }}>Min</SliderTxt>
 				<StyledSlider
 					value={ratio}
 					min={min}
@@ -76,6 +83,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, assetData
 					onChange={handleChangeCollRatio}
 					valueLabelDisplay="on"
 				/>
+        <SliderTxt sx={{ marginLeft: '8px' }}>Max</SliderTxt>
 			</Box>
       <Stack direction="row" gap={2}>
         <StyledBox>
@@ -116,6 +124,15 @@ const StyledBox = styled(Box)`
   border: solid 1px #444;
   width: 244px;
   margin-top: 8px;
+`
+
+const SliderTxt = styled('div')`
+  display: flex;
+  align-items: flex-end;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 8px;
 `
 
 const FormBox = styled(Box)`

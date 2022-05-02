@@ -15,28 +15,21 @@ const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Com
     maxRange: cometDetail.maxRange,
     centerPrice: cometDetail.centerPrice
   }
-  const [cometData, setCometData] = useState<CometInfo>({
-    isTight: false,
-    collRatio: 50,
-    lowerLimit: cometDetail.lowerLimit,
-    upperLimit: cometDetail.upperLimit
-  })
-  const mintAmount = cometDetail.mintAmount
-	const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
-  const ild = cometDetail.ild
   const [openEditDetail, setOpenEditDetail] = useState(false)
 
 	const cometIndex = parseInt(assetId)
+
+  const handleRecenter = () => {
+    // TODO: recenter logic    
+  }
 
 	return assetData ? (
     <Wrapper>
       <PositionInfo
         assetData={assetData}
-        cometData={cometData}
-        mintAmount={mintAmount}
-        collateralAmount={collAmount}
-        ild={ild}
+        cometDetail={cometDetail}
         onShowEditForm={() => setOpenEditDetail(true)}
+        onRecenter={() => handleRecenter()}
       />
 
       <EditDetailDialog
