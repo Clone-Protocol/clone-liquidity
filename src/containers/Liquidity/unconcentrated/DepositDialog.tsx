@@ -7,8 +7,8 @@ import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPositio
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import Image from 'next/image'
-import OneIcon from 'public/images/one-icon.png'
-import TwoIcon from 'public/images/two-icon.png'
+import OneIcon from 'public/images/one-icon.svg'
+import TwoIcon from 'public/images/two-icon.svg'
 
 const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()

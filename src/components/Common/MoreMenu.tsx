@@ -2,11 +2,11 @@ import { styled } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Image from 'next/image'
-import InfoIcon from 'public/images/more/info-icon.png'
-import BookIcon from 'public/images/more/book-icon.png'
-import DiscordIcon from 'public/images/more/discord-icon.png'
-import TradingIcon from 'public/images/more/trading-icon.png'
-import TwitterIcon from 'public/images/more/twitter-icon.png'
+import InfoIcon from 'public/images/more/info-icon.svg'
+import BookIcon from 'public/images/more/book-icon.svg'
+import DiscordIcon from 'public/images/more/discord-icon.svg'
+import TradingIcon from 'public/images/more/trading-icon.svg'
+import TwitterIcon from 'public/images/more/twitter-icon.svg'
 
 interface Props {
   anchorEl: null | HTMLElement

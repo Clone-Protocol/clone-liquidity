@@ -14,11 +14,13 @@ import WarningIcon from 'public/images/warning-icon.png'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
-import OneIcon from 'public/images/one-icon.png'
-import TwoIcon from 'public/images/two-icon.png'
-import ThreeIcon from 'public/images/three-icon.png'
-import CometIcon from 'public/images/comet-icon.png'
-import UnconcentIcon from 'public/images/ul-icon.png'
+import OneIcon from 'public/images/one-icon.svg'
+import TwoIcon from 'public/images/two-icon.svg'
+import ThreeIcon from 'public/images/three-icon.svg'
+import CometIconOn from 'public/images/comet-icon-on.svg'
+import UlIconOn from 'public/images/ul-icon-on.svg'
+import CometIconOff from 'public/images/comet-icon-off.svg'
+import UlIconOff from 'public/images/ul-icon-off.svg'
 import { useInitCometDetailQuery, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { UnconcentratedData as UnconcentPI } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
@@ -241,10 +243,11 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 				<Box sx={{ display: 'flex', maxWidth: '488px', height: '47px', alignItems: 'center', paddingLeft: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
 					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
-						<Image src={CometIcon} /> <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
+						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
+            <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
 					</CometTabBtn>
 					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
-						<Image src={UnconcentIcon} />
+						{tab===1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} /> }
 						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span>
 					</UnconcentTabBtn>
 				</Box>
@@ -479,6 +482,7 @@ const CometTabBtn = styled((props: any) => (
   <CometTab {...props} />
 ))(({ active }: { active: boolean}) => ({
   border: active? '1px solid #0038ff' : '',
+  color: active? '#fff' : '#989898'
   // backgroundImage: active? 'linear-gradient(to bottom, #809cff 0%, #0038ff 100%)' : '',
   // backgroundOrigin: active? 'border-box' : '',
   // backgroundClip: active? 'content-box, border-box': ''
@@ -506,6 +510,7 @@ const UnconcentTabBtn = styled((props: any) => (
 ))(({ active }: { active: boolean}) => ({
   border: active? '1px solid #444' : '',
   background: active? '#000': 'rgba(21, 22, 24, 0.75)',
+  color: active? '#fff' : '#989898'
 }))
 
 const UnconcentTab = styled(Button)`
