@@ -86,7 +86,6 @@ const StyledBox = styled(Box)`
   padding: 17px 34px 18px 35px;
   border-radius: 10px;
   background: rgba(21, 22, 24, 0.75);
-  margin-top: 22px;
 `
 
 const TxtPriceRate = styled('div')`

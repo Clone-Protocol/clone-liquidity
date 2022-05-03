@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
-import PairInput from '~/components/Borrow/PairInput'
+import PairInput from '~/components/Liquidity/unconcent/PairInput'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
@@ -78,33 +78,35 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 
 	return unconcentData ? (
 		<Dialog open={open} onClose={handleClose}>
-			<DialogContent sx={{ backgroundColor: '#171717', border: 'solid 1px #535353' }}>
-				<Box sx={{ padding: '30px', color: '#fff' }}>
-					<Box>
-						<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional {unconcentData.tickerSymbol} to deposit</Box></SubTitle>
-						<SubTitleComment>Acquire {unconcentData.tickerSymbol} by Borrowing</SubTitleComment>
-						<PairInput
-							tickerIcon={unconcentData.tickerIcon}
-							tickerName={unconcentData.tickerName}
-							tickerSymbol={unconcentData.tickerSymbol}
-							value={borrowFrom}
-							balance={balances?.usdiVal}
-							onChange={handleBorrowFrom}
-						/>
+			<DialogContent sx={{ backgroundColor: '#16171a' }}>
+				<Box sx={{ padding: '20px', color: '#fff' }}>
+          <WarningBox>
+            Acquire addtional iAsset and USDi by <span style={{ textDecoration: 'underline' }}>borrowing</span> and <span style={{ textDecoration: 'underline' }}>swaping</span>, click <span style={{ textDecoration: 'underline' }}>here</span> to learn more.
+          </WarningBox>
+					<Box sx={{ marginTop: '20px'}}>
+						<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>{unconcentData.tickerSymbol}</span> to deposit</Box></SubTitle>
+            <PairInput
+              tickerIcon={unconcentData.tickerIcon}
+              tickerName={unconcentData.tickerName}
+              tickerSymbol={unconcentData.tickerSymbol}
+              value={borrowFrom}
+              balance={balances?.iassetVal}
+              onChange={handleBorrowFrom}
+            />
 					</Box>
 					<StyledDivider />
 
 					<Box>
-						<SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional USDi to deposit</Box></SubTitle>
-						<SubTitleComment>Equivalent value of USDi must be provided</SubTitleComment>
-						<PairInput
-							tickerIcon={'/images/assets/USDi.png'}
-							tickerName="USDi Coin"
-							tickerSymbol="USDi"
-							value={borrowTo}
-							balance={balances?.iassetVal}
-							onChange={handleBorrowTo}
-						/>
+						<SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>USDi</span> to deposit</Box></SubTitle>
+            
+            <PairInput
+              tickerIcon={'/images/assets/USDi.png'}
+              tickerName="USDi Coin"
+              tickerSymbol="USDi"
+              value={borrowTo}
+              balance={balances?.usdiVal}
+              onChange={handleBorrowTo}
+            />
 					</Box>
 					<StyledDivider />
 					<ActionButton onClick={onDeposit}>Deposit</ActionButton>
@@ -114,36 +116,42 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	) : <></>
 }
 
+const WarningBox = styled(Box)`
+  max-width: 507px;
+  height: 42px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 42px;
+  color: #989898;
+  border-radius: 10px;
+  border: solid 1px #809cff;
+  background-color: rgba(128, 156, 255, 0.09);
+  text-align: center;
+  margin: 0 auto;
+`
+
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 39px;
-	margin-top: 39px;
+	margin-bottom: 20px;
+	margin-top: 20px;
 	height: 1px;
 `
 
 const SubTitle = styled('div')`
   display: flex;
-	font-size: 18px;
-	font-weight: 500;
-	marginbottom: 17px;
-	color: #fff;
-`
-
-const SubTitleComment = styled('div')`
 	font-size: 14px;
 	font-weight: 500;
-	color: #989898;
-	marginbottom: 18px;
+	margin-bottom: 7px;
+	color: #fff;
 `
 
 const ActionButton = styled(Button)`
-	width: 100%;
-	background: #7d7d7d;
-	color: #fff;
-	border-radius: 8px;
-  font-size: 18px;
-  font-weight: 500;
-	margin-bottom: 15px;
+  width: 100%;
+  background: #4e609f;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
 `
 
 export default DepositDialog
