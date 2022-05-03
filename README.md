@@ -18,6 +18,11 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+### Installing the Incept SDK 
+In the `package.json` file under `devDependencies`, you will need to change the path pointed to by `"incept-protocol-sdk"` to your location of the `incept-protocol` repository. Make sure to repull the changes on it regularly and rerun `npm install`.
+
+The setup above is most fitting for local development, but is not suited for deployment. Instead you should use git+ssh. Rather than your local path, replace with `"incept-protocol-sdk": "git+ssh://git@github.com:Incept-Protocol/incept-protocol.git#develop"`. This should install the library from the git repository, it does require the system installing it to have ssh access to `incept-protocol`.
+
 ### Switching Networks
 
 In the `.env.local` file you can set the `NEXT_PUBLIC_USE_NETWORK` variable to either `LOCAL_NET` or `DEV_NET` (will default to `LOCAL_NET`). This will switch the network endpoint and program IDs to the default values defined in `sdk/src/network.ts`.
