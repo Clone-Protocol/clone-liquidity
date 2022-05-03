@@ -1,6 +1,6 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from 'sdk/src'
+import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
 import { FilterType } from '~/data/filter'

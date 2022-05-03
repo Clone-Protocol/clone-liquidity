@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { useMutation } from 'react-query'
-import { Incept } from 'sdk/src'
+import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 
