@@ -63,7 +63,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
         </StyledBox>
 			</Grid>
 			<Grid item xs={12} md={8}>
-        <Box sx={{ maxWidth: '466px' }}>
+        <Box sx={{ maxWidth: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
             <StyledTab value={0} label="Edit Comet"></StyledTab>
             <StyledTab value={1} label="Close Comet"></StyledTab>
@@ -86,7 +86,6 @@ const StyledBox = styled(Box)`
   padding: 17px 34px 18px 35px;
   border-radius: 10px;
   background: rgba(21, 22, 24, 0.75);
-  margin-top: 22px;
 `
 
 const TxtPriceRate = styled('div')`

@@ -1,6 +1,6 @@
-import { FormControl, styled, Stack, Box, Autocomplete, TextField, Popper } from '@mui/material'
+import { styled, Box, Autocomplete, TextField, Popper } from '@mui/material'
 import Image from 'next/image'
-import SearchIcon from 'public/images/search-icon.png'
+import SearchIcon from 'public/images/search-icon.svg'
 
 export interface AssetType {
 	tickerIcon: string

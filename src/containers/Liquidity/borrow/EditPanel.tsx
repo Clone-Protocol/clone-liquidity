@@ -8,8 +8,8 @@ import PairInput from '~/components/Borrow/PairInput'
 import Image from 'next/image'
 // import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import { useEditMutation } from '~/features/Borrow/Borrow.mutation'
-import OneIcon from 'public/images/one-icon.png'
-import TwoIcon from 'public/images/two-icon.png'
+import OneIcon from 'public/images/one-icon.svg'
+import TwoIcon from 'public/images/two-icon.svg'
 // import RatioSlider from '~/components/Borrow/RatioSlider'
 import {
 	PairData,

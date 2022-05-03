@@ -7,12 +7,12 @@ import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType, FilterTypeMap } from '~/data/filter'
 import Image from 'next/image'
-import CometIconOff from 'public/images/comet-icon-off.png'
-import UlIconOff from 'public/images/ul-icon-off.png'
-import BorrowIconOff from 'public/images/borrow-position-icon-off.png'
-import CometIconOn from 'public/images/comet-icon-on.png'
-import UlIconOn from 'public/images/ul-icon-on.png'
-import BorrowIconOn from 'public/images/borrow-position-icon-on.png'
+import CometIconOff from 'public/images/comet-icon-off.svg'
+import UlIconOff from 'public/images/ul-icon-off.svg'
+import BorrowIconOff from 'public/images/borrow-position-icon-off.svg'
+import CometIconOn from 'public/images/comet-icon-on.svg'
+import UlIconOn from 'public/images/ul-icon-on.svg'
+import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 
 const LiquidityTable = () => {
 	const [tab, setTab] = useState(0)
