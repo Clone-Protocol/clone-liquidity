@@ -278,7 +278,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								</Box>
 								<WarningBox>
 									Fill in two of the three parts and the third part will automatically generate.{' '}
-									<br /> Learn more here.
+									<br />Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
 								</WarningBox>
 							</Stack>
 
@@ -320,6 +320,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 										tickerName="USDi Coin"
 										tickerSymbol="USDi"
 										value={mintAmount}
+                    headerTitle="Max amount mintable"
+									  headerValue={0}
 										onChange={handleChangeToAmount}
 									/>
 								</Box>
@@ -350,7 +352,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 								<ConcentrationRangeBox assetData={assetData} cometData={cometData} />
 
-								{assetData.tightRange > assetData.price - cometData.lowerLimit ||
+								{/* {assetData.tightRange > assetData.price - cometData.lowerLimit ||
 								assetData.tightRange > cometData.upperLimit - assetData.price ? (
 									<Stack
 										sx={{
@@ -374,7 +376,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 									</Stack>
 								) : (
 									<></>
-								)}
+								)} */}
 							</Box>
 							<StyledDivider />
 

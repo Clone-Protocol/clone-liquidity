@@ -66,7 +66,7 @@ export default withCsrOnly(StatusView)
 const StyledPaper = styled(Box)`
 	font-size: 14px;
 	font-weight: 500;
-	background-image: linear-gradient(to bottom, rgba(21, 22, 24, 0.75) 100%, #002888 -159%);
+	background-image: linear-gradient(rgba(21, 22, 24, 0.75), rgba(0, 40, 136, 0.5));
 	color: #fff;
 	padding: 10px 18px;
 	border-radius: 10px;
