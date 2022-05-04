@@ -25,7 +25,7 @@ const PairInput: React.FC<Props> = ({
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494' }}>Balance: <span style={{color:'#90e4fe'}}>{balance} {tickerSymbol}</span></Box> : <></>}
+				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '10px' }}>Balance: <span style={{color:'#90e4fe'}}>{balance} {tickerSymbol}</span></Box> : <></>}
 			</Stack>
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">

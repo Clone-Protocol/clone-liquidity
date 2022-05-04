@@ -27,8 +27,11 @@ export const PageTab = styled(Tab)`
 	height: 28px;
 	color: #fff;
 	&.MuiTab-root {
-		padding: 0px;
+		padding-left: 12px;
+    padding-right: 12px;
+    margin-right: 8px;
 		height: 28px;
+    min-width: 60px;
 		min-height: 28px;
 		border-radius: 10px;
 		color: #989898;
