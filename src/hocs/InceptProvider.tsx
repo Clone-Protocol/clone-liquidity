@@ -5,7 +5,8 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { InceptContext } from '~/hooks/useIncept'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
-import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
+import { DEV_NET } from 'incept-protocol-sdk/sdk/src/network'
+
 
 export interface InceptProviderProps {
 	children: ReactNode
@@ -19,7 +20,7 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
     const opts = {
       preflightCommitment: 'processed',
     }
-    const network = getNetworkDetailsFromEnv()
+    const network = DEV_NET
     let new_connection = new Connection(network.endpoint)
     //TODO: to connect wallet's network, use useConnection instead
 
