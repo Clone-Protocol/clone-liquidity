@@ -20,7 +20,9 @@ const ConcentrationRangeView: React.FC<Props> = ({ assetData, cometData, max }) 
       <LeftBox>{cometData.lowerLimit.toFixed(2)}</LeftBox>
       <Box sx={{ position: 'relative' }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
+          <LeftRangeStick />
           <RangeBar />
+          <RightRangeStick />
         </Box>
         
         <CenterStick sx={{ marginLeft: '50%' }} />
@@ -30,6 +32,26 @@ const ConcentrationRangeView: React.FC<Props> = ({ assetData, cometData, max }) 
     </Box>
 	)
 }
+
+const LeftRangeStick = styled('div')`
+  position: relative;
+  border-radius: 0;
+  background: #809cff;
+  width: 2px;
+  height: 12px;
+  margin-top: -12px;
+  z-index: 20;
+`
+
+const RightRangeStick = styled('div')`
+  position: relative;
+  border-radius: 0;
+  background: #0038ff;
+  width: 2px;
+  height: 12px;
+  margin-top: -12px;
+  z-index: 20;
+`
 
 const CenterStick = styled('div')`
   position: relative;
@@ -57,7 +79,7 @@ const LeftBox = styled(Box)`
   font-weight: 500;
   border-radius: 6px;
   text-align: center;
-  margin-right: -2px;
+  margin-right: -10px;
 `
 
 const RightBox = styled(Box)`
@@ -66,7 +88,7 @@ const RightBox = styled(Box)`
   font-weight: 500;
   border-radius: 6px;
   text-align: center;
-  margin-left: -2px;
+  margin-left: -10px;
 `
 
 const RangeBar = styled('div')`

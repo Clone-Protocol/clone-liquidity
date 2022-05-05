@@ -25,7 +25,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       <Title>Comet Position</Title>
       <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)'}}>
         <Box display="flex">
-          <Box sx={{ padding: '15px 15px', minWidth: '365px' }}>
+          <Box sx={{ padding: '22px', minWidth: '365px' }}>
             <SubTitle>Collateral</SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
               {cometDetail.collAmount} <span style={{ fontSize: '14px' }}>USDi</span>

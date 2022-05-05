@@ -303,7 +303,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								<SubTitle>
 									<Image src={TwoIcon} />{' '}
 									<Box sx={{ marginLeft: '9px' }}>
-										Amount of USDi-{assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
+										Amount of USDi & {assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
 										AMM
 									</Box>
 								</SubTitle>
@@ -409,7 +409,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								</Box>
 								<WarningBox>
 									Unconcentrated liquidity positions are less capital efficent than coment liquidity. <br />
-									Learn more here.
+									Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
 								</WarningBox>
 							</Stack>
 
@@ -483,11 +483,8 @@ const StyledDivider = styled(Divider)`
 const CometTabBtn = styled((props: any) => (
   <CometTab {...props} />
 ))(({ active }: { active: boolean}) => ({
-  border: active? '1px solid #0038ff' : '',
+  borderStyle: active? 'solid' : 'none',
   color: active? '#fff' : '#989898'
-  // backgroundImage: active? 'linear-gradient(to bottom, #809cff 0%, #0038ff 100%)' : '',
-  // backgroundOrigin: active? 'border-box' : '',
-  // backgroundClip: active? 'content-box, border-box': ''
 }))
 
 const CometTab = styled(Button)`
@@ -495,7 +492,11 @@ const CometTab = styled(Button)`
 	height: 35px;
 	padding: 9px 24px 9px 24.5px;
 	border-radius: 10px;
-	background-color: rgba(21, 22, 24, 0.75);
+  border-style: solid;
+  border-width: 1px;
+  border-image-source: linear-gradient(to bottom, #809cff 0%, #0038ff 100%);
+  border-image-slice: 1;
+  background-origin: border-box;
 	font-size: 12px;
 	font-weight: 600;
 	color: #fff;

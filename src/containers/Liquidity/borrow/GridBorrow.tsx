@@ -37,7 +37,7 @@ let columns: GridColDef[] = [
 		field: 'asset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'iAsset',
+		headerName: 'Pools',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
@@ -80,9 +80,9 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Collateral Ratio',
-		flex: 1,
+		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '14px', fontWeight: '600' }}>{params.value.toLocaleString()}%</Box>
+			return <Box sx={{ fontSize: '12px', fontWeight: '600' }}>{params.value.toLocaleString()}% <span style={{ fontSize: '11px', fontWeight: '500' }}>(min {params.row.minCollateralRatio}%)</span></Box>
 		},
 	},
 	{
@@ -102,17 +102,6 @@ let columns: GridColDef[] = [
 		},
 	},
 ]
-
-const RiskButton = styled(Button)`
-	width: 84px;
-	height: 33px;
-	margin: 6px;
-	border-radius: 8px;
-	border: solid 1px #ff2929;
-	color: #fff;
-	font-size: 12px;
-	font-weight: 600;
-`
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
