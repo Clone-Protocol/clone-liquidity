@@ -37,7 +37,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeA
 						</MenuItem>
 					))}
 				</Select>
-				<InputAmount id="ip-amount" type="number" value={value} onChange={onChangeAmount} />
+				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChangeAmount} />
 			</FormStack>
 		</FormControl>
 	)

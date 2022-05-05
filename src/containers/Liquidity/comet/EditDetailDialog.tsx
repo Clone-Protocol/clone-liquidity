@@ -113,7 +113,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
   return (
     <Dialog open={open} onClose={onHideEditForm}>
 			<DialogContent sx={{ backgroundColor: '#16171a' }}>
-				<Box sx={{ padding: '13px 10px', color: '#fff' }}>
+				<Box sx={{ padding: '8px 1px', color: '#fff' }}>
           <WarningBox>
             If you are unclear about how to edit your Comet, click here to learn more.
           </WarningBox>

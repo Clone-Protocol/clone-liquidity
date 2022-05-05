@@ -78,8 +78,8 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 
 	return unconcentData ? (
 		<Dialog open={open} onClose={handleClose}>
-			<DialogContent sx={{ backgroundColor: '#16171a' }}>
-				<Box sx={{ padding: '20px', color: '#fff' }}>
+			<DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+				<Box sx={{ padding: '8px 28px', color: '#fff' }}>
           <WarningBox>
             Acquire addtional iAsset and USDi by <span style={{ textDecoration: 'underline' }}>borrowing</span> and <span style={{ textDecoration: 'underline' }}>swaping</span>, click <span style={{ textDecoration: 'underline' }}>here</span> to learn more.
           </WarningBox>

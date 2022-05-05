@@ -64,8 +64,8 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 
 	return unconcentData ? (
 		<Dialog open={open} onClose={handleClose}>
-			<DialogContent sx={{ width: '570px', backgroundColor: '#16171a' }}>
-				<Box sx={{ padding: '20px', color: '#fff' }}>		
+			<DialogContent sx={{ width: '570px', backgroundColor: '#16171a', padding: '20px 6px' }}>
+				<Box sx={{ padding: '8px 32px', color: '#fff' }}>		
           <SubTitle>Select withdraw amount</SubTitle>
           <RatioSlider
             min={0}

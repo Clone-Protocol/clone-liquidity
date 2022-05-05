@@ -85,36 +85,38 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
 				/>
         <SliderTxt sx={{ marginLeft: '8px' }}>Max</SliderTxt>
 			</Box>
-      <Stack direction="row" gap={2}>
-        <StyledBox>
-          <FormBox>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box display="flex">
-                <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  USDi
+      <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
+        <Stack direction="row" gap={2}>
+          <StyledBox>
+            <FormBox>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box display="flex">
+                  <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                  <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
+                    USDi
+                  </Box>
                 </Box>
-              </Box>
-              <InputAmount id="ip-amount" type="number" value={mintAmount} onChange={handleChangeAmount} />
-            </Stack>
-          </FormBox>
-          <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
-        </StyledBox>
-        <StyledBox>
-          <FormBox sx={{ background: '#252627', color: '#9a9a9a'}}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box display="flex">
-                <Image src={assetData.tickerIcon} width="28px" height="28px" />
-                <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  {assetData.tickerSymbol}
+                <InputAmount id="ip-amount" type="number" sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={mintAmount} onChange={handleChangeAmount} />
+              </Stack>
+            </FormBox>
+            <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
+          </StyledBox>
+          <StyledBox>
+            <FormBox sx={{ background: '#252627', color: '#9a9a9a'}}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box display="flex">
+                  <Image src={assetData.tickerIcon} width="28px" height="28px" />
+                  <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
+                    {assetData.tickerSymbol}
+                  </Box>
                 </Box>
-              </Box>
-              <Box>{(mintAmount/assetData.price).toLocaleString()}</Box>
-            </Stack>
-          </FormBox>
-          <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
-        </StyledBox>
-      </Stack>
+                <Box>{(mintAmount/assetData.price).toLocaleString()}</Box>
+              </Stack>
+            </FormBox>
+            <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
+          </StyledBox>
+        </Stack>
+      </Box>
 		</Box>
 	)
 }
@@ -169,7 +171,7 @@ const InputAmount = styled(`input`)`
 	background-color: #323436;
 	font-size: 14px;
 	font-weight: 600;
-	color: #fff;
+	color: #adadad;
 `
 
 export default EditRatioSlider
