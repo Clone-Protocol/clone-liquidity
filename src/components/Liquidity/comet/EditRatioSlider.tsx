@@ -36,6 +36,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
     fontWeight: '600',
+    width: '51px',
     padding: '4px 8px 4px 8px',
     borderRadius: '10px',
     border: 'solid 1px #809cff',
@@ -49,16 +50,12 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 }))
 
 const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChange }) => {
-  const [ratioArr, setRatioArr] = useState([currentRatio])
-
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
-      // setRatioArr([currentRatio, newValue])
-
       onChange && onChange(newValue, mintAmount)
 		}
 	}
@@ -74,15 +71,21 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
 		<Box>
 			<Box width="100%" display="flex">
         <SliderTxt sx={{ marginRight: '8px' }}>Min</SliderTxt>
-				<StyledSlider
-					value={ratio}
-					min={min}
-					step={10}
-					max={max}
-					valueLabelFormat={valueLabelFormat}
-					onChange={handleChangeCollRatio}
-					valueLabelDisplay="on"
-				/>
+        <Box sx={{width: '100%', height: '48px'}}>
+          <StyledSlider
+            value={ratio}
+            min={min}
+            step={10}
+            max={max}
+            valueLabelFormat={valueLabelFormat}
+            onChange={handleChangeCollRatio}
+            valueLabelDisplay="on"
+          />
+          <Box sx={{ position: 'relative', top: '-32px', left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
+            <FixThumb />
+            <FixValueLabel>{currentRatio}%</FixValueLabel>
+          </Box>
+        </Box>
         <SliderTxt sx={{ marginLeft: '8px' }}>Max</SliderTxt>
 			</Box>
       <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
@@ -135,6 +138,28 @@ const SliderTxt = styled('div')`
   font-weight: 500;
   color: #fff;
   margin-bottom: 8px;
+`
+
+const FixThumb = styled('div')`
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 99999px;
+  border: 3px solid #686868;
+`
+
+const FixValueLabel = styled(Box)`
+  width: 51px;
+  height: 24px;
+  padding: 2px 8px 1px 12px;
+  margin-top: 8px;
+  margin-left: -16px;
+  border-radius: 10px;
+  border: solid 1px #686868;
+  background-color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
 `
 
 const FormBox = styled(Box)`
