@@ -47,6 +47,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 interface GetAssetsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
+  searchTerm: string
   refetchOnMount?: QueryObserverOptions['refetchOnMount']
   enabled?: boolean
 }
@@ -63,10 +64,11 @@ export interface AssetList {
 	baselineAPY: number
 }
 
-export function useAssetsQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {
+export function useAssetsQuery({ userPubKey, filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
   const { getInceptApp } = useIncept()
   return useQuery(['assets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, filter }), {
     refetchOnMount,
-    enabled
+    enabled,
+    select: (assets) => assets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
   })
 }
