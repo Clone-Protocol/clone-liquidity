@@ -63,6 +63,10 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 					onChange={onChange}
 					valueLabelDisplay="on"
 				/>
+        <Box sx={{ display: 'flex', }}>
+          <FlagBox sx={{ marginLeft: '27px' }}>min 150%</FlagBox>
+          <FlagBox sx={{ marginLeft: '172px' }}>safe 200%</FlagBox>
+        </Box>
 			</Box>
 		</Box>
 	)
@@ -80,6 +84,27 @@ const ValueBox = styled(Box)`
 	font-weight: 500;
 	color: #fff;
 	padding: 12px 18px 12px 26px;
+`
+
+const FlagBox = styled(Box)`
+  width: 69px;
+  height: 23px;
+  padding: 6px 4px 7px 9px;
+  border-radius: 10px;
+  border: solid 1px #444;
+  background-color: #000;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 9px;
+  margin-top: -8px;
+  // &::after {
+  //   position: absolute;
+  //   width: 100px;
+  //   height: 16px;
+  //   top: 10px;
+  //   left: 30px;
+  //   background: #fff;
+  // }
 `
 
 export default RatioSlider

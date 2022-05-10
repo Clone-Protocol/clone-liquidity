@@ -72,7 +72,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box sx={{ fontSize: '14px', fontWeight: '600' }}>
+				<Box sx={{ fontSize: '11px', fontWeight: '500' }}>
 					{params.row.fromPriceRange.toFixed(2)} - {params.row.toPriceRange.toFixed(2)}
 				</Box>
 			)

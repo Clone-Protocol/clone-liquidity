@@ -56,7 +56,7 @@ const MiniLineChartAlt: React.FC<LineChartProps> = ({
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <Area dataKey="value" type="monotone" stroke={color} fill="url(#gradient)" strokeWidth={2} />
+          <Area dataKey="value" type="monotone" stroke={color} fill="url(#gradient)" strokeWidth={1} />
         </AreaChart>
       </ResponsiveContainer>
     </Wrapper>

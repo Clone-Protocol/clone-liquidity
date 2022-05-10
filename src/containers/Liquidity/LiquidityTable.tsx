@@ -1,4 +1,5 @@
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Divider } from '@mui/material'
+import { styled } from '@mui/system'
 import { useEffect, useState } from 'react'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
@@ -42,13 +43,14 @@ const LiquidityTable = () => {
           // '& .super-app-theme--row': { border: 'solid 1px #535353' },
           // '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353' },
         }}>
-        <Stack mt={4} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
+        <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
           <PageTabs value={filter} onChange={handleFilterChange}>
             {Object.keys(FilterTypeMap).map((f) => (
               <PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
             ))}
           </PageTabs>
         </Stack>
+        <StyledDivider />
         <TabPanel value={tab} index={0}>
           <GridComet filter={filter} />
         </TabPanel>
@@ -62,5 +64,13 @@ const LiquidityTable = () => {
     </div>
 	)
 }
+
+const StyledDivider = styled(Divider)`
+	background-color: #535353;
+  margin: 0 auto;
+	margin-top: 20px;
+  width: 95%;
+	height: 1px;
+`
 
 export default LiquidityTable

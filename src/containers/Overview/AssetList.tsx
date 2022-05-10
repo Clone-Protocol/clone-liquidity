@@ -2,7 +2,7 @@ import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
@@ -19,11 +19,13 @@ import SearchInput from '~/components/Overview/SearchInput'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
+  const [searchTerm, setSearchTerm] = useState('')
 	const { publicKey } = useWallet()
 
 	const { data: assets } = useAssetsQuery({
     userPubKey: publicKey,
     filter,
+    searchTerm,
 	  refetchOnMount: true,
     enabled: publicKey != null
 	})
@@ -31,6 +33,13 @@ const AssetList: React.FC = () => {
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
 	}
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		const newVal = e.currentTarget.value
+		if (newVal) {
+			setSearchTerm(newVal)
+		}
+	}, [searchTerm])
 
 	return (
 		<Box
@@ -40,8 +49,6 @@ const AssetList: React.FC = () => {
         padding: '18px 36px',
         borderRadius: '10px',
         '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '11px' },
-				// '& .super-app-theme--row': { background: '#1b1b1b' },
-				// '& .super-app-theme--cell': { borderBottom: 'solid 1px #535353' },
 			}}>
 			<Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
 				<PageTabs value={filter} onChange={handleFilterChange}>
@@ -49,7 +56,7 @@ const AssetList: React.FC = () => {
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
 				</PageTabs>
-        <SearchInput />
+        <SearchInput onChange={handleSearch} />
 			</Stack>
       <Divider sx={{ backgroundColor: '#535353' }} />
       <Grid

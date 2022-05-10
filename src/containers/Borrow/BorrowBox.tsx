@@ -55,13 +55,6 @@ const BorrowBox = () => {
     enabled: publicKey != null
   });
 
-	const handleChangeFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		const newVal = e.currentTarget.value
-		if (newVal) {
-			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
-		}
-	}, [fromPair])
-
   const handleChangeAsset = useCallback((data: AssetType) => {
     if (data) {
       const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
@@ -70,10 +63,16 @@ const BorrowBox = () => {
     }
   }, [assetIndex, borrowAsset])
 
+  const handleChangeFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		const newVal = e.currentTarget.value
+		if (newVal) {
+			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
+		}
+	}, [fromPair])
+
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setCollRatio(newValue)
-      //TODO: binding web3
 		}
 	}, [collRatio])
 

@@ -1,4 +1,4 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Divider } from '@mui/material'
 import { styled } from '@mui/system'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
@@ -24,12 +24,14 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<Box
 					sx={{
-						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
+						background: 'linear-gradient(180deg, #333333 50%, #171717 50%)',
 						borderRadius: '10px',
 						border: 'solid 1px #809cff',
-						padding: '8px',
+						paddingTop: '8px',
+            paddingBottom: '8px'
 					}}>
 					<PriceValue>{cometData.lowerLimit.toFixed(2)}</PriceValue>
+          <StyledDivider />
 					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
@@ -44,8 +46,10 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 					}}>
 					Center Price
 				</Box>
-				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', padding: '8px' }}>
+				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', paddingTop: '8px',
+            paddingBottom: '8px' }}>
 					<PriceValue>{assetData.price.toFixed(2)}</PriceValue>
+          <StyledDivider />
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
@@ -62,12 +66,14 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<Box
 					sx={{
-						background: 'linear-gradient(180deg, #333333 55%, #171717 45%)',
+						background: 'linear-gradient(180deg, #333333 50%, #171717 50%)',
 						borderRadius: '10px',
 						border: 'solid 1px #0038ff',
-						padding: '8px',
+						paddingTop: '8px',
+            paddingBottom: '8px'
 					}}>
 					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>
+          <StyledDivider />
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
@@ -81,6 +87,12 @@ const PriceValue = styled('div')`
 	font-size: 16px;
 	font-weight: 500;
 	text-align: center;
+`
+
+const StyledDivider = styled(Divider)`
+	background-color: #444;
+	height: 1px;
+  margin-top: 2px;
 `
 
 const RangePair = styled('div')`

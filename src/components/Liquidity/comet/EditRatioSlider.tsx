@@ -36,6 +36,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
     fontWeight: '600',
+    width: '51px',
     padding: '4px 8px 4px 8px',
     borderRadius: '10px',
     border: 'solid 1px #809cff',
@@ -49,16 +50,12 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 }))
 
 const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChange }) => {
-  const [ratioArr, setRatioArr] = useState([currentRatio])
-
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
-      // setRatioArr([currentRatio, newValue])
-
       onChange && onChange(newValue, mintAmount)
 		}
 	}
@@ -74,47 +71,55 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
 		<Box>
 			<Box width="100%" display="flex">
         <SliderTxt sx={{ marginRight: '8px' }}>Min</SliderTxt>
-				<StyledSlider
-					value={ratio}
-					min={min}
-					step={10}
-					max={max}
-					valueLabelFormat={valueLabelFormat}
-					onChange={handleChangeCollRatio}
-					valueLabelDisplay="on"
-				/>
+        <Box sx={{width: '100%', height: '48px'}}>
+          <StyledSlider
+            value={ratio}
+            min={min}
+            step={10}
+            max={max}
+            valueLabelFormat={valueLabelFormat}
+            onChange={handleChangeCollRatio}
+            valueLabelDisplay="on"
+          />
+          <Box sx={{ position: 'relative', top: '-32px', left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
+            <FixThumb />
+            <FixValueLabel>{currentRatio}%</FixValueLabel>
+          </Box>
+        </Box>
         <SliderTxt sx={{ marginLeft: '8px' }}>Max</SliderTxt>
 			</Box>
-      <Stack direction="row" gap={2}>
-        <StyledBox>
-          <FormBox>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box display="flex">
-                <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  USDi
+      <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
+        <Stack direction="row" gap={2}>
+          <StyledBox>
+            <FormBox>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box display="flex">
+                  <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                  <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
+                    USDi
+                  </Box>
                 </Box>
-              </Box>
-              <InputAmount id="ip-amount" type="number" value={mintAmount} onChange={handleChangeAmount} />
-            </Stack>
-          </FormBox>
-          <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
-        </StyledBox>
-        <StyledBox>
-          <FormBox sx={{ background: '#252627', color: '#9a9a9a'}}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box display="flex">
-                <Image src={assetData.tickerIcon} width="28px" height="28px" />
-                <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  {assetData.tickerSymbol}
+                <InputAmount id="ip-amount" type="number" sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={mintAmount} onChange={handleChangeAmount} />
+              </Stack>
+            </FormBox>
+            <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
+          </StyledBox>
+          <StyledBox>
+            <FormBox sx={{ background: '#252627', color: '#9a9a9a'}}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box display="flex">
+                  <Image src={assetData.tickerIcon} width="28px" height="28px" />
+                  <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
+                    {assetData.tickerSymbol}
+                  </Box>
                 </Box>
-              </Box>
-              <Box>{(mintAmount/assetData.price).toLocaleString()}</Box>
-            </Stack>
-          </FormBox>
-          <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
-        </StyledBox>
-      </Stack>
+                <Box>{(mintAmount/assetData.price).toLocaleString()}</Box>
+              </Stack>
+            </FormBox>
+            <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
+          </StyledBox>
+        </Stack>
+      </Box>
 		</Box>
 	)
 }
@@ -133,6 +138,28 @@ const SliderTxt = styled('div')`
   font-weight: 500;
   color: #fff;
   margin-bottom: 8px;
+`
+
+const FixThumb = styled('div')`
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 99999px;
+  border: 3px solid #686868;
+`
+
+const FixValueLabel = styled(Box)`
+  width: 51px;
+  height: 24px;
+  padding: 2px 8px 1px 12px;
+  margin-top: 8px;
+  margin-left: -16px;
+  border-radius: 10px;
+  border: solid 1px #686868;
+  background-color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
 `
 
 const FormBox = styled(Box)`
@@ -169,7 +196,7 @@ const InputAmount = styled(`input`)`
 	background-color: #323436;
 	font-size: 14px;
 	font-weight: 600;
-	color: #fff;
+	color: #adadad;
 `
 
 export default EditRatioSlider

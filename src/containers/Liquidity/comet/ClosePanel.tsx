@@ -35,6 +35,7 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
 
 	return (
     <Box sx={{ padding: '30px', background: 'rgba(21, 22, 24, 0.75)', borderRadius: '10px', marginTop: '17px' }}>
+      <Title>Close Comet</Title>
       <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
         <Stack direction="row" justifyContent="space-between">
           <DetailHeader>Collateral</DetailHeader>
@@ -59,6 +60,14 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
     </Box>
 	)
 }
+
+const Title = styled('div')`
+	font-size: 16px;
+	font-weight: 600;
+	color: #fff;
+  margin-left: 15px;
+	margin-bottom: 15px;
+`
 
 const DetailHeader = styled('div')`
 	font-size: 12px;

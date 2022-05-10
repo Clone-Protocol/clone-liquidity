@@ -35,7 +35,7 @@ const EditCollateralInput: React.FC<Props> = ({
             <StyledTab value={1} label="Withdraw"></StyledTab>
           </StyledTabs>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494'}}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494', marginRight: '15px'}}>
           Max withdrawable: <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
         </Box>
       </Stack>
@@ -47,7 +47,7 @@ const EditCollateralInput: React.FC<Props> = ({
               <TickerSymbol>{tickerSymbol}</TickerSymbol>
             </Box>
           </Box>
-          <InputAmount id="ip-amount" type="number" value={collAmount} onChange={onChangeAmount} />
+          <InputAmount id="ip-amount" type="number" sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={collAmount} onChange={onChangeAmount} />
         </FormStack>
         <BottomBox>
           Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>
@@ -84,7 +84,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 16px;
 	font-weight: 500;
-	color: #fff;
+	color: #adadad;
 `
 
 const BottomBox = styled(Box)`

@@ -25,7 +25,7 @@ const PairInput: React.FC<Props> = ({
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494' }}>Balance: <span style={{color:'#90e4fe'}}>{balance?.toLocaleString()} {tickerSymbol}</span></Box> : <></>}
+				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '15px' }}>Balance: <span style={{color:'#90e4fe'}}>{balance?.toLocaleString()} {tickerSymbol}</span></Box> : <></>}
 			</Stack>
       <Box
         sx={{
@@ -77,7 +77,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 16px;
 	font-weight: 500;
-	color: #fff;
+	color: #adadad;
 `
 
 const CurrentPrice = styled('div')`

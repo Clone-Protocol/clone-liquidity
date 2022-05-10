@@ -28,9 +28,9 @@ const FormStack = styled(Stack)`
 	width: 100%;
 	height: 54px;
 	padding: 9px 21px 8px 24px;
+  background: rgba(21, 22, 24, 0.75);
 	border-radius: 8px;
 	border: solid 1px #5c5c5c;
-	background-color: #171717;
 `
 
 const TickerSymbol = styled('div')`
@@ -45,7 +45,7 @@ const InputAmount = styled(`input`)`
 	margin-left: 30px;
 	text-align: right;
 	border: 0px;
-	background-color: #171717;
+	background-color: rgba(21, 22, 24, 0.75);
 	font-size: 16px;
 	font-weight: 500;
 	color: #5c5c5c;

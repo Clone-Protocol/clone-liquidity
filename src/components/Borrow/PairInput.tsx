@@ -25,7 +25,7 @@ const PairInput: React.FC<Props> = ({
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494' }}>Balance: <span style={{color:'#90e4fe'}}>{balance} {tickerSymbol}</span></Box> : <></>}
+				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '10px' }}>Balance: <span style={{color:'#90e4fe'}}>{balance} {tickerSymbol}</span></Box> : <></>}
 			</Stack>
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
@@ -35,7 +35,7 @@ const PairInput: React.FC<Props> = ({
 						{/* <TickerName>{tickerName}</TickerName> */}
 					</Box>
 				</Box>
-				<InputAmount id="ip-amount" type="number" value={value} onChange={onChange} disabled={disabled} />
+				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChange} disabled={disabled} />
 			</InputStack>
 		</FormControl>
 	)
@@ -70,7 +70,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 16px;
 	font-weight: 500;
-	color: #fff;
+	color: #adadad;
 `
 
 export default PairInput

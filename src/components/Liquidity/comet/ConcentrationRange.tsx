@@ -30,13 +30,12 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 27,
 		width: 27,
 		backgroundColor: LEFT_SLIDER_THUMB_COLOR,
-		border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
+		// border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 		marginTop: '-46px',
 		marginLeft: '-12px',
 		'&::after': {
-			border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
-			borderRadius: 0,
-			background: '#fff',
+			// border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
+			// background: '#fff',
 			width: '1px',
 			height: '50px',
 			position: 'absolute',
@@ -74,14 +73,13 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 30,
 		width: 75,
 		backgroundColor: '#171717',
-		border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
+		// border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
 		borderRadius: '8px',
 		marginTop: '-44px',
-		marginLeft: '36px',
+		marginLeft: '37px',
 		'&::after': {
-			border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
-			borderRadius: 0,
-			background: '#fff',
+			// border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
+			// background: '#fff',
 			width: '1px',
 			height: '50px',
 			position: 'absolute',
@@ -91,8 +89,8 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		'& .MuiSlider-valueLabel': {
 			fontSize: '11px',
 			fontWeight: '500',
-			top: 24,
-			left: 15,
+			top: 26,
+			left: 12,
 			backgroundColor: 'unset',
 			color: '#fff',
 			'&:before': {
@@ -266,7 +264,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 const CenterPriceBox = styled(Box)`
 	position: absolute;
 	left: calc(50% - 30px);
-	bottom: 80px;
+	bottom: 81px;
 	width: 74px;
 	height: 30px;
 	border-radius: 10px;

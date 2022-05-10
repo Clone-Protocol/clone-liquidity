@@ -3,9 +3,12 @@ import { Box, Input } from '@mui/material'
 import Image from 'next/image'
 import SearchIcon from 'public/images/search-icon.svg'
 
-const SearchInput: React.FC = () => {
+interface Props {
+  onChange?: any
+}
+const SearchInput: React.FC<Props> = ({onChange}) => {
 	return <StyledBox>
-    <StyledInput placeholder="Search for iAsset Liquidity Pool" />
+    <StyledInput placeholder="Search for iAsset Liquidity Pool" onChange={onChange} />
     <Box sx={{ position: 'relative', right: '-10px', top: '0px' }}>
       <Image src={SearchIcon} />
     </Box>

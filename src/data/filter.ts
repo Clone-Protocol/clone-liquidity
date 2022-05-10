@@ -1,8 +1,8 @@
 export enum FilterTypeMap {
 	'all' = 'All',
 	'crypto' = 'Crypto',
-	'stocks' = 'Stocks',
-	'fx' = 'FX',
+  'fx' = 'FX',
 	'commodities' = 'Commodities',
+	'stocks' = 'Stocks',
 }
 export type FilterType = keyof typeof FilterTypeMap
