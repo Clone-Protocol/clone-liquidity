@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { BN } from '@project-serum/anchor'
-import { toScaledNumber } from 'sdk/src/utils'
+import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { useIncept } from '~/hooks/useIncept'
 
 export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {

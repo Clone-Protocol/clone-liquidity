@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
-import { toScaledNumber } from 'sdk/src/utils'
+import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
