@@ -1,0 +1,313 @@
+import { Box, Stack, Button, Divider } from '@mui/material'
+import React, { useState, useEffect, useCallback } from 'react'
+import { styled } from '@mui/system'
+import { useIncept } from '~/hooks/useIncept'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useSnackbar } from 'notistack'
+import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
+import InfoBookIcon from 'public/images/info-book-icon.png'
+import OneIcon from 'public/images/one-icon.svg'
+import TwoIcon from 'public/images/two-icon.svg'
+import ThreeIcon from 'public/images/three-icon.svg'
+import PairInput from '~/components/Asset/PairInput'
+import PairInputView from '~/components/Asset/PairInputView'
+import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
+import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
+import RatioSlider from '~/components/Asset/RatioSlider'
+import { LoadingProgress } from '~/components/Common/Loading'
+import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
+import { useCometMutation } from '~/features/Comet/Comet.mutation'
+import withSuspense from '~/hocs/withSuspense'
+import Image from 'next/image'
+import { Balance } from '~/features/Borrow/Balance.query'
+
+const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, assetData: PositionInfo, assetIndex: number }) => {
+  const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
+  const { enqueueSnackbar } = useSnackbar()
+  const [cometData, setCometData] = useState<CometInfo>({
+    isTight: false,
+    collRatio: 50,
+    lowerLimit: 40.0,
+    upperLimit: 180.0
+  })
+  const [collAmount, setCollAmount] = useState(0.0)
+  const [mintAmount, setMintAmount] = useState(0.0)
+
+  const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
+
+  useEffect(() => {
+    if (assetData) {
+      setCometData({
+        ...cometData,
+        lowerLimit: assetData.price / 2,
+        upperLimit: (assetData.price * 3) / 2
+      })
+    }
+  }, [assetData])
+
+  useEffect(() => {
+    async function fetch() {
+      if (collAmount && mintAmount) {
+        console.log('calculateRange', collAmount +"/"+mintAmount)
+        const program = getInceptApp()
+        let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+          0, // USDi
+          assetIndex,
+          collAmount,
+          mintAmount
+        ))!
+
+        console.log('l', lowerLimit)
+        console.log('u', upperLimit)
+        // if (lowerLimit && upperLimit) {
+          setCometData({
+            ...cometData,
+            lowerLimit,
+            upperLimit
+          })
+        // }
+      }
+    }
+    fetch()
+  }, [collAmount, mintAmount])
+
+  const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.currentTarget.value) {
+			const amount = parseFloat(e.currentTarget.value)
+
+      console.log('a', amount)
+      console.log('b', mintAmount)
+
+      setCollAmount(amount)
+		} else {
+      setCollAmount(0.0)
+		}
+	}, [collAmount])
+
+	const handleChangeCollRatio = useCallback( async (event: Event, newValue: number | number[]) => {
+	  if (typeof newValue === 'number') {
+	    const newData = {
+	      ...cometData,
+	      collRatio: newValue
+	    }
+	    setCometData(newData)
+	  }
+	}, [cometData])
+
+	const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.currentTarget.value) {
+			const amount = parseFloat(e.currentTarget.value)
+
+      console.log('c', amount)
+      console.log('d', mintAmount)
+
+			setMintAmount(amount)
+		} else {
+			setMintAmount(0.0)
+		}
+	}, [mintAmount])
+
+
+	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
+		const newData = {
+			...cometData,
+			isTight,
+			lowerLimit,
+			upperLimit,
+		}
+		setCometData(newData)
+	}, [cometData])
+
+	const onComet = async () => {
+    await mutateAsyncComet(
+      {
+        collateralIndex: 0,
+        iassetIndex: assetIndex,
+        usdiAmount: mintAmount,
+        collateralAmount: collAmount,
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to comet')
+          }
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to comet')
+        }
+      }
+    )
+	}
+
+  return (
+    <Box>
+      <PriceIndicatorBox
+        tickerIcon={assetData.tickerIcon}
+        tickerName={assetData.tickerName}
+        tickerSymbol={assetData.tickerSymbol}
+        value={assetData.price}
+      />
+
+      <Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
+        <Stack
+          sx={{
+            background: 'rgba(128, 156, 255, 0.09)',
+            border: '1px solid #809cff',
+            borderRadius: '10px',
+            color: '#809cff',
+            padding: '8px',
+            marginBottom: '26px',
+          }}
+          direction="row">
+          <Box sx={{ width: '73px', textAlign: 'center', marginTop: '6px' }}>
+            <Image src={InfoBookIcon} />
+          </Box>
+          <WarningBox>
+            Fill in two of the three parts and the third part will automatically generate.{' '}
+            <br />Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
+          </WarningBox>
+        </Stack>
+
+        <Box>
+          <SubTitle>
+            <Image src={OneIcon} />{' '}
+            <Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box>
+          </SubTitle>
+          <PairInput
+            tickerIcon={'/images/assets/USDi.png'}
+            tickerName="USDi Coin"
+            tickerSymbol="USDi"
+            value={collAmount}
+            headerTitle="Balance"
+            headerValue={balances?.usdiVal}
+            onChange={handleChangeFromAmount}
+          />
+        </Box>
+        <StyledDivider />
+
+        <Box>
+          <SubTitle>
+            <Image src={TwoIcon} />{' '}
+            <Box sx={{ marginLeft: '9px' }}>
+              Amount of USDi & {assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
+              AMM
+            </Box>
+          </SubTitle>
+          <Box sx={{ marginTop: '15px' }}>
+            <RatioSlider min={0} max={100} value={cometData?.collRatio} hideValueBox onChange={handleChangeCollRatio} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
+              <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
+              <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
+            </Box>
+          </Box>
+          <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
+            <PairInput
+              tickerIcon={'/images/assets/USDi.png'}
+              tickerName="USDi Coin"
+              tickerSymbol="USDi"
+              value={mintAmount}
+              headerTitle="Max amount mintable"
+              headerValue={0}
+              onChange={handleChangeToAmount}
+            />
+          </Box>
+          <PairInputView
+            tickerIcon={assetData.tickerIcon}
+            tickerSymbol={assetData.tickerSymbol}
+            value={mintAmount / assetData.price}
+          />
+        </Box>
+        <StyledDivider />
+
+        <Box>
+          <SubTitle>
+            <Image src={ThreeIcon} />{' '}
+            <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box>
+          </SubTitle>
+
+          <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
+            <ConcentrationRange
+              assetData={assetData}
+              cometData={cometData}
+              onChange={handleChangeConcentRange}
+              max={assetData.maxRange}
+              defaultLower={(assetData.price / 2)}
+              defaultUpper={((assetData.price * 3) / 2)}
+            />
+          </Box>
+
+          <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
+
+          {/* {assetData.tightRange > assetData.price - cometData.lowerLimit ||
+          assetData.tightRange > cometData.upperLimit - assetData.price ? (
+            <Stack
+              sx={{
+                maxWidth: '653px',
+                background: 'rgba(128, 156, 255, 0.09)',
+                border: '1px solid #e9d100',
+                borderRadius: '10px',
+                color: '#9d9d9d',
+                padding: '12px',
+                marginTop: '19px',
+                marginBottom: '30px',
+              }}
+              direction="row">
+              <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
+                <Image src={WarningIcon} />
+              </Box>
+              <WarningBox>
+                Liquidity concentration range for this position is very slim, this results
+                in higher potential yield and high probabily of liqudiation.
+              </WarningBox>
+            </Stack>
+          ) : (
+            <></>
+          )} */}
+        </Box>
+        <StyledDivider />
+
+        <CometButton onClick={onComet}>Create Comet Position</CometButton>
+      </Box>
+    </Box>
+  )
+}
+
+const StyledDivider = styled(Divider)`
+	background-color: #535353;
+	margin-bottom: 30px;
+	margin-top: 30px;
+	height: 1px;
+`
+
+const WarningBox = styled(Box)`
+	max-width: 500px;
+	padding-right: 10px;
+	font-size: 11px;
+	font-weight: 500;
+	color: #989898;
+`
+
+const SubTitle = styled(Box)`
+	display: flex;
+	font-size: 14px;
+	font-weight: 500;
+`
+
+const CometButton = styled(Button)`
+	width: 100%;
+	background-color: #4e609f;
+	color: #fff;
+	border-radius: 10px;
+	margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: 600;
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
+`
+
+export default withSuspense(CometPanel, <LoadingProgress />)
