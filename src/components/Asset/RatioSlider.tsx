@@ -1,4 +1,5 @@
 import { Box, Slider, styled } from '@mui/material'
+import chroma from 'chroma-js'
 
 interface Props {
 	min?: number
@@ -47,6 +48,12 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 		return `${value}%`
 	}
 
+  const pickHex = (x: number) => {
+    const f = chroma.scale(['#809cff', '#f00']).gamma(2)
+    const rgb = f(x/100).css()
+    return rgb
+  }
+
 	return (
 		<Box
 			sx={{
@@ -55,6 +62,14 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
 			<Box width="100%">
 				<StyledSlider
+          sx={{
+            '& .MuiSlider-valueLabel': {
+              border: `solid 1px ${pickHex(value)}`,
+            },
+            '& .MuiSlider-thumb': {
+              border: `3px solid ${pickHex(value)}`,
+            }
+          }}
 					value={value}
 					min={min}
 					step={10}

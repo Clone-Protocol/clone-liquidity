@@ -27,36 +27,50 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 	padding: '13px 0',
 	//leftThumb
 	'& .MuiSlider-thumb[data-index="0"]': {
-		height: 27,
-		width: 27,
-		backgroundColor: LEFT_SLIDER_THUMB_COLOR,
-		// border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
+		height: 30,
+		width: 75,
+		// backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+    backgroundColor: '#171717',
 		marginTop: '-46px',
-		marginLeft: '-12px',
+		marginLeft: '-37px',
+    borderTopLeftRadius: '8px',
+    borderTopRightRadius: '8px',
+    borderBottomRightRadius: '0px',
+    borderBottomLeftRadius: '8px',
 		'&::after': {
-			// border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
-			// background: '#fff',
 			width: '1px',
 			height: '50px',
 			position: 'absolute',
-			left: '24px',
+			left: '74px',
 			top: '35px',
 		},
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
 		},
+    '& .left-thumb-cursor': {
+      position: 'relative',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+      borderTopLeftRadius: '8px',
+      borderBottomLeftRadius: '8px',
+      width: '14px',
+      height: '28px',
+      marginLeft: '-64px'
+    },
 		'& .slider-bar': {
-			height: 9,
+			height: 16,
 			width: 1,
-			backgroundColor: 'currentColor',
+			backgroundColor: '#000',
 			marginLeft: 1,
 			marginRight: 1,
 		},
 		'& .MuiSlider-valueLabel': {
 			fontSize: '11px',
 			fontWeight: '500',
-			top: 24,
-			left: 20,
+			top: 25,
+			left: 16,
 			backgroundColor: 'unset',
 			color: '#fff',
 			'&:before': {
@@ -73,13 +87,13 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 30,
 		width: 75,
 		backgroundColor: '#171717',
-		// border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
-		borderRadius: '8px',
+    borderTopLeftRadius: '8px',
+    borderTopRightRadius: '8px',
+    borderBottomRightRadius: '8px',
+    borderBottomLeftRadius: '0px',
 		marginTop: '-44px',
 		marginLeft: '37px',
 		'&::after': {
-			// border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
-			// background: '#fff',
 			width: '1px',
 			height: '50px',
 			position: 'absolute',
@@ -121,8 +135,10 @@ function ThumbComponent(props: ThumbComponentProps) {
 	return (
 		<SliderThumb {...other}>
 			{children}
-			<span className="slider-bar" />
-			<span className="slider-bar" />
+      <Box className="left-thumb-cursor">
+			  <span className="slider-bar" />
+			  <span className="slider-bar" />
+      </Box>
 		</SliderThumb>
 	)
 }
@@ -156,7 +172,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 			background: BACKGROUND_VALID_RANGE_COLOR,
 		},
 		'& .MuiSlider-thumb[data-index="0"]': {
-			backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+			// backgroundColor: LEFT_SLIDER_THUMB_COLOR,
 			border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
 				border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
@@ -201,7 +217,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 						background: BACKGROUND_WARNING_RANGE_COLOR,
 					},
 					'& .MuiSlider-thumb[data-index="0"]': {
-						backgroundColor: BACKGROUND_WARNING_RANGE_COLOR,
+						// backgroundColor: BACKGROUND_WARNING_RANGE_COLOR,
 						border: `solid 1px ${BACKGROUND_WARNING_RANGE_COLOR}`,
 						'&::after': {
 							border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`,
@@ -222,7 +238,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 						background: BACKGROUND_VALID_RANGE_COLOR,
 					},
 					'& .MuiSlider-thumb[data-index="0"]': {
-						backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+						// backgroundColor: LEFT_SLIDER_THUMB_COLOR,
 						border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 						'&::after': {
 							border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
