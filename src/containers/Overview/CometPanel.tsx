@@ -19,12 +19,26 @@ import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.qu
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
 
 const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, assetData: PositionInfo, assetIndex: number }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
+
+  const {
+		register,
+		handleSubmit,
+		control,
+		formState: { isSubmitted, errors },
+		clearErrors,
+		watch,
+	} = useForm({
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+	})
+  
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     collRatio: 50,
@@ -51,6 +65,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
       if (collAmount && mintAmount) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
         const program = getInceptApp()
+        await program.loadManager()
         let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
           0, // USDi
           assetIndex,
