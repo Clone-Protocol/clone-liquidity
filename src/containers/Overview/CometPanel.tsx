@@ -21,11 +21,13 @@ import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
+import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
 const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, assetData: PositionInfo, assetIndex: number }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
+  const [loading, setLoading] = useState(false)
 
   const {
 		register,
@@ -35,9 +37,15 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 		clearErrors,
 		watch,
 	} = useForm({
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
+    defaultValues: {
+      collAmount: 0.0,
+      mintAmount: 0.0,
+    }
 	})
+  const [collAmount, mintAmount] = watch([
+		'collAmount',
+		'mintAmount',
+	])
   
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
@@ -45,8 +53,8 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
     lowerLimit: 40.0,
     upperLimit: 180.0
   })
-  const [collAmount, setCollAmount] = useState(0.0)
-  const [mintAmount, setMintAmount] = useState(0.0)
+  // const [collAmount, setCollAmount] = useState(0.0)
+  // const [mintAmount, setMintAmount] = useState(0.0)
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
 
@@ -87,18 +95,18 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
     fetch()
   }, [collAmount, mintAmount])
 
-  const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.currentTarget.value) {
-			const amount = parseFloat(e.currentTarget.value)
+  // const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
+	// 	if (e.currentTarget.value) {
+	// 		const amount = parseFloat(e.currentTarget.value)
 
-      console.log('a', amount)
-      console.log('b', mintAmount)
+  //     console.log('a', amount)
+  //     console.log('b', mintAmount)
 
-      setCollAmount(amount)
-		} else {
-      setCollAmount(0.0)
-		}
-	}, [collAmount])
+  //     setCollAmount(amount)
+	// 	} else {
+  //     setCollAmount(0.0)
+	// 	}
+	// }, [collAmount])
 
 	const handleChangeCollRatio = useCallback( async (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
@@ -110,19 +118,18 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 	  }
 	}, [cometData])
 
-	const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.currentTarget.value) {
-			const amount = parseFloat(e.currentTarget.value)
+	// const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+	// 	if (e.currentTarget.value) {
+	// 		const amount = parseFloat(e.currentTarget.value)
 
-      console.log('c', amount)
-      console.log('d', mintAmount)
+  //     console.log('c', amount)
+  //     console.log('d', mintAmount)
 
-			setMintAmount(amount)
-		} else {
-			setMintAmount(0.0)
-		}
-	}, [mintAmount])
-
+	// 		setMintAmount(amount)
+	// 	} else {
+	// 		setMintAmount(0.0)
+	// 	}
+	// }, [mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -135,6 +142,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 	}, [cometData])
 
 	const onComet = async () => {
+    setLoading(true)
     await mutateAsyncComet(
       {
         collateralIndex: 0,
@@ -147,146 +155,197 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to comet')
+            setLoading(false)
           }
         },
         onError(err) {
           console.error(err)
           enqueueSnackbar('Failed to comet')
+          setLoading(false)
         }
       }
     )
 	}
 
+  const isValid = Object.keys(errors).length === 0
+
   return (
-    <Box>
-      <PriceIndicatorBox
-        tickerIcon={assetData.tickerIcon}
-        tickerName={assetData.tickerName}
-        tickerSymbol={assetData.tickerSymbol}
-        value={assetData.price}
-      />
+    <>
+      {loading && (
+				<LoadingWrapper>
+					<LoadingIndicator open inline />
+				</LoadingWrapper>
+			)}
+    
+      <Box>
+        <PriceIndicatorBox
+          tickerIcon={assetData.tickerIcon}
+          tickerName={assetData.tickerName}
+          tickerSymbol={assetData.tickerSymbol}
+          value={assetData.price}
+        />
 
-      <Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
-        <Stack
-          sx={{
-            background: 'rgba(128, 156, 255, 0.09)',
-            border: '1px solid #809cff',
-            borderRadius: '10px',
-            color: '#809cff',
-            padding: '8px',
-            marginBottom: '26px',
-          }}
-          direction="row">
-          <Box sx={{ width: '73px', textAlign: 'center', marginTop: '6px' }}>
-            <Image src={InfoBookIcon} />
-          </Box>
-          <WarningBox>
-            Fill in two of the three parts and the third part will automatically generate.{' '}
-            <br />Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
-          </WarningBox>
-        </Stack>
-
-        <Box>
-          <SubTitle>
-            <Image src={OneIcon} />{' '}
-            <Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box>
-          </SubTitle>
-          <PairInput
-            tickerIcon={'/images/assets/USDi.png'}
-            tickerName="USDi Coin"
-            tickerSymbol="USDi"
-            value={collAmount}
-            headerTitle="Balance"
-            headerValue={balances?.usdiVal}
-            onChange={handleChangeFromAmount}
-          />
-        </Box>
-        <StyledDivider />
-
-        <Box>
-          <SubTitle>
-            <Image src={TwoIcon} />{' '}
-            <Box sx={{ marginLeft: '9px' }}>
-              Amount of USDi & {assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
-              AMM
+        <Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
+          <Stack
+            sx={{
+              background: 'rgba(128, 156, 255, 0.09)',
+              border: '1px solid #809cff',
+              borderRadius: '10px',
+              color: '#809cff',
+              padding: '8px',
+              marginBottom: '26px',
+            }}
+            direction="row">
+            <Box sx={{ width: '73px', textAlign: 'center', marginTop: '6px' }}>
+              <Image src={InfoBookIcon} />
             </Box>
-          </SubTitle>
-          <Box sx={{ marginTop: '15px' }}>
-            <RatioSlider min={0} max={100} value={cometData?.collRatio} hideValueBox onChange={handleChangeCollRatio} />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
-              <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
-              <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
-            </Box>
-          </Box>
-          <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
-            <PairInput
-              tickerIcon={'/images/assets/USDi.png'}
-              tickerName="USDi Coin"
-              tickerSymbol="USDi"
-              value={mintAmount}
-              headerTitle="Max amount mintable"
-              headerValue={0}
-              onChange={handleChangeToAmount}
-            />
-          </Box>
-          <PairInputView
-            tickerIcon={assetData.tickerIcon}
-            tickerSymbol={assetData.tickerSymbol}
-            value={mintAmount / assetData.price}
-          />
-        </Box>
-        <StyledDivider />
+            <WarningBox>
+              Fill in two of the three parts and the third part will automatically generate.{' '}
+              <br />Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
+            </WarningBox>
+          </Stack>
 
-        <Box>
-          <SubTitle>
-            <Image src={ThreeIcon} />{' '}
-            <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box>
-          </SubTitle>
-
-          <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
-            <ConcentrationRange
-              assetData={assetData}
-              cometData={cometData}
-              onChange={handleChangeConcentRange}
-              max={assetData.maxRange}
-              defaultLower={(assetData.price / 2)}
-              defaultUpper={((assetData.price * 3) / 2)}
-            />
-          </Box>
-
-          <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
-
-          {/* {assetData.tightRange > assetData.price - cometData.lowerLimit ||
-          assetData.tightRange > cometData.upperLimit - assetData.price ? (
-            <Stack
-              sx={{
-                maxWidth: '653px',
-                background: 'rgba(128, 156, 255, 0.09)',
-                border: '1px solid #e9d100',
-                borderRadius: '10px',
-                color: '#9d9d9d',
-                padding: '12px',
-                marginTop: '19px',
-                marginBottom: '30px',
+          <Box>
+            <SubTitle>
+              <Image src={OneIcon} />{' '}
+              <Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box>
+            </SubTitle>
+            <Controller
+              name="collAmount"
+              control={control}
+              rules={{
+                validate(value) {
+                  console.log('v', value);
+                  if (value <= 0) {
+                    return 'the collateral amount should be above zero.'
+                  } else if (value > balances?.usdiVal) {
+                    return 'The collateral amount cannot exceed the balance.'
+                  }
+                }
               }}
-              direction="row">
-              <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
-                <Image src={WarningIcon} />
-              </Box>
-              <WarningBox>
-                Liquidity concentration range for this position is very slim, this results
-                in higher potential yield and high probabily of liqudiation.
-              </WarningBox>
-            </Stack>
-          ) : (
-            <></>
-          )} */}
-        </Box>
-        <StyledDivider />
+              render={({ field }) => (
+                <PairInput
+                  tickerIcon={'/images/assets/USDi.png'}
+                  tickerName="USDi Coin"
+                  tickerSymbol="USDi"
+                  value={field.value}
+                  headerTitle="Balance"
+                  headerValue={balances?.usdiVal}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    field.onChange(parseFloat(event.currentTarget.value))
+                  }}
+                />
+              )}
+            />
+              
+          </Box>
+          <StyledDivider />
 
-        <CometButton onClick={onComet}>Create Comet Position</CometButton>
+          <Box>
+            <SubTitle>
+              <Image src={TwoIcon} />{' '}
+              <Box sx={{ marginLeft: '9px' }}>
+                Amount of USDi & {assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
+                AMM
+              </Box>
+            </SubTitle>
+            <Box sx={{ marginTop: '15px' }}>
+              <RatioSlider min={0} max={100} value={cometData?.collRatio} hideValueBox onChange={handleChangeCollRatio} />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
+                <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
+                <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
+              </Box>
+            </Box>
+            <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
+              <Controller
+                name="mintAmount"
+                control={control}
+                rules={{
+                  validate(value) {
+                    if (value <= 0) {
+                      return 'the mint amount should be above zero'
+                    }
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    tickerIcon={'/images/assets/USDi.png'}
+                    tickerName="USDi Coin"
+                    tickerSymbol="USDi"
+                    value={field.value}
+                    headerTitle="Max amount mintable"
+                    headerValue={0}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      field.onChange(parseFloat(event.currentTarget.value))
+                    }}
+                  />
+                )}
+              />
+            </Box>
+            <PairInputView
+              tickerIcon={assetData.tickerIcon}
+              tickerSymbol={assetData.tickerSymbol}
+              value={mintAmount / assetData.price}
+            />
+          </Box>
+          <StyledDivider />
+
+          <Box>
+            <SubTitle>
+              <Image src={ThreeIcon} />{' '}
+              <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box>
+            </SubTitle>
+
+            <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
+              <ConcentrationRange
+                assetData={assetData}
+                cometData={cometData}
+                onChange={handleChangeConcentRange}
+                max={assetData.maxRange}
+                defaultLower={(assetData.price / 2)}
+                defaultUpper={((assetData.price * 3) / 2)}
+              />
+            </Box>
+
+            <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
+
+            {/* {assetData.tightRange > assetData.price - cometData.lowerLimit ||
+            assetData.tightRange > cometData.upperLimit - assetData.price ? (
+              <Stack
+                sx={{
+                  maxWidth: '653px',
+                  background: 'rgba(128, 156, 255, 0.09)',
+                  border: '1px solid #e9d100',
+                  borderRadius: '10px',
+                  color: '#9d9d9d',
+                  padding: '12px',
+                  marginTop: '19px',
+                  marginBottom: '30px',
+                }}
+                direction="row">
+                <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
+                  <Image src={WarningIcon} />
+                </Box>
+                <WarningBox>
+                  Liquidity concentration range for this position is very slim, this results
+                  in higher potential yield and high probabily of liqudiation.
+                </WarningBox>
+              </Stack>
+            ) : (
+              <></>
+            )} */}
+          </Box>
+          <StyledDivider />
+
+          <div>
+            t: {isSubmitted}
+            t2: {errors.collAmount} {errors.mintAmount}
+          </div>
+
+          <CometButton onClick={onComet} disabled={isSubmitted && !isValid}>Create Comet Position</CometButton>
+        </Box>
       </Box>
-    </Box>
+    </>
   )
 }
 
