@@ -28,10 +28,6 @@ interface GetProps {
 }
 
 export interface UnconcentratedData {
-	// tickerIcon: string
-	// tickerName: string
-	// tickerSymbol: string
-	// price: number
 	borrowFrom: number
 	borrowTo: number
 }

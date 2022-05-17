@@ -1,4 +1,4 @@
-import { Box, Stack, Button, Divider } from '@mui/material'
+import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
@@ -19,7 +19,7 @@ import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.qu
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
@@ -30,13 +30,12 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
   const [loading, setLoading] = useState(false)
 
   const {
-		register,
 		handleSubmit,
 		control,
-		formState: { isSubmitted, errors },
-		clearErrors,
+		formState: { isDirty, errors },
 		watch,
 	} = useForm({
+    mode: 'onChange',
     defaultValues: {
       collAmount: 0.0,
       mintAmount: 0.0,
@@ -53,8 +52,6 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
     lowerLimit: 40.0,
     upperLimit: 180.0
   })
-  // const [collAmount, setCollAmount] = useState(0.0)
-  // const [mintAmount, setMintAmount] = useState(0.0)
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
 
@@ -95,19 +92,6 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
     fetch()
   }, [collAmount, mintAmount])
 
-  // const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	if (e.currentTarget.value) {
-	// 		const amount = parseFloat(e.currentTarget.value)
-
-  //     console.log('a', amount)
-  //     console.log('b', mintAmount)
-
-  //     setCollAmount(amount)
-	// 	} else {
-  //     setCollAmount(0.0)
-	// 	}
-	// }, [collAmount])
-
 	const handleChangeCollRatio = useCallback( async (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
 	    const newData = {
@@ -117,19 +101,6 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 	    setCometData(newData)
 	  }
 	}, [cometData])
-
-	// const handleChangeToAmount = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	if (e.currentTarget.value) {
-	// 		const amount = parseFloat(e.currentTarget.value)
-
-  //     console.log('c', amount)
-  //     console.log('d', mintAmount)
-
-	// 		setMintAmount(amount)
-	// 	} else {
-	// 		setMintAmount(0.0)
-	// 	}
-	// }, [mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -215,8 +186,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
               control={control}
               rules={{
                 validate(value) {
-                  console.log('v', value);
-                  if (value <= 0) {
+                  if (!value || value <= 0) {
                     return 'the collateral amount should be above zero.'
                   } else if (value > balances?.usdiVal) {
                     return 'The collateral amount cannot exceed the balance.'
@@ -237,7 +207,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                 />
               )}
             />
-              
+            <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
           </Box>
           <StyledDivider />
 
@@ -262,7 +232,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                 control={control}
                 rules={{
                   validate(value) {
-                    if (value <= 0) {
+                    if (!value || value <= 0) {
                       return 'the mint amount should be above zero'
                     }
                   }
@@ -274,13 +244,14 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                     tickerSymbol="USDi"
                     value={field.value}
                     headerTitle="Max amount mintable"
-                    headerValue={0}
+                    headerValue={5}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                     }}
                   />
                 )}
               />
+              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
             </Box>
             <PairInputView
               tickerIcon={assetData.tickerIcon}
@@ -337,12 +308,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
           </Box>
           <StyledDivider />
 
-          <div>
-            t: {isSubmitted}
-            t2: {errors.collAmount} {errors.mintAmount}
-          </div>
-
-          <CometButton onClick={onComet} disabled={isSubmitted && !isValid}>Create Comet Position</CometButton>
+          <CometButton onClick={handleSubmit(onComet)} disabled={!isDirty || !isValid}>Create Comet Position</CometButton>
         </Box>
       </Box>
     </>
