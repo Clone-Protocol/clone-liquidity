@@ -25,10 +25,10 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
 		tickerSymbol: 'USDi',
-		amount: 0.0,
 	})
 
 	// const [collRatio, setCollRatio] = useState(150)
+  const [collAmount, setCollAmount] = useState(0.0)
 	const [borrowAmount, setBorrowAmount] = useState(0.0)
 	const borrowIndex = parseInt(assetId)
   const { mutateAsync } = useEditMutation(publicKey)
@@ -43,7 +43,8 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 	const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
-			setFromPair({ ...fromPair, amount: parseFloat(newVal) })
+			// setFromPair({ ...fromPair, amount: parseFloat(newVal) })
+      setCollAmount(parseFloat(newVal))
 		}
 	}
 
@@ -64,7 +65,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
     await mutateAsync(
       {
         borrowIndex,
-        totalCollateralAmount: fromPair.amount,
+        totalCollateralAmount: collAmount,
         totalBorrowAmount: borrowAmount
       },
       {
@@ -96,7 +97,7 @@ const EditPanel = ({ assetId }: { assetId: string }) => {
 							tickerIcon={fromPair.tickerIcon}
 							tickerName={fromPair.tickerName}
 							tickerSymbol={fromPair.tickerSymbol}
-							value={fromPair.amount}
+							value={collAmount}
 							balance={positionInfo?.usdiVal}
 							onChange={handleChangeFrom}
 						/>

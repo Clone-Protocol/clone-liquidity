@@ -93,7 +93,6 @@ export interface PairData {
 	tickerIcon: string
 	tickerName: string
 	tickerSymbol: string
-	amount: number
 }
 
 export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
