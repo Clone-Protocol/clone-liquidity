@@ -1,19 +1,23 @@
+import React, { useState } from 'react'
 import { Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCloseMutation } from '~/features/Comet/Comet.mutation'
 import { CometDetail } from '~/features/MyLiquidity/CometPosition.query'
+import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
 const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: CometDetail }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const [loading, setLoading] = useState(false)
 
   const { mutateAsync } = useCloseMutation(publicKey)
 
 	const cometIndex = parseInt(assetId)
 
 	const onClose = async () => {
+    setLoading(true)
     await mutateAsync(
       {
         cometIndex
@@ -23,41 +27,51 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to close comet')
+            setLoading(false)
           }
         },
         onError(err) {
           console.error(err)
           enqueueSnackbar('Failed to close comet')
+          setLoading(false)
         }
       }
     )
 	}
 
 	return (
-    <Box sx={{ padding: '30px', background: 'rgba(21, 22, 24, 0.75)', borderRadius: '10px', marginTop: '17px' }}>
-      <Title>Close Comet</Title>
-      <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
-        <Stack direction="row" justifyContent="space-between">
-          <DetailHeader>Collateral</DetailHeader>
-          <DetailValue>{cometDetail.collAmount.toLocaleString()} USDi</DetailValue>
-        </Stack>
-        <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
-          <DetailHeader>ILD</DetailHeader>
-          <DetailValue>{cometDetail.ild.toLocaleString()} USDi</DetailValue>
-        </Stack>
+    <>
+      {loading && (
+				<LoadingWrapper>
+					<LoadingIndicator open inline />
+				</LoadingWrapper>
+			)}
+
+      <Box sx={{ padding: '30px', background: 'rgba(21, 22, 24, 0.75)', borderRadius: '10px', marginTop: '17px' }}>
+        <Title>Close Comet</Title>
+        <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
+          <Stack direction="row" justifyContent="space-between">
+            <DetailHeader>Collateral</DetailHeader>
+            <DetailValue>{cometDetail.collAmount.toLocaleString()} USDi</DetailValue>
+          </Stack>
+          <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
+            <DetailHeader>ILD</DetailHeader>
+            <DetailValue>{cometDetail.ild.toLocaleString()} USDi</DetailValue>
+          </Stack>
+        </Box>
+        <Box sx={{ padding: '0px 24px 9px 27px' }}>
+          <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+            <DetailHeader>Total withdraw</DetailHeader>
+            <DetailValue>{cometDetail.collAmount.toLocaleString()} - {cometDetail.ild.toLocaleString()} =</DetailValue>
+          </Stack>
+          <Stack direction="row" justifyContent="flex-end">
+            <TotalWithdraw>{(cometDetail.collAmount - cometDetail.ild).toLocaleString()} USDi</TotalWithdraw>
+          </Stack>
+        </Box>
+        
+        <ActionButton onClick={onClose}>Close Comet</ActionButton>
       </Box>
-      <Box sx={{ padding: '0px 24px 9px 27px' }}>
-        <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-          <DetailHeader>Total withdraw</DetailHeader>
-          <DetailValue>{cometDetail.collAmount.toLocaleString()} - {cometDetail.ild.toLocaleString()} =</DetailValue>
-        </Stack>
-        <Stack direction="row" justifyContent="flex-end">
-          <TotalWithdraw>{(cometDetail.collAmount - cometDetail.ild).toLocaleString()} USDi</TotalWithdraw>
-        </Stack>
-      </Box>
-      
-      <ActionButton onClick={onClose}>Close Comet</ActionButton>
-    </Box>
+    </>
 	)
 }
 
@@ -95,6 +109,10 @@ const ActionButton = styled(Button)`
   font-size: 13px;
   font-weight: 600;
   margin-top: 22px;
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
 `
 
 export default ClosePanel

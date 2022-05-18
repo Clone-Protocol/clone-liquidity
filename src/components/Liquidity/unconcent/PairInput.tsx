@@ -39,7 +39,7 @@ const PairInput: React.FC<Props> = ({
               {/* <TickerName>{tickerName}</TickerName> */}
             </Box>
           </Box>
-          <InputAmount id="ip-amount" type="number" value={value} onChange={onChange} disabled={disabled} />
+          <InputAmount id="ip-amount" type="number" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} disabled={disabled} />
         </InputStack>
         <CurrentPrice style={{ borderTop: '1px solid #444'}}>Current: {balance?.toLocaleString()} {tickerSymbol}</CurrentPrice>
       </Box>

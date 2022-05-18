@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
+import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import PairInput from '~/components/Liquidity/unconcent/PairInput'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -9,15 +9,34 @@ import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity
 import Image from 'next/image'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
+import { useForm, Controller } from 'react-hook-form'
+import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
 const DepositDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const [loading, setLoading] = useState(false)
 
 	const unconcentratedIndex = parseInt(assetId)
-  const [borrowFrom, setBorrowFrom] = useState(0.0)
-  const [borrowTo, setBorrowTo] = useState(0.0)
   const { mutateAsync } = useDepositMutation(publicKey)
+
+  const {
+		handleSubmit,
+    setValue,
+		control,
+		formState: { isDirty, errors },
+		watch,
+	} = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      borrowFrom: 0.0,
+      borrowTo: 0.0,
+    }
+	})
+  const [borrowFrom, borrowTo] = watch([
+		'borrowFrom',
+		'borrowTo',
+	])
 
   const { data: balances } = useBalanceQuery({
     userPubKey: publicKey,
@@ -33,27 +52,8 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
     enabled: open && publicKey != null
 	})
 
-	const handleBorrowFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.currentTarget.value && unconcentData) {
-			const amount = parseFloat(e.currentTarget.value)
-      setBorrowFrom(amount)
-      setBorrowTo(amount * unconcentData.price)
-		} else {
-      setBorrowFrom(0.0)
-		}
-	}, [borrowFrom, borrowTo])
-
-	const handleBorrowTo = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.currentTarget.value && unconcentData) {
-			const amount = parseFloat(e.currentTarget.value)
-      setBorrowFrom(amount / unconcentData.price)
-      setBorrowTo(amount)
-		} else {
-      setBorrowTo(0.0)
-		}
-	}, [borrowFrom, borrowTo])
-
 	const onDeposit = async () => {
+    setLoading(true)
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -67,52 +67,102 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
 
             handleClose()
           }
+          setLoading(false)
         },
         onError(err) {
           console.error(err)
           enqueueSnackbar('Failed to borrow')
+          setLoading(false)
         }
       }
     )
 	}
 
-	return unconcentData ? (
-		<Dialog open={open} onClose={handleClose}>
-			<DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
-				<Box sx={{ padding: '8px 28px', color: '#fff' }}>
-          <WarningBox>
-            Acquire addtional iAsset and USDi by <span style={{ textDecoration: 'underline' }}>borrowing</span> and <span style={{ textDecoration: 'underline' }}>swaping</span>, click <span style={{ textDecoration: 'underline' }}>here</span> to learn more.
-          </WarningBox>
-					<Box sx={{ marginTop: '20px'}}>
-						<SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>{unconcentData.tickerSymbol}</span> to deposit</Box></SubTitle>
-            <PairInput
-              tickerIcon={unconcentData.tickerIcon}
-              tickerName={unconcentData.tickerName}
-              tickerSymbol={unconcentData.tickerSymbol}
-              value={borrowFrom}
-              balance={balances?.iassetVal}
-              onChange={handleBorrowFrom}
-            />
-					</Box>
-					<StyledDivider />
+  const isValid = Object.keys(errors).length === 0
 
-					<Box>
-						<SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>USDi</span> to deposit</Box></SubTitle>
-            
-            <PairInput
-              tickerIcon={'/images/assets/USDi.png'}
-              tickerName="USDi Coin"
-              tickerSymbol="USDi"
-              value={borrowTo}
-              balance={balances?.usdiVal}
-              onChange={handleBorrowTo}
-            />
-					</Box>
-					<StyledDivider />
-					<ActionButton onClick={onDeposit}>Deposit</ActionButton>
-				</Box>
-			</DialogContent>
-		</Dialog>
+	return unconcentData && balances ? (
+    <>
+      {loading && (
+				<LoadingWrapper>
+					<LoadingIndicator open inline />
+				</LoadingWrapper>
+			)}
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+          <Box sx={{ padding: '8px 28px', color: '#fff' }}>
+            <WarningBox>
+              Acquire addtional iAsset and USDi by <span style={{ textDecoration: 'underline' }}>borrowing</span> and <span style={{ textDecoration: 'underline' }}>swaping</span>, click <span style={{ textDecoration: 'underline' }}>here</span> to learn more.
+            </WarningBox>
+            <Box sx={{ marginTop: '20px'}}>
+              <SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>{unconcentData.tickerSymbol}</span> to deposit</Box></SubTitle>
+              <Controller
+                name="borrowFrom"
+                control={control}
+                rules={{
+                  validate(value) {
+                    if (!value || value <= 0) {
+                      return 'the borrowing amount should be above zero.'
+                    } else if (value > balances?.iassetVal) {
+                      return 'The borrowing amount cannot exceed the balance.'
+                    }
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    tickerIcon={unconcentData.tickerIcon}
+                    tickerName={unconcentData.tickerName}
+                    tickerSymbol={unconcentData.tickerSymbol}
+                    value={field.value}
+                    balance={balances?.iassetVal}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      field.onChange(parseFloat(event.currentTarget.value))
+                      setValue('borrowTo', parseFloat(event.currentTarget.value) * unconcentData.price);
+                    }}
+                  />
+                )}
+              />
+              <FormHelperText error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
+            </Box>
+            <StyledDivider />
+
+            <Box>
+              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>USDi</span> to deposit</Box></SubTitle>
+              
+              <Controller
+                name="borrowTo"
+                control={control}
+                rules={{
+                  validate(value) {
+                    if (!value || value <= 0) {
+                      return 'the amount should be above zero.'
+                    } else if (value > balances?.usdiVal) {
+                      return 'The amount cannot exceed the balance.'
+                    }
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    tickerIcon={'/images/assets/USDi.png'}
+                    tickerName="USDi Coin"
+                    tickerSymbol="USDi"
+                    value={field.value}
+                    balance={balances?.usdiVal}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      field.onChange(parseFloat(event.currentTarget.value))
+                      setValue('borrowFrom', parseFloat(event.currentTarget.value) / unconcentData.price);
+                    }}
+                  />
+                )}
+              />
+              <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
+            </Box>
+            <StyledDivider />
+            <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid}>Deposit</ActionButton>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
 	) : <></>
 }
 
@@ -152,6 +202,10 @@ const ActionButton = styled(Button)`
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
 `
 
 export default DepositDialog

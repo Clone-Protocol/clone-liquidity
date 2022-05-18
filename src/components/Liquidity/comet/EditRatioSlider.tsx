@@ -99,7 +99,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
                     USDi
                   </Box>
                 </Box>
-                <InputAmount id="ip-amount" type="number" sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={mintAmount} onChange={handleChangeAmount} />
+                <InputAmount id="ip-amount" type="number" min={0} sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={mintAmount} onChange={handleChangeAmount} />
               </Stack>
             </FormBox>
             <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>

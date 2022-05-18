@@ -7,10 +7,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
+import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
 const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const [loading, setLoading] = useState(false)
 	const [amount, setAmount] = useState(0.0)
 	const [percent, setPercent] = useState(50)
 	const unconcentratedIndex = parseInt(assetId)
@@ -40,6 +42,7 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 	}, [amount, percent])
 
 	const onWithdraw = async () => {
+    setLoading(true)
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -53,65 +56,75 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
 
             handleClose()
           }
+          setLoading(false)
         },
         onError(err) {
           console.error(err)
           enqueueSnackbar('Failed to withdraw')
+          setLoading(false)
         }
       }
     )
 	}
 
 	return unconcentData ? (
-		<Dialog open={open} onClose={handleClose}>
-			<DialogContent sx={{ width: '570px', backgroundColor: '#16171a', padding: '20px 6px' }}>
-				<Box sx={{ padding: '8px 32px', color: '#fff' }}>		
-          <SubTitle>Select withdraw amount</SubTitle>
-          <RatioSlider
-            min={0}
-            max={100}
-            value={percent}
-            onChange={handleChangePercent}
-          />
-          <StyledDivider />
+    <>
+      {loading && (
+				<LoadingWrapper>
+					<LoadingIndicator open inline />
+				</LoadingWrapper>
+			)}
 
-          <Stack direction="row" gap={2}>
-            <StyledBox>
-              <FormBox>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box display="flex">
-                    <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                    <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                      USDi
-                    </Box>
-                  </Box>
-                  <Box sx={{ color: '#949494'}}>{amount.toLocaleString()}</Box>
-                </Stack>
-              </FormBox>
-              <BottomBox>Withdrawable: {data?.maxVal.toLocaleString()} USDi</BottomBox>
-            </StyledBox>
-            <StyledBox>
-              <FormBox>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box display="flex">
-                    <Image src={unconcentData.tickerIcon} width="28px" height="28px" />
-                    <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                      {unconcentData.tickerSymbol}
-                    </Box>
-                  </Box>
-                  <Box sx={{ color: '#949494'}}>{(amount/unconcentData.price).toLocaleString()}</Box>
-                </Stack>
-              </FormBox>
-              <BottomBox>Withdrawable: {data?.maxVal.toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
-            </StyledBox>
-          </Stack>
-						
-					<StyledDivider />
+      <Dialog open={open} onClose={handleClose}>
+        <DialogContent sx={{ width: '570px', backgroundColor: '#16171a', padding: '20px 6px' }}>
+          <Box sx={{ padding: '8px 32px', color: '#fff' }}>		
+            <SubTitle>Select withdraw amount</SubTitle>
+            <RatioSlider
+              min={0}
+              max={100}
+              value={percent}
+              onChange={handleChangePercent}
+            />
+            <StyledDivider />
 
-					<ActionButton onClick={onWithdraw}>Withdraw</ActionButton>
-				</Box>
-			</DialogContent>
-		</Dialog>
+            <Stack direction="row" gap={2}>
+              <StyledBox>
+                <FormBox>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box display="flex">
+                      <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                      <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
+                        USDi
+                      </Box>
+                    </Box>
+                    <Box sx={{ color: '#949494'}}>{amount.toLocaleString()}</Box>
+                  </Stack>
+                </FormBox>
+                <BottomBox>Withdrawable: {data?.maxVal.toLocaleString()} USDi</BottomBox>
+              </StyledBox>
+              <StyledBox>
+                <FormBox>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box display="flex">
+                      <Image src={unconcentData.tickerIcon} width="28px" height="28px" />
+                      <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
+                        {unconcentData.tickerSymbol}
+                      </Box>
+                    </Box>
+                    <Box sx={{ color: '#949494'}}>{(amount/unconcentData.price).toLocaleString()}</Box>
+                  </Stack>
+                </FormBox>
+                <BottomBox>Withdrawable: {data?.maxVal.toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
+              </StyledBox>
+            </Stack>
+              
+            <StyledDivider />
+
+            <ActionButton onClick={onWithdraw}>Withdraw</ActionButton>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
 	) : <></>
 }
 
@@ -164,17 +177,6 @@ const BottomBox = styled(Box)`
   border-bottom-right-radius: 10px;
 `
 
-const TxtAmount = styled(`div`)`
-	width: 60px;
-	margin-left: 10px;
-	text-align: right;
-	border: 0px;
-	background-color: #323436;
-	font-size: 14px;
-	font-weight: 600;
-	color: #fff;
-`
-
 const ActionButton = styled(Button)`
   width: 100%;
   background: #4e609f;
@@ -182,6 +184,10 @@ const ActionButton = styled(Button)`
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
 `
 
 export default WithdrawDialog

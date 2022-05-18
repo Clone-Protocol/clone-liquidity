@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
+import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
@@ -13,10 +13,13 @@ import ThreeIcon from 'public/images/three-icon.svg'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
+import { useForm, Controller } from 'react-hook-form'
+import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
 const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditForm }: any) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
+  const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = parseInt(cometId)
 
@@ -27,7 +30,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
   //   enabled: publicKey != null
   // });
 
-  const [editType, setEditType] = useState(0)
+  const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const maxCollVal = cometDetail.maxCollValue
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
@@ -35,8 +38,27 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
-	const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
-  const [mintAmount, setMintAmount] = useState(cometDetail.mintAmount)
+
+  const {
+		handleSubmit,
+		control,
+    setValue,
+		formState: { isDirty, errors },
+		watch,
+	} = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      collAmount: cometDetail.collAmount,
+      mintAmount: cometDetail.mintAmount,
+    }
+	})
+  const [collAmount, mintAmount] = watch([
+		'collAmount',
+		'mintAmount',
+	])
+
+	// const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
+  // const [mintAmount, setMintAmount] = useState(cometDetail.mintAmount)
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
@@ -61,12 +83,10 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
           lowerLimit,
           upperLimit
         })
-        setCollAmount(amount)
-			} else {
-				setCollAmount(amount)
 			}
+      setValue('collAmount', amount)
 		} else {
-			setCollAmount(0.0)
+			setValue('collAmount', 0.0)
 		}
 	}, [cometIndex, mintAmount, cometData])
 
@@ -75,8 +95,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
       ...cometData,
       collRatio: newRatio
     })
-    setMintAmount(mintAmount)
-
+    setValue('mintAmount', mintAmount)
 	}, [cometData, mintAmount])
 
 	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
@@ -89,6 +108,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
 	}, [cometData])
 
 	const onEdit = async () => {
+    setLoading(true)
     await mutateAsync(
       {
         cometIndex, 
@@ -101,66 +121,94 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
             enqueueSnackbar('Success to comet')
             onHideEditForm()
           }
+          setLoading(false)
         },
         onError(err) {
           console.error(err)
           enqueueSnackbar('Failed to comet')
+          setLoading(false)
         }
       }
     )
 	}
 
+  const isValid = Object.keys(errors).length === 0
+
   return (
-    <Dialog open={open} onClose={onHideEditForm}>
-			<DialogContent sx={{ backgroundColor: '#16171a' }}>
-				<Box sx={{ padding: '8px 1px', color: '#fff' }}>
-          <WarningBox>
-            If you are unclear about how to edit your Comet, click here to learn more.
-          </WarningBox>
+    <>
+      {loading && (
+				<LoadingWrapper>
+					<LoadingIndicator open inline />
+				</LoadingWrapper>
+			)}
 
-          <Box sx={{ padding: '15px 10px' }}>
-            <Box>
-              <SubTitle>
-                <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust Collateral</Box>
-              </SubTitle>
-              <EditCollateralInput
-                editType={editType}
-                tickerIcon={'/images/assets/USDi.png'}
-                tickerSymbol="USDi"
-                collAmount={collAmount}
-                maxCollVal={maxCollVal}
-                currentCollAmount={cometDetail.collAmount}
-                onChangeType={handleChangeType}
-                onChangeAmount={handleChangeFromAmount}
-              />
-            </Box>
-            <StyledDivider />
+      <Dialog open={open} onClose={onHideEditForm}>
+        <DialogContent sx={{ backgroundColor: '#16171a' }}>
+          <Box sx={{ padding: '8px 1px', color: '#fff' }}>
+            <WarningBox>
+              If you are unclear about how to edit your Comet, click here to learn more.
+            </WarningBox>
 
-            <Box>
-              <SubTitle>
-                <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>iSOL</TxtPair> to minted into <TxtPair>iSOL AMM</TxtPair></Box>
-              </SubTitle>
-
-              <Box sx={{ marginTop: '20px' }}>
-                <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} currentRatio={cometDetail.collRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChange={handleChangeCollRatio} />
+            <Box sx={{ padding: '15px 10px' }}>
+              <Box>
+                <SubTitle>
+                  <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust Collateral</Box>
+                </SubTitle>
+                <Controller
+                  name="collAmount"
+                  control={control}
+                  rules={{
+                    validate(value) {
+                      if (!value || value <= 0) {
+                        return 'the collateral amount should be above zero.'
+                      } else if (value > maxCollVal) {
+                        return 'The collateral amount cannot exceed the balance.'
+                      }
+                    }
+                  }}
+                  render={({ field }) => (
+                    <EditCollateralInput
+                      editType={editType}
+                      tickerIcon={'/images/assets/USDi.png'}
+                      tickerSymbol="USDi"
+                      collAmount={field.value}
+                      maxCollVal={maxCollVal}
+                      currentCollAmount={cometDetail.collAmount}
+                      onChangeType={handleChangeType}
+                      onChangeAmount={handleChangeFromAmount}
+                    />
+                  )}
+                />
+                <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
               </Box>
+              <StyledDivider />
+
+              <Box>
+                <SubTitle>
+                  <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>iSOL</TxtPair> to minted into <TxtPair>iSOL AMM</TxtPair></Box>
+                </SubTitle>
+
+                <Box sx={{ marginTop: '20px' }}>
+                  <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} currentRatio={cometDetail.collRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChange={handleChangeCollRatio} />
+                </Box>
+              </Box>
+              <StyledDivider />
+
+              <Box>
+                <SubTitle>
+                  <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
+                </SubTitle>
+
+                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometDetail.lowerLimit} currentUpperLimit={cometDetail.upperLimit} onChange={handleChangeConcentRange} />
+              </Box>
+              <StyledDivider />
+
+              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>Edit Collateral</ActionButton>
             </Box>
-            <StyledDivider />
-
-            <Box>
-              <SubTitle>
-                <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
-              </SubTitle>
-
-              <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometDetail.lowerLimit} currentUpperLimit={cometDetail.upperLimit} onChange={handleChangeConcentRange} />
-            </Box>
-            <StyledDivider />
-
-            <ActionButton onClick={onEdit}>Edit Collateral</ActionButton>
           </Box>
-        </Box>
-      </DialogContent>
-		</Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -204,6 +252,10 @@ const ActionButton = styled(Button)`
 	border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
 `
 
 export default EditDetailDialog

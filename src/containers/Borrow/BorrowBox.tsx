@@ -26,15 +26,13 @@ const BorrowBox = () => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
-	const [fromPair, setFromPair] = useState<PairData>({
-		tickerIcon: '/images/assets/USDi.png',
+  const fromPair: PairData = {
+    tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
 		tickerSymbol: 'USDi',	
-	})
+  }
 	const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
-  // const [collAmount, setCollAmount] = useState(0.0)
-	// const [borrowAmount, setBorrowAmount] = useState(0.0)
   const [collRatio, setCollRatio] = useState(250)
 
   const { data: priceHistory } = usePriceHistoryQuery({
@@ -84,26 +82,11 @@ const BorrowBox = () => {
     }
   }, [assetIndex, borrowAsset])
 
-  // const handleChangeFrom = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const newVal = e.currentTarget.value
-	// 	if (newVal) {
-	// 		// setFromPair({ ...fromPair, amount: parseFloat(newVal) })
-  //     setCollAmount(parseFloat(newVal))
-	// 	}
-	// }, [fromPair])
-
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setCollRatio(newValue)
 		}
 	}, [collRatio])
-
-	// const handleChangeBorrowAmount = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const newVal = e.currentTarget.value
-	// 	if (newVal) {
-	// 		setBorrowAmount(parseFloat(newVal))
-	// 	}
-	// }, [borrowAmount])
 
 	const onBorrow = async () => {
     setLoading(true)
