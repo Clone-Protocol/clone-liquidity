@@ -7,6 +7,7 @@ import { useIncept } from '~/hooks/useIncept'
 export const fetchStatus = async ({ program, userPubKey }: { program: Incept, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return null
 
+  await program.loadManager()
 	let mintPositions = await program.getMintPositions()
 	let liquidityPositions = await program.getLiquidityPositions()
 	let cometPositions = await program.getCometPositions()
