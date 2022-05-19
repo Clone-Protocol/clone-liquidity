@@ -41,11 +41,11 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		<StyledBox>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 				<Box sx={{ display: 'flex', maxWidth: '488px', height: '47px', alignItems: 'center', paddingLeft: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
-					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
+					<CometTabBtn active={`${tab===0}`} onClick={() => changeTab(0)}>
 						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
             <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
 					</CometTabBtn>
-					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
+					<UnconcentTabBtn active={`${tab===1}`} onClick={() => changeTab(1)}>
 						{tab===1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} /> }
 						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span>
 					</UnconcentTabBtn>

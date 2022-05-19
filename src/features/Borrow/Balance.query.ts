@@ -2,9 +2,12 @@ import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchBalance = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return null
+
+  console.log('fetchBalance')
 
 	await program.loadManager()
 
@@ -41,6 +44,8 @@ export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = t
   const { getInceptApp } = useIncept()
   return useQuery(['borrowBalance', userPubKey, index], () => fetchBalance({ program: getInceptApp(), userPubKey, index }), {
     refetchOnMount,
+    refetchInterval: REFETCH_CYCLE,
+    refetchIntervalInBackground: true,
     enabled
   })
 }
