@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { CircularProgress, styled, Box } from '@mui/material'
+import { useDataLoading } from '~/hooks/useDataLoading'
 
 export const REFETCH_CYCLE = 30000
 
-const DataLoadingIndicator = ({ clear }: Props) => {
+const DataLoadingIndicator = () => {
+  const { startTimer } = useDataLoading()
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
-    }, 3000);
+    let timer: any = null
+    if (startTimer) {
+      console.log('start Timer')
+      timer = setInterval(() => {
+        setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+      }, 3000);
+    } else {
+      setProgress(0)
+      clearInterval(timer)
+    }
 
     return () => {
-      clearInterval(timer);
+      clearInterval(timer)
     };
-  }, []);
+  }, [startTimer]);
 
 	return (
     <Wrapper>
@@ -26,10 +35,6 @@ const DataLoadingIndicator = ({ clear }: Props) => {
 }
 
 export default DataLoadingIndicator
-
-interface Props {
-  clear?: boolean
-}
 
 const Wrapper = styled(Box)`
   width: 129px;

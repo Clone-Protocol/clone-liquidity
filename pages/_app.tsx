@@ -11,6 +11,8 @@ import Box from '@mui/material/Box'
 import { SnackbarProvider } from 'notistack'
 import { NextPage } from 'next'
 import ClientWalletProvider from '~/hocs/ClientWalletProvider'
+import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvider'
+import { RecoilRoot } from 'recoil'
 import './styles.css'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -18,27 +20,31 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	return (
 		<QueryProvider>
-			<ThemeProvider theme={theme}>
-				<SnackbarProvider maxSnack={3}>
-					<ClientWalletProvider>
-						<Box sx={{ display: 'flex', backgroundColor: '#000' }}>
-							<CssBaseline />
-							<GNB />
-							<Drawer />
+      <RecoilRoot>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider maxSnack={3}>
+            <ClientWalletProvider>
+              <DataLoadingIndicatorProvider>
+                <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
+                  <CssBaseline />
+                  <GNB />
+                  <Drawer />
 
-							<Box
-								component="main"
-								sx={{
-									flexGrow: 1,
-									height: '100vh',
-									overflow: 'auto',
-								}}>
-								{getLayout(<Component {...pageProps} />)}
-							</Box>
-						</Box>
-					</ClientWalletProvider>
-				</SnackbarProvider>
-			</ThemeProvider>
+                  <Box
+                    component="main"
+                    sx={{
+                      flexGrow: 1,
+                      height: '100vh',
+                      overflow: 'auto',
+                    }}>
+                    {getLayout(<Component {...pageProps} />)}
+                  </Box>
+                </Box>
+              </DataLoadingIndicatorProvider>
+            </ClientWalletProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </RecoilRoot>
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryProvider>
 	)
