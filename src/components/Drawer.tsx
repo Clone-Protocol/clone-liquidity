@@ -15,7 +15,7 @@ const Drawer: React.FC = () => {
 		<StyledDrawer variant="permanent" open={true}>
 			<List component="nav">
 				<Link href="/">
-					<StyledListItemButton className={router.asPath === '/' ? 'selected' : ''}>
+					<StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
 						<ListItemIcon sx={{ marginLeft: '10px' }}>
 							<Image src={menuOverviewIcon} alt="overview" />
 						</ListItemIcon>
@@ -23,7 +23,7 @@ const Drawer: React.FC = () => {
 					</StyledListItemButton>
 				</Link>
 				<Link href="/liquidity">
-					<StyledListItemButton className={router.asPath === '/liquidity' ? 'selected' : ''}>
+					<StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''}>
 						<ListItemIcon sx={{ marginLeft: '10px' }}>
 							<Image src={menuLiquidityIcon} alt="portfolio" />
 						</ListItemIcon>
@@ -31,7 +31,7 @@ const Drawer: React.FC = () => {
 					</StyledListItemButton>
 				</Link>
 				<Link href="/borrow">
-					<StyledListItemButton className={router.asPath === '/borrow' ? 'selected' : ''}>
+					<StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''}>
 						<ListItemIcon sx={{ marginLeft: '10px' }}>
 							<Image src={menuBorrowIcon} alt="markets" />
 						</ListItemIcon>

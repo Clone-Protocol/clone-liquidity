@@ -1,5 +1,6 @@
 import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -110,7 +111,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex } : { balances: Balanc
               <Box sx={{ marginLeft: '9px' }}> Provide {assetData.tickerSymbol}</Box>
             </SubTitle>
             <SubTitleComment>
-              Acquire {assetData.tickerSymbol} by <span style={{ color: '#fff' }}>Borrowing</span>
+              Acquire {assetData.tickerSymbol} by <Link href="/borrow"><span style={{ color: '#fff', cursor: 'pointer' }}>Borrowing</span></Link>
             </SubTitleComment>
             <Controller
               name="borrowFrom"

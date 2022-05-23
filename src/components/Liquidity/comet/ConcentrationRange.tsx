@@ -39,10 +39,13 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
     borderBottomLeftRadius: '8px',
 		'&::after': {
 			width: '1px',
-			height: '50px',
+			height: '33px',
 			position: 'absolute',
+      borderRadius: '0px',
+      borderTopRightRadius: '8px',
+      borderBottomLeftRadius: '8px',
 			left: '74px',
-			top: '35px',
+			top: '45px',
 		},
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
@@ -91,14 +94,17 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
     borderTopRightRadius: '8px',
     borderBottomRightRadius: '8px',
     borderBottomLeftRadius: '0px',
-		marginTop: '-44px',
+		marginTop: '-47px',
 		marginLeft: '37px',
 		'&::after': {
 			width: '1px',
-			height: '50px',
+			height: '33px',
 			position: 'absolute',
 			left: '-1px',
-			top: '35px',
+			top: '45px',
+      borderRadius: '0px',
+      borderTopLeftRadius: '8px',
+      borderBottomRightRadius: '8px',
 		},
 		'& .MuiSlider-valueLabel': {
 			fontSize: '11px',
@@ -296,7 +302,7 @@ const Stick = styled('div')`
 	border-radius: 0;
 	background: #fff;
 	width: 1px;
-	height: 64px;
+	height: 63px;
 	margin-top: 0px;
 	margin-left: 34px;
 `

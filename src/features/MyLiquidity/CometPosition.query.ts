@@ -4,6 +4,8 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -28,8 +30,13 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	}
 }
 
-export const fetchCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
+export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return
+
+  console.log('fetchCometDetail')
+  // start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
 
 	await program.loadManager()
 
@@ -109,8 +116,12 @@ export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, ena
 
 export function useCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['cometDetail', userPubKey, index], () => fetchCometDetail({ program: getInceptApp(), userPubKey, index }), {
+  const { setStartTimer } = useDataLoading()
+
+  return useQuery(['cometDetail', userPubKey, index], () => fetchCometDetail({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
     refetchOnMount,
+    refetchInterval: REFETCH_CYCLE,
+    refetchIntervalInBackground: true,
     enabled
   })
 }

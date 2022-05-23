@@ -95,6 +95,8 @@ const BottomBox = styled(Box)`
   text-align: center;
   height: 28px;
   padding-top: 6px;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
 `
 
 export default EditCollateralInput

@@ -29,6 +29,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
         onChange={(e, value) => onChangeAsset(value)}
         getOptionLabel={(option: any) => option.tickerName}
         options={assets}
+        clearIcon={null}
         PopperComponent={CustomPopper}
         renderInput={(params) => <StyledTextField {...params} placeholder="Search for an iAsset" />}
         renderOption={(props: any, option: any) => (
@@ -89,6 +90,13 @@ const StyledAutocomplete = styled(Autocomplete)`
     padding-right: 20px;
   }
 
+  & .MuiTextField-root {
+    margin-top: 3px;
+    &:hover {
+      border: none;
+    }
+  }
+
   & .MuiAutocomplete-inputRoot {
     padding: 0;
     padding-left: 20px;
@@ -97,6 +105,7 @@ const StyledAutocomplete = styled(Autocomplete)`
   & .MuiAutocomplete-input {
     padding: 0 !important;
     padding-top: 5px !important;
+    font-size: 11px;
   }
 
   & input {

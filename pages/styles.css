@@ -6,3 +6,6 @@ body {
 	background-color: #000;
 	overflow-y: hidden;
 }
+input:focus {
+  outline:none;
+}

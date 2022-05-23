@@ -3,9 +3,16 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { useIncept } from '~/hooks/useIncept'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
-export const fetchStatus = async ({ program, userPubKey }: { program: Incept, userPubKey: PublicKey | null }) => {
+export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
+
+  console.log('fetchStatus')
+  // start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
 
   await program.loadManager()
 	let mintPositions = await program.getMintPositions()
@@ -76,8 +83,12 @@ export interface Status {
 
 export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['borrowAssets', userPubKey], () => fetchStatus({ program: getInceptApp(), userPubKey }), {
+  const { setStartTimer } = useDataLoading()
+
+  return useQuery(['statusData', userPubKey], () => fetchStatus({ program: getInceptApp(), userPubKey, setStartTimer }), {
     refetchOnMount,
+    refetchInterval: REFETCH_CYCLE,
+    refetchIntervalInBackground: true,
     enabled
   })
 }

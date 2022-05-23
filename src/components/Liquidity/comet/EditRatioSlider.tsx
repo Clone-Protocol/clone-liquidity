@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
 import { Box, Slider, Stack, styled } from '@mui/material'
 import { PositionInfo as PI } from '~/features/MyLiquidity/CometPosition.query'
 import Image from 'next/image'
+import chroma from 'chroma-js'
 
 interface Props {
 	min?: number
@@ -20,6 +20,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	padding: '13px 0',
 	marginTop: '13px',
 	'& .MuiSlider-thumb': {
+    zIndex: 30,
 		height: 20,
 		width: 20,
 		backgroundColor: '#fff',
@@ -29,6 +30,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 		},
 	},
 	'& .MuiSlider-track': {
+    zIndex: 10,
 		height: 3,
     border: 'none',
     background: 'linear-gradient(to left, #f00 -12%, #809cff 66%)'
@@ -44,6 +46,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     '&:before': { display: 'none' },
   },
 	'& .MuiSlider-rail': {
+    zIndex: 10,
 		color: '#444444',
 		height: 3,
 	},
@@ -53,6 +56,12 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
+
+  const pickHex = (x: number) => {
+    const f = chroma.scale(['#809cff', '#f00']).gamma(2)
+    const rgb = f(x/100).css()
+    return rgb
+  }
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
@@ -73,6 +82,14 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
         <SliderTxt sx={{ marginRight: '8px' }}>Min</SliderTxt>
         <Box sx={{width: '100%', height: '48px'}}>
           <StyledSlider
+            sx={{
+              '& .MuiSlider-valueLabel': {
+                border: `solid 1px ${pickHex(ratio)}`,
+              },
+              '& .MuiSlider-thumb': {
+                border: `3px solid ${pickHex(ratio)}`,
+              }
+            }}
             value={ratio}
             min={min}
             step={10}
@@ -81,7 +98,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
             onChange={handleChangeCollRatio}
             valueLabelDisplay="on"
           />
-          <Box sx={{ position: 'relative', top: '-32px', left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
+          <Box sx={{ position: 'relative', zIndex: '20', top: '-32px', left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
             <FixThumb />
             <FixValueLabel>{currentRatio}%</FixValueLabel>
           </Box>
@@ -185,7 +202,9 @@ const BottomBox = styled(Box)`
   text-align: center;
   color: #949494;
   padding-top: 3px;
-  border: 1px solid #444;
+  border-top: 1px solid #444;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
 `
 
 const InputAmount = styled(`input`)`

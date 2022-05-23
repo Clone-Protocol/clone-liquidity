@@ -185,7 +185,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
 
               <Box>
                 <SubTitle>
-                  <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>iSOL</TxtPair> to minted into <TxtPair>iSOL AMM</TxtPair></Box>
+                  <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to minted into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
                 </SubTitle>
 
                 <Box sx={{ marginTop: '20px' }}>

@@ -4,6 +4,8 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -32,8 +34,10 @@ export const fetchPositionDetail = async ({ program, userPubKey, index }: { prog
 	return data
 }
 
-const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
+const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
+
+  console.log('fetchBorrowDetail')
 
   await program.loadManager()
 
@@ -49,6 +53,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: In
     program,
     userPubKey,
     index: poolIndex,
+    setStartTimer
   })
   
   return {
@@ -105,8 +110,12 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
 
 export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getInceptApp(), userPubKey, index }), {
+  const { setStartTimer } = useDataLoading()
+
+  return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
     refetchOnMount,
+    refetchInterval: REFETCH_CYCLE,
+    refetchIntervalInBackground: true,
     enabled
   })
 }
