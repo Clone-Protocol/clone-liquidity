@@ -41,11 +41,11 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		<StyledBox>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 				<Box sx={{ display: 'flex', maxWidth: '488px', height: '47px', alignItems: 'center', paddingLeft: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
-					<CometTabBtn active={`${tab===0}`} onClick={() => changeTab(0)}>
+					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
 						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
             <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
 					</CometTabBtn>
-					<UnconcentTabBtn active={`${tab===1}`} onClick={() => changeTab(1)}>
+					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
 						{tab===1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} /> }
 						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span>
 					</UnconcentTabBtn>
@@ -80,19 +80,18 @@ const StyledBox = styled(Paper)`
 const CometTabBtn = styled((props: any) => (
   <CometTab {...props} />
 ))(({ active }: { active: boolean}) => ({
-  borderStyle: active? 'solid' : 'none',
+  border: active? '1px solid transparent' : 'none',
   color: active? '#fff' : '#989898'
 }))
 
 const CometTab = styled(Button)`
 	width: 199px;
 	height: 35px;
-	padding: 9px 24px 9px 24.5px;
+  padding: 0;
 	border-radius: 10px;
-  border-style: solid;
-  border-width: 1px;
-  border-image-source: linear-gradient(to bottom, #809cff 0%, #0038ff 100%);
-  border-image-slice: 1;
+  border: 1px solid transparent;
+  background-image: linear-gradient(#000000, #000000), linear-gradient(to bottom, #809cff 0%, #0038ff 100%);
+  background-clip: content-box, border-box;
   background-origin: border-box;
 	font-size: 12px;
 	font-weight: 600;

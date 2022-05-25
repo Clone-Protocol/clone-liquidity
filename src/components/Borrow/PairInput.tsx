@@ -35,7 +35,7 @@ const PairInput: React.FC<Props> = ({
 						{/* <TickerName>{tickerName}</TickerName> */}
 					</Box>
 				</Box>
-				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChange} disabled={disabled} />
+				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} min={0} value={value} onChange={onChange} disabled={disabled} />
 			</InputStack>
 		</FormControl>
 	)
