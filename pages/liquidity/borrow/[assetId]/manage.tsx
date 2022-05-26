@@ -1,20 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useState } from 'react'
 import { styled } from '@mui/system'
 import { useRouter } from 'next/router'
 import { Container, Box } from '@mui/material'
-import EditPanel from '~/containers/Liquidity/borrow/EditPanel'
-import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
-import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import ManageBorrow from '~/containers/Liquidity/borrow/ManageBorrow'
 
 const Manage: NextPage = () => {
 	const router = useRouter()
 	const { assetId } = router.query
-	const [tab, setTab] = useState(0)
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
-	}
 
 	return (
 		<div>
@@ -28,17 +21,8 @@ const Manage: NextPage = () => {
 				<StyledSection>
 					<Container>
 						<Box sx={{ marginTop: '40px', marginLeft: '24px' }}>
-							<StyledTabs value={tab} onChange={handleChangeTab}>
-								<StyledTab value={0} label="Edit"></StyledTab>
-								<StyledTab value={1} label="Close"></StyledTab>
-							</StyledTabs>
+							<ManageBorrow assetId={assetId} />
 						</Box>
-						<TabPanel value={tab} index={0}>
-							<EditPanel assetId={assetId} />
-						</TabPanel>
-						<TabPanel value={tab} index={1}>
-							<ClosePanel assetId={assetId} />
-						</TabPanel>
 					</Container>
 				</StyledSection>
 			</main>

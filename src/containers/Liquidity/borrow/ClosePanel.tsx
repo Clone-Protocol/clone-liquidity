@@ -1,27 +1,20 @@
 import React, { useState } from 'react'
-import { Grid, Box, Stack, Divider, Button } from '@mui/material'
+import { Box, Stack, Divider, Button } from '@mui/material'
 import { styled } from '@mui/system'
-import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
+import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const ClosePanel = ({ assetId }: { assetId: string }) => {
+const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
 	const borrowIndex = parseInt(assetId)
 
-  const { data: positionInfo } = useBorrowPositionQuery({ 
-    userPubKey: publicKey, 
-    index: borrowIndex,
-    refetchOnMount: true,
-    enabled: publicKey != null
-  });
   const { mutateAsync } = useCloseMutation(publicKey)
 
 	const onClose = async () => {
@@ -55,62 +48,68 @@ const ClosePanel = ({ assetId }: { assetId: string }) => {
 				</LoadingWrapper>
 			)}
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
-          <PositionInfo positionInfo={positionInfo} />
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <Box sx={{ padding: '30px' }}>
-            <Stack direction="row" justifyContent="space-between" sx={{ marginBottom: '15px' }}>
-              <DetailHeader>Repay-Burn amount</DetailHeader>
-              <DetailValue>
-                {positionInfo?.borrowedIasset} {positionInfo?.tickerSymbol}
-              </DetailValue>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <DetailHeader>Withdraw amount</DetailHeader>
-              <DetailValue>{positionInfo?.collateralAmount} USDi</DetailValue>
-            </Stack>
-            <StyledDivider />
-            <ActionButton onClick={onClose}>Close</ActionButton>
-          </Box>
-        </Grid>
-      </Grid>
+      <Box sx={{ padding: '30px', background: 'rgba(21, 22, 24, 0.75)', borderRadius: '10px', marginTop: '17px' }}>
+        <Title>Close Borrow Position</Title>
+
+        <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
+          <Stack direction="row" justifyContent="space-between">
+            <DetailHeader>Dept Amount</DetailHeader>
+            <DetailValue>{borrowDetail.borrowedIasset.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
+          </Stack>
+          <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
+            <DetailHeader>Indepted Asset Wallet Balance</DetailHeader>
+            <DetailValue>{borrowDetail.borrowedIasset.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
+          </Stack>
+          <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
+            <DetailHeader>Collateral</DetailHeader>
+            <DetailValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</DetailValue>
+          </Stack>
+        </Box>
+        <Box sx={{ padding: '0px 24px 9px 27px' }}>
+          <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+            <DetailHeader>Collateral Withdraw</DetailHeader>
+            <DetailValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</DetailValue>
+          </Stack>
+        </Box>
+        
+        <ActionButton onClick={onClose}>Repay & Close Position</ActionButton>
+      </Box>
     </>
 	)
 }
 
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 39px;
-	margin-top: 39px;
-	height: 1px;
+const Title = styled('div')`
+	font-size: 16px;
+	font-weight: 600;
+	color: #fff;
+  margin-left: 15px;
+	margin-bottom: 15px;
 `
 
 const DetailHeader = styled('div')`
-	font-size: 14px;
-	font-weight: 500;
+	font-size: 12px;
+	font-weight: 600;
 	color: #989898;
 `
 
 const DetailValue = styled('div')`
-	font-size: 18px;
+	font-size: 11px;
 	font-weight: 500;
-	color: #fff;
+	color: #9a9a9a;
 `
 
 const ActionButton = styled(Button)`
-	width: 100%;
-	background: #7d7d7d;
-	color: #fff;
-	border-radius: 8px;
-  font-size: 18px;
-  font-weight: 500;
-	margin-bottom: 15px;
+  width: 100%;
+  background: #4e609f;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 22px;
   &:disabled {
     background-color: #444;
     color: #adadad;
-  } 
+  }
 `
 
 export default withSuspense(ClosePanel, <LoadingProgress />)

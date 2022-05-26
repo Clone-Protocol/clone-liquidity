@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { Box } from '@mui/material'
 import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
-import { PositionInfo as PI, CometInfo, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
+import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import EditDetailDialog from './EditDetailDialog'
 
 const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: CometDetail }) => {

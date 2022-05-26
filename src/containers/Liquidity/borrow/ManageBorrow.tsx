@@ -7,46 +7,45 @@ import { TabPanelForEdit, StyledTabs, StyledTab } from '~/components/Common/Styl
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
-import EditPanel from '~/containers/Liquidity/comet/EditPanel'
-import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
-import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
+import EditPanel from '~/containers/Liquidity/borrow/EditPanel'
+import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
+import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
-// import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 
-const ManageComet = ({ assetId }: { assetId: string }) => {
+const ManageBorrow = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
   const [tab, setTab] = useState(0)
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)
 	}
 
-	const cometIndex = parseInt(assetId)
+  const borrowIndex = parseInt(assetId)
 
-  const { data: cometDetail } = useCometDetailQuery({
-    userPubKey: publicKey,
-    index: cometIndex,
-	  refetchOnMount: true,
+  const { data: borrowDetail } = useBorrowPositionQuery({ 
+    userPubKey: publicKey, 
+    index: borrowIndex,
+    refetchOnMount: true,
     enabled: publicKey != null
-	})
+  });
 
   const { data: priceHistory } = usePriceHistoryQuery({
-    tickerSymbol: cometDetail?.tickerSymbol,
+    tickerSymbol: borrowDetail?.tickerSymbol,
     refetchOnMount: false,
-    enabled: cometDetail != null
+    enabled: borrowDetail != null
   })
 
-	return (cometDetail && priceHistory) ? (
-		<Grid container spacing={2}>
+  return (borrowDetail && priceHistory) ? (
+    <Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
         <StyledBox>
           <Box display="flex">
-            <Image src={cometDetail.tickerIcon} width="30px" height="30px" />
+            <Image src={borrowDetail.tickerIcon} width="30px" height="30px" />
             <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
-              {cometDetail.tickerName} ({cometDetail.tickerSymbol})
+              {borrowDetail.tickerName} ({borrowDetail.tickerSymbol})
             </Box>
           </Box>
           <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-            ${cometDetail.price.toFixed(2)}
+            ${borrowDetail.oPrice.toFixed(2)}
             {priceHistory.rateOfPrice >= 0 ?
               <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
             :
@@ -65,19 +64,19 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 			<Grid item xs={12} md={8}>
         <Box sx={{ maxWidth: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label="Edit Comet"></StyledTab>
-            <StyledTab value={1} label="Close Comet"></StyledTab>
+            <StyledTab value={0} label="Edit Borrow Position"></StyledTab>
+            <StyledTab value={1} label="Close Borrow Position"></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} cometDetail={cometDetail} />
+            <EditPanel assetId={assetId} borrowDetail={borrowDetail} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
-            <ClosePanel assetId={assetId} cometDetail={cometDetail} />
+            <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
           </TabPanelForEdit>
         </Box>
 			</Grid>
 		</Grid>
-	) : <></>
+  ) : <></>
 }
 
 const StyledBox = styled(Box)`
@@ -99,4 +98,4 @@ const TxtPriceRate = styled('div')`
   color: #59c23a;
 `
 
-export default withSuspense(ManageComet, <LoadingProgress />)
+export default withSuspense(ManageBorrow, <LoadingProgress />)
