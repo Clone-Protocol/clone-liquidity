@@ -16,13 +16,12 @@ export const StableButton = styled(Button)`
 	width: 80px;
 	height: 26px;
 	margin: 4px;
+  padding: 0;
 	border-radius: 10px;
-	border-style: solid;
-  border-width: 1px;
-  border-image-source: linear-gradient(to bottom, #809cff 0%, #0038ff 100%);
-  border-image-slice: 1;
-  background-origin: border-box;
+	border: 1px solid transparent;
+  background-image: linear-gradient(#000000, #000000), linear-gradient(to bottom, #809cff 0%, #0038ff 100%);
   background-clip: content-box, border-box;
+  background-origin: border-box;
 	color: #fff;
 	font-size: 10px;
   font-weight: 500;

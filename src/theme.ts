@@ -57,9 +57,23 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 				root: {
 					marginBottom: '0px',
 					flexGrow: 1,
+          '& .MuiDataGrid-cell:hover': {
+            backgroundColor: 'rgba(38, 38, 38, 0.5)'
+          },
 				},
 			},
 		},
+    MuiDialog: {
+			styleOverrides: {
+				root: {
+          '& .MuiDialog-paper': {
+            background: '#10141f',  
+            boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
+            borderRadius: '10px'
+          }
+        }
+      }
+    },
 		MuiTextField: {
 			styleOverrides: {
 				root: {

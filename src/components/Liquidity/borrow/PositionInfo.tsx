@@ -10,7 +10,7 @@ interface Props {
 
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm }) => {
 	return positionInfo ? (
-		<Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
+		<Box sx={{ color: '#fff', padding: '25px 35px', marginTop: '15px' }}>
       <Title>Borrow Position</Title>
       <Box sx={{ borderRadius: '10px', background: 'rgba(255, 255, 255, 0.08);'}}>
         <Box display="flex">
@@ -24,7 +24,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm }) => {
             <StyledDivider />
 
             <SubTitle>Collateral</SubTitle>
-            <Box sx={{ fontSize: '12px', fontWeight: '500' }}>{positionInfo.collateralAmount} USDi</Box>
+            <Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '15px' }}>{positionInfo.collateralAmount} USDi</Box>
 
             <SubTitle>Borrowed</SubTitle>
             <Box sx={{ fontSize: '12px', fontWeight: '500' }}>
@@ -45,6 +45,7 @@ const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 15px;
 	margin-top: 15px;
+  width: 345px;
 	height: 1px;
 `
 

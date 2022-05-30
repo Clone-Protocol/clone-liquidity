@@ -65,10 +65,10 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
             <DetailValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</DetailValue>
           </Stack>
         </Box>
-        <Box sx={{ padding: '0px 24px 9px 27px' }}>
+        <Box sx={{ padding: '0px 20px 9px 17px' }}>
           <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Collateral Withdraw</DetailHeader>
-            <DetailValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</DetailValue>
+            <div style={{ color: '#fff', fontSize: '14px', fontWeight: '500' }}>{borrowDetail.collateralAmount.toLocaleString()} USDi</div>
           </Stack>
         </Box>
         
@@ -105,7 +105,7 @@ const ActionButton = styled(Button)`
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-  margin-top: 22px;
+  margin-top: 12px;
   &:disabled {
     background-color: #444;
     color: #adadad;

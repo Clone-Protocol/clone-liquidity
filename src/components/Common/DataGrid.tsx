@@ -37,8 +37,15 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
         borderRadius: '10px',
         background: '#1b1b1b'
       },
+      '& .MuiDataGrid-row:hover': {
+        backgroundColor: 'rgba(38, 38, 38, 0.8)'
+      },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
+      },
+      '& .MuiDataGrid-cell:focus': {
+        border: '0',
+        outline: '0'
       },
       '& .MuiDataGrid-withBorder': {
         borderRight: '1px solid #1b1b1b',

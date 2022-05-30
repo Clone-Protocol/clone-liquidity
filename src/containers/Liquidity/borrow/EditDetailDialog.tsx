@@ -1,23 +1,27 @@
-import React, { useState } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
+import React, { useState, useCallback } from 'react'
+import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
 import { useSnackbar } from 'notistack'
-import Image from 'next/image'
-import PairInput from '~/components/Borrow/PairInput'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditMutation } from '~/features/Borrow/Borrow.mutation'
 import {
 	PairData
 } from '~/features/MyLiquidity/BorrowPosition.query'
-import OneIcon from 'public/images/one-icon.svg'
-import TwoIcon from 'public/images/two-icon.svg'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const borrowIndex = parseInt(borrowId)
+
+  const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
+
+  const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
+		setEditType(newValue)
+	}, [editType])
+
   const fromPair: PairData = {
 		tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
@@ -42,6 +46,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 		'collAmount',
 		'borrowAmount',
 	])
+  const maxCollVal = 5;
 
   // const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 	//   if (typeof newValue === 'number') {
@@ -87,9 +92,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
       <Dialog open={open} onClose={onHideEditForm}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <Box sx={{ padding: '8px 1px', color: '#fff' }}>
-          <Box>
-              <SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Edit collateral amount</Box></SubTitle>
-              <SubTitleComment>Editing collateral will effect the collateral ratio</SubTitleComment>
+            <Box>
               <Controller
                 name="collAmount"
                 control={control}
@@ -103,13 +106,15 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
                   }
                 }}
                 render={({ field }) => (
-                  <PairInput
+                  <EditCollateralInput
+                    editType={editType}
                     tickerIcon={fromPair.tickerIcon}
-                    tickerName={fromPair.tickerName}
                     tickerSymbol={fromPair.tickerSymbol}
-                    value={field.value}
-                    balance={borrowDetail?.usdiVal}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    collAmount={field.value}
+                    maxCollVal={borrowDetail?.usdiVal}
+                    currentCollAmount={borrowDetail.collateralAmount}
+                    onChangeType={handleChangeType}
+                    onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                     }}
                   />
@@ -117,63 +122,21 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
               />
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
+
+            <Box sx={{ padding: '5px 3px 5px 3px' }}>
+              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+                <DetailHeader>Collateral Ratio</DetailHeader>
+                <DetailValue>{borrowDetail.collateralAmount.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralAmount.toLocaleString()}%)</span></DetailValue>
+              </Stack>
+              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+                <DetailHeader>Min Collateral Ratio</DetailHeader>
+                <DetailValue>{borrowDetail.minCollateralRatio.toLocaleString()}%</DetailValue>
+              </Stack>
+            </Box>
+
             <StyledDivider />
 
-            {/* <Box>
-              <SubTitle>(2) Edit collateral ratio</SubTitle>
-              <SubTitleComment>To avoid liquidation, collateral ratio above safe point is reccommended</SubTitleComment>
-              <RatioSlider min={0} max={500} value={collRatio} onChange={handleChangeCollRatio} />
-            </Box>
-            <StyledDivider /> */}
-
-            <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
-              <SubTitleComment>
-                The position can be closed when the full borrowed amount is repayed
-              </SubTitleComment>
-              <Box sx={{ marginTop: '20px' }}>
-                <Controller
-                  name="borrowAmount"
-                  control={control}
-                  rules={{
-                    validate(value) {
-                      if (!value || value <= 0) {
-                        return 'the borrow amount should be above zero.'
-                      } else if (value > borrowDetail?.iassetVal) {
-                        return 'The borrow amount cannot exceed the balance.'
-                      }
-                    }
-                  }}
-                  render={({ field }) => (
-                    <PairInput
-                      tickerIcon={
-                        borrowDetail ? borrowDetail!.tickerIcon : '/images/assets/ethereum-eth-logo.svg'
-                      }
-                      tickerName={borrowDetail ? borrowDetail!.tickerName : ''}
-                      tickerSymbol={borrowDetail ? borrowDetail!.tickerSymbol : ''}
-                      balance={borrowDetail?.iassetVal}
-                      value={field.value}
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        field.onChange(parseFloat(event.currentTarget.value))
-                      }}
-                    />
-                  )}
-                />
-                <FormHelperText error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText>
-              </Box>
-
-              {/* <PairInput
-                tickerIcon={ethLogo}
-                tickerName="Incept USD"
-                tickerSymbol="USDi"
-                value={borrowAmount}
-                disabled
-                balanceDisabled
-              /> */}
-            </Box>
-            <StyledDivider />
-
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>Edit</ActionButton>
+            <ActionButton onClick={handleSubmit(onEdit)}>{ editType === 0 ? 'Deposit' : 'Withdraw' }</ActionButton>
           </Box>
         </DialogContent>
       </Dialog>
@@ -181,40 +144,37 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
   )  
 }
 
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 39px;
-	margin-top: 20px;
-	height: 1px;
+const DetailHeader = styled('div')`
+	font-size: 12px;
+	font-weight: 500;
+	color: #949494;
 `
 
-const SubTitle = styled('div')`
-  display: flex;
-	font-size: 18px;
+const DetailValue = styled('div')`
+	font-size: 12px;
 	font-weight: 500;
-	margin-bottom: 17px;
 	color: #fff;
 `
 
-const SubTitleComment = styled('div')`
-	font-size: 14px;
-	font-weight: 500;
-	color: #989898;
-	margin-bottom: 10px;
+const StyledDivider = styled(Divider)`
+	background-color: #535353;
+	margin-bottom: 25px;
+	margin-top: 15px;
+	height: 1px;
 `
 
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #7d7d7d;
-	color: #fff;
-	border-radius: 8px;
-  font-size: 18px;
-  font-weight: 500;
-	margin-bottom: 15px;
+	background: #4e609f;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
   &:disabled {
     background-color: #444;
     color: #adadad;
-  } 
+  }
 `
 
 export default EditDetailDialog
