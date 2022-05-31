@@ -117,6 +117,9 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                     }}
+                    onMax={(value: number) => {
+                      field.onChange(value)
+                    }}
                   />
                 )}
               />

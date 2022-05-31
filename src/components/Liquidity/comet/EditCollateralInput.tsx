@@ -13,6 +13,7 @@ interface Props {
   currentCollAmount?: number
   onChangeType?: any
 	onChangeAmount?: any
+  onMax?: any
 }
 
 const EditCollateralInput: React.FC<Props> = ({
@@ -24,8 +25,8 @@ const EditCollateralInput: React.FC<Props> = ({
   currentCollAmount,
   onChangeType,
 	onChangeAmount,
+  onMax
 }) => {
-
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
       <Stack sx={{ height: '40px' }} direction="row" justifyContent="space-between">
@@ -36,7 +37,7 @@ const EditCollateralInput: React.FC<Props> = ({
           </StyledTabs>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494', marginRight: '15px'}}>
-          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
+          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
         </Box>
       </Stack>
       <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', border: '1px solid #444444'}}>

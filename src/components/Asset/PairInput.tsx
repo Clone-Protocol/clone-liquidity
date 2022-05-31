@@ -9,6 +9,7 @@ interface Props {
 	headerTitle?: string
 	headerValue?: number
 	onChange?: any
+  onMax?: any
 }
 
 const PairInput: React.FC<Props> = ({
@@ -19,13 +20,14 @@ const PairInput: React.FC<Props> = ({
 	headerTitle,
 	headerValue,
 	onChange,
+  onMax
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (
 				<Stack direction="row" justifyContent="flex-end">
 					<Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '2px', color: '#949494', marginRight: '15px' }}>
-						{headerTitle}: {headerValue || headerValue == 0 ? (<span style={{color:'#90e4fe'}}>{headerValue}</span>) : '_'}
+						{headerTitle}: {headerValue || headerValue == 0 ? (<span  style={{color: '#90e4fe', cursor: 'pointer'}} onClick={() => onMax(headerValue)}>{headerValue}</span>) : '_'}
 					</Box>
 				</Stack>
 			) : (

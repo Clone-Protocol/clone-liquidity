@@ -54,7 +54,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   const upperLimit = toScaledNumber(comet.upperPriceRange)
   const ild = 0
   const maxCollValue = 60000
-  const collRatio = 50
 
 	return {
     mintAmount,
@@ -63,7 +62,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     upperLimit,
     ild,
     maxCollValue,
-    collRatio,
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
@@ -93,7 +91,6 @@ export interface PositionInfo {
 
 export interface CometInfo {
   isTight: boolean
-	collRatio: number
 	lowerLimit: number
   upperLimit: number
 }

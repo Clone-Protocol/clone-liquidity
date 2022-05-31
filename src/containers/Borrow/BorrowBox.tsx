@@ -1,5 +1,5 @@
 import { Box, Button, Paper, Divider, Grid, FormHelperText } from '@mui/material'
-import React, { useState, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useSnackbar } from 'notistack'
@@ -33,7 +33,6 @@ const BorrowBox = () => {
   }
 	const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
-  const [collRatio, setCollRatio] = useState(250)
 
   const { data: priceHistory } = usePriceHistoryQuery({
     tickerSymbol: borrowAsset?.tickerSymbol,
@@ -41,12 +40,12 @@ const BorrowBox = () => {
     enabled: borrowAsset != null
   })
 
-  // const { data: assetData } = useBorrowDetailQuery({
-  //   userPubKey: publicKey,
-  //   index: assetIndex,
-  //   refetchOnMount: true,
-  //   enabled: publicKey != null
-  // })
+  const { data: borrowDetail } = useBorrowDetailQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+    refetchOnMount: true,
+    enabled: publicKey != null
+  })
 
   const { data: usdiBalance } = useBalanceQuery({ 
     userPubKey: publicKey, 
@@ -54,6 +53,14 @@ const BorrowBox = () => {
     enabled: publicKey != null
   });
 
+  // TODO:
+  const [collRatio, setCollRatio] = useState(100)
+
+  useEffect(() => {
+    if (borrowDetail) {
+      setCollRatio(borrowDetail.stableCollateralRatio)
+    }
+  }, [borrowDetail])
 
   const { mutateAsync } = useBorrowMutation(publicKey)
 
@@ -62,6 +69,7 @@ const BorrowBox = () => {
 		control,
 		formState: { isDirty, errors },
 		watch,
+    setValue
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -69,6 +77,7 @@ const BorrowBox = () => {
       borrowAmount: 0.0,
     }
 	})
+  
   const [collAmount, borrowAmount] = watch([
 		'collAmount',
 		'borrowAmount',
@@ -126,7 +135,7 @@ const BorrowBox = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
-          <AutoCompletePairInput 
+          <AutoCompletePairInput
             assets={ASSETS}
             selAssetId={assetIndex}
             onChangeAsset={handleChangeAsset}
@@ -182,6 +191,9 @@ const BorrowBox = () => {
                     balance={usdiBalance?.balanceVal}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
+                    }}
+                    onMax={(balance: number) => {
+                      field.onChange(balance)
                     }}
                   />
                 )}

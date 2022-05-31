@@ -29,29 +29,33 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
 
+  // TODO:
+  const maxMintable = 5;
+  
+  const [mintRatio, setMintRatio] = useState(50)
+  const [cometData, setCometData] = useState<CometInfo>({
+    isTight: false,
+    lowerLimit: 40.0,
+    upperLimit: 180.0
+  })
+
   const {
 		handleSubmit,
 		control,
+    setValue,
 		formState: { isDirty, errors },
 		watch,
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
       collAmount: 0.0,
-      mintAmount: 0.0,
+      mintAmount: maxMintable * mintRatio / 100,
     }
 	})
   const [collAmount, mintAmount] = watch([
 		'collAmount',
 		'mintAmount',
 	])
-  
-  const [cometData, setCometData] = useState<CometInfo>({
-    isTight: false,
-    collRatio: 50,
-    lowerLimit: 40.0,
-    upperLimit: 180.0
-  })
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
 
@@ -92,13 +96,10 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
     fetch()
   }, [collAmount, mintAmount])
 
-	const handleChangeCollRatio = useCallback( async (event: Event, newValue: number | number[]) => {
+	const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
-	    const newData = {
-	      ...cometData,
-	      collRatio: newValue
-	    }
-	    setCometData(newData)
+      setValue('mintAmount', maxMintable * newValue / 100)
+      setMintRatio(newValue)
 	  }
 	}, [cometData])
 
@@ -204,6 +205,9 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     field.onChange(parseFloat(event.currentTarget.value))
                   }}
+                  onMax={(value: number) => {
+                    field.onChange(value)
+                  }}
                 />
               )}
             />
@@ -220,7 +224,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
               </Box>
             </SubTitle>
             <Box sx={{ marginTop: '15px' }}>
-              <RatioSlider min={0} max={100} value={cometData?.collRatio} hideValueBox onChange={handleChangeCollRatio} />
+              <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
@@ -244,9 +248,15 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                     tickerSymbol="USDi"
                     value={field.value}
                     headerTitle="Max amount mintable"
-                    headerValue={5}
+                    headerValue={maxMintable}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      field.onChange(parseFloat(event.currentTarget.value))
+                      const mintVal = parseFloat(event.currentTarget.value)
+                      field.onChange(mintVal)
+                      setMintRatio(mintVal * 100 / maxMintable)
+                    }}
+                    onMax={(value: number) => {
+                      field.onChange(value)
+                      setMintRatio(value * 100 / maxMintable)
                     }}
                   />
                 )}

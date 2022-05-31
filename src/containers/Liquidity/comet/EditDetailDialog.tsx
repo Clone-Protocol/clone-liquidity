@@ -34,7 +34,6 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
   const maxCollVal = cometDetail.maxCollValue
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
-    collRatio: cometDetail.collRatio,
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
@@ -57,46 +56,60 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
 		'mintAmount',
 	])
 
-	// const [collAmount, setCollAmount] = useState(cometDetail.collAmount)
-  // const [mintAmount, setMintAmount] = useState(cometDetail.mintAmount)
+  // TODO:
+  const maxMintable = 5;
+
+  const defaultMintRatio = cometDetail.mintAmount * 100 / maxMintable
+  const [mintRatio, setMintRatio] = useState(defaultMintRatio)
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
 	}, [editType])
 
+  const calculateRange = async (amount: number) => {
+    const program = getInceptApp()
+    let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+      0,
+      (
+        await program.getCometPosition(cometIndex)
+      ).poolIndex,
+      amount,
+      mintAmount
+    ))!
+    if (lowerLimit && upperLimit) {
+      setCometData({
+        ...cometData,
+        lowerLimit,
+        upperLimit
+      })
+    }
+  }
+
 	const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-
-			const program = getInceptApp()
-			let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-				0,
-				(
-					await program.getCometPosition(cometIndex)
-				).poolIndex,
-				amount,
-				mintAmount
-			))!
-			if (lowerLimit && upperLimit) {
-        setCometData({
-          ...cometData,
-          lowerLimit,
-          upperLimit
-        })
-			}
+      await calculateRange(amount)
+			
       setValue('collAmount', amount)
 		} else {
 			setValue('collAmount', 0.0)
 		}
 	}, [cometIndex, mintAmount, cometData])
 
-  const handleChangeCollRatio = useCallback((newRatio: number, mintAmount: number) => {
-    setCometData({
-      ...cometData,
-      collRatio: newRatio
-    })
+  const handleChangeMax = async (amount: number) => {
+    await calculateRange(amount)	
+    setValue('collAmount', amount)
+	}
+
+  const handleChangeMintRatio = useCallback((newRatio: number) => {
+    setMintRatio(newRatio)
+    setValue('mintAmount', newRatio * maxMintable / 100)
+	}, [mintRatio, mintAmount])
+
+  const handleChangeMintAmount = useCallback((mintAmount: number) => {
+    setMintRatio(mintAmount * 100 / maxMintable)
     setValue('mintAmount', mintAmount)
-	}, [cometData, mintAmount])
+	}, [mintRatio, mintAmount])
 
 	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -176,6 +189,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
                       currentCollAmount={cometDetail.collAmount}
                       onChangeType={handleChangeType}
                       onChangeAmount={handleChangeFromAmount}
+                      onMax={handleChangeMax}
                     />
                   )}
                 />
@@ -189,7 +203,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
                 </SubTitle>
 
                 <Box sx={{ marginTop: '20px' }}>
-                  <EditRatioSlider min={0} max={100} ratio={cometData.collRatio} currentRatio={cometDetail.collRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChange={handleChangeCollRatio} />
+                  <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
               </Box>
               <StyledDivider />

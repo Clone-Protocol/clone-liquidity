@@ -58,7 +58,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
           </Stack>
           <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Indepted Asset Wallet Balance</DetailHeader>
-            <DetailValue>{borrowDetail.borrowedIasset.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
+            <DetailValue>{borrowDetail.iassetVal.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Collateral</DetailHeader>

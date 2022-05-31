@@ -137,6 +137,10 @@ const UnconcentPanel = ({ balances, assetData, assetIndex } : { balances: Balanc
                     field.onChange(parseFloat(event.currentTarget.value))
                     setValue('borrowTo', parseFloat(event.currentTarget.value) * assetData.price);
                   }}
+                  onMax={(value: number) => {
+                    field.onChange(value)
+                    setValue('borrowTo', value * assetData.price);
+                  }}
                 />
               )}
             />
@@ -172,6 +176,10 @@ const UnconcentPanel = ({ balances, assetData, assetIndex } : { balances: Balanc
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     field.onChange(parseFloat(event.currentTarget.value))
                     setValue('borrowFrom', parseFloat(event.currentTarget.value) / assetData.price);
+                  }}
+                  onMax={(value: number) => {
+                    field.onChange(value)
+                    setValue('borrowFrom', value / assetData.price);
                   }}
                 />
               )}

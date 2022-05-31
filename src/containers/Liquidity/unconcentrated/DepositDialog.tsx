@@ -119,6 +119,10 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                       setValue('borrowTo', parseFloat(event.currentTarget.value) * unconcentData.price);
                     }}
+                    onMax={(balance: number) => {
+                      field.onChange(balance)
+                      setValue('borrowTo', balance * unconcentData.price);
+                    }}
                   />
                 )}
               />
@@ -151,6 +155,10 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                       setValue('borrowFrom', parseFloat(event.currentTarget.value) / unconcentData.price);
+                    }}
+                    onMax={(balance: number) => {
+                      field.onChange(balance)
+                      setValue('borrowFrom', balance / unconcentData.price);
                     }}
                   />
                 )}

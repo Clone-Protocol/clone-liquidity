@@ -10,6 +10,7 @@ interface Props {
 	balanceDisabled?: boolean
 	disabled?: boolean
 	onChange?: any
+  onMax?: any
 }
 
 const PairInput: React.FC<Props> = ({
@@ -21,11 +22,12 @@ const PairInput: React.FC<Props> = ({
 	balanceDisabled = false,
 	disabled = false,
 	onChange,
+  onMax
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '15px' }}>Balance: <span style={{color:'#90e4fe'}}>{balance?.toLocaleString()} {tickerSymbol}</span></Box> : <></>}
+				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '15px' }}>Balance: <span style={{color:'#90e4fe', cursor: 'pointer'}} onClick={() => onMax(balance)}>{balance?.toLocaleString()} {tickerSymbol}</span></Box> : <></>}
 			</Stack>
       <Box
         sx={{

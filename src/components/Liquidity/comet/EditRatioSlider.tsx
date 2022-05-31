@@ -11,7 +11,8 @@ interface Props {
   assetData: PI
   mintAmount: number
   currentMintAmount: number
-	onChange?: (newRatio: number, mintAmount: number) => void
+  onChangeRatio?: (newRatio: number) => void
+  onChangeAmount?: (mintAmount: number) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
@@ -52,7 +53,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChange }) => {
+const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
 	const valueLabelFormat = (value: number) => {
 		return `${value}%`
 	}
@@ -65,14 +66,14 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
 
   const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
-      onChange && onChange(newValue, mintAmount)
+      onChangeRatio && onChangeRatio(newValue)
 		}
 	}
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-      onChange && onChange(ratio, amount)
+      onChangeAmount && onChangeAmount(amount)
     }
   }
 
