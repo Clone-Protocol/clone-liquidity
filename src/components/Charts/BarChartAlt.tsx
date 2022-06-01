@@ -34,7 +34,7 @@ const CustomBar = ({
           <stop offset="100%" stopColor="rgb(128, 156, 255)" stopOpacity={0.62} />
         </linearGradient>
       </defs>
-      <rect x={x} y={y} fill="url(#grad1)" width={width} height={height} stroke="#10162c" strokeWidth="1" rx="2" />
+      <rect x={x} y={y} fill="url(#grad1)" width={width} height={height} rx="2" />
     </g>
   )
 }
@@ -104,7 +104,17 @@ const BarChartAlt: React.FC<LineChartProps> = ({
             tickFormatter={(time) => dayjs(time).format(activeWindow === VolumeWindow.monthly ? 'MMM' : 'DD')}
             minTickGap={10}
           />
-          <Tooltip />
+          <Tooltip 
+            cursor={{ fill: '#2C2F36' }}
+            contentStyle={{ display: 'none' }}
+            formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {
+              if (setValue && parsedValue !== props.payload.value) {
+                setValue(props.payload.value)
+              }
+              const formattedTime = dayjs(props.payload.time).format('MMM D, YYYY')
+              if (setLabel && label !== formattedTime) setLabel(formattedTime)
+            }}
+          />
           <Bar
             dataKey="value"
             fill={color}

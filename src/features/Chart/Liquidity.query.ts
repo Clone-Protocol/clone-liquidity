@@ -34,23 +34,23 @@ export const fetchTotalUsers = async ({ timeframe } : { timeframe: FilterTime}) 
 	const chartData = [
     {
       time: '2022-03-01',
-      value: 15
-    },
-    {
-      time: '2022-03-02',
       value: 35
     },
     {
+      time: '2022-03-02',
+      value: 55
+    },
+    {
       time: '2022-03-03',
-      value: 80
+      value: 90
     },
     {
       time: '2022-03-04',
-      value: 65
+      value: 185
     },
     {
       time: '2022-03-05',
-      value: 115
+      value: 235
     },
   ]
 
@@ -92,15 +92,15 @@ export const fetchTotalLiquidation = async ({ timeframe } : { timeframe: FilterT
 	const chartData = [
     {
       time: '2022-03-01',
-      value: 15
+      value: 65
     },
     {
       time: '2022-03-02',
-      value: 35
+      value: 45
     },
     {
       time: '2022-03-03',
-      value: 80
+      value: 180
     },
     {
       time: '2022-03-04',
@@ -108,7 +108,7 @@ export const fetchTotalLiquidation = async ({ timeframe } : { timeframe: FilterT
     },
     {
       time: '2022-03-05',
-      value: 115
+      value: 95
     },
   ]
 

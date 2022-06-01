@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/system'
-import { Box, Stack } from '@mui/material'
+import { Box } from '@mui/material'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import BarChartAlt from '~/components/Charts/BarChartAlt'
+import { formatDollarAmount } from '~/utils/numbers'
 // import { unixToDate } from '~/utils/date'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
 import { TimeTabs, TimeTab, FilterTimeMap, FilterTime } from '~/components/Charts/TimeTabs'
@@ -15,6 +16,7 @@ const BarChart: React.FC = () => {
 
   const [tab, setTab] = useState(0)
   const [filterTime, setFilterTime] = useState<FilterTime>('24h')
+  const [chartHover, setChartHover] = useState<number | undefined>()
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)
 	}
@@ -33,6 +35,16 @@ const BarChart: React.FC = () => {
     enabled: tab === 1
   })
 
+  useEffect(() => {
+    if (chartHover === undefined && totalVolume) {
+      if (tab === 0) {
+        setChartHover(totalVolume?.chartData[totalVolume?.chartData.length-1].value)
+      } else {
+        setChartHover(totalLiquidation?.chartData[totalLiquidation?.chartData.length-1].value)
+      }
+    }
+  }, [chartHover, totalVolume, totalLiquidation, tab])
+
   // const formattedData = useMemo(() => {
   //   if (chartData) {
   //     return chartData.map((day: any) => {
@@ -49,6 +61,8 @@ const BarChart: React.FC = () => {
   return (
     <BarChartAlt
       data={tab === 0 ? totalVolume?.chartData : totalLiquidation?.chartData}
+      value={chartHover}
+      setValue={setChartHover}
       topLeft={
         <Box>
           <Box>
@@ -57,7 +71,7 @@ const BarChart: React.FC = () => {
               <StyledTab value={1} label="Total Liquidation"></StyledTab>
             </StyledTabs>
           </Box>
-          <SelectValue>$480.6m</SelectValue>
+          <SelectValue>{formatDollarAmount(chartHover, 2, true)}</SelectValue>
         </Box>
       }
       topRight={

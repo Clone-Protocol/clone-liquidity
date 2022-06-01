@@ -1,4 +1,3 @@
-import { createChart } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 import { withCsrOnly } from '~/hocs/CsrOnly'
 

@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 // import dynamic from 'next/dynamic'
+import { formatDollarAmount } from '~/utils/numbers'
 import LineChartAlt from '~/components/Charts/LineChartAlt'
 // import { unixToDate } from '~/utils/date'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
@@ -16,6 +17,7 @@ const LineChart: React.FC = () => {
 
   const [tab, setTab] = useState(0)
   const [filterTime, setFilterTime] = useState<FilterTime>('24h')
+  const [chartHover, setChartHover] = useState<number | undefined>()
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)
 	}
@@ -34,6 +36,16 @@ const LineChart: React.FC = () => {
     enabled: tab === 1
   })
 
+  useEffect(() => {
+    if (chartHover === undefined && totalLiquidity) {
+      if (tab === 0) {
+        setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length-1].value)
+      } else {
+        setChartHover(totalUsers?.chartData[totalUsers?.chartData.length-1].value)
+      }
+    }
+  }, [chartHover, totalLiquidity, totalUsers, tab])
+
   // const formattedData = useMemo(() => {
   //   if (chartData) {
   //     return chartData.map((day: any) => {
@@ -50,6 +62,8 @@ const LineChart: React.FC = () => {
   return (
     <LineChartAlt
       data={tab === 0 ? totalLiquidity?.chartData : totalUsers?.chartData}
+      value={chartHover}
+      setValue={setChartHover}
       topLeft={
         <Box>
           <Box>
@@ -58,7 +72,7 @@ const LineChart: React.FC = () => {
               <StyledTab value={1} label="Total Users"></StyledTab>
             </StyledTabs>
           </Box>
-          <SelectValue>$480.6m</SelectValue>
+          <SelectValue>{tab === 0 ? formatDollarAmount(chartHover, 2, true) : chartHover?.toLocaleString()}</SelectValue>
         </Box>
       }
       topRight={
