@@ -73,20 +73,21 @@ const BorrowBox = () => {
 	])
 
   const [collRatio, setCollRatio] = useState(100)
-  const assetOraclePrice = 1.1
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
+    const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
     const borrowAmount = inputCollAmount * inputCollRatio / (assetOraclePrice * 100)
     setValue('borrowAmount', borrowAmount)
   }
 
   const calculateCollRatio = (inputBorrowAmount: number) => {
+    const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
     setCollRatio((inputBorrowAmount * assetOraclePrice * 100 / collAmount))
   }
 
   useEffect(() => {
     if (borrowDetail) {
-      console.log('setCollRatio', borrowDetail.stableCollateralRatio)
+      console.log('borrowDetail', borrowDetail)
       setCollRatio(borrowDetail.stableCollateralRatio + 30)
     }
   }, [borrowDetail])
@@ -159,7 +160,7 @@ const BorrowBox = () => {
               </Box>
             </Box>
             <Box sx={{ marginTop: '10px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-              ${priceHistory.assetPrice.toFixed(2)}
+              ${borrowDetail?.oPrice.toFixed(2)}
               {priceHistory.rateOfPrice >= 0 ?
                 <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
               :
