@@ -47,7 +47,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox = false, onChange }) => {
 	const valueLabelFormat = (value: number) => {
-		return `${value}%`
+		return `${value.toFixed(0)}%`
 	}
 
 	return (
@@ -59,16 +59,16 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 			<Box width="100%">
 				<StyledSlider
 					value={value}
-					min={min}
-					step={10}
-					max={max}
+					min={min - 25}
+					step={5}
+					max={min + 100 + 50}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
 					valueLabelDisplay="on"
 				/>
         <Box sx={{ display: 'flex', }}>
-          <Box sx={{ marginLeft: '27px' }}><Stick /><FlagBox>min 120%</FlagBox></Box>
-          <Box sx={{ marginLeft: '172px' }}><Stick /><FlagBox>safe 200%</FlagBox></Box>
+          <Box sx={{ marginLeft: '30px' }}><Stick /><FlagBox>min {min}%</FlagBox></Box>
+          <Box sx={{ marginLeft: '190px' }}><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
         </Box>
 			</Box>
 		</Box>

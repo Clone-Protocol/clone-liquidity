@@ -53,17 +53,6 @@ const BorrowBox = () => {
     enabled: publicKey != null
   });
 
-  // TODO:
-  const [collRatio, setCollRatio] = useState(100)
-
-  useEffect(() => {
-    if (borrowDetail) {
-      setCollRatio(borrowDetail.stableCollateralRatio)
-    }
-  }, [borrowDetail])
-
-  const { mutateAsync } = useBorrowMutation(publicKey)
-
   const {
 		handleSubmit,
 		control,
@@ -83,6 +72,27 @@ const BorrowBox = () => {
 		'borrowAmount',
 	])
 
+  const [collRatio, setCollRatio] = useState(100)
+  const assetOraclePrice = 1.1
+
+  const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
+    const borrowAmount = inputCollAmount * inputCollRatio / (assetOraclePrice * 100)
+    setValue('borrowAmount', borrowAmount)
+  }
+
+  const calculateCollRatio = (inputBorrowAmount: number) => {
+    setCollRatio((inputBorrowAmount * assetOraclePrice * 100 / collAmount))
+  }
+
+  useEffect(() => {
+    if (borrowDetail) {
+      console.log('setCollRatio', borrowDetail.stableCollateralRatio)
+      setCollRatio(borrowDetail.stableCollateralRatio + 30)
+    }
+  }, [borrowDetail])
+
+  const { mutateAsync } = useBorrowMutation(publicKey)
+
   const handleChangeAsset = useCallback((data: AssetType) => {
     if (data) {
       const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
@@ -94,8 +104,9 @@ const BorrowBox = () => {
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
 			setCollRatio(newValue)
+      calculateBorrowAmount(collAmount, newValue)
 		}
-	}, [collRatio])
+	}, [collAmount, collRatio])
 
 	const onBorrow = async () => {
     setLoading(true)
@@ -190,7 +201,9 @@ const BorrowBox = () => {
                     value={field.value}
                     balance={usdiBalance?.balanceVal}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      field.onChange(parseFloat(event.currentTarget.value))
+                      const collAmt = parseFloat(event.currentTarget.value)
+                      field.onChange(collAmt)
+                      calculateBorrowAmount(collAmt, collRatio)
                     }}
                     onMax={(balance: number) => {
                       field.onChange(balance)
@@ -206,7 +219,7 @@ const BorrowBox = () => {
               <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio</Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
-                <RatioSlider min={100} max={250} value={collRatio} onChange={handleChangeCollRatio} />
+                <RatioSlider min={borrowDetail?.stableCollateralRatio} max={250} value={collRatio} onChange={handleChangeCollRatio} />
               </Box>
             </Box>
             <StyledDivider />
@@ -240,7 +253,9 @@ const BorrowBox = () => {
                       balanceDisabled
                       value={field.value}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        field.onChange(parseFloat(event.currentTarget.value))
+                        const borrowAmt = parseFloat(event.currentTarget.value)
+                        field.onChange(borrowAmt)
+                        calculateCollRatio(borrowAmt)
                       }}
                     />
                   )}

@@ -40,7 +40,9 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 			<Grid item xs={12} md={4}>
         <StyledBox>
           <Box display="flex">
-            <Image src={cometDetail.tickerIcon} width="30px" height="30px" />
+            <Box sx={{ marginTop: '7px' }}>
+              <Image src={cometDetail.tickerIcon} width={30} height={30} />
+            </Box>
             <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
               {cometDetail.tickerName} ({cometDetail.tickerSymbol})
             </Box>

@@ -33,7 +33,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return
 
-  console.log('fetchCometDetail')
+  console.log('fetchCometDetail', index)
   // start timer in data-loading-indicator
   setStartTimer(false);
   setStartTimer(true);
@@ -41,13 +41,15 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 	await program.loadManager()
 
 	let comet = await program.getCometPosition(index)
-	const balances = await program.getPoolBalances(comet.poolIndex)
+  console.log('comet', comet)
+  console.log('comet-poolIndex', Number(comet.poolIndex))
+	const balances = await program.getPoolBalances(Number(comet.poolIndex))
 	let price = balances[1] / balances[0]
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = Number(comet.borrowedIasset.val) === 0 ? 0 : Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(comet.poolIndex))
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
   const mintAmount = toScaledNumber(comet.borrowedUsdi)
   const collAmount = toScaledNumber(comet.collateralAmount)
   const lowerLimit = toScaledNumber(comet.lowerPriceRange)

@@ -117,7 +117,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
     setLoading(true)
     await mutateAsyncComet(
       {
-        collateralIndex: 0,
+        collateralIndex: 0, //USDi
         iassetIndex: assetIndex,
         usdiAmount: mintAmount,
         collateralAmount: collAmount,

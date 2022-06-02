@@ -10,6 +10,8 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
+  console.log('fetchBorrowDetail', index)
+
 	await program.loadManager()
 	const data = await program.getMintiAssetData(index)
 
@@ -37,7 +39,7 @@ export const fetchPositionDetail = async ({ program, userPubKey, index }: { prog
 const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
-  console.log('fetchBorrowDetail')
+  console.log('fetchBorrowPosition')
 
   await program.loadManager()
 
