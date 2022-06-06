@@ -2,7 +2,6 @@ import { Box, Slider, styled } from '@mui/material'
 
 interface Props {
 	min?: number
-	max?: number
 	value: number
   hideValueBox?: boolean
 	onChange?: (event: Event, newValue: number | number[]) => void
@@ -45,10 +44,12 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox = false, onChange }) => {
+const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, onChange }) => {
 	const valueLabelFormat = (value: number) => {
 		return `${value.toFixed(0)}%`
 	}
+
+  const max = min + 100 + 50
 
 	return (
 		<Box
@@ -64,7 +65,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 					max={min + 100 + 50}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
-					valueLabelDisplay="on"
+					valueLabelDisplay={min <= value && value <= max ? 'on' : 'off'}
 				/>
         <Box sx={{ display: 'flex', }}>
           <Box sx={{ marginLeft: '30px' }}><Stick /><FlagBox>min {min}%</FlagBox></Box>

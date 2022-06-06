@@ -36,6 +36,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 			borrowedIasset: Number(info[9]),
 			borrowedUsdi: Number(info[10]),
 			liquidityTokenAmount: Number(info[11]),
+      healthScore: 5
 		})
 
     i++
@@ -59,7 +60,8 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	    ild: 28.9,
       borrowedIasset: 0,
       borrowedUsdi: 0,
-      liquidityTokenAmount: 0
+      liquidityTokenAmount: 0,
+      healthScore: 5
 	  },
 	]
 	return result2
@@ -90,6 +92,7 @@ export interface PoolList {
 	borrowedIasset: number
 	borrowedUsdi: number
 	liquidityTokenAmount: number
+  healthScore: number
 }
 
 export function useCometPoolsQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetPoolsProps) {

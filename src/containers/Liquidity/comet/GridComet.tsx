@@ -88,16 +88,30 @@ let columns: GridColDef[] = [
       return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
-	{
-		field: 'ild',
+  {
+		field: 'healthScore',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'ILD',
+		headerName: 'Health Score',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-      return <CellDigitValue value={params.value} symbol="USDi" />
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <CellDigitValue value={params.value} symbol="%" />
+        </Box>
+      )
 		},
 	},
+	// {
+	// 	field: 'ild',
+	// 	headerClassName: 'super-app-theme--header',
+	// 	cellClassName: 'super-app-theme--cell',
+	// 	headerName: 'ILD',
+	// 	flex: 1,
+	// 	renderCell(params: GridRenderCellParams<string>) {
+  //     return <CellDigitValue value={params.value} symbol="USDi" />
+	// 	},
+	// },
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',

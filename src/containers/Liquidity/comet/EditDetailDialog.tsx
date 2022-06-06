@@ -202,7 +202,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
                   <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to minted into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
                 </SubTitle>
 
-                <Box sx={{ marginTop: '20px' }}>
+                <Box sx={{ marginTop: '25px' }}>
                   <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
               </Box>
@@ -227,7 +227,7 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
 }
 
 const WarningBox = styled(Box)`
-	max-width: 507px;
+	max-width: 520px;
   height: 42px;
 	font-size: 11px;
 	font-weight: 500;

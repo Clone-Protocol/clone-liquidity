@@ -80,7 +80,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
 	return (
 		<Box>
 			<Box width="100%" display="flex" sx={{ alignItems: 'center' }}>
-        <SliderTxt sx={{ marginRight: '8px', marginTop: '10px' }}>Min</SliderTxt>
+        <SliderTxt sx={{ marginRight: '18px', marginTop: '10px' }}>Min</SliderTxt>
         <Box sx={{width: '100%', height: '48px'}}>
           <StyledSlider
             sx={{
@@ -89,6 +89,9 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
               },
               '& .MuiSlider-thumb': {
                 border: `3px solid ${pickHex(ratio)}`,
+              },
+              '& .MuiSlider-track': {
+                background: `linear-gradient(to left, #f00 -12%, #809cff ${ratio}%)`
               }
             }}
             value={ratio}
@@ -104,9 +107,9 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
             <FixValueLabel>{currentRatio}%</FixValueLabel>
           </Box>
         </Box>
-        <SliderTxt sx={{ marginLeft: '8px', marginTop: '10px' }}>Max</SliderTxt>
+        <SliderTxt sx={{ marginLeft: '18px', marginTop: '10px' }}>Max</SliderTxt>
 			</Box>
-      <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
+      <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '25px' }}>
         <Stack direction="row" gap={2}>
           <StyledBox>
             <FormBox>

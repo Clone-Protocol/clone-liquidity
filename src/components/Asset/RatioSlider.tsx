@@ -68,6 +68,9 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
             },
             '& .MuiSlider-thumb': {
               border: `3px solid ${pickHex(value)}`,
+            },
+            '& .MuiSlider-track': {
+              background: `linear-gradient(to left, #f00 -12%, #809cff ${value}%)`
             }
           }}
 					value={value}
