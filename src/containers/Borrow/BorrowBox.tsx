@@ -103,7 +103,7 @@ const BorrowBox = () => {
   }, [assetIndex, borrowAsset])
 
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number') {
+		if (typeof newValue === 'number' && borrowDetail && borrowDetail.stableCollateralRatio <= newValue) {
 			setCollRatio(newValue)
       calculateBorrowAmount(collAmount, newValue)
 		}

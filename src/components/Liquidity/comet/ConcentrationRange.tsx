@@ -266,7 +266,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 			<RangeSlider
 				sx={trackCss}
 				min={minLimit}
-				max={maxLimit}
+				max={parseFloat(maxLimit.toFixed(2))}
 				step={0.01}
 				components={{ Thumb: ThumbComponent }}
 				onChange={handleChange}
