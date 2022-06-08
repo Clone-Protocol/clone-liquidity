@@ -11,6 +11,7 @@ import EditPanel from '~/containers/Liquidity/comet/EditPanel'
 import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
+import { useBalanceQuery } from '~/features/Comet/Balance.query'
 // import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
@@ -35,7 +36,13 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     enabled: cometDetail != null
   })
 
-	return (cometDetail && priceHistory) ? (
+  const { data: usdiBalance } = useBalanceQuery({ 
+    userPubKey: publicKey, 
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
+
+	return (cometDetail && priceHistory && usdiBalance) ? (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
         <StyledBox>
@@ -71,7 +78,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
             <StyledTab value={1} label="Close Comet"></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} cometDetail={cometDetail} />
+            <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
             <ClosePanel assetId={assetId} cometDetail={cometDetail} />

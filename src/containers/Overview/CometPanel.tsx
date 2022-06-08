@@ -101,9 +101,9 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 	  }
 	}, [maxMintable, cometData])
 
-  // throttling with call contract : (1.4sec)
+  // throttling with call contract : (1sec)
   const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
-    console.log('calculateUSDiAmount')
+    console.log('calculateUSDiAmount', lowerLimit)
     const program = getInceptApp()
     await program.loadManager()
 
@@ -115,7 +115,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
       true,
     )
     setValue('mintAmount', mintAmount)
-  }, 1400), [mintAmount])
+  }, 1000), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -125,9 +125,11 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 			upperLimit,
 		}
 		setCometData(newData)
-
-    calculateUSDiAmountFromRange(lowerLimit)
 	}, [cometData])
+
+  const handleChangeCommittedRange = (lowerLimit: number, upperLimit: number) => {
+    calculateUSDiAmountFromRange(lowerLimit)
+  }
 
 	const onComet = async () => {
     setLoading(true)
@@ -298,6 +300,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                 assetData={assetData}
                 cometData={cometData}
                 onChange={handleChangeConcentRange}
+                onChangeCommitted={handleChangeCommittedRange}
                 max={assetData.maxRange}
                 defaultLower={(assetData.price / 2)}
                 defaultUpper={((assetData.price * 3) / 2)}

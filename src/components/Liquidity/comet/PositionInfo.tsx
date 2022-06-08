@@ -82,7 +82,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box sx={{ width: '45%', marginLeft: '15px' }}>
           <SubTitle>Health Score</SubTitle>
           <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-            95%
+            {cometDetail.healthScore}%
           </Box>
         </Box>
         <Box sx={{ display: 'flex', width: '50%' }}>

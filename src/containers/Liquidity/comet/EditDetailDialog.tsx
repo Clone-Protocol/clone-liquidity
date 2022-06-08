@@ -9,14 +9,13 @@ import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import ThreeIcon from 'public/images/three-icon.svg'
-// import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditForm }: any) => {
+const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm }: any) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
@@ -24,14 +23,9 @@ const EditDetailDialog = ({ cometId, assetData, cometDetail, open, onHideEditFor
   const cometIndex = parseInt(cometId)
 
   const { mutateAsync } = useEditMutation(publicKey)
-  // const { data: usdiBalance } = useBalanceQuery({ 
-  //   userPubKey: publicKey, 
-  //   refetchOnMount: true,
-  //   enabled: publicKey != null
-  // });
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
-  const maxCollVal = cometDetail.maxCollValue
+  const maxCollVal = balance
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     lowerLimit: cometDetail.lowerLimit,

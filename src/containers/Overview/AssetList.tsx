@@ -16,16 +16,18 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
+import useDebounce from '~/hooks/useDebounce'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const debounceSearchTerm = useDebounce(searchTerm, 500)
 	const { publicKey } = useWallet()
 
 	const { data: assets } = useAssetsQuery({
     userPubKey: publicKey,
     filter,
-    searchTerm,
+    searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
 	  refetchOnMount: true,
     enabled: publicKey != null
 	})

@@ -16,6 +16,7 @@ interface Props {
   assetData: PositionInfo
 	cometData: CometInfo
 	onChange?: (isTight: boolean, lowerLimit: number, upperLimit: number) => void
+  onChangeCommitted?: (lowerLimit: number, upperLimit: number) => void
 	max: number
 	defaultLower: number
 	defaultUpper: number
@@ -161,7 +162,7 @@ function ValueLabelComponent(props: { children: React.ReactElement; value: numbe
 	)
 }
 
-const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, max, defaultLower, defaultUpper }) => {
+const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, onChangeCommitted, max, defaultLower, defaultUpper }) => {
 	const minLimit = 0
 	const maxLimit = max
 
@@ -261,6 +262,16 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 			}
 		}
 	}
+
+  //@ts-ignore
+  const handleChangeCommitted = (event: Event, newValue: number | number[]) => {
+    if (!Array.isArray(newValue)) {
+			return
+		}
+
+    onChangeCommitted && onChangeCommitted(newValue[0], newValue[1])
+  }
+
 	return (
 		<Box sx={{ position: 'relative' }}>
 			<RangeSlider
@@ -270,6 +281,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, m
 				step={0.01}
 				components={{ Thumb: ThumbComponent }}
 				onChange={handleChange}
+        onChangeCommitted={handleChangeCommitted}
 				defaultValue={[defaultLower, defaultUpper]}
 				disableSwap
 				valueLabelDisplay="on"

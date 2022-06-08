@@ -5,7 +5,7 @@ import PositionInfo from '~/components/Liquidity/comet/PositionInfo'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import EditDetailDialog from './EditDetailDialog'
 
-const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: CometDetail }) => {
+const EditPanel = ({ assetId, cometDetail, balance }: { assetId: string, cometDetail: CometDetail, balance: number }) => {
 	const assetData: PI = {
     tickerIcon: cometDetail.tickerIcon,
     tickerName: cometDetail.tickerName,
@@ -35,6 +35,7 @@ const EditPanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Com
       <EditDetailDialog
         open={openEditDetail}
         cometId={cometIndex}
+        balance={balance}
         assetData={assetData}
         cometDetail={cometDetail}
         onHideEditForm={() => setOpenEditDetail(false)}
