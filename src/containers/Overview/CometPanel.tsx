@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -22,22 +22,22 @@ import Image from 'next/image'
 import { useForm, Controller } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import throttle from 'lodash.throttle'
 
 const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, assetData: PositionInfo, assetIndex: number }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
-
-  // TODO:
-  const maxMintable = 5;
   
   const [mintRatio, setMintRatio] = useState(50)
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
-    lowerLimit: 40.0,
-    upperLimit: 180.0
+    lowerLimit: assetData.price / 2,
+    upperLimit: (assetData.price * 3) / 2
   })
+  const [maxMintable, setMaxMintable] = useState(0.0)
+  const COLLATERAL_INDEX = 0 // USDi
 
   const {
 		handleSubmit,
@@ -58,25 +58,25 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 	])
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
-
-  useEffect(() => {
-    if (assetData) {
-      setCometData({
-        ...cometData,
-        lowerLimit: assetData.price / 2,
-        upperLimit: (assetData.price * 3) / 2
-      })
-    }
-  }, [assetData])
-
+  
   useEffect(() => {
     async function fetch() {
+      const program = getInceptApp()
+      await program.loadManager()
+
+      if (collAmount) {
+        const max = await program.calculateMaxUSDiAmountFromCollateral(
+          assetIndex,
+          collAmount 
+        )
+        setMaxMintable(max)
+      }
+
       if (collAmount && mintAmount) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
-        const program = getInceptApp()
-        await program.loadManager()
+        
         let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-          0, // USDi
+          COLLATERAL_INDEX, // USDi
           assetIndex,
           collAmount,
           mintAmount
@@ -84,13 +84,11 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 
         console.log('l', lowerLimit)
         console.log('u', upperLimit)
-        // if (lowerLimit && upperLimit) {
-          setCometData({
-            ...cometData,
-            lowerLimit,
-            upperLimit
-          })
-        // }
+        setCometData({
+          ...cometData,
+          lowerLimit,
+          upperLimit
+        })
       }
     }
     fetch()
@@ -101,7 +99,23 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
       setValue('mintAmount', maxMintable * newValue / 100)
       setMintRatio(newValue)
 	  }
-	}, [cometData])
+	}, [maxMintable, cometData])
+
+  // throttling with call contract : (1.4sec)
+  const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
+    console.log('calculateUSDiAmount')
+    const program = getInceptApp()
+    await program.loadManager()
+
+    const mintAmount = await program.calculateUSDiAmountFromRange(
+      COLLATERAL_INDEX,
+      assetIndex,
+      collAmount,
+      lowerLimit,
+      true,
+    )
+    setValue('mintAmount', mintAmount)
+  }, 1400), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -111,13 +125,15 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 			upperLimit,
 		}
 		setCometData(newData)
+
+    calculateUSDiAmountFromRange(lowerLimit)
 	}, [cometData])
 
 	const onComet = async () => {
     setLoading(true)
     await mutateAsyncComet(
       {
-        collateralIndex: 0, //USDi
+        collateralIndex: COLLATERAL_INDEX, //USDi
         iassetIndex: assetIndex,
         usdiAmount: mintAmount,
         collateralAmount: collAmount,
@@ -252,11 +268,11 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const mintVal = parseFloat(event.currentTarget.value)
                       field.onChange(mintVal)
-                      setMintRatio(mintVal * 100 / maxMintable)
+                      maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)
-                      setMintRatio(value * 100 / maxMintable)
+                      maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
                     }}
                   />
                 )}

@@ -73,7 +73,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
               background: `linear-gradient(to left, #f00 -12%, #809cff ${value}%)`
             }
           }}
-					value={value}
+					value={parseFloat(value.toFixed(2))}
 					min={min}
 					step={10}
 					max={max}
