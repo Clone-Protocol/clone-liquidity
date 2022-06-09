@@ -5,6 +5,50 @@ import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 
+
+export const callRecenter = async ({
+  program,
+  userPubKey,
+	data
+}: CallRecenterProps) => {
+  if (!userPubKey) throw new Error('no user public key')
+
+  console.log('recenter data', data)
+
+	await program.loadManager()
+
+  let comet = await program.getCometPosition(data.cometIndex)
+	let pool = await program.getPool(comet.poolIndex)
+
+  const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
+
+  await program.recenterComet(
+		iassetAssociatedTokenAccount.address,
+		data.cometIndex,
+		[]
+	)
+
+  return {
+    result: true
+  }
+}
+
+type RecenterFormData = {
+  cometIndex: number
+}
+
+interface CallRecenterProps {
+	program: Incept
+	userPubKey: PublicKey | null
+  data: RecenterFormData
+}
+
+export function useRecenterMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(), userPubKey, data }))
+}
+
+
 export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
@@ -153,3 +197,4 @@ export function useCometMutation(userPubKey : PublicKey | null ) {
   const { getInceptApp } = useIncept()
   return useMutation((data: CometFormData) => callComet({ program: getInceptApp(), userPubKey, data }))
 }
+
