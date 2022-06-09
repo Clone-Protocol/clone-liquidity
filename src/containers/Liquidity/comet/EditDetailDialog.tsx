@@ -60,16 +60,19 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 		setEditType(newValue)
 	}, [editType])
 
-  const calculateRange = async (amount: number) => {
+  const calculateRange = async (collAmount: number) => {
     const program = getInceptApp()
+    await program.loadManager()
+
     let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-      0,
+      0, // USDi
       (
         await program.getCometPosition(cometIndex)
       ).poolIndex,
-      amount,
+      collAmount,
       mintAmount
-    ))!
+    ))
+    
     if (lowerLimit && upperLimit) {
       setCometData({
         ...cometData,
