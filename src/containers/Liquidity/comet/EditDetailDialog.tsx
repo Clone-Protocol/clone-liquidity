@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import Image from 'next/image'
@@ -14,6 +14,7 @@ import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import throttle from 'lodash.throttle'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm }: any) => {
   const { publicKey } = useWallet()
@@ -22,8 +23,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = parseInt(cometId)
 
-  const { mutateAsync } = useEditMutation(publicKey)
-
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const maxCollVal = balance
   const [cometData, setCometData] = useState<CometInfo>({
@@ -31,6 +30,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
+  const COLLATERAL_INDEX = 0 // USDi
 
   const {
 		handleSubmit,
@@ -50,63 +50,106 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 		'mintAmount',
 	])
 
-  // TODO:
-  const maxMintable = 5;
+  const { mutateAsync } = useEditMutation(publicKey)
 
-  const defaultMintRatio = cometDetail.mintAmount * 100 / maxMintable
-  const [mintRatio, setMintRatio] = useState(defaultMintRatio)
+  const [assetIndex, setAssetIndex] = useState(cometIndex)
+  const [maxMintable, setMaxMintable] = useState(0.0)
+  const [defaultMintRatio, setDefaultMintRatio] = useState(0)
+  const [mintRatio, setMintRatio] = useState(0)
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
 	}, [editType])
 
-  const calculateRange = async (collAmount: number) => {
-    const program = getInceptApp()
-    await program.loadManager()
+  // defaultMintRatio
+  useEffect(() => {
+    async function fetch() {
+      const program = getInceptApp()
+      await program.loadManager()
 
-    let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-      0, // USDi
-      (
+      const assetIndex = (
         await program.getCometPosition(cometIndex)
-      ).poolIndex,
-      collAmount,
-      mintAmount
-    ))
-    
-    if (lowerLimit && upperLimit) {
-      setCometData({
-        ...cometData,
-        lowerLimit,
-        upperLimit
-      })
-    }
-  }
+      ).poolIndex
 
-	const handleChangeFromAmount = useCallback( async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const max = await program.calculateMaxUSDiAmountFromCollateral(
+        assetIndex,
+        cometDetail.collAmount 
+      )
+
+      setAssetIndex(assetIndex)
+      setDefaultMintRatio(max > 0 ? cometDetail.mintAmount * 100 / max : 0)
+      setMintRatio(max > 0 ? cometDetail.mintAmount * 100 / max : 0)
+    }
+    fetch()
+  }, [])
+
+  useEffect(() => {
+    async function fetch() {
+      const program = getInceptApp()
+      await program.loadManager()
+
+      if (collAmount) {
+        const max = await program.calculateMaxUSDiAmountFromCollateral(
+          assetIndex,
+          collAmount 
+        )
+        setMaxMintable(max)
+      }
+
+      if (collAmount && mintAmount) {
+        console.log('calculateRange', collAmount +"/"+mintAmount)
+        
+        let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+          COLLATERAL_INDEX, // USDi
+          assetIndex,
+          collAmount,
+          mintAmount
+        ))!
+
+        setCometData({
+          ...cometData,
+          lowerLimit,
+          upperLimit
+        })
+      }
+    }
+    fetch()
+  }, [collAmount, mintAmount])
+
+	const handleChangeFromAmount = useCallback( (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.currentTarget.value) {
 			const amount = parseFloat(e.currentTarget.value)
-      await calculateRange(amount)
-			
       setValue('collAmount', amount)
 		} else {
 			setValue('collAmount', 0.0)
 		}
-	}, [cometIndex, mintAmount, cometData])
-
-  const handleChangeMax = async (amount: number) => {
-    await calculateRange(amount)	
-    setValue('collAmount', amount)
-	}
+	}, [collAmount])
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
-    setMintRatio(newRatio)
     setValue('mintAmount', newRatio * maxMintable / 100)
+    setMintRatio(newRatio)
 	}, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    setMintRatio(mintAmount * 100 / maxMintable)
     setValue('mintAmount', mintAmount)
+    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
 	}, [mintRatio, mintAmount])
+
+  // throttling with call contract : (1sec)
+  const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
+    console.log('calculateUSDiAmount', lowerLimit)
+    const program = getInceptApp()
+    await program.loadManager()
+
+    const mintAmount = await program.calculateUSDiAmountFromRange(
+      COLLATERAL_INDEX,
+      assetIndex,
+      collAmount,
+      lowerLimit,
+      true,
+    )
+    setValue('mintAmount', mintAmount)
+  }, 1000), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
 		const newData = {
@@ -115,6 +158,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 			upperLimit,
 		}
 		setCometData(newData)
+    calculateUSDiAmountFromRange(lowerLimit)
 	}, [cometData])
 
 	const onEdit = async () => {
@@ -186,7 +230,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       currentCollAmount={cometDetail.collAmount}
                       onChangeType={handleChangeType}
                       onChangeAmount={handleChangeFromAmount}
-                      onMax={handleChangeMax}
+                      onMax={(amount: number) => {
+                        setValue('collAmount', amount)
+                      }}
                     />
                   )}
                 />

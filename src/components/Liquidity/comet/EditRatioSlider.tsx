@@ -55,7 +55,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
 	const valueLabelFormat = (value: number) => {
-		return `${value}%`
+		return `${value.toFixed(1)}%`
 	}
 
   const pickHex = (x: number) => {
@@ -64,7 +64,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
     return rgb
   }
 
-  const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
+  const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number') {
       onChangeRatio && onChangeRatio(newValue)
 		}
@@ -99,12 +99,12 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
             step={10}
             max={max}
             valueLabelFormat={valueLabelFormat}
-            onChange={handleChangeCollRatio}
+            onChange={handleChangeMintRatio}
             valueLabelDisplay="on"
           />
           <Box sx={{ position: 'relative', zIndex: '20', top: '-32px', left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
             <FixThumb />
-            <FixValueLabel>{currentRatio}%</FixValueLabel>
+            <FixValueLabel>{currentRatio.toFixed(1)}%</FixValueLabel>
           </Box>
         </Box>
         <SliderTxt sx={{ marginLeft: '18px', marginTop: '10px' }}>Max</SliderTxt>
