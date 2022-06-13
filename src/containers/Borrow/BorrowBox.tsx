@@ -199,7 +199,7 @@ const BorrowBox = () => {
                     tickerIcon={fromPair.tickerIcon}
                     tickerName={fromPair.tickerName}
                     tickerSymbol={fromPair.tickerSymbol}
-                    value={field.value}
+                    value={parseFloat(field.value.toFixed(3))}
                     balance={usdiBalance?.balanceVal}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
@@ -252,7 +252,7 @@ const BorrowBox = () => {
                       tickerName={ASSETS[assetIndex].tickerName}
                       tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                       balanceDisabled
-                      value={field.value}
+                      value={parseFloat(field.value.toFixed(3))}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const borrowAmt = parseFloat(event.currentTarget.value)
                         field.onChange(borrowAmt)

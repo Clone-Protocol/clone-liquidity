@@ -116,15 +116,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     fetch()
   }, [collAmount, mintAmount])
 
-	const handleChangeFromAmount = useCallback( (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.currentTarget.value) {
-			const amount = parseFloat(e.currentTarget.value)
-      setValue('collAmount', amount)
-		} else {
-			setValue('collAmount', 0.0)
-		}
-	}, [collAmount])
-
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     setValue('mintAmount', newRatio * maxMintable / 100)
     setMintRatio(newRatio)
@@ -166,7 +157,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     await mutateAsync(
       {
         cometIndex, 
-        totalCollateralAmount: collAmount
+        totalCollateralAmount: collAmount,
+        editType
       },
       {
         onSuccess(data) {
@@ -229,9 +221,12 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       maxCollVal={maxCollVal}
                       currentCollAmount={cometDetail.collAmount}
                       onChangeType={handleChangeType}
-                      onChangeAmount={handleChangeFromAmount}
+                      onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const collAmt = parseFloat(e.currentTarget.value)
+                        field.onChange(collAmt)
+                      }}
                       onMax={(amount: number) => {
-                        setValue('collAmount', amount)
+                        field.onChange(amount)
                       }}
                     />
                   )}

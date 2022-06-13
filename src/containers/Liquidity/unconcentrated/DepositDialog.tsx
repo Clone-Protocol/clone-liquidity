@@ -113,7 +113,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
                     tickerIcon={unconcentData.tickerIcon}
                     tickerName={unconcentData.tickerName}
                     tickerSymbol={unconcentData.tickerSymbol}
-                    value={field.value}
+                    value={parseFloat(field.value.toFixed(3))}
                     balance={balances?.iassetVal}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
@@ -150,7 +150,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
                     tickerIcon={'/images/assets/USDi.png'}
                     tickerName="USDi Coin"
                     tickerSymbol="USDi"
-                    value={field.value}
+                    value={parseFloat(field.value.toFixed(3))}
                     balance={balances?.usdiVal}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))

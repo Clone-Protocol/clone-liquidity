@@ -100,12 +100,14 @@ export const callEdit = async ({
 
 	await program.loadManager()
 
-  const { totalCollateralAmount, cometIndex } = data
+  const { totalCollateralAmount, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
 	let comet = await program.getCometPosition(cometIndex)
 
-	if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
+  /// Deposit
+	// if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
+  if (editType === 0) {
 		await program.addCollateralToComet(
 			collateralAssociatedTokenAccount.address,
 			new BN(totalCollateralAmount * 10 ** 8).sub(comet.collateralAmount.val),
@@ -117,7 +119,9 @@ export const callEdit = async ({
       result: true,
       msg: 'added collateral to comet'
     }
-	} else if (totalCollateralAmount < toScaledNumber(comet.collateralAmount)) {
+	} else { 
+  /// Withdraw
+  // else if (totalCollateralAmount < toScaledNumber(comet.collateralAmount)) {
 		await program.withdrawCollateralFromComet(
 			collateralAssociatedTokenAccount.address,
 			comet.collateralAmount.val.sub(new BN(totalCollateralAmount * 10 ** 8)),
@@ -130,15 +134,12 @@ export const callEdit = async ({
       msg: 'withdraw collateral from comet'
     }
 	}
-
-  return {
-    result : false
-  }
 }
 
 type EditFormData = {
   cometIndex: number,
 	totalCollateralAmount: number
+  editType: number
 }
 interface CallEditProps {
 	program: Incept

@@ -48,7 +48,7 @@ const EditCollateralInput: React.FC<Props> = ({
               <TickerSymbol>{tickerSymbol}</TickerSymbol>
             </Box>
           </Box>
-          <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={collAmount} onChange={onChangeAmount} />
+          <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={parseFloat(collAmount.toFixed(3))} onChange={onChangeAmount} />
         </FormStack>
         <BottomBox>
           Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>

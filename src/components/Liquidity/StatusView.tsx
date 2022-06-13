@@ -1,4 +1,4 @@
-import { styled, Box, Paper, Stack, Tabs, Tab } from '@mui/material'
+import { styled, Box, Tabs, Tab } from '@mui/material'
 import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { Status } from '~/features/MyLiquidity/Status.query'
@@ -27,7 +27,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
         <Box>
           <Title>Total Value</Title>
           <BalanceValue>
-            <NumValue>{status.totalVal.toLocaleString()}</NumValue> USDi
+            <NumValue>{status.totalVal.toLocaleString()}</NumValue> USD
           </BalanceValue>
         </Box>
       </TabPanel>
@@ -35,7 +35,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
         <Box>
           <Title>Comet</Title>
           <BalanceValue>
-            <NumValue>{status.comet.toLocaleString()}</NumValue> USDi
+            <NumValue>{status.comet.toLocaleString()}</NumValue> USD
           </BalanceValue>
         </Box>
       </TabPanel>
@@ -43,7 +43,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
         <Box>
           <Title>Unconcentrated</Title>
           <BalanceValue>
-            <NumValue>{status.unconcentrated.toLocaleString()}</NumValue> USDi
+            <NumValue>{status.unconcentrated.toLocaleString()}</NumValue> USD
           </BalanceValue>
         </Box>
       </TabPanel>
@@ -51,7 +51,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
         <Box>
           <Title>Borrow</Title>
           <BalanceValue>
-            <NumValue>{status.borrow.toLocaleString()}</NumValue> USDi
+            <NumValue>{status.borrow.toLocaleString()}</NumValue> USD
           </BalanceValue>
         </Box>
       </TabPanel>
