@@ -31,31 +31,31 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
     i++
 	}
 
-	const result2: PoolList[] = [
-	  {
-	    id: 0,
-	    tickerName: 'iSolana',
-	    tickerSymbol: 'iSOL',
-	    tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	    price: 160.51,
-      assetType: AssetType.Stocks,
-	    liquidityAsset: 90.11,
-	    liquidityUSD: 111.48,
-	    liquidityVal: 15898343,
-	  },
-    {
-	    id: 1,
-	    tickerName: 'iSolana',
-	    tickerSymbol: 'iSOL',
-	    tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	    price: 160.51,
-      assetType: AssetType.Stocks,
-	    liquidityAsset: 90.11,
-	    liquidityUSD: 111.48,
-	    liquidityVal: 15898343,
-	  },
-	]
-	return result2
+	// const result2: PoolList[] = [
+	//   {
+	//     id: 0,
+	//     tickerName: 'iSolana',
+	//     tickerSymbol: 'iSOL',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+	//     price: 160.51,
+  //     assetType: AssetType.Stocks,
+	//     liquidityAsset: 90.11,
+	//     liquidityUSD: 111.48,
+	//     liquidityVal: 15898343,
+	//   },
+  //   {
+	//     id: 1,
+	//     tickerName: 'iSolana',
+	//     tickerSymbol: 'iSOL',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+	//     price: 160.51,
+  //     assetType: AssetType.Stocks,
+	//     liquidityAsset: 90.11,
+	//     liquidityUSD: 111.48,
+	//     liquidityVal: 15898343,
+	//   },
+	// ]
+	return result
 }
 
 interface GetPoolsProps {

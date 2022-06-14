@@ -21,7 +21,7 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
   const { data: pools } = useUnconcentPoolsQuery({
     userPubKey: publicKey,
     filter,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
 

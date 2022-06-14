@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Stack, Divider, Button } from '@mui/material'
+import { Box, Stack, Button } from '@mui/material'
+import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -10,6 +11,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: CometDetail }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   const { mutateAsync } = useCloseMutation(publicKey)
@@ -28,6 +30,7 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
             console.log('data', data)
             enqueueSnackbar('Success to close comet')
             setLoading(false)
+            router.push('/liquidity')
           }
         },
         onError(err) {
@@ -69,7 +72,7 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
           </Stack>
         </Box>
         
-        <ActionButton onClick={onClose}>Close Comet</ActionButton>
+        <ActionButton onClick={onClose} disabled={cometDetail.collAmount == 0}>Close Comet</ActionButton>
       </Box>
     </>
 	)

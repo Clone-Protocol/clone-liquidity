@@ -48,8 +48,9 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = Number(comet.borrowedIasset.val) === 0 ? 0 : Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
+  const maxWithdrawable = await program.calculateMaxWithdrawableCollateral(index);
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(comet.poolIndex))
   const mintAmount = toScaledNumber(comet.borrowedUsdi)
   const collAmount = toScaledNumber(comet.collateralAmount)
   const lowerLimit = toScaledNumber(comet.lowerPriceRange)
@@ -62,6 +63,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     collAmount,
     lowerLimit,
     upperLimit,
+    maxWithdrawable,
     ild,
     healthScore,
 		tickerIcon: tickerIcon,
@@ -102,6 +104,7 @@ export interface CometDetail extends PositionInfo {
   collAmount: number
   lowerLimit: number
   upperLimit: number
+  maxWithdrawable: number
   ild: number
   healthScore: number
 }

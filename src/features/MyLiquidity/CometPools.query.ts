@@ -13,6 +13,8 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 
 	const result: PoolList[] = []
 
+  console.log('cometInfos', cometInfos)
+
 	let i = 0
 	for (const info of cometInfos) {
     const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
@@ -42,29 +44,29 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
     i++
 	}
 
-	const result2: PoolList[] = [
-	  {
-	    id: 1,
-	    tickerName: 'iSolana',
-	    tickerSymbol: 'iSOL',
-	    tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-      collateralName: 'USDi',
-      assetType: 0,
-      collateralType: 0,
-	    iPrice: 160.51,
-	    cPrice: 100.20,
-	    fromPriceRange: 90.11,
-	    toPriceRange: 111.48,
-	    collateral: 15898343,
-      ildIsIasset: false,
-	    ild: 28.9,
-      borrowedIasset: 0,
-      borrowedUsdi: 0,
-      liquidityTokenAmount: 0,
-      healthScore: 5
-	  },
-	]
-	return result2
+	// const result2: PoolList[] = [
+	//   {
+	//     id: 1,
+	//     tickerName: 'iSolana',
+	//     tickerSymbol: 'iSOL',
+	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
+  //     collateralName: 'USDi',
+  //     assetType: 0,
+  //     collateralType: 0,
+	//     iPrice: 160.51,
+	//     cPrice: 100.20,
+	//     fromPriceRange: 90.11,
+	//     toPriceRange: 111.48,
+	//     collateral: 15898343,
+  //     ildIsIasset: false,
+	//     ild: 28.9,
+  //     borrowedIasset: 0,
+  //     borrowedUsdi: 0,
+  //     liquidityTokenAmount: 0,
+  //     healthScore: 5
+	//   },
+	// ]
+	return result
 }
 
 interface GetPoolsProps {

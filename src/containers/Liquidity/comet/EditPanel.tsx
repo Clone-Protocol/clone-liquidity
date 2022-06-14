@@ -63,8 +63,15 @@ const EditPanel = ({ assetId, cometDetail, balance }: { assetId: string, cometDe
         <PositionInfo
           assetData={assetData}
           cometDetail={cometDetail}
-          onShowEditForm={() => setOpenEditDetail(true)}
-          onRecenter={() => handleRecenter()}
+          onShowEditForm={() => {
+            if (cometDetail.collAmount > 0) {
+              setOpenEditDetail(true)
+            }
+          }}
+          onRecenter={() => {
+            // TODO: need to check it can recenter in advance (whether it already set trade in user's trading app)
+            handleRecenter()
+          }}
         />
 
         <EditDetailDialog

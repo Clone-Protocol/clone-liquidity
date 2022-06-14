@@ -23,14 +23,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = parseInt(cometId)
 
+  const COLLATERAL_INDEX = 0 // USDi
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
-  const maxCollVal = balance
+  const [maxCollVal, setMaxCollVal] = useState(balance)
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
-  const COLLATERAL_INDEX = 0 // USDi
 
   const {
 		handleSubmit,
@@ -59,6 +59,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
+    const maxColl = newValue === 0 ? balance : cometDetail.maxWithdrawable
+    setMaxCollVal(maxColl)
 	}, [editType])
 
   // defaultMintRatio

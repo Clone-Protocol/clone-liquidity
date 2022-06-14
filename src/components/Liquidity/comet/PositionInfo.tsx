@@ -97,7 +97,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </Box>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter}>Recenter</ActionButton>
+      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter</ActionButton>
     </Box>
 	) : (
 		<></>
