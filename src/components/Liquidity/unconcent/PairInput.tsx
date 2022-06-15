@@ -7,6 +7,7 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	balance?: number
+  currentAmount?: number
 	balanceDisabled?: boolean
 	disabled?: boolean
 	onChange?: any
@@ -19,6 +20,7 @@ const PairInput: React.FC<Props> = ({
 	tickerSymbol,
 	value,
 	balance,
+  currentAmount,
 	balanceDisabled = false,
 	disabled = false,
 	onChange,
@@ -43,7 +45,7 @@ const PairInput: React.FC<Props> = ({
           </Box>
           <InputAmount id="ip-amount" type="number" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} disabled={disabled} />
         </InputStack>
-        <CurrentPrice style={{ borderTop: '1px solid #444'}}>Current: {balance?.toLocaleString()} {tickerSymbol}</CurrentPrice>
+        <CurrentPrice style={{ borderTop: '1px solid #444'}}>Current: {currentAmount?.toLocaleString()} {tickerSymbol}</CurrentPrice>
       </Box>
 		</FormControl>
 	)

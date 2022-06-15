@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Stack, Divider, styled, Button, Dialog, DialogContent } from '@mui/material'
 import RatioSlider from '~/components/Liquidity/unconcent/RatioSlider'
 import Image from 'next/image'
@@ -8,8 +8,9 @@ import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPositio
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 
-const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
+const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -32,14 +33,20 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
     enabled: open && publicKey != null
 	})
 
+  //default amount
+  useEffect(() => {
+    if (data?.maxVal) {
+      setAmount((data?.maxVal * percent) / 100)
+    }
+  }, [data?.maxVal])
+
 	const handleChangePercent = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number' && data?.maxVal) {
-      // console.log('n', newValue)
       // console.log('m', (data?.maxVal * percent) / 100)
 			setPercent(newValue)
 			setAmount((data?.maxVal * percent) / 100)
 		}
-	}, [amount, percent])
+	}, [data?.maxVal, amount, percent])
 
 	const onWithdraw = async () => {
     setLoading(true)
@@ -114,7 +121,7 @@ const WithdrawDialog = ({ assetId, open, handleClose }: any) => {
                     <Box sx={{ color: '#949494'}}>{(amount/unconcentData.price).toLocaleString()}</Box>
                   </Stack>
                 </FormBox>
-                <BottomBox>Withdrawable: {data?.maxVal.toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
+                <BottomBox>Withdrawable: {(data?.maxVal/unconcentData.price).toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
               </StyledBox>
             </Stack>
               

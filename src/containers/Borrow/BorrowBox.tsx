@@ -76,13 +76,13 @@ const BorrowBox = () => {
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
     const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-    const borrowAmount = inputCollAmount * inputCollRatio / (assetOraclePrice * 100)
+    const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
     setValue('borrowAmount', borrowAmount)
   }
 
   const calculateCollRatio = (inputBorrowAmount: number) => {
     const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-    setCollRatio((inputBorrowAmount * assetOraclePrice * 100 / collAmount))
+    setCollRatio((collAmount * 100) / (inputBorrowAmount * assetOraclePrice))
   }
 
   useEffect(() => {

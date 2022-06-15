@@ -97,6 +97,7 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			const [openDeposit, setOpenDeposit] = useState(false)
 			const [openWithdraw, setOpenWithdraw] = useState(false)
+      // console.log('p', params)
 			return (
 				<Box display="flex">
 					<DefaultButton sx={{ border: '1px solid #809cff'}} onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>
@@ -104,11 +105,13 @@ let columns: GridColDef[] = [
 
 					<DepositDialog
 						assetId={params.row.id}
+            pool={params.row}
 						open={openDeposit}
 						handleClose={() => setOpenDeposit(false)}
 					/>
 					<WithdrawDialog
 						assetId={params.row.id}
+            pool={params.row}
 						open={openWithdraw}
 						handleClose={() => setOpenWithdraw(false)}
 					/>

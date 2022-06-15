@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import PairInput from '~/components/Liquidity/unconcent/PairInput'
 import { useSnackbar } from 'notistack'
@@ -11,8 +11,9 @@ import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 
-const DepositDialog = ({ assetId, open, handleClose }: any) => {
+const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -115,6 +116,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
                     tickerSymbol={unconcentData.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     balance={balances?.iassetVal}
+                    currentAmount={pool.liquidityAsset}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                       setValue('borrowTo', parseFloat(event.currentTarget.value) * unconcentData.price);
@@ -152,6 +154,7 @@ const DepositDialog = ({ assetId, open, handleClose }: any) => {
                     tickerSymbol="USDi"
                     value={parseFloat(field.value.toFixed(3))}
                     balance={balances?.usdiVal}
+                    currentAmount={pool.liquidityUSD}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                       setValue('borrowFrom', parseFloat(event.currentTarget.value) / unconcentData.price);
