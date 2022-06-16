@@ -14,6 +14,7 @@ import BorrowIconOff from 'public/images/borrow-position-icon-off.svg'
 import CometIconOn from 'public/images/comet-icon-on.svg'
 import UlIconOn from 'public/images/ul-icon-on.svg'
 import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
+import LiquidityPositions from './comet/LiquidatedPositions'
 
 const LiquidityTable = () => {
 	const [tab, setTab] = useState(0)
@@ -34,6 +35,10 @@ const LiquidityTable = () => {
         <StyledTab value={1} label="Unconcentrated Liquidity" icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
         <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
       </StyledTabs>
+
+      <Box sx={{ marginTop: '24px' }}>
+        <LiquidityPositions />
+      </Box>
       
       <Box
         sx={{
