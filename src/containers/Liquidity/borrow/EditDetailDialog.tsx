@@ -18,8 +18,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
 
+  const [maxCollVal, setMaxCollVal] = useState(borrowDetail.usdiVal);
+
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
+    setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal : borrowDetail.maxWithdrawableColl)
 	}, [editType])
 
   const fromPair: PairData = {
@@ -46,13 +49,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 		'collAmount',
 		'borrowAmount',
 	])
-  const maxCollVal = 5;
-
-  // const handleChangeCollRatio = (event: Event, newValue: number | number[]) => {
-	//   if (typeof newValue === 'number') {
-	//     setCollRatio(newValue)
-	//   }
-	// }
 
 	const onEdit = async () => {
     setLoading(true)
@@ -60,7 +56,8 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
       {
         borrowIndex,
         totalCollateralAmount: collAmount,
-        totalBorrowAmount: borrowAmount
+        totalBorrowAmount: borrowAmount,
+        editType
       },
       {
         onSuccess(data) {
@@ -100,7 +97,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
                   validate(value) {
                     if (!value || value <= 0) {
                       return 'the collateral amount should be above zero.'
-                    } else if (value > borrowDetail?.usdiVal) {
+                    } else if (value > maxCollVal) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
                   }
@@ -111,7 +108,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
                     collAmount={field.value}
-                    maxCollVal={borrowDetail?.usdiVal}
+                    maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.collateralAmount}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +136,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onEdit)}>{ editType === 0 ? 'Deposit' : 'Withdraw' }</ActionButton>
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{ editType === 0 ? 'Deposit' : 'Withdraw' }</ActionButton>
           </Box>
         </DialogContent>
       </Dialog>

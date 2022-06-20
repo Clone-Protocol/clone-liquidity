@@ -57,6 +57,15 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     index: poolIndex,
     setStartTimer
   })
+
+  // MEMO : calculation of maxWithdrawableCollateral
+  // borrow_amount_in_iasset = collateral_amount / (iasset_oracle_price * collateral_ratio)
+  // min_collateral_amount = borrow_amount_in_iasset * iasset_oracle_price * minCollateralRatio
+  // max_withdrawable_collateral = collateral_amount - min_collateral_amount
+  const borrowAmountInIasset = positionData![1] / (data[0]! * positionData![2]);
+  const minCollateralRatio = positionData![3];
+  const minCollateralAmount = borrowAmountInIasset * data[0]! * minCollateralRatio;
+  const maxWithdrawableColl = positionData![1] - minCollateralAmount;
   
   return {
 		tickerIcon: tickerIcon,
@@ -70,7 +79,8 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     collateralRatio: positionData![2],
     minCollateralRatio: positionData![3],
     usdiVal: balance?.usdiVal,
-    iassetVal: balance?.iassetVal
+    iassetVal: balance?.iassetVal,
+    maxWithdrawableColl
 	}
 }
 
@@ -94,6 +104,7 @@ export interface PositionInfo {
 	minCollateralRatio: number
   usdiVal: number
   iassetVal: number
+  maxWithdrawableColl: number
 }
 
 export interface PairData {

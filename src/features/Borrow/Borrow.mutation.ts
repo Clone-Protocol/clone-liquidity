@@ -53,7 +53,8 @@ export const callEdit = async ({
   const {
     borrowIndex,
     totalCollateralAmount,
-    totalBorrowAmount
+    totalBorrowAmount,
+    editType
   } = data
 
   console.log('edit input data', data)
@@ -64,7 +65,9 @@ export const callEdit = async ({
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
 
-	if (totalCollateralAmount > toScaledNumber(mint.collateralAmount)) {
+  /// Deposit
+	// if (totalCollateralAmount > toScaledNumber(mint.collateralAmount)) {
+  if (editType === 0) {
 		await program.addCollateralToMint(
 			collateralAssociatedTokenAccount.address,
 			new BN(totalCollateralAmount * 10 ** 8).sub(mint.collateralAmount.val),
@@ -88,7 +91,14 @@ export const callEdit = async ({
 				[]
 			)
 		}
-	} else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {
+
+    return {
+      result: true,
+      msg: 'added collateral to borrow'
+    }
+	} else { 
+  /// Withdraw
+  //else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {
 		if (totalCollateralAmount == 0) {
 			if (totalBorrowAmount < toScaledNumber(mint.borrowedIasset)) {
 				if (totalBorrowAmount != 0) {
@@ -140,16 +150,19 @@ export const callEdit = async ({
 				)
 			}
 		}
+
+    return {
+      result: true,
+      msg: 'withdraw collateral from borrow'
+    }
 	}
-  return {
-    result: true
-  }
 }
 
 type EditFormData = {
   borrowIndex: number,
 	totalCollateralAmount: number,
 	totalBorrowAmount: number
+  editType: number
 }
 interface CallEditProps {
 	program: Incept

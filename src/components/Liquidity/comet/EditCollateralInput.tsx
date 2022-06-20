@@ -1,7 +1,6 @@
 import { FormControl, styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 import { StyledTabs, StyledTab } from '~/components/Liquidity/comet/StyledTab'
-import { useState } from 'react'
 
 interface Props {
   editType: number
