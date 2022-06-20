@@ -46,7 +46,8 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
     display: 'flex',
     gap: '10px',
     '&:hover': {
-      backgroundColor: 'rgba(38, 38, 38, 0.5)'
+      backgroundColor: 'rgba(38, 38, 38, 0.5)',
+      borderRadius: '10px'
     }
   },
   textTransform: 'none',

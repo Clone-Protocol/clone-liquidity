@@ -1,6 +1,6 @@
 import { Box, Stack, Divider } from '@mui/material'
 import { styled } from '@mui/system'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
@@ -30,15 +30,19 @@ const LiquidityTable = () => {
 
 	return (
     <div>
-      <StyledTabs value={tab} onChange={handleChangeTab}>
+      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '832px' }}>
         <StyledTab value={0} label="Comet Liquidity" icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
         <StyledTab value={1} label="Unconcentrated Liquidity" icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
         <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
+        <StyledTab value={3} label="Multiple Comet Liquidity" icon={tab === 3 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} sx={{ marginRight: '27px', background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
 
-      <Box sx={{ marginTop: '24px' }}>
-        <LiquidityPositions />
-      </Box>
+      { tab === 0 || tab === 2 && (
+          <Box sx={{ marginTop: '24px' }}>
+            <LiquidityPositions />
+          </Box>
+        )
+      }
       
       <Box
         sx={{
@@ -67,6 +71,7 @@ const LiquidityTable = () => {
         <TabPanel value={tab} index={2}>
           <GridBorrow filter={filter} />
         </TabPanel>
+        <TabPanel value={tab} index={3}>Multiple Comet</TabPanel>
       </Box>
     </div>
 	)

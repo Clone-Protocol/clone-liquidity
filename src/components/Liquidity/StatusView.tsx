@@ -21,6 +21,8 @@ const StatusView: React.FC<Props> = ({ status }) => {
         <StyledTab value={1} label="Comet" />
         <StyledTab value={2} label="Unconcentrated" />
         <StyledTab value={3} label="Borrow" />
+        <StyledTab value={4} label="Multipool Comet" />
+        <StyledTab value={5} label="Liquidated" />
       </StyledTabs>
 
       <TabPanel value={tab} index={0}>
@@ -52,6 +54,22 @@ const StatusView: React.FC<Props> = ({ status }) => {
           <Title>Borrow</Title>
           <BalanceValue>
             <NumValue>{status.borrow.toLocaleString()}</NumValue> USD
+          </BalanceValue>
+        </Box>
+      </TabPanel>
+      <TabPanel value={tab} index={4}>
+        <Box>
+          <Title>Multipool Comet</Title>
+          <BalanceValue>
+            <NumValue>{status.multipoolComet.toLocaleString()}</NumValue> USD
+          </BalanceValue>
+        </Box>
+      </TabPanel>
+      <TabPanel value={tab} index={5}>
+        <Box>
+          <Title>Liquidated</Title>
+          <BalanceValue>
+            <NumValue>{status.liquidated.toLocaleString()}</NumValue> USD
           </BalanceValue>
         </Box>
       </TabPanel>
@@ -120,7 +138,7 @@ const StyledTabs = styled((props: StyledTabsProps) => (
 	'& .MuiTabs-indicatorSpan': {
 		display: 'none'
 	},
-  maxWidth: '620px',
+  maxWidth: '812px',
   borderRadius: '10px',
   height: '34px',
   paddingLeft: '8px',

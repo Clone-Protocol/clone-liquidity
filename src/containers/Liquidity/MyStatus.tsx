@@ -16,7 +16,7 @@ const MyStatus = () => {
 
 
 	return (
-		<Box sx={{ maxWidth: '578px' }}>
+		<Box sx={{ maxWidth: '812px' }}>
 			<StatusView status={status} />
 		</Box>
 	)

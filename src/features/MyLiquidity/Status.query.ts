@@ -54,6 +54,10 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 	let unconcentratedPercent = (unconcentrated / totalVal) * 100
 	let cometPercent = (comet / totalVal) * 100
 
+  // TODO:
+  let multipoolComet = 0
+  let liquidated = 0
+
 	return {
 		totalVal,
 		comet,
@@ -62,6 +66,8 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 		unconcentratedPercent,
 		borrow,
 		borrowPercent,
+    multipoolComet,
+    liquidated
 	}
 }
 
@@ -79,6 +85,8 @@ export interface Status {
 	unconcentratedPercent: number
 	borrow: number
 	borrowPercent: number
+  multipoolComet: number
+  liquidated: number
 }
 
 export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
