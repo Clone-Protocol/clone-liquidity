@@ -39,7 +39,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 		'borrowTo',
 	])
 
-  const { data: balances } = useBalanceQuery({
+  const { data: balances, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
 	  refetchOnMount: true,
@@ -64,15 +64,16 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to borrow')
+            enqueueSnackbar('Success to deposit')
 
             handleClose()
+            refetch()
           }
           setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to borrow')
+          enqueueSnackbar('Failed to deposit')
           setLoading(false)
         }
       }

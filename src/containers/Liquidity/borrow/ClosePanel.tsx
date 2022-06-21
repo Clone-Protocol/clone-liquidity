@@ -40,6 +40,8 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
     )
 	}
 
+  const canCloseComet = borrowDetail.iassetVal >= borrowDetail.borrowedIasset
+
 	return (
     <>
       {loading && (
@@ -72,7 +74,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
           </Stack>
         </Box>
         
-        <ActionButton onClick={onClose}>Repay & Close Position</ActionButton>
+        <ActionButton onClick={onClose} disabled={!canCloseComet}>Repay & Close Position</ActionButton>
       </Box>
     </>
 	)

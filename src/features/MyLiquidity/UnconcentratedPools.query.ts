@@ -8,6 +8,8 @@ import { assetMapping, AssetType } from '~/data/assets'
 export const fetchPools = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
 	if (!userPubKey) return []
 
+  console.log('fetchPools :: UnconcentratedPools.query')
+
 	await program.loadManager()
 	const iassetInfos = await program.getUserLiquidityInfos()
 

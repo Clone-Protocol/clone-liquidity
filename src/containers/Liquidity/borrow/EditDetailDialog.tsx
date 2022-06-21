@@ -38,6 +38,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 		control,
 		formState: { isDirty, errors },
 		watch,
+    setValue
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -50,13 +51,19 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 		'borrowAmount',
 	])
 
+  const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
+    const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
+    const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
+    setValue('borrowAmount', borrowAmount)
+  }
+
 	const onEdit = async () => {
     setLoading(true)
     await mutateAsync(
       {
         borrowIndex,
-        totalCollateralAmount: collAmount,
-        totalBorrowAmount: borrowAmount,
+        collateralAmount: collAmount,
+        borrowAmount: borrowAmount,
         editType
       },
       {
@@ -112,7 +119,9 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
                     currentCollAmount={borrowDetail.collateralAmount}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      field.onChange(parseFloat(event.currentTarget.value))
+                      const collAmt = parseFloat(event.currentTarget.value)
+                      field.onChange(collAmt)
+                      calculateBorrowAmount(collAmt, borrowDetail.collateralRatio)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)
@@ -126,7 +135,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Collateral Ratio</DetailHeader>
-                <DetailValue>{borrowDetail.collateralAmount.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralAmount.toLocaleString()}%)</span></DetailValue>
+                <DetailValue>{borrowDetail.collateralRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Min Collateral Ratio</DetailHeader>

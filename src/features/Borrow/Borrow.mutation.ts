@@ -13,17 +13,18 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
   console.log('close input data', data)
 
-	let mint = await program.getMintPosition(borrowIndex)
-	let assetInfo = await program.getAssetInfo(mint.poolIndex)
+  const mint = await program.getMintPosition(borrowIndex)
+	const assetInfo = await program.getAssetInfo(mint.poolIndex)
+  const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
+  const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
+  await program.closeMintPosition(
+    iassetAssociatedTokenAccount.address,
+    Number(borrowIndex),
+    collateralAssociatedTokenAccount.address,
+    []
+  )
 
-	await program.payBackiAssetToMint(
-		iassetAssociatedTokenAccount.address,
-		mint.borrowedIasset.val,
-		Number(borrowIndex),
-		[]
-	)
   return {
     result: true
   }
@@ -52,8 +53,8 @@ export const callEdit = async ({
 	await program.loadManager()
   const {
     borrowIndex,
-    totalCollateralAmount,
-    totalBorrowAmount,
+    collateralAmount,
+    borrowAmount,
     editType
   } = data
 
@@ -70,23 +71,23 @@ export const callEdit = async ({
   if (editType === 0) {
 		await program.addCollateralToMint(
 			collateralAssociatedTokenAccount.address,
-			new BN(totalCollateralAmount * 10 ** 8).sub(mint.collateralAmount.val),
+			new BN(collateralAmount * 10 ** 8),
 			borrowIndex,
 			[]
 		)
-		if (totalBorrowAmount < toScaledNumber(mint.borrowedIasset)) {
-			if (totalBorrowAmount != 0) {
+		if (borrowAmount < toScaledNumber(mint.borrowedIasset)) {
+			if (borrowAmount != 0) {
 				await program.payBackiAssetToMint(
 					iassetAssociatedTokenAccount.address,
-					new BN(totalBorrowAmount * 10 ** 8).sub(mint.borrowedIasset.val),
+					new BN(borrowAmount * 10 ** 8),
 					borrowIndex,
 					[]
 				)
 			}
-		} else if (totalBorrowAmount > toScaledNumber(mint.borrowedIasset)) {
+		} else if (borrowAmount > toScaledNumber(mint.borrowedIasset)) {
 			await program.addiAssetToMint(
 				iassetAssociatedTokenAccount.address,
-				mint.borrowedIasset.val.sub(new BN(totalBorrowAmount * 10 ** 8)),
+				new BN(borrowAmount * 10 ** 8),
 				borrowIndex,
 				[]
 			)
@@ -98,58 +99,38 @@ export const callEdit = async ({
     }
 	} else { 
   /// Withdraw
-  //else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {
-		if (totalCollateralAmount == 0) {
-			if (totalBorrowAmount < toScaledNumber(mint.borrowedIasset)) {
-				if (totalBorrowAmount != 0) {
-					await program.payBackiAssetToMint(
-						iassetAssociatedTokenAccount.address,
-						new BN(totalBorrowAmount * 10 ** 8).sub(mint.borrowedIasset.val),
-						borrowIndex,
-						[]
-					)
-				}
-			} else if (totalCollateralAmount > toScaledNumber(mint.collateralAmount)) {
-				await program.addiAssetToMint(
-					iassetAssociatedTokenAccount.address,
-					mint.borrowedIasset.val.sub(new BN(totalBorrowAmount * 10 ** 8)),
-					borrowIndex,
-					[]
-				)
-			}
-		} else {
-			if (totalBorrowAmount < toScaledNumber(mint.borrowedIasset)) {
-				if (totalBorrowAmount != 0) {
-					await program.payBackiAssetToMint(
-						iassetAssociatedTokenAccount.address,
-						new BN(totalBorrowAmount * 10 ** 8).sub(mint.borrowedIasset.val),
-						borrowIndex,
-						[]
-					)
-				}
+  //else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {	
+    if (borrowAmount < toScaledNumber(mint.borrowedIasset)) {
+      if (borrowAmount != 0) {
+        await program.payBackiAssetToMint(
+          iassetAssociatedTokenAccount.address,
+          new BN(borrowAmount * 10 ** 8),
+          borrowIndex,
+          []
+        )
+      }
 
-				await program.withdrawCollateralFromMint(
-					collateralAssociatedTokenAccount.address,
-					mint.collateralAmount.val.sub(new BN(totalCollateralAmount * 10 ** 8)),
-					borrowIndex,
-					[]
-				)
-			} else if (totalBorrowAmount > toScaledNumber(mint.borrowedIasset)) {
-				await program.withdrawCollateralFromMint(
-					collateralAssociatedTokenAccount.address,
-					mint.collateralAmount.val.sub(new BN(totalCollateralAmount * 10 ** 8)),
-					borrowIndex,
-					[]
-				)
+      await program.withdrawCollateralFromMint(
+        collateralAssociatedTokenAccount.address,
+        new BN(collateralAmount * 10 ** 8),
+        borrowIndex,
+        []
+      )
+    } else if (borrowAmount > toScaledNumber(mint.borrowedIasset)) {
+      await program.withdrawCollateralFromMint(
+        collateralAssociatedTokenAccount.address,
+        new BN(collateralAmount * 10 ** 8),
+        borrowIndex,
+        []
+      )
 
-				await program.addiAssetToMint(
-					iassetAssociatedTokenAccount.address,
-					mint.borrowedIasset.val.sub(new BN(totalBorrowAmount * 10 ** 8)),
-					borrowIndex,
-					[]
-				)
-			}
-		}
+      await program.addiAssetToMint(
+        iassetAssociatedTokenAccount.address,
+        new BN(borrowAmount * 10 ** 8),
+        borrowIndex,
+        []
+      )
+    }
 
     return {
       result: true,
@@ -160,8 +141,8 @@ export const callEdit = async ({
 
 type EditFormData = {
   borrowIndex: number,
-	totalCollateralAmount: number,
-	totalBorrowAmount: number
+	collateralAmount: number,
+	borrowAmount: number
   editType: number
 }
 interface CallEditProps {

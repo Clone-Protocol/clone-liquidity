@@ -24,7 +24,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { data: borrowDetail } = useBorrowPositionQuery({ 
     userPubKey: publicKey, 
     index: borrowIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   });
 

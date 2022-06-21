@@ -19,7 +19,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
 	const unconcentratedIndex = parseInt(assetId)
   const { mutateAsync } = useWithdrawMutation(publicKey)
 
-  const { data } = useBalanceQuery({
+  const { data, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
 	  refetchOnMount: true,
@@ -62,6 +62,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
             enqueueSnackbar('Success to withdraw')
 
             handleClose()
+            refetch()
           }
           setLoading(false)
         },
