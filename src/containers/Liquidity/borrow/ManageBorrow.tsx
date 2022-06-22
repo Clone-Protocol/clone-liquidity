@@ -21,7 +21,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
 
   const borrowIndex = parseInt(assetId)
 
-  const { data: borrowDetail } = useBorrowPositionQuery({ 
+  const { data: borrowDetail, refetch } = useBorrowPositionQuery({ 
     userPubKey: publicKey, 
     index: borrowIndex,
     refetchOnMount: "always",
@@ -68,7 +68,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
             <StyledTab value={1} label="Close Borrow Position"></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} borrowDetail={borrowDetail} />
+            <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()}   />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
             <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />

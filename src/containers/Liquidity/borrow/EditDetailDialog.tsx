@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -10,7 +10,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 
-const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any) => {
+const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -18,7 +18,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
 
-  const [maxCollVal, setMaxCollVal] = useState(borrowDetail.usdiVal);
+  const [maxCollVal, setMaxCollVal] = useState();
+
+  useEffect(() => {
+    setMaxCollVal(borrowDetail.usdiVal)
+  }, [borrowDetail.usdiVal])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
@@ -72,6 +76,8 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm }: any)
             console.log('data', data)
             enqueueSnackbar('Success to edit')
             setLoading(false)
+            onRefetchData()
+            onHideEditForm()
           }
         },
         onError(err) {

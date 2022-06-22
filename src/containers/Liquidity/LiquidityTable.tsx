@@ -1,6 +1,7 @@
 import { Box, Stack, Divider } from '@mui/material'
 import { styled } from '@mui/system'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
@@ -17,8 +18,17 @@ import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 import LiquidityPositions from './comet/LiquidatedPositions'
 
 const LiquidityTable = () => {
+  const router = useRouter()
+  const { ltab } = router.query
 	const [tab, setTab] = useState(0)
 	const [filter, setFilter] = useState<FilterType>('all')
+
+  // sub routing for tab
+  useEffect(() => {
+    if (ltab && parseInt(ltab.toString()) <= 3) {
+      setTab(parseInt(ltab.toString()))
+    }
+  }, [ltab])
 
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
 		setTab(newValue)

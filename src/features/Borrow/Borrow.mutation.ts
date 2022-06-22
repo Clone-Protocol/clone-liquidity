@@ -100,30 +100,20 @@ export const callEdit = async ({
 	} else { 
   /// Withdraw
   //else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {	
+    await program.withdrawCollateralFromMint(
+      collateralAssociatedTokenAccount.address,
+      new BN(collateralAmount * 10 ** 8),
+      borrowIndex,
+      []
+    )
     if (borrowAmount < toScaledNumber(mint.borrowedIasset)) {
-      if (borrowAmount != 0) {
-        await program.payBackiAssetToMint(
-          iassetAssociatedTokenAccount.address,
-          new BN(borrowAmount * 10 ** 8),
-          borrowIndex,
-          []
-        )
-      }
-
-      await program.withdrawCollateralFromMint(
-        collateralAssociatedTokenAccount.address,
-        new BN(collateralAmount * 10 ** 8),
+      await program.payBackiAssetToMint(
+        iassetAssociatedTokenAccount.address,
+        new BN(borrowAmount * 10 ** 8),
         borrowIndex,
         []
       )
     } else if (borrowAmount > toScaledNumber(mint.borrowedIasset)) {
-      await program.withdrawCollateralFromMint(
-        collateralAssociatedTokenAccount.address,
-        new BN(collateralAmount * 10 ** 8),
-        borrowIndex,
-        []
-      )
-
       await program.addiAssetToMint(
         iassetAssociatedTokenAccount.address,
         new BN(borrowAmount * 10 ** 8),

@@ -5,7 +5,7 @@ import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditDetailDialog from './EditDetailDialog'
 
-const EditPanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
+const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, borrowDetail: BorrowDetail, onRefetchData: any }) => {
   const [openEditDetail, setOpenEditDetail] = useState(false)
   const borrowIndex = parseInt(assetId)
 
@@ -21,6 +21,7 @@ const EditPanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: B
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenEditDetail(false)}
+        onRefetchData={() => onRefetchData() }
       />
     </Wrapper>
 	) : <></>

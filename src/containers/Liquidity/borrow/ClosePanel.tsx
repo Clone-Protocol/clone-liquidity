@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Stack, Divider, Button } from '@mui/material'
+import { Box, Stack, Button } from '@mui/material'
+import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -13,6 +14,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 	const borrowIndex = parseInt(assetId)
 
   const { mutateAsync } = useCloseMutation(publicKey)
@@ -29,6 +31,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
             console.log('data', data)
             enqueueSnackbar('Success to close')
             setLoading(false)
+            router.push('/liquidity?ltab=2')
           }
         },
         onError(err) {

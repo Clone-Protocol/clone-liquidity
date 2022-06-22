@@ -45,16 +45,18 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 
   let mint = await program.getMintPosition(index)
   const poolIndex = Number(mint.poolIndex)
-  
-	const data = await program.getMintiAssetData(poolIndex)
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 
-  const positionData = await program.getUserMintInfo(poolIndex)
+  // console.log('p', mint)
+  
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
+	const data = await program.getMintiAssetData(index)
+
+  const positionData = await program.getUserMintInfo(index)
 
   const balance = await fetchBalance({
     program,
     userPubKey,
-    index: poolIndex,
+    index,
     setStartTimer
   })
 
