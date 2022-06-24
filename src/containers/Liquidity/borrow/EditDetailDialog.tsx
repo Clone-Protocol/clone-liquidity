@@ -18,7 +18,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
 
-  const [maxCollVal, setMaxCollVal] = useState();
+  const [maxCollVal, setMaxCollVal] = useState(0);
 
   useEffect(() => {
     setMaxCollVal(borrowDetail.usdiVal)
@@ -55,6 +55,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 		'borrowAmount',
 	])
 
+  const initData = () => {
+    setValue('collAmount', 0.0)
+    setValue('borrowAmount', 0.0)
+  }
+
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
     const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
     const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
@@ -75,10 +80,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to edit')
-            setLoading(false)
+            initData()
             onRefetchData()
             onHideEditForm()
           }
+          setLoading(false)
         },
         onError(err) {
           console.error(err)

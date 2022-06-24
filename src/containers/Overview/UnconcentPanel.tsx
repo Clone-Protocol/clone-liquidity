@@ -18,7 +18,7 @@ import { Balance } from '~/features/Borrow/Balance.query'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const UnconcentPanel = ({ balances, assetData, assetIndex } : { balances: Balance, assetData: PositionInfo, assetIndex: number }) => {
+const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: any }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -42,6 +42,12 @@ const UnconcentPanel = ({ balances, assetData, assetIndex } : { balances: Balanc
 		'borrowTo',
 	])
 
+  const initData = () => {
+    setValue('borrowFrom', 0.0)
+    setValue('borrowTo', 0.0)
+    onRefetchData()
+  }
+
 	const onLiquidity = async () => {
     setLoading(true)
     await mutateAsyncLiquidity(
@@ -55,6 +61,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex } : { balances: Balanc
             console.log('data', data)
             enqueueSnackbar('Success to liquidity')
             setLoading(false)
+            initData()
           }
         },
         onError(err) {

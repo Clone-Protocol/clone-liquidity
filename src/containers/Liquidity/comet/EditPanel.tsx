@@ -9,7 +9,7 @@ import EditDetailDialog from './EditDetailDialog'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const EditPanel = ({ assetId, cometDetail, balance }: { assetId: string, cometDetail: CometDetail, balance: number }) => {
+const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: any }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -81,6 +81,7 @@ const EditPanel = ({ assetId, cometDetail, balance }: { assetId: string, cometDe
           assetData={assetData}
           cometDetail={cometDetail}
           onHideEditForm={() => setOpenEditDetail(false)}
+          onRefetchData={() => onRefetchData()}
         />
       </Wrapper>
     </>

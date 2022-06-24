@@ -23,7 +23,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 
 	const cometIndex = parseInt(assetId)
 
-  const { data: cometDetail } = useCometDetailQuery({
+  const { data: cometDetail, refetch } = useCometDetailQuery({
     userPubKey: publicKey,
     index: cometIndex,
 	  refetchOnMount: true,
@@ -78,7 +78,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
             <StyledTab value={1} label="Close Comet"></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} />
+            <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
             <ClosePanel assetId={assetId} cometDetail={cometDetail} />

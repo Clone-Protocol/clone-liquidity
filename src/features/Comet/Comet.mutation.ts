@@ -1,7 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
-import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 
@@ -100,7 +99,7 @@ export const callEdit = async ({
 
 	await program.loadManager()
 
-  const { totalCollateralAmount, cometIndex, editType } = data
+  const { collAmount, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
 	let comet = await program.getCometPosition(cometIndex)
@@ -110,7 +109,7 @@ export const callEdit = async ({
   if (editType === 0) {
 		await program.addCollateralToComet(
 			collateralAssociatedTokenAccount.address,
-			new BN(totalCollateralAmount * 10 ** 8).sub(comet.collateralAmount.val),
+			new BN(collAmount * 10 ** 8),
 			cometIndex,
 			[]
 		)
@@ -124,7 +123,7 @@ export const callEdit = async ({
   // else if (totalCollateralAmount < toScaledNumber(comet.collateralAmount)) {
 		await program.withdrawCollateralFromComet(
 			collateralAssociatedTokenAccount.address,
-			comet.collateralAmount.val.sub(new BN(totalCollateralAmount * 10 ** 8)),
+			new BN(collAmount * 10 ** 8),
 			cometIndex,
 			[]
 		)
@@ -138,7 +137,7 @@ export const callEdit = async ({
 
 type EditFormData = {
   cometIndex: number,
-	totalCollateralAmount: number
+	collAmount: number
   editType: number
 }
 interface CallEditProps {

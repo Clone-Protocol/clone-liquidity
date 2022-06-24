@@ -24,7 +24,7 @@ import { Balance } from '~/features/Borrow/Balance.query'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
 
-const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, assetData: PositionInfo, assetIndex: number }) => {
+const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: any }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
@@ -56,6 +56,12 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
 		'collAmount',
 		'mintAmount',
 	])
+
+  const initData = () => {
+    setValue('collAmount', 0.0)
+    setValue('mintAmount', 0.0)
+    onRefetchData()
+  }
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
   
@@ -146,6 +152,7 @@ const CometPanel = ({ balances, assetData, assetIndex } : { balances: Balance, a
             console.log('data', data)
             enqueueSnackbar('Success to comet')
             setLoading(false)
+            initData()
           }
         },
         onError(err) {

@@ -19,10 +19,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	const [tab, setTab] = useState(0)
   const assetIndex = parseInt(assetId)
 
-  const { data: balances } = useBalanceQuery({
+  const { data: balances, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     index: assetIndex,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
 
@@ -53,9 +53,9 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 			</Box>
 			<Box sx={{ paddingY: '20px' }}>
 				{tab === 0 ? (
-					<CometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} />
+					<CometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
 				) : (
-					<UnconcentPanel balances={balances} assetData={assetData} assetIndex={assetIndex} />
+					<UnconcentPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
 				)}
 			</Box>
 		</StyledBox>

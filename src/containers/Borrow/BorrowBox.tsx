@@ -47,7 +47,7 @@ const BorrowBox = () => {
     enabled: publicKey != null
   })
 
-  const { data: usdiBalance } = useBalanceQuery({ 
+  const { data: usdiBalance, refetch } = useBalanceQuery({ 
     userPubKey: publicKey, 
     refetchOnMount: true,
     enabled: publicKey != null
@@ -73,6 +73,12 @@ const BorrowBox = () => {
 	])
 
   const [collRatio, setCollRatio] = useState(100)
+
+  const initData = () => {
+    setValue('collAmount', 0.0)
+    setValue('borrowAmount', 0.0)
+    refetch()
+  }
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
     const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
@@ -124,6 +130,7 @@ const BorrowBox = () => {
             console.log('data', data)
             enqueueSnackbar('Success to borrow')
             setLoading(false)
+            initData()
           }
         },
         onError(err) {

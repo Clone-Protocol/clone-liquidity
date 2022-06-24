@@ -16,7 +16,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
 
-const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm }: any) => {
+const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
@@ -41,14 +41,19 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: cometDetail.collAmount,
-      mintAmount: cometDetail.mintAmount,
+      collAmount: 0.0,
+      mintAmount: 0.0,
     }
 	})
   const [collAmount, mintAmount] = watch([
 		'collAmount',
 		'mintAmount',
 	])
+
+  const initData = () => {
+    setValue('collAmount', 0.0)
+    setValue('mintAmount', 0.0)
+  }
 
   const { mutateAsync } = useEditMutation(publicKey)
 
@@ -159,7 +164,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     await mutateAsync(
       {
         cometIndex, 
-        totalCollateralAmount: collAmount,
+        collAmount,
         editType
       },
       {
@@ -167,6 +172,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to comet')
+            initData()
+            onRefetchData()
             onHideEditForm()
           }
           setLoading(false)
