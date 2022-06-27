@@ -47,9 +47,9 @@ const LiquidityTable = () => {
         <StyledTab value={3} label="Multiple Comet Liquidity" icon={tab === 3 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} sx={{ marginRight: '27px', background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
 
-      { tab === 0 || tab === 2 && (
+      { (tab === 0 || tab === 2) && (
           <Box sx={{ marginTop: '24px' }}>
-            <LiquidityPositions />
+            <LiquidityPositions ltype={tab} />
           </Box>
         )
       }

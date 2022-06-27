@@ -5,7 +5,7 @@ import ArrowUpIcon from 'public/images/arrow-up.svg'
 import ArrowDownIcon from 'public/images/arrow-down.svg'
 import { useState } from "react"
 
-const LiquidityPositions = () => {
+const LiquidityPositions = ({ ltype }: {ltype : number}) => {
 
   const [showArea, setShowArea] = useState(true)
 
@@ -19,7 +19,9 @@ const LiquidityPositions = () => {
   return (
     <Box sx={{ padding: '16px 36px', borderRadius: '10px', backgroundColor: 'rgba(21, 22, 24, 0.75)' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: '11px', fontWeight: '500', color: '#fff', marginTop: '5px' }}>Remainder of liquidated positions</div>
+        <div style={{ fontSize: '11px', fontWeight: '500', color: '#fff', marginTop: '5px' }}>
+          { ltype === 0 ? 'Remainder of liquidated positions' : 'Liquidated positions' }
+        </div>
         <Box display='flex'>
           <div style={{ fontSize: '11px', fontWeight: 500, color: '#989898', margin: '6px 10px', cursor: 'pointer' }} onClick={() => setShowArea(!showArea)}>
             {showArea ? (<><Image src={ArrowUpIcon} /> Minimize</>) : (<><Image src={ArrowDownIcon} /> Expand</>) }
@@ -32,10 +34,10 @@ const LiquidityPositions = () => {
           <StyledDivider />
           <Grid container spacing={2}>
             <Grid item xs={6} sx={{ padding: '15px' }}>
-              <LiquidatedPositionRow positionInfo={positionInfo} hasHeader={true} />
+              <LiquidatedPositionRow positionInfo={positionInfo} hasHeader={true} ltype={ltype} />
             </Grid>
             <Grid item xs={6} sx={{ padding: '15px' }}>
-              <LiquidatedPositionRow positionInfo={positionInfo} hasHeader={true} />
+              <LiquidatedPositionRow positionInfo={positionInfo} hasHeader={true} ltype={ltype} />
             </Grid>
           </Grid>
         </>

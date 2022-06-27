@@ -78,11 +78,11 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </Box>
       <StyledDivider />
 
-      <Box sx={{ display: 'flex', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '17px 27px' }}>
+      <Box sx={{ display: 'flex', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '13px 27px' }}>
         <Box sx={{ width: '45%', marginLeft: '15px' }}>
           <SubTitle>Health Score</SubTitle>
           <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-            {cometDetail.healthScore}%
+            {cometDetail.healthScore}/100
           </Box>
         </Box>
         <Box sx={{ display: 'flex', width: '50%' }}>

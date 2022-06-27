@@ -38,6 +38,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   })
   const [maxMintable, setMaxMintable] = useState(0.0)
   const COLLATERAL_INDEX = 0 // USDi
+  const healthScore = 72
 
   const {
 		handleSubmit,
@@ -342,6 +343,13 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               <></>
             )} */}
           </Box>
+          <StyledDivider />
+
+          <Box>
+            <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore</Box>
+            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore}</span>/100</Box>
+          </Box>
+
           <StyledDivider />
 
           <CometButton onClick={handleSubmit(onComet)} disabled={!isDirty || !isValid}>Create Comet Position</CometButton>

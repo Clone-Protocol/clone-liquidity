@@ -61,6 +61,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [mintRatio, setMintRatio] = useState(0)
+  const healthScore = 72
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
@@ -262,6 +263,13 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometDetail.lowerLimit} currentUpperLimit={cometDetail.upperLimit} onChange={handleChangeConcentRange} />
               </Box>
+              <StyledDivider />
+
+              <Box>
+                <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore</Box>
+                <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore}</span>/100</Box>
+              </Box>
+
               <StyledDivider />
 
               <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>Edit Collateral</ActionButton>

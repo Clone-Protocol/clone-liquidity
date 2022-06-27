@@ -11,18 +11,19 @@ export interface PositionInfo {
 
 interface Props {
   positionInfo: PositionInfo,
+  ltype: number
   hasHeader: boolean
 }
 
-const LiquidatedPositionRow: React.FC<Props> = ({ positionInfo, hasHeader = false }) => {
+const LiquidatedPositionRow: React.FC<Props> = ({ positionInfo, ltype, hasHeader = false }) => {
 
   return (
     <Wrapper>
       {hasHeader &&
         <Box>
           <Grid container spacing={2}>
-            <Grid item xs={5}><TxtHeader>Token</TxtHeader></Grid>
-            <Grid item xs={4}><TxtHeader>Claimable amount</TxtHeader></Grid>
+            <Grid item xs={5}><TxtHeader>{ ltype === 0 ? 'Token' : 'Borrowed iAsset' }</TxtHeader></Grid>
+            <Grid item xs={4}><TxtHeader>{ ltype === 0 ? 'Claimable amount' : 'Claimable collateral' }</TxtHeader></Grid>
             <Grid item xs={3}></Grid>
           </Grid>
         </Box>
