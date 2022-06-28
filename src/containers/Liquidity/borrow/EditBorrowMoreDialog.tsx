@@ -152,11 +152,11 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Expected Collateral Ratio</DetailHeader>
-                <DetailValue>{borrowDetail.collateralRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
+                <DetailValue>{ editType === 0 || collAmount < borrowDetail.collateralAmount ? `${borrowDetail.collateralRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Min Collateral Ratio</DetailHeader>
-                <DetailValue>{borrowDetail.minCollateralRatio.toLocaleString()}%</DetailValue>
+                <DetailValue>{ editType === 0 || collAmount < borrowDetail.collateralAmount ? `${borrowDetail.minCollateralRatio.toLocaleString()}%` : ''}</DetailValue>
               </Stack>
             </Box>
 
