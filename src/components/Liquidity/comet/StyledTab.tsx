@@ -45,7 +45,8 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
   textTransform: 'none',
 	fontWeight: '600',
 	fontSize: '11px',
-  marginLeft: '6px',
+  marginLeft: '5px',
+  marginRight: '5px',
 	color: '#989898',
 	'&.Mui-selected': {
     border: 'solid 1px #3f3f3f',
