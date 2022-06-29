@@ -136,7 +136,7 @@ let columns: GridColDef[] = [
               <Image src={ChangePositionIcon} />
             </ChangePositionButton>
           </Link>
-          <Link href={`/assets/${params.row.id}/asset`}>
+          <Link href={`/assets/${params.row.id}/asset?ltab=1`}>
             <TradeButton>
               <Image src={TradeIcon} />
             </TradeButton>

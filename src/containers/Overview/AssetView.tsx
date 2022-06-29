@@ -1,5 +1,6 @@
 import { Box, Button, Paper } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -16,8 +17,17 @@ import UnconcentPanel from './UnconcentPanel'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
+  const router = useRouter()
+  const { ltab } = router.query
 	const [tab, setTab] = useState(0)
   const assetIndex = parseInt(assetId)
+
+  // sub routing for tab
+  useEffect(() => {
+    if (ltab && parseInt(ltab.toString()) <= 1) {
+      setTab(parseInt(ltab.toString()))
+    }
+  }, [ltab])
 
   const { data: balances, refetch } = useBalanceQuery({
     userPubKey: publicKey,
