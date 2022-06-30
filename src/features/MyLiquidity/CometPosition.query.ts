@@ -40,7 +40,9 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
 	await program.loadManager()
 
-	let comet = await program.getCometPosition(index)
+  const multiPoolComet = await program.getComet()
+  let comet = multiPoolComet.positions[index];
+
   console.log('comet', comet)
   console.log('comet-poolIndex', Number(comet.poolIndex))
 	const balances = await program.getPoolBalances(Number(comet.poolIndex))

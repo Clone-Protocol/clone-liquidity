@@ -75,9 +75,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      const assetIndex = (
-        await program.getCometPosition(cometIndex)
-      ).poolIndex
+      const multiPoolComet = await program.getComet()
+      const assetIndex = multiPoolComet.positions[cometIndex].poolIndex
 
       const max = await program.calculateMaxUSDiAmountFromCollateral(
         assetIndex,
@@ -247,7 +246,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <SubTitle>
-                  <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to minted into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
+                  <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to mint into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
                 </SubTitle>
 
                 <Box sx={{ marginTop: '25px' }}>

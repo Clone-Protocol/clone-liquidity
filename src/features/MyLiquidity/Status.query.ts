@@ -17,7 +17,9 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
   await program.loadManager()
 	let mintPositions = await program.getMintPositions()
 	let liquidityPositions = await program.getLiquidityPositions()
-	let cometPositions = await program.getCometPositions()
+	// let cometPositions = await program.getCometPositions()
+  const comets = await (await program.getComet())
+  
 	let totalVal = 0
 	let borrow = 0
 	let unconcentrated = 0
@@ -43,9 +45,9 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 		unconcentrated += amount
 	}
 
-	for (var i = 0; i < Number(cometPositions.numPositions); i++) {
-		let cometPosition = cometPositions.cometPositions[i]
-		let collateralAmount = toScaledNumber(cometPosition.collateralAmount)
+	for (var i = 0; i < Number(comets.numPositions); i++) {
+		let cometCollateral = comets.collaterals[i]
+		let collateralAmount = toScaledNumber(cometCollateral.collateralAmount)
 		totalVal += collateralAmount
 		comet += collateralAmount
 	}

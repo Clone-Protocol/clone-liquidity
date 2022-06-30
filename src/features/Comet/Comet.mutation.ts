@@ -16,7 +16,8 @@ export const callRecenter = async ({
 
 	await program.loadManager()
 
-  let comet = await program.getCometPosition(data.cometIndex)
+  const multiPoolComet = await program.getComet()
+  let comet = multiPoolComet.positions[data.cometIndex]
 	let pool = await program.getPool(comet.poolIndex)
 
   const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
@@ -55,7 +56,8 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
 	await program.loadManager()
 
-	let comet = await program.getCometPosition(data.cometIndex)
+  const multiPoolComet = await program.getComet()
+  let comet = multiPoolComet.positions[data.cometIndex]
 	let pool = await program.getPool(comet.poolIndex)
 
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
@@ -102,7 +104,8 @@ export const callEdit = async ({
   const { collAmount, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-	let comet = await program.getCometPosition(cometIndex)
+  const multiPoolComet = await program.getComet()
+  let comet = multiPoolComet.positions[cometIndex]
 
   /// Deposit
 	// if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
