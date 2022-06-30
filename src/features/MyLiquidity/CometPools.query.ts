@@ -19,6 +19,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	for (const info of cometInfos) {
     const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
     const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+    //getHealthScore
     
 		result.push({
 			id: i,

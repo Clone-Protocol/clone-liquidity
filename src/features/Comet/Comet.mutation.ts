@@ -22,7 +22,7 @@ export const callRecenter = async ({
 
   const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
 
-  await program.recenterComet(
+  await program.recenterSinglePoolComet(
 		iassetAssociatedTokenAccount.address,
 		data.cometIndex,
 		[]
@@ -64,11 +64,19 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
 	const usdiAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-	await program.closeComet(
-		collateralAssociatedTokenAccount.address,
+	// await program.closeComet(
+	// 	collateralAssociatedTokenAccount.address,
+	// 	iassetAssociatedTokenAccount.address,
+	// 	usdiAssociatedTokenAccount.address,
+	// 	data.cometIndex,
+	// 	[]
+	// )
+
+  await program.closeComet(
 		iassetAssociatedTokenAccount.address,
 		usdiAssociatedTokenAccount.address,
 		data.cometIndex,
+    false,
 		[]
 	)
 
@@ -110,11 +118,10 @@ export const callEdit = async ({
   /// Deposit
 	// if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
   if (editType === 0) {
-		await program.addCollateralToComet(
+		await program.addCollateralToSinglePoolCometInstruction(
 			collateralAssociatedTokenAccount.address,
 			new BN(collAmount * 10 ** 8),
-			cometIndex,
-			[]
+			cometIndex
 		)
 
     return {
@@ -124,7 +131,7 @@ export const callEdit = async ({
 	} else { 
   /// Withdraw
   // else if (totalCollateralAmount < toScaledNumber(comet.collateralAmount)) {
-		await program.withdrawCollateralFromComet(
+		await program.withdrawCollateralFromSinglePoolComet(
 			collateralAssociatedTokenAccount.address,
 			new BN(collAmount * 10 ** 8),
 			cometIndex,
@@ -169,14 +176,23 @@ export const callComet = async ({
   const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-	await program.initializeComet(
-		collateralAssociatedTokenAccount.address,
-		new BN(collateralAmount * 10 ** 8),
-		new BN(usdiAmount * 10 ** 8),
-		iassetIndex,
+  await program.openNewSinglePoolComet(
+    collateralAssociatedTokenAccount.address,
+    new BN(usdiAmount * 10 ** 8),
+    new BN(collateralAmount * 10 ** 8),
+    iassetIndex,
 		collateralIndex,
 		[]
-	)
+  )
+
+	// await program.initializeComet(
+	// 	collateralAssociatedTokenAccount.address,
+	// 	new BN(collateralAmount * 10 ** 8),
+	// 	new BN(usdiAmount * 10 ** 8),
+	// 	iassetIndex,
+	// 	collateralIndex,
+	// 	[]
+	// )
 
   return {
     result: true

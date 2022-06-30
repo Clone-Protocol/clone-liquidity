@@ -44,7 +44,7 @@ const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: 
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to recenter')
+          enqueueSnackbar('Failed to recenter : No price deviation detected.')
           setLoading(false)
         }
       }

@@ -271,7 +271,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <StyledDivider />
 
-              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>Edit Collateral</ActionButton>
+              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>Edit Comet</ActionButton>
             </Box>
           </Box>
         </DialogContent>
