@@ -20,7 +20,7 @@ const MyLiquidity: NextPage = () => {
 					<Container>
             <WelcomeMsg />
 						<Box sx={{ marginTop: '40px' }}>
-							<MyStatus />
+							{/* <MyStatus /> */}
 							<Box sx={{ marginBottom: '30px' }} />
 							<LiquidityTable />
 						</Box>

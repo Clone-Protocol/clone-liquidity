@@ -23,7 +23,10 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   const [maxCollVal, setMaxCollVal] = useState(0);
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
-  const isRisk = borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
+  const isRisk = editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
+  const isLackBalance = editType === 1 && borrowDetail.collateralAmount > borrowDetail.maxWithdrawableColl
+
+  const isWarning = isRisk || isLackBalance
 
   useEffect(() => {
     setMaxCollVal(borrowDetail.usdiVal)
@@ -160,7 +163,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
               </Stack>
             </Box>
 
-            { isRisk && 
+            { isWarning && 
               <Stack
                 sx={{
                   background: 'rgba(233, 209, 0, 0.04)',
@@ -176,7 +179,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                   <Image src={WarningIcon} />
                 </Box>
                 <WarningBox>
-                  This borrow position has significant risk of liquidation.
+                  { isRisk && 'This borrow position has significant risk of liquidation.' }
+                  { isLackBalance && 'Not enough wallet balance to pay in full.' }
                 </WarningBox>
               </Stack>
             }

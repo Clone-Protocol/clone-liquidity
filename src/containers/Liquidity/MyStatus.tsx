@@ -14,7 +14,6 @@ const MyStatus = () => {
     enabled: publicKey != null
 	})
 
-
 	return (
 		<Box sx={{ maxWidth: '812px' }}>
 			<StatusView status={status} />
