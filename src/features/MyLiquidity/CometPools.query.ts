@@ -9,7 +9,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	if (!userPubKey) return []
 
 	await program.loadManager()
-	const cometInfos = await program.getUserCometInfos()
+	const cometInfos = await program.getUserSinglePoolCometInfos()
 
 	const result: PoolList[] = []
 
