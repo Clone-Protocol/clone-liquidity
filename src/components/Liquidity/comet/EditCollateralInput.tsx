@@ -10,6 +10,7 @@ interface Props {
   maxCollVal: number
 	collAmount: number
   currentCollAmount?: number
+  dollarPrice?: number
   onChangeType?: any
 	onChangeAmount?: any
   onMax?: any
@@ -22,6 +23,7 @@ const EditCollateralInput: React.FC<Props> = ({
   maxCollVal,
 	collAmount,
   currentCollAmount,
+  dollarPrice,
   onChangeType,
 	onChangeAmount,
   onMax
@@ -50,7 +52,7 @@ const EditCollateralInput: React.FC<Props> = ({
           <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={parseFloat(collAmount.toFixed(3))} onChange={onChangeAmount} />
         </FormStack>
         <BottomBox>
-          Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>
+          Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
         </BottomBox>
       </Box>
 		</FormControl>

@@ -8,6 +8,7 @@ interface Props {
 	value?: number
 	balance?: number
   currentAmount?: number
+  dollarPrice?: number
 	balanceDisabled?: boolean
 	disabled?: boolean
 	onChange?: any
@@ -21,6 +22,7 @@ const PairInput: React.FC<Props> = ({
 	value,
 	balance,
   currentAmount,
+  dollarPrice,
 	balanceDisabled = false,
 	disabled = false,
 	onChange,
@@ -45,7 +47,7 @@ const PairInput: React.FC<Props> = ({
           </Box>
           <InputAmount id="ip-amount" type="number" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} disabled={disabled} />
         </InputStack>
-        <CurrentPrice style={{ borderTop: '1px solid #444'}}>Current: {currentAmount?.toLocaleString()} {tickerSymbol}</CurrentPrice>
+        <CurrentPrice style={{ borderTop: '1px solid #444'}}>Current: <span style={{ color: '#fff' }}>{currentAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span></CurrentPrice>
       </Box>
 		</FormControl>
 	)

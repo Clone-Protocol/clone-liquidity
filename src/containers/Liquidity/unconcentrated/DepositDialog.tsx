@@ -118,6 +118,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                     value={parseFloat(field.value.toFixed(3))}
                     balance={balances?.iassetVal}
                     currentAmount={pool.liquidityAsset}
+                    dollarPrice={pool.liquidityAsset * unconcentData.price}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                       setValue('borrowTo', parseFloat(event.currentTarget.value) * unconcentData.price);
@@ -156,6 +157,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                     value={parseFloat(field.value.toFixed(3))}
                     balance={balances?.usdiVal}
                     currentAmount={pool.liquidityUSD}
+                    dollarPrice={pool.liquidityUSD}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       field.onChange(parseFloat(event.currentTarget.value))
                       setValue('borrowFrom', parseFloat(event.currentTarget.value) / unconcentData.price);

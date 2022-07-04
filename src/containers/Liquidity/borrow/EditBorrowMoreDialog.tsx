@@ -137,6 +137,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     collAmount={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.collateralAmount}
+                    dollarPrice={borrowDetail.collateralAmount}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)

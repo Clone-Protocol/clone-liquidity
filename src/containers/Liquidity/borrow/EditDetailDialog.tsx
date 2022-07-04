@@ -129,6 +129,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     collAmount={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.collateralAmount}
+                    dollarPrice={borrowDetail.collateralAmount}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
@@ -146,7 +147,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Collateral Ratio</DetailHeader>
+                <DetailHeader>Expected Collateral Ratio</DetailHeader>
                 <DetailValue>{borrowDetail.collateralRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">

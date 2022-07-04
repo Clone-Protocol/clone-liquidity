@@ -98,28 +98,34 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
             <Stack direction="row" gap={2}>
               <StyledBox>
                 <FormBox>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Stack sx={{ marginTop: '5px'}} direction="row" justifyContent="space-between" alignItems="center">
                     <Box display="flex">
                       <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
                       <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
                         USDi
                       </Box>
                     </Box>
-                    <Box sx={{ color: '#949494'}}>{amount.toLocaleString()}</Box>
+                    <Box sx={{ color: '#949494'}}>
+                      <Box sx={{ fontSize: '16px', fontWeight: '500', lineHeight: '14px' }}>{amount.toLocaleString()}</Box>
+                      <Box sx={{ fontSize: '10px', textAlign: 'right' }}>${amount.toLocaleString()}</Box>
+                    </Box>
                   </Stack>
                 </FormBox>
                 <BottomBox>Withdrawable: {data?.maxVal.toLocaleString()} USDi</BottomBox>
               </StyledBox>
               <StyledBox>
                 <FormBox>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Stack sx={{ marginTop: '5px'}} direction="row" justifyContent="space-between" alignItems="center">
                     <Box display="flex">
                       <Image src={unconcentData.tickerIcon} width="28px" height="28px" />
                       <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
                         {unconcentData.tickerSymbol}
                       </Box>
                     </Box>
-                    <Box sx={{ color: '#949494'}}>{(amount/unconcentData.price).toLocaleString()}</Box>
+                    <Box sx={{ color: '#949494'}}>
+                      <Box sx={{ fontSize: '16px', fontWeight: '500', lineHeight: '14px' }}>{(amount/unconcentData.price).toLocaleString()}</Box>
+                      <Box sx={{ fontSize: '10px', textAlign: 'right' }}>${(amount * unconcentData.price).toLocaleString()}</Box>
+                    </Box>
                   </Stack>
                 </FormBox>
                 <BottomBox>Withdrawable: {(data?.maxVal/unconcentData.price).toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>

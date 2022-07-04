@@ -10,6 +10,7 @@ interface Props {
   maxCollVal: number
 	collAmount: number
   currentCollAmount?: number
+  dollarPrice?: number
   onChangeType?: any
 	onChangeAmount?: any
   onMax?: any
@@ -22,6 +23,7 @@ const EditBorrowedInput: React.FC<Props> = ({
   maxCollVal,
 	collAmount,
   currentCollAmount,
+  dollarPrice,
   onChangeType,
 	onChangeAmount,
   onMax
@@ -68,6 +70,7 @@ const EditBorrowedInput: React.FC<Props> = ({
               :
                 <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>
             }
+            <span style={{ color: '#fff', marginLeft: '5px' }}>{ dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
         </BottomBox>
       </Box>
 		</FormControl>
