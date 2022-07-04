@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import PairInput from '~/components/Liquidity/unconcent/PairInput'
 import { useSnackbar } from 'notistack'

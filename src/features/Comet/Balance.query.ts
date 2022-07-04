@@ -19,7 +19,6 @@ export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { pro
 
 	try {
 		const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-    
     balanceVal = Number(associatedTokenAccount.amount) / 100000000;
 	} catch {}
 

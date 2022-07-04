@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
@@ -8,6 +9,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
+import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 
 interface Props {
 	filter: FilterType
@@ -119,12 +121,20 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
+      const [openRecenter, setOpenRecenter] = useState(false)
+
 			return (
 				<Box display="flex">
 					<StableButton>Recenter</StableButton>
 					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
 						<DefaultButton>Manage</DefaultButton>
 					</Link>
+
+          <RecenterDialog
+            assetId={params.row.id}
+						open={openRecenter}
+						handleClose={() => setOpenRecenter(false)}
+					/>
 				</Box>
 			)
 		},

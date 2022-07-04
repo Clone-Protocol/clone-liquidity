@@ -19,11 +19,18 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
 	let iassetVal = 0.0
 
 	try {
-		usdiVal = await program.getUsdiBalance()
+		const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+    usdiVal = Number(associatedTokenAccount.amount) / 100000000;
 	} catch {}
 
 	try {
-		iassetVal = await program.getiAssetBalance(index)
+    const associatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(
+      (
+        await program.getPool(index)
+      ).assetInfo.iassetMint
+    );
+
+    iassetVal =  Number(associatedTokenAccount.amount) / 100000000;
 	} catch {}
 
 	return {
