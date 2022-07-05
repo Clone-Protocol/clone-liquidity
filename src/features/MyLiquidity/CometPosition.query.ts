@@ -40,23 +40,25 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
 	await program.loadManager()
 
-  const multiPoolComet = await program.getComet()
-  let comet = multiPoolComet.positions[index];
+  // const multiPoolComet = await program.getComet()
+  // let comet = multiPoolComet.positions[index];
+  const comet = await program.getSinglePoolComet(index);
+  const position = comet.positions[0];
 
   console.log('comet', comet)
-  console.log('comet-poolIndex', Number(comet.poolIndex))
-	const balances = await program.getPoolBalances(Number(comet.poolIndex))
+  console.log('comet-poolIndex', Number(position.poolIndex))
+	const balances = await program.getPoolBalances(Number(position.poolIndex))
 	let price = balances[1] / balances[0]
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
-	let centerPrice = Number(comet.borrowedIasset.val) === 0 ? 0 : Number(comet.borrowedUsdi.val) / Number(comet.borrowedIasset.val)
+	let centerPrice = Number(position.borrowedIasset.val) === 0 ? 0 : Number(position.borrowedUsdi.val) / Number(position.borrowedIasset.val)
   const maxWithdrawable = await program.calculateMaxWithdrawableCollateral(index);
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(comet.poolIndex))
-  const mintAmount = toScaledNumber(comet.borrowedUsdi)
-  const collAmount = toScaledNumber(comet.collateralAmount)
-  const lowerLimit = toScaledNumber(comet.lowerPriceRange)
-  const upperLimit = toScaledNumber(comet.upperPriceRange)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(position.poolIndex))
+  const mintAmount = toScaledNumber(position.borrowedUsdi)
+  const collAmount = toScaledNumber(comet.totalCollateralAmount)
+  const lowerLimit = 0;//toScaledNumber(comet.lowerPriceRange)
+  const upperLimit = 100;//toScaledNumber(comet.upperPriceRange)
   const ild = 0
   const healthScore = 95
 

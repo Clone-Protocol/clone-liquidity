@@ -14,11 +14,13 @@ export const callRecenter = async ({
 
   console.log('recenter data', data)
 
-	await program.loadManager()
+  await program.loadManager()
 
-  const multiPoolComet = await program.getComet()
-  let comet = multiPoolComet.positions[data.cometIndex]
-	let pool = await program.getPool(comet.poolIndex)
+//   const multiPoolComet = await program.getComet()
+//   let comet = multiPoolComet.positions[data.cometIndex]
+  let comet = await program.getSinglePoolComet(data.cometIndex);
+  let position = comet.positions[0];
+	let pool = await program.getPool(position.poolIndex)
 
   const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
 
@@ -56,9 +58,11 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
 	await program.loadManager()
 
-  const multiPoolComet = await program.getComet()
-  let comet = multiPoolComet.positions[data.cometIndex]
-	let pool = await program.getPool(comet.poolIndex)
+//   const multiPoolComet = await program.getComet()
+//   let comet = multiPoolComet.positions[data.cometIndex]
+	let comet = await program.getSinglePoolComet(data.cometIndex);
+	let position = comet.positions[0];
+	let pool = await program.getPool(position.poolIndex)
 
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
@@ -112,7 +116,7 @@ export const callEdit = async ({
   const { collAmount, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-  const multiPoolComet = await program.getComet()
+  const multiPoolComet = await program.getSinglePoolComet(cometIndex);//getComet()
   let comet = multiPoolComet.positions[cometIndex]
 
   /// Deposit
@@ -181,7 +185,7 @@ export const callComet = async ({
     new BN(usdiAmount * 10 ** 8),
     new BN(collateralAmount * 10 ** 8),
     iassetIndex,
-		collateralIndex,
+	collateralIndex,
 		[]
   )
 
