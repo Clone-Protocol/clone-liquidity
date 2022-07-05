@@ -48,16 +48,16 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 
       <Dialog open={open} onClose={handleClose}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
-          <Box sx={{ padding: '8px 28px', color: '#fff' }}>
+          <Box sx={{ padding: '8px 18px', color: '#fff' }}>
             <WarningBox>
               If this is your first interaction with Recenting, please click here to learn.
             </WarningBox>
-            <Box sx={{ marginTop: '20px'}}>
-              <Box display="flex" justifyContent="right">
+            <Box sx={{ marginTop: '20px', marginBottom: '22px'}}>
+              <WalletBalance>
                 Wallet balance: 2000 USDi
-              </Box>
-              <Stack sx={{ borderRadius: '10px', border: 'solid 1px #444' }} direction="row" justifyContent="space-between">
-                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9'}}>Recentering cost</div>
+              </WalletBalance>
+              <Stack sx={{ borderRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
+                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', marginTop: '3px'}}>Recentering cost</div>
                 <div style={{ fontSize: '16px', fontWeight: '500', color: '#fff'}}>
                   110.51 USDi
                 </div>
@@ -67,26 +67,27 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             <StyledDivider />
           
             <SubTitle>Projected Price Range</SubTitle>
-            <Box sx={{ marginTop: '20px' }}>
-              <ConcentrationRangeView 
-                assetData={assetData}
-                cometData={cometData}
-                max={assetData.maxRange}
+            <Box sx={{ margin: '0 auto', marginTop: '20px', marginBottom: '33px', width: '345px' }}>
+              <ConcentrationRangeView
+                centerPrice={100}
+                lowerLimit={50.43}
+                upperLimit={150.89}
+                max={155}
               />
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Center price</DetailHeader>
+                <DetailHeader>Center price:</DetailHeader>
                 <DetailValue>100.58 USD</DetailValue>
                 {/* <DetailValue>{assetData?.centerPrice.toFixed(2)} USD</DetailValue> */}
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Lower limit</DetailHeader>
+                <DetailHeader>Lower limit:</DetailHeader>
                 <DetailValue>100.58 USD</DetailValue>
                 {/* <DetailValue>
                   {cometData.lowerLimit.toFixed(2)} USD
                 </DetailValue> */}
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Upper limit</DetailHeader>
+                <DetailHeader>Upper limit:</DetailHeader>
                 <DetailValue>100.58 USD</DetailValue>
                 {/* <DetailValue>
                   {cometData.upperLimit.toFixed(2)} USD
@@ -96,7 +97,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             <Stack direction="row" justifyContent="space-between">
               <SubTitle>Projected Health Score</SubTitle>
               <DetailValue>
-                95/100 (prev. 75/100)
+                95/100 <span style={{ color: '#949494' }}>(prev. 75/100)</span>
               </DetailValue>
             </Stack>
 
@@ -121,6 +122,8 @@ const WarningBox = styled(Box)`
   background-color: rgba(128, 156, 255, 0.09);
   text-align: center;
   margin: 0 auto;
+  padding-left: 40px;
+  padding-right: 40px;
 `
 
 const StyledDivider = styled(Divider)`
@@ -132,7 +135,7 @@ const StyledDivider = styled(Divider)`
 
 const SubTitle = styled('div')`
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 500;
 	color: #989898;
   margin-bottom: 5px;
 `
@@ -147,6 +150,16 @@ const DetailValue = styled('div')`
 	font-size: 11px;
 	font-weight: 500;
 	color: #fff;
+`
+
+const WalletBalance = styled(Box)`
+  display: flex;
+  justify-content: right;
+  color: #949494; 
+  font-size: 12px;
+  font-weight: 500; 
+  margin-right: 10px;
+  margin-bottom: 4px;
 `
 
 const ActionButton = styled(Button)`

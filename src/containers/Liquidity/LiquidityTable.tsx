@@ -15,7 +15,6 @@ import BorrowIconOff from 'public/images/borrow-position-icon-off.svg'
 import CometIconOn from 'public/images/comet-icon-on.svg'
 import UlIconOn from 'public/images/ul-icon-on.svg'
 import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
-import LiquidityPositions from './comet/LiquidatedPositions'
 
 const LiquidityTable = () => {
   const router = useRouter()
@@ -47,12 +46,12 @@ const LiquidityTable = () => {
         <StyledTab value={3} label="Multiple Comet Liquidity" icon={tab === 3 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} sx={{ marginRight: '27px', background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
 
-      { (tab === 0 || tab === 2) && (
+      {/* { (tab === 0 || tab === 2) && (
           <Box sx={{ marginTop: '24px' }}>
             <LiquidityPositions ltype={tab} />
           </Box>
         )
-      }
+      } */}
       
       <Box
         sx={{

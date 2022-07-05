@@ -46,21 +46,41 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-	{
-		field: 'iPrice',
+	// {
+	// 	field: 'iPrice',
+	// 	headerClassName: 'super-app-theme--header',
+	// 	cellClassName: 'super-app-theme--cell',
+	// 	headerName: 'Indicator price',
+	// 	flex: 1,
+	// 	renderCell(params: GridRenderCellParams<string>) {
+  //     return <CellDigitValue value={params.value} symbol="USDi" />
+	// 	},
+	// },
+	// {
+	// 	field: 'cPrice',
+	// 	headerClassName: 'super-app-theme--header',
+	// 	cellClassName: 'super-app-theme--cell',
+	// 	headerName: 'Center price',
+	// 	flex: 1,
+	// 	renderCell(params: GridRenderCellParams<string>) {
+  //     return <CellDigitValue value={params.value} symbol="USDi" />
+	// 	},
+	// },
+  {
+		field: 'collateral',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Indicator price',
+		headerName: 'Collateral',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
       return <CellDigitValue value={params.value} symbol="USDi" />
 		},
 	},
-	{
-		field: 'cPrice',
+  {
+		field: 'ild',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Center price',
+		headerName: 'ILD',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
       return <CellDigitValue value={params.value} symbol="USDi" />
@@ -80,16 +100,6 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-	{
-		field: 'collateral',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
-		headerName: 'Collateral',
-		flex: 1,
-		renderCell(params: GridRenderCellParams<string>) {
-      return <CellDigitValue value={params.value} symbol="USDi" />
-		},
-	},
   {
 		field: 'healthScore',
 		headerClassName: 'super-app-theme--header',
@@ -98,22 +108,12 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
       return (
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box>
           <CellDigitValue value={params.value} symbol="%" />
         </Box>
       )
 		},
 	},
-	// {
-	// 	field: 'ild',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'super-app-theme--cell',
-	// 	headerName: 'ILD',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-  //     return <CellDigitValue value={params.value} symbol="USDi" />
-	// 	},
-	// },
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',
@@ -125,7 +125,7 @@ let columns: GridColDef[] = [
 
 			return (
 				<Box display="flex">
-					<StableButton>Recenter</StableButton>
+					<StableButton onClick={() => setOpenRecenter(true)}>Recenter</StableButton>
 					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
 						<DefaultButton>Manage</DefaultButton>
 					</Link>

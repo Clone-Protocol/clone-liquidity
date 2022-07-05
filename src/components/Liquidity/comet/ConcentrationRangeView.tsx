@@ -5,19 +5,19 @@ import { Box } from '@mui/material'
 import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
-	assetData: PositionInfo
-  cometData: CometInfo
+  centerPrice: number
+  lowerLimit: number
+  upperLimit: number
 	max: number
 }
 
-const ConcentrationRangeView: React.FC<Props> = ({ assetData, cometData, max }) => {
+const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit, max }) => {
 	const maxLimit = max
-
-	const centerPricePercent = (assetData.price * 100) / maxLimit
+	const centerPricePercent = (centerPrice * 100) / maxLimit
 	
 	return (
     <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px', marginBottom: '16px' }}>
-      <LeftBox>{cometData.lowerLimit.toFixed(2)}</LeftBox>
+      <LeftBox>{lowerLimit.toFixed(2)}</LeftBox>
       <Box sx={{ position: 'relative' }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
           <LeftRangeStick />
@@ -28,7 +28,7 @@ const ConcentrationRangeView: React.FC<Props> = ({ assetData, cometData, max }) 
         <CenterStick sx={{ marginLeft: '50%' }} />
         <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
       </Box>
-      <RightBox>{cometData.upperLimit.toFixed(2)}</RightBox>
+      <RightBox>{upperLimit.toFixed(2)}</RightBox>
     </Box>
 	)
 }
