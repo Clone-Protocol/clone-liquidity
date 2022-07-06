@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
+import Image from 'next/image'
+import WarningIcon from 'public/images/warning-icon.png'
 import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
@@ -11,6 +13,8 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
   const { mutateAsync } = useRecenterMutation(publicKey)
+
+  const isLackBalance = true
 
   const cometIndex = parseInt(assetId)
 
@@ -54,7 +58,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             </WarningBox>
             <Box sx={{ marginTop: '20px', marginBottom: '22px'}}>
               <WalletBalance>
-                Wallet balance: 2000 USDi
+                Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>2000 USDi</span>
               </WalletBalance>
               <Stack sx={{ borderRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
                 <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', marginTop: '3px'}}>Recentering cost</div>
@@ -103,6 +107,26 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 
             <StyledDivider />
             <ActionButton onClick={() => handleRecenter()}>Recenter</ActionButton>
+
+            { isLackBalance && 
+              <Stack
+                sx={{
+                  background: 'rgba(233, 209, 0, 0.04)',
+                  border: '1px solid #e9d100',
+                  borderRadius: '10px',
+                  color: '#9d9d9d',
+                  padding: '8px',
+                  marginTop: '17px',
+                }}
+                direction="row">
+                <Box sx={{ width: '53px', marginLeft: '20px', textAlign: 'center' }}>
+                  <Image src={WarningIcon} />
+                </Box>
+                <NotEnoughBox>
+                  Not enough wallet balance to pay for the cost.
+                </NotEnoughBox>
+              </Stack>
+            }
           </Box>
         </DialogContent>
       </Dialog>
@@ -171,6 +195,16 @@ const ActionButton = styled(Button)`
   font-size: 13px;
   font-weight: 600;
 	color: #fff;
+`
+
+const NotEnoughBox = styled(Box)`
+	max-width: 500px;
+  padding-left: 36px;
+  padding-top: 4px;
+	padding-right: 10px;
+	font-size: 11px;
+	font-weight: 500;
+	color: #989898;
 `
 
 export default RecenterDialog

@@ -77,6 +77,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
           collAmount 
         )
         setMaxMintable(max)
+        setValue('mintAmount', max * mintRatio / 100)
       }
 
       if (collAmount && mintAmount) {
