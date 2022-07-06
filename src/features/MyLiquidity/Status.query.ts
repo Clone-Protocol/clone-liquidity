@@ -1,6 +1,6 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { Incept, Comet } from "incept-protocol-sdk/sdk/src/incept"
 import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -9,16 +9,17 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
 
-  console.log('fetchStatus')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
+	console.log('fetchStatus')
+	// start timer in data-loading-indicator
+	setStartTimer(false);
+	setStartTimer(true);
 
-  await program.loadManager()
+  	await program.loadManager()
 	let mintPositions = await program.getMintPositions()
 	let liquidityPositions = await program.getLiquidityPositions()
 	// let cometPositions = await program.getCometPositions()
-  const comets = await program.getComet()
+  	// const comets = await program.getComet()
+	let comets = await program.getSinglePoolComets()
   
 	let totalVal = 0
 	let borrow = 0
@@ -45,12 +46,30 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 		unconcentrated += amount
 	}
 
-	for (var i = 0; i < Number(comets.numCollaterals); i++) {
-		let cometCollateral = comets.collaterals[i]
-		let collateralAmount = toScaledNumber(cometCollateral.collateralAmount)
-		totalVal += collateralAmount
-		comet += collateralAmount
+	// for (var i = 0; i < Number(comets.numCollaterals); i++) {
+	// 	let cometCollateral = comets.collaterals[i]
+	// 	let collateralAmount = toScaledNumber(cometCollateral.collateralAmount)
+	// 	totalVal += collateralAmount
+	// 	comet += collateralAmount
+	// }
+
+	const returnCometPosition = async (address: PublicKey): Promise<Comet> => {
+		return await (program.program.account.comet.fetch(
+			address
+		)) as Comet;
 	}
+
+	Promise.all(
+		comets.comets.slice(0, comets.numComets.toNumber()).map(returnCometPosition)
+	).then(
+		singlePoolComets => {
+			singlePoolComets.forEach(singlePoolComet => {
+				let collateralAmount = toScaledNumber(singlePoolComet.totalCollateralAmount);
+				totalVal += collateralAmount;
+				comet += collateralAmount;
+			})
+		}
+	);
 
 	let borrowPercent = (borrow / totalVal) * 100
 	let unconcentratedPercent = (unconcentrated / totalVal) * 100
