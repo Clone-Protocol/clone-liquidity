@@ -9,6 +9,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
+import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 
 interface Props {
@@ -21,7 +22,7 @@ const GridComet: React.FC<Props> = ({ filter }) => {
   const { data: cometPools } = useCometPoolsQuery({
     userPubKey: publicKey,
     filter,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
   
@@ -94,9 +95,10 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box sx={{ fontSize: '11px', fontWeight: '500' }}>
-					{params.row.fromPriceRange.toFixed(2)} - {params.row.toPriceRange.toFixed(2)}
-				</Box>
+				// <Box sx={{ fontSize: '11px', fontWeight: '500' }}>
+				// 	{params.row.fromPriceRange.toFixed(2)} - {params.row.toPriceRange.toFixed(2)}
+				// </Box>
+        <MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={100} />
 			)
 		},
 	},

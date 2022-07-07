@@ -75,8 +75,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      // const multiPoolComet = await program.getComet()
-      // const assetIndex = multiPoolComet.positions[cometIndex].poolIndex
       const comet = await program.getSinglePoolComet(cometIndex);
       const position = comet.positions[0];
       const assetIndex = position.poolIndex;
@@ -103,6 +101,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           collAmount 
         )
         setMaxMintable(max)
+        setValue('mintAmount', max * defaultMintRatio / 100)
       }
 
       if (collAmount && mintAmount) {

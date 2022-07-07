@@ -97,17 +97,4 @@ const EditBox = styled(Box)`
   cursor: pointer;
 `
 
-const ActionButton = styled(Button)`
-	width: 100%;
-	height: 45px;
-  flex-grow: 0;
-  border-radius: 10px;
-  background-color: #4e609f;
-  font-size: 13px;
-  font-weight: 600;
-	color: #fff;
-  margin-top: 33px;
-  margin-bottom: 6px;
-`
-
 export default withCsrOnly(PositionInfo)

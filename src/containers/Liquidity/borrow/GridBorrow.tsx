@@ -19,7 +19,7 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
   const { data: assets } = useBorrowQuery({
     userPubKey: publicKey,
     filter,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
 

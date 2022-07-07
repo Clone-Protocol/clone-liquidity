@@ -1,63 +1,165 @@
+import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { Box } from '@mui/material'
-import { AssetData } from '~/features/Overview/Asset.query'
+import { Box, Stack, Popover } from '@mui/material'
 
 interface Props {
-	assetData: AssetData
+  iPrice: number
+	centerPrice: number
+  lowerLimit: number
+  upperLimit: number
 	max: number
-  hasRisk: boolean
+  hasRisk?: boolean
 }
 
-const BG_BAR_WARNING = '#ff2929'
-const BG_BAR_NORMAL = 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)'
-
-const MiniPriceRange: React.FC<Props> = ({ assetData, max, hasRisk }) => {
+const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit, max, hasRisk }) => {
 	const maxLimit = max
+	const centerPricePercent = (centerPrice * 100) / maxLimit
 
-	const centerPricePercent = (assetData.price * 100) / maxLimit
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 	
 	return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <PriceVal>{assetData.lowerLimit.toFixed(2)}</PriceVal>
-        <PriceVal>{assetData.upperLimit.toFixed(2)}</PriceVal>
-      </Box>
-      <Box sx={{ position: 'relative' }}>
-        <Box>
-          <RangeBar sx={hasRisk? { background: BG_BAR_WARNING} : { background: BG_BAR_NORMAL}} />
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px'}} 
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}>
+        <LeftBox>{lowerLimit.toLocaleString()}</LeftBox>
+        <Box sx={{ position: 'relative' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
+            <LeftRangeStick />
+            <RangeBar />
+            <RightRangeStick />
+          </Box>
+          
+          <CenterStick sx={{ marginLeft: '50%' }} />
+          <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
         </Box>
-        <CenterBar sx={{ left: `calc(${centerPricePercent}% - 20px)` }} />
+        <RightBox>{upperLimit.toLocaleString()}</RightBox>
       </Box>
+
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: 'none',
+          marginTop: '-60px',
+          '& .MuiPopover-paper': {
+            borderRadius: '10px',
+            border: 'solid 1px #616161',
+            backgroundColor: 'rgba(52, 52, 52, 0.9)'
+          }
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <HoverBox>
+          <Stack direction="row" justifyContent="space-between">
+            <div>Indicator Price:</div>
+            <div>$ {iPrice.toLocaleString()}</div>
+          </Stack>
+          <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '5px'}}>
+            <div>Center Price:</div>
+            <div>$ {centerPrice.toLocaleString()}</div>
+          </Stack>
+        </HoverBox> 
+      </Popover>
     </Box>
 	)
 }
 
-const CenterBar = styled(Box)`
-	position: absolute;
-	left: calc(50% - 24px);
-  border: 1px solid #fff;
-	border-radius: 0;
-	background: #fff;
-	width: 3px;
-	height: 18px;
+const LeftRangeStick = styled('div')`
+  position: relative;
+  border-radius: 0;
+  background: #809cff;
+  width: 1px;
+  height: 9px;
+  margin-top: -12px;
+  z-index: 20;
 `
 
-const PriceVal = styled('div')`
-  font-size: 12px;
+const RightRangeStick = styled('div')`
+  position: relative;
+  border-radius: 0;
+  background: #809cff;
+  width: 1px;
+  height: 9px;
+  margin-top: -12px;
+  z-index: 20;
+`
+
+const CenterStick = styled('div')`
+  position: relative;
+	border-radius: 0;
+	background: #fff;
+	width: 2px;
+	height: 6px;
+	margin-top: -6px;
+  z-index: 20;
+`
+
+const Stick = styled('div')`
+  position: relative;
+	border-radius: 0;
+	background: #fff;
+	width: 2px;
+	height: 15px;
+	margin-top: -9px;
+  z-index: 20;
+`
+
+const LeftBox = styled(Box)`
+  width: 15px;
+  height: 28px;
+  font-size: 11px;
   font-weight: 500;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
+  border-radius: 6px;
   text-align: center;
-  color: #fff;
+  margin-right: -10px;
+`
+
+const RightBox = styled(Box)`
+  width: 15px;
+  height: 28px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  text-align: center;
+  margin-left: -10px;
 `
 
 const RangeBar = styled('div')`
-  width: 173px;
-  height: 5px;  
-  background: linear-gradient(to right, #00f0ff -1%, #0038ff 109%);
+  width: 68px;
+  height: 2px;  
+  background: #809cff;
+`
+
+const HoverBox = styled(Box)`
+  width: 152px;
+  height: 54px;
+  padding: 9px 11px 8px 12px;
+  background-color: rgba(52, 52, 52, 0.9);
+  font-size: 9px;
+  font-weight: 500;
+  color: #fff;
 `
 
 export default withCsrOnly(MiniPriceRange)

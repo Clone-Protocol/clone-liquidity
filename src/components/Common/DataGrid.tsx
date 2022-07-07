@@ -12,6 +12,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
     sx={{
       border: 0,
       color: '#fff',
+      minHeight: '180px',
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end'

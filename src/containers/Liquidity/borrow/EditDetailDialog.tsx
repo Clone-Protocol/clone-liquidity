@@ -20,6 +20,9 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
   const [maxCollVal, setMaxCollVal] = useState(0);
 
+  //collateralAmount (minus value above if withdraw, plus value above if deposit) / getAssetInfo(poolIndex).price * borrowedIasset
+  const [expectedCollRatio, setExpectedCollRatio] = useState(0)
+
   useEffect(() => {
     setMaxCollVal(borrowDetail.usdiVal)
   }, [borrowDetail.usdiVal])
@@ -59,6 +62,14 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     setValue('collAmount', 0.0)
     setValue('borrowAmount', 0.0)
   }
+
+  useEffect(() => {
+    if (editType === 0) { // deposit
+      setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) / borrowDetail.oPrice * borrowDetail.borrowedIasset)
+    } else { // withdraw
+      setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) / borrowDetail.oPrice * borrowDetail.borrowedIasset)
+    }
+  }, [collAmount, editType])
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
     const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
@@ -148,7 +159,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Expected Collateral Ratio</DetailHeader>
-                <DetailValue>{borrowDetail.collateralRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
+                <DetailValue>{expectedCollRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Min Collateral Ratio</DetailHeader>

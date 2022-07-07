@@ -28,6 +28,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   const isWarning = isRisk || isLackBalance
 
+  //collateralAmount / getAssetInfo(poolIndex).price * (borrowedIasset (minus value above if repay, plus value above if borrow more))
+  const [expectedCollRatio, setExpectedCollRatio] = useState(0)
+
   useEffect(() => {
     setMaxCollVal(borrowDetail.usdiVal)
   }, [borrowDetail.usdiVal])
@@ -67,6 +70,14 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
     setValue('collAmount', 0.0)
     setValue('borrowAmount', 0.0)
   }
+
+  useEffect(() => {
+    if (editType === 0) { // borrow more
+      setExpectedCollRatio(borrowDetail.collateralAmount / borrowDetail.oPrice * (borrowDetail.borrowedIasset + collAmount))
+    } else { // repay
+      setExpectedCollRatio(borrowDetail.collateralAmount / borrowDetail.oPrice * (borrowDetail.borrowedIasset - collAmount))
+    }
+  }, [collAmount, editType])
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
     const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
@@ -156,7 +167,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Expected Collateral Ratio</DetailHeader>
-                <DetailValue>{ editType === 0 || collAmount < borrowDetail.collateralAmount ? `${borrowDetail.collateralRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
+                <DetailValue>{ editType === 0 || collAmount < borrowDetail.collateralAmount ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Min Collateral Ratio</DetailHeader>

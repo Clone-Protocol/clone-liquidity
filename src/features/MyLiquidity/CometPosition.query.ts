@@ -40,8 +40,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
 	await program.loadManager()
 
-  // const multiPoolComet = await program.getComet()
-  // let comet = multiPoolComet.positions[index];
   const comet = await program.getSinglePoolComet(index);
   const position = comet.positions[0];
 
@@ -59,8 +57,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   const collAmount = toScaledNumber(comet.totalCollateralAmount)
   const lowerLimit = 0;//toScaledNumber(comet.lowerPriceRange)
   const upperLimit = 100;//toScaledNumber(comet.upperPriceRange)
-  const ild = 0
-  const healthScore = 95
+  const ild = 0 //await program.getILD(Number(position.poolIndex))
+  const healthScore = 95 //  await program.getHealthScore()
 
 	return {
     mintAmount,
