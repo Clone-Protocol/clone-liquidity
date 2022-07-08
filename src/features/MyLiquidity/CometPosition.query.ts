@@ -50,7 +50,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = Number(position.borrowedIasset.val) === 0 ? 0 : Number(position.borrowedUsdi.val) / Number(position.borrowedIasset.val)
-  const maxWithdrawable = await program.calculateMaxWithdrawableCollateral(index);
+  const maxWithdrawable = 0 //await program.calculateMaxWithdrawableCollateral(index);
 
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(position.poolIndex))
   const mintAmount = toScaledNumber(position.borrowedUsdi)

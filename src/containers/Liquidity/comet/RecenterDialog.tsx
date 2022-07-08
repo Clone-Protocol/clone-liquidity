@@ -1,22 +1,71 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useIncept } from '~/hooks/useIncept'
 import Image from 'next/image'
 import WarningIcon from 'public/images/warning-icon.png'
 import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, FormHelperText } from '@mui/material'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
+import { useBalanceQuery } from '~/features/Comet/Balance.query'
+
+interface CometInfo {
+  healthScore: number
+  usdiCost: number
+  centerPrice: number
+	lowerLimit: number
+  upperLimit: number
+}
 
 const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open: any, handleClose: any }) => {
   const { publicKey } = useWallet()
+  const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
   const { mutateAsync } = useRecenterMutation(publicKey)
 
   const isLackBalance = true
+  const [cometData, setCometData] = useState<CometInfo>({
+    healthScore: 95,
+    usdiCost: 110.51,
+    centerPrice: 100.58,
+    lowerLimit: 50.43,
+    upperLimit: 150.89
+  })
 
   const cometIndex = parseInt(assetId)
+
+  const { data: usdiBalance, refetch } = useBalanceQuery({ 
+    userPubKey: publicKey, 
+    refetchOnMount: true,
+    enabled: publicKey != null
+  });
+
+  // defaultMintRatio
+  useEffect(() => {
+    async function fetch() {
+      const program = getInceptApp()
+      await program.loadManager()
+
+      const { 
+        healthScore,
+        usdiCost,
+        lowerPrice,
+        upperPrice
+      } = await program.calculateCometRecenterSinglePool(cometIndex)
+      const balances = await program.getPoolBalances(cometIndex)
+	    const price = balances[1] / balances[0]
+      setCometData({
+        healthScore,
+        usdiCost,
+        centerPrice: price,
+        lowerLimit: lowerPrice,
+        upperLimit: upperPrice
+      })
+    }
+    fetch()
+  }, [])
 
   const handleRecenter = async () => {
     // TODO: need to check it can recenter in advance (whether it already set trade in user's trading app)
@@ -58,12 +107,12 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             </WarningBox>
             <Box sx={{ marginTop: '20px', marginBottom: '22px'}}>
               <WalletBalance>
-                Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>2000 USDi</span>
+                Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
               </WalletBalance>
               <Stack sx={{ borderRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
                 <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', marginTop: '3px'}}>Recentering cost</div>
                 <div style={{ fontSize: '16px', fontWeight: '500', color: '#fff'}}>
-                  110.51 USDi
+                  {cometData.usdiCost} USDi
                 </div>
               </Stack>
             </Box>
@@ -74,34 +123,27 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             <Box sx={{ margin: '0 auto', marginTop: '20px', marginBottom: '33px', width: '345px' }}>
               <ConcentrationRangeView
                 centerPrice={100}
-                lowerLimit={50.43}
-                upperLimit={150.89}
-                max={155}
+                lowerLimit={cometData.lowerLimit}
+                upperLimit={cometData.upperLimit}
+                max={cometData.upperLimit}
               />
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price:</DetailHeader>
                 <DetailValue>100.58 USD</DetailValue>
-                {/* <DetailValue>{assetData?.centerPrice.toFixed(2)} USD</DetailValue> */}
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Lower limit:</DetailHeader>
-                <DetailValue>100.58 USD</DetailValue>
-                {/* <DetailValue>
-                  {cometData.lowerLimit.toFixed(2)} USD
-                </DetailValue> */}
+                <DetailValue>{cometData.lowerLimit.toLocaleString()} USD</DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Upper limit:</DetailHeader>
-                <DetailValue>100.58 USD</DetailValue>
-                {/* <DetailValue>
-                  {cometData.upperLimit.toFixed(2)} USD
-                </DetailValue> */}
+                <DetailValue>{cometData.upperLimit.toLocaleString()} USD</DetailValue>
               </Stack>
             </Box>
             <Stack direction="row" justifyContent="space-between">
               <SubTitle>Projected Health Score</SubTitle>
               <DetailValue>
-                95/100 <span style={{ color: '#949494' }}>(prev. 75/100)</span>
+                {cometData.healthScore}/100 <span style={{ color: '#949494' }}>(prev. 75/100)</span>
               </DetailValue>
             </Stack>
 
