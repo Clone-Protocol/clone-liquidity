@@ -95,6 +95,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
+      //calculateEditCometSinglePool
+
       if (collAmount) {
         const max = await program.calculateMaxUSDiAmountFromCollateral(
           assetIndex,

@@ -132,6 +132,7 @@ let columns: GridColDef[] = [
 						<DefaultButton>Manage</DefaultButton>
 					</Link>
 
+
           <RecenterDialog
             assetId={params.row.id}
 						open={openRecenter}

@@ -36,9 +36,9 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     lowerLimit: assetData.price / 2,
     upperLimit: (assetData.price * 3) / 2
   })
+  const [cometHealthScore, setHealthScore] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
   const COLLATERAL_INDEX = 0 // USDi
-  const healthScore = 72
 
   const {
 		handleSubmit,
@@ -83,20 +83,31 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       if (collAmount && mintAmount) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
         
-        let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-          COLLATERAL_INDEX, // USDi
+        // let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+        //   COLLATERAL_INDEX, // USDi
+        //   assetIndex,
+        //   collAmount,
+        //   mintAmount
+        // ))!
+
+        const {
+          healthScore,
+          lowerPrice,
+          upperPrice
+        } = await program.calculateNewSinglePoolComet(
           assetIndex,
           collAmount,
           mintAmount
-        ))!
+        )
 
-        console.log('l', lowerLimit)
-        console.log('u', upperLimit)
+        console.log('l', lowerPrice)
+        console.log('u', upperPrice)
         setCometData({
           ...cometData,
-          lowerLimit,
-          upperLimit
+          lowerLimit: lowerPrice,
+          upperLimit: upperPrice
         })
+        setHealthScore(healthScore)
       }
     }
     fetch()
@@ -348,7 +359,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
           <Box>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore</Box>
-            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore}</span>/100</Box>
+            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{cometHealthScore.toFixed(2)}</span>/100</Box>
           </Box>
 
           <StyledDivider />
