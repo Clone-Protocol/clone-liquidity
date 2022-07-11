@@ -73,9 +73,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   useEffect(() => {
     if (editType === 0) { // borrow more
-      setExpectedCollRatio(borrowDetail.collateralAmount / borrowDetail.oPrice * (borrowDetail.borrowedIasset + collAmount))
+      setExpectedCollRatio(borrowDetail.collateralAmount / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + collAmount)))
     } else { // repay
-      setExpectedCollRatio(borrowDetail.collateralAmount / borrowDetail.oPrice * (borrowDetail.borrowedIasset - collAmount))
+      setExpectedCollRatio(borrowDetail.collateralAmount / (borrowDetail.oPrice * (borrowDetail.borrowedIasset - collAmount)))
     }
   }, [collAmount, editType])
 
@@ -175,7 +175,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
               </Stack>
             </Box>
 
-            { isWarning && 
+            { isWarning && (editType === 1 && collAmount >= borrowDetail.collateralAmount) && 
               <Stack
                 sx={{
                   background: 'rgba(233, 209, 0, 0.04)',
@@ -192,7 +192,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                 </Box>
                 <WarningBox>
                   { isRisk && 'This borrow position has significant risk of liquidation.' }
-                  { isLackBalance && 'Not enough wallet balance to pay in full.' }
+                  { isLackBalance && `Not enough wallet balance to pay in full.` }
                 </WarningBox>
               </Stack>
             }

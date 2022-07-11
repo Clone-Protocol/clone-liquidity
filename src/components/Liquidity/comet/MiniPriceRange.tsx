@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { Box, Stack, Popover } from '@mui/material'
+import { formatDollarAmount } from '~/utils/numbers'
 
 interface Props {
   iPrice: number
@@ -14,7 +15,7 @@ interface Props {
 
 const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit, max, hasRisk }) => {
 	const maxLimit = max
-	const centerPricePercent = (centerPrice * 100) / maxLimit
+	const centerPricePercent = (iPrice * 100) / maxLimit
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -33,7 +34,7 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
       <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px'}} 
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}>
-        <LeftBox>{lowerLimit.toLocaleString()}</LeftBox>
+        <LeftBox>{formatDollarAmount(lowerLimit, 2, true).slice(1)}</LeftBox>
         <Box sx={{ position: 'relative' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
             <LeftRangeStick />
@@ -44,7 +45,7 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
           <CenterStick sx={{ marginLeft: '50%' }} />
           <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
         </Box>
-        <RightBox>{upperLimit.toLocaleString()}</RightBox>
+        <RightBox>{formatDollarAmount(upperLimit, 2, true).slice(1)}</RightBox>
       </Box>
 
       <Popover

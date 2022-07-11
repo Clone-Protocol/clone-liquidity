@@ -54,6 +54,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(position.poolIndex))
   const mintAmount = toScaledNumber(position.borrowedUsdi)
+  const mintIassetAmount = toScaledNumber(position.borrowedIasset)
   const collAmount = toScaledNumber(comet.totalCollateralAmount)
   const lowerLimit = 0;//toScaledNumber(comet.lowerPriceRange)
   const upperLimit = 100;//toScaledNumber(comet.upperPriceRange)
@@ -62,6 +63,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
 	return {
     mintAmount,
+    mintIassetAmount,
     collAmount,
     lowerLimit,
     upperLimit,
@@ -103,6 +105,7 @@ export interface CometInfo {
 
 export interface CometDetail extends PositionInfo {
   mintAmount: number
+  mintIassetAmount?: number
   collAmount: number
   lowerLimit: number
   upperLimit: number

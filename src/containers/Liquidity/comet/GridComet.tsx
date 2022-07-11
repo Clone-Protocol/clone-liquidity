@@ -74,7 +74,9 @@ let columns: GridColDef[] = [
 		headerName: 'Collateral',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-      return <CellDigitValue value={params.value} symbol="USDi" />
+      return (
+        <CellDigitValue value={params.value} symbol="USDi" />
+      )
 		},
 	},
   {
@@ -95,10 +97,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				// <Box sx={{ fontSize: '11px', fontWeight: '500' }}>
-				// 	{params.row.fromPriceRange.toFixed(2)} - {params.row.toPriceRange.toFixed(2)}
-				// </Box>
-        <MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={100} />
+        <MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.cPrice * 2} />
 			)
 		},
 	},
@@ -110,7 +109,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
       return (
-        <Box>
+        <Box sx={{ width: '80px', textAlign: 'center'}}>
           <CellDigitValue value={params.value} symbol="%" />
         </Box>
       )

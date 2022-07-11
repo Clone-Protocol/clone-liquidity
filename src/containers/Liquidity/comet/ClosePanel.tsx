@@ -10,6 +10,7 @@ import { CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
+import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 
 const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: CometDetail }) => {
 	const { publicKey } = useWallet()
@@ -45,6 +46,8 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
     )
 	}
 
+  const noBorrowedAsset = cometDetail.mintIassetAmount === 0 && cometDetail.mintAmount === 0
+
 	return (
     <>
       {loading && (
@@ -58,17 +61,7 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
           Click here to learn more about how closing comet works.
         </WarningBox>
         <Title>Close Comet</Title>
-        <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
-          <Stack direction="row" justifyContent="space-between">
-            <DetailHeader>ILD</DetailHeader>
-            <DetailValue>{cometDetail.ild.toLocaleString()} USDi</DetailValue>
-          </Stack>
-          <Stack sx={{ marginTop: '2px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral</DetailHeader>
-            <DetailValue>{cometDetail.collAmount.toLocaleString()} USDi</DetailValue>
-          </Stack>
-        </Box>
-        <Box sx={{ padding: '0px 24px 9px 27px' }}>
+        <Box sx={{ padding: '0px 24px 9px 15px' }}>
           <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
             <DetailHeader>ILD Dept</DetailHeader>
             <TotalValue>{cometDetail.ild.toLocaleString()} USDi</TotalValue>
@@ -79,8 +72,12 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
           </Stack>
         </Box>
         
-        <ActionButton onClick={onClose} disabled={cometDetail.collAmount !== 0}><Image src={OneIcon} width={17} /> <div>Withdraw liquidity & pay ILD</div> <div></div></ActionButton>
-        <ActionButton onClick={onClose} disabled={cometDetail.collAmount === 0}><Image src={TwoIcon} width={17} /> <div>Close comet & withdraw Collateral</div> <div></div></ActionButton>
+        <ActionButton onClick={onClose} disabled={!noBorrowedAsset}>
+          <Image src={OneIcon} width={17} /> 
+          <div>Withdraw liquidity & pay ILD</div> 
+          <div>{ !noBorrowedAsset && <CheckCircleOutlineRoundedIcon fontSize="small" sx={{ color:'#809cff', marginTop: '2px'}}  />}</div>
+        </ActionButton>
+        <ActionButton onClick={onClose} disabled={noBorrowedAsset}><Image src={TwoIcon} width={17} /> <div>Close comet & withdraw Collateral</div> <div></div></ActionButton>
       </Box>
     </>
 	)
