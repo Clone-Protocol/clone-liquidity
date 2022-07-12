@@ -198,6 +198,9 @@ const ActionButton = styled(Button)`
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
+  &:hover {
+    background-color: #7A86B6;
+  }
   &:disabled {
     background-color: #444;
     color: #adadad;

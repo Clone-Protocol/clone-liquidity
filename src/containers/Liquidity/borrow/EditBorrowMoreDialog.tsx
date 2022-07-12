@@ -234,6 +234,9 @@ const ActionButton = styled(Button)`
   font-size: 13px;
   font-weight: 600;
   margin-top: 2px;
+  &:hover {
+    background-color: #7A86B6;
+  }
   &:disabled {
     background-color: #444;
     color: #adadad;

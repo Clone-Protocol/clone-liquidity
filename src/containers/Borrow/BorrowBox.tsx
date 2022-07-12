@@ -2,10 +2,10 @@ import { Box, Button, Paper, Divider, Grid, FormHelperText } from '@mui/material
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import PairInput from '~/components/Borrow/PairInput'
 import AutoCompletePairInput, { AssetType } from '~/components/Borrow/AutoCompletePairInput'
-// import SelectPairInput from '~/components/Borrow/SelectPairInput'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useWallet } from '@solana/wallet-adapter-react'
 import OneIcon from 'public/images/one-icon.svg'
@@ -24,8 +24,10 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
+  const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+  const { lAssetId } = router.query
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
 		tickerName: 'USDi Coin',
@@ -33,6 +35,14 @@ const BorrowBox = () => {
   }
 	const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
+
+  // sub routing for asset id
+  useEffect(() => {
+    if (lAssetId) {
+      setAssetIndex(parseInt(lAssetId.toString()))
+      setBorrowAsset(ASSETS[parseInt(lAssetId.toString())])
+    }
+  }, [lAssetId])
 
   const { data: priceHistory } = usePriceHistoryQuery({
     tickerSymbol: borrowAsset?.tickerSymbol,
@@ -371,6 +381,9 @@ const ActionButton = styled(Button)`
 	color: #fff;
 	border-radius: 8px;
 	margin-bottom: 15px;
+  &:hover {
+    background-color: #7A86B6;
+  }
   &:disabled {
     background-color: #444;
     color: #adadad;

@@ -118,7 +118,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               <Box sx={{ marginLeft: '9px' }}> Provide {assetData.tickerSymbol}</Box>
             </SubTitle>
             <SubTitleComment>
-              Acquire {assetData.tickerSymbol} by <Link href="/borrow"><span style={{ color: '#fff', cursor: 'pointer' }}>Borrowing</span></Link>
+              Acquire {assetData.tickerSymbol} by <Link href={`/borrow?lAssetId=${assetIndex}`}><span style={{ color: '#fff', cursor: 'pointer' }}>Borrowing</span></Link>
             </SubTitleComment>
             <Controller
               name="borrowFrom"
@@ -237,6 +237,9 @@ const LiquidityButton = styled(Button)`
   font-size: 13px;
 	border-radius: 10px;
 	margin-bottom: 15px;
+  &:hover {
+    background-color: #7A86B6;
+  }
   &:disabled {
     background-color: #444;
     color: #adadad;

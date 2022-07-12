@@ -50,16 +50,22 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = Number(position.borrowedIasset.val) === 0 ? 0 : Number(position.borrowedUsdi.val) / Number(position.borrowedIasset.val)
-  const maxWithdrawable = 0 //await program.calculateMaxWithdrawableCollateral(index);
 
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(position.poolIndex))
   const mintAmount = toScaledNumber(position.borrowedUsdi)
   const mintIassetAmount = toScaledNumber(position.borrowedIasset)
   const collAmount = toScaledNumber(comet.totalCollateralAmount)
-  const lowerLimit = 0;//toScaledNumber(comet.lowerPriceRange)
-  const upperLimit = 100;//toScaledNumber(comet.upperPriceRange)
-  const ild = 0 //await program.getILD(Number(position.poolIndex))
-  const healthScore = 95 //  await program.getHealthScore()
+  const [ lLimit, hLimit] = await program.calculateRangeFromUSDiAndCollateral(
+    0, // USDi
+    Number(position.poolIndex),
+    collAmount,
+    mintAmount
+  )
+  const lowerLimit = lLimit;
+  const upperLimit = hLimit;
+  const singlePoolHealthScore =  await program.getSinglePoolHealthScore(index)
+  const ild = singlePoolHealthScore.ILD
+  const healthScore = singlePoolHealthScore.healthScore
 
 	return {
     mintAmount,
@@ -67,7 +73,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     collAmount,
     lowerLimit,
     upperLimit,
-    maxWithdrawable,
     ild,
     healthScore,
 		tickerIcon: tickerIcon,
@@ -109,7 +114,6 @@ export interface CometDetail extends PositionInfo {
   collAmount: number
   lowerLimit: number
   upperLimit: number
-  maxWithdrawable: number
   ild: number
   healthScore: number
 }

@@ -242,6 +242,9 @@ const ActionButton = styled(Button)`
   font-size: 13px;
   font-weight: 600;
 	color: #fff;
+  &:hover {
+    background-color: #7A86B6;
+  }
 `
 
 const NotEnoughBox = styled(Box)`

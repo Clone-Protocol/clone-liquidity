@@ -28,19 +28,19 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
           <Box sx={{ padding: '22px', minWidth: '365px' }}>
             <SubTitle>Collateral</SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
-              {cometDetail.collAmount} <span style={{ fontSize: '14px' }}>USDi</span>
+              {cometDetail.collAmount.toLocaleString()} <span style={{ fontSize: '14px' }}>USDi</span>
             </Box>
             <Box sx={{ marginTop: '10px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
                 <DetailValue>
-                  {cometDetail.collAmount} USDi
+                  {cometDetail.collAmount.toLocaleString()} USDi
                 </DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
                 <DetailValue>
-                  {cometDetail.mintAmount} {assetData.tickerSymbol}
+                  {cometDetail.mintAmount.toLocaleString()} {assetData.tickerSymbol}
                 </DetailValue>
               </Stack>
             </Box>
@@ -83,7 +83,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box sx={{ width: '45%', marginLeft: '15px' }}>
           <SubTitle>Health Score</SubTitle>
           <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
-            {cometDetail.healthScore}/100
+            {cometDetail.healthScore.toFixed(2)}/100
           </Box>
         </Box>
         <Box sx={{ display: 'flex', width: '50%' }}>
@@ -91,7 +91,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
           <Box sx={{ marginLeft: '35px' }}>
             <SubTitle>ILD</SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginTop: '10px' }}>
-              {cometDetail.ild} USDi
+              {cometDetail.ild.toFixed(2)} USDi
             </Box>
           </Box>
         </Box>
@@ -158,6 +158,9 @@ const ActionButton = styled(Button)`
   font-size: 13px;
   font-weight: 600;
 	color: #fff;
+  &:hover {
+    background-color: #7A86B6;
+  }
 `
 
 export default withCsrOnly(PositionInfo)
