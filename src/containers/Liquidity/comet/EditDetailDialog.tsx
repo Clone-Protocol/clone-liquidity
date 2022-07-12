@@ -25,7 +25,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const COLLATERAL_INDEX = 0 // USDi
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
-  const [maxCollVal, setMaxCollVal] = useState(balance)
+  // const [maxCollVal, setMaxCollVal] = useState(balance)
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     lowerLimit: cometDetail.lowerLimit,
@@ -61,41 +61,62 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [mintRatio, setMintRatio] = useState(0)
-  const healthScore = 72
+  const [healthScore, setHealthScore] = useState(0)
+  const [maxWithdrawable, setMaxWithdrawable] = useState(0)
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
-    const maxColl = newValue === 0 ? balance : cometDetail.maxWithdrawable
-    setMaxCollVal(maxColl)
 	}, [editType])
 
   // defaultMintRatio
   useEffect(() => {
     async function fetch() {
-      const program = getInceptApp()
-      await program.loadManager()
+      if (open) {
+        const program = getInceptApp()
+        await program.loadManager()
 
-      const comet = await program.getSinglePoolComet(cometIndex);
-      const position = comet.positions[0];
-      const assetIndex = position.poolIndex;
-      const max = await program.calculateMaxUSDiAmountFromCollateral(
-        assetIndex,
-        cometDetail.collAmount 
-      )
+        // const comet = await program.getSinglePoolComet(cometIndex);
+        // const position = comet.positions[0];
+        // const assetIndex = position.poolIndex;
+        // const max = await program.calculateMaxUSDiAmountFromCollateral(
+        //   assetIndex,
+        //   cometDetail.collAmount 
+        // )
 
-      setAssetIndex(assetIndex)
-      setDefaultMintRatio(max > 0 ? cometDetail.mintAmount * 100 / max : 0)
-      setMintRatio(max > 0 ? cometDetail.mintAmount * 100 / max : 0)
+        let {
+          maxCollateralWithdrawable,
+          healthScore,
+          maxUsdiPosition,
+          lowerPrice,
+          upperPrice
+        } = await program.calculateEditCometSinglePool(
+          cometIndex,
+          cometDetail.collAmount,
+          cometDetail.mintAmount
+        )
+        console.log('a', lowerPrice+"/"+upperPrice)
+        console.log('b', maxUsdiPosition +"/"+maxCollateralWithdrawable + "/"+healthScore)
+        console.log('c', cometDetail.mintAmount +"/"+ cometDetail.mintAmount * 100 / maxUsdiPosition)
+
+        setAssetIndex(assetIndex)
+        setCometData({
+          ...cometData,
+          lowerLimit: lowerPrice,
+          upperLimit: upperPrice
+        })
+        setHealthScore(healthScore)
+        setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
+        setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
+        setMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
+      }
     }
     fetch()
-  }, [])
+  }, [open])
 
   useEffect(() => {
     async function fetch() {
       const program = getInceptApp()
       await program.loadManager()
-
-      //calculateEditCometSinglePool
 
       if (collAmount) {
         const max = await program.calculateMaxUSDiAmountFromCollateral(
@@ -219,7 +240,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     validate(value) {
                       if (!value || value <= 0) {
                         return 'the collateral amount should be above zero.'
-                      } else if (value > maxCollVal) {
+                      } else if ((editType === 0 && value > balance) || (editType === 1 && value > maxWithdrawable)) {
                         return 'The collateral amount cannot exceed the balance.'
                       }
                     }
@@ -230,8 +251,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       tickerIcon={'/images/assets/USDi.png'}
                       tickerSymbol="USDi"
                       collAmount={field.value}
-                      maxCollVal={maxCollVal}
+                      maxCollVal={editType === 0 ? balance : maxWithdrawable}
                       currentCollAmount={cometDetail.collAmount}
+                      dollarPrice={cometDetail.collAmount}
                       onChangeType={handleChangeType}
                       onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const collAmt = parseFloat(e.currentTarget.value)
@@ -263,13 +285,13 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
                 </SubTitle>
 
-                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometDetail.lowerLimit} currentUpperLimit={cometDetail.upperLimit} onChange={handleChangeConcentRange} />
+                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} onChange={handleChangeConcentRange} />
               </Box>
               <StyledDivider />
 
               <Box>
                 <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore</Box>
-                <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore}</span>/100</Box>
+                <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
               </Box>
 
               <StyledDivider />
