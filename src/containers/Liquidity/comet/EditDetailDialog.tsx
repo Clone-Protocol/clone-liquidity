@@ -118,31 +118,61 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      if (collAmount) {
-        const max = await program.calculateMaxUSDiAmountFromCollateral(
-          assetIndex,
-          collAmount 
+      if (collAmount && !mintAmount) {
+        let {
+          maxUsdiPosition
+        } = await program.calculateEditCometSinglePool(
+          cometIndex,
+          collAmount,
+          0
         )
-        setMaxMintable(max)
-        setValue('mintAmount', max * defaultMintRatio / 100)
+        setMaxMintable(maxUsdiPosition)
+        setValue('mintAmount', maxUsdiPosition * defaultMintRatio / 100)
       }
 
       if (collAmount && mintAmount) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
-        
-        let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-          COLLATERAL_INDEX, // USDi
-          assetIndex,
-          collAmount,
-          mintAmount
-        ))!
 
+        let {
+          lowerPrice,
+          upperPrice
+        } = await program.calculateEditCometSinglePool(
+          cometIndex,
+          collAmount,
+          mintAmount - cometDetail.mintAmount
+        )
         setCometData({
           ...cometData,
-          lowerLimit,
-          upperLimit
+          lowerLimit: lowerPrice,
+          upperLimit: upperPrice
         })
       }
+
+      // if (collAmount) {
+      //   const max = await program.calculateMaxUSDiAmountFromCollateral(
+      //     assetIndex,
+      //     collAmount 
+      //   )
+      //   setMaxMintable(max)
+      //   setValue('mintAmount', max * defaultMintRatio / 100)
+      // }
+
+      // if (collAmount && mintAmount) {
+      //   console.log('calculateRange', collAmount +"/"+mintAmount)
+        
+      //   let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
+      //     COLLATERAL_INDEX, // USDi
+      //     assetIndex,
+      //     collAmount,
+      //     mintAmount
+      //   ))!
+
+      //   setCometData({
+      //     ...cometData,
+      //     lowerLimit,
+      //     upperLimit
+      //   })
+      // }
     }
     fetch()
   }, [collAmount, mintAmount])
