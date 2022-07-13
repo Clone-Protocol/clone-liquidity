@@ -22,7 +22,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
   const { data, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: open && publicKey != null
 	})
 
@@ -61,8 +61,8 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
             console.log('data', data)
             enqueueSnackbar('Success to withdraw')
 
-            handleClose()
             refetch()
+            handleClose()
           }
           setLoading(false)
         },

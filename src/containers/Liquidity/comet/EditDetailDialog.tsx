@@ -200,6 +200,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       lowerLimit,
       true,
     )
+    
     setValue('mintAmount', mintAmount)
   }, 1000), [mintAmount])
 

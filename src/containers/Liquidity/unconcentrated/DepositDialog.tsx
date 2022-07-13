@@ -42,14 +42,14 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
   const { data: balances, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: open && publicKey != null
 	})
 
   const { data: unconcentData } = useUnconcentDetailQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: open && publicKey != null
 	})
 
@@ -66,8 +66,8 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
             console.log('data', data)
             enqueueSnackbar('Success to deposit')
 
-            handleClose()
             refetch()
+            handleClose()
           }
           setLoading(false)
         },
