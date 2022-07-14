@@ -6,6 +6,7 @@ interface Props {
 	tickerName: string | null
 	tickerSymbol: string | null
 	value?: number
+  valueDollarPrice?: number
 	balance?: number
   currentAmount?: number
   dollarPrice?: number
@@ -20,6 +21,7 @@ const PairInput: React.FC<Props> = ({
 	tickerName,
 	tickerSymbol,
 	value,
+  valueDollarPrice,
 	balance,
   currentAmount,
   dollarPrice,
@@ -45,7 +47,10 @@ const PairInput: React.FC<Props> = ({
               {/* <TickerName>{tickerName}</TickerName> */}
             </Box>
           </Box>
-          <InputAmount id="ip-amount" type="number" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} disabled={disabled} />
+          <Box>
+            <InputAmount id="ip-amount" type="number" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} disabled={disabled} />
+            <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (valueDollarPrice && valueDollarPrice > 0) ? ('$' + valueDollarPrice?.toLocaleString()) : '' }</div>
+          </Box>
         </InputStack>
         <CurrentPrice style={{ borderTop: '1px solid #444'}}>Current: <span style={{ color: '#fff' }}>{currentAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span></CurrentPrice>
       </Box>
@@ -83,7 +88,7 @@ const InputAmount = styled(`input`)`
 	background-color: #333333;
 	font-size: 16px;
 	font-weight: 500;
-	color: #adadad;
+	color: #fff;
 `
 
 const CurrentPrice = styled('div')`

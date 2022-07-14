@@ -23,9 +23,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = parseInt(cometId)
 
-  const COLLATERAL_INDEX = 0 // USDi
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
-  // const [maxCollVal, setMaxCollVal] = useState(balance)
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
     lowerLimit: cometDetail.lowerLimit,
@@ -75,21 +73,13 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const program = getInceptApp()
         await program.loadManager()
 
-        // const comet = await program.getSinglePoolComet(cometIndex);
-        // const position = comet.positions[0];
-        // const assetIndex = position.poolIndex;
-        // const max = await program.calculateMaxUSDiAmountFromCollateral(
-        //   assetIndex,
-        //   cometDetail.collAmount 
-        // )
-
         let {
           maxCollateralWithdrawable,
           healthScore,
           maxUsdiPosition,
           lowerPrice,
           upperPrice
-        } = await program.calculateEditCometSinglePool(
+        } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
           cometIndex,
           cometDetail.collAmount,
           cometDetail.mintAmount
@@ -120,14 +110,17 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
       if (collAmount && !mintAmount) {
         let {
-          maxUsdiPosition
-        } = await program.calculateEditCometSinglePool(
+          maxUsdiPosition,
+          healthScore
+        } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
           cometIndex,
           collAmount,
           0
         )
+        setHealthScore(healthScore)
         setMaxMintable(maxUsdiPosition)
         setValue('mintAmount', maxUsdiPosition * defaultMintRatio / 100)
+        setMintRatio(mintAmount * 100 / maxUsdiPosition)
       }
 
       if (collAmount && mintAmount) {
@@ -135,44 +128,22 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
         let {
           lowerPrice,
-          upperPrice
-        } = await program.calculateEditCometSinglePool(
+          upperPrice,
+          maxUsdiPosition,
+          healthScore,
+        } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
           cometIndex,
           collAmount,
           mintAmount - cometDetail.mintAmount
         )
+        setHealthScore(healthScore)
+        setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
           lowerLimit: lowerPrice,
           upperLimit: upperPrice
         })
       }
-
-      // if (collAmount) {
-      //   const max = await program.calculateMaxUSDiAmountFromCollateral(
-      //     assetIndex,
-      //     collAmount 
-      //   )
-      //   setMaxMintable(max)
-      //   setValue('mintAmount', max * defaultMintRatio / 100)
-      // }
-
-      // if (collAmount && mintAmount) {
-      //   console.log('calculateRange', collAmount +"/"+mintAmount)
-        
-      //   let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-      //     COLLATERAL_INDEX, // USDi
-      //     assetIndex,
-      //     collAmount,
-      //     mintAmount
-      //   ))!
-
-      //   setCometData({
-      //     ...cometData,
-      //     lowerLimit,
-      //     upperLimit
-      //   })
-      // }
     }
     fetch()
   }, [collAmount, mintAmount])
@@ -193,15 +164,17 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     const program = getInceptApp()
     await program.loadManager()
 
-    const mintAmount = await program.calculateUSDiAmountFromRange(
-      COLLATERAL_INDEX,
-      assetIndex,
+    const {
+      usdiPosition,
+    } = await program.calculateEditCometSinglePoolWithRange(
+      cometIndex,
       collAmount,
       lowerLimit,
       true,
     )
     
-    setValue('mintAmount', mintAmount)
+    setValue('mintAmount', usdiPosition)
+    setMintRatio(mintAmount * 100 / maxMintable)
   }, 1000), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
@@ -282,6 +255,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       tickerIcon={'/images/assets/USDi.png'}
                       tickerSymbol="USDi"
                       collAmount={field.value}
+                      collAmountDollarPrice={field.value}
                       maxCollVal={editType === 0 ? balance : maxWithdrawable}
                       currentCollAmount={cometDetail.collAmount}
                       dollarPrice={cometDetail.collAmount}

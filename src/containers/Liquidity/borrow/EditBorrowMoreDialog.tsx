@@ -146,6 +146,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
                     collAmount={field.value}
+                    collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.collateralAmount}
                     dollarPrice={borrowDetail.collateralAmount}

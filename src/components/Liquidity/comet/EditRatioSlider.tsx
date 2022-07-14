@@ -120,7 +120,10 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
                     USDi
                   </Box>
                 </Box>
-                <InputAmount id="ip-amount" type="number" min={0} sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={mintAmount} onChange={handleChangeAmount} />
+                <Box>
+                  <InputAmount id="ip-amount" type="number" min={0} sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={mintAmount} onChange={handleChangeAmount} />
+                  <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a', marginRight: '16px'}}>${mintAmount.toLocaleString()}</div>
+                </Box>
               </Stack>
             </FormBox>
             <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
@@ -134,7 +137,10 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
                     {assetData.tickerSymbol}
                   </Box>
                 </Box>
-                <Box>{(mintAmount/assetData.price).toLocaleString()}</Box>
+                <Box sx={{ paddingRight: '10px'}}>
+                  <div>{(mintAmount/assetData.price).toLocaleString()}</div>
+                  <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a'}}>${mintAmount.toLocaleString()}</div>
+                </Box>
               </Stack>
             </FormBox>
             <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
