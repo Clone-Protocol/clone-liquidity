@@ -108,7 +108,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      if (collAmount && !mintAmount) {
+      if (collAmount) {
         let {
           maxUsdiPosition,
           healthScore
@@ -120,7 +120,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setHealthScore(healthScore)
         setMaxMintable(maxUsdiPosition)
         setValue('mintAmount', maxUsdiPosition * defaultMintRatio / 100)
-        setMintRatio(mintAmount * 100 / maxUsdiPosition)
       }
 
       if (collAmount && mintAmount) {

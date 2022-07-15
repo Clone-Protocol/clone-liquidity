@@ -21,8 +21,7 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
       preflightCommitment: 'processed',
     }
     const network = getNetworkDetailsFromEnv()
-    let new_connection = new Connection(network.endpoint)
-    //TODO: to connect wallet's network, use useConnection instead
+    const new_connection = new Connection(network.endpoint)
 
     // @ts-ignore
     const provider = new Provider(new_connection, wallet, opts.preflightCommitment)

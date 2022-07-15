@@ -72,25 +72,25 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       await program.loadManager()
 
       if (collAmount) {
-        const max = await program.calculateMaxUSDiAmountFromCollateral(
+        const {
+          maxUsdiPosition,
+          healthScore
+        } = await program.calculateNewSinglePoolComet(
           assetIndex,
-          collAmount 
+          collAmount,
+          0
         )
-        setMaxMintable(max)
-        setValue('mintAmount', max * mintRatio / 100)
+        setHealthScore(healthScore)
+        setMaxMintable(maxUsdiPosition)
+        setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
+        // setMintRatio(mintAmount * 100 / maxUsdiPosition)
       }
 
       if (collAmount && mintAmount) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
         
-        // let [lowerLimit, upperLimit] = (await program.calculateRangeFromUSDiAndCollateral(
-        //   COLLATERAL_INDEX, // USDi
-        //   assetIndex,
-        //   collAmount,
-        //   mintAmount
-        // ))!
-
         const {
+          maxUsdiPosition,
           healthScore,
           lowerPrice,
           upperPrice
@@ -107,11 +107,13 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
           lowerLimit: lowerPrice,
           upperLimit: upperPrice
         })
+        setMaxMintable(maxUsdiPosition)
         setHealthScore(healthScore)
       }
     }
     fetch()
   }, [collAmount, mintAmount])
+
 
 	const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
