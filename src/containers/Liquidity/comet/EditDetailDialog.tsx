@@ -108,7 +108,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      if (collAmount) {
+      if (collAmount && !mintAmount) {
         let {
           maxUsdiPosition,
           healthScore
@@ -119,7 +119,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         )
         setHealthScore(healthScore)
         setMaxMintable(maxUsdiPosition)
-        setValue('mintAmount', maxUsdiPosition * defaultMintRatio / 100)
+        setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
       }
 
       if (collAmount && mintAmount) {
@@ -158,32 +158,41 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 	}, [mintRatio, mintAmount])
 
   // throttling with call contract : (1sec)
-  const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
-    console.log('calculateUSDiAmount', lowerLimit)
-    const program = getInceptApp()
-    await program.loadManager()
+  const calculateUSDiAmountFromRange = useCallback( throttle(async (limit: number, isLeft: boolean) => {
+      console.log('calculateUSDiAmount', limit +"/"+isLeft)
+      const program = getInceptApp()
+      await program.loadManager()
 
-    const {
-      usdiPosition,
-    } = await program.calculateEditCometSinglePoolWithRange(
-      cometIndex,
-      collAmount,
-      lowerLimit,
-      true,
-    )
+      const {
+        usdiPosition,
+      } = await program.calculateEditCometSinglePoolWithRange(
+        cometIndex,
+        collAmount,
+        limit,
+        isLeft,
+      )
+      
+      setValue('mintAmount', usdiPosition)
+      setMintRatio(mintAmount * 100 / maxMintable)
     
-    setValue('mintAmount', usdiPosition)
-    setMintRatio(mintAmount * 100 / maxMintable)
   }, 1000), [mintAmount])
 
-	const handleChangeConcentRange = useCallback((lowerLimit: number, upperLimit: number) => {
-		const newData = {
-			...cometData,
-			lowerLimit,
-			upperLimit,
-		}
-		setCometData(newData)
-    calculateUSDiAmountFromRange(lowerLimit)
+	const handleChangeConcentRange = useCallback((limit: number, isLeft: boolean) => {
+    if (isLeft) {
+      setCometData({
+        ...cometData,
+        lowerLimit: limit
+      })
+    } else {
+      setCometData({
+        ...cometData,
+        upperLimit: limit
+      })
+    }
+		
+    if ((isLeft && (limit < assetData.price && limit > 0)) || (!isLeft && (limit > assetData.price))) {
+      calculateUSDiAmountFromRange(limit, isLeft)
+    }
 	}, [cometData])
 
 	const onEdit = async () => {
