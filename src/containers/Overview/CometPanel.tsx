@@ -71,11 +71,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       const program = getInceptApp()
       await program.loadManager()
 
-      if (collAmount) {
+      if (collAmount && !mintAmount) {
         const {
           maxUsdiPosition,
           healthScore
-        } = await program.calculateNewSinglePoolComet(
+        } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
           assetIndex,
           collAmount,
           0
@@ -94,7 +94,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
           healthScore,
           lowerPrice,
           upperPrice
-        } = await program.calculateNewSinglePoolComet(
+        } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
           assetIndex,
           collAmount,
           mintAmount
@@ -128,14 +128,16 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     const program = getInceptApp()
     await program.loadManager()
 
-    const mintAmount = await program.calculateUSDiAmountFromRange(
-      COLLATERAL_INDEX,
+    const {
+      usdiBorrowed
+    } = await program.calculateNewSinglePoolCometFromRange(
       assetIndex,
       collAmount,
       lowerLimit,
       true,
     )
-    setValue('mintAmount', mintAmount)
+    setValue('mintAmount', usdiBorrowed)
+    setMintRatio(mintAmount * 100 / maxMintable)
   }, 1000), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {

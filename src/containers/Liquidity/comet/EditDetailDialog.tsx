@@ -159,22 +159,21 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   // throttling with call contract : (1sec)
   const calculateUSDiAmountFromRange = useCallback( throttle(async (limit: number, isLeft: boolean) => {
-      console.log('calculateUSDiAmount', limit +"/"+isLeft)
-      const program = getInceptApp()
-      await program.loadManager()
+    console.log('calculateUSDiAmount', limit +"/"+isLeft)
+    const program = getInceptApp()
+    await program.loadManager()
 
-      const {
-        usdiPosition,
-      } = await program.calculateEditCometSinglePoolWithRange(
-        cometIndex,
-        collAmount,
-        limit,
-        isLeft,
-      )
-      
-      setValue('mintAmount', usdiPosition)
-      setMintRatio(mintAmount * 100 / maxMintable)
+    const {
+      usdiPosition,
+    } = await program.calculateEditCometSinglePoolWithRange(
+      cometIndex,
+      collAmount,
+      limit,
+      isLeft,
+    )
     
+    setValue('mintAmount', usdiPosition)
+    setMintRatio(usdiPosition * 100 / maxMintable)
   }, 1000), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((limit: number, isLeft: boolean) => {

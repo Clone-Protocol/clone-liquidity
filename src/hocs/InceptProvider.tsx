@@ -3,10 +3,8 @@ import { Provider } from '@project-serum/anchor'
 import { Connection } from '@solana/web3.js'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { InceptContext } from '~/hooks/useIncept'
-import { useConnection } from '@solana/wallet-adapter-react'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
-
 
 export interface InceptProviderProps {
 	children: ReactNode
