@@ -137,7 +137,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       true,
     )
     setValue('mintAmount', usdiBorrowed)
-    setMintRatio(mintAmount * 100 / maxMintable)
+    setMintRatio(usdiBorrowed * 100 / maxMintable)
   }, 1000), [mintAmount])
 
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {

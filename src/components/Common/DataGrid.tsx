@@ -12,7 +12,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
     sx={{
       border: 0,
       color: '#fff',
-      minHeight: '180px',
+      minHeight: '280px',
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end'
@@ -64,7 +64,6 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
     hideFooter
     headerHeight={40}
     rowHeight={52}
-    autoHeight
     columns={headers}
     rows={rows || []}
   />

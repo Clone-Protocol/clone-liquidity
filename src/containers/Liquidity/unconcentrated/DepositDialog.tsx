@@ -68,6 +68,8 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 
             refetch()
             handleClose()
+            //hacky sync
+            location.reload()
           }
           setLoading(false)
         },

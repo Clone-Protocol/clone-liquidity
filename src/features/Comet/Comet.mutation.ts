@@ -20,9 +20,11 @@ export const callRecenter = async ({
   let position = comet.positions[0];
 	let pool = await program.getPool(position.poolIndex)
 
+  const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
   const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
 
   await program.recenterSinglePoolComet(
+    collateralAssociatedTokenAccount.address,
 		iassetAssociatedTokenAccount.address,
 		data.cometIndex,
 		[]
@@ -60,18 +62,28 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 	let position = comet.positions[0];
 	let pool = await program.getPool(position.poolIndex)
 
-	// const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(pool.assetInfo.iassetMint)
 	const usdiAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-  await program.closeComet(
-		iassetAssociatedTokenAccount.address,
-		usdiAssociatedTokenAccount.address,
-		data.cometIndex,
-    false,
-		[]
-	)
-
+  if (data.cType === 0) {
+    // Withdraw liquidity & pay ILD
+    await program.withdrawLiquidityAndPaySinglePoolCometILD(
+      usdiAssociatedTokenAccount.address,
+      iassetAssociatedTokenAccount.address,
+      data.cometIndex,
+      []
+    )
+  } else {
+    //Close comet & withdraw collateral
+    await program.withdrawCollateralAndCloseSinglePoolComet(
+      collateralAssociatedTokenAccount.address,
+      data.cometIndex,
+      []
+    )
+  
+  }
+  
   return {
     result: true
   }
@@ -79,6 +91,7 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
 type CloseFormData = {
   cometIndex: number,
+  cType: number, // 0 : withdraw liquidity , 1 : close comet
 }
 interface CallCloseProps {
 	program: Incept

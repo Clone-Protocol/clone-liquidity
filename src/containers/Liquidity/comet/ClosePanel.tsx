@@ -22,11 +22,12 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
 
 	const cometIndex = parseInt(assetId)
 
-	const onClose = async () => {
+	const onClose = async (cType: number) => {
     setLoading(true)
     await mutateAsync(
       {
-        cometIndex
+        cometIndex,
+        cType
       },
       {
         onSuccess(data) {
@@ -112,19 +113,7 @@ const DetailHeader = styled('div')`
 	color: #989898;
 `
 
-const DetailValue = styled('div')`
-	font-size: 11px;
-	font-weight: 500;
-	color: #9a9a9a;
-`
-
 const TotalValue = styled('div')`
-  font-size: 14px;
-  font-weight: 500;
-  color: #fff;
-`
-
-const TotalWithdraw = styled(Box)`
   font-size: 14px;
   font-weight: 500;
   color: #fff;

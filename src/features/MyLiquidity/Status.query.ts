@@ -15,52 +15,57 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 	setStartTimer(true);
 
   await program.loadManager()
-	let mintPositions = await program.getMintPositions()
-	let liquidityPositions = await program.getLiquidityPositions()
-	let comets = await program.getSinglePoolComets()
   
 	let totalVal = 0
 	let borrow = 0
 	let unconcentrated = 0
 	let comet = 0
 
-	for (var i = 0; i < Number(mintPositions.numPositions); i++) {
-		let mintPosition = mintPositions.mintPositions[i]
-		let collateralAmount = toScaledNumber(mintPosition.collateralAmount)
-		totalVal += collateralAmount
-		borrow += collateralAmount
-	}
+  try {
+    let mintPositions = await program.getMintPositions()
+    let liquidityPositions = await program.getLiquidityPositions()
+    let comets = await program.getSinglePoolComets()
 
-	for (var i = 0; i < Number(liquidityPositions.numPositions); i++) {
-		let liquidityPosition = liquidityPositions.liquidityPositions[i]
-		let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
-		let poolIndex = liquidityPosition.poolIndex
-		let pool = await program.getPool(poolIndex)
-		let liquidityTokenSupply = (await program.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed'))
-			.value!.uiAmount
-		let balances = await program.getPoolBalances(poolIndex)
-		let amount = ((balances[1] * liquidityTokenAmount) / liquidityTokenSupply!) * 2
-		totalVal += amount
-		unconcentrated += amount
-	}
+    for (var i = 0; i < Number(mintPositions.numPositions); i++) {
+      let mintPosition = mintPositions.mintPositions[i]
+      let collateralAmount = toScaledNumber(mintPosition.collateralAmount)
+      totalVal += collateralAmount
+      borrow += collateralAmount
+    }
 
-	const returnCometPosition = async (address: PublicKey): Promise<Comet> => {
-		return await (program.program.account.comet.fetch(
-			address
-		)) as Comet;
-	}
+    for (var i = 0; i < Number(liquidityPositions.numPositions); i++) {
+      let liquidityPosition = liquidityPositions.liquidityPositions[i]
+      let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
+      let poolIndex = liquidityPosition.poolIndex
+      let pool = await program.getPool(poolIndex)
+      let liquidityTokenSupply = (await program.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed'))
+        .value!.uiAmount
+      let balances = await program.getPoolBalances(poolIndex)
+      let amount = ((balances[1] * liquidityTokenAmount) / liquidityTokenSupply!) * 2
+      totalVal += amount
+      unconcentrated += amount
+    }
 
-	Promise.all(
-		comets.comets.slice(0, comets.numComets.toNumber()).map(returnCometPosition)
-	).then(
-		singlePoolComets => {
-			singlePoolComets.forEach(singlePoolComet => {
-				let collateralAmount = toScaledNumber(singlePoolComet.totalCollateralAmount);
-				totalVal += collateralAmount;
-				comet += collateralAmount;
-			})
-		}
-	);
+    const returnCometPosition = async (address: PublicKey): Promise<Comet> => {
+      return await (program.program.account.comet.fetch(
+        address
+      )) as Comet;
+    }
+
+    Promise.all(
+      comets.comets.slice(0, comets.numComets.toNumber()).map(returnCometPosition)
+    ).then(
+      singlePoolComets => {
+        singlePoolComets.forEach(singlePoolComet => {
+          let collateralAmount = toScaledNumber(singlePoolComet.totalCollateralAmount);
+          totalVal += collateralAmount;
+          comet += collateralAmount;
+        })
+      }
+    );
+  } catch (e) {
+    console.error(e)
+  }
 
 	let borrowPercent = (borrow / totalVal) * 100
 	let unconcentratedPercent = (unconcentrated / totalVal) * 100

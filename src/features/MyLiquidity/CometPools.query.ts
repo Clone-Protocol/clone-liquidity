@@ -19,7 +19,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	for (const info of cometInfos) {
     const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
     const { collateralName, collateralType } = collateralMapping(Number(info[1]))
-    //getHealthScore
+    const healthData = await program.getSinglePoolHealthScore(i)
     
 		result.push({
 			id: i,
@@ -39,7 +39,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 			borrowedIasset: Number(info[9]),
 			borrowedUsdi: Number(info[10]),
 			liquidityTokenAmount: Number(info[11]),
-      healthScore: 5
+      healthScore: healthData.healthScore
 		})
 
     i++
