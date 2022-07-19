@@ -123,7 +123,7 @@ export const callEdit = async ({
   /// Deposit
 	// if (totalCollateralAmount > toScaledNumber(comet.collateralAmount)) {
   if (editType === 0) {
-		await program.addCollateralToSinglePoolCometInstruction(
+		await program.addCollateralToSinglePoolComet(
 			collateralAssociatedTokenAccount.address,
 			new BN(collAmount * 10 ** 8),
 			cometIndex

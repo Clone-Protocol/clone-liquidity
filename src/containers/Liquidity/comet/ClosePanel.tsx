@@ -35,7 +35,12 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
             console.log('data', data)
             enqueueSnackbar('Success to close comet')
             setLoading(false)
-            router.push('/liquidity')
+
+            if (cType === 0) {
+              location.reload()
+            } else {
+              router.push('/liquidity')
+            }
           }
         },
         onError(err) {
@@ -73,12 +78,12 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
           </Stack>
         </Box>
         
-        <ActionButton onClick={onClose} disabled={!noBorrowedAsset}>
+        <ActionButton onClick={() => onClose(0)} disabled={noBorrowedAsset}>
           <Image src={OneIcon} width={17} /> 
           <div>Withdraw liquidity & pay ILD</div> 
-          <div>{ !noBorrowedAsset && <CheckCircleOutlineRoundedIcon fontSize="small" sx={{ color:'#809cff', marginTop: '2px'}}  />}</div>
+          <div>{ noBorrowedAsset && <CheckCircleOutlineRoundedIcon fontSize="small" sx={{ color:'#809cff', marginTop: '2px'}}  />}</div>
         </ActionButton>
-        <ActionButton onClick={onClose} disabled={noBorrowedAsset}><Image src={TwoIcon} width={17} /> <div>Close comet & withdraw Collateral</div> <div></div></ActionButton>
+        <ActionButton onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <div>Close comet & withdraw Collateral</div> <div></div></ActionButton>
       </Box>
     </>
 	)
