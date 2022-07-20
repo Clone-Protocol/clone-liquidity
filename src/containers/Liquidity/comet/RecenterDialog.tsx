@@ -25,8 +25,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
   const { mutateAsync } = useRecenterMutation(publicKey)
-
-  const isLackBalance = true
+  const [isLackBalance, setIsLackBalance] = useState(false)
   const [cometData, setCometData] = useState<CometInfo>({
     healthScore: 95,
     prevHealthScore: 70,
@@ -43,6 +42,12 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
     refetchOnMount: true,
     enabled: open && publicKey != null
   });
+
+  useEffect(() => {
+    if (usdiBalance) {
+      setIsLackBalance(usdiBalance.balanceVal < cometData.usdiCost)
+    }
+  }, [usdiBalance])
 
   useEffect(() => {
     async function fetch() {
@@ -153,7 +158,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             </Stack>
 
             <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()}>Recenter</ActionButton>
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance}>Recenter</ActionButton>
 
             { isLackBalance && 
               <Stack
@@ -244,6 +249,10 @@ const ActionButton = styled(Button)`
 	color: #fff;
   &:hover {
     background-color: #7A86B6;
+  }
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
   }
 `
 

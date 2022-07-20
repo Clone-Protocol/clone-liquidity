@@ -1,4 +1,4 @@
-import { Box, Button, Divider } from '@mui/material'
+import { Box } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PositionInfo as PI } from '~/features/MyLiquidity/BorrowPosition.query'
@@ -50,14 +50,6 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 		<></>
 	)
 }
-
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 15px;
-	margin-top: 15px;
-  width: 345px;
-	height: 1px;
-`
 
 const EditRowBox = styled(Box)`
   display: inline-flex; 

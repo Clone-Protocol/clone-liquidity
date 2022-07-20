@@ -116,7 +116,7 @@ let columns: GridColDef[] = [
 		field: 'baselineAPY',
 		headerClassName: 'last--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Baseline APY',
+		headerName: '24h Fee Revenue',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return <Box sx={{ fontSize: '12px', fontWeight: '500', textAlign: 'center', margin: '0 auto' }}>{params.value.toLocaleString()} %</Box>

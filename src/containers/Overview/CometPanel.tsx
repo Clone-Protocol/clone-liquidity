@@ -21,6 +21,7 @@ import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { useForm, Controller } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
+import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
 
@@ -28,6 +29,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   
   const [mintRatio, setMintRatio] = useState(50)
@@ -170,6 +172,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
             enqueueSnackbar('Success to comet')
             setLoading(false)
             initData()
+            router.push('/liquidity')
           }
         },
         onError(err) {

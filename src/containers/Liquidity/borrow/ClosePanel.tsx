@@ -3,12 +3,14 @@ import { Box, Stack, Button } from '@mui/material'
 import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
+import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import WarningIcon from 'public/images/warning-icon.png'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
 	const { publicKey } = useWallet()
@@ -78,6 +80,27 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         </Box>
         
         <ActionButton onClick={onClose} disabled={!canCloseComet}>Repay & Close Position</ActionButton>
+
+        {!canCloseComet &&
+          <Stack
+            sx={{
+              background: 'rgba(233, 209, 0, 0.04)',
+              border: '1px solid #e9d100',
+              borderRadius: '10px',
+              color: '#9d9d9d',
+              padding: '8px',
+              marginTop: '10px',
+              marginBottom: '30px',
+            }}
+            direction="row">
+            <Box sx={{ width: '53px', marginLeft: '20px', textAlign: 'center' }}>
+              <Image src={WarningIcon} />
+            </Box>
+            <WarningBox>
+              Not enough wallet balance to repay.
+            </WarningBox>
+          </Stack>
+        }
       </Box>
     </>
 	)
@@ -118,6 +141,16 @@ const ActionButton = styled(Button)`
     background-color: #444;
     color: #adadad;
   }
+`
+
+const WarningBox = styled(Box)`
+	max-width: 300px;
+  padding-left: 36px;
+  padding-top: 4px;
+	padding-right: 10px;
+	font-size: 11px;
+	font-weight: 500;
+	color: #989898;
 `
 
 export default withSuspense(ClosePanel, <LoadingProgress />)

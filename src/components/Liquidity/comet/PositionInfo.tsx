@@ -161,6 +161,10 @@ const ActionButton = styled(Button)`
   &:hover {
     background-color: #7A86B6;
   }
+  &:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
 `
 
 export default withCsrOnly(PositionInfo)

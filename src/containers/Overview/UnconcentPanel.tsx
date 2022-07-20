@@ -15,6 +15,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useLiquidityMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { Balance } from '~/features/Borrow/Balance.query'
+import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
@@ -22,6 +23,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const { mutateAsync: mutateAsyncLiquidity } = useLiquidityMutation(publicKey)
 
   const {
@@ -62,6 +64,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
             enqueueSnackbar('Success to liquidity')
             setLoading(false)
             initData()
+            router.push('/liquidity?ltab=1')
           }
         },
         onError(err) {

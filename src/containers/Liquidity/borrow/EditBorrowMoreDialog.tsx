@@ -31,19 +31,20 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   //collateralAmount / getAssetInfo(poolIndex).price * (borrowedIasset (minus value above if repay, plus value above if borrow more))
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
 
+  //max borrowable
   useEffect(() => {
-    setMaxCollVal(borrowDetail.usdiVal)
+    setMaxCollVal(borrowDetail.usdiVal / (borrowDetail.oPrice * borrowDetail.minCollateralRatio/100))
   }, [borrowDetail.usdiVal])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
-    setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal : borrowDetail.maxWithdrawableColl)
+    setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal / (borrowDetail.oPrice * borrowDetail.minCollateralRatio/100) : borrowDetail.iassetVal)
 	}, [editType])
 
   const fromPair: PairData = {
-		tickerIcon: '/images/assets/USDi.png',
-		tickerName: 'USDi Coin',
-		tickerSymbol: 'USDi',
+		tickerIcon: borrowDetail.tickerIcon,
+		tickerName: borrowDetail.tickerName,
+		tickerSymbol: borrowDetail.tickerSymbol,
 	}
 
   const { mutateAsync } = useEditMutation(publicKey)
@@ -148,8 +149,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     collAmount={field.value}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
-                    currentCollAmount={borrowDetail.collateralAmount}
-                    dollarPrice={borrowDetail.collateralAmount}
+                    currentCollAmount={borrowDetail.borrowedIasset}
+                    dollarPrice={borrowDetail.borrowedIasset * borrowDetail.oPrice}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
