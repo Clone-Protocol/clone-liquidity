@@ -55,12 +55,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   const mintAmount = toScaledNumber(position.borrowedUsdi)
   const mintIassetAmount = toScaledNumber(position.borrowedIasset)
   const collAmount = toScaledNumber(comet.totalCollateralAmount)
-  // const [ lLimit, hLimit] = await program.calculateRangeFromUSDiAndCollateral(
-  //   0, // USDi
-  //   Number(position.poolIndex),
-  //   collAmount,
-  //   mintAmount
-  // )
   const {
     lowerPrice,
     upperPrice

@@ -119,12 +119,16 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
               <WalletBalance>
                 Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
               </WalletBalance>
-              <Stack sx={{ borderRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
-                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', marginTop: '3px'}}>Recentering cost</div>
+              <Stack sx={{ borderTopRightRadius: '10px', borderTopLeftRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
+                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost</div>
                 <div style={{ fontSize: '16px', fontWeight: '500', color: '#fff'}}>
                   {cometData.usdiCost.toLocaleString()} USDi
+                  <div style={{ fontSize: '10px', color: '#b9b9b9', textAlign: 'right'}}>${cometData.usdiCost.toLocaleString()}</div>
                 </div>
               </Stack>
+              <BottomBox>
+                Current Collateral: <span style={{ color: '#fff' }}>103.5 USDi ($103.5)</span>
+              </BottomBox>
             </Box>
 
             <StyledDivider />
@@ -154,6 +158,13 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
               <SubTitle>Projected Health Score</SubTitle>
               <DetailValue>
                 {cometData.healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {cometData.prevHealthScore.toFixed(2)}/100)</span>
+              </DetailValue>
+            </Stack>
+
+            <Stack direction="row" justifyContent="space-between">
+              <SubTitle>Estimated Collateral After Recentering</SubTitle>
+              <DetailValue>
+                130.2 USDi <span style={{ color: '#949494' }}>($130.2)</span>
               </DetailValue>
             </Stack>
 
@@ -200,6 +211,21 @@ const WarningBox = styled(Box)`
   margin: 0 auto;
   padding-left: 40px;
   padding-right: 40px;
+`
+
+const BottomBox = styled(Box)`
+  background: #252627;
+  font-size: 11px;
+  font-weight: 500;
+  color: #949494;
+  text-align: center;
+  height: 28px;
+  padding-top: 6px;
+  border-bottom: solid 1px #444;
+  border-left: solid 1px #444;
+  border-right: solid 1px #444;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
 `
 
 const StyledDivider = styled(Divider)`

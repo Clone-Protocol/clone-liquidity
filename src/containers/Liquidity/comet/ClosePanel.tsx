@@ -12,7 +12,7 @@ import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 
-const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: CometDetail }) => {
+const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, cometDetail: CometDetail, onRefetchData: any }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
@@ -37,7 +37,7 @@ const ClosePanel = ({ assetId, cometDetail }: { assetId: string, cometDetail: Co
             setLoading(false)
 
             if (cType === 0) {
-              location.reload()
+              onRefetchData()
             } else {
               router.push('/liquidity')
             }

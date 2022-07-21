@@ -81,7 +81,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
             <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
-            <ClosePanel assetId={assetId} cometDetail={cometDetail} />
+            <ClosePanel assetId={assetId} cometDetail={cometDetail} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
         </Box>
 			</Grid>

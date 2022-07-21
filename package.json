@@ -28,6 +28,7 @@
     "@solana/wallet-adapter-wallets": "^0.15.5",
     "@solana/web3.js": "^1.36.0",
     "@types/react-copy-to-clipboard": "^5.0.2",
+    "animate.css": "^4.1.1",
     "bn.js": "^5.2.0",
     "chroma-js": "^2.4.2",
     "dayjs": "^1.11.0",

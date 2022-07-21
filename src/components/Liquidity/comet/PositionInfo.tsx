@@ -34,13 +34,13 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
                 <DetailValue>
-                  {cometDetail.collAmount.toLocaleString()} USDi
+                  {cometDetail.mintAmount.toLocaleString()} USDi
                 </DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed iAsset</DetailHeader>
                 <DetailValue>
-                  {cometDetail.mintAmount.toLocaleString()} {assetData.tickerSymbol}
+                  {cometDetail.mintIassetAmount!.toLocaleString()} {assetData.tickerSymbol}
                 </DetailValue>
               </Stack>
             </Box>
