@@ -168,9 +168,9 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 
 	const centerPricePercent = (assetData.price * 100) / maxLimit
 
-  console.log('max', maxLimit)
-  console.log('n', cometData.lowerLimit)
-  console.log('k', cometData.upperLimit)
+  // console.log('max', maxLimit)
+  // console.log('n', cometData.lowerLimit)
+  // console.log('k', cometData.upperLimit)
 
 	// const [value, setValue] = useState<number[]>([20, 180])
 	const [value, setValue] = useState<number[]>([cometData.lowerLimit, cometData.upperLimit])
@@ -195,8 +195,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 
 	useEffect(() => {
 		// if (cometData.lowerLimit && cometData.upperLimit) {
-      console.log('f', parseFloat(cometData.upperLimit.toFixed(2)))
-			setValue([parseFloat(cometData.lowerLimit.toFixed(2)), parseFloat(cometData.upperLimit.toFixed(2))])
+			setValue([parseFloat(cometData.lowerLimit.toFixed(3)), parseFloat(cometData.upperLimit.toFixed(3))])
 		// }
 	}, [cometData.lowerLimit, cometData.upperLimit])
 
@@ -277,7 +276,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 			<RangeSlider
 				sx={trackCss}
 				min={minLimit}
-				max={parseFloat(maxLimit.toFixed(2))}
+				max={parseFloat(maxLimit.toFixed(3))}
 				step={0.01}
 				components={{ Thumb: ThumbComponent }}
 				onChange={handleChange}
@@ -287,8 +286,8 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 				valueLabelDisplay="on"
 				value={value}
 			/>
-			<CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 43px)` }}>
-				{assetData.price.toFixed(2)}
+			<CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 35px)` }}>
+				{assetData.price.toFixed(3)}
 				<Stick />
 			</CenterPriceBox>
 		</Box>

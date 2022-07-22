@@ -1,5 +1,6 @@
 import { styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
+import 'animate.css'
 
 interface Props {
 	tickerIcon?: string
@@ -33,6 +34,8 @@ const StyledStack = styled(Stack)`
 	padding-left: 25px;
 	padding-right: 25px;
 	height: 61px;
+  animation: fadeIn;
+  animation-duration: 1s;
 `
 
 export default PriceIndicatorBox

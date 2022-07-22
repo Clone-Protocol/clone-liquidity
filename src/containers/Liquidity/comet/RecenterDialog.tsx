@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
+import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import Image from 'next/image'
 import WarningIcon from 'public/images/warning-icon.png'
 import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, FormHelperText } from '@mui/material'
@@ -9,10 +10,12 @@ import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRa
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
+import { SliderTransition } from '~/components/Common/Dialog'
 
 interface CometInfo {
   healthScore: number
   prevHealthScore: number
+  currentCollateral: number
   usdiCost: number
   centerPrice: number
 	lowerLimit: number
@@ -29,6 +32,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
   const [cometData, setCometData] = useState<CometInfo>({
     healthScore: 95,
     prevHealthScore: 70,
+    currentCollateral: 0,
     usdiCost: 110.51,
     centerPrice: 100.58,
     lowerLimit: 50.43,
@@ -44,10 +48,11 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
   });
 
   useEffect(() => {
-    if (usdiBalance) {
+    if (usdiBalance && cometData) {
+      console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
       setIsLackBalance(usdiBalance.balanceVal < cometData.usdiCost)
     }
-  }, [usdiBalance])
+  }, [usdiBalance, cometData])
 
   useEffect(() => {
     async function fetch() {
@@ -55,6 +60,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         const program = getInceptApp()
         await program.loadManager()
 
+        const comet = await program.getSinglePoolComet(cometIndex);
         const { 
           healthScore,
           usdiCost,
@@ -67,6 +73,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         setCometData({
           healthScore,
           prevHealthScore: prevHScore.healthScore,
+          currentCollateral: toScaledNumber(comet.totalCollateralAmount),
           usdiCost,
           centerPrice: price,
           lowerLimit: lowerPrice,
@@ -109,7 +116,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
           <Box sx={{ padding: '8px 18px', color: '#fff' }}>
             <WarningBox>
@@ -127,7 +134,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
                 </div>
               </Stack>
               <BottomBox>
-                Current Collateral: <span style={{ color: '#fff' }}>103.5 USDi ($103.5)</span>
+                Current Collateral: <span style={{ color: '#fff' }}>{cometData.currentCollateral.toLocaleString()} USDi (${cometData.currentCollateral.toLocaleString()})</span>
               </BottomBox>
             </Box>
 
@@ -164,12 +171,12 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             <Stack direction="row" justifyContent="space-between">
               <SubTitle>Estimated Collateral After Recentering</SubTitle>
               <DetailValue>
-                130.2 USDi <span style={{ color: '#949494' }}>($130.2)</span>
+                {(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi <span style={{ color: '#949494' }}>(${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()})</span>
               </DetailValue>
             </Stack>
 
             <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance}>Recenter</ActionButton>
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || parseInt(cometData.usdiCost.toLocaleString()) === 0}>Recenter</ActionButton>
 
             { isLackBalance && 
               <Stack

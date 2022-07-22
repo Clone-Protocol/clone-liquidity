@@ -9,6 +9,7 @@ import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.quer
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { SliderTransition } from '~/components/Common/Dialog'
 
 const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
 	const { publicKey } = useWallet()
@@ -85,7 +86,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ width: '570px', backgroundColor: '#16171a', padding: '20px 6px' }}>
           <Box sx={{ padding: '8px 32px', color: '#fff' }}>		
             <SubTitle>Select withdraw amount</SubTitle>

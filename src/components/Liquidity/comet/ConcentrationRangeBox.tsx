@@ -30,7 +30,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						paddingTop: '8px',
             paddingBottom: '8px'
 					}}>
-					<PriceValue>{cometData.lowerLimit.toFixed(2)}</PriceValue>
+					<PriceValue>{cometData.lowerLimit.toFixed(5)}</PriceValue>
           <StyledDivider />
 					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 				</Box>
@@ -48,7 +48,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', paddingTop: '8px',
             paddingBottom: '8px' }}>
-					<PriceValue>{assetData.price.toFixed(2)}</PriceValue>
+					<PriceValue>{assetData.price.toFixed(5)}</PriceValue>
           <StyledDivider />
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
@@ -72,7 +72,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						paddingTop: '8px',
             paddingBottom: '8px'
 					}}>
-					<PriceValue>{cometData.upperLimit.toFixed(2)}</PriceValue>
+					<PriceValue>{cometData.upperLimit.toFixed(5)}</PriceValue>
           <StyledDivider />
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>

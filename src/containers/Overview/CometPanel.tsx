@@ -318,8 +318,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
           <Box>
             <SubTitle>
-              <Image src={ThreeIcon} />{' '}
-              <Box sx={{ marginLeft: '9px' }}>Liquidity concentration range</Box>
+              <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range</Box>
             </SubTitle>
 
             <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>

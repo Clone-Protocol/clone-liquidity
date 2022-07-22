@@ -2,6 +2,7 @@ import { styled, Box, Tabs, Tab } from '@mui/material'
 import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { Status } from '~/features/MyLiquidity/Status.query'
+import 'animate.css';
 
 interface Props {
 	status: Status
@@ -104,6 +105,8 @@ const BalanceValue = styled('div')`
   font-style: normal;
   line-height: normal;
   letter-spacing: normal;
+  animation: fadeInUp;
+  animation-duration: 1s;
 `
 
 const NumValue = styled('span')`

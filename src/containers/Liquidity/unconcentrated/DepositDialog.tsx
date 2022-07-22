@@ -12,6 +12,7 @@ import TwoIcon from 'public/images/two-icon.svg'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { SliderTransition } from '~/components/Common/Dialog'
 
 const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
 	const { publicKey } = useWallet()
@@ -92,7 +93,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
           <Box sx={{ padding: '8px 28px', color: '#fff' }}>
             <WarningBox>

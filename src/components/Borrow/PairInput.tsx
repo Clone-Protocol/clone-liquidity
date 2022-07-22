@@ -32,9 +32,8 @@ const PairInput: React.FC<Props> = ({
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+					<Box sx={{ width: '100px', marginTop: '3px', marginLeft: '8px', textAlign: 'left' }}>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-						{/* <TickerName>{tickerName}</TickerName> */}
 					</Box>
 				</Box>
 				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} min={0} value={value} onChange={onChange} disabled={disabled} />

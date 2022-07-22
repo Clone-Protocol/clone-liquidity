@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditBorrowedInput from '~/components/Liquidity/comet/EditBorrowedInput'
 import WarningIcon from 'public/images/warning-icon.png'
+import { SliderTransition } from '~/components/Common/Dialog'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -125,7 +126,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={onHideEditForm}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <Box sx={{ padding: '8px 1px', color: '#fff' }}>
             <Box>

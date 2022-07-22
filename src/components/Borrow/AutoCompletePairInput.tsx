@@ -1,6 +1,7 @@
 import { styled, Box, Autocomplete, TextField, Popper } from '@mui/material'
 import Image from 'next/image'
 import SearchIcon from 'public/images/search-icon.svg'
+import 'animate.css'
 
 export interface AssetType {
 	tickerIcon: string
@@ -138,6 +139,8 @@ const SelectBox = styled(Box)`
   display: flex;
   padding: 13px 15px 17px;
   background-color: #151618;
+  animation: fadeInDown;
+  animation-duration: 1s;
 `
  
 const StyledTextField = styled(TextField)`

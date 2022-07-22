@@ -9,6 +9,7 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
+import { SliderTransition } from '~/components/Common/Dialog'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -116,7 +117,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={onHideEditForm}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <Box sx={{ padding: '8px 1px', color: '#fff' }}>
             <Box>

@@ -49,7 +49,7 @@ const EditBorrowedInput: React.FC<Props> = ({
             : 
             <>
               Balance: 
-              <span style={{ marginLeft: '5px', color: '#e9d100' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
+              <span style={{ fontSize: '13px', marginLeft: '5px', color: '#e9d100' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
             </>
           }
         </Box>

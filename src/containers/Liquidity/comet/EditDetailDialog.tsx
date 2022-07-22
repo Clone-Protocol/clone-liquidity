@@ -15,6 +15,7 @@ import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInpu
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
+import { SliderTransition } from '~/components/Common/Dialog'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -232,7 +233,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={onHideEditForm}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <Box sx={{ padding: '8px 1px', color: '#fff' }}>
             <WarningBox>
