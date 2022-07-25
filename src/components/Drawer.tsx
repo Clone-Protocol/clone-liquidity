@@ -1,5 +1,5 @@
 import MuiDrawer from '@mui/material/Drawer'
-import { styled, List, ListItemButton, ListItemIcon, Box, Stack } from '@mui/material'
+import { styled, List, ListItemButton, ListItemIcon, Box, Stack, Fade } from '@mui/material'
 import Link from 'next/link'
 import Image from 'next/image'
 import menuOverviewIcon from 'public/images/menu/overview-icon.svg'
@@ -13,32 +13,34 @@ const Drawer: React.FC = () => {
 
 	return (
 		<StyledDrawer variant="permanent" open={true}>
-			<List component="nav">
-				<Link href="/">
-					<StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
-						<ListItemIcon sx={{ marginLeft: '10px' }}>
-							<Image src={menuOverviewIcon} alt="overview" />
-						</ListItemIcon>
-						<StyledListItemText>Overview</StyledListItemText>
-					</StyledListItemButton>
-				</Link>
-				<Link href="/liquidity">
-					<StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''}>
-						<ListItemIcon sx={{ marginLeft: '10px' }}>
-							<Image src={menuLiquidityIcon} alt="portfolio" />
-						</ListItemIcon>
-						<StyledListItemText>My Liquidity</StyledListItemText>
-					</StyledListItemButton>
-				</Link>
-				<Link href="/borrow">
-					<StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''}>
-						<ListItemIcon sx={{ marginLeft: '10px' }}>
-							<Image src={menuBorrowIcon} alt="markets" />
-						</ListItemIcon>
-						<StyledListItemText>Borrow</StyledListItemText>
-					</StyledListItemButton>
-				</Link>
-			</List>
+      <Fade in timeout={1500}>
+        <List component="nav">
+          <Link href="/">
+            <StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
+              <ListItemIcon sx={{ marginLeft: '10px' }}>
+                <Image src={menuOverviewIcon} alt="overview" />
+              </ListItemIcon>
+              <StyledListItemText>Overview</StyledListItemText>
+            </StyledListItemButton>
+          </Link>
+          <Link href="/liquidity">
+            <StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''}>
+              <ListItemIcon sx={{ marginLeft: '10px' }}>
+                <Image src={menuLiquidityIcon} alt="portfolio" />
+              </ListItemIcon>
+              <StyledListItemText>My Liquidity</StyledListItemText>
+            </StyledListItemButton>
+          </Link>
+          <Link href="/borrow">
+            <StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''}>
+              <ListItemIcon sx={{ marginLeft: '10px' }}>
+                <Image src={menuBorrowIcon} alt="markets" />
+              </ListItemIcon>
+              <StyledListItemText>Borrow</StyledListItemText>
+            </StyledListItemButton>
+          </Link>
+        </List>
+      </Fade>
 			<Stack
 				sx={{
 					position: 'absolute',
@@ -94,6 +96,7 @@ const StyledListItemButton = styled(ListItemButton)`
   &.selected {
     border: solid 1px #3f3f3f;
     background-image: linear-gradient(to bottom, #000 0%, #000 100%); 
+    transition: all 0.3s ease 0.2s;
   }
   &:hover {
     background-color: rgba(38, 38, 38, 0.5);

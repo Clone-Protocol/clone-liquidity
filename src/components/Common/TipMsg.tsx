@@ -1,8 +1,13 @@
 import Paper from '@mui/material/Paper'
+import Slide from '@mui/material/Slide';
 import { styled } from '@mui/material'
 
 const TipMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
-	return <StyledPaper variant="outlined">{children}</StyledPaper>
+	return (
+    <Slide direction="down" in={true} mountOnEnter unmountOnExit>
+      <StyledPaper variant="outlined">{children}</StyledPaper>
+    </Slide>
+  )
 }
 
 const StyledPaper = styled(Paper)`

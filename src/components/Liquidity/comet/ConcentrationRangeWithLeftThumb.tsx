@@ -30,7 +30,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 30,
 		width: 75,
     backgroundColor: '#171717',
-		marginTop: '-37px',
+		marginTop: '-46px',
 		marginLeft: '-37px',
     borderTopLeftRadius: '8px',
     borderTopRightRadius: '8px',
@@ -38,17 +38,29 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
     borderBottomLeftRadius: '8px',
 		'&::after': {
 			width: '1px',
-			height: '23px',
+			height: '33px',
 			position: 'absolute',
       borderRadius: '0px',
       borderTopRightRadius: '8px',
       borderBottomLeftRadius: '8px',
 			left: '74px',
-			top: '40px',
+			top: '45px',
 		},
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
 		},
+    '& .left-thumb-cursor': {
+      position: 'relative',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: LEFT_SLIDER_THUMB_COLOR,
+      borderTopLeftRadius: '8px',
+      borderBottomLeftRadius: '8px',
+      width: '14px',
+      height: '28px',
+      marginLeft: '-64px'
+    },
 		'& .slider-bar': {
 			height: 16,
 			width: 1,
@@ -60,7 +72,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 			fontSize: '11px',
 			fontWeight: '500',
 			top: 25,
-			left: 9,
+			left: 16,
 			backgroundColor: 'unset',
 			color: '#fff',
 			'&:before': {
@@ -81,14 +93,14 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
     borderTopRightRadius: '8px',
     borderBottomRightRadius: '8px',
     borderBottomLeftRadius: '0px',
-		marginTop: '-37px',
+		marginTop: '-47px',
 		marginLeft: '37px',
 		'&::after': {
 			width: '1px',
-			height: '23px',
+			height: '33px',
 			position: 'absolute',
 			left: '-1px',
-			top: '40px',
+			top: '45px',
       borderRadius: '0px',
       borderTopLeftRadius: '8px',
       borderBottomRightRadius: '8px',
@@ -128,9 +140,25 @@ function ThumbComponent(props: ThumbComponentProps) {
 	return (
 		<SliderThumb {...other}>
 			{children}
+      <Box className="left-thumb-cursor">
+			  <span className="slider-bar" />
+			  <span className="slider-bar" />
+      </Box>
 		</SliderThumb>
 	)
 }
+
+// function ValueLabelComponent(props: { children: React.ReactElement; value: number }) {
+// 	const { children, value } = props
+
+// 	return (
+// 		<Box>
+// 			<Tooltip enterTouchDelay={0} placement="top" title={value}>
+// 				{children}
+// 			</Tooltip>
+// 		</Box>
+// 	)
+// }
 
 const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, onChangeCommitted, max, defaultLower, defaultUpper }) => {
 	const minLimit = 0
@@ -163,6 +191,70 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 		// }
 	}, [cometData.lowerLimit, cometData.upperLimit])
 
+	const handleChange = (event: Event, newValue: number | number[], activeThumb: number) => {
+		if (activeThumb == 1) return // rightThumb should be prevented
+
+		if (!Array.isArray(newValue)) {
+			return
+		}
+
+		if (activeThumb === 0) {
+			const rightVal = newValue[1]
+			setValue([newValue[0], rightVal])
+
+			// Tight Concentration
+			if (newValue[1] - newValue[0] <= assetData.tightRange) {
+				setTrackCss({
+					'& .MuiSlider-track': {
+						background: BACKGROUND_WARNING_RANGE_COLOR,
+					},
+					'& .MuiSlider-thumb[data-index="0"]': {
+						border: `solid 1px ${BACKGROUND_WARNING_RANGE_COLOR}`,
+						'&::after': {
+							border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`,
+						},
+					},
+					'& .MuiSlider-thumb[data-index="1"]': {
+						border: `solid 1px ${BACKGROUND_WARNING_RANGE_COLOR}`,
+						'&::after': {
+							border: `1px solid ${BACKGROUND_WARNING_RANGE_COLOR}`,
+						},
+					},
+				})
+
+				onChange && onChange(true, newValue[0], newValue[1])
+			} else {
+				setTrackCss({
+					'& .MuiSlider-track': {
+						background: BACKGROUND_VALID_RANGE_COLOR,
+					},
+					'& .MuiSlider-thumb[data-index="0"]': {
+						border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
+						'&::after': {
+							border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
+						},
+					},
+					'& .MuiSlider-thumb[data-index="1"]': {
+						border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
+						'&::after': {
+							border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
+						},
+					},
+				})
+				onChange && onChange(false, newValue[0], newValue[1])
+			}
+		}
+	}
+
+  //@ts-ignore
+  const handleChangeCommitted = (event: Event, newValue: number | number[]) => {
+    if (!Array.isArray(newValue)) {
+			return
+		}
+
+    onChangeCommitted && onChangeCommitted(newValue[0], newValue[1])
+  }
+
 	return (
 		<Box sx={{ position: 'relative' }}>
 			<RangeSlider
@@ -171,6 +263,8 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 				max={parseFloat(maxLimit.toFixed(3))}
 				step={0.01}
 				components={{ Thumb: ThumbComponent }}
+				onChange={handleChange}
+        onChangeCommitted={handleChangeCommitted}
 				defaultValue={[defaultLower, defaultUpper]}
 				disableSwap
 				valueLabelDisplay="on"

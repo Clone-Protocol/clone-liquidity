@@ -11,7 +11,13 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
   console.log('fetchPools :: UnconcentratedPools.query')
 
 	await program.loadManager()
-	const iassetInfos = await program.getUserLiquidityInfos()
+	let iassetInfos : number[][] = []
+
+  try {
+    iassetInfos = await program.getUserLiquidityInfos()
+  } catch (e) {
+    console.error(e)
+  }
 
 	const result: PoolList[] = []
 

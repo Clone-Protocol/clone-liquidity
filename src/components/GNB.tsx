@@ -259,6 +259,10 @@ const HeaderButton = styled(Button)`
 	color: #fff;
   min-width: 40px;
 	height: 35px;
+  &:hover {
+    border: 1px solid #404040;
+    background-color: rgba(38, 38, 38, 0.5);
+  }
 `
 
 const ConnectButton = styled(Button)`

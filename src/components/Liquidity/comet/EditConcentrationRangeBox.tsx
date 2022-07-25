@@ -12,7 +12,6 @@ interface Props {
 }
 
 const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, currentLowerLimit, currentUpperLimit, onChange }) => {
-
   const handleChangeLowerLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value) {
 			const limit = parseFloat(e.currentTarget.value)
@@ -26,7 +25,6 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
       onChange(limit, false)
     }
   }
-  
 
 	return cometData ? (
 		<Grid container spacing={2}>
@@ -47,7 +45,7 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 						border: 'solid 1px #809cff',
             background: '#252627'
 					}}>
-					<PriceValue><InputAmount type="number" step=".01" value={parseFloat(cometData.lowerLimit.toFixed(3))} min={0} max={assetData.price-0.01} onChange={handleChangeLowerLimit} /></PriceValue>
+					<PriceValue><InputAmount disabled type="number" step=".01" value={parseFloat(cometData.lowerLimit.toFixed(4))} min={0} max={assetData.price-0.01} onChange={handleChangeLowerLimit} /></PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
           <CurrentPrice style={{ borderTop: '1px solid #809cff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentLowerLimit.toLocaleString()} USD</CurrentPrice>
 				</Box>
@@ -86,7 +84,7 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 						border: 'solid 1px #2e5cff',
             background: '#252627'
 					}}>
-					<PriceValue><InputAmount type="number" step=".01" value={parseFloat(cometData.upperLimit.toFixed(3))} min={assetData.price+0.01} onChange={handleChangeUpperLimit} /></PriceValue>
+					<PriceValue><InputAmount disabled type="number" step=".01" value={parseFloat(cometData.upperLimit.toFixed(4))} min={assetData.price+0.01} onChange={handleChangeUpperLimit} /></PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
           <CurrentPrice style={{ borderTop: '1px solid #0038ff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentUpperLimit.toLocaleString()} USD</CurrentPrice>
 				</Box>
@@ -98,7 +96,7 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 }
 
 const PriceValue = styled('div')`
-  background: #333333;
+  background: #171717;
 	font-size: 16px;
 	font-weight: 500;
 	text-align: center;
@@ -111,7 +109,7 @@ const PriceValue = styled('div')`
 const InputAmount = styled(`input`)`
 	width: 100px;
 	border: 0px;
-	background-color: #333333;
+	background: #171717;
 	font-size: 16px;
 	font-weight: 500;
 	color: #fff;

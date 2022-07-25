@@ -295,7 +295,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <SubTitle>
-                  <Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust liquidity concentration range</Box>
+                  <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range</Box>
                 </SubTitle>
 
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} onChange={handleChangeConcentRange} />

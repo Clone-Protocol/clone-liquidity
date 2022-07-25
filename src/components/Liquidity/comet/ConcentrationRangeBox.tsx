@@ -24,7 +24,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<Box
 					sx={{
-						background: 'linear-gradient(180deg, #333333 50%, #171717 50%)',
+						background: '#171717',
 						borderRadius: '10px',
 						border: 'solid 1px #809cff',
 						paddingTop: '8px',
@@ -66,7 +66,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<Box
 					sx={{
-						background: 'linear-gradient(180deg, #333333 50%, #171717 50%)',
+						background: '#171717',
 						borderRadius: '10px',
 						border: 'solid 1px #0038ff',
 						paddingTop: '8px',

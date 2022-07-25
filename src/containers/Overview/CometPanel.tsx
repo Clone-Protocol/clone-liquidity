@@ -8,7 +8,6 @@ import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import InfoBookIcon from 'public/images/info-book-icon.png'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
-import ThreeIcon from 'public/images/three-icon.svg'
 import PairInput from '~/components/Asset/PairInput'
 import PairInputView from '~/components/Asset/PairInputView'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
@@ -124,7 +123,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 	  }
 	}, [maxMintable, cometData])
 
-  // throttling with call contract : (1sec)
+  // @deprecated throttling with call contract : (1sec)
   const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
     console.log('calculateUSDiAmount', lowerLimit)
     const program = getInceptApp()
@@ -141,7 +140,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     setValue('mintAmount', usdiBorrowed)
     setMintRatio(usdiBorrowed * 100 / maxMintable)
   }, 1000), [mintAmount])
-
 	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
 		const newData = {
 			...cometData,
@@ -151,10 +149,10 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 		}
 		setCometData(newData)
 	}, [cometData])
-
   const handleChangeCommittedRange = (lowerLimit: number, upperLimit: number) => {
     calculateUSDiAmountFromRange(lowerLimit)
   }
+  //
 
 	const onComet = async () => {
     setLoading(true)
