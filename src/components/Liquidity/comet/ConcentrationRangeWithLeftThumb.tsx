@@ -247,7 +247,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 	}
 
   //@ts-ignore
-  const handleChangeCommitted = (event: Event, newValue: number | number[]) => {
+  const handleChangeCommitted = (event: React.SyntheticEvent | Event, newValue: number | number[]) => {
     if (!Array.isArray(newValue)) {
 			return
 		}

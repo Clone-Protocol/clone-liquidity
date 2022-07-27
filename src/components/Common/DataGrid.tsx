@@ -87,6 +87,6 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
   </Box>
 )
 
-export const CellDigitValue = ({ value, symbol }: {value: string, symbol?: string}) => (
-  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '5px' }}>{value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
+export const CellDigitValue = ({ value, symbol }: {value: string | undefined, symbol?: string}) => (
+  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '5px' }}>{value && value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
 )
