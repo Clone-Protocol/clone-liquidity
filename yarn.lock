@@ -2858,9 +2858,9 @@ imurmurhash@^0.1.4:
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==
 
-"incept-protocol-sdk@git+ssh://git@github.com:Incept-Protocol/incept-protocol.git#sdk-update":
+"incept-protocol-sdk@git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#sdk-update":
   version "0.1.0"
-  resolved "git+ssh://git@github.com:Incept-Protocol/incept-protocol.git#0137623eab856fedff06e502c65147f7ec5a60b2"
+  resolved "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#0137623eab856fedff06e502c65147f7ec5a60b2"
   dependencies:
     "@project-serum/anchor" "^0.20.1"
     "@pythnetwork/client" "^2.6.0"
