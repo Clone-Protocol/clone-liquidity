@@ -77,7 +77,7 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-weight: 500;
     color: #989898;
     padding: 0;
-    line-height: 3px;
+    line-height: 5px;
     overflow: initial;
   }
 
@@ -92,7 +92,7 @@ const StyledAutocomplete = styled(Autocomplete)`
   }
 
   & .MuiTextField-root {
-    margin-top: 3px;
+    margin-top: 0px;
     &:hover {
       border: none;
     }
@@ -105,19 +105,20 @@ const StyledAutocomplete = styled(Autocomplete)`
 
   & .MuiAutocomplete-input {
     padding: 0 !important;
-    padding-top: 5px !important;
+    padding-top: 2px !important;
     font-size: 11px;
   }
 
   & input {
     width: 315px;
-    height: 24px;
+    height: 30px;
     color: #989898;
+    line-height: 3px;
     padding: 0;
     &::placeholder {
       color: #fff;
       font-size: 11px;
-      margin-top: -5px;
+      margin-top: -8px;
     }
   }
 `
@@ -145,6 +146,7 @@ const SelectBox = styled(Box)`
  
 const StyledTextField = styled(TextField)`
   line-height: 3px;
+
 `
 
 const TickerName = styled('div')`

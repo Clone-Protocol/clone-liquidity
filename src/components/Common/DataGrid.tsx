@@ -80,7 +80,7 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
     <Image src={tickerIcon} width="27px" height="27px" />
     <Box sx={{ marginLeft: '32px', display: 'flex', alignItems: 'center' }}>
       <Box sx={{ display: 'block', fontSize: '14px', fontWeight: '500', maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{tickerName}</Box>
-      <Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500', marginLeft: '8px' }}>
+      <Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
         {tickerSymbol}
       </Box>
     </Box>
@@ -88,5 +88,5 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
 )
 
 export const CellDigitValue = ({ value, symbol }: {value: string | undefined, symbol?: string}) => (
-  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '5px' }}>{value && value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
+  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '1px' }}>{value && value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
 )

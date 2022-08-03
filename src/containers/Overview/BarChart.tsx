@@ -71,7 +71,7 @@ const BarChart: React.FC = () => {
               <StyledTab value={1} label="Total Liquidation"></StyledTab>
             </StyledTabs>
           </Box>
-          <SelectValue>{formatDollarAmount(chartHover, 2, true)}</SelectValue>
+          <SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>
         </Box>
       }
       topRight={

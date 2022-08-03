@@ -72,7 +72,7 @@ const LineChart: React.FC = () => {
               <StyledTab value={1} label="Total Users"></StyledTab>
             </StyledTabs>
           </Box>
-          <SelectValue>{tab === 0 ? formatDollarAmount(chartHover, 2, true) : chartHover?.toLocaleString()}</SelectValue>
+          <SelectValue>{tab === 0 ? formatDollarAmount(chartHover, 0, true) : chartHover?.toLocaleString()}</SelectValue>
         </Box>
       }
       topRight={

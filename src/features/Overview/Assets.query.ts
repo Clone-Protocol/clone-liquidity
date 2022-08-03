@@ -23,7 +23,7 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 			tickerIcon: tickerIcon,
 			price: info[1],
 			assetType: assetType,
-			liquidity: info[2],
+			liquidity: parseInt(info[2].toString()),
 			volume24h: 0, //coming soon
 			baselineAPY: 0, //coming soon
 		})

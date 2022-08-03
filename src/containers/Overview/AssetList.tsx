@@ -75,7 +75,7 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'iAsset',
-		flex: 3,
+		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
         <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
@@ -97,7 +97,7 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Liquidity',
-		flex: 1,
+		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
