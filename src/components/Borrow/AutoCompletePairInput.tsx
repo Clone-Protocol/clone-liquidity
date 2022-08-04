@@ -146,7 +146,6 @@ const SelectBox = styled(Box)`
  
 const StyledTextField = styled(TextField)`
   line-height: 3px;
-
 `
 
 const TickerName = styled('div')`

@@ -343,6 +343,7 @@ const StyledDivider = styled(Divider)`
 
 const SubTitle = styled('div')`
   display: flex;
+  align-items: center;
 	font-size: 14px;
 	font-weight: 500;
 	margin-bottom: 12px;

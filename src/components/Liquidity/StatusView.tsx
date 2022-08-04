@@ -12,7 +12,10 @@ const StatusView: React.FC<Props> = ({ status }) => {
   const [tab, setTab] = useState(0)
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
+    // MEMO: temporary multipool not enabled
+    if (newValue <= 3) {
+      setTab(newValue)
+    }
 	}
 
 	return status ? (

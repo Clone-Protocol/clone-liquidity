@@ -30,7 +30,10 @@ const LiquidityTable = () => {
   }, [ltab])
 
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
+    // MEMO: temporary multiple comet not enabled
+    if (newValue <= 2) {
+      setTab(newValue) 
+    }
 	}
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
