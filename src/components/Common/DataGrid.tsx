@@ -46,7 +46,10 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
       },
       '& .MuiDataGrid-cell:focus': {
         border: '0',
-        outline: '0'
+        outline: 'none'
+      },
+      '& .MuiDataGrid-cell:focus-within': {
+        outline: 'none !important'
       },
       '& .MuiDataGrid-withBorder': {
         borderRight: '1px solid #1b1b1b',
