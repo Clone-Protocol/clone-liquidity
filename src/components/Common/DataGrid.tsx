@@ -7,6 +7,14 @@ interface GridProps {
   rows: any
 }
 
+const CustomNoRowsOverlay = () => {
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '20px', fontSize: '12px', fontWeight: '500', color: '#fff'}}>
+      No position to display.
+    </Box>
+  )
+}
+
 export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
   <DataGrid
     sx={{
@@ -56,6 +64,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
         borderRadius: '10px',
         marginLeft: '-5px'
       }
+    }}
+    components={{
+      NoRowsOverlay: CustomNoRowsOverlay
     }}
     getRowClassName={(params) => 'super-app-theme--row'}
     disableColumnFilter
