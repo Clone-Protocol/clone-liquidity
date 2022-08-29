@@ -29,7 +29,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(iassetMint)
 	const liquidityAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(liquidityTokenMint)
 
-	program.withdrawLiquidity(
+	await program.withdrawLiquidity(
 		new BN(liquidityTokenAmount * 10 ** 8),
 		collateralAssociatedTokenAccount.address,
 		iassetAssociatedTokenAccount.address,
@@ -73,7 +73,7 @@ export const callDeposit = async ({program, userPubKey, data} : CallDepositProps
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(iassetMint)
 	const liquidityAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(liquidityTokenMint)
 
-	program.provideLiquidity(
+	await program.provideLiquidity(
 		new BN(iassetAmount * 10 ** 8),
 		collateralAssociatedTokenAccount.address,
 		iassetAssociatedTokenAccount.address,
