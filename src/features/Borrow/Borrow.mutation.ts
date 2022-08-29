@@ -2,8 +2,8 @@ import { PublicKey } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { BN } from '@project-serum/anchor'
-import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { useIncept } from '~/hooks/useIncept'
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -70,12 +70,12 @@ export const callEdit = async ({
 	// if (totalCollateralAmount > toScaledNumber(mint.collateralAmount)) {
   if (editType === 0) {
 		await program.addCollateralToMint(
+      borrowIndex,
 			collateralAssociatedTokenAccount.address,
 			new BN(collateralAmount * 10 ** 8),
-			borrowIndex,
 			[]
 		)
-		if (borrowAmount < toScaledNumber(mint.borrowedIasset)) {
+		if (borrowAmount < toNumber(mint.borrowedIasset)) {
 			if (borrowAmount != 0) {
 				await program.payBackiAssetToMint(
 					iassetAssociatedTokenAccount.address,
@@ -84,7 +84,7 @@ export const callEdit = async ({
 					[]
 				)
 			}
-		} else if (borrowAmount > toScaledNumber(mint.borrowedIasset)) {
+		} else if (borrowAmount > toNumber(mint.borrowedIasset)) {
 			await program.addiAssetToMint(
 				iassetAssociatedTokenAccount.address,
 				new BN(borrowAmount * 10 ** 8),
@@ -102,18 +102,18 @@ export const callEdit = async ({
   //else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {	
     await program.withdrawCollateralFromMint(
       collateralAssociatedTokenAccount.address,
-      new BN(collateralAmount * 10 ** 8),
       borrowIndex,
+      new BN(collateralAmount * 10 ** 8),
       []
     )
-    if (borrowAmount < toScaledNumber(mint.borrowedIasset)) {
+    if (borrowAmount < toNumber(mint.borrowedIasset)) {
       await program.payBackiAssetToMint(
         iassetAssociatedTokenAccount.address,
         new BN(borrowAmount * 10 ** 8),
         borrowIndex,
         []
       )
-    } else if (borrowAmount > toScaledNumber(mint.borrowedIasset)) {
+    } else if (borrowAmount > toNumber(mint.borrowedIasset)) {
       await program.addiAssetToMint(
         iassetAssociatedTokenAccount.address,
         new BN(borrowAmount * 10 ** 8),

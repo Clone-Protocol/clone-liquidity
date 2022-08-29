@@ -3,9 +3,9 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
-import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -49,12 +49,12 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 	let price = balances[1] / balances[0]
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
-	let centerPrice = Number(position.borrowedIasset.val) === 0 ? 0 : Number(position.borrowedUsdi.val) / Number(position.borrowedIasset.val)
+	let centerPrice = getMantissa(position.borrowedIasset) === 0 ? 0 : getMantissa(position.borrowedUsdi) / getMantissa(position.borrowedIasset)
 
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(position.poolIndex))
-  const mintAmount = toScaledNumber(position.borrowedUsdi)
-  const mintIassetAmount = toScaledNumber(position.borrowedIasset)
-  const collAmount = toScaledNumber(comet.totalCollateralAmount)
+  const mintAmount = toNumber(position.borrowedUsdi)
+  const mintIassetAmount = toNumber(position.borrowedIasset)
+  const collAmount = toNumber(comet.collaterals[0].collateralAmount)
   const {
     lowerPrice,
     upperPrice

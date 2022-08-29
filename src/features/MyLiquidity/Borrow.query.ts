@@ -67,13 +67,13 @@ export interface AssetList {
 	tickerSymbol: string
 	tickerIcon: string
 	collateralName: string
-	oPrice: number
+	oPrice: number | Number
 	assetType: number
 	collateralType: number
-	borrowed: number
-	collateral: number
-	collateralRatio: number
-	minCollateralRatio: number
+	borrowed: number | Number
+	collateral: number | Number
+	collateralRatio: number | Number
+	minCollateralRatio: number | Number
 }
 
 export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {

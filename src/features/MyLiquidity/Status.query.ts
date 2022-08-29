@@ -1,10 +1,10 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept, Comet } from "incept-protocol-sdk/sdk/src/incept"
-import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
@@ -28,14 +28,14 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 
     for (var i = 0; i < Number(mintPositions.numPositions); i++) {
       let mintPosition = mintPositions.mintPositions[i]
-      let collateralAmount = toScaledNumber(mintPosition.collateralAmount)
+      let collateralAmount = toNumber(mintPosition.collateralAmount)
       totalVal += collateralAmount
       borrow += collateralAmount
     }
 
     for (var i = 0; i < Number(liquidityPositions.numPositions); i++) {
       let liquidityPosition = liquidityPositions.liquidityPositions[i]
-      let liquidityTokenAmount = toScaledNumber(liquidityPosition.liquidityTokenValue)
+      let liquidityTokenAmount = toNumber(liquidityPosition.liquidityTokenValue)
       let poolIndex = liquidityPosition.poolIndex
       let pool = await program.getPool(poolIndex)
       let liquidityTokenSupply = (await program.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed'))
@@ -57,7 +57,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     ).then(
       singlePoolComets => {
         singlePoolComets.forEach(singlePoolComet => {
-          let collateralAmount = toScaledNumber(singlePoolComet.totalCollateralAmount);
+          let collateralAmount = toNumber(singlePoolComet.collaterals[0].collateralAmount);
           totalVal += collateralAmount;
           comet += collateralAmount;
         })
