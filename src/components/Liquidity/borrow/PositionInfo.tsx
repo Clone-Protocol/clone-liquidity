@@ -26,7 +26,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
         <EditRowBox>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '27px' }}>
             <SubTitle>Collateral</SubTitle>
-            <Box sx={{ fontSize: '12px', fontWeight: '500' }}>{positionInfo.collateralAmount} USDi</Box>
+            <Box sx={{ fontSize: '12px', fontWeight: '500' }}>{positionInfo.collateralAmount.toLocaleString()} USDi</Box>
           </Box>
           <EditBox onClick={onShowEditForm}>
             <NoteAltOutlinedIcon fontSize="small" />
@@ -37,7 +37,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '27px' }}>
             <SubTitle>Borrowed</SubTitle>
             <Box sx={{ fontSize: '12px', fontWeight: '500' }}>
-              {positionInfo.borrowedIasset.toFixed(2)} {positionInfo.tickerSymbol}
+              {positionInfo.borrowedIasset.toLocaleString()} {positionInfo.tickerSymbol}
             </Box>
           </Box>
           <EditBox onClick={onShowBorrowMore}>

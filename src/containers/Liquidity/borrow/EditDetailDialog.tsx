@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useEditMutation } from '~/features/Borrow/Borrow.mutation'
+import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
 import {
 	PairData
 } from '~/features/MyLiquidity/BorrowPosition.query'
@@ -39,7 +39,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 		tickerSymbol: 'USDi',
 	}
 
-  const { mutateAsync } = useEditMutation(publicKey)
+  const { mutateAsync } = useEditCollateralMutation(publicKey)
 
   const {
 		handleSubmit,
@@ -51,17 +51,14 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     mode: 'onChange',
     defaultValues: {
       collAmount: 0.0,
-      borrowAmount: 0.0,
     }
 	})
-  const [collAmount, borrowAmount] = watch([
+  const [collAmount] = watch([
 		'collAmount',
-		'borrowAmount',
 	])
 
   const initData = () => {
     setValue('collAmount', 0.0)
-    setValue('borrowAmount', 0.0)
   }
 
   useEffect(() => {
@@ -72,11 +69,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     }
   }, [collAmount, editType])
 
-  const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
-    const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-    const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
-    setValue('borrowAmount', borrowAmount)
-  }
+  // const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
+  //   const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
+  //   const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
+  //   setValue('borrowAmount', borrowAmount)
+  // }
 
 	const onEdit = async () => {
     setLoading(true)
@@ -84,7 +81,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
       {
         borrowIndex,
         collateralAmount: collAmount,
-        borrowAmount: borrowAmount,
         editType
       },
       {
@@ -147,7 +143,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
                       field.onChange(collAmt)
-                      calculateBorrowAmount(collAmt, borrowDetail.collateralRatio)
+                      // calculateBorrowAmount(collAmt, borrowDetail.collateralRatio)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)

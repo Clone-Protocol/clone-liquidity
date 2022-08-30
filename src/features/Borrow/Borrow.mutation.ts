@@ -43,7 +43,7 @@ export function useCloseMutation(userPubKey : PublicKey | null ) {
   return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data }))
 }
 
-export const callEdit = async ({
+export const callEditCollateral = async ({
 	program,
 	userPubKey,
 	data
@@ -54,20 +54,16 @@ export const callEdit = async ({
   const {
     borrowIndex,
     collateralAmount,
-    borrowAmount,
     editType
   } = data
 
+  if (!collateralAmount) throw new Error('no collateral amount')
+
   console.log('edit input data', data)
 
-	let mint = await program.getMintPosition(borrowIndex)
-	let assetInfo = await program.getAssetInfo(mint.poolIndex)
-
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
 
   /// Deposit
-	// if (totalCollateralAmount > toScaledNumber(mint.collateralAmount)) {
   if (editType === 0) {
 		await program.addCollateralToMint(
       borrowIndex,
@@ -75,23 +71,6 @@ export const callEdit = async ({
 			new BN(collateralAmount * 10 ** 8),
 			[]
 		)
-		if (borrowAmount < toNumber(mint.borrowedIasset)) {
-			if (borrowAmount != 0) {
-				await program.payBackiAssetToMint(
-					iassetAssociatedTokenAccount.address,
-					new BN(borrowAmount * 10 ** 8),
-					borrowIndex,
-					[]
-				)
-			}
-		} else if (borrowAmount > toNumber(mint.borrowedIasset)) {
-			await program.addiAssetToMint(
-				iassetAssociatedTokenAccount.address,
-				new BN(borrowAmount * 10 ** 8),
-				borrowIndex,
-				[]
-			)
-		}
 
     return {
       result: true,
@@ -99,28 +78,12 @@ export const callEdit = async ({
     }
 	} else { 
   /// Withdraw
-  //else if (totalCollateralAmount < toScaledNumber(mint.collateralAmount)) {	
     await program.withdrawCollateralFromMint(
       collateralAssociatedTokenAccount.address,
       borrowIndex,
       new BN(collateralAmount * 10 ** 8),
       []
     )
-    if (borrowAmount < toNumber(mint.borrowedIasset)) {
-      await program.payBackiAssetToMint(
-        iassetAssociatedTokenAccount.address,
-        new BN(borrowAmount * 10 ** 8),
-        borrowIndex,
-        []
-      )
-    } else if (borrowAmount > toNumber(mint.borrowedIasset)) {
-      await program.addiAssetToMint(
-        iassetAssociatedTokenAccount.address,
-        new BN(borrowAmount * 10 ** 8),
-        borrowIndex,
-        []
-      )
-    }
 
     return {
       result: true,
@@ -129,10 +92,63 @@ export const callEdit = async ({
 	}
 }
 
+export const callEditBorrow = async ({
+	program,
+	userPubKey,
+	data
+}: CallEditProps) => {
+	if (!userPubKey) throw new Error('no user public key')
+
+  await program.loadManager()
+  const {
+    borrowIndex,
+    borrowAmount,
+    editType
+  } = data
+
+  if (!borrowAmount) throw new Error('no borrow more amount')
+
+  console.log('edit input data', data)
+
+	let mint = await program.getMintPosition(borrowIndex)
+	let assetInfo = await program.getAssetInfo(mint.poolIndex)
+
+	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
+
+  /// Deposit
+  if (editType === 0) {
+    await program.addiAssetToMint(
+      iassetAssociatedTokenAccount.address,
+      new BN(borrowAmount * 10 ** 8),
+      borrowIndex,
+      []
+    )
+
+    return {
+      result: true,
+      msg: 'added borrow amount to borrow'
+    }
+	} else { 
+  /// Withdraw
+    await program.payBackiAssetToMint(
+      iassetAssociatedTokenAccount.address,
+      new BN(borrowAmount * 10 ** 8),
+      borrowIndex,
+      []
+    )
+
+    return {
+      result: true,
+      msg: 'withdraw borrow amount from borrow'
+    }
+	}
+
+}
+
 type EditFormData = {
   borrowIndex: number,
-	collateralAmount: number,
-	borrowAmount: number
+	collateralAmount?: number,
+	borrowAmount?: number
   editType: number
 }
 interface CallEditProps {
@@ -140,9 +156,13 @@ interface CallEditProps {
 	userPubKey: PublicKey | null
   data: EditFormData
 }
-export function useEditMutation(userPubKey : PublicKey | null ) {
+export function useEditCollateralMutation(userPubKey : PublicKey | null ) {
   const { getInceptApp } = useIncept()
-  return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data }))
+  return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(), userPubKey, data }))
+}
+export function useEditBorrowMutation(userPubKey : PublicKey | null ) {
+  const { getInceptApp } = useIncept()
+  return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(), userPubKey, data }))
 }
 
 
