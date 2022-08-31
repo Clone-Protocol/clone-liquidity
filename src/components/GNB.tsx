@@ -50,7 +50,7 @@ const GNB: React.FC = () => {
 		<>
 			<NavPlaceholder />
 			<StyledAppBar className={navClassName} position="static">
-				<Container maxWidth="xl">
+				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ paddingLeft: '10px' }}>
 						<Image src={logoIcon} alt="incept" />
 						<LiquidityTitle>Liquidity</LiquidityTitle>
