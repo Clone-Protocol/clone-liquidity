@@ -70,7 +70,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         <Box sx={{ padding: '0px 24px 9px 15px' }}>
           <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
             <DetailHeader>ILD Dept</DetailHeader>
-            <TotalValue>{cometDetail.ild.toLocaleString()} USDi</TotalValue>
+            <TotalValue>{Math.abs(cometDetail.ild).toLocaleString()} USDi</TotalValue>
           </Stack>
           <Stack sx={{ marginTop: '5px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Collateral Withdraw</DetailHeader>

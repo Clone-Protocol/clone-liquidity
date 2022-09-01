@@ -91,7 +91,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
           <Box sx={{ marginLeft: '35px' }}>
             <SubTitle>ILD</SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginTop: '10px' }}>
-              {cometDetail.ild.toFixed(2)} USDi
+              {Math.abs(cometDetail.ild).toFixed(2)} USDi
             </Box>
           </Box>
         </Box>

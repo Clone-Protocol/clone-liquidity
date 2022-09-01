@@ -3,7 +3,6 @@ import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
-import { toScaledNumber } from 'incept-protocol-sdk/sdk/src/utils'
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import Image from 'next/image'
 import WarningIcon from 'public/images/warning-icon.png'
 import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, FormHelperText } from '@mui/material'
@@ -73,7 +73,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         setCometData({
           healthScore,
           prevHealthScore: prevHScore.healthScore,
-          currentCollateral: toScaledNumber(comet.totalCollateralAmount),
+          currentCollateral: toNumber(comet.collaterals[0].collateralAmount),
           usdiCost,
           centerPrice: price,
           lowerLimit: lowerPrice,

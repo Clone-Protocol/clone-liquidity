@@ -115,7 +115,7 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(iassetMint)
 	const liquidityAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(liquidityTokenMint)
 
-	program.initializeLiquidityPosition(
+	await program.initializeLiquidityPosition(
 		new BN(iassetAmount * 10 ** 8),
 		collateralAssociatedTokenAccount.address,
 		iassetAssociatedTokenAccount.address,
