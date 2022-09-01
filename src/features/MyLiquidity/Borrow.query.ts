@@ -9,7 +9,13 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 	if (!userPubKey) return []
 
 	await program.loadManager()
-	const mintInfos = await program.getUserMintInfos()
+	let mintInfos : any = []
+
+	try {
+		mintInfos = await program.getUserMintInfos()
+	} catch (e) {
+		console.error(e)
+	}
 
 	const result: AssetList[] = []
 

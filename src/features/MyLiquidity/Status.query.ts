@@ -67,9 +67,9 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     console.error(e)
   }
 
-	let borrowPercent = (borrow / totalVal) * 100
-	let unconcentratedPercent = (unconcentrated / totalVal) * 100
-	let cometPercent = (comet / totalVal) * 100
+	let borrowPercent = totalVal > 0 ? (borrow / totalVal) * 100 : 0
+	let unconcentratedPercent = totalVal > 0 ? (unconcentrated / totalVal) * 100 : 0
+	let cometPercent = totalVal > 0 ? (comet / totalVal) * 100 : 0
 
   // TODO:
   let multipoolComet = 0

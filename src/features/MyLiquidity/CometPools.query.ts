@@ -9,7 +9,14 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	if (!userPubKey) return []
 
 	await program.loadManager()
-	const cometInfos = await program.getUserSinglePoolCometInfos()
+
+	let cometInfos = []
+
+	try {
+		cometInfos = await program.getUserSinglePoolCometInfos()
+	} catch (e) {
+		console.error(e)
+	}
 
 	const result: PoolList[] = []
 
@@ -19,7 +26,15 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	for (const info of cometInfos) {
     const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
     const { collateralName, collateralType } = collateralMapping(Number(info[1]))
-    const healthData = await program.getSinglePoolHealthScore(i)
+
+		let healthScore = 0
+		try {
+			const healthData = await program.getSinglePoolHealthScore(i)
+			healthScore = healthData.healthScore
+		} catch (e) {
+			console.error(e)
+		}
+    
     
 		result.push({
 			id: i,
@@ -39,7 +54,7 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 			borrowedIasset: Number(info[9]),
 			borrowedUsdi: Number(info[10]),
 			liquidityTokenAmount: Number(info[11]),
-      healthScore: healthData.healthScore
+      healthScore
 		})
 
     i++
