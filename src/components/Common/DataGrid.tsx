@@ -9,7 +9,7 @@ interface GridProps {
 
 const CustomNoRowsOverlay = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '20px', fontSize: '12px', fontWeight: '500', color: '#fff'}}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '60px', fontSize: '12px', fontWeight: '500', color: '#fff'}}>
       No position to display.
     </Box>
   )
