@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
-import { assetMapping, collateralMapping } from '~/data/assets'
+import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 
 export const fetchAssets = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
 	if (!userPubKey) return []
@@ -86,6 +86,20 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
   const { getInceptApp } = useIncept()
   return useQuery(['borrowAssets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, filter }), {
     refetchOnMount,
-    enabled
+    enabled,
+		select: (assets) => {
+			return assets.filter((asset) => {
+				if (filter === 'crypto') {
+					return asset.assetType === AssetType.Crypto
+				} else if (filter === 'fx') {
+					return asset.assetType === AssetType.Fx
+				} else if (filter === 'commodities') {
+					return asset.assetType === AssetType.Commodities
+				} else if (filter === 'stocks') {
+					return asset.assetType === AssetType.Stocks
+				}
+				return true;
+			})
+		}
   })
 }

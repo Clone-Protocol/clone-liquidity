@@ -89,6 +89,20 @@ export function useUnconcentPoolsQuery({ userPubKey, filter, refetchOnMount, ena
   const { getInceptApp } = useIncept()
   return useQuery(['unconcentPools', userPubKey, filter], () => fetchPools({ program: getInceptApp(), userPubKey, filter }), {
     refetchOnMount,
-    enabled
+    enabled,
+		select: (assets) => {
+			return assets.filter((asset) => {
+				if (filter === 'crypto') {
+					return asset.assetType === AssetType.Crypto
+				} else if (filter === 'fx') {
+					return asset.assetType === AssetType.Fx
+				} else if (filter === 'commodities') {
+					return asset.assetType === AssetType.Commodities
+				} else if (filter === 'stocks') {
+					return asset.assetType === AssetType.Stocks
+				}
+				return true;
+			})
+		}
   })
 }
