@@ -45,31 +45,33 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 	return (cometDetail && priceHistory && usdiBalance) ? (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-        <StyledBox>
-          <Box display="flex">
-            <Box>
-              <Image src={cometDetail.tickerIcon} width={30} height={30} />
+        { tab === 0 &&
+          <StyledBox>
+            <Box display="flex">
+              <Box>
+                <Image src={cometDetail.tickerIcon} width={30} height={30} />
+              </Box>
+              <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
+                {cometDetail.tickerName} ({cometDetail.tickerSymbol})
+              </Box>
             </Box>
-            <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
-              {cometDetail.tickerName} ({cometDetail.tickerSymbol})
+            <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
+              ${cometDetail.price.toFixed(2)}
+              {priceHistory.rateOfPrice >= 0 ?
+                <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
+              :
+                <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
+              }
             </Box>
-          </Box>
-          <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-            ${cometDetail.price.toFixed(2)}
-            {priceHistory.rateOfPrice >= 0 ?
-              <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-            :
-              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-            }
-          </Box>
-          <MiniLineChartAlt 
-            data={priceHistory?.chartData}
-            color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-            Indicator Price
-          </Box>
-        </StyledBox>
+            <MiniLineChartAlt 
+              data={priceHistory?.chartData}
+              color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
+              Indicator Price
+            </Box>
+          </StyledBox>
+        }
 			</Grid>
 			<Grid item xs={12} md={8}>
         <Box sx={{ maxWidth: '466px', marginLeft: '18px' }}>

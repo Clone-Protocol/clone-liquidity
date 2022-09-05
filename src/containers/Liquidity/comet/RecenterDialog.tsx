@@ -30,13 +30,13 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
   const { mutateAsync } = useRecenterMutation(publicKey)
   const [isLackBalance, setIsLackBalance] = useState(false)
   const [cometData, setCometData] = useState<CometInfo>({
-    healthScore: 95,
-    prevHealthScore: 70,
+    healthScore: 0,
+    prevHealthScore: 0,
     currentCollateral: 0,
-    usdiCost: 110.51,
-    centerPrice: 100.58,
-    lowerLimit: 50.43,
-    upperLimit: 150.89
+    usdiCost: 0,
+    centerPrice: 0,
+    lowerLimit: 0,
+    upperLimit: 0
   })
 
   const cometIndex = parseInt(assetId)
@@ -85,7 +85,6 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
   }, [open])
 
   const handleRecenter = async () => {
-    // TODO: need to check it can recenter in advance (whether it already set trade in user's trading app)
     setLoading(true)
     await mutateAsync(
       {
@@ -96,8 +95,13 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Success to recenter')
-            setLoading(false)
+
+            refetch()
+            handleClose()
+            //hacky sync
+            location.reload()
           }
+          setLoading(false)
         },
         onError(err) {
           console.error(err)
@@ -176,7 +180,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             </Stack>
 
             <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || parseInt(cometData.usdiCost.toLocaleString()) === 0}>Recenter</ActionButton>
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || Math.abs(cometData.usdiCost) == 0}>Recenter</ActionButton>
 
             { isLackBalance && 
               <Stack
