@@ -59,6 +59,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
       if (open) {
         const program = getInceptApp()
         await program.loadManager()
+        console.log('sfd', cometIndex)
 
         const comet = await program.getSinglePoolComet(cometIndex);
         const { 
