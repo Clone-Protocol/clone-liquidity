@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
@@ -17,8 +17,11 @@ import { useBalanceQuery } from '~/features/Comet/Balance.query'
 const ManageComet = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
   const [tab, setTab] = useState(0)
+  const [isCloseTabFixed, setIsCloseTabFixed] = useState(false)
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
+    if (!isCloseTabFixed) {
+      setTab(newValue)
+    }
 	}
 
 	const cometIndex = parseInt(assetId)
@@ -42,10 +45,18 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     enabled: publicKey != null
   });
 
-	return (cometDetail && priceHistory && usdiBalance) ? (
+  useEffect(() => {
+    // if poolIndex is 255, goes to close comet as fix
+    if (cometDetail && !cometDetail.tickerSymbol) {
+      setTab(1)
+      setIsCloseTabFixed(true)
+    }
+  }, [cometDetail])
+
+	return (cometDetail && usdiBalance) ? (
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={4}>
-        { tab === 0 &&
+        { (tab === 0 && cometDetail.tickerIcon) &&
           <StyledBox>
             <Box display="flex">
               <Box>
@@ -57,15 +68,15 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
             </Box>
             <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
               ${cometDetail.price.toFixed(2)}
-              {priceHistory.rateOfPrice >= 0 ?
+              {/* {priceHistory.rateOfPrice >= 0 ?
                 <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
               :
                 <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-              }
+              } */}
             </Box>
             <MiniLineChartAlt 
               data={priceHistory?.chartData}
-              color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+              // color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
             />
             <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
               Indicator Price

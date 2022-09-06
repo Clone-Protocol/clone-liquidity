@@ -45,13 +45,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
   console.log('comet', comet)
   console.log('comet-poolIndex', Number(position.poolIndex))
-	const balances = await program.getPoolBalances(Number(position.poolIndex))
-	let price = balances[1] / balances[0]
-	let tightRange = price * 0.1
-	let maxRange = 2 * price
-	let centerPrice = getMantissa(position.borrowedIasset) === 0 ? 0 : getMantissa(position.borrowedUsdi) / getMantissa(position.borrowedIasset)
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(Number(position.poolIndex))
   const mintAmount = toNumber(position.borrowedUsdi)
   const mintIassetAmount = toNumber(position.borrowedIasset)
   const collAmount = toNumber(comet.collaterals[0].collateralAmount)
@@ -65,9 +59,31 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   )
   const lowerLimit = lowerPrice;
   const upperLimit = upperPrice;
-  const singlePoolHealthScore =  await program.getSinglePoolHealthScore(index)
-  const ild = singlePoolHealthScore.ILD
-  const healthScore = singlePoolHealthScore.healthScore
+
+  let price = 0
+  let tightRange = 0
+  let maxRange = 0
+  let centerPrice = 0
+  let tickerIcon = ''
+  let tickerName = ''
+  let tickerSymbol = ''
+  let ild = 0
+  let healthScore = 0
+  if (Number(position.poolIndex) < 255) {
+    const balances = await program.getPoolBalances(Number(position.poolIndex))
+    price = balances[1] / balances[0]
+    tightRange = price * 0.1
+    maxRange = 2 * price
+    centerPrice = getMantissa(position.borrowedIasset) === 0 ? 0 : getMantissa(position.borrowedUsdi) / getMantissa(position.borrowedIasset)
+
+    const asset = assetMapping(Number(position.poolIndex))
+    tickerIcon = asset.tickerIcon
+    tickerName = asset.tickerName
+    tickerSymbol = asset.tickerSymbol
+    const singlePoolHealthScore =  await program.getSinglePoolHealthScore(index)
+    ild = singlePoolHealthScore.ILD
+    healthScore = singlePoolHealthScore.healthScore
+  }
 
 	return {
     mintAmount,

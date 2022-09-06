@@ -83,6 +83,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
     }
     fetch()
   }, [open])
+  
 
   const handleRecenter = async () => {
     setLoading(true)
@@ -180,7 +181,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             </Stack>
 
             <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || Math.abs(cometData.usdiCost) == 0}>Recenter</ActionButton>
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || parseInt(cometData.usdiCost.toLocaleString()) == 0}>Recenter</ActionButton>
 
             { isLackBalance && 
               <Stack
