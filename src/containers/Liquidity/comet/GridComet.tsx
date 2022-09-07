@@ -126,7 +126,7 @@ let columns: GridColDef[] = [
 
 			return (
 				<Box display="flex">
-					<StableButton onClick={() => setOpenRecenter(true)}>Recenter</StableButton>
+					<StableButton onClick={() => setOpenRecenter(true)} disabled={params.row.healthScore === 0}>Recenter</StableButton>
 					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
 						<DefaultButton>Manage</DefaultButton>
 					</Link>

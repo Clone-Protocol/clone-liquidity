@@ -9,6 +9,13 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 	if (!userPubKey) return []
 
 	await program.loadManager()
+	
+	// const spcomets = await program.getSinglePoolComets();
+  // for (let i = 0; i < spcomets.numComets.toNumber(); i++) {
+  //   let comet = await program.getSinglePoolComet(i);
+  //   console.log('p',comet.positions[0])
+	// 	console.log('f', comet.positions[0].poolIndex.toString())
+  // }
 
 	let cometInfos = []
 
@@ -24,38 +31,63 @@ export const fetchPools = async ({ program, userPubKey, filter }: { program: Inc
 
 	let i = 0
 	for (const info of cometInfos) {
-    const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
-    const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+		const hasPool = Number(info[info.length-1])
 
-		let healthScore = 0
-		try {
-			const healthData = await program.getSinglePoolHealthScore(i)
-			healthScore = healthData.healthScore
-		} catch (e) {
-			console.error(e)
+		const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+		// unless poolIndex is 255
+		if (hasPool) {
+			const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+
+			let healthScore = 0
+			try {
+				const healthData = await program.getSinglePoolHealthScore(i)
+				healthScore = healthData.healthScore
+			} catch (e) {
+				console.error('healthData', e)
+			}
+
+			result.push({
+				id: i,
+				tickerName: tickerName,
+				tickerSymbol: tickerSymbol,
+				tickerIcon: tickerIcon,
+				collateralName: collateralName,
+				assetType: assetType,
+				collateralType: collateralType,
+				iPrice: Number(info[2]),
+				cPrice: Number(info[3]),
+				fromPriceRange: Number(info[4]),
+				toPriceRange: Number(info[5]),
+				collateral: Number(info[6]),
+				ildIsIasset: Boolean(info[7]),
+				ild: Number(info[8]),
+				borrowedIasset: Number(info[9]),
+				borrowedUsdi: Number(info[10]),
+				liquidityTokenAmount: Number(info[11]),
+				healthScore
+			})
+		} else {
+			result.push({
+				id: i,
+				tickerName: '',
+				tickerSymbol: '',
+				tickerIcon: '',
+				collateralName: collateralName,
+				assetType: 0,
+				collateralType: collateralType,
+				iPrice: 0,
+				cPrice: 0,
+				fromPriceRange: 0,
+				toPriceRange: 0,
+				collateral: Number(info[6]),
+				ildIsIasset: false,
+				ild: 0,
+				borrowedIasset: 0,
+				borrowedUsdi: 0,
+				liquidityTokenAmount: 0,
+				healthScore: 0
+			})
 		}
-    
-    
-		result.push({
-			id: i,
-			tickerName: tickerName,
-			tickerSymbol: tickerSymbol,
-			tickerIcon: tickerIcon,
-			collateralName: collateralName,
-			assetType: assetType,
-			collateralType: collateralType,
-			iPrice: Number(info[2]),
-			cPrice: Number(info[3]),
-			fromPriceRange: Number(info[4]),
-			toPriceRange: Number(info[5]),
-			collateral: Number(info[6]),
-			ildIsIasset: Boolean(info[7]),
-			ild: Number(info[8]),
-			borrowedIasset: Number(info[9]),
-			borrowedUsdi: Number(info[10]),
-			liquidityTokenAmount: Number(info[11]),
-      healthScore
-		})
 
     i++
 	}

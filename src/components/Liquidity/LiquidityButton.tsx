@@ -25,6 +25,10 @@ export const StableButton = styled(Button)`
 	color: #fff;
 	font-size: 10px;
   font-weight: 500;
+	&:disabled {
+    background-color: #444;
+    color: #adadad;
+  }
 `
 
 export const InactiveButton = styled(Button)`

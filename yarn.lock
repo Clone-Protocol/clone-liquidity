@@ -2829,7 +2829,7 @@ imurmurhash@^0.1.4:
 
 "incept-protocol-sdk@git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#private-beta":
   version "0.1.0"
-  resolved "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#442ffa3c04e628ad5b6a245bf8510dd86a18e095"
+  resolved "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#cb880837436b7dec1ad0a798f3d6e6c2aa6c521f"
   dependencies:
     "@project-serum/anchor" "^0.20.1"
     "@pythnetwork/client" "^2.6.0"

@@ -74,10 +74,12 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
                 <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
               } */}
             </Box>
-            <MiniLineChartAlt 
-              data={priceHistory?.chartData}
-              // color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
-            />
+            { priceHistory && 
+              <MiniLineChartAlt 
+                data={priceHistory.chartData}
+                color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+              />
+            }
             <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
               Indicator Price
             </Box>
