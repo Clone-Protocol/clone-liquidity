@@ -13,9 +13,13 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   console.log('fetchBorrowDetail', index)
 
 	await program.loadManager()
-	const data = await program.getMintiAssetData(index)
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+  let mint = await program.getMintPosition(index)
+  const poolIndex = Number(mint.poolIndex)
+
+	const data = await program.getMintiAssetData(poolIndex)
+
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 
 	return {
 		tickerIcon: tickerIcon,
@@ -76,8 +80,8 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 		cryptoCollateralRatio: data[2]!,
     borrowedIasset: positionData![0],
     collateralAmount: positionData![1],
-    collateralRatio: positionData![2],
-    minCollateralRatio: positionData![3],
+    collateralRatio: positionData![2] * 100,
+    minCollateralRatio: positionData![3] * 100,
     usdiVal: balance?.usdiVal,
     iassetVal: balance?.iassetVal,
     maxWithdrawableColl

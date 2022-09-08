@@ -12,13 +12,17 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 
 	await program.loadManager()
 
-	const balances = await program.getPoolBalances(index)
+  const comet = await program.getSinglePoolComet(index);
+  const position = comet.positions[0];
+  const poolIndex = Number(position.poolIndex)
+
+	const balances = await program.getPoolBalances(poolIndex)
 	let price = balances[1] / balances[0]
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = price
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 	return {
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
