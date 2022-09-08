@@ -8,14 +8,11 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	if (!userPubKey) return
 
 	await program.loadManager()
-
-	const liquidity = await program.getLiquidityPosition(index)
-	const poolIndex = liquidity.poolIndex
-
-	const balances = await program.getPoolBalances(poolIndex)
+	
+	const balances = await program.getPoolBalances(index)
 	let price = balances[1] / balances[0]
 	
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
 	return {
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
