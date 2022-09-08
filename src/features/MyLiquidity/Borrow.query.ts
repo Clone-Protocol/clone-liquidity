@@ -35,8 +35,8 @@ export const fetchAssets = async ({ program, userPubKey, filter }: { program: In
 			collateralType: collateralType,
 			borrowed: info[3],
 			collateral: info[4],
-			collateralRatio: info[5],
-			minCollateralRatio: info[6],
+			collateralRatio: info[5] * 100,
+			minCollateralRatio: info[6] * 100,
 		})
     i++
 	}
