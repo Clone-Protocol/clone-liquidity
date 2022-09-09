@@ -25,7 +25,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
   const isRisk = editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
-  const isLackBalance = editType === 1 && borrowDetail.borrowedIasset > borrowDetail.maxWithdrawableColl
+  const isLackBalance = editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal
 
   const isWarning = isRisk || isLackBalance
 

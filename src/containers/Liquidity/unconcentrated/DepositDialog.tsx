@@ -40,14 +40,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 		'borrowTo',
 	])
 
-  const { data: balances, refetch } = useBalanceQuery({
-    userPubKey: publicKey,
-    index: unconcentratedIndex,
-	  refetchOnMount: "always",
-    enabled: open && publicKey != null
-	})
-
-  const { data: unconcentData } = useUnconcentDetailQuery({
+  const { data: unconcentData, refetch } = useUnconcentDetailQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
 	  refetchOnMount: "always",
@@ -85,7 +78,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 
   const isValid = Object.keys(errors).length === 0
 
-	return unconcentData && balances ? (
+	return unconcentData ? (
     <>
       {loading && (
 				<LoadingWrapper>
@@ -108,7 +101,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                   validate(value) {
                     if (!value || value <= 0) {
                       return 'the borrowing amount should be above zero.'
-                    } else if (value > balances?.iassetVal) {
+                    } else if (value > unconcentData?.iassetVal) {
                       return 'The borrowing amount cannot exceed the balance.'
                     }
                   }
@@ -120,7 +113,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                     tickerSymbol={unconcentData.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     valueDollarPrice={field.value * unconcentData.price}
-                    balance={balances?.iassetVal}
+                    balance={unconcentData?.iassetVal}
                     currentAmount={pool.liquidityAsset}
                     dollarPrice={pool.liquidityAsset * unconcentData.price}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,7 +141,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                   validate(value) {
                     if (!value || value <= 0) {
                       return 'the amount should be above zero.'
-                    } else if (value > balances?.usdiVal) {
+                    } else if (value > unconcentData?.usdiVal) {
                       return 'The amount cannot exceed the balance.'
                     }
                   }
@@ -160,7 +153,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                     tickerSymbol="USDi"
                     value={parseFloat(field.value.toFixed(3))}
                     valueDollarPrice={field.value}
-                    balance={balances?.usdiVal}
+                    balance={unconcentData?.usdiVal}
                     currentAmount={pool.liquidityUSD}
                     dollarPrice={pool.liquidityUSD}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

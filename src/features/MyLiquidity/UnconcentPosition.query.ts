@@ -8,16 +8,39 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	if (!userPubKey) return
 
 	await program.loadManager()
-	
-	const balances = await program.getPoolBalances(index)
+
+	const liquidity = await program.getLiquidityPosition(index)
+	const poolIndex = Number(liquidity.poolIndex)
+
+	const balances = await program.getPoolBalances(poolIndex)
 	let price = balances[1] / balances[0]
+
+	let usdiVal = 0.0
+	let iassetVal = 0.0
+
+	try {
+		const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+    usdiVal = Number(associatedTokenAccount.amount) / 100000000;
+	} catch {}
+
+	try {
+    const associatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(
+      (
+        await program.getPool(poolIndex)
+      ).assetInfo.iassetMint
+    );
+
+    iassetVal =  Number(associatedTokenAccount.amount) / 100000000;
+	} catch {}
 	
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 	return {
-		tickerIcon: tickerIcon,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
-		price: price,
+		tickerIcon,
+		tickerName,
+		tickerSymbol,
+		price,
+		usdiVal,
+		iassetVal,
 	}
 }
 

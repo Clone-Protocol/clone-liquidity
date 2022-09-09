@@ -34,8 +34,8 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
 	} catch {}
 
 	return {
-		usdiVal: usdiVal,
-		iassetVal: iassetVal,
+		usdiVal,
+		iassetVal,
 	}
 }
 

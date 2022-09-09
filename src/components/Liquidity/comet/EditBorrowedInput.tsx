@@ -71,9 +71,9 @@ const EditBorrowedInput: React.FC<Props> = ({
           Current dept: 
             {
               editType === 0 ?
-                <span style={{ color: '#fff', marginLeft: '4px' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>
+                <span style={{ color: '#fff', marginLeft: '4px' }}>{currentCollAmount?.toFixed(3)} {tickerSymbol}</span>
               :
-                <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount?.toLocaleString()} {tickerSymbol}</span>
+                <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount?.toFixed(3)} {tickerSymbol}</span>
             }
             <span style={{ color: '#fff', marginLeft: '5px' }}>{ dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
         </BottomBox>
