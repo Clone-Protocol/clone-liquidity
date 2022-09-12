@@ -71,7 +71,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   }
 
   useEffect(() => {
-    // console.log('bd', borrowDetail)
     if (editType === 0) { // borrow more
       setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + borrowAmount)))
     } else { // repay
@@ -167,7 +166,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Expected Collateral Ratio</DetailHeader>
-                <DetailValue>{ editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.collateralRatio.toLocaleString()}%)</span></DetailValue>
+                <DetailValue>{ editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Min Collateral Ratio</DetailHeader>

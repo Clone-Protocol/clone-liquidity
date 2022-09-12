@@ -17,10 +17,14 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
       <Box sx={{ borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)'}}>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '27px', width: '400px', height: '65px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '10px', marginTop: '18px', marginBottom: '9px' }}>
           <SubTitle>Collateral Ratio</SubTitle>
-          <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
-            {positionInfo.collateralRatio.toFixed(2)}% 
-            <span style={{ fontSize: '12px', marginLeft: '5px' }}>(min: {positionInfo.minCollateralRatio.toFixed(2)}%)</span>
-          </Box>
+          { positionInfo.borrowedIasset > 0 ?
+            <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
+              {positionInfo.collateralRatio.toFixed(2)}% 
+              <span style={{ fontSize: '12px', marginLeft: '5px' }}>(min: {positionInfo.minCollateralRatio.toFixed(2)}%)</span>
+            </Box>
+            :
+            <Box sx={{ fontSize: '16px', fontWeight: '500' }}>-</Box>
+          }
         </Box>
 
         <EditRowBox>

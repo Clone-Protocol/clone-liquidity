@@ -81,7 +81,9 @@ let columns: GridColDef[] = [
 		headerName: 'Collateral Ratio',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '12px', fontWeight: '600' }}>{params.value?.toLocaleString()}% <span style={{ fontSize: '11px', fontWeight: '500' }}>(min {params.row.minCollateralRatio.toLocaleString()}%)</span></Box>
+			return params.row.borrowed > 0 ?
+			 (<Box sx={{ fontSize: '12px', fontWeight: '600' }}>{params.value?.toLocaleString()}% <span style={{ fontSize: '11px', fontWeight: '500' }}>(min {params.row.minCollateralRatio.toLocaleString()}%)</span></Box>)
+			 : (<></>)
 		},
 	},
 	{
