@@ -12,6 +12,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import EditBorrowedInput from '~/components/Liquidity/comet/EditBorrowedInput'
 import WarningIcon from 'public/images/warning-icon.png'
 import { SliderTransition } from '~/components/Common/Dialog'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -165,11 +166,11 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Expected Collateral Ratio</DetailHeader>
+                <DetailHeader>Expected Collateral Ratio <InfoTooltip title="expected collateral ratio" /></DetailHeader>
                 <DetailValue>{ editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Min Collateral Ratio</DetailHeader>
+                <DetailHeader>Min Collateral Ratio <InfoTooltip title="min colalteral ratio" /></DetailHeader>
                 <DetailValue>{ editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${borrowDetail.minCollateralRatio.toLocaleString()}%` : '-'}</DetailValue>
               </Stack>
             </Box>

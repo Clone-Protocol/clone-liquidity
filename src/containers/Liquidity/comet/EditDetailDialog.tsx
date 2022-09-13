@@ -8,7 +8,6 @@ import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentr
 import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
-import ThreeIcon from 'public/images/three-icon.svg'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
@@ -16,6 +15,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
 import { SliderTransition } from '~/components/Common/Dialog'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -295,7 +295,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <SubTitle>
-                  <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range</Box>
+                  <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title="Projected Liquidity Concentration Range" /></Box>
                 </SubTitle>
 
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} onChange={handleChangeConcentRange} />
@@ -303,7 +303,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
               <StyledDivider />
 
               <Box>
-                <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore</Box>
+                <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></Box>
                 <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
               </Box>
 

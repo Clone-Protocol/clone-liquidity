@@ -4,6 +4,7 @@ import { styled } from '@mui/system'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
+import InfoTooltip from '~/components/Common/InfoTooltip';
 
 interface Props {
 	assetData: PI
@@ -26,7 +27,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)'}}>
         <Box display="flex">
           <Box sx={{ padding: '22px', minWidth: '365px' }}>
-            <SubTitle>Collateral</SubTitle>
+            <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
               {cometDetail.collAmount.toLocaleString()} <span style={{ fontSize: '14px' }}>USDi</span>
             </Box>
@@ -46,7 +47,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             </Box>
             <StyledDivider />
           
-            <SubTitle>Price Range</SubTitle>
+            <SubTitle>Price Range <InfoTooltip title="price range" /></SubTitle>
             <Box sx={{ marginTop: '20px' }}>
               <ConcentrationRangeView
                 centerPrice={assetData.price}
@@ -81,7 +82,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
       <Box sx={{ display: 'flex', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '13px 27px' }}>
         <Box sx={{ width: '45%', marginLeft: '15px' }}>
-          <SubTitle>Health Score</SubTitle>
+          <SubTitle>Health Score <InfoTooltip title="health score" /></SubTitle>
           <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
             {cometDetail.healthScore.toFixed(2)}/100
           </Box>
@@ -89,7 +90,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box sx={{ display: 'flex', width: '50%' }}>
           <div style={{ background: '#535353', width: '1px', height: '56px'}}></div>
           <Box sx={{ marginLeft: '35px' }}>
-            <SubTitle>ILD</SubTitle>
+            <SubTitle>ILD <InfoTooltip title="ild" /></SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginTop: '10px' }}>
               {Math.abs(cometDetail.ild).toFixed(2)} USDi
             </Box>
@@ -98,7 +99,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </Box>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter</ActionButton>
+      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title="recenter" /></ActionButton>
     </Box>
 	) : (
 		<></>

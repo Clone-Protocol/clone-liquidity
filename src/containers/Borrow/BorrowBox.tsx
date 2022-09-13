@@ -21,6 +21,7 @@ import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
 import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -188,8 +189,8 @@ const BorrowBox = () => {
               data={priceHistory?.chartData}
               color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
             />
-            <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-              Oracle Price
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
+              Oracle Price <InfoTooltip title="Oracle Price" />
             </Box>
           </StyledBox>
         </Grid>
@@ -234,7 +235,7 @@ const BorrowBox = () => {
             <StyledDivider />
 
             <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio</Box></SubTitle>
+              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title="Set collateral ratio" /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
                 <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} onChange={handleChangeCollRatio} />

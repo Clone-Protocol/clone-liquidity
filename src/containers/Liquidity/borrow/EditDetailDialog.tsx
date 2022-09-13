@@ -10,6 +10,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { SliderTransition } from '~/components/Common/Dialog'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -156,11 +157,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Expected Collateral Ratio</DetailHeader>
+                <DetailHeader>Expected Collateral Ratio <InfoTooltip title="expected collateral ratio" /></DetailHeader>
                 <DetailValue>{expectedCollRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Min Collateral Ratio</DetailHeader>
+                <DetailHeader>Min Collateral Ratio <InfoTooltip title="min collateral ratio" /></DetailHeader>
                 <DetailValue>{borrowDetail.minCollateralRatio.toLocaleString()}%</DetailValue>
               </Stack>
             </Box>

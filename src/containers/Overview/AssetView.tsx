@@ -14,6 +14,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import CometPanel from './CometPanel'
 import UnconcentPanel from './UnconcentPanel'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -53,11 +54,11 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				<Box sx={{ display: 'flex', maxWidth: '488px', height: '47px', alignItems: 'center', paddingLeft: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
 					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
 						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
-            <span style={{ marginLeft: '8px' }}>Comet Liquidity</span>
+            <span style={{ marginLeft: '8px' }}>Comet Liquidity <InfoTooltip title="Comet Liquidity" /></span>
 					</CometTabBtn>
 					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
 						{tab===1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} /> }
-						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity</span>
+						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity <InfoTooltip title="Unconcentrated Liquidity" /></span>
 					</UnconcentTabBtn>
 				</Box>
 			</Box>
@@ -123,7 +124,7 @@ const UnconcentTabBtn = styled((props: any) => (
 }))
 
 const UnconcentTab = styled(Button)`
-	width: 254px;
+	width: 290px;
 	height: 35px;
   margin-left: 8px;
 	border-radius: 10px;

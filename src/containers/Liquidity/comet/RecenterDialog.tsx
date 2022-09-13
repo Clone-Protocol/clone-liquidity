@@ -11,6 +11,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { SliderTransition } from '~/components/Common/Dialog'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 interface CometInfo {
   healthScore: number
@@ -133,7 +134,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
                 Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
               </WalletBalance>
               <Stack sx={{ borderTopRightRadius: '10px', borderTopLeftRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
-                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost</div>
+                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost <InfoTooltip title="recenter cost" /></div>
                 <div style={{ fontSize: '16px', fontWeight: '500', color: '#fff'}}>
                   {cometData.usdiCost.toLocaleString()} USDi
                   <div style={{ fontSize: '10px', color: '#b9b9b9', textAlign: 'right'}}>${cometData.usdiCost.toLocaleString()}</div>
@@ -146,7 +147,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 
             <StyledDivider />
           
-            <SubTitle>Projected Price Range</SubTitle>
+            <SubTitle>Projected Price Range <InfoTooltip title="projected price range" /></SubTitle>
             <Box sx={{ margin: '0 auto', marginTop: '20px', marginBottom: '33px', width: '345px' }}>
               <ConcentrationRangeView
                 centerPrice={100}
@@ -168,14 +169,14 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
               </Stack>
             </Box>
             <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Projected Health Score</SubTitle>
+              <SubTitle>Projected Health Score <InfoTooltip title="projected health score" /></SubTitle>
               <DetailValue>
                 {cometData.healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {cometData.prevHealthScore.toFixed(2)}/100)</span>
               </DetailValue>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Estimated Collateral After Recentering</SubTitle>
+              <SubTitle>Estimated Collateral After Recentering <InfoTooltip title="estimated collateral after recentering" /></SubTitle>
               <DetailValue>
                 {(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi <span style={{ color: '#949494' }}>(${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()})</span>
               </DetailValue>

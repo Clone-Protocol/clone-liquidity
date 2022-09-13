@@ -11,6 +11,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import WarningIcon from 'public/images/warning-icon.png'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
 	const { publicKey } = useWallet()
@@ -60,21 +61,21 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
 
         <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
           <Stack direction="row" justifyContent="space-between">
-            <DetailHeader>Dept Amount</DetailHeader>
+            <DetailHeader>Dept Amount <InfoTooltip title="dept amount" /></DetailHeader>
             <DetailValue>{borrowDetail.borrowedIasset.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Indepted Asset Wallet Balance</DetailHeader>
+            <DetailHeader>Indepted Asset Wallet Balance <InfoTooltip title="indepted asset wallet balance" /></DetailHeader>
             <DetailValue>{borrowDetail.iassetVal.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral</DetailHeader>
+            <DetailHeader>Collateral <InfoTooltip title="collateral" /></DetailHeader>
             <DetailValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</DetailValue>
           </Stack>
         </Box>
         <Box sx={{ padding: '0px 20px 9px 17px' }}>
           <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral Withdraw</DetailHeader>
+            <DetailHeader>Collateral Withdraw <InfoTooltip title="collateral withdraw" /></DetailHeader>
             <div style={{ color: '#fff', fontSize: '14px', fontWeight: '500' }}>{borrowDetail.collateralAmount.toLocaleString()} USDi</div>
           </Stack>
         </Box>

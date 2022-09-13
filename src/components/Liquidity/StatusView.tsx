@@ -2,6 +2,7 @@ import { styled, Box, Tabs, Tab } from '@mui/material'
 import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { Status } from '~/features/MyLiquidity/Status.query'
+import InfoTooltip from '../Common/InfoTooltip'
 import 'animate.css';
 
 interface Props {
@@ -31,7 +32,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
       <TabPanel value={tab} index={0}>
         <Box>
-          <Title>Total Value</Title>
+          <Title>Total Value <InfoTooltip title="Total Value" /></Title>
           <BalanceValue>
             <NumValue>{status.totalVal.toLocaleString()}</NumValue> USD
           </BalanceValue>

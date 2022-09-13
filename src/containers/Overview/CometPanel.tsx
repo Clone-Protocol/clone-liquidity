@@ -13,6 +13,7 @@ import PairInputView from '~/components/Asset/PairInputView'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import RatioSlider from '~/components/Asset/RatioSlider'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
@@ -316,7 +317,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
           <Box>
             <SubTitle>
-              <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range</Box>
+              <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title="Projected Liquidity Concentration Range" /></Box>
             </SubTitle>
 
             <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
@@ -332,37 +333,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
             </Box>
 
             <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
-
-            {/* {assetData.tightRange > assetData.price - cometData.lowerLimit ||
-            assetData.tightRange > cometData.upperLimit - assetData.price ? (
-              <Stack
-                sx={{
-                  maxWidth: '653px',
-                  background: 'rgba(128, 156, 255, 0.09)',
-                  border: '1px solid #e9d100',
-                  borderRadius: '10px',
-                  color: '#9d9d9d',
-                  padding: '12px',
-                  marginTop: '19px',
-                  marginBottom: '30px',
-                }}
-                direction="row">
-                <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
-                  <Image src={WarningIcon} />
-                </Box>
-                <WarningBox>
-                  Liquidity concentration range for this position is very slim, this results
-                  in higher potential yield and high probabily of liqudiation.
-                </WarningBox>
-              </Stack>
-            ) : (
-              <></>
-            )} */}
           </Box>
           <StyledDivider />
 
           <Box>
-            <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore</Box>
+            <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></Box>
             <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{cometHealthScore.toFixed(2)}</span>/100</Box>
           </Box>
 
