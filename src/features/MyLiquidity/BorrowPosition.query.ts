@@ -53,7 +53,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 	const data = await program.getMintiAssetData(poolIndex)
 
-  const positionData = await program.getUserMintInfo(poolIndex)
+  const positionData = await program.getUserMintInfo(index)
 
   const balance = await fetchBalance({
     program,
