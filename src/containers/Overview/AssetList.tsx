@@ -28,7 +28,7 @@ const AssetList: React.FC = () => {
     userPubKey: publicKey,
     filter,
     searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
 

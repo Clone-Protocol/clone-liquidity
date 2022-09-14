@@ -3,10 +3,17 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
+import { useDataLoading } from '~/hooks/useDataLoading'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
-export const fetchPools = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
+export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
+
+	console.log('fetchPools :: CometPools.query')
+	// start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
 
 	await program.loadManager()
 	
@@ -147,8 +154,12 @@ export interface PoolList {
 
 export function useCometPoolsQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetPoolsProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['cometPools', userPubKey, filter], () => fetchPools({ program: getInceptApp(), userPubKey, filter }), {
+	const { setStartTimer } = useDataLoading()
+
+  return useQuery(['cometPools', userPubKey, filter], () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer }), {
     refetchOnMount,
+		refetchInterval: REFETCH_CYCLE,
+		refetchIntervalInBackground: true,
     enabled,
 		select: (assets) => {
 			return assets.filter((asset) => {

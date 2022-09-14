@@ -4,9 +4,16 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
-export const fetchAssets = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
+export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
+
+	console.log('fetchPools :: Borrow.query')
+	// start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
 
 	await program.loadManager()
 	let mintInfos : any = []
@@ -84,8 +91,11 @@ export interface AssetList {
 
 export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['borrowAssets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, filter }), {
+	const { setStartTimer } = useDataLoading()
+  return useQuery(['borrowAssets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, setStartTimer }), {
     refetchOnMount,
+		refetchInterval: REFETCH_CYCLE,
+		refetchIntervalInBackground: true,
     enabled,
 		select: (assets) => {
 			return assets.filter((asset) => {

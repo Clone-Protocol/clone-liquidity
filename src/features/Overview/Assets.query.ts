@@ -4,9 +4,16 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
-export const fetchAssets = async ({ program, userPubKey, filter }: { program: Incept, userPubKey: PublicKey | null, filter: string}) => {
+export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
+
+	console.log('fetchAssets')
+	// start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
     
 	await program.loadManager()
 
@@ -66,8 +73,12 @@ export interface AssetList {
 
 export function useAssetsQuery({ userPubKey, filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
   const { getInceptApp } = useIncept()
-  return useQuery(['assets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, filter }), {
+	const { setStartTimer } = useDataLoading()
+
+  return useQuery(['assets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, setStartTimer }), {
     refetchOnMount,
+		refetchInterval: REFETCH_CYCLE,
+		refetchIntervalInBackground: true,
     enabled,
     select: (assets) => {
 			if (searchTerm && searchTerm.length > 0) {
