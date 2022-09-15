@@ -118,9 +118,15 @@ const RightMenu = () => {
 				}
 
 				try {
-					const userAccount = await program.getUserAccount()
+					await program.getUserAccount()
 				} catch (error) {
-					const response = await program.initializeUser()
+					console.log('err', 'Account does not exist')
+					try {
+						await program.initializeUser()
+					} catch (err) {
+						console.log('err: Attempt to debit an account but found no record of a prior credit.')
+						enqueueSnackbar('Attempt to debit an account but found no record of a prior credit. Get SOL in Faucet or exchanges')
+					}
 				}
 			}
 		}
@@ -193,7 +199,7 @@ const RightMenu = () => {
           <PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
         </WalletSelectBox> }
       </Box>
-			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '18px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
+			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
       <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 		</Box>
 	)
@@ -251,7 +257,7 @@ const NavPlaceholder = styled('div')`
 
 const HeaderButton = styled(Button)`
 	border: 1px solid #404040;
-	padding: 12px 12px 10px 13px;
+	padding: 12px;
 	border-radius: 10px;
 	font-size: 11px;
 	font-weight: 600;
@@ -268,7 +274,7 @@ const HeaderButton = styled(Button)`
 const ConnectButton = styled(Button)`
   border: solid 1px #00218f;
   background-color: #001149;
-	padding: 12px 12px 10px 13px;
+	padding: 12px;
 	border-radius: 10px;
 	font-size: 11px;
 	font-weight: 600;

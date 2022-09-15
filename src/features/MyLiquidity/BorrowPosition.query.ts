@@ -17,32 +17,34 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   let poolIndex = index;
   // for catch the MintPositionsUninitialized exception
   try {
-    let mint = await program.getMintPosition(index)
+    const mint = await program.getMintPosition(index)
     poolIndex = Number(mint.poolIndex)
   } catch (e) {
     console.error(e)
   }
 
-	const data = await program.getMintiAssetData(poolIndex)
+  let oPrice = 1
+  let stableCollateralRatio = 0
+  let cryptoCollateralRatio = 0
+  try {
+    const data = await program.getMintiAssetData(poolIndex)
+    oPrice = data[0]!
+    stableCollateralRatio = data[1]!
+    cryptoCollateralRatio = data[2]!
+  } catch (e) {
+    console.error(e)
+  }
+	
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 
 	return {
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
-		oPrice: data[0]!,
-		stableCollateralRatio: data[1]!,
-		cryptoCollateralRatio: data[2]!,
+		oPrice,
+		stableCollateralRatio,
+		cryptoCollateralRatio,
 	}
-}
-
-export const fetchPositionDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
-	if (!userPubKey) return
-
-	await program.loadManager()
-
-	const data = await program.getUserMintInfo(index)
-	return data
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {

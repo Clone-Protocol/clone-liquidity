@@ -11,7 +11,7 @@ interface WalletListItemProps extends Omit<ListItemProps, 'onClick' | 'button'> 
 export const WalletListItem: FC<WalletListItemProps> = ({ onClick, wallet, ...props }) => {
 	return (
 		<ListItem {...props}>
-			<Button onClick={onClick} endIcon={<WalletIcon height={20} wallet={wallet} />}>
+			<Button onClick={onClick} endIcon={<WalletIcon height={20} wallet={wallet} />} sx={{ borderRadius: '0' }}>
 				<div style={{ fontSize: '18px', fontWeight: '600' }}>{wallet.adapter.name}</div>
 			</Button>
 		</ListItem>

@@ -356,15 +356,6 @@ const SubTitleComment = styled('div')`
 	color: #989898;
 `
 
-const IconButton = styled('div')`
-	width: 22px;
-	height: 22px;
-	background: #00f0ff;
-	color: #000;
-  cursor: pointer;
-  border-radius: 20px;
-`
-
 const TxtPriceRate = styled('div')`
   font-size: 10px;
   font-weight: 500;

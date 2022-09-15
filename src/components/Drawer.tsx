@@ -45,7 +45,7 @@ const Drawer: React.FC = () => {
 				sx={{
 					position: 'absolute',
 					left: '35px',
-					bottom: '15px',
+					bottom: '45px',
 					fontSize: '12px',
 					color: '#6c6c6c',
 					textAlign: 'center',
