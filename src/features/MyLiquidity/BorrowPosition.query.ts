@@ -14,11 +14,16 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 
 	await program.loadManager()
 
-  let mint = await program.getMintPosition(index)
-  const poolIndex = Number(mint.poolIndex)
+  let poolIndex = index;
+  // for catch the MintPositionsUninitialized exception
+  try {
+    let mint = await program.getMintPosition(index)
+    poolIndex = Number(mint.poolIndex)
+  } catch (e) {
+    console.error(e)
+  }
 
 	const data = await program.getMintiAssetData(poolIndex)
-
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 
 	return {
