@@ -76,11 +76,13 @@ const LineChart: React.FC = () => {
         </Box>
       }
       topRight={
-        <TimeTabs value={filterTime} onChange={handleFilterChange}>
-          {Object.keys(FilterTimeMap).map((f) => (
-            <TimeTab key={f} value={f} label={FilterTimeMap[f as FilterTime]} />
-          ))}
-        </TimeTabs>
+        <div style={{ marginTop: '4px' }}>
+          <TimeTabs value={filterTime} onChange={handleFilterChange}>
+            {Object.keys(FilterTimeMap).map((f) => (
+              <TimeTab key={f} value={f} label={FilterTimeMap[f as FilterTime]} />
+            ))}
+          </TimeTabs>
+        </div>
       }
     />
   )

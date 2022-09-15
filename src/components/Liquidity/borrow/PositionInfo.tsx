@@ -77,7 +77,6 @@ const SubTitle = styled('div')`
   font-size: 12px;
   font-weight: 600;
   color: #989898;
-  margin-bottom: 5px;
 `
 
 const EditBox = styled(Box)`

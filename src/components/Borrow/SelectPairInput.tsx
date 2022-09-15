@@ -31,7 +31,6 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeA
 								<Image src={asset.tickerIcon} width="28px" height="28px" />
 								<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
 									<TickerSymbol>{asset.tickerSymbol}</TickerSymbol>
-									{/* <TickerName>{asset.tickerName}</TickerName> */}
 								</Box>
 							</Box>
 						</MenuItem>
@@ -55,13 +54,6 @@ const FormStack = styled(Stack)`
 const TickerSymbol = styled('div')`
 	font-size: 14px;
 	font-weight: 600;
-`
-
-const TickerName = styled('div')`
-	color: #757a7f;
-	font-size: 9px;
-	font-weight: 600;
-	line-height: 5px;
 `
 
 const InputAmount = styled(`input`)`
