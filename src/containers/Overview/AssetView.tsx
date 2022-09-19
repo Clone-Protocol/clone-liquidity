@@ -108,7 +108,7 @@ const CometTab = styled(Button)`
 	font-weight: 600;
 	color: #fff;
   &:hover {
-    opacity: 0.8;
+    background-color: rgba(38, 38, 38, 0.5);
   }
   &:active {
     background: #171717;
@@ -132,6 +132,9 @@ const UnconcentTab = styled(Button)`
 	font-size: 12px;
 	font-weight: 600;
 	color: #fff;
+	&:hover {
+    background-color: rgba(38, 38, 38, 0.5);
+  }
   &:active {
     background: #3d3d3d;
   }
