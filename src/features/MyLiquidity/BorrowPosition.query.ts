@@ -27,7 +27,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   let stableCollateralRatio = 0
   let cryptoCollateralRatio = 0
   try {
-    const data = await program.getMintiAssetData(poolIndex)
+    const data = await program.getMintiAssetData(index)
     oPrice = data[0]!
     stableCollateralRatio = data[1]!
     cryptoCollateralRatio = data[2]!
@@ -35,7 +35,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
     console.error(e)
   }
 	
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
 
 	return {
 		tickerIcon: tickerIcon,

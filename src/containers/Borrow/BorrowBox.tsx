@@ -54,13 +54,13 @@ const BorrowBox = () => {
   const { data: borrowDetail } = useBorrowDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   })
 
   const { data: usdiBalance, refetch } = useBalanceQuery({ 
     userPubKey: publicKey, 
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   });
 
@@ -172,7 +172,7 @@ const BorrowBox = () => {
           />
           <StyledBox>
             <Box display="flex">
-              <Image src={borrowAsset.tickerIcon} width="30px" height="30px" />
+              <Image src={borrowAsset.tickerIcon} width="30px" height="30px" layout="fixed" />
               <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
                 {borrowAsset.tickerName} ({borrowAsset.tickerSymbol})
               </Box>
