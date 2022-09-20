@@ -44,7 +44,7 @@ const LiquidityTable = () => {
 
 	return (
     <div>
-      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '842px' }}>
+      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '860px' }}>
         <StyledTab value={0} label="Comet Liquidity" icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
         <StyledTab value={1} label="Unconcentrated Liquidity" icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
         <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
