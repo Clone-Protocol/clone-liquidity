@@ -106,7 +106,7 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Health Score',
-		flex: 1,
+		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box sx={{ width: '80px', textAlign: 'center'}}>

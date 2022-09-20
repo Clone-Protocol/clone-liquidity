@@ -44,15 +44,16 @@ const Drawer: React.FC = () => {
 			<Stack
 				sx={{
 					position: 'absolute',
-					left: '35px',
-					bottom: '45px',
-					fontSize: '12px',
-					color: '#6c6c6c',
+					left: '65px',
+					bottom: '100px',
+					fontSize: '13px',
+					fontWeight: '600',
+					color: '#9c9c9c',
 					textAlign: 'center',
 				}}
 				spacing={2}>
-				<div>V1: Polaris Devnet</div>
-				<div>© Incept 2022</div>
+				<div><span style={{ fontSize: '10px' }}>V1:</span> Polaris Devnet</div>
+				<div style={{ fontSize: '12px', fontWeight: '500', color: '#8c8c8c' }}>© Incept 2022</div>
 			</Stack>
 		</StyledDrawer>
 	)

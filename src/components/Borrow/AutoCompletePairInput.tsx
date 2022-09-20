@@ -91,6 +91,10 @@ const StyledAutocomplete = styled(Autocomplete)`
     padding-right: 20px;
   }
 
+  & .MuiOutlinedInput-notchedOutline {
+    border: none !important;
+  }
+
   & .MuiTextField-root {
     margin-top: 0px;
     &:hover {
@@ -125,10 +129,17 @@ const StyledAutocomplete = styled(Autocomplete)`
 
 const StyledPopper = styled(Popper)`
   background: #151618;
+  & .MuiPaper-root {
+    border: solid 1px #444;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
   & .MuiAutocomplete-listbox {
     background: #151618;
-    // border-radius: 10px;
-    border: solid 1px #444;
+    // border: solid 1px #444;
+    // border-left-bottom-radius: 10px;
+    // border-right-bottom-radius: 10px;
 
     & :hover {
       background: #1f1f1f;

@@ -15,6 +15,8 @@ import BorrowIconOff from 'public/images/borrow-position-icon-off.svg'
 import CometIconOn from 'public/images/comet-icon-on.svg'
 import UlIconOn from 'public/images/ul-icon-on.svg'
 import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
+import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
+import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
 
 const LiquidityTable = () => {
   const router = useRouter()
@@ -42,11 +44,11 @@ const LiquidityTable = () => {
 
 	return (
     <div>
-      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '832px' }}>
+      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '842px' }}>
         <StyledTab value={0} label="Comet Liquidity" icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
         <StyledTab value={1} label="Unconcentrated Liquidity" icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
         <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
-        <StyledTab value={3} label="Multiple Comet Liquidity" icon={tab === 3 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} sx={{ marginRight: '27px', background: 'rgba(24, 24, 40, 0.75)' }} />
+        <StyledTab value={3} label="Multipool Comet Liquidity" icon={tab === 3 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} sx={{ background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
 
       {/* { (tab === 0 || tab === 2) && (
