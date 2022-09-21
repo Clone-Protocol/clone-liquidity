@@ -49,17 +49,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   const mintAmount = toNumber(position.borrowedUsdi)
   const mintIassetAmount = toNumber(position.borrowedIasset)
   const collAmount = toNumber(comet.collaterals[0].collateralAmount)
-  const {
-    lowerPrice,
-    upperPrice
-  } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
-    index,
-    collAmount,
-    mintAmount
-  )
-  const lowerLimit = lowerPrice;
-  const upperLimit = upperPrice;
-
+  
   let price = 0
   let tightRange = 0
   let maxRange = 0
@@ -69,6 +59,9 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   let tickerSymbol = ''
   let ild = 0
   let healthScore = 0
+  let lowerLimit = 0
+  let upperLimit = 0
+
   if (Number(position.poolIndex) < 255) {
     const balances = await program.getPoolBalances(Number(position.poolIndex))
     price = balances[1] / balances[0]
@@ -83,6 +76,17 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     const singlePoolHealthScore =  await program.getSinglePoolHealthScore(index)
     ild = singlePoolHealthScore.ILD
     healthScore = singlePoolHealthScore.healthScore
+
+    const {
+      lowerPrice,
+      upperPrice
+    } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
+      Number(position.poolIndex),
+      collAmount,
+      mintAmount
+    )
+    lowerLimit = lowerPrice
+    upperLimit = upperPrice
   }
 
 	return {
