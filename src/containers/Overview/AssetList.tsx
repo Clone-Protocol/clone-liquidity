@@ -64,6 +64,7 @@ const AssetList: React.FC = () => {
       <Grid
         headers={columns}
 				rows={assets || []}
+				minHeight={680}
       />
 		</Box>
 	)
@@ -114,12 +115,12 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'baselineAPY',
-		headerClassName: 'last--header',
+		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: '24h Fee Revenue',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '12px', fontWeight: '500', textAlign: 'center', margin: '0 auto' }}>{params.value.toLocaleString()} %</Box>
+			return <CellDigitValue value={params.row.baselineAPY} symbol="USDi" />
 		},
 	},
 	{
@@ -163,7 +164,7 @@ const TradeButton = styled(Box)`
 	width: 25px;
 	height: 25px;
 	flex-grow: 0;
-	padding: 3px 5.7px 4px 8px;
+	padding: 2px 4px 4px 7px;
 	border-radius: 4px;
 	border: solid 1px #535353;
 	cursor: pointer;

@@ -68,7 +68,9 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 		color: '#fff',
 		whiteSpace: 'nowrap',
 		width: 241,
-		marginTop: 60,
+		marginTop: 62,
+		paddingTop: 26,
+		borderTopRightRadius: '10px',
 		transition: theme.transitions.create('width', {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.enteringScreen,

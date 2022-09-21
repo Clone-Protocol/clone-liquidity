@@ -50,7 +50,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, on
 	}
 
   const max = min + 100 + 50
-	const normValue = value < 300 ? 150 - (value % 150) : 1
+	const normValue = (value !== max) ? 180 - (value % 150) : 30
 
 	return (
 		<Box
@@ -62,7 +62,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, on
 				<StyledSlider
 					sx={{
 						'& .MuiSlider-track': {
-              background: `linear-gradient(to right, #f00 -12%, #809cff ${normValue}%)`
+              background: `linear-gradient(to right, #f00 -22%, #809cff ${normValue}%)`
             }
 					}}
 					value={value}

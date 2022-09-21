@@ -51,7 +51,7 @@ const GNB: React.FC = () => {
 			<NavPlaceholder />
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
-					<Toolbar disableGutters sx={{ paddingLeft: '10px' }}>
+					<Toolbar disableGutters sx={{ paddingLeft: '1px' }}>
 						<Image src={logoIcon} alt="incept" />
 						<LiquidityTitle>Liquidity</LiquidityTitle>
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>

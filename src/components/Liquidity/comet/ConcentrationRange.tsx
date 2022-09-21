@@ -146,13 +146,13 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 		'& .MuiSlider-thumb[data-index="0"]': {
 			border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
-				border: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
+				borderLeft: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
 			},
 		},
 		'& .MuiSlider-thumb[data-index="1"]': {
 			border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
-				border: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
+				borderRight: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
 			},
 		},
 	})

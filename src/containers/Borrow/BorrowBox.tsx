@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Divider, Grid, FormHelperText } from '@mui/material'
+import { Box, Button, Paper, Divider, Stack, FormHelperText } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
@@ -163,8 +163,8 @@ const BorrowBox = () => {
 				</LoadingWrapper>
 			)}
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
+      <Stack direction="row" spacing={3}>
+        <Box>
           <AutoCompletePairInput
             assets={ASSETS}
             selAssetId={assetIndex}
@@ -193,8 +193,8 @@ const BorrowBox = () => {
               Oracle Price <InfoTooltip title="Oracle Price" />
             </Box>
           </StyledBox>
-        </Grid>
-        <Grid item xs={12} md={8}>
+        </Box>
+        <Box>
           <StyledPaper variant="outlined">
             <Box sx={{ fontSize: '16px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
             <Box>
@@ -306,8 +306,8 @@ const BorrowBox = () => {
 
             <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid}>Create Borrow Position</ActionButton>
           </StyledPaper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
     </>
 	) : <></>
 }
