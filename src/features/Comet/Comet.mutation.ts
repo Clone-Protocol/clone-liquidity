@@ -1,6 +1,7 @@
 import { PublicKey } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 
@@ -117,7 +118,8 @@ export const callEdit = async ({
   const { collAmount, mintAmountChange, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
-  // const singlePoolComet = await program.getSinglePoolComet(cometIndex);//getComet()
+  const singlePoolComet = await program.getSinglePoolComet(cometIndex);//getComet()
+  const pool = await program.getPool(Number(singlePoolComet.positions[0].poolIndex));
   // let comet = singlePoolComet.positions[cometIndex]
 
   // adjust USDI & iAsset in liquidity
@@ -128,9 +130,12 @@ export const callEdit = async ({
       []
     )
   } else if (mintAmountChange < 0) {
-    console.log('mmmm', Math.abs(mintAmountChange))
+    const lpTokensToClaim = Math.min(
+      toNumber(pool.liquidityTokenSupply) * Math.abs(mintAmountChange) / toNumber(pool.usdiAmount),
+      toNumber(singlePoolComet.positions[0].liquidityTokenValue)
+    )
     await program.withdrawLiquidityFromSinglePoolComet(
-      new BN(Math.abs(mintAmountChange) * 10 ** 8),
+      new BN(lpTokensToClaim * 10 ** 8),
       cometIndex,
       []
     )
