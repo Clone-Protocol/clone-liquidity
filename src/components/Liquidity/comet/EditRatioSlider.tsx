@@ -178,7 +178,7 @@ const FixThumb = styled('div')`
 const FixValueLabel = styled(Box)`
   width: 51px;
   height: 24px;
-  padding: 2px 8px 1px 12px;
+  padding: 2px 8px;
   margin-top: 8px;
   margin-left: -16px;
   border-radius: 10px;

@@ -56,7 +56,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const { mutateAsync } = useEditMutation(publicKey)
 
-  const [assetIndex, setAssetIndex] = useState(cometIndex)
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [mintRatio, setMintRatio] = useState(0)
@@ -67,7 +66,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 		setEditType(newValue)
 	}, [editType])
 
-  // defaultMintRatio
+  // set defaultMintRatio
   useEffect(() => {
     async function fetch() {
       if (open) {
@@ -82,14 +81,15 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           upperPrice
         } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
           cometIndex,
-          cometDetail.collAmount,
-          cometDetail.mintAmount
+          0,
+          0
         )
+
+        const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
         console.log('a', lowerPrice+"/"+upperPrice)
         console.log('b', maxUsdiPosition +"/"+maxCollateralWithdrawable + "/"+healthScore)
-        console.log('c', cometDetail.mintAmount +"/"+ cometDetail.mintAmount * 100 / maxUsdiPosition)
-
-        setAssetIndex(assetIndex)
+        console.log('c', cometDetail.mintAmount +"/"+ mintRatio)
+        
         setCometData({
           ...cometData,
           lowerLimit: lowerPrice,
@@ -97,8 +97,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         })
         setHealthScore(healthScore)
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
-        setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
-        setMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
+        setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
+        setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
+        setValue('mintAmount', cometDetail.mintAmount)
       }
     }
     fetch()
@@ -109,24 +110,25 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      if (collAmount && !mintAmount) {
-        let {
-          maxUsdiPosition,
-          healthScore
-        } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
-          cometIndex,
-          collAmount,
-          0
-        )
-        setHealthScore(healthScore)
-        setMaxMintable(maxUsdiPosition)
-        setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
-      }
+      // if (collAmount && !mintAmount) {
+      //   let {
+      //     maxUsdiPosition,
+      //     healthScore
+      //   } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
+      //     cometIndex,
+      //     collAmount,
+      //     0
+      //   )
+      //   setHealthScore(healthScore)
+      //   setMaxMintable(maxUsdiPosition)
+      //   setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
+      // }
 
-      if (collAmount && mintAmount) {
+      // if (collAmount && mintAmount) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
 
         let {
+          maxCollateralWithdrawable,
           lowerPrice,
           upperPrice,
           maxUsdiPosition,
@@ -137,63 +139,73 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           mintAmount - cometDetail.mintAmount
         )
         setHealthScore(healthScore)
+        setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
           lowerLimit: lowerPrice,
           upperLimit: upperPrice
         })
-      }
+        
+        setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
+
+      // }
     }
     fetch()
   }, [collAmount, mintAmount])
 
+  const calculateMintAmount = useCallback( throttle ((mintAmount: number) => {
+    setValue('mintAmount', mintAmount)
+  }, 1000), [mintAmount])
+
   const handleChangeMintRatio = useCallback((newRatio: number) => {
-    setValue('mintAmount', newRatio * maxMintable / 100)
+    // setValue('mintAmount', newRatio * maxMintable / 100)
+    calculateMintAmount(newRatio * maxMintable / 100)
     setMintRatio(newRatio)
 	}, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    setValue('mintAmount', mintAmount)
+    // setValue('mintAmount', mintAmount)
+    calculateMintAmount(mintAmount)
     setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
 	}, [mintRatio, mintAmount])
 
   // throttling with call contract : (1sec)
-  const calculateUSDiAmountFromRange = useCallback( throttle(async (limit: number, isLeft: boolean) => {
-    console.log('calculateUSDiAmount', limit +"/"+isLeft)
-    const program = getInceptApp()
-    await program.loadManager()
+  // const calculateUSDiAmountFromRange = useCallback( throttle(async (limit: number, isLeft: boolean) => {
+  //   console.log('calculateUSDiAmount', limit +"/"+isLeft)
+  //   const program = getInceptApp()
+  //   await program.loadManager()
 
-    const {
-      usdiPosition,
-    } = await program.calculateEditCometSinglePoolWithRange(
-      cometIndex,
-      collAmount,
-      limit,
-      isLeft,
-    )
+  //   const {
+  //     usdiPosition,
+  //   } = await program.calculateEditCometSinglePoolWithRange(
+  //     cometIndex,
+  //     collAmount,
+  //     limit,
+  //     isLeft,
+  //   )
     
-    setValue('mintAmount', usdiPosition)
-    setMintRatio(usdiPosition * 100 / maxMintable)
-  }, 1000), [mintAmount])
+  //   setValue('mintAmount', usdiPosition)
+  //   setMintRatio(usdiPosition * 100 / maxMintable)
+  // }, 1000), [mintAmount])
 
-	const handleChangeConcentRange = useCallback((limit: number, isLeft: boolean) => {
-    if (isLeft) {
-      setCometData({
-        ...cometData,
-        lowerLimit: limit
-      })
-    } else {
-      setCometData({
-        ...cometData,
-        upperLimit: limit
-      })
-    }
+	// const handleChangeConcentRange = useCallback((limit: number, isLeft: boolean) => {
+  //   if (isLeft) {
+  //     setCometData({
+  //       ...cometData,
+  //       lowerLimit: limit
+  //     })
+  //   } else {
+  //     setCometData({
+  //       ...cometData,
+  //       upperLimit: limit
+  //     })
+  //   }
 		
-    if ((isLeft && (limit < assetData.price && limit > 0)) || (!isLeft && (limit > assetData.price))) {
-      calculateUSDiAmountFromRange(limit, isLeft)
-    }
-	}, [cometData])
+  //   if ((isLeft && (limit < assetData.price && limit > 0)) || (!isLeft && (limit > assetData.price))) {
+  //     calculateUSDiAmountFromRange(limit, isLeft)
+  //   }
+	// }, [cometData])
 
 	const onEdit = async () => {
     setLoading(true)
@@ -201,6 +213,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       {
         cometIndex, 
         collAmount,
+        mintAmountChange: mintAmount - cometDetail.mintAmount,
         editType
       },
       {
@@ -235,7 +248,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
-          <Box sx={{ padding: '8px 1px', color: '#fff' }}>
+          <Box sx={{ padding: '8px 1px', color: '#fff', overflowX: 'hidden' }}>
             <WarningBox>
               If you are unclear about how to edit your Comet, click here to learn more.
             </WarningBox>
@@ -250,7 +263,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   control={control}
                   rules={{
                     validate(value) {
-                      if (!value || value <= 0) {
+                      if (value < 0) {
                         return 'the collateral amount should be above zero.'
                       } else if ((editType === 0 && value > balance) || (editType === 1 && value > maxWithdrawable)) {
                         return 'The collateral amount cannot exceed the balance.'
@@ -298,7 +311,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title="Projected Liquidity Concentration Range" /></Box>
                 </SubTitle>
 
-                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} onChange={handleChangeConcentRange} />
+                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
               </Box>
               <StyledDivider />
 
@@ -309,7 +322,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <StyledDivider />
 
-              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>Edit Comet</ActionButton>
+              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isValid}>Edit Comet</ActionButton>
             </Box>
           </Box>
         </DialogContent>

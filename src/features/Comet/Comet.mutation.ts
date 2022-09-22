@@ -114,11 +114,27 @@ export const callEdit = async ({
 
 	await program.loadManager()
 
-  const { collAmount, cometIndex, editType } = data
+  const { collAmount, mintAmountChange, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
 
   // const singlePoolComet = await program.getSinglePoolComet(cometIndex);//getComet()
   // let comet = singlePoolComet.positions[cometIndex]
+
+  // adjust USDI & iAsset in liquidity
+  if (mintAmountChange > 0) {
+    await program.addLiquidityToSinglePoolComet(
+      new BN(mintAmountChange * 10 ** 8),
+      cometIndex,
+      []
+    )
+  } else if (mintAmountChange < 0) {
+    console.log('mmmm', Math.abs(mintAmountChange))
+    await program.withdrawLiquidityFromSinglePoolComet(
+      new BN(Math.abs(mintAmountChange) * 10 ** 8),
+      cometIndex,
+      []
+    )
+  }
 
   /// Deposit
   if (editType === 0) {
@@ -149,8 +165,9 @@ export const callEdit = async ({
 }
 
 type EditFormData = {
-  cometIndex: number,
+  cometIndex: number
 	collAmount: number
+  mintAmountChange: number
   editType: number
 }
 interface CallEditProps {
