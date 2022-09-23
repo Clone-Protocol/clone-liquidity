@@ -89,8 +89,8 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     collateralAmount: positionData![1],
     collateralRatio: positionData![2] * 100,
     minCollateralRatio: positionData![3] * 100,
-    usdiVal: balance?.usdiVal,
-    iassetVal: balance?.iassetVal,
+    usdiVal: balance?.usdiVal!,
+    iassetVal: balance?.iassetVal!,
     maxWithdrawableColl
 	}
 }

@@ -101,8 +101,8 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
             <Stack direction="row" gap={2}>
               <StyledBox>
                 <FormBox>
-                  <Stack sx={{ marginTop: '5px'}} direction="row" justifyContent="space-between" alignItems="center">
-                    <Box display="flex">
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" alignItems="center">
                       <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
                       <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
                         USDi
@@ -118,8 +118,8 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
               </StyledBox>
               <StyledBox>
                 <FormBox>
-                  <Stack sx={{ marginTop: '5px'}} direction="row" justifyContent="space-between" alignItems="center">
-                    <Box display="flex">
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" alignItems="center">
                       <Image src={unconcentData.tickerIcon} width="28px" height="28px" />
                       <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
                         {unconcentData.tickerSymbol}

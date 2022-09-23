@@ -91,7 +91,7 @@ const FormStack = styled(Stack)`
   border-top-right-radius: 10px;
 	background-color: #333333;
   &:hover {
-    border: solid 1px #809cff;
+    box-shadow: 0 0 0 1px #809cff inset;
   }
 `
 
