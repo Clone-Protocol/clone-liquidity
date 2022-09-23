@@ -110,21 +110,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
       await program.loadManager()
 
-      // if (collAmount && !mintAmount) {
-      //   let {
-      //     maxUsdiPosition,
-      //     healthScore
-      //   } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
-      //     cometIndex,
-      //     collAmount,
-      //     0
-      //   )
-      //   setHealthScore(healthScore)
-      //   setMaxMintable(maxUsdiPosition)
-      //   setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
-      // }
-
-      // if (collAmount && mintAmount) {
+      if (open) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
 
         let {
@@ -148,8 +134,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         })
         
         setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
-
-      // }
+      }
     }
     fetch()
   }, [collAmount, mintAmount])
