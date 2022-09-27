@@ -14,14 +14,14 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 
 	await program.loadManager()
 
-  let poolIndex = index;
+  // let poolIndex = index;
   // for catch the MintPositionsUninitialized exception
-  try {
-    const mint = await program.getMintPosition(index)
-    poolIndex = Number(mint.poolIndex)
-  } catch (e) {
-    console.error(e)
-  }
+  // try {
+  //   const mint = await program.getMintPosition(index)
+  //   poolIndex = Number(mint.poolIndex)
+  // } catch (e) {
+  //   console.error(e)
+  // }
 
   let oPrice = 1
   let stableCollateralRatio = 0

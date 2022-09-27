@@ -4,8 +4,12 @@ import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
 import TipMsg from '~/components/Common/TipMsg'
 import BorrowBox from '~/containers/Borrow/BorrowBox'
+import useInitialized from '~/hooks/useInitialized'
 
 const Borrow: NextPage = () => {
+
+	useInitialized()
+
 	return (
 		<div>
 			<Head>

@@ -19,6 +19,7 @@ import { useIncept } from '~/hooks/useIncept'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import MoreMenu from '~/components/Common/MoreMenu';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import useInitialized from '~/hooks/useInitialized'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -107,31 +108,34 @@ const RightMenu = () => {
     setAnchorEl(event.currentTarget);
   }
 
-	useEffect(() => {
-		async function getAccount() {
-			if (connected && publicKey && wallet) {
-				const program = getInceptApp()
-				await program.loadManager()
+	// TODO:: NEED TO REMOVE
+	// useEffect(() => {
+	// 	async function getAccount() {
+	// 		if (connected && publicKey && wallet) {
+	// 			const program = getInceptApp()
+	// 			await program.loadManager()
 
-				if (!program.provider.wallet) {
-					return
-				}
+	// 			if (!program.provider.wallet) {
+	// 				return
+	// 			}
 
-				try {
-					await program.getUserAccount()
-				} catch (error) {
-					console.log('err', 'Account does not exist')
-					try {
-						await program.initializeUser()
-					} catch (err) {
-						console.log('err: Attempt to debit an account but found no record of a prior credit.')
-						enqueueSnackbar('Attempt to debit an account but found no record of a prior credit. Get SOL in Faucet or exchanges')
-					}
-				}
-			}
-		}
-		getAccount()
-	}, [connected, publicKey])
+	// 			console.log('d', router.pathname)
+
+	// 			try {
+	// 				await program.getUserAccount()
+	// 			} catch (error) {
+	// 				console.log('err', 'Account does not exist')
+	// 				try {
+	// 					await program.initializeUser()
+	// 				} catch (err) {
+	// 					console.log('err: Attempt to debit an account but found no record of a prior credit.')
+	// 					enqueueSnackbar('Attempt to debit an account but found no record of a prior credit. Get SOL in Faucet or exchanges')
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	getAccount()
+	// }, [connected, publicKey])
 
 	const handleWalletClick = () => {
 		try {
@@ -144,7 +148,6 @@ const RightMenu = () => {
         setShowWalletSelectPopup(false)
 			} else {
         setShowWalletSelectPopup(!showWalletSelectPopup)
-				// disconnect()
 			}
 		} catch (error) {
 			console.log('Error connecting to the wallet: ', (error as any).message)

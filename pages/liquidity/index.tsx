@@ -5,8 +5,11 @@ import { Container, Box } from '@mui/material'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import MyStatus from '~/containers/Liquidity/MyStatus'
 import LiquidityTable from '~/containers/Liquidity/LiquidityTable'
+import useInitialized from '~/hooks/useInitialized'
 
 const MyLiquidity: NextPage = () => {
+	useInitialized()
+
 	return (
 		<div>
 			<Head>

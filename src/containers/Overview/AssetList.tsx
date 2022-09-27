@@ -13,7 +13,6 @@ import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.svg'
 import ChangePositionIcon from 'public/images/change-position-icon.svg'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
@@ -22,14 +21,12 @@ const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const debounceSearchTerm = useDebounce(searchTerm, 500)
-	const { publicKey } = useWallet()
 
 	const { data: assets } = useAssetsQuery({
-    userPubKey: publicKey,
     filter,
     searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
 	  refetchOnMount: "always",
-    enabled: publicKey != null
+    enabled: true
 	})
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
