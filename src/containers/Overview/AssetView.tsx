@@ -125,7 +125,7 @@ const UnconcentTabBtn = styled((props: any) => (
 }))
 
 const UnconcentTab = styled(Button)`
-	width: 290px;
+	width: 295px;
 	height: 35px;
 	line-height: 35px;
   margin-left: 8px;
