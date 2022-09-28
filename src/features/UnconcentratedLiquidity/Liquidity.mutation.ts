@@ -8,7 +8,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
-  const { index, amount } = data
+  	const { index, amount } = data
 
 	let liquidityPosition = await program.getLiquidityPosition(index)
 

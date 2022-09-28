@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
+import { getTokenAccount } from '~/utils/token_accounts'
 
 export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -18,20 +19,34 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	let usdiVal = 0.0
 	let iassetVal = 0.0
 
-	try {
-		const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-    usdiVal = Number(associatedTokenAccount.amount) / 100000000;
-	} catch {}
+	const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, program.provider.publicKey!, program.connection);
 
-	try {
-    const associatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(
-      (
-        await program.getPool(poolIndex)
-      ).assetInfo.iassetMint
-    );
+	if (usdiTokenAccountAddress !== undefined) {
+	  const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress);
+	  usdiVal = Number(usdiBalance.value.amount) / 100000000;
+	}
+  
+	const pool = await program.getPool(index);
+	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.publicKey!, program.connection);
+	if (iassetTokenAccountAddress !== undefined) {
+	  const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress);
+	  iassetVal = Number(iassetBalance.value.amount) / 100000000;
+	}
+	
+	// try {
+	// 	const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+    // usdiVal = Number(associatedTokenAccount.amount) / 100000000;
+	// } catch {}
 
-    iassetVal =  Number(associatedTokenAccount.amount) / 100000000;
-	} catch {}
+	// try {
+    // const associatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(
+    //   (
+    //     await program.getPool(poolIndex)
+    //   ).assetInfo.iassetMint
+    // );
+
+    // iassetVal =  Number(associatedTokenAccount.amount) / 100000000;
+	// } catch {}
 	
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 	return {
