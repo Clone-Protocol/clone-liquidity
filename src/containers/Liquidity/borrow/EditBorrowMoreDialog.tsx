@@ -79,12 +79,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
     }
   }, [borrowAmount, editType])
 
-  // const calculateCollateralAmount = (inputBorrowAmount: number, inputCollRatio: number) => {
-  //   const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-  //   const collAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
-  //   setValue('collAmount', collAmount)
-  // }
-
 	const onEdit = async () => {
     setLoading(true)
     await mutateAsync(
@@ -153,7 +147,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)
                       field.onChange(borrowAmt)
-                      // calculateBorrowAmount(borrowAmt, borrowDetail.collateralRatio)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)

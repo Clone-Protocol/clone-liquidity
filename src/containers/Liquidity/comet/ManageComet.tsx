@@ -12,7 +12,6 @@ import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
-// import { fetchPools, PoolList } from '~/features/MyLiquidity/CometPools.query'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()

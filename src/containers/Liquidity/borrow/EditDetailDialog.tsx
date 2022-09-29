@@ -70,12 +70,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     }
   }, [collAmount, editType])
 
-  // const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
-  //   const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-  //   const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
-  //   setValue('borrowAmount', borrowAmount)
-  // }
-
 	const onEdit = async () => {
     setLoading(true)
     await mutateAsync(

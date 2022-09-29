@@ -281,26 +281,6 @@ const BorrowBox = () => {
                 />
                 <FormHelperText error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText>
               </Box>
-              {/* <Stack
-                sx={{
-                  border: '1px solid #9d9d9d',
-                  borderRadius: '10px',
-                  color: '#9d9d9d',
-                  padding: '12px',
-                  marginTop: '19px',
-                }}
-                direction="row"
-                justifyContent="space-between">
-                <Box>Price of asset bring borrowed</Box>
-                <Box sx={{ display: 'flex' }}>
-                  <Box sx={{ marginRight: '10px' }}>
-                    1 {assetData?.tickerSymbol} - {assetData?.oPrice} USDi
-                  </Box>
-                  <IconButton onClick={onRefresh}>
-                    <RefreshIcon></RefreshIcon>
-                  </IconButton>
-                </Box>
-              </Stack> */}
             </Box>
             <StyledDivider />
 

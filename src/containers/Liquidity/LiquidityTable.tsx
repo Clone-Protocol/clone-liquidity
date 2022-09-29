@@ -65,8 +65,6 @@ const LiquidityTable = () => {
           minHeight: '250px',
           color: '#fff',
           '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '13px' },
-          // '& .super-app-theme--row:hover': { border: 'solid 1px #535353' },
-          // '& .super-app-theme--cell:hover': { backgroundColor: 'rgba(38, 38, 38, 0.5)' },
         }}>
         <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
           <PageTabs value={filter} onChange={handleFilterChange}>
