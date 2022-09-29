@@ -94,16 +94,16 @@ const RightMenu = () => {
 				const usdiTokenAccount = await getUSDiAccount(program);
 				try {
 					if (usdiTokenAccount === undefined) {
-						console.log("NO USDI ACCOUNT!")
-						const ata = await getAssociatedTokenAddress(program.manager!.usdiMint, program.provider.publicKey!);
+						const ata = await getAssociatedTokenAddress(program.manager!.usdiMint, publicKey);
 						const transactions = new Transaction().add(
-							await createAssociatedTokenAccountInstruction(program.provider.publicKey!, ata, program.provider.publicKey!, program.manager!.usdiMint)
+							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.manager!.usdiMint)
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);
 						await program.provider.sendAndConfirm!(transactions);
 
 					} else {
+						console.log("USDI token account:", usdiTokenAccount.toString());
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
 					} 
 				} finally {

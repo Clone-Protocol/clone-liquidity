@@ -26,9 +26,9 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	let iassetMint = (await program.getAssetInfo(liquidityPosition.poolIndex)).iassetMint
 	let liquidityTokenMint = (await program.getPool(liquidityPosition.poolIndex)).liquidityTokenMint
 
-	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
+	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
+	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
 
 	await program.withdrawLiquidity(
 		new BN(liquidityTokenAmount * 10 ** 8),
@@ -70,9 +70,9 @@ export const callDeposit = async ({program, userPubKey, data} : CallDepositProps
 	let iassetMint = (await program.getAssetInfo(liquidityPosition.poolIndex)).iassetMint
 	let liquidityTokenMint = (await program.getPool(liquidityPosition.poolIndex)).liquidityTokenMint
 
-	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
+	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
+	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
 
 	await program.provideLiquidity(
 		new BN(iassetAmount * 10 ** 8),
@@ -111,9 +111,9 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 	let iassetMint = (await program.getAssetInfo(iassetIndex)).iassetMint
 	let liquidityTokenMint = (await program.getPool(iassetIndex)).liquidityTokenMint
 
-	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
+	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
+	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
 
 	await program.initializeLiquidityPosition(
 		new BN(iassetAmount * 10 ** 8),

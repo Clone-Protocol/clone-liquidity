@@ -19,7 +19,7 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	let usdiVal = 0.0
 	let iassetVal = 0.0
 
-	const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, program.provider.publicKey!, program.connection);
+	const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, program.provider.wallet.publicKey, program.connection);
 
 	if (usdiTokenAccountAddress !== undefined) {
 	  const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress);
@@ -27,7 +27,7 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	}
   
 	const pool = await program.getPool(index);
-	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.publicKey!, program.connection);
+	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.wallet.publicKey, program.connection);
 	if (iassetTokenAccountAddress !== undefined) {
 	  const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress);
 	  iassetVal = Number(iassetBalance.value.amount) / 100000000;

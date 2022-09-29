@@ -16,7 +16,7 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
   const mint = await program.getMintPosition(borrowIndex)
 	const assetInfo = await program.getAssetInfo(mint.poolIndex)
-  const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, program.provider.publicKey!, program.provider.connection);
+  const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, program.provider.wallet.publicKey, program.provider.connection);
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   await program.closeMintPosition(
@@ -114,7 +114,7 @@ export const callEditBorrow = async ({
 	let mint = await program.getMintPosition(borrowIndex)
 	let assetInfo = await program.getAssetInfo(mint.poolIndex)
 
-	const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, program.provider.publicKey!, program.connection);
+	const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, program.provider.wallet.publicKey, program.connection);
 
   /// Deposit
   if (editType === 0) {
@@ -182,7 +182,7 @@ export const callBorrow = async ({
 	let iassetMint = (await program.getAssetInfo(iassetIndex)).iassetMint
 
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-  const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
+  const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 
   if (iassetAssociatedTokenAccount !== undefined) {
     await program.initializeMintPosition(
@@ -197,13 +197,13 @@ export const callBorrow = async ({
   } else {
     const associatedToken = await getAssociatedTokenAddress(
       iassetMint,
-      program.provider.publicKey!,
+      program.provider.wallet.publicKey,
     );
     const transactions = new Transaction().add(
       await createAssociatedTokenAccountInstruction(
-        program.provider.publicKey!,
+        program.provider.wallet.publicKey,
         associatedToken,
-        program.provider.publicKey!,
+        program.provider.wallet.publicKey,
         iassetMint
       )).add(
       await program.initializeMintPositionInstruction(

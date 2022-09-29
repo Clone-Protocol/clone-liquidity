@@ -12,10 +12,7 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept";
 export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connection: Connection): Promise<PublicKey | undefined> => {
     const associatedToken = await getAssociatedTokenAddress(
         mint,
-        owner,
-        false,
-        TOKEN_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID
+        owner
     );
 
     let account;
@@ -39,13 +36,11 @@ export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connect
 }
 
 export const getUSDiAccount = async (incept: Incept): Promise<PublicKey | undefined> => {
-
   const usdiTokenAccount = await getTokenAccount(
     incept.manager!.usdiMint,
-    incept.provider.publicKey!,
+    incept.provider.wallet.publicKey,
     incept.connection
   );
-
   return usdiTokenAccount!;
 }
 
