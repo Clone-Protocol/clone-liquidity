@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import { useIncept } from '~/hooks/useIncept'
-import { fetchUSDiAccount, createTokenAccountInstruction } from '~/utils/token_accounts'
+import { getUSDiAccount, createTokenAccountInstruction } from '~/utils/token_accounts'
 import { Transaction } from "@solana/web3.js";
 
 export default function useInitialized() {
@@ -24,7 +24,7 @@ export default function useInitialized() {
 					return;
 				}
 
-				const usdiTokenAccount = await fetchUSDiAccount(program);
+				const usdiTokenAccount = await getUSDiAccount(program);
 
 				try {
 					await program.getUserAccount()

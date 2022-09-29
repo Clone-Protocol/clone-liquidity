@@ -33,21 +33,6 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	  iassetVal = Number(iassetBalance.value.amount) / 100000000;
 	}
 	
-	// try {
-	// 	const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-    // usdiVal = Number(associatedTokenAccount.amount) / 100000000;
-	// } catch {}
-
-	// try {
-    // const associatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(
-    //   (
-    //     await program.getPool(poolIndex)
-    //   ).assetInfo.iassetMint
-    // );
-
-    // iassetVal =  Number(associatedTokenAccount.amount) / 100000000;
-	// } catch {}
-	
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
 	return {
 		tickerIcon,

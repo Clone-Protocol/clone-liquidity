@@ -38,7 +38,7 @@ export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connect
     return account.address;
 }
 
-export const fetchUSDiAccount = async (incept: Incept): Promise<PublicKey | undefined> => {
+export const getUSDiAccount = async (incept: Incept): Promise<PublicKey | undefined> => {
 
   const usdiTokenAccount = await getTokenAccount(
     incept.manager!.usdiMint,

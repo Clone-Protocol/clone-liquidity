@@ -1,8 +1,10 @@
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, Transaction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
+import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 
 export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -14,13 +16,13 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
   const mint = await program.getMintPosition(borrowIndex)
 	const assetInfo = await program.getAssetInfo(mint.poolIndex)
-  const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
-  const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+  const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, program.provider.publicKey!, program.provider.connection);
+  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   await program.closeMintPosition(
-    iassetAssociatedTokenAccount.address,
+    iassetAssociatedTokenAccount!,
     Number(borrowIndex),
-    collateralAssociatedTokenAccount.address,
+    collateralAssociatedTokenAccount!,
     []
   )
 
@@ -112,12 +114,12 @@ export const callEditBorrow = async ({
 	let mint = await program.getMintPosition(borrowIndex)
 	let assetInfo = await program.getAssetInfo(mint.poolIndex)
 
-	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(assetInfo.iassetMint)
+	const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, program.provider.publicKey!, program.connection);
 
   /// Deposit
   if (editType === 0) {
     await program.addiAssetToMint(
-      iassetAssociatedTokenAccount.address,
+      iassetAssociatedTokenAccount!,
       new BN(borrowAmount * 10 ** 8),
       borrowIndex,
       []
@@ -130,7 +132,7 @@ export const callEditBorrow = async ({
 	} else { 
   /// Withdraw
     await program.payBackiAssetToMint(
-      iassetAssociatedTokenAccount.address,
+      iassetAssociatedTokenAccount!,
       new BN(borrowAmount * 10 ** 8),
       borrowIndex,
       []
@@ -179,18 +181,42 @@ export const callBorrow = async ({
   const { collateralIndex, iassetIndex, iassetAmount, collateralAmount } = data
 	let iassetMint = (await program.getAssetInfo(iassetIndex)).iassetMint
 
-	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-	const iassetAssociatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(iassetMint)
+  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
 
-	await program.initializeMintPosition(
-		new BN(iassetAmount * 10 ** 8),
-		new BN(collateralAmount * 10 ** 8),
-		collateralAssociatedTokenAccount.address,
-		iassetAssociatedTokenAccount.address,
-		iassetIndex,
-		collateralIndex,
-		[]
-	)
+  if (iassetAssociatedTokenAccount !== undefined) {
+    await program.initializeMintPosition(
+      new BN(iassetAmount * 10 ** 8),
+      new BN(collateralAmount * 10 ** 8),
+      collateralAssociatedTokenAccount!,
+      iassetAssociatedTokenAccount!,
+      iassetIndex,
+      collateralIndex,
+      []
+    )
+  } else {
+    const associatedToken = await getAssociatedTokenAddress(
+      iassetMint,
+      program.provider.publicKey!,
+    );
+    const transactions = new Transaction().add(
+      await createAssociatedTokenAccountInstruction(
+        program.provider.publicKey!,
+        associatedToken,
+        program.provider.publicKey!,
+        iassetMint
+      )).add(
+      await program.initializeMintPositionInstruction(
+        collateralAssociatedTokenAccount!,
+        associatedToken,
+        new BN(iassetAmount * 10 ** 8),
+        new BN(collateralAmount * 10 ** 8),
+        iassetIndex,
+        collateralIndex
+    ));
+    program.provider.sendAndConfirm!(transactions);
+  }
+
 
   return {
     result: true

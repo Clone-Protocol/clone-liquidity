@@ -19,6 +19,7 @@ import { useIncept } from '~/hooks/useIncept'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import MoreMenu from '~/components/Common/MoreMenu';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { getUSDiAccount } from "~/utils/token_accounts";
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -89,8 +90,8 @@ const RightMenu = () => {
 				await program.loadManager()
 
 				try {
-					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-					await program.hackathonMintUsdi(usdiAccount.address, 10000000000)
+					const usdiAccount = await getUSDiAccount(program);//await program.getOrCreateUsdiAssociatedTokenAccount()
+					await program.hackathonMintUsdi(usdiAccount!, 10000000000)
 				} finally {
 					setMintUsdi(false)
 				}
