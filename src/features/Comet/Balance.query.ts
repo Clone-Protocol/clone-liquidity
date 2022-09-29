@@ -4,6 +4,7 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 
 export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
@@ -18,8 +19,9 @@ export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { pro
 	let balanceVal = 0.0
 
 	try {
-		const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-    balanceVal = Number(associatedTokenAccount.amount) / 100000000;
+    const associatedTokenAccount = await getUSDiAccount(program);
+    const balance = await program.connection.getTokenAccountBalance(associatedTokenAccount!);
+    balanceVal = Number(balance.value.amount) / 100000000;
 	} catch {}
 
 	return {

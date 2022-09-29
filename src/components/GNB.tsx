@@ -90,7 +90,7 @@ const RightMenu = () => {
 				await program.loadManager()
 
 				try {
-					const usdiAccount = await getUSDiAccount(program);//await program.getOrCreateUsdiAssociatedTokenAccount()
+					const usdiAccount = await getUSDiAccount(program);
 					await program.hackathonMintUsdi(usdiAccount!, 10000000000)
 				} finally {
 					setMintUsdi(false)

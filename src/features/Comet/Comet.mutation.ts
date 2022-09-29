@@ -4,6 +4,7 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
+import { getUSDiAccount } from '~/utils/token_accounts';
 
 export const callRecenter = async ({
   program,
@@ -56,10 +57,10 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
       []
     )
   } else {
-    const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+    const collateralAssociatedTokenAccount = await getUSDiAccount(program);
     //Close comet & withdraw collateral
     await program.withdrawCollateralAndCloseSinglePoolComet(
-      collateralAssociatedTokenAccount.address,
+      collateralAssociatedTokenAccount!,
       data.cometIndex,
       []
     )
@@ -96,7 +97,7 @@ export const callEdit = async ({
 	await program.loadManager()
 
   const { collAmount, mintAmountChange, cometIndex, editType } = data
-	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   const singlePoolComet = await program.getSinglePoolComet(cometIndex);
   const pool = await program.getPool(Number(singlePoolComet.positions[0].poolIndex));
@@ -123,7 +124,7 @@ export const callEdit = async ({
   /// Deposit
   if (editType === 0) {
 		await program.addCollateralToSinglePoolComet(
-			collateralAssociatedTokenAccount.address,
+			collateralAssociatedTokenAccount!,
 			new BN(collAmount * 10 ** 8),
 			cometIndex
 		)
@@ -135,7 +136,7 @@ export const callEdit = async ({
 	} else { 
   /// Withdraw
 		await program.withdrawCollateralFromSinglePoolComet(
-			collateralAssociatedTokenAccount.address,
+			collateralAssociatedTokenAccount!,
 			new BN(collAmount * 10 ** 8),
 			cometIndex,
 			[]
@@ -177,10 +178,10 @@ export const callComet = async ({
 	await program.loadManager()
 
   const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data
-	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   await program.openNewSinglePoolComet(
-    collateralAssociatedTokenAccount.address,
+    collateralAssociatedTokenAccount!,
     new BN(usdiAmount * 10 ** 8),
     new BN(collateralAmount * 10 ** 8),
     iassetIndex,

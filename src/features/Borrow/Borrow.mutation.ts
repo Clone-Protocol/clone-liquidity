@@ -62,13 +62,13 @@ export const callEditCollateral = async ({
 
   console.log('edit input data', data)
 
-	const collateralAssociatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
+	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   /// Deposit
   if (editType === 0) {
 		await program.addCollateralToMint(
       borrowIndex,
-			collateralAssociatedTokenAccount.address,
+			collateralAssociatedTokenAccount!,
 			new BN(collateralAmount * 10 ** 8),
 			[]
 		)
@@ -80,7 +80,7 @@ export const callEditCollateral = async ({
 	} else { 
   /// Withdraw
     await program.withdrawCollateralFromMint(
-      collateralAssociatedTokenAccount.address,
+      collateralAssociatedTokenAccount!,
       borrowIndex,
       new BN(collateralAmount * 10 ** 8),
       []
