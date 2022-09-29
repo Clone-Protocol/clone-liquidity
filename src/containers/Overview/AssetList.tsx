@@ -7,7 +7,6 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
-// import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 import Divider from '@mui/material/Divider';
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'

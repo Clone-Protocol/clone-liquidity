@@ -43,7 +43,6 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
 
 	const handleChangePercent = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number' && data?.maxVal) {
-      // console.log('m', (data?.maxVal * percent) / 100)
 			setPercent(newValue)
 			setAmount((data?.maxVal * percent) / 100)
 		}
@@ -131,7 +130,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
                     </Box>
                   </Stack>
                 </FormBox>
-                <BottomBox>Withdrawable: {(data?.maxVal/unconcentData.price).toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
+                <BottomBox>Withdrawable: {(data?.maxVal!/unconcentData.price).toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
               </StyledBox>
             </Stack>
               

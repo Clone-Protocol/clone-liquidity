@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -85,7 +85,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         setHealthScore(healthScore)
         setMaxMintable(maxUsdiPosition)
         setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
-        // setMintRatio(mintAmount * 100 / maxUsdiPosition)
       }
 
       if (collAmount && mintAmount) {

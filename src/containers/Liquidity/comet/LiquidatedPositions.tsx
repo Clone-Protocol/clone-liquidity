@@ -8,7 +8,6 @@ import { useState } from "react"
 const LiquidityPositions = ({ ltype }: {ltype : number}) => {
 
   const [showArea, setShowArea] = useState(true)
-
   const positionInfo = {
     tickerIcon: '/images/assets/USDi.png',
     tickerName: 'USD Coin',

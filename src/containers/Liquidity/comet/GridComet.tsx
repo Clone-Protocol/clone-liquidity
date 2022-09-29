@@ -47,26 +47,6 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-	// {
-	// 	field: 'iPrice',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'super-app-theme--cell',
-	// 	headerName: 'Indicator price',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-  //     return <CellDigitValue value={params.value} symbol="USDi" />
-	// 	},
-	// },
-	// {
-	// 	field: 'cPrice',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'super-app-theme--cell',
-	// 	headerName: 'Center price',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-  //     return <CellDigitValue value={params.value} symbol="USDi" />
-	// 	},
-	// },
   {
 		field: 'collateral',
 		headerClassName: 'super-app-theme--header',

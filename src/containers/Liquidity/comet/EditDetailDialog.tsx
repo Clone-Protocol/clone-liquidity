@@ -144,13 +144,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }, 1000), [mintAmount])
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
-    // setValue('mintAmount', newRatio * maxMintable / 100)
     calculateMintAmount(newRatio * maxMintable / 100)
     setMintRatio(newRatio)
 	}, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    // setValue('mintAmount', mintAmount)
     calculateMintAmount(mintAmount)
     setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
 	}, [mintRatio, mintAmount])
