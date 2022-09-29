@@ -20,6 +20,9 @@ import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import MoreMenu from '~/components/Common/MoreMenu';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { getUSDiAccount } from "~/utils/token_accounts";
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
+import { Transaction } from "@solana/web3.js";
+
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -88,10 +91,21 @@ const RightMenu = () => {
 			if (connected && publicKey && mintUsdi) {
 				const program = getInceptApp()
 				await program.loadManager()
-
+				const usdiTokenAccount = await getUSDiAccount(program);
 				try {
-					const usdiAccount = await getUSDiAccount(program);
-					await program.hackathonMintUsdi(usdiAccount!, 10000000000)
+					if (usdiTokenAccount === undefined) {
+						console.log("NO USDI ACCOUNT!")
+						const ata = await getAssociatedTokenAddress(program.manager!.usdiMint, program.provider.publicKey!);
+						const transactions = new Transaction().add(
+							await createAssociatedTokenAccountInstruction(program.provider.publicKey!, ata, program.provider.publicKey!, program.manager!.usdiMint)
+						).add(
+							await program.hackathonMintUsdiInstruction(ata, 10000000000)
+						);
+						await program.provider.sendAndConfirm!(transactions);
+
+					} else {
+						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
+					} 
 				} finally {
 					setMintUsdi(false)
 				}
