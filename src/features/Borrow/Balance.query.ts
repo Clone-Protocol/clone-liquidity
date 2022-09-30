@@ -19,8 +19,6 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
 	let usdiVal = 0.0
 	let iassetVal = 0.0
 
-  console.log("pb:", program.provider.wallet.publicKey.toString());
-
   const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, program.provider.wallet.publicKey, program.connection);
 
   if (usdiTokenAccountAddress !== undefined) {

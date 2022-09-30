@@ -1,9 +1,11 @@
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, Transaction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
 import { BN } from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
+import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 
 export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -29,15 +31,69 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
+	const singlePoolComet = await program.getSinglePoolComet(data.index);
 
-	await program.withdrawLiquidity(
-		new BN(liquidityTokenAmount * 10 ** 8),
-		collateralAssociatedTokenAccount!,
-		iassetAssociatedTokenAccount!,
-		liquidityAssociatedTokenAccount!,
-		index,
-		[]
-	)
+	if (iassetAssociatedTokenAccount === undefined || collateralAssociatedTokenAccount === undefined) {
+		let tx = new Transaction().add(
+			await program.paySinglePoolCometILDInstruction(
+				data.index,
+				getMantissa(singlePoolComet.collaterals[0].collateralAmount)
+			)	
+		);
+		
+		if (iassetAssociatedTokenAccount === undefined) {
+			const iAssetAssociatedToken = await getAssociatedTokenAddress(
+				iassetMint,
+				program.provider.wallet.publicKey,
+			  );
+			tx.add(
+				await createAssociatedTokenAccountInstruction(
+					program.provider.wallet.publicKey,
+					iAssetAssociatedToken,
+					program.provider.wallet.publicKey,
+					iassetMint
+				)
+			);
+		}
+
+		if (collateralAssociatedTokenAccount === undefined) {
+			const usdiAssociatedToken = await getAssociatedTokenAddress(
+				program.manager!.usdiMint,
+				program.provider.wallet.publicKey,
+			  );
+			tx.add(
+				await createAssociatedTokenAccountInstruction(
+					program.provider.wallet.publicKey,
+					usdiAssociatedToken,
+					program.provider.wallet.publicKey,
+					program.manager!.usdiMint
+				)
+			);
+		}
+
+		tx.add(
+			await program.withdrawLiquidityInstruction(
+				collateralAssociatedTokenAccount!,
+				iassetAssociatedTokenAccount!,
+				liquidityAssociatedTokenAccount!,
+				new BN(liquidityTokenAmount * 10 ** 8),
+				index,
+			)
+		);
+		await program.provider.send!(tx);
+
+	} else {
+		await program.withdrawLiquidity(
+			new BN(liquidityTokenAmount * 10 ** 8),
+			collateralAssociatedTokenAccount!,
+			iassetAssociatedTokenAccount!,
+			liquidityAssociatedTokenAccount!,
+			index,
+			[]
+		)
+	}
+
+
 
 	return {
     result: true

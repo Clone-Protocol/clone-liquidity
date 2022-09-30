@@ -79,12 +79,38 @@ export const callEditCollateral = async ({
     }
 	} else { 
   /// Withdraw
-    await program.withdrawCollateralFromMint(
-      collateralAssociatedTokenAccount!,
-      borrowIndex,
-      new BN(collateralAmount * 10 ** 8),
-      []
-    )
+
+    if (collateralAssociatedTokenAccount === undefined) {
+      let tx = new Transaction();
+			const usdiAssociatedToken = await getAssociatedTokenAddress(
+				program.manager!.usdiMint,
+				program.provider.wallet.publicKey,
+			  );
+			tx.add(
+				await createAssociatedTokenAccountInstruction(
+					program.provider.wallet.publicKey,
+					usdiAssociatedToken,
+					program.provider.wallet.publicKey,
+					program.manager!.usdiMint
+				)
+			);
+      tx.add(
+        await program.withdrawCollateralFromMintInstruction(
+          program.provider.wallet.publicKey,
+          borrowIndex,
+          usdiAssociatedToken,
+          new BN(collateralAmount * 10 ** 8),
+        )
+      );
+      await program.provider.send!(tx);
+    } else {
+      await program.withdrawCollateralFromMint(
+        collateralAssociatedTokenAccount!,
+        borrowIndex,
+        new BN(collateralAmount * 10 ** 8),
+        []
+      )
+    }
 
     return {
       result: true,
@@ -118,12 +144,33 @@ export const callEditBorrow = async ({
 
   /// Deposit
   if (editType === 0) {
-    await program.addiAssetToMint(
-      iassetAssociatedTokenAccount!,
-      new BN(borrowAmount * 10 ** 8),
-      borrowIndex,
-      []
-    )
+    if (iassetAssociatedTokenAccount !== undefined) {
+      await program.addiAssetToMint(
+        iassetAssociatedTokenAccount!,
+        new BN(borrowAmount * 10 ** 8),
+        borrowIndex,
+        []
+      )
+    } else {
+      const associatedToken = await getAssociatedTokenAddress(
+        assetInfo.iassetMint,
+        program.provider.wallet.publicKey,
+      );
+      const transactions = new Transaction().add(
+        await createAssociatedTokenAccountInstruction(
+          program.provider.wallet.publicKey,
+          associatedToken,
+          program.provider.wallet.publicKey,
+          assetInfo.iassetMint
+        )).add(
+        await program.addiAssetToMintInstruction(
+          associatedToken,
+          new BN(borrowAmount * 10 ** 8),
+          borrowIndex,
+      ));
+      program.provider.send!(transactions);
+    }
+
 
     return {
       result: true,
@@ -214,7 +261,7 @@ export const callBorrow = async ({
         iassetIndex,
         collateralIndex
     ));
-    program.provider.sendAndConfirm!(transactions);
+    program.provider.send!(transactions);
   }
 
 

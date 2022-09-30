@@ -39,7 +39,7 @@ export default function useInitialized() {
 							).add(
 								await program.initializeUserInstruction()
 							);
-							await program.provider.sendAndConfirm!(transactions);
+							await program.provider.send!(transactions);
 
 						} else {
 							await program.initializeUser()
