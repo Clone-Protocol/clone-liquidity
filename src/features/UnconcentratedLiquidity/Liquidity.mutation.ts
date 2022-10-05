@@ -2,10 +2,11 @@ import { PublicKey, Transaction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
-import { BN } from '@project-serum/anchor'
+import * as anchor from "@project-serum/anchor"
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
+import { initial } from 'lodash';
 
 export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -28,12 +29,12 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	let iassetMint = (await program.getAssetInfo(liquidityPosition.poolIndex)).iassetMint
 	let liquidityTokenMint = (await program.getPool(liquidityPosition.poolIndex)).liquidityTokenMint
 
-	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
+	let iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
+	let collateralAssociatedTokenAccount = await getUSDiAccount(program);
+	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
 	const singlePoolComet = await program.getSinglePoolComet(data.index);
 
-	if (iassetAssociatedTokenAccount === undefined || collateralAssociatedTokenAccount === undefined) {
+	if (iassetAssociatedTokenAccount === undefined || collateralAssociatedTokenAccount === undefined || liquidityAssociatedTokenAccount === undefined) {
 		let tx = new Transaction().add(
 			await program.paySinglePoolCometILDInstruction(
 				data.index,
@@ -42,7 +43,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 		);
 		
 		if (iassetAssociatedTokenAccount === undefined) {
-			const iAssetAssociatedToken = await getAssociatedTokenAddress(
+			const iAssetAssociatedToken: PublicKey = await getAssociatedTokenAddress(
 				iassetMint,
 				program.provider.wallet.publicKey,
 			  );
@@ -54,8 +55,8 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 					iassetMint
 				)
 			);
+			iassetAssociatedTokenAccount = iAssetAssociatedToken;
 		}
-
 		if (collateralAssociatedTokenAccount === undefined) {
 			const usdiAssociatedToken = await getAssociatedTokenAddress(
 				program.manager!.usdiMint,
@@ -69,6 +70,23 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 					program.manager!.usdiMint
 				)
 			);
+			collateralAssociatedTokenAccount = usdiAssociatedToken;
+		}
+
+		if (liquidityAssociatedTokenAccount === undefined) {
+			const liquidityAssociatedToken = await getAssociatedTokenAddress(
+				liquidityTokenMint,
+				program.provider.wallet.publicKey,
+			  );
+			tx.add(
+				await createAssociatedTokenAccountInstruction(
+					program.provider.wallet.publicKey,
+					liquidityAssociatedToken,
+					program.provider.wallet.publicKey,
+					liquidityTokenMint
+				)
+			);
+			liquidityAssociatedTokenAccount = liquidityAssociatedToken;
 		}
 
 		tx.add(
@@ -76,7 +94,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 				collateralAssociatedTokenAccount!,
 				iassetAssociatedTokenAccount!,
 				liquidityAssociatedTokenAccount!,
-				new BN(liquidityTokenAmount * 10 ** 8),
+				new anchor.BN(liquidityTokenAmount * 10 ** 8),
 				index,
 			)
 		);
@@ -84,7 +102,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 
 	} else {
 		await program.withdrawLiquidity(
-			new BN(liquidityTokenAmount * 10 ** 8),
+			new anchor.BN(liquidityTokenAmount * 10 ** 8),
 			collateralAssociatedTokenAccount!,
 			iassetAssociatedTokenAccount!,
 			liquidityAssociatedTokenAccount!,
@@ -92,8 +110,6 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 			[]
 		)
 	}
-
-
 
 	return {
     result: true
@@ -128,17 +144,34 @@ export const callDeposit = async ({program, userPubKey, data} : CallDepositProps
 
 	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
+	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
 
-	await program.provideLiquidity(
-		new BN(iassetAmount * 10 ** 8),
-		collateralAssociatedTokenAccount!,
-		iassetAssociatedTokenAccount!,
-		liquidityAssociatedTokenAccount!,
-		index,
-		[]
-	)
+	let tx = new Transaction();
 
+	if (liquidityAssociatedTokenAccount === undefined) {
+		const liquidityAssociatedToken = await getAssociatedTokenAddress(
+			liquidityTokenMint,
+			program.provider.wallet.publicKey,
+		  );
+		tx.add(
+			await createAssociatedTokenAccountInstruction(
+				program.provider.wallet.publicKey,
+				liquidityAssociatedToken,
+				program.provider.wallet.publicKey,
+				liquidityTokenMint
+			)
+		);
+		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
+	}
+	tx.add(
+		await program.provideLiquidityInstruction(
+			collateralAssociatedTokenAccount!,
+			iassetAssociatedTokenAccount!,
+			liquidityAssociatedTokenAccount!,
+			new anchor.BN(iassetAmount * 10 ** 8),
+			index
+		)
+	);
 	return {
     result: true
   }
@@ -164,21 +197,67 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 	await program.loadManager()
   	const { iassetIndex, iassetAmount } = data
 
-	let iassetMint = (await program.getAssetInfo(iassetIndex)).iassetMint
-	let liquidityTokenMint = (await program.getPool(iassetIndex)).liquidityTokenMint
+	const pool = await program.getPool(iassetIndex);
+
+	let iassetMint = pool.assetInfo.iassetMint;
+	let liquidityTokenMint = pool.liquidityTokenMint;
+	let signers = [];
 
 	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	const liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
+	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
 
-	await program.initializeLiquidityPosition(
-		new BN(iassetAmount * 10 ** 8),
-		collateralAssociatedTokenAccount!,
-		iassetAssociatedTokenAccount!,
-		liquidityAssociatedTokenAccount!,
-		iassetIndex,
-		[]
-	)
+	const tx = new Transaction();
+
+	let userAccount = await program.getUserAccount();
+	let liquidityPositionAddress = userAccount.liquidityPositions;
+	if (liquidityPositionAddress.equals(PublicKey.default)) {
+		const liquidityPositionsAccount = anchor.web3.Keypair.generate();
+		signers.push(liquidityPositionsAccount);
+		liquidityPositionAddress = liquidityPositionsAccount.publicKey;
+		tx.add(
+			await program.program.account.liquidityPositions.createInstruction(
+				liquidityPositionsAccount
+			)
+		);
+		tx.add(
+			await program.initializeLiquidityPositionsInstruction(liquidityPositionsAccount)
+		);
+	}
+	const associatedToken = await getAssociatedTokenAddress(liquidityTokenMint, program.provider.wallet.publicKey)
+	if (liquidityAssociatedTokenAccount === undefined) {
+		tx.add(
+			await createAssociatedTokenAccountInstruction(
+				program.provider.wallet.publicKey,
+				associatedToken,
+				program.provider.wallet.publicKey,
+				liquidityTokenMint
+			)
+		)
+		liquidityAssociatedTokenAccount = associatedToken;
+	}
+
+	tx.add(
+		await program.initializeLiquidityPositionInstruction(
+			collateralAssociatedTokenAccount!,
+			iassetAssociatedTokenAccount!,
+			liquidityAssociatedTokenAccount!,
+			new anchor.BN(iassetAmount * 10 ** 8),
+			iassetIndex,
+			liquidityPositionAddress
+		)
+	);
+
+	await program.provider.send!(tx, signers);
+
+	// await program.initializeLiquidityPosition(
+	// 	new anchor.BN(iassetAmount * 10 ** 8),
+	// 	collateralAssociatedTokenAccount!,
+	// 	iassetAssociatedTokenAccount!,
+	// 	liquidityAssociatedTokenAccount!,
+	// 	iassetIndex,
+	// 	[]
+	// )
 
 	return {
     result: true

@@ -3,7 +3,7 @@ import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } fr
 import { useMutation } from 'react-query'
 import { Incept, Comet } from "incept-protocol-sdk/sdk/src/incept"
 import { toNumber, getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
-import { BN } from '@project-serum/anchor'
+import * as anchor from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
 
@@ -79,7 +79,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
   if (getMantissa(singlePoolComet.positions[0].liquidityTokenValue) !== 0) {
     tx.add(
       await program.withdrawLiquidityFromSinglePoolCometInstruction(
-        new BN(getMantissa(singlePoolComet.positions[0].liquidityTokenValue)),
+        new anchor.BN(getMantissa(singlePoolComet.positions[0].liquidityTokenValue)),
         data.cometIndex
       )
     );
@@ -116,7 +116,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({program, userPubKey, d
     tx.add(
       await program.withdrawCollateralFromSinglePoolCometInstruction(
         usdiAssociatedToken,
-        new BN(getMantissa(singlePoolComet.collaterals[0].collateralAmount)),
+        new anchor.BN(getMantissa(singlePoolComet.collaterals[0].collateralAmount)),
         data.cometIndex
       )
     );
@@ -197,7 +197,7 @@ export const callEdit = async ({
   // adjust USDI & iAsset in liquidity
   if (mintAmountChange > 0) {
     await program.addLiquidityToSinglePoolComet(
-      new BN(mintAmountChange * 10 ** 8),
+      new anchor.BN(mintAmountChange * 10 ** 8),
       cometIndex,
       []
     )
@@ -207,7 +207,7 @@ export const callEdit = async ({
       toNumber(singlePoolComet.positions[0].liquidityTokenValue)
     )
     await program.withdrawLiquidityFromSinglePoolComet(
-      new BN(lpTokensToClaim * 10 ** 8),
+      new anchor.BN(lpTokensToClaim * 10 ** 8),
       cometIndex,
       []
     )
@@ -217,7 +217,7 @@ export const callEdit = async ({
   if (editType === 0) {
 		await program.addCollateralToSinglePoolComet(
 			collateralAssociatedTokenAccount!,
-			new BN(collAmount * 10 ** 8),
+			new anchor.BN(collAmount * 10 ** 8),
 			cometIndex
 		)
 
@@ -230,7 +230,7 @@ export const callEdit = async ({
   /// Withdraw
 		await program.withdrawCollateralFromSinglePoolComet(
 			collateralAssociatedTokenAccount!,
-			new BN(collAmount * 10 ** 8),
+			new anchor.BN(collAmount * 10 ** 8),
 			cometIndex,
 			[]
 		)
@@ -270,17 +270,79 @@ export const callComet = async ({
 
 	await program.loadManager()
 
-  const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data
+  const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data;
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
-  await program.openNewSinglePoolComet(
-    collateralAssociatedTokenAccount!,
-    new BN(usdiAmount * 10 ** 8),
-    new BN(collateralAmount * 10 ** 8),
-    iassetIndex,
-	  collateralIndex,
-		[]
-  )
+  let tx = new Transaction();
+  let signers = [];
+  let numberSinglePoolComets = 1;
+
+  let userAccount = await program.getUserAccount();
+  let singlePoolCometsAddress = userAccount.singlePoolComets;
+
+  const singlePoolComets = await program.getSinglePoolComets();
+  numberSinglePoolComets = Number(singlePoolComets.numComets);
+
+  // Assume for now the single pool comets positions account is created,
+  // Moving the creation to when we create a user account as transaction size is too large!
+  // if (singlePoolCometsAddress.equals(PublicKey.default)) {
+  //   const singlePoolCometsAccount = anchor.web3.Keypair.generate();
+  //   singlePoolCometsAddress = singlePoolCometsAccount.publicKey;
+  //   tx.add(
+  //     await program.program.account.singlePoolComets.createInstruction(
+  //       singlePoolCometsAccount
+  //     )
+  //   );
+  //   tx.add(
+  //     await program.initializeSinglePoolCometsInstruction(
+  //       singlePoolCometsAccount
+  //     )
+  //   );
+  //   signers.push(singlePoolCometsAccount);
+
+  // } else {
+  //   const singlePoolComets = await program.getSinglePoolComets();
+  //   numberSinglePoolComets = Number(singlePoolComets.numComets);
+  // }
+
+  const newSinglePoolCometAccount = anchor.web3.Keypair.generate();
+  signers.push(newSinglePoolCometAccount);
+
+  tx.add(
+    await program.initializeSinglePoolCometInstruction(
+      singlePoolCometsAddress, newSinglePoolCometAccount.publicKey, iassetIndex, collateralIndex
+    )
+  );
+
+  tx.add(
+    await program.updatePricesInstruction()
+  );
+  tx.add(
+    await program.addCollateralToSinglePoolCometInstruction(
+      collateralAssociatedTokenAccount!,
+      new anchor.BN(collateralAmount * 10 ** 8),
+      newSinglePoolCometAccount.publicKey,
+      numberSinglePoolComets - 1
+    )
+  );
+  tx.add(
+    await program.addLiquidityToSinglePoolCometInstruction(
+      new anchor.BN(usdiAmount * 10 ** 8),
+      iassetIndex,
+      newSinglePoolCometAccount.publicKey
+    )
+  );
+
+  await program.provider.send!(tx, signers);
+
+  // await program.openNewSinglePoolComet(
+  //   collateralAssociatedTokenAccount!,
+  //   new anchor.BN(usdiAmount * 10 ** 8),
+  //   new anchor.BN(collateralAmount * 10 ** 8),
+  //   iassetIndex,
+	//   collateralIndex,
+	// 	[]
+  // )
 
   return {
     result: true
