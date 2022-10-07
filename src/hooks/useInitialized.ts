@@ -25,9 +25,10 @@ export default function useInitialized() {
 				const usdiTokenAccount = await getTokenAccount(program.manager!.usdiMint, publicKey, program.provider.connection);
 
 				try {
-					await program.getUserAccount(publicKey)
+					await program.getUserAccount()
 					console.log('getUserAccount')
 				} catch (error) {
+					console.log("error:", error);
 					console.log('err', 'Account does not exist')
 					let tx = new Transaction();
 

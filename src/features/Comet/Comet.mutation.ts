@@ -275,13 +275,12 @@ export const callComet = async ({
 
   let tx = new Transaction();
   let signers = [];
-  let numberSinglePoolComets = 1;
 
   let userAccount = await program.getUserAccount();
   let singlePoolCometsAddress = userAccount.singlePoolComets;
 
   const singlePoolComets = await program.getSinglePoolComets();
-  numberSinglePoolComets = Number(singlePoolComets.numComets);
+  console.log("SPCS", singlePoolCometsAddress.toString())
 
   // Assume for now the single pool comets positions account is created,
   // Moving the creation to when we create a user account as transaction size is too large!
@@ -307,10 +306,15 @@ export const callComet = async ({
 
   const newSinglePoolCometAccount = anchor.web3.Keypair.generate();
   signers.push(newSinglePoolCometAccount);
+  tx.add(
+       await program.program.account.comet.createInstruction(
+          newSinglePoolCometAccount
+       )
+  );
 
   tx.add(
     await program.initializeSinglePoolCometInstruction(
-      singlePoolCometsAddress, newSinglePoolCometAccount.publicKey, iassetIndex, collateralIndex
+      singlePoolCometsAddress, newSinglePoolCometAccount.publicKey, iassetIndex, 0
     )
   );
 
@@ -322,7 +326,7 @@ export const callComet = async ({
       collateralAssociatedTokenAccount!,
       new anchor.BN(collateralAmount * 10 ** 8),
       newSinglePoolCometAccount.publicKey,
-      numberSinglePoolComets - 1
+      0
     )
   );
   tx.add(
