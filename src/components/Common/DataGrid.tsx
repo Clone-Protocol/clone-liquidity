@@ -67,7 +67,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260 }) =>
       }
     }}
     components={{
-      NoRowsOverlay: CustomNoRowsOverlay
+      NoResultsOverlay: CustomNoRowsOverlay
     }}
     getRowClassName={(params) => 'super-app-theme--row'}
     disableColumnFilter
