@@ -54,8 +54,8 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
       <Image src={TwitterIcon} alt="twitter" />
     </StyledMenuItem>
     <StyledMenuItem>
-      <div>Incept Market</div>
-      <Image src={TradingIcon} alt="market" />
+      <div>Incept Markets</div>
+      <Image src={TradingIcon} alt="markets" />
     </StyledMenuItem>
   </Menu>
 }

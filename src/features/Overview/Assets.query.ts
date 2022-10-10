@@ -1,5 +1,4 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
-import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
@@ -72,7 +71,7 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
   const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-  return useQuery(['assets', filter], () => fetchAssets({ program: getInceptApp(), setStartTimer }), {
+  return useQuery(['assets'], () => fetchAssets({ program: getInceptApp(), setStartTimer }), {
     refetchOnMount,
 		refetchInterval: REFETCH_CYCLE,
 		refetchIntervalInBackground: true,
