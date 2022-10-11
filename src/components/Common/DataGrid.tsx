@@ -38,6 +38,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260 }) =>
       '& .MuiDataGrid-columnHeaders': {
         border: '0'
       },
+      '& .MuiDataGrid-columnHeader:focus': {
+        outline: 'none',
+      },
       '& .MuiDataGrid-columnSeparator': {
         display: 'none',
       },

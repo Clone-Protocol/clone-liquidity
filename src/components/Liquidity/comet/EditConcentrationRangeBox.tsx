@@ -46,7 +46,7 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 						border: 'solid 1px #809cff',
             background: '#252627'
 					}}>
-					<PriceValue><InputAmount disabled step=".01" value={parseFloat(cometData.lowerLimit.toFixed(4))} min={0} max={assetData.price-0.01} onChange={handleChangeLowerLimit} /></PriceValue>
+					<PriceValue><InputAmount disabled step=".01" value={parseFloat(cometData.lowerLimit.toFixed(4))} placeholder="0.00" min={0} max={assetData.price-0.01} onChange={handleChangeLowerLimit} /></PriceValue>
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
           <CurrentPrice style={{ borderTop: '1px solid #809cff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentLowerLimit.toLocaleString()} USD</CurrentPrice>
 				</Box>
