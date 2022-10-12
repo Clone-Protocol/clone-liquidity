@@ -242,7 +242,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerName="USDi Coin"
                   tickerSymbol="USDi"
-                  value={field.value}
+                  value={parseFloat(field.value.toFixed(3))}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -289,7 +289,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                     tickerIcon={'/images/assets/USDi.png'}
                     tickerName="USDi Coin"
                     tickerSymbol="USDi"
-                    value={field.value}
+                    value={parseFloat(field.value.toFixed(3))}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
