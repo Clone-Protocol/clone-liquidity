@@ -7,13 +7,10 @@ import Container from '@mui/material/Container'
 import TipMsg from '~/components/Common/TipMsg'
 import AssetView from '~/containers/Overview/AssetView'
 import { Box } from '@mui/material'
-import useInitialized from '~/hooks/useInitialized'
 
 const AssetPage: NextPage = () => {
 	const router = useRouter()
 	const { assetId } = router.query
-
-	useInitialized()
 
 	return (
 		<div>
