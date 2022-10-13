@@ -43,11 +43,11 @@ export function useRecenterMutation(userPubKey : PublicKey | null ) {
   return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(), userPubKey, data }))
 }
 
-const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, data} : CallCloseProps, singlePoolComet: Comet, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined ) => {
+const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, data} : CallCloseProps, singlePoolComet: Comet, iassetMint: PublicKey, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined ) => {
 
   let tx = new Transaction();
   const iAssetAssociatedToken = await getAssociatedTokenAddress(
-    data.iassetMint,
+    iassetMint,
     program.provider.wallet.publicKey,
   );
   if (iassetAssociatedTokenAccount === undefined) {
@@ -56,7 +56,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
         program.provider.wallet.publicKey,
         iAssetAssociatedToken,
         program.provider.wallet.publicKey,
-        data.iassetMint
+        iassetMint
       )
     );
   }
@@ -79,7 +79,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
   if (getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue) !== 0) {
     tx.add(
       await program.withdrawLiquidityFromSinglePoolCometInstruction(
-        new anchor.BN(getMantissa(singlePoolComet.positions[0].liquidityTokenValue)),
+        new anchor.BN(getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue)),
         data.cometIndex
       )
     );
@@ -139,20 +139,21 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
 	await program.loadManager()
 
-  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-  const iassetAssociatedTokenAccount = await getTokenAccount(data.iassetMint, userPubKey, program.connection);
   let singlePoolComet = await program.getSinglePoolComets();
+  let assetInfo = await program.getAssetInfo(singlePoolComet.positions[data.cometIndex].poolIndex);
 
+  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, userPubKey, program.connection);
 
   if (data.cType === 0) {
     if (Number(singlePoolComet.numPositions) !== 0) {
       await withdrawLiquidityAndPaySinglePoolCometILD(
-        {program, userPubKey, data}, singlePoolComet, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
+        {program, userPubKey, data}, singlePoolComet, assetInfo.iassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
       )
     }
 
   } else {
-    if (getMantissa(singlePoolComet.positions[0].liquidityTokenValue) === 0)  {
+    if (getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue) === 0)  {
       await withdrawCollateralAndCloseSinglePoolComet({program, userPubKey, data}, singlePoolComet, collateralAssociatedTokenAccount);
     }
   }
@@ -205,7 +206,7 @@ export const callEdit = async ({
   } else if (mintAmountChange < 0) {
     const lpTokensToClaim = Math.min(
       toNumber(pool.liquidityTokenSupply) * Math.abs(mintAmountChange) / toNumber(pool.usdiAmount),
-      toNumber(singlePoolComet.positions[0].liquidityTokenValue)
+      toNumber(singlePoolComet.positions[cometIndex].liquidityTokenValue)
     )
     await program.withdrawLiquidityFromSinglePoolComet(
       new anchor.BN(lpTokensToClaim * 10 ** 8),

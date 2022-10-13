@@ -18,7 +18,6 @@ export default function useInitialized() {
 			if (connected && publicKey && wallet) {
 				const program = getInceptApp()
 				await program.loadManager()
-				console.log("WTF!");
 				if (!program.provider.wallet) {
 					return;
 				}
