@@ -76,7 +76,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
     );
   }
 
-  if (getMantissa(singlePoolComet.positions[0].liquidityTokenValue) !== 0) {
+  if (getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue) !== 0) {
     tx.add(
       await program.withdrawLiquidityFromSinglePoolCometInstruction(
         new anchor.BN(getMantissa(singlePoolComet.positions[0].liquidityTokenValue)),
@@ -88,7 +88,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
   tx.add(
     await program.paySinglePoolCometILDInstruction(
       data.cometIndex,
-      getMantissa(singlePoolComet.collaterals[0].collateralAmount)
+      getMantissa(singlePoolComet.collaterals[data.cometIndex].collateralAmount)
     )
   );
 
@@ -116,7 +116,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({program, userPubKey, d
     tx.add(
       await program.withdrawCollateralFromSinglePoolCometInstruction(
         usdiAssociatedToken,
-        new anchor.BN(getMantissa(singlePoolComet.collaterals[0].collateralAmount)),
+        new anchor.BN(getMantissa(singlePoolComet.collaterals[data.cometIndex].collateralAmount)),
         data.cometIndex
       )
     );

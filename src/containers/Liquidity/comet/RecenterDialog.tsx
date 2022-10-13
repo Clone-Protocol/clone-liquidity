@@ -62,7 +62,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         await program.loadManager()
         console.log('sfd', cometIndex)
 
-        const comet = await program.getSinglePoolComet(cometIndex);
+        const comet = await program.getSinglePoolComets();
         const { 
           healthScore,
           usdiCost,
@@ -75,7 +75,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         setCometData({
           healthScore,
           prevHealthScore: prevHScore.healthScore,
-          currentCollateral: toNumber(comet.collaterals[0].collateralAmount),
+          currentCollateral: toNumber(comet.collaterals[cometIndex].collateralAmount),
           usdiCost,
           centerPrice: price,
           lowerLimit: lowerPrice,
