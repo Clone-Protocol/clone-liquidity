@@ -28,8 +28,19 @@ const DataLoadingIndicator = () => {
 	return (
     <Wrapper>
       <div style={{ marginRight: '8px', marginTop: '-5px'}}>Data update in</div>
-      <CircularProgress variant="determinate" sx={{ color: '#809cff' }} size={23}
-        thickness={8} value={progress} />
+      <Box sx={{ position: 'relative' }}>
+        <CircularProgress
+          variant="determinate"
+          sx={{
+            color: '#525252'
+          }}
+          size={23}
+          thickness={8}
+          value={100}
+        />
+        <CircularProgress variant="determinate" sx={{ color: '#809cff', position: 'absolute', left: 0 }} size={23}
+          thickness={8} value={progress} />
+      </Box>
     </Wrapper>
 	)
 }

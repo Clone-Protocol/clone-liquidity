@@ -25,6 +25,19 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     let mintPositions = await program.getMintPositions()
     let liquidityPositions = await program.getLiquidityPositions()
     let comets = await program.getSinglePoolComets()
+    let cometInfos = await program.getUserSinglePoolCometInfos()
+
+    // comets
+    for (const info of cometInfos) {
+      const hasPool = Number(info[info.length-1])
+
+      // unless poolIndex is 255
+      if (hasPool) {
+        const collateralAmount = Number(info[6])
+        totalVal += collateralAmount
+        comet += collateralAmount
+      }
+    }
 
     for (var i = 0; i < Number(mintPositions.numPositions); i++) {
       let mintPosition = mintPositions.mintPositions[i]

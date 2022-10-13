@@ -76,7 +76,8 @@ let columns: GridColDef[] = [
 		headerName: 'Price range',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return (
+			return (params.row.fromPriceRange === 0 && params.row.toPriceRange === 0) ? <></> :
+			(
         <MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.cPrice * 2} />
 			)
 		},
