@@ -6,16 +6,27 @@ import { getTokenAccount, createTokenAccountInstruction } from '~/utils/token_ac
 import { Transaction, SystemProgram } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor"
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
+import useLocalStorage from '~/hooks/useLocalStorage'
+
 
 export default function useInitialized() {
 	const { enqueueSnackbar } = useSnackbar()
 	const { connected, publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const [localAccount, setLocalAccount] = useLocalStorage("currentAccount", '')
 
 	useEffect(() => {
-		async function getAccount() {
+		async function getAccount() {			
 			if (connected && publicKey && wallet) {
+				// for initialize once per each account
+				if (localAccount === publicKey.toString()) {
+					console.log('the account is already initialized')
+					return;
+				} else {
+					setLocalAccount(publicKey.toString())
+				}
+
 				const program = getInceptApp()
 				await program.loadManager()
 				if (!program.provider.wallet) {

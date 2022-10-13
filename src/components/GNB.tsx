@@ -22,7 +22,7 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
-
+import useInitialized from '~/hooks/useInitialized'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -85,6 +85,7 @@ const RightMenu = () => {
 	const [mintUsdi, setMintUsdi] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
+	useInitialized()
 
 	useEffect(() => {
 		async function userMintUsdi() {
