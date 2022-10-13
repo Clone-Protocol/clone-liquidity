@@ -18,6 +18,7 @@ export default function useInitialized() {
 			if (connected && publicKey && wallet) {
 				const program = getInceptApp()
 				await program.loadManager()
+				console.log("WTF!");
 				if (!program.provider.wallet) {
 					return;
 				}
@@ -66,15 +67,17 @@ export default function useInitialized() {
 					// 	})
 					// );
 					tx.add(
-						await program.program.account.singlePoolComets.createInstruction(
-							singlePoolCometsAccount
+						await program.initializeCometInstruction(
+							singlePoolCometsAccount,
+							true,
+							publicKey
 						)
 					);
-					tx.add(
-						await program.initializeSinglePoolCometsInstruction(
-							singlePoolCometsAccount, publicKey
-						)
-					);
+					// tx.add(
+					// 	await program.initializeSinglePoolCometsInstruction(
+					// 		singlePoolCometsAccount, publicKey
+					// 	)
+					// );
 
 					try {
 						await program.provider.send!(tx, [singlePoolCometsAccount]);

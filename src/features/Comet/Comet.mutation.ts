@@ -141,7 +141,7 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
 
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
   const iassetAssociatedTokenAccount = await getTokenAccount(data.iassetMint, userPubKey, program.connection);
-  let singlePoolComet = await program.getSinglePoolComet(data.cometIndex);
+  let singlePoolComet = await program.getSinglePoolComets();
 
 
   if (data.cType === 0) {
@@ -191,15 +191,16 @@ export const callEdit = async ({
   const { collAmount, mintAmountChange, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
-  const singlePoolComet = await program.getSinglePoolComet(cometIndex);
-  const pool = await program.getPool(Number(singlePoolComet.positions[0].poolIndex));
+  const singlePoolComet = await program.getSinglePoolComets();
+  const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
+  const pool = await program.getPool(poolIndex);
 
   // adjust USDI & iAsset in liquidity
   if (mintAmountChange > 0) {
     await program.addLiquidityToSinglePoolComet(
       new anchor.BN(mintAmountChange * 10 ** 8),
       cometIndex,
-      []
+      poolIndex
     )
   } else if (mintAmountChange < 0) {
     const lpTokensToClaim = Math.min(
@@ -273,80 +274,13 @@ export const callComet = async ({
   const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data;
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
-  let tx = new Transaction();
-  let signers = [];
-
-  let userAccount = await program.getUserAccount();
-  let singlePoolCometsAddress = userAccount.singlePoolComets;
-
-  const singlePoolComets = await program.getSinglePoolComets();
-  console.log("SPCS", singlePoolCometsAddress.toString())
-
-  // Assume for now the single pool comets positions account is created,
-  // Moving the creation to when we create a user account as transaction size is too large!
-  // if (singlePoolCometsAddress.equals(PublicKey.default)) {
-  //   const singlePoolCometsAccount = anchor.web3.Keypair.generate();
-  //   singlePoolCometsAddress = singlePoolCometsAccount.publicKey;
-  //   tx.add(
-  //     await program.program.account.singlePoolComets.createInstruction(
-  //       singlePoolCometsAccount
-  //     )
-  //   );
-  //   tx.add(
-  //     await program.initializeSinglePoolCometsInstruction(
-  //       singlePoolCometsAccount
-  //     )
-  //   );
-  //   signers.push(singlePoolCometsAccount);
-
-  // } else {
-  //   const singlePoolComets = await program.getSinglePoolComets();
-  //   numberSinglePoolComets = Number(singlePoolComets.numComets);
-  // }
-
-  const newSinglePoolCometAccount = anchor.web3.Keypair.generate();
-  signers.push(newSinglePoolCometAccount);
-  tx.add(
-       await program.program.account.comet.createInstruction(
-          newSinglePoolCometAccount
-       )
+  await program.openNewSinglePoolComet(
+    collateralAssociatedTokenAccount!,
+    new anchor.BN(usdiAmount * 10 ** 8),
+    new anchor.BN(collateralAmount * 10 ** 8),
+    iassetIndex,
+    collateralIndex
   );
-
-  tx.add(
-    await program.initializeSinglePoolCometInstruction(
-      singlePoolCometsAddress, newSinglePoolCometAccount.publicKey, iassetIndex, 0
-    )
-  );
-
-  tx.add(
-    await program.updatePricesInstruction()
-  );
-  tx.add(
-    await program.addCollateralToSinglePoolCometInstruction(
-      collateralAssociatedTokenAccount!,
-      new anchor.BN(collateralAmount * 10 ** 8),
-      newSinglePoolCometAccount.publicKey,
-      0
-    )
-  );
-  tx.add(
-    await program.addLiquidityToSinglePoolCometInstruction(
-      new anchor.BN(usdiAmount * 10 ** 8),
-      iassetIndex,
-      newSinglePoolCometAccount.publicKey
-    )
-  );
-
-  await program.provider.send!(tx, signers);
-
-  // await program.openNewSinglePoolComet(
-  //   collateralAssociatedTokenAccount!,
-  //   new anchor.BN(usdiAmount * 10 ** 8),
-  //   new anchor.BN(collateralAmount * 10 ** 8),
-  //   iassetIndex,
-	//   collateralIndex,
-	// 	[]
-  // )
 
   return {
     result: true

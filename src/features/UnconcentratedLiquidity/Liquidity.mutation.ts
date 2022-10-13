@@ -32,13 +32,13 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	let iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.wallet.publicKey, program.provider.connection);
 	let collateralAssociatedTokenAccount = await getUSDiAccount(program);
 	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.wallet.publicKey, program.provider.connection)
-	const singlePoolComet = await program.getSinglePoolComet(data.index);
+	const singlePoolComets = await program.getSinglePoolComets();
 
 	if (iassetAssociatedTokenAccount === undefined || collateralAssociatedTokenAccount === undefined || liquidityAssociatedTokenAccount === undefined) {
 		let tx = new Transaction().add(
 			await program.paySinglePoolCometILDInstruction(
 				data.index,
-				getMantissa(singlePoolComet.collaterals[0].collateralAmount)
+				getMantissa(singlePoolComets.collaterals[index].collateralAmount)
 			)	
 		);
 		

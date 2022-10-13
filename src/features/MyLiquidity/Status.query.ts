@@ -46,23 +46,12 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
       unconcentrated += amount
     }
 
-    const returnCometPosition = async (address: PublicKey): Promise<Comet> => {
-      return await (program.program.account.comet.fetch(
-        address
-      )) as Comet;
-    }
+    comets.collaterals.slice(0, comets.numCollaterals.toNumber()).forEach(collateral => {
+      let collateralAmount = toNumber(collateral.collateralAmount);
+      totalVal += collateralAmount;
+      comet += collateralAmount;
+    });
 
-    Promise.all(
-      comets.comets.slice(0, comets.numComets.toNumber()).map(returnCometPosition)
-    ).then(
-      singlePoolComets => {
-        singlePoolComets.forEach(singlePoolComet => {
-          let collateralAmount = toNumber(singlePoolComet.collaterals[0].collateralAmount);
-          totalVal += collateralAmount;
-          comet += collateralAmount;
-        })
-      }
-    );
   } catch (e) {
     console.error(e)
   }
