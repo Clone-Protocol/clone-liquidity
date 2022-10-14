@@ -23,8 +23,6 @@ export default function useInitialized() {
 				if (localAccount === publicKey.toString()) {
 					console.log('the account is already initialized')
 					return;
-				} else {
-					setLocalAccount(publicKey.toString())
 				}
 
 				const program = getInceptApp()
@@ -91,7 +89,12 @@ export default function useInitialized() {
 
 					try {
 						await program.provider.send!(tx, [singlePoolCometsAccount]);
+
+						// store account to localstorage
+						console.log('store account')
+						setLocalAccount(publicKey.toString())
 					} catch (err) {
+
 						console.log(err)
 						console.log('err: Attempt to debit an account but found no record of a prior credit.')
 						enqueueSnackbar('Attempt to debit an account but found no record of a prior credit. Get SOL in Faucet or exchanges')

@@ -21,8 +21,8 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   let cryptoCollateralRatio = 0
   let assetInfo = await program.getAssetInfo(index);
   oPrice = toNumber(assetInfo.price);
-  stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio);
-  cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio);
+  stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
+  cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
 	
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
 

@@ -97,7 +97,7 @@ const ValueBox = styled(Box)`
 `
 
 const FlagBox = styled(Box)`
-  width: 75px;
+  width: 90px;
   height: 23px;
   padding: 8px;
   border-radius: 10px;

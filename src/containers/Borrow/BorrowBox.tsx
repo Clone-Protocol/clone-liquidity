@@ -238,7 +238,7 @@ const BorrowBox = () => {
               <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title="Set collateral ratio" /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
-                <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} onChange={handleChangeCollRatio} />
+                <RatioSlider min={borrowDetail?.stableCollateralRatio } value={collRatio} onChange={handleChangeCollRatio} />
               </Box>
             </Box>
             <StyledDivider />
