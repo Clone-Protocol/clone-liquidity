@@ -36,6 +36,8 @@ const AssetList: React.FC = () => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
 			setSearchTerm(newVal)
+		} else {
+			setSearchTerm('')
 		}
 	}, [searchTerm])
 

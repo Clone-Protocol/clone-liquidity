@@ -77,22 +77,25 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 		refetchIntervalInBackground: true,
     enabled,
     select: (assets) => {
+			let filteredAssets = assets
+
+			filteredAssets = assets.filter((asset) => {
+				if (filter === 'crypto') {
+					return asset.assetType === AssetType.Crypto
+				} else if (filter === 'fx') {
+					return asset.assetType === AssetType.Fx
+				} else if (filter === 'commodities') {
+					return asset.assetType === AssetType.Commodities
+				} else if (filter === 'stocks') {
+					return asset.assetType === AssetType.Stocks
+				}
+				return true;
+			})
+
 			if (searchTerm && searchTerm.length > 0) {
-				return assets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
-			} else {
-				return assets.filter((asset) => {
-					if (filter === 'crypto') {
-						return asset.assetType === AssetType.Crypto
-					} else if (filter === 'fx') {
-						return asset.assetType === AssetType.Fx
-					} else if (filter === 'commodities') {
-						return asset.assetType === AssetType.Commodities
-					} else if (filter === 'stocks') {
-						return asset.assetType === AssetType.Stocks
-					}
-					return true;
-				})
+				filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
 			}
+			return filteredAssets
 		}
   })
 }

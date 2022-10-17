@@ -26,6 +26,7 @@ export const StyledTabs = styled(Tabs)`
   border-radius: 10px;
   padding-top: 4px;
   padding-left: 4px;
+	padding-right: 4px;
 	min-height: 23px;
 `
 export const TimeTab = styled(Tab)`
