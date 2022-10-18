@@ -4,6 +4,7 @@ interface Props {
 	min?: number
 	value: number
   hideValueBox?: boolean
+	showChangeRatio?: boolean
 	onChange?: (event: Event, newValue: number | number[]) => void
 }
 
@@ -44,13 +45,13 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, onChange }) => {
-	const valueLabelFormat = (value: number) => {
-		return `${value.toFixed(0)}%`
-	}
-
-  const max = min + 100 + 50
+const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, onChange }) => {
+	const max = min + 100 + 50
 	const normValue = (value !== max) ? 180 - (value % 150) : 30
+
+	const valueLabelFormat = (value: number) => {
+		return value >= max ? `${value.toFixed(0)}%+` : `${value.toFixed(0)}%`
+	}
 
 	return (
 		<Box
@@ -58,6 +59,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, on
 				display: 'flex',
 			}}>
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
+			{showChangeRatio ? <InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={value} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} /> : <></>}
 			<Box width="100%">
 				<StyledSlider
 					sx={{
@@ -71,7 +73,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, on
 					max={min + 100 + 50}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
-					valueLabelDisplay={min <= value && value <= max ? 'on' : 'off'}
+					valueLabelDisplay={min <= value ? 'on' : 'off'}
 				/>
         <Box sx={{ display: 'flex', }}>
           <Box sx={{ marginLeft: '30px' }}><Stick /><FlagBox>min {min}%</FlagBox></Box>
@@ -94,6 +96,24 @@ const ValueBox = styled(Box)`
 	font-weight: 500;
 	color: #fff;
 	padding: 12px 18px 12px 26px;
+`
+
+const InputAmount = styled(`input`)`
+	text-align: center;
+	background-color: #333;
+	border: solid 1px #444;
+	border-radius: 10px;
+	width: 102px;
+	height: 54px;
+	line-height: 28px;
+	font-size: 16px;
+	font-weight: 500;
+	color: #fff;
+	padding: 12px 18px 12px 26px;
+	cursor: pointer;
+	&:hover {
+    border: solid 1px #809cff;
+  }
 `
 
 const FlagBox = styled(Box)`

@@ -120,9 +120,15 @@ const BorrowBox = () => {
   }, [assetIndex, borrowAsset])
 
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number' && borrowDetail && borrowDetail.stableCollateralRatio <= newValue) {
-			setCollRatio(newValue)
-      calculateBorrowAmount(collAmount, newValue)
+		if (typeof newValue === 'number' && borrowDetail) {
+        if (!isNaN(newValue)) {
+          setCollRatio(newValue)
+          calculateBorrowAmount(collAmount, newValue)
+        } else {
+          setCollRatio(0)
+          calculateBorrowAmount(collAmount, 0)
+        }
+        
 		}
 	}, [collAmount, collRatio])
 
@@ -238,7 +244,7 @@ const BorrowBox = () => {
               <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title="Set collateral ratio" /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
-                <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} onChange={handleChangeCollRatio} />
+                <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
               </Box>
             </Box>
             <StyledDivider />
@@ -284,7 +290,7 @@ const BorrowBox = () => {
             </Box>
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid}>Create Borrow Position</ActionButton>
+            <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)}>Create Borrow Position</ActionButton>
           </StyledPaper>
         </Box>
       </Stack>
