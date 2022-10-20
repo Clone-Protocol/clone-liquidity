@@ -21,7 +21,7 @@ export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connect
         account = await getAccount(
           connection,
           associatedToken,
-          "recent",
+          "processed",
           TOKEN_PROGRAM_ID
         );
       } catch (error: unknown) {

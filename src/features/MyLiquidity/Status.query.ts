@@ -38,7 +38,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
       let liquidityTokenAmount = toNumber(liquidityPosition.liquidityTokenValue)
       let poolIndex = liquidityPosition.poolIndex
       let pool = await program.getPool(poolIndex)
-      let liquidityTokenSupply = (await program.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed'))
+      let liquidityTokenSupply = (await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed"))
         .value!.uiAmount
       let balances = await program.getPoolBalances(poolIndex)
       let amount = ((balances[1] * liquidityTokenAmount) / liquidityTokenSupply!) * 2

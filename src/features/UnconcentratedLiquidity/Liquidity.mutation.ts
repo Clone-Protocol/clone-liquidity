@@ -19,7 +19,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	let pool = await program.getPool(liquidityPosition.poolIndex)
 
 	let liquidityTokenSupplyBeforeComet = (
-		await program.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed')
+		await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed")
 	).value!.uiAmount
 
 	let balances = await program.getPoolBalances(liquidityPosition.poolIndex)

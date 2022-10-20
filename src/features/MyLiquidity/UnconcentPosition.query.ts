@@ -22,14 +22,14 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, program.provider.wallet.publicKey, program.connection);
 
 	if (usdiTokenAccountAddress !== undefined) {
-	  const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress);
+	  const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress, "processed");
 	  usdiVal = Number(usdiBalance.value.amount) / 100000000;
 	}
   
 	const pool = await program.getPool(index);
 	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.wallet.publicKey, program.connection);
 	if (iassetTokenAccountAddress !== undefined) {
-	  const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress);
+	  const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress, "processed");
 	  iassetVal = Number(iassetBalance.value.amount) / 100000000;
 	}
 	

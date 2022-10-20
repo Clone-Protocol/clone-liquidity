@@ -20,7 +20,7 @@ export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { pro
 
 	try {
     const associatedTokenAccount = await getUSDiAccount(program);
-    const balance = await program.connection.getTokenAccountBalance(associatedTokenAccount!);
+    const balance = await program.connection.getTokenAccountBalance(associatedTokenAccount!, "processed");
     balanceVal = Number(balance.value.amount) / 100000000;
 	} catch {}
 
