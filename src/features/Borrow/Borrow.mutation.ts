@@ -260,7 +260,7 @@ const runMintInstructions = async (
 		)
 	)
 
-	incept.provider.send!(tx, signers);
+	await incept.provider.send!(tx, signers);
 }
 
 export const callBorrow = async ({ program, userPubKey, data }: CallBorrowProps) => {
