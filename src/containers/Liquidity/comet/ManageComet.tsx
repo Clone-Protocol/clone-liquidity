@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -53,9 +53,9 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
   }, [cometDetail])
 
 	return (cometDetail && usdiBalance) ? (
-		<Grid container spacing={2}>
-			<Grid item xs={12} md={4}>
-        { (tab === 0 && cometDetail.tickerIcon) &&
+		<Stack direction='row' spacing={2} justifyContent="center">
+      { (tab === 0 && cometDetail.tickerIcon) &&
+			  <Box>
           <StyledBox>
             <Box display="flex">
               <Box>
@@ -83,10 +83,10 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
               Indicator Price
             </Box>
           </StyledBox>
-        }
-			</Grid>
-			<Grid item xs={12} md={8}>
-        <Box sx={{ maxWidth: '466px', marginLeft: '18px' }}>
+			  </Box>
+      }
+			<Box>
+        <Box sx={{ width: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
             <StyledTab value={0} label="Edit Comet"></StyledTab>
             <StyledTab value={1} label="Close Comet"></StyledTab>
@@ -98,8 +98,8 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
             <ClosePanel assetId={assetId} cometDetail={cometDetail} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
         </Box>
-			</Grid>
-		</Grid>
+			</Box>
+		</Stack>
 	) : <></>
 }
 

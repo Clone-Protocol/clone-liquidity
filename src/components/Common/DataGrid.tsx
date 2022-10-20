@@ -24,7 +24,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260 }) =>
       minHeight: `${minHeight}px`,
       '& .last--cell': {
         display: 'flex',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        marginRight: '4px'
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#9d9d9d', 
@@ -95,7 +96,7 @@ export interface TickerType {
 }
 
 export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, tickerSymbol }) => (
-  <Box display="flex" justifyContent="flex-start">
+  <Box display="flex" justifyContent="flex-start" style={{ marginLeft: '4px' }}>
     { tickerIcon && <Image src={tickerIcon} width="27px" height="27px" layout="fixed" /> }
     <Box sx={{ marginLeft: '16px', display: 'flex', alignItems: 'center' }}>
       <Box sx={{ display: 'block', fontSize: '14px', fontWeight: '500', maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{tickerName}</Box>

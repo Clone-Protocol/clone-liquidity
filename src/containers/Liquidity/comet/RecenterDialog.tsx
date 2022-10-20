@@ -124,7 +124,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px', overflow: 'hidden' }}>
           <Box sx={{ padding: '8px 18px', color: '#fff' }}>
             <WarningBox>
               If this is your first interaction with Recenting, please click here to learn.

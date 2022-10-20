@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, Box } from '@mui/material'
+import { Stack, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -35,8 +35,8 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   })
 
   return (borrowDetail && priceHistory) ? (
-    <Grid container spacing={2}>
-			<Grid item xs={12} md={4}>
+    <Stack direction='row' spacing={2} justifyContent="center">
+			<Box>
         <StyledBox>
           <Box display="flex">
             <Image src={borrowDetail.tickerIcon} width="30px" height="30px" />
@@ -60,9 +60,9 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
             Indicator Price
           </Box>
         </StyledBox>
-			</Grid>
-			<Grid item xs={12} md={8}>
-        <Box sx={{ maxWidth: '466px', marginLeft: '18px' }}>
+			</Box>
+			<Box>
+        <Box sx={{ width: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
             <StyledTab value={0} label="Edit Borrow Position"></StyledTab>
             <StyledTab value={1} label="Close Borrow Position"></StyledTab>
@@ -74,8 +74,8 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
             <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
           </TabPanelForEdit>
         </Box>
-			</Grid>
-		</Grid>
+			</Box>
+		</Stack>
   ) : <></>
 }
 

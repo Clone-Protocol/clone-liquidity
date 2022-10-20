@@ -90,7 +90,7 @@ let columns: GridColDef[] = [
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
       return (
-        <Box sx={{ width: '80px', textAlign: 'center'}}>
+        <Box sx={{ width: '65px', textAlign: 'center'}}>
           <CellDigitValue value={params.value} symbol="%" />
         </Box>
       )
@@ -99,7 +99,7 @@ let columns: GridColDef[] = [
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'last--cell',
 		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
