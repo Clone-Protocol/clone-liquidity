@@ -172,6 +172,8 @@ export const callDeposit = async ({program, userPubKey, data} : CallDepositProps
 			index
 		)
 	);
+	await program.provider.send!(tx, []);
+	
 	return {
     result: true
   }
