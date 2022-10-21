@@ -1,4 +1,5 @@
 import { Box, Slider, styled } from '@mui/material'
+import { relative } from 'path'
 
 interface Props {
 	min?: number
@@ -49,8 +50,8 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 	const max = min + 100 + 50
 	const normValue = (value !== max) ? 180 - (value % 150) : 30
 
-	const valueLabelFormat = (value: number) => {
-		return value >= max ? `${value.toFixed(0)}%+` : `${value.toFixed(0)}%`
+	const valueLabelFormat = (val: number) => {
+		return value > max ? `${val.toFixed(0)}%+` : `${val.toFixed(0)}%`
 	}
 
 	return (
@@ -59,7 +60,12 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				display: 'flex',
 			}}>
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
-			{showChangeRatio ? <InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={value} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} /> : <></>}
+			{showChangeRatio &&
+				<Box display='flex'>
+					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+					<div style={{ position: 'absolute', marginLeft: '75px', marginTop: '17px' }}>%</div>
+				</Box>
+			}
 			<Box width="100%">
 				<StyledSlider
 					sx={{

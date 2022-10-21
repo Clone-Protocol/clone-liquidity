@@ -156,6 +156,9 @@ const ChangePositionButton = styled(Box)`
 	border: solid 1px #535353;
   background-color: #1b377b;
 	cursor: pointer;
+	&:hover {
+		border-color: #809CFF;
+	}
 `
 
 const TradeButton = styled(Box)`

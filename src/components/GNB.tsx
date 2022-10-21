@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
-import logoIcon from 'public/images/incept-logo.svg'
+import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
 import { useSnackbar } from 'notistack'
 import { IconButton, styled, Theme, useMediaQuery } from '@mui/material'
@@ -51,9 +51,8 @@ const GNB: React.FC = () => {
 			<NavPlaceholder />
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
-					<Toolbar disableGutters sx={{ paddingLeft: '1px' }}>
-						<Image src={logoIcon} alt="incept" />
-						<LiquidityTitle>Liquidity</LiquidityTitle>
+					<Toolbar disableGutters>
+						<Image src={logoIcon} width={200} alt="incept" />
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
