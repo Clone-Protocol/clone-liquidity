@@ -51,7 +51,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
+      collAmount: NaN,
       mintAmount: maxMintable * mintRatio / 100,
     }
 	})
@@ -231,7 +231,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               rules={{
                 validate(value) {
                   if (!value || value <= 0) {
-                    return 'the collateral amount should be above zero.'
+                    return ''
                   } else if (value > balances?.usdiVal) {
                     return 'The collateral amount cannot exceed the balance.'
                   }

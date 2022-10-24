@@ -210,7 +210,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   rules={{
                     validate(value) {
                       if (value < 0) {
-                        return 'the collateral amount should be above zero.'
+                        return ''
                       } else if ((editType === 0 && value > balance) || (editType === 1 && value > maxWithdrawable)) {
                         return 'The collateral amount cannot exceed the balance.'
                       }
@@ -221,7 +221,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       editType={editType}
                       tickerIcon={'/images/assets/USDi.png'}
                       tickerSymbol="USDi"
-                      collAmount={field.value}
+                      collAmount={parseFloat(field.value.toFixed(3))}
                       collAmountDollarPrice={field.value}
                       maxCollVal={editType === 0 ? balance : maxWithdrawable}
                       currentCollAmount={cometDetail.collAmount}

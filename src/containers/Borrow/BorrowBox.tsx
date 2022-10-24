@@ -73,8 +73,8 @@ const BorrowBox = () => {
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
-      borrowAmount: 0.0,
+      collAmount: NaN,
+      borrowAmount: NaN,
     }
 	})
   
@@ -212,7 +212,7 @@ const BorrowBox = () => {
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the collateral amount should be above zero.'
+                      return '' //'the collateral amount should be above zero.'
                     } else if (value > usdiBalance?.balanceVal) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
@@ -266,7 +266,7 @@ const BorrowBox = () => {
                   rules={{
                     validate(value) {
                       if (!value || value <= 0) {
-                        return 'the borrow amount should be above zero.'
+                        return '' //'the borrow amount should be above zero.'
                       }
                     }
                   }}

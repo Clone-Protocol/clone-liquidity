@@ -51,7 +51,13 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 	const normValue = (value !== max) ? 180 - (value % 150) : 30
 
 	const valueLabelFormat = (val: number) => {
-		return value > max ? `${val.toFixed(0)}%+` : `${val.toFixed(0)}%`
+		if (value > max) {
+			return `${val.toFixed(0)}%+`
+		} else if (value < min)  {
+			return `<${val.toFixed(0)}%`
+		} else {
+			return `${val.toFixed(0)}%`
+		}
 	}
 
 	return (
@@ -63,23 +69,24 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 			{showChangeRatio &&
 				<Box display='flex'>
 					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-					<div style={{ position: 'absolute', marginLeft: '75px', marginTop: '17px' }}>%</div>
+					<div style={{ marginLeft: '-24px', marginRight: '10px', marginTop: '16px' }}>%</div>
 				</Box>
 			}
 			<Box width="100%">
 				<StyledSlider
 					sx={{
 						'& .MuiSlider-track': {
-              background: `linear-gradient(to right, #f00 -22%, #809cff ${normValue}%)`
+              // background: `linear-gradient(to right, #f00 -22%, #809cff ${normValue}%)`
+							background: `linear-gradient(to right, #f00 -160px, #809cff 270px)`
             }
 					}}
-					value={value}
+					value={value > min ? value : min}
 					min={min - 25}
 					step={5}
 					max={min + 100 + 50}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
-					valueLabelDisplay={min <= value ? 'on' : 'off'}
+					valueLabelDisplay={'on'}
 				/>
         <Box sx={{ display: 'flex', }}>
           <Box sx={{ marginLeft: '30px' }}><Stick /><FlagBox>min {min}%</FlagBox></Box>

@@ -30,8 +30,8 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      borrowFrom: 0.0,
-      borrowTo: 0.0,
+      borrowFrom: NaN,
+      borrowTo: NaN,
     }
 	})
   const [borrowFrom, borrowTo] = watch([
@@ -99,7 +99,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the borrowing amount should be above zero.'
+                      return ''
                     } else if (value > unconcentData?.iassetVal) {
                       return 'The borrowing amount cannot exceed the balance.'
                     }

@@ -127,7 +127,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the borrow amount should be above zero.'
+                      return ''
                     } else if (value > maxCollVal) {
                       return 'The borrow amount cannot exceed the balance.'
                     }
@@ -138,7 +138,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     editType={editType}
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
-                    collAmount={field.value}
+                    collAmount={parseFloat(field.value.toFixed(3))}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.borrowedIasset}
