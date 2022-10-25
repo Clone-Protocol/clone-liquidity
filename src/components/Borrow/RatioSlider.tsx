@@ -130,7 +130,7 @@ const InputAmount = styled(`input`)`
 `
 
 const FlagBox = styled(Box)`
-  width: 83px;
+  width: 90px;
   height: 23px;
   padding: 8px;
   border-radius: 10px;

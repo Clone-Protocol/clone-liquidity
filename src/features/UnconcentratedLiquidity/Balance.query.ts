@@ -22,7 +22,7 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 	let pool = await program.getPool(liquidityPosition.poolIndex)
 
 	let liquidityTokenSupplyBeforeComet = (
-		await program.connection.getTokenSupply(pool.liquidityTokenMint, 'confirmed')
+		await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed")
 	).value!.uiAmount
 
 	let balances = await program.getPoolBalances(liquidityPosition.poolIndex)

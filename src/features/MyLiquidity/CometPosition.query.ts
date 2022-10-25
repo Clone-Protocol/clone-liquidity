@@ -40,15 +40,15 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
 	await program.loadManager()
 
-  const comet = await program.getSinglePoolComet(index);
-  const position = comet.positions[0];
+  const comet = await program.getSinglePoolComets();
+  const position = comet.positions[index];
 
   console.log('comet', comet)
   console.log('comet-poolIndex', Number(position.poolIndex))
 
   const mintAmount = toNumber(position.borrowedUsdi)
   const mintIassetAmount = toNumber(position.borrowedIasset)
-  const collAmount = toNumber(comet.collaterals[0].collateralAmount)
+  const collAmount = toNumber(comet.collaterals[index].collateralAmount)
   
   let price = 0
   let tightRange = 0

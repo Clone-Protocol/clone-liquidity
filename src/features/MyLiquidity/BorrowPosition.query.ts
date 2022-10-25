@@ -1,11 +1,13 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
@@ -17,14 +19,10 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   let oPrice = 1
   let stableCollateralRatio = 0
   let cryptoCollateralRatio = 0
-  try {
-    const data = await program.getMintiAssetData(index)
-    oPrice = data[0]!
-    stableCollateralRatio = data[1]!
-    cryptoCollateralRatio = data[2]!
-  } catch (e) {
-    console.error(e)
-  }
+  let assetInfo = await program.getAssetInfo(index);
+  oPrice = toNumber(assetInfo.price);
+  stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
+  cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
 	
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
 
@@ -49,8 +47,8 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const poolIndex = Number(mint.poolIndex)
   
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
-	const data = await program.getMintiAssetData(poolIndex)
-
+  const assetInfo = await program.getAssetInfo(poolIndex);
+  const oraclePrice = toNumber(assetInfo.price);
   const positionData = await program.getUserMintInfo(index)
 
   const balance = await fetchBalance({
@@ -64,18 +62,18 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   // borrow_amount_in_iasset = collateral_amount / (iasset_oracle_price * collateral_ratio)
   // min_collateral_amount = borrow_amount_in_iasset * iasset_oracle_price * minCollateralRatio
   // max_withdrawable_collateral = collateral_amount - min_collateral_amount
-  const borrowAmountInIasset = positionData![1] / (data[0]! * positionData![2]);
+  const borrowAmountInIasset = positionData![1] / (oraclePrice * positionData![2]);
   const minCollateralRatio = positionData![3];
-  const minCollateralAmount = borrowAmountInIasset * data[0]! * minCollateralRatio;
+  const minCollateralAmount = borrowAmountInIasset * oraclePrice * minCollateralRatio;
   const maxWithdrawableColl = positionData![1] - minCollateralAmount;
   
   return {
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
-		oPrice: data[0]!,
-		stableCollateralRatio: data[1]!,
-		cryptoCollateralRatio: data[2]!,
+		oPrice: oraclePrice,
+		stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
+		cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
     borrowedIasset: positionData![0],
     collateralAmount: positionData![1],
     collateralRatio: positionData![2] * 100,
