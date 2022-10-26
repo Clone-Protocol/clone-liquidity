@@ -290,7 +290,7 @@ const BorrowBox = () => {
             </Box>
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)}>Create Borrow Position</ActionButton>
+            <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)}>Create Borrow Position</ActionButton>
           </StyledPaper>
         </Box>
       </Stack>
