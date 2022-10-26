@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
-import logoIcon from 'public/images/incept-logo.svg'
+import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
 import { useSnackbar } from 'notistack'
 import { IconButton, styled, Theme, useMediaQuery } from '@mui/material'
@@ -19,6 +19,10 @@ import { useIncept } from '~/hooks/useIncept'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import MoreMenu from '~/components/Common/MoreMenu';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { getUSDiAccount } from "~/utils/token_accounts";
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
+import { Transaction } from "@solana/web3.js";
+import useInitialized from '~/hooks/useInitialized'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -51,9 +55,8 @@ const GNB: React.FC = () => {
 			<NavPlaceholder />
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
-					<Toolbar disableGutters sx={{ paddingLeft: '10px' }}>
-						<Image src={logoIcon} alt="incept" />
-						<LiquidityTitle>Liquidity</LiquidityTitle>
+					<Toolbar disableGutters>
+						<Image src={logoIcon} width={200} alt="incept" />
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
@@ -81,16 +84,28 @@ const RightMenu = () => {
 	const [mintUsdi, setMintUsdi] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
+	useInitialized()
 
 	useEffect(() => {
 		async function userMintUsdi() {
 			if (connected && publicKey && mintUsdi) {
 				const program = getInceptApp()
 				await program.loadManager()
-
+				const usdiTokenAccount = await getUSDiAccount(program);
 				try {
-					const usdiAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-					await program.hackathonMintUsdi(usdiAccount.address, 10000000000)
+					if (usdiTokenAccount === undefined) {
+						const ata = await getAssociatedTokenAddress(program.manager!.usdiMint, publicKey);
+						const tx = new Transaction().add(
+							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.manager!.usdiMint)
+						).add(
+							await program.hackathonMintUsdiInstruction(ata, 10000000000)
+						);
+						await program.provider.send!(tx);
+
+					} else {
+						console.log("USDI token account:", usdiTokenAccount.toString());
+						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
+					} 
 				} finally {
 					setMintUsdi(false)
 				}
@@ -107,32 +122,6 @@ const RightMenu = () => {
     setAnchorEl(event.currentTarget);
   }
 
-	useEffect(() => {
-		async function getAccount() {
-			if (connected && publicKey && wallet) {
-				const program = getInceptApp()
-				await program.loadManager()
-
-				if (!program.provider.wallet) {
-					return
-				}
-
-				try {
-					await program.getUserAccount()
-				} catch (error) {
-					console.log('err', 'Account does not exist')
-					try {
-						await program.initializeUser()
-					} catch (err) {
-						console.log('err: Attempt to debit an account but found no record of a prior credit.')
-						enqueueSnackbar('Attempt to debit an account but found no record of a prior credit. Get SOL in Faucet or exchanges')
-					}
-				}
-			}
-		}
-		getAccount()
-	}, [connected, publicKey])
-
 	const handleWalletClick = () => {
 		try {
 			if (!connected) {
@@ -144,7 +133,6 @@ const RightMenu = () => {
         setShowWalletSelectPopup(false)
 			} else {
         setShowWalletSelectPopup(!showWalletSelectPopup)
-				// disconnect()
 			}
 		} catch (error) {
 			console.log('Error connecting to the wallet: ', (error as any).message)

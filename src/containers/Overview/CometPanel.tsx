@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -51,7 +51,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
+      collAmount: NaN,
       mintAmount: maxMintable * mintRatio / 100,
     }
 	})
@@ -85,7 +85,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         setHealthScore(healthScore)
         setMaxMintable(maxUsdiPosition)
         setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
-        // setMintRatio(mintAmount * 100 / maxUsdiPosition)
       }
 
       if (collAmount && mintAmount) {
@@ -232,7 +231,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               rules={{
                 validate(value) {
                   if (!value || value <= 0) {
-                    return 'the collateral amount should be above zero.'
+                    return ''
                   } else if (value > balances?.usdiVal) {
                     return 'The collateral amount cannot exceed the balance.'
                   }
@@ -243,7 +242,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerName="USDi Coin"
                   tickerSymbol="USDi"
-                  value={field.value}
+                  value={parseFloat(field.value.toFixed(3))}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,7 +289,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                     tickerIcon={'/images/assets/USDi.png'}
                     tickerName="USDi Coin"
                     tickerSymbol="USDi"
-                    value={field.value}
+                    value={parseFloat(field.value.toFixed(3))}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

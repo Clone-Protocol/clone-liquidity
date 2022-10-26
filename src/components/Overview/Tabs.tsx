@@ -41,7 +41,7 @@ export const PageTab = styled(Tab)`
     }
 	}
 	&.Mui-selected {
-    border: solid 1px #3f3f3f;
+		box-shadow: 0 0 0 1px #3f3f3f inset;
     background-color: #000;
 		color: #fff;
 	}

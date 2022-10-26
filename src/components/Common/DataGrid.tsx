@@ -4,7 +4,8 @@ import Image from 'next/image'
 
 interface GridProps {
   headers: GridColDef[],
-  rows: any
+  rows: any,
+  minHeight?: number
 }
 
 const CustomNoRowsOverlay = () => {
@@ -15,15 +16,16 @@ const CustomNoRowsOverlay = () => {
   )
 }
 
-export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
+export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260 }) => (
   <DataGrid
     sx={{
       border: 0,
       color: '#fff',
-      minHeight: '280px',
+      minHeight: `${minHeight}px`,
       '& .last--cell': {
         display: 'flex',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        marginRight: '4px',
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#9d9d9d', 
@@ -36,6 +38,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
       },
       '& .MuiDataGrid-columnHeaders': {
         border: '0'
+      },
+      '& .MuiDataGrid-columnHeader:focus': {
+        outline: 'none',
       },
       '& .MuiDataGrid-columnSeparator': {
         display: 'none',
@@ -60,13 +65,13 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
         outline: 'none !important'
       },
       '& .MuiDataGrid-withBorder': {
-        borderRight: '1px solid #1b1b1b',
+        borderRight: '0px solid #1b1b1b',
         borderRadius: '10px',
         marginLeft: '-5px'
-      }
+      },
     }}
     components={{
-      NoRowsOverlay: CustomNoRowsOverlay
+      NoResultsOverlay: CustomNoRowsOverlay
     }}
     getRowClassName={(params) => 'super-app-theme--row'}
     disableColumnFilter
@@ -78,6 +83,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows }) => (
     hideFooter
     headerHeight={40}
     rowHeight={52}
+    rowCount={20}
     columns={headers}
     rows={rows || []}
   />
@@ -90,8 +96,8 @@ export interface TickerType {
 }
 
 export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, tickerSymbol }) => (
-  <Box display="flex" justifyContent="flex-start">
-    { tickerIcon && <Image src={tickerIcon} width="27px" height="27px" /> }
+  <Box display="flex" justifyContent="flex-start" style={{ marginLeft: '4px' }}>
+    { tickerIcon && <Image src={tickerIcon} width="27px" height="27px" layout="fixed" /> }
     <Box sx={{ marginLeft: '16px', display: 'flex', alignItems: 'center' }}>
       <Box sx={{ display: 'block', fontSize: '14px', fontWeight: '500', maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{tickerName}</Box>
       <Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
@@ -102,5 +108,5 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
 )
 
 export const CellDigitValue = ({ value, symbol }: {value: string | undefined, symbol?: string}) => (
-  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '1px' }}>{value && value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
+  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '5px' }}>{value && value.toLocaleString()} <span style={{fontSize: '11px'}}>{symbol}</span></Box>
 )

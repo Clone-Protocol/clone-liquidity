@@ -5,7 +5,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import Image from 'next/image'
 import WarningIcon from 'public/images/warning-icon.png'
-import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, FormHelperText } from '@mui/material'
+import { Box, Divider, styled, Button, Stack, Dialog, DialogContent } from '@mui/material'
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
@@ -62,7 +62,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         await program.loadManager()
         console.log('sfd', cometIndex)
 
-        const comet = await program.getSinglePoolComet(cometIndex);
+        const comet = await program.getSinglePoolComets();
         const { 
           healthScore,
           usdiCost,
@@ -75,7 +75,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         setCometData({
           healthScore,
           prevHealthScore: prevHScore.healthScore,
-          currentCollateral: toNumber(comet.collaterals[0].collateralAmount),
+          currentCollateral: toNumber(comet.collaterals[cometIndex].collateralAmount),
           usdiCost,
           centerPrice: price,
           lowerLimit: lowerPrice,
@@ -124,7 +124,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px', overflow: 'hidden' }}>
           <Box sx={{ padding: '8px 18px', color: '#fff' }}>
             <WarningBox>
               If this is your first interaction with Recenting, please click here to learn.

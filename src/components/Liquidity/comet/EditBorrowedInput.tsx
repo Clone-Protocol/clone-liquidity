@@ -63,7 +63,7 @@ const EditBorrowedInput: React.FC<Props> = ({
             </Box>
           </Box>
           <Box>
-            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={parseFloat(collAmount.toFixed(3))} onChange={onChangeAmount} />
+            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={collAmount ? Number(collAmount).toString() : 0} onChange={onChangeAmount} />
             <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (collAmountDollarPrice && collAmountDollarPrice > 0) ? ('$' + collAmountDollarPrice?.toLocaleString()) : '' }</div>
           </Box>
         </FormStack>
@@ -91,7 +91,7 @@ const FormStack = styled(Stack)`
   border-top-right-radius: 10px;
 	background-color: #333333;
   &:hover {
-    border: solid 1px #809cff;
+    box-shadow: 0 0 0 1px #809cff inset;
   }
 `
 

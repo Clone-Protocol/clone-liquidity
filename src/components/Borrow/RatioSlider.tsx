@@ -1,9 +1,11 @@
 import { Box, Slider, styled } from '@mui/material'
+import { relative } from 'path'
 
 interface Props {
 	min?: number
 	value: number
   hideValueBox?: boolean
+	showChangeRatio?: boolean
 	onChange?: (event: Event, newValue: number | number[]) => void
 }
 
@@ -44,12 +46,19 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, onChange }) => {
-	const valueLabelFormat = (value: number) => {
-		return `${value.toFixed(0)}%`
-	}
+const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, onChange }) => {
+	const max = min + 100 + 50
+	const normValue = (value !== max) ? 180 - (value % 150) : 30
 
-  const max = min + 100 + 50
+	const valueLabelFormat = (val: number) => {
+		if (value > max) {
+			return `${val.toFixed(0)}%+`
+		} else if (value < min)  {
+			return `<${val.toFixed(0)}%`
+		} else {
+			return `${val.toFixed(0)}%`
+		}
+	}
 
 	return (
 		<Box
@@ -57,15 +66,27 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, on
 				display: 'flex',
 			}}>
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
+			{showChangeRatio &&
+				<Box display='flex'>
+					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+					<div style={{ marginLeft: '-24px', marginRight: '10px', marginTop: '16px' }}>%</div>
+				</Box>
+			}
 			<Box width="100%">
 				<StyledSlider
-					value={value}
+					sx={{
+						'& .MuiSlider-track': {
+              // background: `linear-gradient(to right, #f00 -22%, #809cff ${normValue}%)`
+							background: `linear-gradient(to right, #f00 -160px, #809cff 270px)`
+            }
+					}}
+					value={value > min ? value : min}
 					min={min - 25}
 					step={5}
 					max={min + 100 + 50}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
-					valueLabelDisplay={min <= value && value <= max ? 'on' : 'off'}
+					valueLabelDisplay={'on'}
 				/>
         <Box sx={{ display: 'flex', }}>
           <Box sx={{ marginLeft: '30px' }}><Stick /><FlagBox>min {min}%</FlagBox></Box>
@@ -90,16 +111,35 @@ const ValueBox = styled(Box)`
 	padding: 12px 18px 12px 26px;
 `
 
+const InputAmount = styled(`input`)`
+	text-align: center;
+	background-color: #333;
+	border: solid 1px #444;
+	border-radius: 10px;
+	width: 102px;
+	height: 54px;
+	line-height: 28px;
+	font-size: 16px;
+	font-weight: 500;
+	color: #fff;
+	padding: 12px 18px 12px 26px;
+	cursor: pointer;
+	&:hover {
+    border: solid 1px #809cff;
+  }
+`
+
 const FlagBox = styled(Box)`
-  width: 75px;
+  width: 90px;
   height: 23px;
-  padding: 6px 4px 7px 9px;
+  padding: 8px;
   border-radius: 10px;
   border: solid 1px #444;
   background-color: #000;
   font-size: 11px;
   font-weight: 500;
-  line-height: 9px;
+  line-height: 3px;
+	text-align: center;
   margin-top: 0px;
   // &::after {
   //   position: absolute;

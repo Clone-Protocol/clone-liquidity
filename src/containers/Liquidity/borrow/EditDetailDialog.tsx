@@ -70,12 +70,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     }
   }, [collAmount, editType])
 
-  // const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
-  //   const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-  //   const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
-  //   setValue('borrowAmount', borrowAmount)
-  // }
-
 	const onEdit = async () => {
     setLoading(true)
     await mutateAsync(
@@ -124,7 +118,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the collateral amount should be above zero.'
+                      return ''
                     } else if (value > maxCollVal) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
@@ -135,7 +129,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     editType={editType}
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
-                    collAmount={field.value}
+                    collAmount={parseFloat(field.value.toFixed(3))}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.collateralAmount}

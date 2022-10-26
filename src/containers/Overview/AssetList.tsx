@@ -7,13 +7,11 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
-// import { AssetList as AssetListType, FilterType, FilterTypeMap, fetchAssets } from '~/web3/Overview/Assets'
 import Divider from '@mui/material/Divider';
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.svg'
 import ChangePositionIcon from 'public/images/change-position-icon.svg'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
@@ -22,14 +20,12 @@ const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const debounceSearchTerm = useDebounce(searchTerm, 500)
-	const { publicKey } = useWallet()
 
 	const { data: assets } = useAssetsQuery({
-    userPubKey: publicKey,
     filter,
     searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
 	  refetchOnMount: "always",
-    enabled: publicKey != null
+    enabled: true
 	})
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
@@ -40,6 +36,8 @@ const AssetList: React.FC = () => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
 			setSearchTerm(newVal)
+		} else {
+			setSearchTerm('')
 		}
 	}, [searchTerm])
 
@@ -64,6 +62,7 @@ const AssetList: React.FC = () => {
       <Grid
         headers={columns}
 				rows={assets || []}
+				minHeight={680}
       />
 		</Box>
 	)
@@ -114,12 +113,12 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'baselineAPY',
-		headerClassName: 'last--header',
+		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: '24h Fee Revenue',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box sx={{ fontSize: '12px', fontWeight: '500', textAlign: 'center', margin: '0 auto' }}>{params.value.toLocaleString()} %</Box>
+			return <CellDigitValue value={params.row.baselineAPY} symbol="USDi" />
 		},
 	},
 	{
@@ -157,13 +156,16 @@ const ChangePositionButton = styled(Box)`
 	border: solid 1px #535353;
   background-color: #1b377b;
 	cursor: pointer;
+	&:hover {
+		border-color: #809CFF;
+	}
 `
 
 const TradeButton = styled(Box)`
 	width: 25px;
 	height: 25px;
 	flex-grow: 0;
-	padding: 3px 5.7px 4px 8px;
+	padding: 2px 4px 4px 7px;
 	border-radius: 4px;
 	border: solid 1px #535353;
 	cursor: pointer;

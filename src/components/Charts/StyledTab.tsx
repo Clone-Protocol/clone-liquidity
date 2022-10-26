@@ -50,7 +50,7 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
   backgroundColor: 'rgba(21, 22, 24, 0.75)',
 	color: '#989898',
 	'&.Mui-selected': {
-    border: 'solid 1px #3f3f3f',
+		boxShadow:'0 0 0 1px #3f3f3f inset',
     backgroundColor: '#000',
 		color: '#fff',
     borderRadius: '10px'

@@ -4,6 +4,7 @@ import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getTokenAccount } from '~/utils/token_accounts'
 
 export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return null
@@ -18,24 +19,25 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
 	let usdiVal = 0.0
 	let iassetVal = 0.0
 
-	try {
-		const associatedTokenAccount = await program.getOrCreateUsdiAssociatedTokenAccount()
-    usdiVal = Number(associatedTokenAccount.amount) / 100000000;
-	} catch {}
+  const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, userPubKey, program.connection);
 
-	try {
-    const associatedTokenAccount = await program.getOrCreateAssociatedTokenAccount(
-      (
-        await program.getPool(index)
-      ).assetInfo.iassetMint
-    );
+  if (usdiTokenAccountAddress !== undefined) {
+    const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress, "processed");
+    usdiVal = Number(usdiBalance.value.amount) / 100000000;
+  }
 
-    iassetVal =  Number(associatedTokenAccount.amount) / 100000000;
-	} catch {}
+  const pool = await program.getPool(index);
+  const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, userPubKey, program.connection);
+  if (iassetTokenAccountAddress !== undefined) {
+    const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress, "processed");
+    iassetVal = Number(iassetBalance.value.amount) / 100000000;
+  }
 
 	return {
 		usdiVal,
 		iassetVal,
+    usdiTokenAccountAddress,
+    iassetTokenAccountAddress
 	}
 }
 

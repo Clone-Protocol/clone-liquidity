@@ -51,7 +51,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	return assetData ? (
 		<StyledBox>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-				<Box sx={{ display: 'flex', maxWidth: '488px', height: '47px', alignItems: 'center', paddingLeft: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
+				<Box sx={{ display: 'flex', maxWidth: '494px', height: '47px', alignItems: 'center', paddingLeft: '9px', paddingRight: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
 					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
 						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
             <span style={{ marginLeft: '8px' }}>Comet Liquidity <InfoTooltip title="Comet Liquidity" /></span>
@@ -99,6 +99,7 @@ const CometTab = styled(Button)`
 	width: 199px;
 	height: 35px;
   padding: 0;
+	line-height: 35px;
 	border-radius: 10px;
   border: 1px solid transparent;
   background-image: linear-gradient(#000000, #000000), linear-gradient(to bottom, #809cff 0%, #0038ff 100%);
@@ -108,7 +109,7 @@ const CometTab = styled(Button)`
 	font-weight: 600;
 	color: #fff;
   &:hover {
-    opacity: 0.8;
+    background-color: rgba(38, 38, 38, 0.5);
   }
   &:active {
     background: #171717;
@@ -124,14 +125,18 @@ const UnconcentTabBtn = styled((props: any) => (
 }))
 
 const UnconcentTab = styled(Button)`
-	width: 290px;
+	width: 295px;
 	height: 35px;
+	line-height: 35px;
   margin-left: 8px;
 	border-radius: 10px;
 	background-color: rgba(21, 22, 24, 0.75);
 	font-size: 12px;
 	font-weight: 600;
 	color: #fff;
+	&:hover {
+    background-color: rgba(38, 38, 38, 0.5);
+  }
   &:active {
     background: #3d3d3d;
   }

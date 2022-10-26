@@ -4,7 +4,6 @@ import PairInput from '~/components/Liquidity/unconcent/PairInput'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
-import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import Image from 'next/image'
 import OneIcon from 'public/images/one-icon.svg'
@@ -31,8 +30,8 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      borrowFrom: 0.0,
-      borrowTo: 0.0,
+      borrowFrom: NaN,
+      borrowTo: NaN,
     }
 	})
   const [borrowFrom, borrowTo] = watch([
@@ -100,7 +99,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the borrowing amount should be above zero.'
+                      return ''
                     } else if (value > unconcentData?.iassetVal) {
                       return 'The borrowing amount cannot exceed the balance.'
                     }

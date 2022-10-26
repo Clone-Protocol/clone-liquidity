@@ -35,8 +35,8 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      borrowFrom: 0.0,
-      borrowTo: 0.0,
+      borrowFrom: NaN,
+      borrowTo: NaN,
     }
 	})
   const [borrowFrom, borrowTo] = watch([
@@ -129,7 +129,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               rules={{
                 validate(value) {
                   if (!value || value <= 0) {
-                    return 'the borrowing amount should be above zero.'
+                    return '' //'the borrowing amount should be above zero.'
                   } else if (value > balances?.iassetVal) {
                     return 'The borrowing amount cannot exceed the balance.'
                   }
@@ -140,7 +140,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
                   tickerIcon={assetData.tickerIcon}
                   tickerName={assetData.tickerName}
                   tickerSymbol={assetData.tickerSymbol}
-                  value={field.value}
+                  value={parseFloat(field.value.toFixed(3))}
                   headerTitle="Balance"
                   headerValue={balances?.iassetVal}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,7 +180,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerName="USDi Coin"
                   tickerSymbol="USDi"
-                  value={field.value}
+                  value={parseFloat(field.value.toFixed(3))}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

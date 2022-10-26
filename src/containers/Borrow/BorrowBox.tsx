@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Divider, Grid, FormHelperText } from '@mui/material'
+import { Box, Button, Paper, Divider, Stack, FormHelperText } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
@@ -54,13 +54,13 @@ const BorrowBox = () => {
   const { data: borrowDetail } = useBorrowDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   })
 
   const { data: usdiBalance, refetch } = useBalanceQuery({ 
     userPubKey: publicKey, 
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   });
 
@@ -73,8 +73,8 @@ const BorrowBox = () => {
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
-      borrowAmount: 0.0,
+      collAmount: NaN,
+      borrowAmount: NaN,
     }
 	})
   
@@ -120,9 +120,15 @@ const BorrowBox = () => {
   }, [assetIndex, borrowAsset])
 
 	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number' && borrowDetail && borrowDetail.stableCollateralRatio <= newValue) {
-			setCollRatio(newValue)
-      calculateBorrowAmount(collAmount, newValue)
+		if (typeof newValue === 'number' && borrowDetail) {
+        if (!isNaN(newValue)) {
+          setCollRatio(newValue)
+          calculateBorrowAmount(collAmount, newValue)
+        } else {
+          setCollRatio(0)
+          calculateBorrowAmount(collAmount, 0)
+        }
+        
 		}
 	}, [collAmount, collRatio])
 
@@ -163,8 +169,8 @@ const BorrowBox = () => {
 				</LoadingWrapper>
 			)}
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
+      <Stack direction="row" spacing={3}>
+        <Box>
           <AutoCompletePairInput
             assets={ASSETS}
             selAssetId={assetIndex}
@@ -172,7 +178,7 @@ const BorrowBox = () => {
           />
           <StyledBox>
             <Box display="flex">
-              <Image src={borrowAsset.tickerIcon} width="30px" height="30px" />
+              <Image src={borrowAsset.tickerIcon} width="30px" height="30px" layout="fixed" />
               <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
                 {borrowAsset.tickerName} ({borrowAsset.tickerSymbol})
               </Box>
@@ -193,8 +199,8 @@ const BorrowBox = () => {
               Oracle Price <InfoTooltip title="Oracle Price" />
             </Box>
           </StyledBox>
-        </Grid>
-        <Grid item xs={12} md={8}>
+        </Box>
+        <Box>
           <StyledPaper variant="outlined">
             <Box sx={{ fontSize: '16px', fontWeight: '600', marginBottom: '30px' }}>Borrow</Box>
             <Box>
@@ -206,7 +212,7 @@ const BorrowBox = () => {
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the collateral amount should be above zero.'
+                      return '' //'the collateral amount should be above zero.'
                     } else if (value > usdiBalance?.balanceVal) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
@@ -238,7 +244,7 @@ const BorrowBox = () => {
               <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title="Set collateral ratio" /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
-                <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} onChange={handleChangeCollRatio} />
+                <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
               </Box>
             </Box>
             <StyledDivider />
@@ -260,7 +266,7 @@ const BorrowBox = () => {
                   rules={{
                     validate(value) {
                       if (!value || value <= 0) {
-                        return 'the borrow amount should be above zero.'
+                        return '' //'the borrow amount should be above zero.'
                       }
                     }
                   }}
@@ -281,33 +287,13 @@ const BorrowBox = () => {
                 />
                 <FormHelperText error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText>
               </Box>
-              {/* <Stack
-                sx={{
-                  border: '1px solid #9d9d9d',
-                  borderRadius: '10px',
-                  color: '#9d9d9d',
-                  padding: '12px',
-                  marginTop: '19px',
-                }}
-                direction="row"
-                justifyContent="space-between">
-                <Box>Price of asset bring borrowed</Box>
-                <Box sx={{ display: 'flex' }}>
-                  <Box sx={{ marginRight: '10px' }}>
-                    1 {assetData?.tickerSymbol} - {assetData?.oPrice} USDi
-                  </Box>
-                  <IconButton onClick={onRefresh}>
-                    <RefreshIcon></RefreshIcon>
-                  </IconButton>
-                </Box>
-              </Stack> */}
             </Box>
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid}>Create Borrow Position</ActionButton>
+            <ActionButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)}>Create Borrow Position</ActionButton>
           </StyledPaper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
     </>
 	) : <></>
 }

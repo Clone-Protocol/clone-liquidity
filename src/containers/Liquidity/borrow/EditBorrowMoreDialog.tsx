@@ -35,8 +35,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(borrowDetail.collateralAmount / (borrowDetail.oPrice * borrowDetail.minCollateralRatio))
-  }, [borrowDetail.usdiVal])
+    setMaxCollVal(editType === 0 ? borrowDetail.collateralAmount / (borrowDetail.oPrice * borrowDetail.minCollateralRatio) : borrowDetail.iassetVal)
+  }, [borrowDetail.usdiVal, borrowDetail.iassetVal])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
@@ -78,12 +78,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
       setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset - borrowAmount)))
     }
   }, [borrowAmount, editType])
-
-  // const calculateCollateralAmount = (inputBorrowAmount: number, inputCollRatio: number) => {
-  //   const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
-  //   const collAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
-  //   setValue('collAmount', collAmount)
-  // }
 
 	const onEdit = async () => {
     setLoading(true)
@@ -133,7 +127,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                 rules={{
                   validate(value) {
                     if (!value || value <= 0) {
-                      return 'the borrow amount should be above zero.'
+                      return ''
                     } else if (value > maxCollVal) {
                       return 'The borrow amount cannot exceed the balance.'
                     }
@@ -144,7 +138,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     editType={editType}
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
-                    collAmount={field.value}
+                    collAmount={parseFloat(field.value.toFixed(3))}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.borrowedIasset}
@@ -153,7 +147,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)
                       field.onChange(borrowAmt)
-                      // calculateBorrowAmount(borrowAmt, borrowDetail.collateralRatio)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)

@@ -89,7 +89,7 @@ let columns: GridColDef[] = [
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'last--cell',
 		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {

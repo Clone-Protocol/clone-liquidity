@@ -32,7 +32,7 @@
     "bn.js": "^5.2.0",
     "chroma-js": "^2.4.2",
     "dayjs": "^1.11.0",
-    "incept-protocol-sdk": "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#private-beta",
+    "incept-protocol-sdk": "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#private-beta",
     "lightweight-charts": "^3.8.0",
     "lodash.throttle": "^4.1.1",
     "next": "12.1.0",

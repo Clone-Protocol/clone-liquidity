@@ -47,26 +47,6 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-	// {
-	// 	field: 'iPrice',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'super-app-theme--cell',
-	// 	headerName: 'Indicator price',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-  //     return <CellDigitValue value={params.value} symbol="USDi" />
-	// 	},
-	// },
-	// {
-	// 	field: 'cPrice',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'super-app-theme--cell',
-	// 	headerName: 'Center price',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-  //     return <CellDigitValue value={params.value} symbol="USDi" />
-	// 	},
-	// },
   {
 		field: 'collateral',
 		headerClassName: 'super-app-theme--header',
@@ -96,7 +76,8 @@ let columns: GridColDef[] = [
 		headerName: 'Price range',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return (
+			return (params.row.fromPriceRange === 0 && params.row.toPriceRange === 0) ? <></> :
+			(
         <MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.cPrice * 2} />
 			)
 		},
@@ -106,10 +87,10 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Health Score',
-		flex: 1,
+		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
       return (
-        <Box sx={{ width: '80px', textAlign: 'center'}}>
+        <Box sx={{ width: '65px', textAlign: 'center'}}>
           <CellDigitValue value={params.value} symbol="%" />
         </Box>
       )
@@ -118,7 +99,7 @@ let columns: GridColDef[] = [
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'last--cell',
 		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {

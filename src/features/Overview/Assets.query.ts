@@ -1,5 +1,4 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
-import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
@@ -7,9 +6,7 @@ import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
-export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
-	if (!userPubKey) return []
-
+export const fetchAssets = async ({ program, setStartTimer }: { program: Incept, setStartTimer: (start: boolean) => void}) => {
 	console.log('fetchAssets')
 	// start timer in data-loading-indicator
   setStartTimer(false);
@@ -52,7 +49,6 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 }
 
 interface GetAssetsProps {
-	userPubKey: PublicKey | null
 	filter: FilterType
   searchTerm: string
   refetchOnMount?: QueryObserverOptions['refetchOnMount']
@@ -71,32 +67,35 @@ export interface AssetList {
 	baselineAPY: number
 }
 
-export function useAssetsQuery({ userPubKey, filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
+export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
   const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-  return useQuery(['assets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, setStartTimer }), {
+  return useQuery(['assets'], () => fetchAssets({ program: getInceptApp(), setStartTimer }), {
     refetchOnMount,
 		refetchInterval: REFETCH_CYCLE,
 		refetchIntervalInBackground: true,
     enabled,
     select: (assets) => {
+			let filteredAssets = assets
+
+			filteredAssets = assets.filter((asset) => {
+				if (filter === 'crypto') {
+					return asset.assetType === AssetType.Crypto
+				} else if (filter === 'fx') {
+					return asset.assetType === AssetType.Fx
+				} else if (filter === 'commodities') {
+					return asset.assetType === AssetType.Commodities
+				} else if (filter === 'stocks') {
+					return asset.assetType === AssetType.Stocks
+				}
+				return true;
+			})
+
 			if (searchTerm && searchTerm.length > 0) {
-				return assets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
-			} else {
-				return assets.filter((asset) => {
-					if (filter === 'crypto') {
-						return asset.assetType === AssetType.Crypto
-					} else if (filter === 'fx') {
-						return asset.assetType === AssetType.Fx
-					} else if (filter === 'commodities') {
-						return asset.assetType === AssetType.Commodities
-					} else if (filter === 'stocks') {
-						return asset.assetType === AssetType.Stocks
-					}
-					return true;
-				})
+				filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
 			}
+			return filteredAssets
 		}
   })
 }

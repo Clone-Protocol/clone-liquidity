@@ -40,7 +40,9 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
             if (cType === 0) {
               onRefetchData()
             } else {
-              router.push('/liquidity')
+              router.replace('/liquidity').then(() => {
+                router.reload()
+              })
             }
           }
         },

@@ -8,7 +8,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { FilterType } from '~/data/filter'
 import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
-import { RiskButton, DefaultButton } from '~/components/Liquidity/LiquidityButton'
+import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
@@ -91,13 +91,13 @@ let columns: GridColDef[] = [
 	{
 		field: 'action',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'last--cell',
 		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			const [openDeposit, setOpenDeposit] = useState(false)
 			const [openWithdraw, setOpenWithdraw] = useState(false)
-      // console.log('p', params)
+
 			return (
 				<Box display="flex">
 					<DefaultButton sx={{ border: '1px solid #809cff'}} onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>

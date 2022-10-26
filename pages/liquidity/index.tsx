@@ -7,6 +7,7 @@ import MyStatus from '~/containers/Liquidity/MyStatus'
 import LiquidityTable from '~/containers/Liquidity/LiquidityTable'
 
 const MyLiquidity: NextPage = () => {
+
 	return (
 		<div>
 			<Head>

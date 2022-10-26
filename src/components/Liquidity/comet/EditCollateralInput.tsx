@@ -43,7 +43,7 @@ const EditCollateralInput: React.FC<Props> = ({
           Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
         </Box>
       </Stack>
-      <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', border: '1px solid #444444'}}>
+      <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', boxShadow: '0 0 0 1px #444444 inset' }}>
         <FormStack direction="row" justifyContent="space-between" alignItems="center">
           <Box display="flex">
             <Image src={tickerIcon} width="28px" height="28px" />
@@ -52,7 +52,7 @@ const EditCollateralInput: React.FC<Props> = ({
             </Box>
           </Box>
           <Box>
-            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} value={parseFloat(collAmount.toFixed(3))} onChange={onChangeAmount} />
+            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={Number(collAmount).toString()} onChange={onChangeAmount} />
             <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (collAmountDollarPrice && collAmountDollarPrice > 0) ? ('$' + collAmountDollarPrice?.toLocaleString()) : '' }</div>
           </Box>
         </FormStack>
@@ -73,7 +73,7 @@ const FormStack = styled(Stack)`
   border-top-right-radius: 10px;
 	background-color: #333333;
   &:hover {
-    border: solid 1px #809cff;
+    box-shadow: 0 0 0 1px #809cff inset;
   }
 `
 

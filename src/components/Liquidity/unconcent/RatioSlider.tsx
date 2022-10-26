@@ -79,7 +79,7 @@ const ValueBox = styled(Box)`
 	font-size: 16px;
 	font-weight: 500;
 	color: #fff;
-	padding: 12px 18px 12px 26px;
+	padding: 12px 18px 12px 22px;
 `
 
 export default RatioSlider

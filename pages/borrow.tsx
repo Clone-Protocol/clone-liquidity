@@ -6,6 +6,7 @@ import TipMsg from '~/components/Common/TipMsg'
 import BorrowBox from '~/containers/Borrow/BorrowBox'
 
 const Borrow: NextPage = () => {
+
 	return (
 		<div>
 			<Head>
