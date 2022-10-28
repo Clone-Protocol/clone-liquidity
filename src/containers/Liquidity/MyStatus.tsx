@@ -10,7 +10,7 @@ const MyStatus = () => {
 
   const { data: status } = useStatusQuery({
     userPubKey: publicKey,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
 
