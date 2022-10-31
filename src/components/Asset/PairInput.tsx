@@ -22,6 +22,7 @@ const PairInput: React.FC<Props> = ({
 	onChange,
   onMax
 }) => {
+	console.log('vv', value)
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (
@@ -40,7 +41,7 @@ const PairInput: React.FC<Props> = ({
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
 					</Box>
 				</Box>
-				<InputAmount id="ip-amount" type="number" placeholder='0.00' min={0} max={headerValue} sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={Number(value).toString()} onChange={onChange} />
+				<InputAmount id="ip-amount" type="number" placeholder='0.00' min={0} max={headerValue} sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChange} />
 			</FormStack>
 		</FormControl>
 	)
