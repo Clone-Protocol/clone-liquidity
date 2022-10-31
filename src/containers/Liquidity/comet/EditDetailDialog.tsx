@@ -113,6 +113,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       if (open) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
 
+        const collateralChange = editType === 0 ? collAmount : -1 * collAmount
+
         let {
           maxCollateralWithdrawable,
           lowerPrice,
@@ -121,7 +123,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           healthScore,
         } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
           cometIndex,
-          collAmount,
+          collateralChange,
           mintAmount - cometDetail.mintAmount
         )
         setHealthScore(healthScore)
@@ -228,7 +230,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       dollarPrice={cometDetail.collAmount}
                       onChangeType={handleChangeType}
                       onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const collAmt = parseFloat(e.currentTarget.value)
+                        let collAmt = parseFloat(e.currentTarget.value)
+                        collAmt = isNaN(collAmt) ? 0 : collAmt
                         field.onChange(collAmt)
                       }}
                       onMax={(amount: number) => {

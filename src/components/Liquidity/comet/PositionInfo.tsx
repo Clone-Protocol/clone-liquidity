@@ -50,10 +50,10 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             <SubTitle>Price Range <InfoTooltip title="price range" /></SubTitle>
             <Box sx={{ marginTop: '20px' }}>
               <ConcentrationRangeView
-                centerPrice={assetData.price}
+                centerPrice={assetData?.centerPrice}
                 lowerLimit={cometData.lowerLimit}
                 upperLimit={cometData.upperLimit}
-                max={assetData.maxRange}
+                max={cometData.upperLimit}
               />
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price</DetailHeader>
