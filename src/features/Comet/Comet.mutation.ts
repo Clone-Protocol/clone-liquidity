@@ -201,52 +201,72 @@ export const callEdit = async ({
   const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
   const pool = await program.getPool(poolIndex);
 
+  let tx = new Transaction().add(
+    await program.updatePricesInstruction()
+  );
+
+  let result: any = {
+    result: false,
+    msg: '',
+    iassetMint: pool.assetInfo.iassetMint
+
+  };
+  if (collAmount != 0) {
+    /// Deposit
+    if (editType === 0) {
+      tx.add(
+        await program.addCollateralToSinglePoolCometInstruction(
+          collateralAssociatedTokenAccount!,
+          new anchor.BN(collAmount * 10 ** 8),
+          0,
+          cometIndex
+      )
+      );
+  
+      result = {
+        result: true,
+        msg: 'added collateral to comet',
+        iassetMint: pool.assetInfo.iassetMint
+      };
+    } else { 
+    /// Withdraw
+    tx.add(
+      await program.withdrawCollateralFromSinglePoolCometInstruction(
+        collateralAssociatedTokenAccount!,
+        new anchor.BN(collAmount * 10 ** 8),
+        cometIndex,
+      )
+    );
+  
+      result = {
+        result: true,
+        msg: 'withdraw collateral from comet'
+      }
+    }
+  }
+
   // adjust USDI & iAsset in liquidity
   if (mintAmountChange > 0) {
-    await program.addLiquidityToSinglePoolComet(
-      new anchor.BN(mintAmountChange * 10 ** 8),
-      cometIndex,
-      poolIndex
-    )
+    tx.add(
+      await program.addLiquidityToSinglePoolCometInstruction(
+        new anchor.BN(mintAmountChange * 10 ** 8),
+        cometIndex,
+        poolIndex
+      )
+    );
   } else if (mintAmountChange < 0) {
     const lpTokensToClaim = Math.min(
       toNumber(pool.liquidityTokenSupply) * Math.abs(mintAmountChange) / toNumber(pool.usdiAmount),
       toNumber(singlePoolComet.positions[cometIndex].liquidityTokenValue)
     )
-    await program.withdrawLiquidityFromSinglePoolComet(
-      new anchor.BN(lpTokensToClaim * 10 ** 8),
-      cometIndex,
-      []
-    )
+    tx.add(
+      await program.withdrawLiquidityFromSinglePoolCometInstruction(
+        new anchor.BN(lpTokensToClaim * 10 ** 8),
+        cometIndex,
+      )
+    );
   }
-
-  /// Deposit
-  if (editType === 0) {
-		await program.addCollateralToSinglePoolComet(
-			collateralAssociatedTokenAccount!,
-			new anchor.BN(collAmount * 10 ** 8),
-			cometIndex
-		)
-
-    return {
-      result: true,
-      msg: 'added collateral to comet',
-      iassetMint: pool.assetInfo.iassetMint
-    }
-	} else { 
-  /// Withdraw
-		await program.withdrawCollateralFromSinglePoolComet(
-			collateralAssociatedTokenAccount!,
-			new anchor.BN(collAmount * 10 ** 8),
-			cometIndex,
-			[]
-		)
-
-    return {
-      result: true,
-      msg: 'withdraw collateral from comet'
-    }
-	}
+  return result;
 }
 
 type EditFormData = {

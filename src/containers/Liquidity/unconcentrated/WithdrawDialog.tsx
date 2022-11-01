@@ -53,7 +53,8 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
     await mutateAsync(
       {
         index: unconcentratedIndex,
-        amount
+        amount,
+        percent
       },
       {
         onSuccess(data) {
