@@ -22,7 +22,6 @@ const PairInput: React.FC<Props> = ({
 	onChange,
   onMax
 }) => {
-	console.log('vv', value)
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (

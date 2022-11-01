@@ -73,6 +73,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const program = getInceptApp()
         await program.loadManager()
 
+        initData()
+
         let {
           maxCollateralWithdrawable,
           healthScore,
@@ -103,7 +105,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       }
     }
     fetch()
-  }, [open])
+  }, [open, editType])
 
   useEffect(() => {
     async function fetch() {
