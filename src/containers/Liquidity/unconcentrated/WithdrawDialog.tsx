@@ -44,7 +44,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
 	const handleChangePercent = useCallback((event: Event, newValue: number | number[]) => {
 		if (typeof newValue === 'number' && data?.maxVal) {
 			setPercent(newValue)
-			setAmount((data?.maxVal * percent) / 100)
+			setAmount((data?.maxVal * newValue) / 100)
 		}
 	}, [data?.maxVal, amount, percent])
 
