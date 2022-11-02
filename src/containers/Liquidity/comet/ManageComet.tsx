@@ -45,8 +45,9 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
   });
 
   useEffect(() => {
-    // if poolIndex is 255, goes to close comet as fix
-    if (cometDetail && !cometDetail.tickerSymbol) {
+    console.log('cometDetail', cometDetail)
+    // if step1 is finished, goes to close comet as fix
+    if (cometDetail && cometDetail.centerPrice === 0) {
       setTab(1)
       setIsCloseTabFixed(true)
     }

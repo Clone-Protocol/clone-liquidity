@@ -76,7 +76,7 @@ let columns: GridColDef[] = [
 		headerName: 'Price range',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return (params.row.fromPriceRange === 0 && params.row.toPriceRange === 0) ? <></> :
+			return (isNaN(params.row.cPrice)) ? <></> :
 			(
         <MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.cPrice * 2} />
 			)
@@ -89,7 +89,8 @@ let columns: GridColDef[] = [
 		headerName: 'Health Score',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
-      return (
+      return (isNaN(params.row.cPrice)) ? <></> : 
+			(
         <Box sx={{ width: '65px', textAlign: 'center'}}>
           <CellDigitValue value={params.value} symbol="%" />
         </Box>
@@ -107,7 +108,7 @@ let columns: GridColDef[] = [
 
 			return (
 				<Box display="flex">
-					<StableButton onClick={() => setOpenRecenter(true)} disabled={params.row.healthScore === 0}>Recenter</StableButton>
+					<StableButton onClick={() => setOpenRecenter(true)} disabled={isNaN(params.row.cPrice)}>Recenter</StableButton>
 					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
 						<DefaultButton>Manage</DefaultButton>
 					</Link>

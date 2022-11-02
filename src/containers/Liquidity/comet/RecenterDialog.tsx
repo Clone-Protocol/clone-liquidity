@@ -50,7 +50,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 
   useEffect(() => {
     if (usdiBalance && cometData) {
-      console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
+      // console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
       setIsLackBalance(usdiBalance.balanceVal < cometData.usdiCost)
     }
   }, [usdiBalance, cometData])

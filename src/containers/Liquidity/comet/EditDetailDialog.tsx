@@ -55,6 +55,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }
 
   const { mutateAsync } = useEditMutation(publicKey)
+  const [defaultValues, setDefaultValues] = useState({
+    lowerLimit: cometDetail.lowerLimit,
+    upperLimit: cometDetail.upperLimit,
+    mintRatio: 0,
+    healthScore: 0,
+    maxWithdrawable: 0,
+    maxUsdiPosition: 0,
+  })
 
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
@@ -88,9 +96,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         )
 
         const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
-        console.log('a', lowerPrice+"/"+upperPrice)
-        console.log('b', maxUsdiPosition +"/"+maxCollateralWithdrawable + "/"+healthScore)
-        console.log('c', cometDetail.mintAmount +"/"+ mintRatio)
+        // console.log('a', lowerPrice+"/"+upperPrice)
+        // console.log('b', maxUsdiPosition +"/"+maxCollateralWithdrawable + "/"+healthScore)
+        // console.log('c', cometDetail.mintAmount +"/"+ mintRatio)
         
         setCometData({
           ...cometData,
@@ -102,10 +110,37 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
         setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
         setValue('mintAmount', cometDetail.mintAmount)
+
+        setDefaultValues({
+          lowerLimit: lowerPrice,
+          upperLimit: upperPrice,
+          healthScore: healthScore,
+          maxWithdrawable: Math.abs(maxCollateralWithdrawable),
+          maxUsdiPosition: maxUsdiPosition,
+          mintRatio: mintRatio,
+        })
       }
     }
     fetch()
-  }, [open, editType])
+  }, [open])
+
+  // set default when changing editType
+  useEffect(() => {
+    if (defaultValues) {
+      initData()
+      
+      setCometData({
+        ...cometData,
+        lowerLimit: defaultValues.lowerLimit,
+        upperLimit: defaultValues.upperLimit
+      })
+      setHealthScore(defaultValues.healthScore)
+      setMaxWithdrawable(defaultValues.maxWithdrawable)
+      setDefaultMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
+      setMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
+      setValue('mintAmount', cometDetail.mintAmount)
+    }
+  }, [editType])
 
   useEffect(() => {
     async function fetch() {
