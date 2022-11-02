@@ -20,32 +20,22 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 	let borrow = 0
 	let unconcentrated = 0
 	let comet = 0
+  // TODO:
+  let multipoolComet = 0
+  let liquidated = 0
 
   try {
-    let mintPositions = await program.getMintPositions()
-    let liquidityPositions = await program.getLiquidityPositions()
-    let comets = await program.getSinglePoolComets()
-    let cometInfos = await program.getUserSinglePoolCometInfos()
-
-    // comets
-    for (const info of cometInfos) {
-      const hasPool = Number(info[info.length-1])
-
-      // unless poolIndex is 255
-      if (hasPool) {
-        const collateralAmount = Number(info[6])
-        totalVal += collateralAmount
-        comet += collateralAmount
-      }
-    }
-
+    let mintPositions = await program.getMintPositions();
     for (var i = 0; i < Number(mintPositions.numPositions); i++) {
       let mintPosition = mintPositions.mintPositions[i]
       let collateralAmount = toNumber(mintPosition.collateralAmount)
       totalVal += collateralAmount
       borrow += collateralAmount
     }
-
+  } catch (e) {console.log(e);}
+  
+  try {
+    let liquidityPositions = await program.getLiquidityPositions()
     for (var i = 0; i < Number(liquidityPositions.numPositions); i++) {
       let liquidityPosition = liquidityPositions.liquidityPositions[i]
       let liquidityTokenAmount = toNumber(liquidityPosition.liquidityTokenValue)
@@ -58,24 +48,21 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
       totalVal += amount
       unconcentrated += amount
     }
+  } catch (e) {console.log(e);}
 
-    comets.collaterals.slice(0, comets.numCollaterals.toNumber()).forEach(collateral => {
-      let collateralAmount = toNumber(collateral.collateralAmount);
+  try {
+    let comets = await program.getSinglePoolComets();
+    for (let i = 0; i < Number(comets.numCollaterals.toNumber()); i++) {
+      let collateralAmount = toNumber(comets.collaterals[i].collateralAmount);
       totalVal += collateralAmount;
       comet += collateralAmount;
-    });
-
-  } catch (e) {
-    console.error(e)
-  }
+    }
+  } catch (e) {console.log(e);}
 
 	let borrowPercent = totalVal > 0 ? (borrow / totalVal) * 100 : 0
 	let unconcentratedPercent = totalVal > 0 ? (unconcentrated / totalVal) * 100 : 0
 	let cometPercent = totalVal > 0 ? (comet / totalVal) * 100 : 0
 
-  // TODO:
-  let multipoolComet = 0
-  let liquidated = 0
 
 	return {
 		totalVal,
