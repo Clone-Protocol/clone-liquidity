@@ -90,7 +90,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				/>
         <Box sx={{ display: 'flex', }}>
           <Box sx={{ marginLeft: '30px' }}><Stick /><FlagBox>min {min}%</FlagBox></Box>
-          <Box sx={{ marginLeft: '190px' }}><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
+          <Box sx={{ marginLeft: '163px' }}><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
         </Box>
 			</Box>
 		</Box>

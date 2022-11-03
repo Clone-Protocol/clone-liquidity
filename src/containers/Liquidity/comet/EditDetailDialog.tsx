@@ -55,6 +55,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }
 
   const { mutateAsync } = useEditMutation(publicKey)
+  const [defaultValues, setDefaultValues] = useState({
+    lowerLimit: cometDetail.lowerLimit,
+    upperLimit: cometDetail.upperLimit,
+    mintRatio: 0,
+    healthScore: 0,
+    maxWithdrawable: 0,
+    maxUsdiPosition: 0,
+  })
 
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
@@ -73,6 +81,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const program = getInceptApp()
         await program.loadManager()
 
+        initData()
+
         let {
           maxCollateralWithdrawable,
           healthScore,
@@ -86,9 +96,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         )
 
         const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
-        console.log('a', lowerPrice+"/"+upperPrice)
-        console.log('b', maxUsdiPosition +"/"+maxCollateralWithdrawable + "/"+healthScore)
-        console.log('c', cometDetail.mintAmount +"/"+ mintRatio)
+        // console.log('a', lowerPrice+"/"+upperPrice)
+        // console.log('b', maxUsdiPosition +"/"+maxCollateralWithdrawable + "/"+healthScore)
+        // console.log('c', cometDetail.mintAmount +"/"+ mintRatio)
         
         setCometData({
           ...cometData,
@@ -100,10 +110,37 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
         setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
         setValue('mintAmount', cometDetail.mintAmount)
+
+        setDefaultValues({
+          lowerLimit: lowerPrice,
+          upperLimit: upperPrice,
+          healthScore: healthScore,
+          maxWithdrawable: Math.abs(maxCollateralWithdrawable),
+          maxUsdiPosition: maxUsdiPosition,
+          mintRatio: mintRatio,
+        })
       }
     }
     fetch()
   }, [open])
+
+  // set default when changing editType
+  useEffect(() => {
+    if (defaultValues) {
+      initData()
+      
+      setCometData({
+        ...cometData,
+        lowerLimit: defaultValues.lowerLimit,
+        upperLimit: defaultValues.upperLimit
+      })
+      setHealthScore(defaultValues.healthScore)
+      setMaxWithdrawable(defaultValues.maxWithdrawable)
+      setDefaultMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
+      setMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
+      setValue('mintAmount', cometDetail.mintAmount)
+    }
+  }, [editType])
 
   useEffect(() => {
     async function fetch() {
@@ -113,6 +150,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       if (open) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
 
+        const collateralChange = editType === 0 ? collAmount : -1 * collAmount
+
         let {
           maxCollateralWithdrawable,
           lowerPrice,
@@ -121,7 +160,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           healthScore,
         } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
           cometIndex,
-          collAmount,
+          collateralChange,
           mintAmount - cometDetail.mintAmount
         )
         setHealthScore(healthScore)
@@ -228,7 +267,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       dollarPrice={cometDetail.collAmount}
                       onChangeType={handleChangeType}
                       onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const collAmt = parseFloat(e.currentTarget.value)
+                        let collAmt = parseFloat(e.currentTarget.value)
+                        collAmt = isNaN(collAmt) ? 0 : collAmt
                         field.onChange(collAmt)
                       }}
                       onMax={(amount: number) => {

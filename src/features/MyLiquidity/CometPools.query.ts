@@ -18,10 +18,11 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 	await program.loadManager()
 	
 	// const spcomets = await program.getSinglePoolComets();
-  // for (let i = 0; i < spcomets.numComets.toNumber(); i++) {
+	// console.log('spcomets', spcomets.numPositions.toString());
+  // for (let i = 0; i < spcomets.numPositions.toNumber(); i++) {
   //   let comet = await program.getSinglePoolComet(i);
-  //   console.log('p',comet.positions[0])
-	// 	console.log('f', comet.positions[0].poolIndex.toString())
+  //   console.log('p',comet)
+	// 	console.log('f', comet.poolIndex.toString())
   // }
 
 	let cometInfos = []

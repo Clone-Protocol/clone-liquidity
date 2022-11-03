@@ -54,7 +54,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const balance = await fetchBalance({
     program,
     userPubKey,
-    index,
+    index: poolIndex,
     setStartTimer
   })
 

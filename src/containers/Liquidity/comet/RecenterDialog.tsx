@@ -50,7 +50,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 
   useEffect(() => {
     if (usdiBalance && cometData) {
-      console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
+      // console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
       setIsLackBalance(usdiBalance.balanceVal < cometData.usdiCost)
     }
   }, [usdiBalance, cometData])
@@ -150,7 +150,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
             <SubTitle>Projected Price Range <InfoTooltip title="projected price range" /></SubTitle>
             <Box sx={{ margin: '0 auto', marginTop: '20px', marginBottom: '33px', width: '345px' }}>
               <ConcentrationRangeView
-                centerPrice={100}
+                centerPrice={cometData.centerPrice}
                 lowerLimit={cometData.lowerLimit}
                 upperLimit={cometData.upperLimit}
                 max={cometData.upperLimit}

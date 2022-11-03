@@ -64,9 +64,9 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
   useEffect(() => {
     if (editType === 0) { // deposit
-      setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
+      setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) * 100 / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
     } else { // withdraw
-      setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
+      setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) * 100 / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
     }
   }, [collAmount, editType])
 
