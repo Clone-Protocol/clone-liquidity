@@ -1,4 +1,4 @@
-import { FormControl, Input, InputAdornment, InputLabel, styled, Stack, Box } from '@mui/material'
+import { FormControl, styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 
 interface Props {

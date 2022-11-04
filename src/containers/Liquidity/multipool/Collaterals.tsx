@@ -1,8 +1,9 @@
-import { Box, Stack, Grid, Button } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useState } from 'react'
 import AddCollateralDialog from './Dialogs/AddCollateralDialog'
+import CollateralPairView from '~/components/Liquidity/multipool/CollateralPairView'
 
 const Collaterals = () => {
   const [openAddCollateral, setOpenAddCollateral] = useState(false)
@@ -10,14 +11,12 @@ const Collaterals = () => {
   return (
     <>
       <Box>
-        {/* <PairInputView
-          tickerIcon={'/images/assets/USDi.png'}
-          tickerName="USDi Coin"
-          tickerSymbol="USDi"
-          value={parseFloat(field.value.toFixed(3))}
-          headerTitle="Max amount mintable"
-          headerValue={maxMintable}
-        /> */}
+        <CollateralPairView
+          tickerIcon={'/images/assets/solana.png'}
+          tickerSymbol="SOL"
+          value={1005.04}
+          usdValue={10000}
+        />
       </Box>
       <AddButton onClick={() => setOpenAddCollateral(true)}>Add Collateral</AddButton>
 
@@ -32,6 +31,7 @@ const Collaterals = () => {
 
 const AddButton = styled(Button)`
   background: #1d1d1d;
+  width: 112px;
   height: 26px;
   padding: 4px 0;
   border-radius: 10px;
@@ -39,6 +39,7 @@ const AddButton = styled(Button)`
   font-size: 10px;
   font-weight: 500;
   color: #fff;
+  margin-top: 9px;
 `
 
 export default Collaterals

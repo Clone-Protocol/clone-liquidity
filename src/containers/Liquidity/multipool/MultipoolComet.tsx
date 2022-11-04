@@ -1,7 +1,7 @@
 import { Box, Stack, Grid, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
-import InfoBookIcon from 'public/images/info-book-icon.png'
+import InfoBookIcon from 'public/images/info-book-icon.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip';
 import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
@@ -19,9 +19,10 @@ const MultipoolComet = () => {
           color: '#989898',
           padding: '8px',
           marginBottom: '26px',
+          height: '41px'
         }}
         direction="row">
-        <Box sx={{ width: '73px', textAlign: 'center', marginTop: '6px' }}>
+        <Box sx={{ width: '73px', textAlign: 'center', marginTop: '2px' }}>
           <Image src={InfoBookIcon} />
         </Box>
         <WarningBox>
@@ -32,29 +33,29 @@ const MultipoolComet = () => {
       <Grid container spacing={2}>
 			  <Grid item xs={12} md={2}>
           <CardWrapper>
-            <SubTitle>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
-            <SubValue><span style={{ fontSize: '16px', fontWeight: '600' }}>75</span>/100</SubValue>
+            <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
+            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>75</span>/100</SubValue>
           </CardWrapper>
-          <CardWrapper>
+          <CardWrapper style={{ marginTop: '13px' }}>
             <Box>
-              <SubTitle>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></SubTitle>
-              <SubValue><span style={{ fontSize: '14px', fontWeight: '500' }}>90,094.95</span>USD</SubValue>
+              <SubTitle style={{ marginLeft: '16px' }}>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></SubTitle>
+              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>90,094.95</span>USD</SubValue>
             </Box>
             <Divider />
             <Box>
-              <SubTitle>Total Liquidity <InfoTooltip title="Total Liquidity" /></SubTitle>
-              <SubValue><span style={{ fontSize: '14px', fontWeight: '500' }}>50,094.95</span>USD</SubValue>
+              <SubTitle style={{ marginLeft: '16px' }}>Total Liquidity <InfoTooltip title="Total Liquidity" /></SubTitle>
+              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>50,094.95</span>USD</SubValue>
             </Box>
           </CardWrapper>
         </Grid>
-        <Grid item xs={12} md={5}>
-          <CardWrapper>
+        <Grid item xs={12} md={4}>
+          <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
             <SubTitle>Collaterals <InfoTooltip title="Collaterals" /></SubTitle>
             <Collaterals />
           </CardWrapper>
         </Grid>
-        <Grid item xs={12} md={5}>
-          <CardWrapper>
+        <Grid item xs={12} md={6}>
+          <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
             <SubTitle>Contributed Liquidity Positions <InfoTooltip title="Contributed Liquidity Positions" /></SubTitle>
             <LiquidityPositions />
           </CardWrapper>
@@ -73,6 +74,7 @@ const WarningBox = styled(Box)`
 	font-size: 11px;
 	font-weight: 500;
 	color: #989898;
+  margin-top: 3px;
 `
 
 const CardWrapper = styled(Box)`
@@ -107,7 +109,7 @@ const SubValue = styled('div')`
 const Divider = styled('div')`
   width: 140px;
   height: 1px;
-  margin: 18px 12px 12px 0;
+  margin: 18px 12px 12px 10px;
   background-color: #535353;
 `
 
