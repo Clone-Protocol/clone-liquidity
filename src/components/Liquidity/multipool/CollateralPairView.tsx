@@ -8,9 +8,12 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	usdValue?: number
+	handleOpenEdit?: any
 }
 
-const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, usdValue }) => {
+const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, usdValue, handleOpenEdit }) => {
+	
+	
 	return (
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
@@ -26,8 +29,8 @@ const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, 
 				</Box>
 			</FormStack>
 			<Box sx={{ marginLeft: '8px' }}>
-				<PlusButton><AddRoundedIcon fontSize='small' /></PlusButton>
-				<MinusButton><RemoveRoundedIcon fontSize='small' /></MinusButton>
+				<PlusButton onClick={() => handleOpenEdit(0)}><AddRoundedIcon fontSize='small' /></PlusButton>
+				<MinusButton onClick={() => handleOpenEdit(1)}><RemoveRoundedIcon fontSize='small' /></MinusButton>
 			</Box>
 		</Box>
 	)

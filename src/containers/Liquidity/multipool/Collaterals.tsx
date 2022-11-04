@@ -1,12 +1,18 @@
 import { Box, Button } from '@mui/material'
 import { styled } from '@mui/system'
-import Image from 'next/image'
 import { useState } from 'react'
 import AddCollateralDialog from './Dialogs/AddCollateralDialog'
 import CollateralPairView from '~/components/Liquidity/multipool/CollateralPairView'
+import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 
 const Collaterals = () => {
   const [openAddCollateral, setOpenAddCollateral] = useState(false)
+  const [openEditCollateral, setOpenEditCollateral] = useState(false)
+
+  const openEdit = (tab: number) => {
+    console.log('t', tab)
+    setOpenEditCollateral(true)
+  }
 
   return (
     <>
@@ -16,6 +22,7 @@ const Collaterals = () => {
           tickerSymbol="SOL"
           value={1005.04}
           usdValue={10000}
+          handleOpenEdit={openEdit}
         />
       </Box>
       <AddButton onClick={() => setOpenAddCollateral(true)}>Add Collateral</AddButton>
@@ -23,6 +30,10 @@ const Collaterals = () => {
       <AddCollateralDialog
         open={openAddCollateral}
         handleClose={() => setOpenAddCollateral(false)}
+      />
+      <EditCollateralDialog
+        open={openEditCollateral}
+        handleClose={() => setOpenEditCollateral(false)}
       />
     </>
   )
