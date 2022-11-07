@@ -89,7 +89,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           maxUsdiPosition,
           lowerPrice,
           upperPrice
-        } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
+        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+          await program.getTokenData(),
+          await program.getSinglePoolComets(),
           cometIndex,
           0,
           0
@@ -159,6 +161,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           maxUsdiPosition,
           healthScore,
         } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
+          await program.getTokenData(),
+          await program.getSinglePoolComets(),
           cometIndex,
           collateralChange,
           mintAmount - cometDetail.mintAmount
