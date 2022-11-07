@@ -50,6 +50,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
 
 	const onWithdraw = async () => {
     setLoading(true)
+    handleClose()
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -63,7 +64,6 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
             enqueueSnackbar('Success to withdraw')
 
             refetch()
-            handleClose()
             //hacky sync
             location.reload()
           }

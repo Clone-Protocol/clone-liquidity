@@ -173,6 +173,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         })
         
         setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
+        calculateMintAmount(mintRatio * maxUsdiPosition / 100)
       }
     }
     fetch()

@@ -120,7 +120,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     if (!value || value <= 0) {
                       return ''
                     } else if (value > maxCollVal) {
-                      return 'The collateral amount cannot exceed the balance.'
+                      if (editType === 0) {
+                        return 'The deposit amount exceeds wallet balance.'
+                      } else {
+                        return 'The withdraw amount exceeds maximum withdraw balance.'
+                      }
                     }
                   }
                 }}

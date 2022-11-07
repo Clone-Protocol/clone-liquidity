@@ -27,7 +27,7 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 
 	let balances = await program.getPoolBalances(liquidityPosition.poolIndex)
 
-	let maxVal = ((balances[1] * liquidityTokenBalance) / liquidityTokenSupplyBeforeComet!) * 2
+	let maxVal = ((balances[1] * liquidityTokenBalance) / liquidityTokenSupplyBeforeComet!)
 
 	return {
 		maxVal: maxVal,
