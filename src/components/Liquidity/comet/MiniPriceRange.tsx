@@ -15,7 +15,7 @@ interface Props {
 
 const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit, max, hasRisk }) => {
 	const maxLimit = max
-	const centerPricePercent = (iPrice * 100) / maxLimit
+	const centerPricePercent = (centerPrice * 100) / upperLimit
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
