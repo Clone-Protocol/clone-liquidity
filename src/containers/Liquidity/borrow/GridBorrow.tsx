@@ -27,6 +27,7 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
     <Grid
       headers={columns}
       rows={assets || []}
+			minHeight={380}
     />
 	)
 }

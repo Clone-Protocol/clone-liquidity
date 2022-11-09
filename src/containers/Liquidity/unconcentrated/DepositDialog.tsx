@@ -48,6 +48,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
 
 	const onDeposit = async () => {
     setLoading(true)
+    handleClose()
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -60,7 +61,6 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
             enqueueSnackbar('Success to deposit')
 
             refetch()
-            handleClose()
             //hacky sync
             location.reload()
           }

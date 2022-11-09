@@ -30,6 +30,7 @@ const GridComet: React.FC<Props> = ({ filter }) => {
     <Grid
       headers={columns}
       rows={cometPools || []}
+			minHeight={380}
     />
 	)
 }

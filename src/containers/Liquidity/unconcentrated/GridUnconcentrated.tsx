@@ -29,6 +29,7 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 		<Grid
       headers={columns}
       rows={pools || []}
+			minHeight={380}
     />
 	)
 }

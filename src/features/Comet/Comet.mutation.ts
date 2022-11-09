@@ -266,6 +266,8 @@ export const callEdit = async ({
       )
     );
   }
+  await program.provider.send!(tx);
+  
   return result;
 }
 

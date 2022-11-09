@@ -73,7 +73,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   useEffect(() => {
     if (editType === 0) { // borrow more
-      setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + borrowAmount)))
+      // setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + borrowAmount)))
+      setExpectedCollRatio(borrowDetail.usdiVal * 100 / (borrowDetail.oPrice * borrowAmount))
     } else { // repay
       setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset - borrowAmount)))
     }
