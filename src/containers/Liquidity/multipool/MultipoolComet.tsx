@@ -66,7 +66,11 @@ const MultipoolComet = () => {
 }
 
 const Wrapper = styled(Box)`
+  min-height: 550px;
   margin-top: 26px;
+  margin-bottom: 25px;
+  padding-top: 17px;
+  padding-bottom: 17px;
 `
 
 const WarningBox = styled(Box)`

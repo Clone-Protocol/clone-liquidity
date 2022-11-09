@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
 import {
 	PairData
 } from '~/features/MyLiquidity/BorrowPosition.query'
@@ -12,7 +11,7 @@ import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateral
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditCollateralDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
+const EditCollateralDialog = ({ open, handleClose, onRefetchData }: any) => {
   // const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   // const { enqueueSnackbar } = useSnackbar()
@@ -20,18 +19,12 @@ const EditCollateralDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
 
-  // const [maxCollVal, setMaxCollVal] = useState(0);
-
-  //collateralAmount (minus value above if withdraw, plus value above if deposit) / getAssetInfo(poolIndex).price * borrowedIasset
-  // const [expectedCollRatio, setExpectedCollRatio] = useState(0)
-
   // useEffect(() => {
   //   setMaxCollVal(borrowDetail.usdiVal)
   // }, [borrowDetail.usdiVal])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
-    // setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal : borrowDetail.maxWithdrawableColl)
 	}, [editType])
 
   const fromPair: PairData = {
@@ -62,40 +55,8 @@ const EditCollateralDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
     setValue('collAmount', 0.0)
   }
 
-  // useEffect(() => {
-  //   if (editType === 0) { // deposit
-  //     setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
-  //   } else { // withdraw
-  //     setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
-  //   }
-  // }, [collAmount, editType])
-
 	const onEdit = async () => {
-    // setLoading(true)
-    // await mutateAsync(
-    //   {
-    //     borrowIndex,
-    //     collateralAmount: collAmount,
-    //     editType
-    //   },
-    //   {
-    //     onSuccess(data) {
-    //       if (data) {
-    //         console.log('data', data)
-    //         enqueueSnackbar('Success to edit')
-    //         initData()
-    //         onRefetchData()
-    //         onHideEditForm()
-    //       }
-    //       setLoading(false)
-    //     },
-    //     onError(err) {
-    //       console.error(err)
-    //       enqueueSnackbar('Failed to edit')
-    //       setLoading(false)
-    //     }
-    //   }
-    // )
+    
 	}
 
   const isValid = Object.keys(errors).length === 0
@@ -108,7 +69,7 @@ const EditCollateralDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 				</LoadingWrapper>
 			)}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <Box sx={{ padding: '8px 1px', color: '#fff' }}>
             <Box>
@@ -132,9 +93,9 @@ const EditCollateralDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     tickerSymbol={fromPair.tickerSymbol}
                     collAmount={parseFloat(field.value.toFixed(3))}
                     collAmountDollarPrice={field.value}
-                    maxCollVal={0}
-                    currentCollAmount={0}
-                    dollarPrice={0}
+                    balance={0}
+                    currentCollAmount={1}
+                    dollarPrice={1}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
@@ -153,11 +114,11 @@ const EditCollateralDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
-                {/* <DetailValue>{expectedCollRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue> */}
+                <DetailValue>77/100 <span style={{color: '#949494'}}>(prev. 74/100)</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
                 <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
-                {/* <DetailValue>{borrowDetail.minCollateralRatio.toLocaleString()}%</DetailValue> */}
+                <DetailValue>$33,000.04</DetailValue>
               </Stack>
             </Box>
 
@@ -192,14 +153,14 @@ const StyledDivider = styled(Divider)`
 
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #4e609f;
+	background: #4e3969;
   color: #fff;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
   margin-top: 2px;
   &:hover {
-    background-color: #7A86B6;
+    background-color: #4e3969;
   }
   &:disabled {
     background-color: #444;
