@@ -23,7 +23,7 @@ interface CometInfo {
   upperLimit: number
 }
 
-const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open: any, handleClose: any }) => {
+const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: string, centerPrice: number, open: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
@@ -60,7 +60,6 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
       if (open) {
         const program = getInceptApp()
         await program.loadManager()
-        console.log('sfd', cometIndex)
 
         const comet = await program.getSinglePoolComets();
         const { 
@@ -77,7 +76,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
           prevHealthScore: prevHScore.healthScore,
           currentCollateral: toNumber(comet.collaterals[cometIndex].collateralAmount),
           usdiCost,
-          centerPrice: price,
+          centerPrice: centerPrice,
           lowerLimit: lowerPrice,
           upperLimit: upperPrice
         })
