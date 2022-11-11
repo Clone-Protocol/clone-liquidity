@@ -86,11 +86,15 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
     );
   }
 
+  let payILDInstruction = await program.paySinglePoolCometILDInstruction(
+    data.cometIndex,
+    getMantissa(singlePoolComet.collaterals[data.cometIndex].collateralAmount)
+  );
+
   tx.add(
-    await program.paySinglePoolCometILDInstruction(
-      data.cometIndex,
-      getMantissa(singlePoolComet.collaterals[data.cometIndex].collateralAmount)
-    )
+    payILDInstruction
+  ).add(
+    payILDInstruction
   );
 
   await program.provider.send!(tx);
