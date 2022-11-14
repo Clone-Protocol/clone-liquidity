@@ -25,9 +25,9 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
   let liquidated = 0
 
   const [mintPositionsResult, cometsResult, liquidityPositionsResult] = await Promise.allSettled([
-    await program.getMintPositions(), 
-    await program.getSinglePoolComets(), 
-    await program.getLiquidityPositions()
+    program.getMintPositions(), 
+    program.getSinglePoolComets(), 
+    program.getLiquidityPositions()
   ]);
 
   if (mintPositionsResult.status === "fulfilled") {
