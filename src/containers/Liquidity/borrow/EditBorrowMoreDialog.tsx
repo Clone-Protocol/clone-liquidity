@@ -35,12 +35,12 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(editType === 0 ? (borrowDetail.usdiVal * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio) : borrowDetail.iassetVal)
+    setMaxCollVal(editType === 0 ? ((borrowDetail.collateralAmount * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - borrowDetail.borrowedIasset : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
-    setMaxCollVal(newValue === 0 ? (borrowDetail.usdiVal * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio) : borrowDetail.iassetVal)
+    setMaxCollVal(newValue === 0 ? ((borrowDetail.collateralAmount * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - borrowDetail.borrowedIasset : borrowDetail.iassetVal)
 	}, [editType])
 
   const fromPair: PairData = {
@@ -73,8 +73,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   useEffect(() => {
     if (editType === 0) { // borrow more
-      // setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + borrowAmount)))
-      setExpectedCollRatio(borrowDetail.usdiVal * 100 / (borrowDetail.oPrice * borrowAmount))
+      setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + borrowAmount)))
     } else { // repay
       setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset - borrowAmount)))
     }
@@ -139,7 +138,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     editType={editType}
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
-                    collAmount={parseFloat(field.value.toFixed(3))}
+                    collAmount={parseFloat(field.value.toFixed(4))}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.borrowedIasset}

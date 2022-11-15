@@ -49,6 +49,7 @@ const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: 
 
         <RecenterDialog
           assetId={assetId}
+          centerPrice={cometDetail.centerPrice}
           open={openRecenter}
           handleClose={() => setOpenRecenter(false)}
         />

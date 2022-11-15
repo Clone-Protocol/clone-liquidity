@@ -63,6 +63,7 @@ const LiquidityTable = () => {
           background: 'rgba(21, 22, 24, 0.75)',
           borderRadius: '10px',
           minHeight: '250px',
+          marginBottom: '25px',
           color: '#fff',
           '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '13px' },
         }}>

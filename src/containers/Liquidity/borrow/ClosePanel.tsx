@@ -62,11 +62,11 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         <Box sx={{ borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '11px 24px 9px 27px'}}>
           <Stack direction="row" justifyContent="space-between">
             <DetailHeader>Dept Amount <InfoTooltip title="dept amount" /></DetailHeader>
-            <DetailValue>{borrowDetail.borrowedIasset.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
+            <DetailValue>{borrowDetail.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Indepted Asset Wallet Balance <InfoTooltip title="indepted asset wallet balance" /></DetailHeader>
-            <DetailValue>{borrowDetail.iassetVal.toLocaleString()} {borrowDetail.tickerSymbol}</DetailValue>
+            <DetailValue>{borrowDetail.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack sx={{ marginTop: '10px' }} direction="row" justifyContent="space-between">
             <DetailHeader>Collateral <InfoTooltip title="collateral" /></DetailHeader>

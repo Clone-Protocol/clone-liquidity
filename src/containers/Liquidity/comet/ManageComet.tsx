@@ -67,7 +67,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
               </Box>
             </Box>
             <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-              ${cometDetail.price.toFixed(2)}
+              ${cometDetail.price.toLocaleString(undefined, { maximumFractionDigits: 3 })}
               {/* {priceHistory.rateOfPrice >= 0 ?
                 <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
               :
