@@ -75,11 +75,11 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
         <HoverBox>
           <Stack direction="row" justifyContent="space-between">
             <div>Indicator Price:</div>
-            <div>$ {iPrice.toLocaleString()}</div>
+            <div>$ {iPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}</div>
           </Stack>
           <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '5px'}}>
             <div>Center Price:</div>
-            <div>$ {centerPrice.toLocaleString()}</div>
+            <div>$ {centerPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}</div>
           </Stack>
         </HoverBox> 
       </Popover>

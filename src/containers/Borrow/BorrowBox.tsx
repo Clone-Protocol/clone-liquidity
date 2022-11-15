@@ -116,6 +116,7 @@ const BorrowBox = () => {
       const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
       setAssetIndex(index)
       setBorrowAsset(ASSETS[index])
+      initData()
     }
   }, [assetIndex, borrowAsset])
 
@@ -276,7 +277,7 @@ const BorrowBox = () => {
                       tickerName={ASSETS[assetIndex].tickerName}
                       tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                       balanceDisabled
-                      value={parseFloat(field.value.toFixed(3))}
+                      value={field.value}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const borrowAmt = parseFloat(event.currentTarget.value)
                         field.onChange(borrowAmt)

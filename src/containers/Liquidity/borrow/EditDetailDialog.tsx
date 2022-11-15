@@ -59,6 +59,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 	])
 
   const initData = () => {
+    setEditType(0)
     setValue('collAmount', 0.0)
   }
 
