@@ -70,10 +70,10 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   // borrow_amount_in_iasset = collateral_amount / (iasset_oracle_price * collateral_ratio)
   // min_collateral_amount = borrow_amount_in_iasset * iasset_oracle_price * minCollateralRatio
   // max_withdrawable_collateral = collateral_amount - min_collateral_amount
-  const borrowAmountInIasset = Number(positionData![1]) / (oraclePrice * Number(positionData![2]));
-  const minCollateralRatio = positionData![3];
+  const borrowAmountInIasset = Number(positionData![3]);
+  const minCollateralRatio = positionData![6];
   const minCollateralAmount = borrowAmountInIasset * oraclePrice * Number(minCollateralRatio);
-  const maxWithdrawableColl = Number(positionData![1]) - minCollateralAmount;
+  const maxWithdrawableColl = Number(positionData![4]) - minCollateralAmount;
   
   return {
 		tickerIcon: tickerIcon,
@@ -82,10 +82,10 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 		oPrice: oraclePrice,
 		stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
 		cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
-    borrowedIasset: positionData![0],
-    collateralAmount: positionData![1],
-    collateralRatio: Number(positionData![2]) * 100,
-    minCollateralRatio: Number(positionData![3]) * 100,
+    borrowedIasset: positionData![3],
+    collateralAmount: positionData![4],
+    collateralRatio: Number(positionData![5]) * 100,
+    minCollateralRatio: Number(positionData![6]) * 100,
     usdiVal: balance?.usdiVal!,
     iassetVal: balance?.iassetVal!,
     maxWithdrawableColl
