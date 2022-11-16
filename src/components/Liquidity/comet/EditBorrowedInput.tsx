@@ -44,12 +44,12 @@ const EditBorrowedInput: React.FC<Props> = ({
             editType === 0 ? 
             <>
               Max borrowable: 
-              <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
+              <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
             </>
             : 
             <>
               Balance: 
-              <span style={{ fontSize: '13px', marginLeft: '5px', color: '#e9d100' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
+              <span style={{ fontSize: '13px', marginLeft: '5px', color: '#e9d100' }}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
             </>
           }
         </Box>

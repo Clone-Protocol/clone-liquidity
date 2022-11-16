@@ -143,7 +143,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
                 </Box>
               </Stack>
             </FormBox>
-            <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString()} {assetData.tickerSymbol}</BottomBox>
+            <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {assetData.tickerSymbol}</BottomBox>
           </StyledBox>
         </Stack>
       </Box>
