@@ -16,6 +16,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import throttle from 'lodash.throttle'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: any) => {
   const { publicKey } = useWallet()
@@ -69,17 +70,33 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [mintRatio, setMintRatio] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
+  const [tokenDataState, setTokenDataState] = useState<TokenData | null>(null);
+  const [singlePoolCometState, setSinglePoolCometState] = useState<Comet | null>(null);
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
 	}, [editType])
 
-  // set defaultMintRatio
+  // Init data:
   useEffect(() => {
     async function fetch() {
-      if (open) {
         const program = getInceptApp()
         await program.loadManager()
+
+        const [tokenDataResult, cometResult] = await Promise.allSettled([
+          program.getTokenData(), program.getSinglePoolComets()
+        ]);
+        if (tokenDataResult.status === "fulfilled") setTokenDataState(tokenDataResult.value!)
+        if (cometResult.status === "fulfilled") setSinglePoolCometState(cometResult.value);
+    }
+    fetch();
+  }, []);
+
+  // set defaultMintRatio
+  useEffect(() => {
+    function fetch() {
+      if (open) {
+        const program = getInceptApp()
 
         initData()
 
@@ -90,8 +107,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           lowerPrice,
           upperPrice
         } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
-          await program.getTokenData(),
-          await program.getSinglePoolComets(),
+          tokenDataState,
+          singlePoolCometState,
           cometIndex,
           0,
           0
@@ -145,9 +162,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }, [editType])
 
   useEffect(() => {
-    async function fetch() {
+    function fetch() {
       const program = getInceptApp()
-      await program.loadManager()
 
       if (open) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
@@ -160,9 +176,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           upperPrice,
           maxUsdiPosition,
           healthScore,
-        } = await program.calculateEditCometSinglePoolWithUsdiBorrowed(
-          await program.getTokenData(),
-          await program.getSinglePoolComets(),
+        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+          tokenDataState,
+          singlePoolCometState,
           cometIndex,
           collateralChange,
           mintAmount - cometDetail.mintAmount
