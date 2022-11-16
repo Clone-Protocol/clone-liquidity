@@ -180,7 +180,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerName="USDi Coin"
                   tickerSymbol="USDi"
-                  value={parseFloat(field.value.toFixed(3))}
+                  value={field.value}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

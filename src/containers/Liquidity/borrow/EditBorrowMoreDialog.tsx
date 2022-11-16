@@ -36,11 +36,11 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   //max borrowable
   useEffect(() => {
     setMaxCollVal(editType === 0 ? ((borrowDetail.collateralAmount * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - borrowDetail.borrowedIasset : borrowDetail.iassetVal)
-  }, [borrowDetail.usdiVal, borrowDetail.iassetVal])
+  }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
-    setMaxCollVal(newValue === 0 ? ((borrowDetail.collateralAmount * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - borrowDetail.borrowedIasset : borrowDetail.iassetVal)
+    initData()
 	}, [editType])
 
   const fromPair: PairData = {
@@ -56,7 +56,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 		control,
 		formState: { isDirty, errors },
 		watch,
-    setValue
+    setValue,
+    reset
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -69,6 +70,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   const initData = () => {
     setValue('borrowAmount', 0.0)
+    reset()
   }
 
   useEffect(() => {
@@ -129,7 +131,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     if (!value || value <= 0) {
                       return ''
                     } else if (value > maxCollVal) {
-                      return 'The borrow amount cannot exceed the balance.'
+                      return `The borrow amount cannot exceed the ${editType === 0 ? 'max borrowable amount' : 'balance'}.`
                     }
                   }
                 }}
@@ -139,7 +141,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
                     collAmount={parseFloat(field.value.toFixed(4))}
-                    collAmountDollarPrice={field.value}
+                    collAmountDollarPrice={field.value * borrowDetail.oPrice}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.borrowedIasset}
                     dollarPrice={borrowDetail.borrowedIasset * borrowDetail.oPrice}
