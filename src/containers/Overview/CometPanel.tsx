@@ -24,6 +24,7 @@ import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
+import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: any }) => {
   const { publicKey } = useWallet()
@@ -40,6 +41,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   })
   const [cometHealthScore, setHealthScore] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
+  const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const COLLATERAL_INDEX = 0 // USDi
 
   const {
@@ -67,20 +69,31 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   }
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
-  
+
   useEffect(() => {
     async function fetch() {
       const program = getInceptApp()
       await program.loadManager()
+      const tData = await program.getTokenData();
+      setTokenData(tData);
+    }
+    fetch()
+  }, [])
+  
+  useEffect(() => {
+    async function fetch() {
+      const program = getInceptApp()
+      //await program.loadManager()
 
       if (collAmount && !mintAmount) {
         const {
           maxUsdiPosition,
           healthScore
-        } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
+        } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
           assetIndex,
           collAmount,
-          0
+          0,
+          tokenData
         )
         setHealthScore(healthScore)
         setMaxMintable(maxUsdiPosition)
@@ -95,10 +108,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
           healthScore,
           lowerPrice,
           upperPrice
-        } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
+        } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
           assetIndex,
           collAmount,
-          mintAmount
+          mintAmount,
+          tokenData
         )
 
         console.log('l', lowerPrice)
@@ -127,15 +141,16 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
     console.log('calculateUSDiAmount', lowerLimit)
     const program = getInceptApp()
-    await program.loadManager()
+    //await program.loadManager()
 
     const {
       usdiBorrowed
-    } = await program.calculateNewSinglePoolCometFromRange(
+    } = program.calculateNewSinglePoolCometFromRange(
       assetIndex,
       collAmount,
       lowerLimit,
       true,
+      tokenData
     )
     setValue('mintAmount', usdiBorrowed)
     setMintRatio(usdiBorrowed * 100 / maxMintable)
