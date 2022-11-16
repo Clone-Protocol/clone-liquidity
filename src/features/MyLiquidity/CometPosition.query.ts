@@ -40,7 +40,14 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
 	await program.loadManager()
 
-  const comet = await program.getSinglePoolComets();
+
+  const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
+		program.getTokenData(), program.getSinglePoolComets()
+	]);
+
+  if (tokenDataResult.status !== "fulfilled" || singlePoolCometResult.status !== "fulfilled") return null;
+  const comet = singlePoolCometResult.value;
+  const tokenData = tokenDataResult.value;
   const position = comet.positions[index];
 
   console.log('comet', comet)
@@ -63,7 +70,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   let upperLimit = 0
 
   if (Number(position.poolIndex) < 255) {
-    const balances = await program.getPoolBalances(Number(position.poolIndex))
+    let pool = tokenData.pools[position.poolIndex];
+    const balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
     price = balances[1] / balances[0]
     tightRange = price * 0.1
     maxRange = 2 * price
@@ -73,17 +81,18 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     tickerIcon = asset.tickerIcon
     tickerName = asset.tickerName
     tickerSymbol = asset.tickerSymbol
-    const singlePoolHealthScore =  await program.getSinglePoolHealthScore(index)
+    const singlePoolHealthScore =  program.getSinglePoolHealthScore(index, tokenData, comet);
     ild = singlePoolHealthScore.ILD
     healthScore = singlePoolHealthScore.healthScore
 
     const {
       lowerPrice,
       upperPrice
-    } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
+    } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
       Number(position.poolIndex),
       collAmount,
-      mintAmount
+      mintAmount,
+      tokenData
     )
     lowerLimit = lowerPrice
     upperLimit = upperPrice

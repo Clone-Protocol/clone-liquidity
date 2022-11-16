@@ -6,122 +6,86 @@ import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getUserSinglePoolCometInfos } from '~/utils/user/'
 
 export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: CometPools.query')
 	// start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
+	setStartTimer(false);
+	setStartTimer(true);
 
-	await program.loadManager()
-	
-	// const spcomets = await program.getSinglePoolComets();
-	// console.log('spcomets', spcomets.numPositions.toString());
-  // for (let i = 0; i < spcomets.numPositions.toNumber(); i++) {
-  //   let comet = await program.getSinglePoolComet(i);
-  //   console.log('p',comet)
-	// 	console.log('f', comet.poolIndex.toString())
-  // }
-
-	let cometInfos = []
-
-	try {
-		cometInfos = await program.getUserSinglePoolCometInfos()
-	} catch (e) {
-		console.error(e)
-	}
-
+	await program.loadManager();
 	const result: PoolList[] = []
 
-  console.log('cometInfos', cometInfos)
+	const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
+		program.getTokenData(), program.getSinglePoolComets()
+	]);
 
-	let i = 0
-	for (const info of cometInfos) {
-		const hasPool = Number(info[info.length-1])
+	if (tokenDataResult.status === "fulfilled" && singlePoolCometResult.status === "fulfilled") {
 
-		const { collateralName, collateralType } = collateralMapping(Number(info[1]))
-		// unless poolIndex is 255
-		if (hasPool) {
-			const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+		let cometInfos = getUserSinglePoolCometInfos(program.calculateEditCometSinglePoolWithUsdiBorrowed, tokenDataResult.value, singlePoolCometResult.value);
+		console.log('cometInfos', cometInfos)
+	
+		let i = 0
+		for (const info of cometInfos) {
+			const hasPool = Number(info[info.length-1])
+	
+			const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+			// unless poolIndex is 255
+			if (hasPool) {
+				const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+	
+				const healthData = program.getSinglePoolHealthScore(i, tokenDataResult.value, singlePoolCometResult.value)
+				let healthScore = healthData.healthScore
 
-			let healthScore = 0
-			try {
-				const healthData = await program.getSinglePoolHealthScore(i)
-				healthScore = healthData.healthScore
-			} catch (e) {
-				console.error('healthData', e)
+	
+				result.push({
+					id: i,
+					tickerName: tickerName,
+					tickerSymbol: tickerSymbol,
+					tickerIcon: tickerIcon,
+					collateralName: collateralName,
+					assetType: assetType,
+					collateralType: collateralType,
+					iPrice: Number(info[2]),
+					cPrice: Number(info[3]),
+					fromPriceRange: Number(info[4]),
+					toPriceRange: Number(info[5]),
+					collateral: Number(info[6]),
+					ildIsIasset: Boolean(info[7]),
+					ild: Number(info[8]),
+					borrowedIasset: Number(info[9]),
+					borrowedUsdi: Number(info[10]),
+					liquidityTokenAmount: Number(info[11]),
+					healthScore
+				})
+			} else {
+				result.push({
+					id: i,
+					tickerName: '',
+					tickerSymbol: '',
+					tickerIcon: '',
+					collateralName: collateralName,
+					assetType: 0,
+					collateralType: collateralType,
+					iPrice: 0,
+					cPrice: 0,
+					fromPriceRange: 0,
+					toPriceRange: 0,
+					collateral: Number(info[6]),
+					ildIsIasset: false,
+					ild: 0,
+					borrowedIasset: 0,
+					borrowedUsdi: 0,
+					liquidityTokenAmount: 0,
+					healthScore: 0
+				})
 			}
-
-			result.push({
-				id: i,
-				tickerName: tickerName,
-				tickerSymbol: tickerSymbol,
-				tickerIcon: tickerIcon,
-				collateralName: collateralName,
-				assetType: assetType,
-				collateralType: collateralType,
-				iPrice: Number(info[2]),
-				cPrice: Number(info[3]),
-				fromPriceRange: Number(info[4]),
-				toPriceRange: Number(info[5]),
-				collateral: Number(info[6]),
-				ildIsIasset: Boolean(info[7]),
-				ild: Number(info[8]),
-				borrowedIasset: Number(info[9]),
-				borrowedUsdi: Number(info[10]),
-				liquidityTokenAmount: Number(info[11]),
-				healthScore
-			})
-		} else {
-			result.push({
-				id: i,
-				tickerName: '',
-				tickerSymbol: '',
-				tickerIcon: '',
-				collateralName: collateralName,
-				assetType: 0,
-				collateralType: collateralType,
-				iPrice: 0,
-				cPrice: 0,
-				fromPriceRange: 0,
-				toPriceRange: 0,
-				collateral: Number(info[6]),
-				ildIsIasset: false,
-				ild: 0,
-				borrowedIasset: 0,
-				borrowedUsdi: 0,
-				liquidityTokenAmount: 0,
-				healthScore: 0
-			})
+		i++
 		}
-
-    i++
 	}
-
-	// const result2: PoolList[] = [
-	//   {
-	//     id: 1,
-	//     tickerName: 'iSolana',
-	//     tickerSymbol: 'iSOL',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-  //     collateralName: 'USDi',
-  //     assetType: 0,
-  //     collateralType: 0,
-	//     iPrice: 160.51,
-	//     cPrice: 100.20,
-	//     fromPriceRange: 90.11,
-	//     toPriceRange: 111.48,
-	//     collateral: 15898343,
-  //     ildIsIasset: false,
-	//     ild: 28.9,
-  //     borrowedIasset: 0,
-  //     borrowedUsdi: 0,
-  //     liquidityTokenAmount: 0,
-  //     healthScore: 5
-	//   },
-	// ]
 	return result
 }
 
