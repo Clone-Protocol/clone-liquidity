@@ -31,6 +31,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit
   })
+  const [refresh, setRefresh] = useState(true);
 
   const {
 		handleSubmit,
@@ -55,7 +56,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     setValue('mintAmount', 0.0)
   }
 
-  const { mutateAsync } = useEditMutation(publicKey)
+  const { mutateAsync } = useEditMutation(publicKey, () => setRefresh(true))
   const [defaultValues, setDefaultValues] = useState({
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit,
@@ -77,20 +78,32 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 		setEditType(newValue)
 	}, [editType])
 
+  // Initialize state data.
+  useEffect(() => {
+    async function fetch() {
+      const program = getInceptApp()
+      await program.loadManager()
+
+      const [tokenDataResult, cometResult] = await Promise.allSettled([
+        program.getTokenData(), program.getSinglePoolComets()
+      ]);
+
+      if (tokenDataResult.status === "fulfilled" && cometResult.status === "fulfilled") {
+        setTokenDataState(tokenDataResult.value)
+        setSinglePoolCometState(cometResult.value)
+      }
+      setRefresh(false);
+    }
+    if (refresh) fetch();
+  }, [refresh])
+
   // set defaultMintRatio
   useEffect(() => {
     async function fetch() {
       if (open) {
         const program = getInceptApp()
-        await program.loadManager()
-
-        const [tokenDataResult, cometResult] = await Promise.allSettled([
-          program.getTokenData(), program.getSinglePoolComets()
-        ]);
 
         initData()
-
-        if (tokenDataResult.status === "fulfilled" && cometResult.status === "fulfilled") {
           let {
             maxCollateralWithdrawable,
             healthScore,
@@ -98,8 +111,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
             lowerPrice,
             upperPrice
           } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
-            tokenDataResult.value!,
-            cometResult.value,
+            tokenDataState,
+            singlePoolCometState,
             cometIndex,
             0,
             0
@@ -126,10 +139,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
             maxUsdiPosition: maxUsdiPosition,
             mintRatio: mintRatio,
           })
-
-          setTokenDataState(tokenDataResult.value!)
-          setSinglePoolCometState(cometResult.value)
-        }
       }
     }
     fetch()
@@ -158,7 +167,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       const program = getInceptApp()
 
       if (open && tokenDataState && singlePoolCometState) {
-        console.log('calculateRange', collAmount +"/"+mintAmount)
+        console.log('calculateRange', collAmount, mintAmount, cometDetail.mintAmount)
 
         const collateralChange = editType === 0 ? collAmount : -1 * collAmount
 
@@ -175,13 +184,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           collateralChange,
           mintAmount - cometDetail.mintAmount
         )
+        console.log("calc:", healthScore, lowerPrice, upperPrice);
         setHealthScore(healthScore)
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
-          lowerLimit: lowerPrice,
-          upperLimit: upperPrice
+          lowerLimit: healthScore < 100 ? lowerPrice : 0,
+          upperLimit: healthScore < 100 ? upperPrice : Infinity
         })
         
         setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
