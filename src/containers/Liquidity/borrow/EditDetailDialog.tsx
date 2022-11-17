@@ -64,10 +64,14 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   }
 
   useEffect(() => {
-    if (editType === 0) { // deposit
-      setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) * 100 / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
-    } else { // withdraw
-      setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) * 100 / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
+    if (collAmount) {
+      if (editType === 0) { // deposit
+        setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) * 100 / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
+      } else { // withdraw
+        setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) * 100 / (borrowDetail.oPrice * borrowDetail.borrowedIasset))
+      }
+    } else {
+      setExpectedCollRatio(borrowDetail.collateralRatio)
     }
   }, [collAmount, editType])
 
@@ -134,7 +138,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     editType={editType}
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
-                    collAmount={parseFloat(field.value.toFixed(3))}
+                    collAmount={field.value}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
                     currentCollAmount={borrowDetail.collateralAmount}
