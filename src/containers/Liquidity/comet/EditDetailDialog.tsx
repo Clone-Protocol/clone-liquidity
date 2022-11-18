@@ -162,6 +162,45 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     }
   }, [editType])
 
+  // Trigger on collAmount
+  useEffect(() => {
+    function fetch() {
+      const program = getInceptApp()
+
+      if (open && tokenDataState && singlePoolCometState) {
+
+        const collateralChange = editType === 0 ? collAmount : -1 * collAmount
+
+        let {
+          maxCollateralWithdrawable,
+          lowerPrice,
+          upperPrice,
+          maxUsdiPosition,
+          healthScore,
+        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+          tokenDataState,
+          singlePoolCometState,
+          cometIndex,
+          collateralChange,
+          mintAmount - cometDetail.mintAmount
+        )
+        setHealthScore(healthScore)
+        setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
+        setMaxMintable(maxUsdiPosition)
+        setCometData({
+          ...cometData,
+          lowerLimit: healthScore < 100 ? lowerPrice : 0,
+          upperLimit: healthScore < 100 ? upperPrice : Infinity
+        })
+        const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
+        setDefaultMintRatio(newDefaultMintRatio)
+        setMintRatio(newDefaultMintRatio)
+      }
+    }
+    fetch()
+  }, [collAmount])
+
+  // Trigger on mintAmount
   useEffect(() => {
     function fetch() {
       const program = getInceptApp()
@@ -184,7 +223,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           collateralChange,
           mintAmount - cometDetail.mintAmount
         )
-        console.log("calc:", healthScore, lowerPrice, upperPrice);
         setHealthScore(healthScore)
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setMaxMintable(maxUsdiPosition)
@@ -193,13 +231,12 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           lowerLimit: healthScore < 100 ? lowerPrice : 0,
           upperLimit: healthScore < 100 ? upperPrice : Infinity
         })
-        
-        setDefaultMintRatio(maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0)
-        calculateMintAmount(mintRatio * maxUsdiPosition / 100)
+        const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
+        setDefaultMintRatio(newDefaultMintRatio)
       }
     }
     fetch()
-  }, [collAmount, mintRatio])
+  }, [mintRatio])
 
   const calculateCollAmount = useCallback( throttle ((collAmount: number) => {
     setValue('collAmount', collAmount)
