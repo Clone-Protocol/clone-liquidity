@@ -95,7 +95,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
           0,
           tokenData
         )
-        setHealthScore(healthScore)
+        setHealthScore(Math.max(0, healthScore))
         setMaxMintable(maxUsdiPosition)
         setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
       }
@@ -119,11 +119,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         console.log('u', upperPrice)
         setCometData({
           ...cometData,
-          lowerLimit: lowerPrice,
-          upperLimit: upperPrice
+          lowerLimit: Math.min(lowerPrice, assetData.centerPrice),
+          upperLimit: Math.max(upperPrice, assetData.centerPrice)
         })
         setMaxMintable(maxUsdiPosition)
-        setHealthScore(healthScore)
+        setHealthScore(Math.max(0, healthScore))
       }
     }
     fetch()
@@ -159,8 +159,8 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 		const newData = {
 			...cometData,
 			isTight,
-			lowerLimit,
-			upperLimit,
+      lowerLimit: Math.min(lowerLimit, assetData.centerPrice),
+      upperLimit: Math.max(upperLimit, assetData.centerPrice)
 		}
 		setCometData(newData)
 	}, [cometData])

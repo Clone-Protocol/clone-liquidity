@@ -81,8 +81,8 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
           currentCollateral: toNumber(singlePoolCometResult.value.collaterals[cometIndex].collateralAmount),
           usdiCost,
           centerPrice: centerPrice,
-          lowerLimit: lowerPrice,
-          upperLimit: upperPrice
+          lowerLimit: Math.min(lowerPrice,centerPrice),
+          upperLimit: Math.max(upperPrice, centerPrice)
         })
       }
     }

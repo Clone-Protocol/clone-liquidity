@@ -122,10 +122,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           
           setCometData({
             ...cometData,
-            lowerLimit: lowerPrice,
-            upperLimit: upperPrice
+            lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
+            upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
           })
-          setHealthScore(healthScore)
+          setHealthScore(Math.max(0, healthScore))
           setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
           setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
           setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
@@ -184,13 +184,13 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           collateralChange,
           mintAmount - cometDetail.mintAmount
         )
-        setHealthScore(healthScore)
+        setHealthScore(Math.max(0, healthScore))
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
-          lowerLimit: healthScore < 100 ? lowerPrice : 0,
-          upperLimit: healthScore < 100 ? upperPrice : Infinity
+          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
+          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
         })
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
@@ -223,13 +223,13 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           collateralChange,
           mintAmount - cometDetail.mintAmount
         )
-        setHealthScore(healthScore)
+        setHealthScore(Math.max(0, healthScore))
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
-          lowerLimit: healthScore < 100 ? lowerPrice : 0,
-          upperLimit: healthScore < 100 ? upperPrice : Infinity
+          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
+          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
         })
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
