@@ -182,7 +182,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           singlePoolCometState,
           cometIndex,
           collateralChange,
-          mintAmount - cometDetail.mintAmount
+          0
         )
         setHealthScore(Math.max(0, healthScore))
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
@@ -195,6 +195,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
         setMintRatio(newDefaultMintRatio)
+        setValue('mintAmount', cometDetail.mintAmount);
       }
     }
     fetch()
