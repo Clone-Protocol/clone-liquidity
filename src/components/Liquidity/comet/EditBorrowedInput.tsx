@@ -44,12 +44,12 @@ const EditBorrowedInput: React.FC<Props> = ({
             editType === 0 ? 
             <>
               Max borrowable: 
-              <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
+              <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
             </>
             : 
             <>
               Balance: 
-              <span style={{ fontSize: '13px', marginLeft: '5px', color: '#e9d100' }}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
+              <span style={{ fontSize: '13px', marginLeft: '5px', color: '#e9d100' }}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
             </>
           }
         </Box>
@@ -71,9 +71,9 @@ const EditBorrowedInput: React.FC<Props> = ({
           Current dept: 
             {
               editType === 0 ?
-                <span style={{ color: '#fff', marginLeft: '4px' }}>{currentCollAmount?.toFixed(3)} {tickerSymbol}</span>
+                <span style={{ color: '#fff', marginLeft: '4px' }}>{currentCollAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
               :
-                <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount?.toFixed(3)} {tickerSymbol}</span>
+                <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
             }
             <span style={{ color: '#fff', marginLeft: '5px' }}>{ dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
         </BottomBox>

@@ -17,7 +17,7 @@ const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => 
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
 					</Box>
 				</Box>
-				<InputAmount id="ip-amount" disabled value={value?.toFixed(3)} />
+				<InputAmount id="ip-amount" disabled value={value} />
 			</FormStack>
 		</FormControl>
 	)

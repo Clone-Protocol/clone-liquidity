@@ -126,12 +126,12 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
                       </Box>
                     </Box>
                     <Box sx={{ color: '#949494'}}>
-                      <Box sx={{ fontSize: '16px', fontWeight: '500', lineHeight: '14px' }}>{(amount/unconcentData.price).toLocaleString()}</Box>
-                      <Box sx={{ fontSize: '10px', textAlign: 'right' }}>${(amount * unconcentData.price).toLocaleString()}</Box>
+                      <Box sx={{ fontSize: '16px', fontWeight: '500', lineHeight: '14px' }}>{(amount/unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</Box>
+                      <Box sx={{ fontSize: '10px', textAlign: 'right' }}>${(amount * unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</Box>
                     </Box>
                   </Stack>
                 </FormBox>
-                <BottomBox>Withdrawable: {(data?.maxVal!/unconcentData.price).toLocaleString()} {unconcentData.tickerSymbol}</BottomBox>
+                <BottomBox>Withdrawable: {(data?.maxVal!/unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })} {unconcentData.tickerSymbol}</BottomBox>
               </StyledBox>
             </Stack>
               
