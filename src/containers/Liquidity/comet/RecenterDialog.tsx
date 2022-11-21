@@ -60,25 +60,29 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
       if (open) {
         const program = getInceptApp()
         await program.loadManager()
-
-        const comet = await program.getSinglePoolComets();
+        const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
+          program.getTokenData(), program.getSinglePoolComets()
+        ]);
+        if (tokenDataResult.status !== "fulfilled" || singlePoolCometResult.status !== "fulfilled") return;
+        
         const { 
           healthScore,
           usdiCost,
           lowerPrice,
           upperPrice
-        } = await program.calculateCometRecenterSinglePool(cometIndex)
-        const balances = await program.getPoolBalances(cometIndex)
-        const prevHScore = await program.getSinglePoolHealthScore(cometIndex)
+        } = program.calculateCometRecenterSinglePool(cometIndex, tokenDataResult.value, singlePoolCometResult.value)
+        const pool = tokenDataResult.value.pools[singlePoolCometResult.value.positions[cometIndex].poolIndex];
+        const balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
+        const prevHScore = program.getSinglePoolHealthScore(cometIndex, tokenDataResult.value, singlePoolCometResult.value)
         const price = balances[1] / balances[0]
         setCometData({
           healthScore,
           prevHealthScore: prevHScore.healthScore,
-          currentCollateral: toNumber(comet.collaterals[cometIndex].collateralAmount),
+          currentCollateral: toNumber(singlePoolCometResult.value.collaterals[cometIndex].collateralAmount),
           usdiCost,
           centerPrice: centerPrice,
-          lowerLimit: lowerPrice,
-          upperLimit: upperPrice
+          lowerLimit: Math.min(lowerPrice,centerPrice),
+          upperLimit: Math.max(upperPrice, centerPrice)
         })
       }
     }

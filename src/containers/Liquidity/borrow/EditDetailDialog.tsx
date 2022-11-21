@@ -32,7 +32,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
     setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal : borrowDetail.maxWithdrawableColl)
-	}, [editType])
+	}, [editType, open])
 
   const fromPair: PairData = {
 		tickerIcon: '/images/assets/USDi.png',

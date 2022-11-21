@@ -182,15 +182,16 @@ interface CallCloseProps {
 	userPubKey: PublicKey | null
   data: CloseFormData
 }
-export function useCloseMutation(userPubKey : PublicKey | null ) {
+export function useCloseMutation(userPubKey : PublicKey | null) {
   const { getInceptApp } = useIncept()
-  return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data }))
+  return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data}))
 }
 
 export const callEdit = async ({
 	program,
 	userPubKey,
-	data
+	data,
+  setRefreshData
 }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
@@ -271,7 +272,9 @@ export const callEdit = async ({
     );
   }
   await program.provider.send!(tx);
-  
+
+  setRefreshData();
+
   return result;
 }
 
@@ -284,11 +287,12 @@ type EditFormData = {
 interface CallEditProps {
 	program: Incept
 	userPubKey: PublicKey | null
-  data: EditFormData
+  data: EditFormData,
+  setRefreshData: () => {} 
 }
-export function useEditMutation(userPubKey : PublicKey | null ) {
+export function useEditMutation(userPubKey : PublicKey | null, setRefreshData: () => {}  ) {
   const { getInceptApp } = useIncept()
-  return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data }))
+  return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data, setRefreshData }))
 }
 
 
