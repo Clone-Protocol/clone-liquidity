@@ -11,13 +11,18 @@ import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateral
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditCollateralDialog = ({ open, handleClose, onRefetchData }: any) => {
+const EditCollateralDialog = ({ open, isDeposit, handleClose, onRefetchData }: any) => {
   // const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   // const { enqueueSnackbar } = useSnackbar()
   // const borrowIndex = parseInt(borrowId)
 
-  const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
+  const [editType, setEditType] = useState(isDeposit ? 0 : 1) // 0 : deposit , 1: withdraw
+
+  useEffect(() => {
+    setEditType(isDeposit ? 0 : 1)
+  }, [isDeposit])
+
 
   // useEffect(() => {
   //   setMaxCollVal(borrowDetail.usdiVal)
@@ -91,7 +96,7 @@ const EditCollateralDialog = ({ open, handleClose, onRefetchData }: any) => {
                     editType={editType}
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
-                    collAmount={parseFloat(field.value.toFixed(3))}
+                    collAmount={field.value}
                     collAmountDollarPrice={field.value}
                     balance={0}
                     currentCollAmount={1}
