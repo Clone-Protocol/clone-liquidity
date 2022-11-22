@@ -5,10 +5,12 @@ import { useState } from 'react'
 import RecenterDialog from './Dialogs/RecenterDialog'
 import AddPositionDialog from './Dialogs/AddPositionDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
+import NewLiquidityDialog from './Dialogs/NewLiquidityDialog'
 
 const LiquidityPositions = () => {
 
   const [openAddPosition, setOpenAddPosition] = useState(false)
+  const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
 
   return (
@@ -27,7 +29,15 @@ const LiquidityPositions = () => {
 
       <AddPositionDialog
         open={openAddPosition}
+        handleChoosePosition={() => {
+          setOpenAddPosition(false)
+          setOpenNewLiquidity(true)
+        }}
         handleClose={() => setOpenAddPosition(false)}
+      />
+      <NewLiquidityDialog
+        open={openNewLiquidity}
+        handleClose={() => setOpenNewLiquidity(false)}
       />
       <RecenterDialog
         assetId='0'
