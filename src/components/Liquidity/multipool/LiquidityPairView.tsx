@@ -5,13 +5,14 @@ interface Props {
 	tickerIcon: string
 	tickerSymbol: string | null
 	value?: number
+	showEditDialog: any
 }
 
-const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => {
+const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, showEditDialog }) => {
 	return (
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex">
+				<Box display="flex" onClick={showEditDialog}>
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
 						<TickerSymbol>{tickerSymbol} <span style={{ fontSize: '10px' }}>/ USDi</span></TickerSymbol>

@@ -6,11 +6,13 @@ import RecenterDialog from './Dialogs/RecenterDialog'
 import AddPositionDialog from './Dialogs/AddPositionDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
 import NewLiquidityDialog from './Dialogs/NewLiquidityDialog'
+import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 
 const LiquidityPositions = () => {
 
   const [openAddPosition, setOpenAddPosition] = useState(false)
   const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
+  const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
 
   return (
@@ -20,6 +22,7 @@ const LiquidityPositions = () => {
           tickerIcon={'/images/assets/solana.png'}
           tickerSymbol="iSOL"
           value={1005.04}
+          showEditDialog={() => setOpenEditLiquidity(true)}
         />
       </Box>
       <Stack direction='row' justifyContent='space-between' sx={{ marginTop: '9px' }}>
@@ -37,7 +40,12 @@ const LiquidityPositions = () => {
       />
       <NewLiquidityDialog
         open={openNewLiquidity}
+        assetIndex={0}
         handleClose={() => setOpenNewLiquidity(false)}
+      />
+      <EditLiquidityDialog
+        open={openEditLiquidity}
+        handleClose={() => setOpenEditLiquidity(false)}
       />
       <RecenterDialog
         assetId='0'
