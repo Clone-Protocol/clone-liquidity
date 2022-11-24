@@ -22,7 +22,8 @@ const LiquidityPositions = () => {
           tickerIcon={'/images/assets/solana.png'}
           tickerSymbol="iSOL"
           value={1005.04}
-          showEditDialog={() => setOpenEditLiquidity(true)}
+          onShowEditDialog={() => setOpenEditLiquidity(true)}
+          onShowRecenterDialog={() => setOpenRecenter(true)}
         />
       </Box>
       <Stack direction='row' justifyContent='space-between' sx={{ marginTop: '9px' }}>

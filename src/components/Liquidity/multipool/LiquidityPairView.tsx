@@ -6,13 +6,14 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	showEditDialog: any
+	showRecenterDialog: any
 }
 
-const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, showEditDialog }) => {
+const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, onShowEditDialog, onShowRecenterDialog }) => {
 	return (
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex" onClick={showEditDialog}>
+				<Box display="flex" onClick={onShowEditDialog} sx={{ cursor: 'pointer' }}>
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
 						<TickerSymbol>{tickerSymbol} <span style={{ fontSize: '10px' }}>/ USDi</span></TickerSymbol>
@@ -20,7 +21,7 @@ const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, s
 				</Box>
 				<AmountView>
 					${value?.toFixed(3)}
-					<RecenterButton>Recenter</RecenterButton>
+					<RecenterButton onClick={onShowRecenterDialog}>Recenter</RecenterButton>
 				</AmountView>
 			</FormStack>
 			
