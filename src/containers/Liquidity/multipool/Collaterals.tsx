@@ -3,9 +3,11 @@ import { styled } from '@mui/system'
 import { useState } from 'react'
 import CollateralPairView from '~/components/Liquidity/multipool/CollateralPairView'
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
+import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 
 const Collaterals = () => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
+  const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
   const [chooseEditType, setChooseEditType] = useState(0)
 
   const openEdit = (tab: number) => {
@@ -29,7 +31,16 @@ const Collaterals = () => {
       <EditCollateralDialog
         open={openEditCollateral}
         isDeposit={chooseEditType===0}
+        handleChooseColl={() => setOpenChooseCollateral(true)}
         handleClose={() => setOpenEditCollateral(false)}
+      />
+
+      <ChooseCollateralDialog
+        open={openChooseCollateral}
+        handleChooseCollateral={() => {
+          setOpenChooseCollateral(false)
+        }}
+        handleClose={() => setOpenChooseCollateral(false)}
       />
     </>
   )

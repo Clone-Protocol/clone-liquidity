@@ -69,7 +69,7 @@ const EditLiquidityDialog = ({ open, handleClose }:  { open: any, handleClose: a
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px', overflow: 'hidden' }}>
           <Box sx={{ padding: '8px 28px', color: '#fff' }}>
           <HeaderText>Edit Liquidity Position</HeaderText>
             <Divider />

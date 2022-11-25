@@ -15,6 +15,7 @@ interface Props {
   onChangeType?: any
 	onChangeAmount?: any
   onMax?: any
+  onHandleChoose?: any
 }
 
 const EditCollateralInput: React.FC<Props> = ({
@@ -28,7 +29,8 @@ const EditCollateralInput: React.FC<Props> = ({
   dollarPrice,
   onChangeType,
 	onChangeAmount,
-  onMax
+  onMax,
+  onHandleChoose,
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
@@ -45,7 +47,7 @@ const EditCollateralInput: React.FC<Props> = ({
       </Stack>
       <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', boxShadow: '0 0 0 1px #444444 inset' }}>
         <FormStack direction="row" justifyContent="space-between" alignItems="center">
-          <Box display="flex">
+          <Box display="flex" onClick={onHandleChoose} sx={{ cursor: 'pointer' }}>
             <Image src={tickerIcon} width="28px" height="28px" />
             <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
               <TickerSymbol>{tickerSymbol}</TickerSymbol>

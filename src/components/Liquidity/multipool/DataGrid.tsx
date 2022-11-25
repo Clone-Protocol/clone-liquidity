@@ -32,8 +32,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         fontSize: '11px'
       },
       '& .last--header': {
-        '& .MuiDataGrid-columnHeaderTitle': {
-          marginLeft: '20px'
+        '& .MuiDataGrid-columnHeaderTitleContainer': {
+          display: 'flex',
+          justifyContent: 'flex-end'
         }
       },
       '& .MuiDataGrid-columnHeaders': {
@@ -49,7 +50,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         marginBottom: '12px',
         marginRight: '10px',
         borderRadius: '10px',
-        background: '#1b1b1b'
+        background: '#2d2d2d'
       },
       '& .MuiDataGrid-row:hover': {
         backgroundColor: 'rgba(38, 38, 38, 0.8)'
