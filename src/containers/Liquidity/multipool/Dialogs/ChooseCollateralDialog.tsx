@@ -17,7 +17,7 @@ const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={360}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
-          <Box sx={{ padding: '8px 28px', color: '#fff', minWidth: '350px' }}>
+          <Box sx={{ padding: '8px 15px', color: '#fff', minWidth: '350px' }}>
             <HeaderText>Choose Collateral</HeaderText>
             <Divider />
             <GridCollateral onChoose={handleChooseCollateral} />
@@ -37,9 +37,8 @@ const HeaderText = styled(Box)`
 const Divider = styled('div')`
   width: 100%;
   height: 1px;
-  margin-top: 17px;
-  margin-bottom: 10px;
-  background-color: #2c2c2c;
+  margin-top: 10px;
+  background-color: #535353;
 `
 
 export default ChooseCollateralDialog

@@ -70,11 +70,16 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         borderRadius: '10px',
         marginLeft: '-5px'
       },
+      '& .disabled--row': {
+        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+      }
     }}
     components={{
       NoResultsOverlay: CustomNoRowsOverlay
     }}
-    getRowClassName={(params) => 'super-app-theme--row'}
+    getRowClassName={(params) => {
+      return rows[params.id].isEnabled ? 'super-app-theme--row' : 'disabled--row'
+    }}
     disableColumnFilter
     disableSelectionOnClick
     disableColumnSelector

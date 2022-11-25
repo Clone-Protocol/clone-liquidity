@@ -41,7 +41,7 @@ let columns: GridColDef[] = [
 				<Box display="flex" justifyContent="flex-start" style={{ marginLeft: '4px' }}>
 					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
 					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
-						{params.row.tickerSymbol} / USDi
+						{params.row.tickerSymbol}
 					</Box>
 				</Box>
 			)
