@@ -76,7 +76,7 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
-          <Box sx={{ padding: '8px 1px', color: '#fff' }}>
+          <Box sx={{ padding: '4px 10px', color: '#fff' }}>
             <Box>
               <Controller
                 name="collAmount"
@@ -117,12 +117,12 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
 
-            <Box sx={{ padding: '5px 3px 5px 3px' }}>
-              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+            <Box sx={{ padding: '10px 3px 5px 3px' }}>
+              <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
                 <DetailValue>77/100 <span style={{color: '#949494'}}>(prev. 74/100)</span></DetailValue>
               </Stack>
-              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+              <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
                 <DetailValue>$33,000.04</DetailValue>
               </Stack>
@@ -152,8 +152,8 @@ const DetailValue = styled('div')`
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 25px;
-	margin-top: 15px;
+	margin-bottom: 18px;
+	margin-top: 10px;
 	height: 1px;
 `
 

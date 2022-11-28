@@ -5,8 +5,8 @@ interface Props {
 	tickerIcon: string
 	tickerSymbol: string | null
 	value?: number
-	showEditDialog: any
-	showRecenterDialog: any
+	onShowEditDialog: any
+	onShowRecenterDialog: any
 }
 
 const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, onShowEditDialog, onShowRecenterDialog }) => {

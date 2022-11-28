@@ -4,7 +4,7 @@ import { Box, styled, Dialog, DialogContent} from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridCollateral from './GridCollateral'
 
-const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  { open: any, handleChooseCollateral: any, handleClose: any }) => {
+const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  { open: any, handleChooseCollateral: (id: number) => void, handleClose: any }) => {
   const [loading, setLoading] = useState(false)
   
   return (
@@ -16,7 +16,7 @@ const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={360}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '10px 15px' }}>
           <Box sx={{ padding: '8px 15px', color: '#fff', minWidth: '350px' }}>
             <HeaderText>Choose Collateral</HeaderText>
             <Divider />
@@ -31,7 +31,7 @@ const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  
 const HeaderText = styled(Box)`
   font-size: 11px;
   font-weight: 600;
-  color: #fff;
+  color: #fff9f9;
 `
 
 const Divider = styled('div')`

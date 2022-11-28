@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled } from '@mui/material'
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { GridColDef, GridRenderCellParams, GridRowParams, MuiEvent, GridCallbackDetails } from '@mui/x-data-grid'
 import { Grid } from '~/components/Liquidity/multipool/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
@@ -8,7 +8,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import { useCollateralsQuery } from '~/features/MyLiquidity/multipool/Collaterals.query'
 
 interface Props {
-	onChoose: void
+	onChoose: (id: number) => void
 }
 
 const GridCollateral: React.FC<Props> = ({ onChoose }) => {
@@ -18,12 +18,19 @@ const GridCollateral: React.FC<Props> = ({ onChoose }) => {
 	  refetchOnMount: "always",
     enabled: publicKey != null
 	})
+
+	const handleChoose = (params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
+		if (params.row.isEnabled) {
+			const id = params.row.id
+		  onChoose && onChoose(id)
+		}
+	}
   
 	return (
     <Grid
       headers={columns}
       rows={collaterals || []}
-			onRowClick={onChoose}
+			onRowClick={handleChoose}
 			minHeight={380}
     />
 	)

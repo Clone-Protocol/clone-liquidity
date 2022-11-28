@@ -15,6 +15,12 @@ const LiquidityPositions = () => {
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
 
+  const handleChoosePosition = (positionId: number) => {
+    console.log('positionId', positionId)
+
+    setOpenNewLiquidity(true)
+  }
+
   return (
     <>
       <Box>
@@ -33,10 +39,7 @@ const LiquidityPositions = () => {
 
       <AddPositionDialog
         open={openAddPosition}
-        handleChoosePosition={() => {
-          setOpenAddPosition(false)
-          setOpenNewLiquidity(true)
-        }}
+        handleChoosePosition={handleChoosePosition}
         handleClose={() => setOpenAddPosition(false)}
       />
       <NewLiquidityDialog

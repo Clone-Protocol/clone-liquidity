@@ -34,7 +34,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     zIndex: 10,
 		height: 3,
     border: 'none',
-    background: 'linear-gradient(to left, #f00 -12%, #809cff 66%)'
+    background: 'linear-gradient(to left, #ff0000 -12%, #7d17ff 66%)'
 	},
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
@@ -59,7 +59,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
 	}
 
   const pickHex = (x: number) => {
-    const f = chroma.scale(['#809cff', '#f00']).gamma(2)
+    const f = chroma.scale(['#7d17ff', '#ff0000']).gamma(2)
     const rgb = f(x/100).css()
     return rgb
   }
@@ -90,7 +90,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
                 border: `3px solid ${pickHex(ratio)}`,
               },
               '& .MuiSlider-track': {
-                background: `linear-gradient(to left, #f00 -12%, #809cff ${ratio}%)`
+                background: `linear-gradient(to left, #ff0000 -12%, #7d17ff ${ratio}%)`
               }
             }}
             value={ratio}
@@ -123,7 +123,6 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
               </Box>
               <Box>
                 <InputAmount id="ip-amount" type="number" min={0} sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
-                <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a', marginRight: '16px'}}>${mintAmount.toLocaleString()}</div>
               </Box>
             </Stack>
           </FormBox>
@@ -144,7 +143,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
               </Box>
             </Stack>
           </FormBox>
-          <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {assetData.tickerSymbol}</BottomBox>
+          <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {assetData.tickerSymbol} (${(currentMintAmount * assetData.price).toLocaleString()})</BottomBox>
         </StyledBox>
         <StyledBox>
           <FormBox sx={{ background: '#16171a', color: '#fff', fontSize: '12px', fontWeight: '500'}}>
@@ -159,8 +158,8 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
           </FormBox>
           <BottomBox>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box sx={{ paddingLeft: '10px'}}>Current total liquidity value of the position: </Box>
-              <Box sx={{ paddingRight: '10px'}}>$5,000.34</Box>
+              <Box sx={{ marginLeft: '20px'}}>Current total liquidity value of the position: </Box>
+              <Box sx={{ marginRight: '20px'}}>$5,000.34</Box>
             </Stack>
           </BottomBox>
         </StyledBox>
@@ -204,7 +203,7 @@ const FormBox = styled(Box)`
   font-size: 14px;
   font-weight: 600;
   font-stretch: normal;
-  background: #323436;
+  background: #282828;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `
@@ -231,7 +230,7 @@ const InputAmount = styled(`input`)`
 	margin-left: 10px;
 	text-align: right;
 	border: 0px;
-	background-color: #323436;
+	background-color: #282828;
 	font-size: 14px;
 	font-weight: 600;
 	color: #adadad;

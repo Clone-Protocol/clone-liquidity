@@ -15,6 +15,12 @@ const Collaterals = () => {
     setChooseEditType(tab)
   }
 
+  const handleChooseCollateral = (collId: number) => {
+    console.log('collId', collId)
+
+    setOpenChooseCollateral(false)
+  }
+
   return (
     <>
       <Box>
@@ -37,9 +43,7 @@ const Collaterals = () => {
 
       <ChooseCollateralDialog
         open={openChooseCollateral}
-        handleChooseCollateral={() => {
-          setOpenChooseCollateral(false)
-        }}
+        handleChooseCollateral={handleChooseCollateral}
         handleClose={() => setOpenChooseCollateral(false)}
       />
     </>

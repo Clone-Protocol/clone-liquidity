@@ -122,7 +122,7 @@ const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open:
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '35px 25px', overflow: 'hidden' }}>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '25px 35px', overflow: 'hidden' }}>
           <HeaderText>Recenter</HeaderText>
           <Divider />
           <Stack direction='row' gap={4}>
@@ -220,8 +220,8 @@ const BottomBox = styled(Box)`
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 15px;
-	margin-top: 15px;
+	margin-bottom: 10px;
+	margin-top: 10px;
 	height: 1px;
 `
 
@@ -246,6 +246,7 @@ const ActionButton = styled(Button)`
   font-size: 13px;
   font-weight: 600;
 	color: #fff;
+  margin-top: 15px;
   &:hover {
     background-color: #7A86B6;
   }

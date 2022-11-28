@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
 import { useIncept } from '~/hooks/useIncept'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -9,6 +9,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import { useForm, Controller } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiquidityRatioSlider'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
  
 const EditLiquidityDialog = ({ open, handleClose }:  { open: any, handleClose: any }) => {
   const { publicKey } = useWallet()
@@ -69,23 +70,27 @@ const EditLiquidityDialog = ({ open, handleClose }:  { open: any, handleClose: a
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px', overflow: 'hidden' }}>
-          <Box sx={{ padding: '8px 28px', color: '#fff' }}>
-          <HeaderText>Edit Liquidity Position</HeaderText>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '5px 15px', overflow: 'hidden' }}>
+          <Box sx={{ padding: '8px 18px', color: '#fff' }}>
+            <Stack direction="row" justifyContent='space-between' alignItems='center'>
+              <IconButton sx={{ color: '#fff' }} onClick={handleClose}><ChevronLeftIcon /></IconButton>
+              <HeaderText>Edit Liquidity Position</HeaderText>
+              <Box></Box>
+            </Stack>
             <Divider />
 
             <Stack direction='row' gap={4}>
               <SelectedPoolBox />
               
               <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
-                <div>Select amount of USDi & iSOL to mint into iSOL AMM</div>
+                <SelectLabel>Select amount of USDi & iSOL to mint into iSOL AMM</SelectLabel>
                 <Box sx={{ marginTop: '15px' }}>
                   <EditLiquidityRatioSlider min={0} max={100} ratio={60} currentRatio={50} assetData={assetData} mintAmount={mintAmount} currentMintAmount={0} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
+                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
                   <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}>74/100</Box>
                 </Box>
                 <Divider />
@@ -109,23 +114,15 @@ const HeaderText = styled(Box)`
 const Divider = styled('div')`
   width: 100%;
   height: 1px;
-  margin-top: 17px;
+  margin-top: 15px;
   margin-bottom: 10px;
   background-color: #2c2c2c;
 `
 
-const FormStack = styled(Stack)`
-	display: flex;
-	width: 100%;
-	height: 54px;
-	padding: 9px 21px 8px 24px;
-  background: rgba(21, 22, 24, 0.75);
-	border-radius: 8px;
-	border: solid 1px #5c5c5c;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  font-size: 12px;
+const SelectLabel = styled('div')`
+  font-size: 14px;
   font-weight: 500;
+  color: #fff;
 `
 
 const EditPositionButton = styled(Button)`

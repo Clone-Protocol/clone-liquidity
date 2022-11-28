@@ -25,7 +25,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end',
-        marginRight: '4px',
+        marginRight: '6px',
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#9d9d9d', 
@@ -34,7 +34,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       '& .last--header': {
         '& .MuiDataGrid-columnHeaderTitleContainer': {
           display: 'flex',
-          justifyContent: 'flex-end'
+          justifyContent: 'flex-end',
         }
       },
       '& .MuiDataGrid-columnHeaders': {
@@ -47,10 +47,11 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         display: 'none',
       },
       '& .MuiDataGrid-row': {
-        marginBottom: '12px',
+        marginBottom: '10px',
         marginRight: '10px',
         borderRadius: '10px',
-        background: '#2d2d2d'
+        background: '#2d2d2d',
+        cursor: 'pointer'
       },
       '& .MuiDataGrid-row:hover': {
         backgroundColor: 'rgba(38, 38, 38, 0.8)'
@@ -71,7 +72,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         marginLeft: '-5px'
       },
       '& .disabled--row': {
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        backgroundColor: '#1c1b1b',
+        cursor: 'default'
       }
     }}
     components={{

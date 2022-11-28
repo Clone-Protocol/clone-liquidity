@@ -59,7 +59,7 @@ const EditCollateralInput: React.FC<Props> = ({
           </Box>
         </FormStack>
         <BottomBox>
-          Current Collateral (SOL): <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
+          Current Collateral ({tickerSymbol}): <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
         </BottomBox>
       </Box>
 		</FormControl>

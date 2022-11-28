@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
-import RatioSlider from '~/components/Asset/RatioSlider'
+import RatioSlider from '~/components/Liquidity/multipool/RatioSlider'
 import { SliderTransition } from '~/components/Common/Dialog'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import PairInput from '~/components/Asset/PairInput'
@@ -10,6 +10,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 // import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 const NewLiquidityDialog = ({ open, assetIndex, handleClose }:  { open: any, assetIndex: number, handleClose: any }) => {
   const { publicKey } = useWallet()
@@ -63,16 +64,20 @@ const NewLiquidityDialog = ({ open, assetIndex, handleClose }:  { open: any, ass
 			)}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
-          <Box sx={{ padding: '8px 28px', color: '#fff' }}>
-            <HeaderText>Establish New Liquidity Position</HeaderText>
+        <DialogContent sx={{ backgroundColor: '#16171a', padding: '5px 15px' }}>
+          <Box sx={{ padding: '8px 18px', color: '#fff' }}>
+            <Stack direction="row" justifyContent='space-between' alignItems='center'>
+              <IconButton sx={{ color: '#fff' }} onClick={handleClose}><ChevronLeftIcon /></IconButton>
+              <HeaderText>Establish New Liquidity Position</HeaderText>
+              <Box> </Box>
+            </Stack>
             <Divider />
 
             <Stack direction='row' gap={4}>
               <SelectedPoolBox />
               
               <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
-                <div>Select amount of USDi & iSOL to mint into iSOL AMM</div>
+                <SelectLabel>Select amount of USDi & iSOL to mint into iSOL AMM</SelectLabel>
                 <Box sx={{ marginTop: '15px' }}>
                   <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
@@ -126,7 +131,7 @@ const NewLiquidityDialog = ({ open, assetIndex, handleClose }:  { open: any, ass
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
+                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
                   <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>21</span>/100</Box>
                 </Box>
                 <Divider />
@@ -159,15 +164,21 @@ const Divider = styled('div')`
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
-	height: 54px;
+	height: 45px;
 	padding: 9px 21px 8px 24px;
   background: rgba(21, 22, 24, 0.75);
 	border-radius: 8px;
 	border: solid 1px #5c5c5c;
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   font-size: 12px;
   font-weight: 500;
+`
+
+const SelectLabel = styled('div')`
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
 `
 
 const NewPositionButton = styled(Button)`
