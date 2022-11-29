@@ -2,9 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import {
-	PairData
-} from '~/features/MyLiquidity/BorrowPosition.query'
+import { useEditCollateralQuery } from '~/features/MyLiquidity/multipool/EditCollateral.query'
+import { useCollateralMutation } from '~/features/MyLiquidity/multipool/Collateral.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateralInput'
@@ -12,17 +11,17 @@ import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, onRefetchData }: any) => {
-  // const { publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
-  // const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar()
   // const borrowIndex = parseInt(borrowId)
 
   const [editType, setEditType] = useState(isDeposit ? 0 : 1) // 0 : deposit , 1: withdraw
+  const [healthScore, setHealthScore] = useState(0)
 
   useEffect(() => {
     setEditType(isDeposit ? 0 : 1)
   }, [isDeposit])
-
 
   // useEffect(() => {
   //   setMaxCollVal(borrowDetail.usdiVal)
@@ -32,13 +31,16 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
 		setEditType(newValue)
 	}, [editType])
 
-  const fromPair: PairData = {
-		tickerIcon: '/images/assets/USDi.png',
-		tickerName: 'USDi Coin',
-		tickerSymbol: 'USDi',
-	}
 
-  // const { mutateAsync } = useEditCollateralMutation(publicKey)
+  // TODO: need to set binding props
+  const assetIndex = 1
+
+  const { data: collData } = useEditCollateralQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+	  refetchOnMount: true,
+    enabled: open && publicKey != null
+	})
 
   const {
 		handleSubmit,
@@ -60,8 +62,10 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
     setValue('collAmount', 0.0)
   }
 
+  const { mutateAsync } = useCollateralMutation(publicKey)
 	const onEdit = async () => {
-    
+    setLoading(true)
+    // mutateAsync
 	}
 
   const isValid = Object.keys(errors).length === 0
@@ -94,18 +98,17 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
                 render={({ field }) => (
                   <EditCollateralInput
                     editType={editType}
-                    tickerIcon={fromPair.tickerIcon}
-                    tickerSymbol={fromPair.tickerSymbol}
+                    tickerIcon={collData?.tickerIcon}
+                    tickerSymbol={collData?.tickerSymbol}
                     collAmount={field.value}
                     collAmountDollarPrice={field.value}
-                    balance={0}
-                    currentCollAmount={1}
-                    dollarPrice={1}
+                    balance={collData?.balance}
+                    currentCollAmount={collData?.collAmount}
+                    dollarPrice={collData?.collAmountDollarPrice}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
                       field.onChange(collAmt)
-                      // calculateBorrowAmount(collAmt, borrowDetail.collateralRatio)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)
@@ -120,11 +123,11 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
             <Box sx={{ padding: '10px 3px 5px 3px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
-                <DetailValue>77/100 <span style={{color: '#949494'}}>(prev. 74/100)</span></DetailValue>
+                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{color: '#949494'}}>(prev. {collData?.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
-                <DetailValue>$33,000.04</DetailValue>
+                <DetailValue>${collData?.totalCollValue.toLocaleString()}</DetailValue>
               </Stack>
             </Box>
 
