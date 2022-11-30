@@ -43,17 +43,17 @@ const MultipoolComet = () => {
 			  <Grid item xs={12} md={2}>
           <CardWrapper>
             <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
-            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{infos.healthScore.toFixed(2)}</span>/100</SubValue>
+            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)}</span>/100</SubValue>
           </CardWrapper>
           <CardWrapper style={{ marginTop: '13px' }}>
             <Box>
               <SubTitle style={{ marginLeft: '16px' }}>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></SubTitle>
-              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalCollValue.toLocaleString()}</span>USD</SubValue>
+              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalCollValue.toLocaleString()}</span> USD</SubValue>
             </Box>
             <Divider />
             <Box>
               <SubTitle style={{ marginLeft: '16px' }}>Total Liquidity <InfoTooltip title="Total Liquidity" /></SubTitle>
-              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalLiquidity.toLocaleString()}</span>USD</SubValue>
+              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalLiquidity.toLocaleString()}</span> USD</SubValue>
             </Box>
           </CardWrapper>
         </Grid>
