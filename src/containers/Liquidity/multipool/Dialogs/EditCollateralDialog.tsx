@@ -71,14 +71,25 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }
   useEffect(() => {
     async function fetch() {
       if (open && collData && collAmount) {
+        
+        if (collData.prevHealthScore) {
+          let loss = (100 - collData.prevHealthScore) * collData.collAmount;
+          let collDelta = (editType === 0 ? 1 : -1) * collAmount;
+  
+          setHealthScore(100 - loss / (collData.collAmount + collDelta))
+        } else {
+          if (editType === 0) {
+            setHealthScore(100)
+          } else {
+            setHealthScore(0)
+          }
+        }
 
-        // TODO: set healthscore, 
-        setHealthScore(0)
         setTotalCollValue(collAmount * collData.collAmountDollarPrice)
       }
     }
     fetch()
-  }, [collAmount])
+  }, [collAmount, editType])
 
   const { mutateAsync } = useCollateralMutation(publicKey)
 	const onEdit = async () => {
@@ -163,7 +174,7 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }
             <Box sx={{ padding: '10px 3px 5px 3px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
-                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{color: '#949494'}}>(prev. {collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
+                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{color: '#949494'}}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>

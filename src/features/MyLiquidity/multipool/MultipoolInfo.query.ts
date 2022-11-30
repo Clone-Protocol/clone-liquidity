@@ -1,11 +1,12 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
+import { Incept, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getiAssetInfos } from '~/utils/assets'
 import { assetMapping } from '~/data/assets'
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const fetchInfos = async ({
 	program,
@@ -25,28 +26,48 @@ export const fetchInfos = async ({
 	setStartTimer(false)
 	setStartTimer(true)
 
-  let healthScore = 70
-  let totalCollValue = 90094.95
-  let totalLiquidity = 50094.95
-  let collAmount = 1005.04
-  let collAmountDollarPrice = 1 * collAmount
-  let collaterals: Collateral[] = [
-    {
-      tickerIcon : '/images/assets/USDi.png',
-	    tickerSymbol : 'USDi',
-	    tickerName : 'USDi',
-      collAmount,
-      collAmountDollarPrice
-    }
-  ]
-  let positions: LiquidityPosition[] = [
-    {
-      tickerIcon: '/images/assets/solana.png',
-      tickerName: 'iSOL',
-      tickerSymbol: 'iSOL',
-      liquidityDollarPrice: 1005.04
-    }
-  ]
+
+	let healthScore = 0
+	let totalCollValue = 0
+	let totalLiquidity = 0
+	let collAmount = 0
+	let collAmountDollarPrice = 1 * collAmount
+	let collaterals: Collateral[] = [];
+	let positions: LiquidityPosition[] = [];
+	// let collaterals: Collateral[] = [
+	//   {
+	// 	tickerIcon : '/images/assets/USDi.png',
+	// 	tickerSymbol : 'USDi',
+	// 	tickerName : 'USDi',
+	// 	collAmount,
+	// 	collAmountDollarPrice
+	//   }
+	// ]
+	// let positions: LiquidityPosition[] = [
+	//   {
+	// 	tickerIcon: '/images/assets/solana.png',
+	// 	tickerName: 'iSOL',
+	// 	tickerSymbol: 'iSOL',
+	// 	liquidityDollarPrice: 1005.04
+	//   }
+	// ]
+
+	const [cometResult, healthScoreResult] = await Promise.allSettled([
+		program.getComet(), program.getHealthScore()
+	]);
+
+	if (cometResult.status === "fulfilled" && healthScoreResult.status === 'fulfilled') {
+		healthScore = healthScoreResult.value.healthScore
+		collaterals = extractCollateralInfo(cometResult.value)
+		positions = extractLiquidityPositionsInfo(cometResult.value)
+
+		collaterals.forEach(c => {
+			totalCollValue += c.collAmount * c.collAmountDollarPrice
+		});
+		positions.forEach(p => {
+			totalLiquidity += p.liquidityDollarPrice
+		})
+	}
 
 	let result = {
     healthScore,
@@ -73,11 +94,53 @@ export interface Collateral {
 	collAmountDollarPrice: number
 }
 
+const extractCollateralInfo = (comet: Comet): Collateral[] => {
+	let result: Collateral[] = [];
+
+	for (let i=0; i < Number(comet.numCollaterals); i++) {
+		// For now only handle USDi
+		if (Number(comet.collaterals[i].collateralIndex) === 0) {
+			result.push(
+			  {
+				tickerIcon : '/images/assets/USDi.png',
+				tickerSymbol : 'USDi',
+				tickerName : 'USDi',
+				collAmount: toNumber(comet.collaterals[i].collateralAmount),
+				collAmountDollarPrice: 1
+			  } as Collateral
+			)
+		}
+	}
+
+	return result;
+}
+
 export interface LiquidityPosition {
   tickerSymbol: string
 	tickerIcon: string
 	tickerName: string
   liquidityDollarPrice: number
+}
+
+
+const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
+	let result: LiquidityPosition[] = [];
+
+	for (let i=0; i < comet.numPositions.toNumber(); i++) {
+		// For now only handle USDi
+		const info = assetMapping(comet.positions[i].poolIndex);
+
+		result.push(
+			{
+			tickerIcon : info.tickerIcon,
+			tickerSymbol : info.tickerSymbol,
+			tickerName : info.tickerName,
+			liquidityDollarPrice: toNumber(comet.positions[i].borrowedUsdi)
+			} as LiquidityPosition
+		)
+	}
+
+	return result;
 }
 
 export function useMultipoolInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
