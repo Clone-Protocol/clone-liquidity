@@ -7,8 +7,9 @@ import AddPositionDialog from './Dialogs/AddPositionDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
 import NewLiquidityDialog from './Dialogs/NewLiquidityDialog'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
+import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 
-const LiquidityPositions = () => {
+const LiquidityPositions = ({ positions } : { positions: LiquidityPosition[] }) => {
 
   const [openAddPosition, setOpenAddPosition] = useState(false)
   const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
@@ -24,13 +25,15 @@ const LiquidityPositions = () => {
   return (
     <>
       <Box>
-        <LiquidityPairView
-          tickerIcon={'/images/assets/solana.png'}
-          tickerSymbol="iSOL"
-          value={1005.04}
-          onShowEditDialog={() => setOpenEditLiquidity(true)}
-          onShowRecenterDialog={() => setOpenRecenter(true)}
-        />
+        {positions.map((position) => 
+          <LiquidityPairView
+            tickerIcon={position.tickerIcon}
+            tickerSymbol={position.tickerSymbol}
+            value={position.liquidityDollarPrice}
+            onShowEditDialog={() => setOpenEditLiquidity(true)}
+            onShowRecenterDialog={() => setOpenRecenter(true)}
+          />
+        )}
       </Box>
       <Stack direction='row' justifyContent='space-between' sx={{ marginTop: '9px' }}>
         <AddButton onClick={() => setOpenAddPosition(true)}>Add Position</AddButton>

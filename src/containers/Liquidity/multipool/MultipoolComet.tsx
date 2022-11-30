@@ -1,5 +1,6 @@
 import { Box, Stack, Grid } from '@mui/material'
 import { styled } from '@mui/system'
+import { useWallet } from '@solana/wallet-adapter-react'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import Image from 'next/image'
@@ -7,11 +8,17 @@ import InfoBookIcon from 'public/images/info-book-icon.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip';
 import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
+import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 
 const MultipoolComet = () => {
+  const { publicKey } = useWallet()
+  const { data: infos } = useMultipoolInfoQuery({
+    userPubKey: publicKey,
+	  refetchOnMount: "always",
+    enabled: publicKey != null
+	})
 
-
-  return (
+  return infos ? (
     <Wrapper>
       <Stack
         sx={{
@@ -36,35 +43,35 @@ const MultipoolComet = () => {
 			  <Grid item xs={12} md={2}>
           <CardWrapper>
             <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
-            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>75</span>/100</SubValue>
+            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{infos.healthScore.toFixed(2)}</span>/100</SubValue>
           </CardWrapper>
           <CardWrapper style={{ marginTop: '13px' }}>
             <Box>
               <SubTitle style={{ marginLeft: '16px' }}>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></SubTitle>
-              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>90,094.95</span>USD</SubValue>
+              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalCollValue.toLocaleString()}</span>USD</SubValue>
             </Box>
             <Divider />
             <Box>
               <SubTitle style={{ marginLeft: '16px' }}>Total Liquidity <InfoTooltip title="Total Liquidity" /></SubTitle>
-              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>50,094.95</span>USD</SubValue>
+              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalLiquidity.toLocaleString()}</span>USD</SubValue>
             </Box>
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={4}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
             <SubTitle>Collaterals <InfoTooltip title="Collaterals" /></SubTitle>
-            <Collaterals />
+            <Collaterals collaterals={infos.collaterals}  />
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={6}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
             <SubTitle>Contributed Liquidity Positions <InfoTooltip title="Contributed Liquidity Positions" /></SubTitle>
-            <LiquidityPositions />
+            <LiquidityPositions positions={infos.positions}  />
           </CardWrapper>
         </Grid>
       </Grid>
     </Wrapper>
-  )
+  ) : <></>
 }
 
 const Wrapper = styled(Box)`

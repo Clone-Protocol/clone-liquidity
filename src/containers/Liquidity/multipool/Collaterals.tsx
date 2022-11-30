@@ -4,8 +4,9 @@ import { useState } from 'react'
 import CollateralPairView from '~/components/Liquidity/multipool/CollateralPairView'
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
+import { Collateral } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 
-const Collaterals = () => {
+const Collaterals = ({ collaterals } : {collaterals: Collateral[]}) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
   const [chooseEditType, setChooseEditType] = useState(0)
@@ -24,13 +25,15 @@ const Collaterals = () => {
   return (
     <>
       <Box>
-        <CollateralPairView
-          tickerIcon={'/images/assets/solana.png'}
-          tickerSymbol="SOL"
-          value={1005.04}
-          usdValue={10000}
-          handleOpenEdit={openEdit}
-        />
+        {collaterals.map((coll) => 
+          <CollateralPairView
+            tickerIcon={coll.tickerIcon}
+            tickerSymbol={coll.tickerSymbol}
+            value={coll.collAmount}
+            usdValue={coll.collAmountDollarPrice}
+            handleOpenEdit={openEdit}
+          />
+        )}
       </Box>
       <AddButton onClick={() => openEdit(0)}>Add Collateral</AddButton>
 
