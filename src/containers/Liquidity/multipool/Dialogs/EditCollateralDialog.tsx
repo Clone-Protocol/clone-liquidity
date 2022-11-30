@@ -10,34 +10,28 @@ import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateral
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, onRefetchData }: any) => {
+const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }: any) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   // const borrowIndex = parseInt(borrowId)
 
+  const collIndex = 0 // NOTE: currently only support USDi
   const [editType, setEditType] = useState(isDeposit ? 0 : 1) // 0 : deposit , 1: withdraw
   const [healthScore, setHealthScore] = useState(0)
+  const [totalCollValue, setTotalCollValue] = useState(0)
 
   useEffect(() => {
     setEditType(isDeposit ? 0 : 1)
   }, [isDeposit])
 
-  // useEffect(() => {
-  //   setMaxCollVal(borrowDetail.usdiVal)
-  // }, [borrowDetail.usdiVal])
-
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
 		setEditType(newValue)
 	}, [editType])
 
-
-  // TODO: need to set binding props
-  const assetIndex = 1
-
-  const { data: collData } = useEditCollateralQuery({
+  const { data: collData, refetch } = useEditCollateralQuery({
     userPubKey: publicKey,
-    index: assetIndex,
+    index: collIndex,
 	  refetchOnMount: true,
     enabled: open && publicKey != null
 	})
@@ -62,15 +56,61 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
     setValue('collAmount', 0.0)
   }
 
+  // initialize state data
+  useEffect(() => {
+    async function fetch() {
+      if (open && collData) {
+        setHealthScore(collData.prevHealthScore)
+        setTotalCollValue(collData.totalCollValue)
+      }
+    }
+    fetch()
+  }, [open, collData])
+
+  // set HealthScore
+  useEffect(() => {
+    async function fetch() {
+      if (open && collData && collAmount) {
+
+        // TODO: set healthscore, 
+        setHealthScore(0)
+        setTotalCollValue(collAmount * collData.collAmountDollarPrice)
+      }
+    }
+    fetch()
+  }, [collAmount])
+
   const { mutateAsync } = useCollateralMutation(publicKey)
 	const onEdit = async () => {
     setLoading(true)
-    // mutateAsync
+    await mutateAsync(
+      {
+        collIndex, 
+        collAmount,
+        editType
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to edit collateral')
+            refetch()
+            initData()
+          }
+          setLoading(false)
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to edit collateral')
+          setLoading(false)
+        }
+      }
+    )
 	}
 
   const isValid = Object.keys(errors).length === 0
 
-  return (
+  return collData ? (
     <>
       {loading && (
 				<LoadingWrapper>
@@ -90,21 +130,21 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
                     if (!value || value <= 0) {
                       return ''
                     } 
-                    // else if (value > maxCollVal) {
-                    //   return 'The collateral amount cannot exceed the balance.'
-                    // }
+                    else if (value > collData.balance) {
+                      return 'The collateral amount cannot exceed the balance.'
+                    }
                   }
                 }}
                 render={({ field }) => (
                   <EditCollateralInput
                     editType={editType}
-                    tickerIcon={collData?.tickerIcon}
-                    tickerSymbol={collData?.tickerSymbol}
+                    tickerIcon={collData.tickerIcon}
+                    tickerSymbol={collData.tickerSymbol}
                     collAmount={field.value}
                     collAmountDollarPrice={field.value}
-                    balance={collData?.balance}
-                    currentCollAmount={collData?.collAmount}
-                    dollarPrice={collData?.collAmountDollarPrice}
+                    balance={collData.balance}
+                    currentCollAmount={collData.collAmount}
+                    dollarPrice={collData.collAmountDollarPrice}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
@@ -123,11 +163,11 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
             <Box sx={{ padding: '10px 3px 5px 3px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
-                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{color: '#949494'}}>(prev. {collData?.prevHealthScore.toFixed()}/100)</span></DetailValue>
+                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{color: '#949494'}}>(prev. {collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
-                <DetailValue>${collData?.totalCollValue.toLocaleString()}</DetailValue>
+                <DetailValue>${totalCollValue.toLocaleString()}</DetailValue>
               </Stack>
             </Box>
 
@@ -138,7 +178,7 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose, 
         </DialogContent>
       </Dialog>
     </>
-  )  
+  ) : <></>
 }
 
 const DetailHeader = styled('div')`

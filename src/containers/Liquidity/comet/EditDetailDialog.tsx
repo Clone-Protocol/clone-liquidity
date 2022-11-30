@@ -104,41 +104,42 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const program = getInceptApp()
 
         initData()
-          let {
-            maxCollateralWithdrawable,
-            healthScore,
-            maxUsdiPosition,
-            lowerPrice,
-            upperPrice
-          } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
-            tokenDataState,
-            singlePoolCometState,
-            cometIndex,
-            0,
-            0
-          )
-  
-          const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
-          
-          setCometData({
-            ...cometData,
-            lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
-            upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
-          })
-          setHealthScore(Math.max(0, healthScore))
-          setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
-          setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
-          setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
-          setValue('mintAmount', cometDetail.mintAmount)
-  
-          setDefaultValues({
-            lowerLimit: lowerPrice,
-            upperLimit: upperPrice,
-            healthScore: healthScore,
-            maxWithdrawable: Math.abs(maxCollateralWithdrawable),
-            maxUsdiPosition: maxUsdiPosition,
-            mintRatio: mintRatio,
-          })
+        
+        let {
+          maxCollateralWithdrawable,
+          healthScore,
+          maxUsdiPosition,
+          lowerPrice,
+          upperPrice
+        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+          tokenDataState,
+          singlePoolCometState,
+          cometIndex,
+          0,
+          0
+        )
+
+        const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
+        
+        setCometData({
+          ...cometData,
+          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
+          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
+        })
+        setHealthScore(Math.max(0, healthScore))
+        setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
+        setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
+        setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
+        setValue('mintAmount', cometDetail.mintAmount)
+
+        setDefaultValues({
+          lowerLimit: lowerPrice,
+          upperLimit: upperPrice,
+          healthScore: healthScore,
+          maxWithdrawable: Math.abs(maxCollateralWithdrawable),
+          maxUsdiPosition: maxUsdiPosition,
+          mintRatio: mintRatio,
+        })
       }
     }
     fetch()

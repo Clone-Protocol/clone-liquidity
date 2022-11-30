@@ -12,8 +12,8 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 	await program.loadManager()
 	const userUsdiTokenAccount = await getUSDiAccount(program)
 
-	// TODO: params need to be changed
-	const { collAmount, mintAmountChange, cometIndex, editType } = data
+	const { collAmount, collIndex, editType } = data
+  
 	let tx = new Transaction()
 	let ix: TransactionInstruction
 	/// Deposit
@@ -31,12 +31,15 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 	tx.add(ix)
 
 	await program.provider.send!(tx)
+
+  return {
+    result: true
+  }
 }
 
 type EditFormData = {
-	cometIndex: number
+	collIndex: number
 	collAmount: number
-	mintAmountChange: number
 	editType: number
 }
 interface CallEditProps {

@@ -1,5 +1,7 @@
-import { Box, Stack, Grid, Button } from '@mui/material'
+import { Box, Stack, Grid } from '@mui/material'
 import { styled } from '@mui/system'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
 import Image from 'next/image'
 import InfoBookIcon from 'public/images/info-book-icon.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip';
@@ -117,4 +119,4 @@ const Divider = styled('div')`
   background-color: #535353;
 `
 
-export default MultipoolComet
+export default withSuspense(MultipoolComet, <LoadingProgress />)

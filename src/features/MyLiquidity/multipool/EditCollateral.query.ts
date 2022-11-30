@@ -2,7 +2,6 @@ import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
@@ -45,7 +44,6 @@ export const fetchDefaultCollateral = async ({
 	let collAmountDollarPrice = 1 // Since its USDi.
 	let totalCollValue = collAmount * collAmountDollarPrice
 
-	//const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
 	const tickerIcon = '/images/assets/USDi.png'
 	const tickerSymbol = 'USDi'
 	const tickerName = 'USDi'
