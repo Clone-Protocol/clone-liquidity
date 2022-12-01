@@ -7,13 +7,13 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
+import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiquidityRatioSlider'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
  
-const EditLiquidityDialog = ({ open, onRefetchData, handleClose }:  { open: boolean, onRefetchData: any, handleClose: any }) => {
+const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
@@ -26,6 +26,21 @@ const EditLiquidityDialog = ({ open, onRefetchData, handleClose }:  { open: bool
 
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [mintRatio, setMintRatio] = useState(0)
+  const [totalLiquidity, setTotalLiquidity] = useState(0)
+  const [healthScore, setHealthScore] = useState(0)
+
+  const { data: positionInfo } = useLiquidityDetailQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+	  refetchOnMount: true,
+    enabled: open && publicKey != null
+	})
+
+  const initData = () => {
+    setValue('mintAmount', 0.0)
+    onRefetchData()
+  }
+
   const {
 		handleSubmit,
 		control,
@@ -35,19 +50,12 @@ const EditLiquidityDialog = ({ open, onRefetchData, handleClose }:  { open: bool
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
       mintAmount: 0.0,
     }
 	})
-  const [collAmount, mintAmount] = watch([
-		'collAmount',
+  const [mintAmount] = watch([
 		'mintAmount',
 	])
-
-  const initData = () => {
-    setValue('collAmount', 0.0)
-    setValue('mintAmount', 0.0)
-  }
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     // calculateMintAmount(newRatio * maxMintable / 100)
@@ -59,9 +67,15 @@ const EditLiquidityDialog = ({ open, onRefetchData, handleClose }:  { open: bool
     // setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
 	}, [mintRatio, mintAmount])
 
+  const onEditLiquidity = async () => {
+    setLoading(true)
+    // @TODO: implementing mutateAsync
+    // await mutateAsync()
+  }
+
   const isValid = Object.keys(errors).length === 0
   
-  return (
+  return positionInfo ? (
     <>
       {loading && (
 				<LoadingWrapper>
@@ -80,29 +94,29 @@ const EditLiquidityDialog = ({ open, onRefetchData, handleClose }:  { open: bool
             <Divider />
 
             <Stack direction='row' gap={4}>
-              <SelectedPoolBox />
+              <SelectedPoolBox positionInfo={positionInfo} />
               
               <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
-                <SelectLabel>Select amount of USDi & iSOL to mint into iSOL AMM</SelectLabel>
+                <SelectLabel>Select amount of USDi & {positionInfo.tickerSymbol} to mint into {positionInfo.tickerSymbol} AMM</SelectLabel>
                 <Box sx={{ marginTop: '15px' }}>
-                  <EditLiquidityRatioSlider min={0} max={100} ratio={60} currentRatio={50} assetData={assetData} mintAmount={mintAmount} currentMintAmount={0} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
+                  <EditLiquidityRatioSlider min={0} max={100} ratio={60} currentRatio={50} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={0} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
 
                 <Divider />
                 <Box>
                   <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
-                  <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}>74/100</Box>
+                  <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}>{healthScore.toFixed(2)}/100</Box>
                 </Box>
                 <Divider />
 
-                <EditPositionButton>Edit Liquidity Position</EditPositionButton>
+                <EditPositionButton onClick={handleSubmit(onEditLiquidity)} disabled={!isDirty || !isValid}>Edit Liquidity Position</EditPositionButton>
               </Box>
             </Stack>
           </Box>
         </DialogContent>
       </Dialog>
     </>
-  )
+  ) : <></>
 }
 
 const HeaderText = styled(Box)`

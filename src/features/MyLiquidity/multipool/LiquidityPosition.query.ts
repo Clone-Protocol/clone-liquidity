@@ -23,15 +23,29 @@ export const fetchLiquidityDetail = async ({
 	const tokenData = await program.getTokenData()
 	const pool = tokenData.pools[index]
 
-	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
-
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+
+	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+	let totalCollValue = 90405.52
+	let totalHealthScore = 75
+	
 	return {
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
 		price,
+		totalCollValue,
+		totalHealthScore
 	}
+}
+
+export interface PositionInfo {
+	tickerIcon: string
+	tickerName: string
+	tickerSymbol: string
+	price: number
+	totalCollValue: number
+	totalHealthScore: number
 }
 
 interface GetProps {

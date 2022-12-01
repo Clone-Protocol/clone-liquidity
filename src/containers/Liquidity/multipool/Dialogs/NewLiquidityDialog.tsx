@@ -7,24 +7,32 @@ import { SliderTransition } from '~/components/Common/Dialog'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import PairInput from '~/components/Asset/PairInput'
 import InfoTooltip from '~/components/Common/InfoTooltip'
-// import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
+import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
+import { useNewPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-const NewLiquidityDialog = ({ open, onRefetchData, assetIndex, handleClose }:  { open: boolean, onRefetchData: any, assetIndex: number, handleClose: any }) => {
+const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
 
-  const [maxMintable, setMaxMintable] = useState(0.0)
   const [mintRatio, setMintRatio] = useState(50)
+  const [maxMintable, setMaxMintable] = useState(0.0)
+  const [totalLiquidity, setTotalLiquidity] = useState(0)
+  const [healthScore, setHealthScore] = useState(0)
 
-  // const { data: assetData } = useLiquidityDetailQuery({
-  //   userPubKey: publicKey,
-  //   index: assetIndex,
-	//   refetchOnMount: true,
-  //   enabled: open && publicKey != null
-	// })
+  const { data: positionInfo } = useLiquidityDetailQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+	  refetchOnMount: true,
+    enabled: open && publicKey != null
+	})
+
+  const initData = () => {
+    setValue('mintAmount', 0.0)
+    onRefetchData()
+  }
 
   const {
 		handleSubmit,
@@ -49,13 +57,16 @@ const NewLiquidityDialog = ({ open, onRefetchData, assetIndex, handleClose }:  {
 	  }
 	}, [maxMintable])
 
+  const { mutateAsync } = useNewPositionMutation(publicKey)
   const onNewLiquidity = async () => {
-
+    setLoading(true)
+    // @TODO: implementing mutateAsync
+    // await mutateAsync()
   }
 
   const isValid = Object.keys(errors).length === 0
   
-  return (
+  return positionInfo ? (
     <>
       {loading && (
 				<LoadingWrapper>
@@ -74,10 +85,10 @@ const NewLiquidityDialog = ({ open, onRefetchData, assetIndex, handleClose }:  {
             <Divider />
 
             <Stack direction='row' gap={4}>
-              <SelectedPoolBox />
+              <SelectedPoolBox positionInfo={positionInfo}  />
               
               <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
-                <SelectLabel>Select amount of USDi & iSOL to mint into iSOL AMM</SelectLabel>
+                <SelectLabel>Select amount of USDi & {positionInfo.tickerSymbol} to mint into {positionInfo.tickerSymbol} AMM</SelectLabel>
                 <Box sx={{ marginTop: '15px' }}>
                   <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
@@ -119,20 +130,20 @@ const NewLiquidityDialog = ({ open, onRefetchData, assetIndex, handleClose }:  {
                   <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
                 </Box>
                 <PairInputView
-                  tickerIcon={'/images/assets/euro.png'}
-                  tickerSymbol={'iEUR'}
-                  value={0}
+                  tickerIcon={positionInfo.tickerIcon}
+                  tickerSymbol={positionInfo.tickerSymbol}
+                  value={mintAmount / positionInfo.price}
                 />
 
                 <FormStack direction="row" justifyContent="space-between" alignItems="center">
                   <Box>Total liquidity value of the position: </Box>
-                  <Box sx={{ fontSize: '16px' }}>$18,354.32</Box>
+                  <Box sx={{ fontSize: '16px' }}>${totalLiquidity.toLocaleString()}</Box>
                 </FormStack>
 
                 <Divider />
                 <Box>
                   <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
-                  <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>21</span>/100</Box>
+                  <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
                 </Box>
                 <Divider />
 
@@ -143,7 +154,7 @@ const NewLiquidityDialog = ({ open, onRefetchData, assetIndex, handleClose }:  {
         </DialogContent>
       </Dialog>
     </>
-  )
+  ) : <></>
 }
 
 const HeaderText = styled(Box)`

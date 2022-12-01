@@ -4,6 +4,38 @@ import { useMutation } from 'react-query'
 import { Incept, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
+
+export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
+	if (!userPubKey) throw new Error('no user public key')
+
+	console.log('new input data', data)
+
+	await program.loadManager()
+
+	// TODO: make Establish new Liquidity logic
+	
+
+	return {
+    result: true
+  }
+}
+
+type NewFormData = {
+	positionIndex: number
+	changeAmount: number
+	editType: number
+}
+interface CallNewProps {
+	program: Incept
+	userPubKey: PublicKey | null
+	data: NewFormData
+}
+export function useNewPositionMutation(userPubKey: PublicKey | null) {
+	const { getInceptApp } = useIncept()
+	return useMutation((data: NewFormData) => callNew({ program: getInceptApp(), userPubKey, data }))
+}
+
+
 export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
@@ -50,6 +82,10 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 	tx.add(ix)
 
 	await program.provider.send!(tx)
+
+	return {
+    result: true
+  }
 }
 
 type EditFormData = {
@@ -62,7 +98,7 @@ interface CallEditProps {
 	userPubKey: PublicKey | null
 	data: EditFormData
 }
-export function useLiquidityPositionMutation(userPubKey: PublicKey | null) {
+export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	const { getInceptApp } = useIncept()
 	return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data }))
 }

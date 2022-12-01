@@ -9,15 +9,16 @@ import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 
 const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: any }) => {
-
   const [openAddPosition, setOpenAddPosition] = useState(false)
   const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
 
-  const handleChoosePosition = (positionId: number) => {
-    console.log('positionId', positionId)
+  const [selectAssetId, setSelectAssetId] = useState(0)
 
+  const handleChoosePosition = (assetId: number) => {
+    console.log('assetId', assetId)
+    setSelectAssetId(assetId)
     setOpenNewLiquidity(true)
   }
 
@@ -46,12 +47,13 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
       />
       <NewLiquidityDialog
         open={openNewLiquidity}
-        assetIndex={0}
+        assetIndex={selectAssetId}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenNewLiquidity(false)}
       />
       <EditLiquidityDialog
         open={openEditLiquidity}
+        assetIndex={selectAssetId}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenEditLiquidity(false)}
       />

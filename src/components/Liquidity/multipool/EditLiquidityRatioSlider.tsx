@@ -1,14 +1,15 @@
 import { Box, Slider, Stack, styled } from '@mui/material'
-import { PositionInfo as PI } from '~/features/MyLiquidity/CometPosition.query'
 import Image from 'next/image'
 import chroma from 'chroma-js'
+import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 
 interface Props {
 	min?: number
 	max?: number
 	ratio: number
   currentRatio: number
-  assetData: PI
+  positionInfo: PositionInfo
+  totalLiquidity: number
   mintAmount: number
   currentMintAmount: number
   onChangeRatio?: (newRatio: number) => void
@@ -53,7 +54,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, assetData, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
+const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, positionInfo, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
 	const valueLabelFormat = (value: number) => {
 		return `${value.toFixed(1)}%`
 	}
@@ -132,18 +133,18 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
           <FormBox sx={{ background: '#16171a', color: '#9a9a9a'}}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display="flex">
-                <Image src={assetData.tickerIcon} width="28px" height="28px" />
+                <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
                 <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  {assetData.tickerSymbol}
+                  {positionInfo.tickerSymbol}
                 </Box>
               </Box>
               <Box sx={{ paddingRight: '10px'}}>
-                <div>{(mintAmount/assetData.price).toLocaleString()}</div>
+                <div>{(mintAmount/positionInfo.price).toLocaleString()}</div>
                 <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a'}}>${mintAmount.toLocaleString()}</div>
               </Box>
             </Stack>
           </FormBox>
-          <BottomBox>Current: {(currentMintAmount/assetData.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {assetData.tickerSymbol} (${(currentMintAmount * assetData.price).toLocaleString()})</BottomBox>
+          <BottomBox>Current: {(currentMintAmount/positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {assetData.tickerSymbol} (${(currentMintAmount * assetData.price).toLocaleString()})</BottomBox>
         </StyledBox>
         <StyledBox>
           <FormBox sx={{ background: '#16171a', color: '#fff', fontSize: '12px', fontWeight: '500'}}>
@@ -152,7 +153,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
                 Projected new total liquidity value of the position: 
               </Box>
               <Box sx={{ marginRight: '10px'}}>
-                $18,354.32
+                ${totalLiquidity.toLocaleString()}
               </Box>
             </Stack>
           </FormBox>

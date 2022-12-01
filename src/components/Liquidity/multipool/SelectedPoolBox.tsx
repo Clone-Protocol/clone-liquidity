@@ -1,28 +1,30 @@
 import { styled, Stack, Box, Button } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import Image from 'next/image'
+import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 
 interface Props {
+  positionInfo: PositionInfo
 }
 
-const SelectedPoolBox: React.FC<Props> = ({}) => {
+const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
   return (
     <Box>
       <Box>
         <SubTitle>Selected liquidity pool:</SubTitle>
         <PairBox>
-          <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+          <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
           <Box sx={{ marginLeft: '9px' }}>
-            <span style={{ fontSize: '18px' }}>iSOL</span> / USDi
+            <span style={{ fontSize: '18px' }}>{positionInfo.tickerSymbol}</span> / USDi
           </Box>
         </PairBox>
       </Box>
       <DetailBox>
         <SubTitle>Total collateral value <InfoTooltip title="Total collateral value" /></SubTitle>
-        <div style={{ marginBottom: '15px' }}>$90,405.52</div>
+        <div style={{ marginBottom: '15px' }}>${positionInfo.totalCollValue.toLocaleString()}</div>
 
         <SubTitle>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
-        <div style={{ textAlign: 'center' }}><span style={{ fontSize: '20px' }}>75</span>/100</div>
+        <div style={{ textAlign: 'center' }}><span style={{ fontSize: '20px' }}>{positionInfo.totalHealthScore.toFixed(2)}</span>/100</div>
       </DetailBox>
     </Box>
   )
