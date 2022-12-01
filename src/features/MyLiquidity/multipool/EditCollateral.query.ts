@@ -1,9 +1,7 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
-import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useIncept } from '~/hooks/useIncept'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { getUSDiAccount } from '~/utils/token_accounts'
 

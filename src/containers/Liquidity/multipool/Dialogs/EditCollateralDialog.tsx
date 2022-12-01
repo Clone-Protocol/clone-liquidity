@@ -10,7 +10,7 @@ import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateral
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }: any) => {
+const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: any) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -32,7 +32,7 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }
   const { data: collData, refetch } = useEditCollateralQuery({
     userPubKey: publicKey,
     index: collIndex,
-	  refetchOnMount: true,
+	  refetchOnMount: "always",
     enabled: open && publicKey != null
 	})
 
@@ -60,6 +60,7 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }
   useEffect(() => {
     async function fetch() {
       if (open && collData) {
+        initData()
         setHealthScore(collData.prevHealthScore)
         setTotalCollValue(collData.totalCollValue)
       }
@@ -107,6 +108,7 @@ const EditCollateralDialog = ({ open, isDeposit, handleChooseColl, handleClose }
             enqueueSnackbar('Success to edit collateral')
             refetch()
             initData()
+            onRefetchData()
           }
           setLoading(false)
         },

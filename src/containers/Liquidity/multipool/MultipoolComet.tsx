@@ -12,7 +12,7 @@ import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/Multipoo
 
 const MultipoolComet = () => {
   const { publicKey } = useWallet()
-  const { data: infos } = useMultipoolInfoQuery({
+  const { data: infos, refetch } = useMultipoolInfoQuery({
     userPubKey: publicKey,
 	  refetchOnMount: "always",
     enabled: publicKey != null
@@ -60,13 +60,13 @@ const MultipoolComet = () => {
         <Grid item xs={12} md={4}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
             <SubTitle>Collaterals <InfoTooltip title="Collaterals" /></SubTitle>
-            <Collaterals collaterals={infos.collaterals}  />
+            <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()}  />
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={6}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
             <SubTitle>Contributed Liquidity Positions <InfoTooltip title="Contributed Liquidity Positions" /></SubTitle>
-            <LiquidityPositions positions={infos.positions}  />
+            <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()}  />
           </CardWrapper>
         </Grid>
       </Grid>

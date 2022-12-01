@@ -1,6 +1,5 @@
 import { Box, Stack, Grid, Button } from '@mui/material'
 import { styled } from '@mui/system'
-import Image from 'next/image'
 import { useState } from 'react'
 import RecenterDialog from './Dialogs/RecenterDialog'
 import AddPositionDialog from './Dialogs/AddPositionDialog'
@@ -9,7 +8,7 @@ import NewLiquidityDialog from './Dialogs/NewLiquidityDialog'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 
-const LiquidityPositions = ({ positions } : { positions: LiquidityPosition[] }) => {
+const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: any }) => {
 
   const [openAddPosition, setOpenAddPosition] = useState(false)
   const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
@@ -48,15 +47,18 @@ const LiquidityPositions = ({ positions } : { positions: LiquidityPosition[] }) 
       <NewLiquidityDialog
         open={openNewLiquidity}
         assetIndex={0}
+        onRefetchData={onRefetchData}
         handleClose={() => setOpenNewLiquidity(false)}
       />
       <EditLiquidityDialog
         open={openEditLiquidity}
+        onRefetchData={onRefetchData}
         handleClose={() => setOpenEditLiquidity(false)}
       />
       <RecenterDialog
         assetId='0'
         open={openRecenter}
+        onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}
       />
     </>

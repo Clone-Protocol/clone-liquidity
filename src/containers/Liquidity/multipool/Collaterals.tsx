@@ -6,7 +6,7 @@ import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 import { Collateral } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 
-const Collaterals = ({ collaterals } : {collaterals: Collateral[]}) => {
+const Collaterals = ({ collaterals, onRefetchData } : {collaterals: Collateral[], onRefetchData: any}) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
   const [chooseEditType, setChooseEditType] = useState(0)
@@ -40,6 +40,7 @@ const Collaterals = ({ collaterals } : {collaterals: Collateral[]}) => {
       <EditCollateralDialog
         open={openEditCollateral}
         isDeposit={chooseEditType===0}
+        onRefetchData={onRefetchData}
         handleChooseColl={() => setOpenChooseCollateral(true)}
         handleClose={() => setOpenEditCollateral(false)}
       />

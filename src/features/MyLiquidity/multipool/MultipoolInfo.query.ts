@@ -4,7 +4,6 @@ import { Incept, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getiAssetInfos } from '~/utils/assets'
 import { assetMapping } from '~/data/assets'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
@@ -30,8 +29,6 @@ export const fetchInfos = async ({
 	let healthScore = 0
 	let totalCollValue = 0
 	let totalLiquidity = 0
-	let collAmount = 0
-	let collAmountDollarPrice = 1 * collAmount
 	let collaterals: Collateral[] = [];
 	let positions: LiquidityPosition[] = [];
 	// let collaterals: Collateral[] = [

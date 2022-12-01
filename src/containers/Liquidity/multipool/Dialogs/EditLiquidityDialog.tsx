@@ -11,7 +11,7 @@ import { useForm, Controller } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiquidityRatioSlider'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
  
-const EditLiquidityDialog = ({ open, handleClose }:  { open: any, handleClose: any }) => {
+const EditLiquidityDialog = ({ open, onRefetchData, handleClose }:  { open: boolean, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)

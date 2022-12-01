@@ -4,7 +4,7 @@ import { Box, styled, Dialog, DialogContent} from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridLiquidityPool from './GridLiquidityPool'
 
-const AddPositionDialog = ({ open, handleChoosePosition, handleClose }:  { open: any, handleChoosePosition: (id: number) => void, handleClose: any }) => {
+const AddPositionDialog = ({ open, handleChoosePosition, handleClose }:  { open: boolean, handleChoosePosition: (id: number) => void, handleClose: any }) => {
   const [loading, setLoading] = useState(false)
   
   return (

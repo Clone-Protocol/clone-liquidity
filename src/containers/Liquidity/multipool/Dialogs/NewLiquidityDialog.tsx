@@ -12,7 +12,7 @@ import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-const NewLiquidityDialog = ({ open, assetIndex, handleClose }:  { open: any, assetIndex: number, handleClose: any }) => {
+const NewLiquidityDialog = ({ open, onRefetchData, assetIndex, handleClose }:  { open: boolean, onRefetchData: any, assetIndex: number, handleClose: any }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
 

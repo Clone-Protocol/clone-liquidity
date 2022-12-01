@@ -22,7 +22,7 @@ interface CometInfo {
   upperLimit: number
 }
 
-const RecenterDialog = ({ assetId, open, handleClose }: { assetId: string, open: any, handleClose: any }) => {
+const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId: string, open: boolean, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   // const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
