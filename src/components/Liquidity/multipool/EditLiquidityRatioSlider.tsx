@@ -144,7 +144,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
               </Box>
             </Stack>
           </FormBox>
-          <BottomBox>Current: {(currentMintAmount/positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {assetData.tickerSymbol} (${(currentMintAmount * assetData.price).toLocaleString()})</BottomBox>
+          <BottomBox>Current: {(currentMintAmount/positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol} (${(currentMintAmount * positionInfo.price).toLocaleString()})</BottomBox>
         </StyledBox>
         <StyledBox>
           <FormBox sx={{ background: '#16171a', color: '#fff', fontSize: '12px', fontWeight: '500'}}>

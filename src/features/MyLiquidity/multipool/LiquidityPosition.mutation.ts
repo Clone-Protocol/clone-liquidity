@@ -13,7 +13,9 @@ export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
 	await program.loadManager()
 
 	// TODO: make Establish new Liquidity logic
-	
+	let tx = new Transaction().add(await program.updatePricesInstruction())
+	tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(data.changeAmount), data.poolIndex, false))
+    await program.provider.send!(tx);
 
 	return {
     result: true
@@ -21,7 +23,7 @@ export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
 }
 
 type NewFormData = {
-	positionIndex: number
+	poolIndex: number
 	changeAmount: number
 	editType: number
 }
@@ -63,23 +65,27 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 	const poolIndex = cometPosition.poolIndex
 
 	let tx = new Transaction().add(updatePricesIxResult.value)
-	let ix: TransactionInstruction
 	/// Deposit
 	if (editType === 0) {
-		ix = await program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex, false)
+		tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex, false))
 		/// Withdraw
 	} else {
 		const pool = tokenDataResult.value.pools[poolIndex]
 		const totalPoolUsdi = toNumber(pool.usdiAmount)
 		const totalLpTokens = toNumber(pool.liquidityTokenSupply)
+        const positionLpTokens = toNumber(cometPosition.liquidityTokenValue);
 		const lpTokensToWithdraw = Math.min(
 			(totalLpTokens * changeAmount) / totalPoolUsdi,
-			toNumber(cometPosition.liquidityTokenValue)
+			positionLpTokens
 		)
 
-		ix = await program.withdrawLiquidityFromCometInstruction(toDevnetScale(lpTokensToWithdraw), positionIndex, false)
+		tx.add(await program.withdrawLiquidityFromCometInstruction(toDevnetScale(lpTokensToWithdraw), positionIndex, false))
+
+        if (lpTokensToWithdraw === positionLpTokens) {
+            const collateralUsdi = toNumber(cometResult.value.collaterals[0].collateralAmount)
+            tx.add(await program.payCometILDInstruction(positionIndex, 0, collateralUsdi, false))
+        }
 	}
-	tx.add(ix)
 
 	await program.provider.send!(tx)
 

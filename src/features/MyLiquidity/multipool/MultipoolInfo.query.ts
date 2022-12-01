@@ -53,8 +53,10 @@ export const fetchInfos = async ({
 		program.getComet(), program.getHealthScore()
 	]);
 
-	if (cometResult.status === "fulfilled" && healthScoreResult.status === 'fulfilled') {
+	if (healthScoreResult.status === 'fulfilled')
 		healthScore = healthScoreResult.value.healthScore
+
+	if (cometResult.status === "fulfilled") {	
 		collaterals = extractCollateralInfo(cometResult.value)
 		positions = extractLiquidityPositionsInfo(cometResult.value)
 
@@ -114,9 +116,11 @@ const extractCollateralInfo = (comet: Comet): Collateral[] => {
 
 export interface LiquidityPosition {
   tickerSymbol: string
-	tickerIcon: string
-	tickerName: string
+  tickerIcon: string
+  tickerName: string
   liquidityDollarPrice: number
+  positionIndex: number
+  poolIndex: number
 }
 
 
@@ -125,14 +129,18 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 
 	for (let i=0; i < comet.numPositions.toNumber(); i++) {
 		// For now only handle USDi
-		const info = assetMapping(comet.positions[i].poolIndex);
+		const position = comet.positions[i];
+		const poolIndex = Number(position.poolIndex)
+		const info = assetMapping(poolIndex);
 
 		result.push(
 			{
-			tickerIcon : info.tickerIcon,
-			tickerSymbol : info.tickerSymbol,
-			tickerName : info.tickerName,
-			liquidityDollarPrice: toNumber(comet.positions[i].borrowedUsdi)
+				tickerIcon : info.tickerIcon,
+				tickerSymbol : info.tickerSymbol,
+				tickerName : info.tickerName,
+				liquidityDollarPrice: toNumber(position.borrowedUsdi),
+				positionIndex: i,
+				poolIndex: poolIndex
 			} as LiquidityPosition
 		)
 	}

@@ -1,6 +1,6 @@
 import { QueryObserverOptions, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
+import { Incept, TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -20,14 +20,29 @@ export const fetchLiquidityDetail = async ({
 
 	await program.loadManager()
 
-	const tokenData = await program.getTokenData()
+	const [tokenDataResult, cometResult, healthScoreResult] = await Promise.allSettled([
+		program.getTokenData(), program.getComet(), program.getHealthScore()
+	]);
+
+	if (tokenDataResult.status === 'rejected')
+		return;
+
+	const tokenData = tokenDataResult.value
 	const pool = tokenData.pools[index]
-
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
-
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
-	let totalCollValue = 90405.52
-	let totalHealthScore = 75
+
+	let totalCollValue = 0
+	let comet;
+	if (cometResult.status === 'fulfilled') {
+		// Only USDi for now.
+		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
+		comet = cometResult.value
+	}
+
+	let totalHealthScore = 0
+	if (healthScoreResult.status === 'fulfilled')
+		totalHealthScore = healthScoreResult.value.healthScore
 	
 	return {
 		tickerIcon: tickerIcon,
@@ -35,7 +50,9 @@ export const fetchLiquidityDetail = async ({
 		tickerSymbol: tickerSymbol,
 		price,
 		totalCollValue,
-		totalHealthScore
+		totalHealthScore,
+		tokenData: tokenDataResult.value,
+		comet
 	}
 }
 
@@ -46,6 +63,8 @@ export interface PositionInfo {
 	price: number
 	totalCollValue: number
 	totalHealthScore: number
+	tokenData: TokenData,
+	comet: Comet | undefined
 }
 
 interface GetProps {

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
 import { useIncept } from '~/hooks/useIncept'
@@ -11,23 +11,19 @@ import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/Liquid
 import { useForm, Controller } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiquidityRatioSlider'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
  
 const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
-  const assetData = {
-    tickerIcon: '/images/assets/euro.png',
-    tickerName: 'iEURO',
-    tickerSymbol: 'iEUR',
-    price: 1.1,
-  }
-
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [mintRatio, setMintRatio] = useState(0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
+  const [maxMintable, setMaxMintable] = useState(0)
+  const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
 
   const { data: positionInfo } = useLiquidityDetailQuery({
     userPubKey: publicKey,
@@ -35,6 +31,15 @@ const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  
 	  refetchOnMount: true,
     enabled: open && publicKey != null
 	})
+
+  useEffect(() => {
+    if (positionInfo !== undefined) {
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
+      setAssetHealthCoefficient(healthCoefficient)
+      setHealthScore(positionInfo.totalHealthScore)
+      setMaxMintable(positionInfo.totalHealthScore / healthCoefficient)
+    }
+  }, [positionInfo])
 
   const initData = () => {
     setValue('mintAmount', 0.0)
@@ -57,15 +62,26 @@ const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  
 		'mintAmount',
 	])
 
-  const handleChangeMintRatio = useCallback((newRatio: number) => {
-    // calculateMintAmount(newRatio * maxMintable / 100)
-    // setMintRatio(newRatio)
-	}, [mintRatio, mintAmount])
+
+  const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
+	  if (typeof newValue === 'number') {
+      setValue('mintAmount', maxMintable * newValue / 100)
+      setMintRatio(newValue)
+	  }
+	}, [maxMintable])
+
+  useEffect(() => {
+    if (positionInfo !== undefined) {
+      const mintAmount = maxMintable * mintRatio / 100
+      setValue('mintAmount', mintAmount);
+      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount)
+    }
+  }, [mintRatio])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
     // calculateMintAmount(mintAmount)
-    // setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
-	}, [mintRatio, mintAmount])
+    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+	}, [mintAmount])
 
   const onEditLiquidity = async () => {
     setLoading(true)

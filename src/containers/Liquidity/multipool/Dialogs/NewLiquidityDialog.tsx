@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -12,6 +12,7 @@ import { useNewPositionMutation } from '~/features/MyLiquidity/multipool/Liquidi
 import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
@@ -21,6 +22,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
+  const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
 
   const { data: positionInfo } = useLiquidityDetailQuery({
     userPubKey: publicKey,
@@ -29,10 +31,21 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
     enabled: open && publicKey != null
 	})
 
+  useEffect(() => {
+    if (positionInfo !== undefined) {
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
+      setAssetHealthCoefficient(healthCoefficient)
+      setHealthScore(positionInfo.totalHealthScore)
+      setMaxMintable(positionInfo.totalHealthScore / healthCoefficient)
+    }
+  }, [positionInfo])
+
   const initData = () => {
     setValue('mintAmount', 0.0)
     onRefetchData()
   }
+
+  //initData()
 
   const {
 		handleSubmit,
@@ -46,6 +59,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
       mintAmount: maxMintable * mintRatio / 100,
     }
 	})
+
   const [mintAmount] = watch([
 		'mintAmount',
 	])
@@ -57,14 +71,27 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
 	  }
 	}, [maxMintable])
 
+  useEffect(() => {
+    if (positionInfo !== undefined) {
+      const mintAmount = maxMintable * mintRatio / 100
+      setValue('mintAmount', mintAmount);
+      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount)
+    }
+  }, [mintRatio])
+
   const { mutateAsync } = useNewPositionMutation(publicKey)
   const onNewLiquidity = async () => {
     setLoading(true)
     // @TODO: implementing mutateAsync
-    // await mutateAsync()
+    await mutateAsync({
+      poolIndex: assetIndex,
+      changeAmount: mintAmount,
+      editType: 0
+    })
+    setLoading(false)
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = true//Object.keys(errors).length === 0
   
   return positionInfo ? (
     <>
@@ -147,7 +174,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
                 </Box>
                 <Divider />
 
-                <NewPositionButton onClick={handleSubmit(onNewLiquidity)} disabled={!isDirty || !isValid}>Establish New Position</NewPositionButton>
+                <NewPositionButton onClick={handleSubmit(onNewLiquidity)}>Establish New Position</NewPositionButton>
               </Box>
             </Stack>
           </Box>
