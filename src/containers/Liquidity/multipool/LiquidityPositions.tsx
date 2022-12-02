@@ -16,6 +16,7 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
 
   const [selectAssetId, setSelectAssetId] = useState(0)
   const [editAssetId, setEditAssetId] = useState(0)
+  const [poolIndex, setPoolIndex] = useState(0)
 
   const handleChoosePosition = (assetId: number) => {
     console.log('assetId', assetId)
@@ -23,9 +24,10 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
     setOpenNewLiquidity(true)
   }
 
-  const handleChooseEditPosition = (poolIndex: number) => {
-    console.log('poolIndex', poolIndex)
-    setEditAssetId(poolIndex)
+  const handleChooseEditPosition = (positionIndex: number) => {
+    console.log('positionIndex', positionIndex)
+    setPoolIndex(Number(positions[positionIndex].poolIndex))
+    setEditAssetId(positionIndex)
     setOpenEditLiquidity(true)
   }
 
@@ -61,7 +63,8 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
       />
       <EditLiquidityDialog
         open={openEditLiquidity}
-        poolIndex={editAssetId}
+        positionIndex={editAssetId}
+        poolIndex={poolIndex}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenEditLiquidity(false)}
       />

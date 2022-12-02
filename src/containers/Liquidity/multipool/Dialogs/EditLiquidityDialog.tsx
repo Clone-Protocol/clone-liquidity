@@ -13,7 +13,7 @@ import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiqui
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
  
-const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  { open: boolean, poolIndex: number, onRefetchData: any, handleClose: any }) => {
+const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }:  { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -26,27 +26,32 @@ const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  {
   const [maxMintable, setMaxMintable] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [changeAmount, setChangeAmount] = useState(0)
+  const [validMintAmount, setValidMintAmount] = useState(true)
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: poolIndex,
     isEdit: true,
 	  refetchOnMount: true,
-    enabled: open && publicKey != null
+    enabled: open && publicKey != null,
 	})
 
   // initialized state
   useEffect(() => {
     if (open && positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.healthScoreCoefficient);
+      const position = positionInfo.comet!.positions[positionIndex]
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.healthScoreCoefficient)
+      const currentPosition = toNumber(position!.borrowedUsdi)
+
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
-      setMaxMintable(positionInfo.totalHealthScore / healthCoefficient)
+      const maxMintable = positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient + currentPosition
+      setMaxMintable(maxMintable)
 
-      // @TODO
-      setDefaultMintRatio(50)
-      setDefaultMintAmount(0)
-      setTotalLiquidity(50)
+      setDefaultMintRatio(100 * currentPosition / maxMintable)
+      setDefaultMintAmount(currentPosition)
+      setMintRatio(100 * currentPosition / maxMintable)
+      setTotalLiquidity(currentPosition * 2)
       setChangeAmount(0)
     }
   }, [open, positionInfo])
@@ -65,7 +70,7 @@ const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  {
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      mintAmount: 0.0,
+      mintAmount: 0,
     }
 	})
   const [mintAmount] = watch([
@@ -76,7 +81,9 @@ const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  {
     if (positionInfo !== undefined) {
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
-      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount)
+      setHealthScore(positionInfo.totalHealthScore - (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.totalCollValue)
+      setTotalLiquidity(mintAmount * 2);
+      setValidMintAmount(mintAmount < maxMintable && mintRatio < 100 && mintAmount !== defaultMintAmount && mintRatio !== defaultMintRatio)
     }
   }, [mintRatio])
 
@@ -93,11 +100,10 @@ const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  {
   const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
     setLoading(true)
-    // @TODO: implementing mutateAsync
     await mutateAsync({
-      positionIndex: poolIndex,
-      changeAmount,
-      editType: 0
+      positionIndex: positionIndex,
+      changeAmount: Math.abs(mintAmount - defaultMintAmount),
+      editType: mintAmount > defaultMintAmount ? 0 : 1
     },
     {
       onSuccess(data) {
@@ -153,7 +159,7 @@ const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  {
                 </Box>
                 <Divider />
 
-                <EditPositionButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid}>Edit Liquidity Position</EditPositionButton>
+                <EditPositionButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount)}>Edit Liquidity Position</EditPositionButton>
               </Box>
             </Stack>
           </Box>
