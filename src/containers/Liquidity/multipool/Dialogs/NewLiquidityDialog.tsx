@@ -25,6 +25,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
+  const [validMintValue, setValidMintValue] = useState(false)
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
@@ -39,7 +40,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
       const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
-      setMaxMintable(positionInfo.totalHealthScore / healthCoefficient)
+      setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
       initData()
     }
   }, [open, positionInfo])
@@ -77,7 +78,9 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
     if (positionInfo !== undefined) {
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
-      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount)
+      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
+      setTotalLiquidity(mintAmount * 2)
+      setValidMintValue(mintRatio > 0 && mintRatio < 100 && mintAmount > 0 && mintAmount < maxMintable)
     }
   }, [mintRatio])
 
@@ -107,7 +110,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   }
 
   const isValid = Object.keys(errors).length === 0
-  
+
   return positionInfo ? (
     <>
       {loading && (
@@ -189,7 +192,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
                 </Box>
                 <Divider />
 
-                <NewPositionButton onClick={handleSubmit(onNewLiquidity)} disabled={!isValid}>Establish New Position</NewPositionButton>
+                <NewPositionButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)}>Establish New Position</NewPositionButton>
               </Box>
             </Stack>
           </Box>
