@@ -21,6 +21,7 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 		ix = await program.addCollateralToCometInstruction(userUsdiTokenAccount!, toDevnetScale(collAmount), 0, false)
 		/// Withdraw
 	} else {
+    tx.add(await program.updatePricesInstruction())
 		ix = await program.withdrawCollateralFromCometInstruction(
 			userUsdiTokenAccount!,
 			toDevnetScale(collAmount),
@@ -28,7 +29,7 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 			false
 		)
 	}
-	tx.add(ix)
+  tx.add(ix)
 
 	await program.provider.send!(tx)
 
