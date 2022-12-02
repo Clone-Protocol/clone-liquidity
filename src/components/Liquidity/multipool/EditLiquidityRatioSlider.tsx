@@ -160,7 +160,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
           <BottomBox>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box sx={{ marginLeft: '20px'}}>Current total liquidity value of the position: </Box>
-              <Box sx={{ marginRight: '20px'}}>$5,000.34</Box>
+              <Box sx={{ marginRight: '20px'}}>${positionInfo.totalCollValue.toLocaleString()}</Box>
             </Stack>
           </BottomBox>
         </StyledBox>
