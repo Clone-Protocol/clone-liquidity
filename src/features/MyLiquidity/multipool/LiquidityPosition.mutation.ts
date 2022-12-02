@@ -74,16 +74,22 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 		const totalPoolUsdi = toNumber(pool.usdiAmount)
 		const totalLpTokens = toNumber(pool.liquidityTokenSupply)
         const positionLpTokens = toNumber(cometPosition.liquidityTokenValue);
-		const lpTokensToWithdraw = Math.min(
+        const positionUsdi = toNumber(cometPosition.borrowedUsdi)
+
+        let lpTokensToWithdraw = Math.min(
 			(totalLpTokens * changeAmount) / totalPoolUsdi,
 			positionLpTokens
 		)
+        // Catch the edge case if we want to withdraw everything.
+        if (changeAmount === positionUsdi) {
+            lpTokensToWithdraw = positionLpTokens
+        }
 
 		tx.add(await program.withdrawLiquidityFromCometInstruction(toDevnetScale(lpTokensToWithdraw), positionIndex, false))
 
         if (lpTokensToWithdraw === positionLpTokens) {
             const collateralUsdi = toNumber(cometResult.value.collaterals[0].collateralAmount)
-            tx.add(await program.payCometILDInstruction(positionIndex, 0, collateralUsdi, false))
+            tx.add(await program.payCometILDInstruction(positionIndex, 0, toDevnetScale(collateralUsdi).toNumber(), false))
         }
 	}
 
