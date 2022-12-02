@@ -24,10 +24,11 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
   let multipoolComet = 0
   let liquidated = 0
 
-  const [mintPositionsResult, cometsResult, liquidityPositionsResult] = await Promise.allSettled([
+  const [mintPositionsResult, singlePoolCometsResult, liquidityPositionsResult, cometsResult] = await Promise.allSettled([
     program.getMintPositions(), 
     program.getSinglePoolComets(), 
-    program.getLiquidityPositions()
+    program.getLiquidityPositions(),
+    program.getComet()
   ]);
 
   if (mintPositionsResult.status === "fulfilled") {
@@ -57,13 +58,21 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     }
   }
 
-  if (cometsResult.status === "fulfilled") {
-    const comets = cometsResult.value;
+  if (singlePoolCometsResult.status === "fulfilled") {
+    const comets = singlePoolCometsResult.value;
     for (let i = 0; i < Number(comets.numCollaterals.toNumber()); i++) {
       let collateralAmount = toNumber(comets.collaterals[i].collateralAmount);
       totalVal += collateralAmount;
       comet += collateralAmount;
     }
+  }
+
+  if (cometsResult.status === "fulfilled") {
+    const comets = cometsResult.value
+    // Only take usdi value for now.
+    let usdiValue = toNumber(comets.collaterals[0].collateralAmount)
+    totalVal += usdiValue
+    multipoolComet += usdiValue
   }
 
 	let borrowPercent = totalVal > 0 ? (borrow / totalVal) * 100 : 0
