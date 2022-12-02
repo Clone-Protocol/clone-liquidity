@@ -20,7 +20,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
-  const [mintRatio, setMintRatio] = useState(50)
+  const [mintRatio, setMintRatio] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
@@ -46,7 +46,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   }, [open, positionInfo])
 
   const initData = () => {
-    setMintRatio(50)
+    setMintRatio(0)
     onRefetchData()
   }
 
