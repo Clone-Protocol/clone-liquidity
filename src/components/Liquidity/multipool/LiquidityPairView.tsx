@@ -2,18 +2,19 @@ import { styled, Stack, Box, Button } from '@mui/material'
 import Image from 'next/image'
 
 interface Props {
+	poolIndex: number
 	tickerIcon: string
 	tickerSymbol: string | null
 	value?: number
-	onShowEditDialog: any
+	onShowEditDialog: (poolIndex: number) => void
 	onShowRecenterDialog: any
 }
 
-const LiquidityPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, onShowEditDialog, onShowRecenterDialog }) => {
+const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, onShowEditDialog, onShowRecenterDialog }) => {
 	return (
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex" onClick={onShowEditDialog} sx={{ cursor: 'pointer' }}>
+				<Box display="flex" onClick={() => onShowEditDialog(poolIndex)} sx={{ cursor: 'pointer' }}>
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
 						<TickerSymbol>{tickerSymbol} <span style={{ fontSize: '10px' }}>/ USDi</span></TickerSymbol>

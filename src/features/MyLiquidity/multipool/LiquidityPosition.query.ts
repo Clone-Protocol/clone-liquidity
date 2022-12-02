@@ -7,14 +7,17 @@ import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
+
 export const fetchLiquidityDetail = async ({
 	program,
 	userPubKey,
 	index,
+	isEdit,
 }: {
 	program: Incept
 	userPubKey: PublicKey | null
 	index: number
+	isEdit: boolean
 }) => {
 	if (!userPubKey) return
 
@@ -29,7 +32,12 @@ export const fetchLiquidityDetail = async ({
 
 	const tokenData = tokenDataResult.value
 	const pool = tokenData.pools[index]
-	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+
+	let assetId = index	
+	if (isEdit) {
+		//@TODO: need to bind data by poolIndex not assetId
+	}
+	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 
 	let totalCollValue = 0
@@ -70,15 +78,16 @@ export interface PositionInfo {
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
+	isEdit: boolean
 	refetchOnMount?: QueryObserverOptions['refetchOnMount']
 	enabled?: boolean
 }
 
-export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useLiquidityDetailQuery({ userPubKey, index, isEdit, refetchOnMount, enabled = true }: GetProps) {
 	const { getInceptApp } = useIncept()
 	return useQuery(
 		['liquidityPosition', userPubKey, index],
-		() => fetchLiquidityDetail({ program: getInceptApp(), userPubKey, index }),
+		() => fetchLiquidityDetail({ program: getInceptApp(), userPubKey, index, isEdit }),
 		{
 			refetchOnMount,
 			enabled,

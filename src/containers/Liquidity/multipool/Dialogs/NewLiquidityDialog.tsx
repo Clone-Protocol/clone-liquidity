@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useSnackbar } from 'notistack'
 import RatioSlider from '~/components/Liquidity/multipool/RatioSlider'
 import { SliderTransition } from '~/components/Common/Dialog'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
@@ -17,6 +18,7 @@ import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
 
   const [mintRatio, setMintRatio] = useState(50)
   const [maxMintable, setMaxMintable] = useState(0.0)
@@ -24,28 +26,28 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
 
-  const { data: positionInfo } = useLiquidityDetailQuery({
+  const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
+    isEdit: false,
 	  refetchOnMount: true,
     enabled: open && publicKey != null
 	})
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (open && positionInfo !== undefined) {
       const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalHealthScore / healthCoefficient)
+      initData()
     }
-  }, [positionInfo])
+  }, [open, positionInfo])
 
   const initData = () => {
-    setValue('mintAmount', 0.0)
+    setMintRatio(50)
     onRefetchData()
   }
-
-  //initData()
 
   const {
 		handleSubmit,
@@ -82,16 +84,29 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const { mutateAsync } = useNewPositionMutation(publicKey)
   const onNewLiquidity = async () => {
     setLoading(true)
-    // @TODO: implementing mutateAsync
     await mutateAsync({
       poolIndex: assetIndex,
       changeAmount: mintAmount,
-      editType: 0
+    },
+    {
+      onSuccess(data) {
+        if (data) {
+          console.log('data', data)
+          enqueueSnackbar('Success to new liquidity')
+          refetch()
+          initData()
+        }
+        setLoading(false)
+      },
+      onError(err) {
+        console.error(err)
+        enqueueSnackbar('Failed to new liquidity')
+        setLoading(false)
+      }
     })
-    setLoading(false)
   }
 
-  const isValid = true//Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0
   
   return positionInfo ? (
     <>
@@ -174,7 +189,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
                 </Box>
                 <Divider />
 
-                <NewPositionButton onClick={handleSubmit(onNewLiquidity)}>Establish New Position</NewPositionButton>
+                <NewPositionButton onClick={handleSubmit(onNewLiquidity)} disabled={!isValid}>Establish New Position</NewPositionButton>
               </Box>
             </Stack>
           </Box>

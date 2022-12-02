@@ -10,12 +10,13 @@ export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
 
 	console.log('new input data', data)
 
+	const { changeAmount, poolIndex } = data
+
 	await program.loadManager()
 
-	// TODO: make Establish new Liquidity logic
 	let tx = new Transaction().add(await program.updatePricesInstruction())
-	tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(data.changeAmount), data.poolIndex, false))
-    await program.provider.send!(tx);
+	tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex, false))
+  await program.provider.send!(tx);
 
 	return {
     result: true
@@ -25,7 +26,6 @@ export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
 type NewFormData = {
 	poolIndex: number
 	changeAmount: number
-	editType: number
 }
 interface CallNewProps {
 	program: Incept

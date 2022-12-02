@@ -53,24 +53,6 @@ export const fetchPools = async ({
 	// 		averageAPY: 20.355,
 	// 		isEnabled: false,
 	// 	},
-	// 	{
-	// 		id: 1,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		totalLiquidity: 10582845,
-	// 		volume24H: 10582845,
-	// 		averageAPY: 20.355,
-	// 		isEnabled: true,
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		totalLiquidity: 10582845,
-	// 		volume24H: 10582845,
-	// 		averageAPY: 20.355,
-	// 		isEnabled: true,
-	// 	},
 	// ]
 	return result
 }

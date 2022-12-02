@@ -1,45 +1,55 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
-import { useIncept } from '~/hooks/useIncept'
+import { Box, styled, Button, Stack, Dialog, DialogContent, IconButton } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
-import { useForm, Controller } from 'react-hook-form'
+import { useEditPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
+import { useForm } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiquidityRatioSlider'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
  
-const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: any, handleClose: any }) => {
+const EditLiquidityDialog = ({ open, poolIndex, onRefetchData, handleClose }:  { open: boolean, poolIndex: number, onRefetchData: any, handleClose: any }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
-  const [mintRatio, setMintRatio] = useState(0)
+  const [defaultMintAmount, setDefaultMintAmount] = useState(0)
+  const [mintRatio, setMintRatio] = useState(50)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
+  const [changeAmount, setChangeAmount] = useState(0)
 
-  const { data: positionInfo } = useLiquidityDetailQuery({
+  const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
-    index: assetIndex,
+    index: poolIndex,
+    isEdit: true,
 	  refetchOnMount: true,
     enabled: open && publicKey != null
 	})
 
+  // initialized state
   useEffect(() => {
-    if (positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
+    if (open && positionInfo !== undefined) {
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.healthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalHealthScore / healthCoefficient)
+
+      // @TODO
+      setDefaultMintRatio(50)
+      setDefaultMintAmount(0)
+      setTotalLiquidity(50)
+      setChangeAmount(0)
     }
-  }, [positionInfo])
+  }, [open, positionInfo])
 
   const initData = () => {
     setValue('mintAmount', 0.0)
@@ -62,14 +72,6 @@ const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  
 		'mintAmount',
 	])
 
-
-  const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
-	  if (typeof newValue === 'number') {
-      setValue('mintAmount', maxMintable * newValue / 100)
-      setMintRatio(newValue)
-	  }
-	}, [maxMintable])
-
   useEffect(() => {
     if (positionInfo !== undefined) {
       const mintAmount = maxMintable * mintRatio / 100
@@ -78,15 +80,41 @@ const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  
     }
   }, [mintRatio])
 
-  const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    // calculateMintAmount(mintAmount)
-    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
-	}, [mintAmount])
+  const handleChangeMintRatio = useCallback((newRatio: number) => {
+    setValue('mintAmount', maxMintable * newRatio / 100)
+    setMintRatio(newRatio)
+	}, [mintRatio, mintAmount])
 
+  const handleChangeMintAmount = useCallback((mintAmount: number) => {
+    setValue('mintAmount', mintAmount)
+    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+	}, [mintRatio, mintAmount])
+
+  const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
     setLoading(true)
     // @TODO: implementing mutateAsync
-    // await mutateAsync()
+    await mutateAsync({
+      positionIndex: poolIndex,
+      changeAmount,
+      editType: 0
+    },
+    {
+      onSuccess(data) {
+        if (data) {
+          console.log('data', data)
+          enqueueSnackbar('Success to edit liquidity')
+          refetch()
+          initData()
+        }
+        setLoading(false)
+      },
+      onError(err) {
+        console.error(err)
+        enqueueSnackbar('Failed to edit liquidity')
+        setLoading(false)
+      }
+    })
   }
 
   const isValid = Object.keys(errors).length === 0
@@ -115,7 +143,7 @@ const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  
               <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
                 <SelectLabel>Select amount of USDi & {positionInfo.tickerSymbol} to mint into {positionInfo.tickerSymbol} AMM</SelectLabel>
                 <Box sx={{ marginTop: '15px' }}>
-                  <EditLiquidityRatioSlider min={0} max={100} ratio={60} currentRatio={50} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={0} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
+                  <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
 
                 <Divider />
@@ -125,7 +153,7 @@ const EditLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  
                 </Box>
                 <Divider />
 
-                <EditPositionButton onClick={handleSubmit(onEditLiquidity)} disabled={!isDirty || !isValid}>Edit Liquidity Position</EditPositionButton>
+                <EditPositionButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid}>Edit Liquidity Position</EditPositionButton>
               </Box>
             </Stack>
           </Box>

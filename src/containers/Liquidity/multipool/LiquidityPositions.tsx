@@ -15,6 +15,7 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
   const [openRecenter, setOpenRecenter] = useState(false)
 
   const [selectAssetId, setSelectAssetId] = useState(0)
+  const [editAssetId, setEditAssetId] = useState(0)
 
   const handleChoosePosition = (assetId: number) => {
     console.log('assetId', assetId)
@@ -22,15 +23,22 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
     setOpenNewLiquidity(true)
   }
 
+  const handleChooseEditPosition = (poolIndex: number) => {
+    console.log('poolIndex', poolIndex)
+    setEditAssetId(poolIndex)
+    setOpenEditLiquidity(true)
+  }
+
   return (
     <>
       <Box>
-        {positions.map((position) => 
+        {positions.map((position, index) => 
           <LiquidityPairView
+            poolIndex={index}
             tickerIcon={position.tickerIcon}
             tickerSymbol={position.tickerSymbol}
             value={position.liquidityDollarPrice}
-            onShowEditDialog={() => setOpenEditLiquidity(true)}
+            onShowEditDialog={handleChooseEditPosition}
             onShowRecenterDialog={() => setOpenRecenter(true)}
           />
         )}
@@ -53,7 +61,7 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
       />
       <EditLiquidityDialog
         open={openEditLiquidity}
-        assetIndex={selectAssetId}
+        poolIndex={editAssetId}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenEditLiquidity(false)}
       />
