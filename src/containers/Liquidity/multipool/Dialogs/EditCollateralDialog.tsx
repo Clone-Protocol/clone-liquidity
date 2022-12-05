@@ -78,6 +78,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
           let collDelta = (editType === 0 ? 1 : -1) * collAmount;
   
           setHealthScore(100 - loss / (collData.collAmount + collDelta))
+          setMaxWithdrawable(collData.collAmount - loss / 100)
         } else {
           if (editType === 0) {
             setHealthScore(100)
@@ -143,7 +144,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                     if (!value || value <= 0) {
                       return ''
                     } 
-                    else if ((editType === 0 && value > collData.balance) || (editType === 1 && value > maxWithdrawable)) {
+                    else if ((editType === 0 && value > collData.balance) || (editType === 1 && value >= maxWithdrawable)) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
                   }
