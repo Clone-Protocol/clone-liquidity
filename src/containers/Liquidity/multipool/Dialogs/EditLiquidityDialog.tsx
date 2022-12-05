@@ -25,7 +25,6 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   const [healthScore, setHealthScore] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
-  const [changeAmount, setChangeAmount] = useState(0)
   const [validMintAmount, setValidMintAmount] = useState(true)
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
@@ -52,7 +51,6 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
       setDefaultMintAmount(currentPosition)
       setMintRatio(100 * currentPosition / maxMintable)
       setTotalLiquidity(currentPosition * 2)
-      setChangeAmount(0)
     }
   }, [open, positionInfo])
 

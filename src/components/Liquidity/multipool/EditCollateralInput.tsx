@@ -7,7 +7,7 @@ interface Props {
 	tickerIcon: string
 	tickerName?: string | null
 	tickerSymbol: string | null
-  balance: number
+  maxCollVal: number
 	collAmount: number
   collAmountDollarPrice?: number
   currentCollAmount?: number
@@ -22,7 +22,7 @@ const EditCollateralInput: React.FC<Props> = ({
   editType,
 	tickerIcon,
 	tickerSymbol,
-  balance,
+  maxCollVal,
 	collAmount,
   collAmountDollarPrice,
   currentCollAmount,
@@ -42,7 +42,7 @@ const EditCollateralInput: React.FC<Props> = ({
           </StyledTabs>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494', marginRight: '15px'}}>
-          Balance : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(balance)}>{balance.toLocaleString()} {tickerSymbol}</span>
+          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
         </Box>
       </Stack>
       <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', boxShadow: '0 0 0 1px #444444 inset' }}>
@@ -54,7 +54,7 @@ const EditCollateralInput: React.FC<Props> = ({
             </Box>
           </Box>
           <Box>
-            <InputAmount id="ip-amount" type="number" min={0} max={balance} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={Number(collAmount).toString()} onChange={onChangeAmount} />
+            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={Number(collAmount).toString()} onChange={onChangeAmount} />
             <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (collAmountDollarPrice && collAmountDollarPrice > 0) ? ('$' + collAmountDollarPrice?.toLocaleString()) : '' }</div>
           </Box>
         </FormStack>

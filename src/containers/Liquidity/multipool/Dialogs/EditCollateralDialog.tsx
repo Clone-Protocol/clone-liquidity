@@ -14,12 +14,12 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
-  // const borrowIndex = parseInt(borrowId)
-
+  
   const collIndex = 0 // NOTE: currently only support USDi
   const [editType, setEditType] = useState(isDeposit ? 0 : 1) // 0 : deposit , 1: withdraw
   const [healthScore, setHealthScore] = useState(0)
   const [totalCollValue, setTotalCollValue] = useState(0)
+  const [maxWithdrawable, setMaxWithdrawable] = useState(0)
 
   useEffect(() => {
     setEditType(isDeposit ? 0 : 1)
@@ -68,7 +68,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
     fetch()
   }, [open, collData])
 
-  // set HealthScore
+  // calculate HealthScore & totalCollValue
   useEffect(() => {
     async function fetch() {
       if (open && collData && collAmount) {
@@ -143,7 +143,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                     if (!value || value <= 0) {
                       return ''
                     } 
-                    else if (value > collData.balance) {
+                    else if ((editType === 0 && value > collData.balance) || (editType === 1 && value > maxWithdrawable)) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
                   }
@@ -155,7 +155,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                     tickerSymbol={collData.tickerSymbol}
                     collAmount={field.value}
                     collAmountDollarPrice={field.value}
-                    balance={collData.balance}
+                    maxCollVal={editType === 0 ? collData.balance : maxWithdrawable}
                     currentCollAmount={collData.collAmount}
                     dollarPrice={collData.collAmountDollarPrice}
                     onChangeType={handleChangeType}
