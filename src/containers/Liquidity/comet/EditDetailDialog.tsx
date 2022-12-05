@@ -291,7 +291,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     )
 	}
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && healthScore > 0
 
   return (
     <>
@@ -339,11 +339,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
                         let collAmt = parseFloat(e.currentTarget.value)
                         collAmt = isNaN(collAmt) ? 0 : collAmt
-                        // field.onChange(collAmt)
                         handleChangeCollAmount(collAmt)
                       }}
                       onMax={(amount: number) => {
-                        // field.onChange(amount)
                         handleChangeCollAmount(amount)
                       }}
                     />

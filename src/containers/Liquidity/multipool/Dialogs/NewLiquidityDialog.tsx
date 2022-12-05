@@ -54,12 +54,13 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
 		handleSubmit,
 		control,
     setValue,
+    trigger,
 		formState: { isDirty, errors },
 		watch,
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
-      mintAmount: maxMintable * mintRatio / 100,
+      mintAmount: 0,
     }
 	})
 
@@ -67,12 +68,11 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
 		'mintAmount',
 	])
 
-  const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
+  const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
-      setValue('mintAmount', maxMintable * newValue / 100)
       setMintRatio(newValue)
 	  }
-	}, [maxMintable])
+	}
 
   useEffect(() => {
     if (positionInfo !== undefined) {
@@ -81,6 +81,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
       setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
       setTotalLiquidity(mintAmount * 2)
       setValidMintValue(mintRatio > 0 && mintRatio < 100 && mintAmount > 0 && mintAmount < maxMintable)
+      trigger()
     }
   }, [mintRatio])
 
@@ -147,8 +148,8 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
                     control={control}
                     rules={{
                       validate(value) {
-                        if (!value || value <= 0) {
-                          return 'the mint amount should be above zero'
+                        if (!value || value < 0) {
+                          return ''
                         }
                       }
                     }}
@@ -161,7 +162,8 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
                         headerTitle="Max amount mintable"
                         headerValue={maxMintable}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          const mintVal = parseFloat(event.currentTarget.value)
+                          let mintVal = parseFloat(event.currentTarget.value)
+                          mintVal = isNaN(mintVal) ? 0 : mintVal
                           field.onChange(mintVal)
                           maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
                         }}

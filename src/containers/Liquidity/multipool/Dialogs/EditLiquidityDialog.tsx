@@ -110,6 +110,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
           enqueueSnackbar('Success to edit liquidity')
           refetch()
           initData()
+          handleClose()
         }
         setLoading(false)
       },
