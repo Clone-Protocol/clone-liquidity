@@ -72,39 +72,27 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       const program = getInceptApp()
       //await program.loadManager()
 
-
-
-      if (collAmount && !mintAmount) {
-        const {
-          maxUsdiPosition,
-          healthScore
-        } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
-          assetIndex,
-          collAmount,
-          0,
-          tokenData
-        )
-        setHealthScore(Math.max(0, healthScore))
-        setMaxMintable(maxUsdiPosition)
-        setMintAmount(maxUsdiPosition)
-        //setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
+      if (isNaN(collAmount)) {
+        return
       }
 
-      if (collAmount && mintAmount) {
+      if (mintAmount > 0) {
         console.log('calculateRange', collAmount +"/"+mintAmount)
-        
-        const {
-          maxUsdiPosition,
-          healthScore,
-          lowerPrice,
-          upperPrice
-        } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
-          assetIndex,
-          collAmount,
-          mintAmount,
-          tokenData
-        )
+      }
 
+      const {
+        maxUsdiPosition,
+        healthScore,
+        lowerPrice,
+        upperPrice
+      } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
+        assetIndex,
+        collAmount,
+        mintAmount,
+        tokenData
+      )
+
+      if (mintAmount > 0) {
         console.log('l', lowerPrice)
         console.log('u', upperPrice)
         setCometData({
@@ -112,11 +100,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
           lowerLimit: Math.min(lowerPrice, assetData.centerPrice),
           upperLimit: Math.max(upperPrice, assetData.centerPrice)
         })
-        setMaxMintable(maxUsdiPosition)
-        setHealthScore(Math.max(0, healthScore))
-        //setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
-        setMintAmount(maxUsdiPosition)
       }
+
+      setHealthScore(Math.max(0, healthScore))
+      setMaxMintable(maxUsdiPosition)
+      setMintAmount(calculateMintAmount(maxUsdiPosition))
     }
     fetch()
   }, [collAmount, mintAmount])
@@ -125,7 +113,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 	const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
 	  if (typeof newValue === 'number') {
       setMintRatio(newValue)
-      setMintAmount(maxMintable)
+      setMintAmount(calculateMintAmount(maxMintable))
 	  }
 	}, [maxMintable, cometData])
 
@@ -144,7 +132,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       true,
       tokenData
     )
-    //setValue('mintAmount', usdiBorrowed)
     setMintAmount(usdiBorrowed)
     setMintRatio(usdiBorrowed * 100 / maxMintable)
   }, 1000), [mintAmount])
@@ -301,6 +288,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                     tickerIcon={'/images/assets/USDi.png'}
                     tickerName="USDi Coin"
                     tickerSymbol="USDi"
+                    //value={parseFloat(field.value.toFixed(3))}
                     placeholder="0.00"
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     headerTitle="Max amount mintable"
