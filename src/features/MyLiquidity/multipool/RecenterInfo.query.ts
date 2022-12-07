@@ -21,8 +21,8 @@ export const fetchRecenterInfo = async ({
 
 	await program.loadManager()
 
-	const [tokenDataResult, cometResult, healthScoreResult] = await Promise.allSettled([
-		program.getTokenData(), program.getComet(), program.getHealthScore()
+	const [tokenDataResult, cometResult] = await Promise.allSettled([
+		program.getTokenData(), program.getComet()
 	]);
 
 	if (tokenDataResult.status === 'rejected')
@@ -36,16 +36,14 @@ export const fetchRecenterInfo = async ({
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 
 	let totalCollValue = 0
+	let totalHealthScore = 0
 	let comet;
 	if (cometResult.status === 'fulfilled') {
 		// Only USDi for now.
 		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 		comet = cometResult.value
+		totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
 	}
-
-	let totalHealthScore = 0
-	if (healthScoreResult.status === 'fulfilled')
-		totalHealthScore = healthScoreResult.value.healthScore
 
   // @TODO : set data from contract
   let recenterCost = 50.35

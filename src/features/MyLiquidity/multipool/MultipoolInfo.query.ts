@@ -49,12 +49,10 @@ export const fetchInfos = async ({
 	//   }
 	// ]
 
-	const [cometResult, healthScoreResult] = await Promise.allSettled([
-		program.getComet(), program.getHealthScore()
+	const [cometResult, tokenDataResult] = await Promise.allSettled([
+		program.getComet(), program.getTokenData()
 	]);
 
-	if (healthScoreResult.status === 'fulfilled')
-		healthScore = healthScoreResult.value.healthScore
 
 	if (cometResult.status === "fulfilled") {	
 		collaterals = extractCollateralInfo(cometResult.value)
@@ -66,6 +64,9 @@ export const fetchInfos = async ({
 		positions.forEach(p => {
 			totalLiquidity += p.liquidityDollarPrice
 		})
+		if (tokenDataResult.status === "fulfilled") {
+			healthScore = program.getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+		}
 	}
 
 	let result = {
