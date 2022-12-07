@@ -8,7 +8,7 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 
-export const fetchLiquidityDetail = async ({
+export const fetchRecenterInfo = async ({
 	program,
 	userPubKey,
 	index,
@@ -31,7 +31,7 @@ export const fetchLiquidityDetail = async ({
 	const tokenData = tokenDataResult.value
 	const pool = tokenData.pools[index]
 
-	let assetId = index
+	let assetId = index	
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 
@@ -46,16 +46,32 @@ export const fetchLiquidityDetail = async ({
 	let totalHealthScore = 0
 	if (healthScoreResult.status === 'fulfilled')
 		totalHealthScore = healthScoreResult.value.healthScore
+
+  // @TODO : set data from contract
+  let recenterCost = 50.35
+  let recenterCostDollarPrice = 6700.51
+  let recenterCollValue = 10300.32
+  let healthScore = 95
+  let prevHealthScore = 75
+  let estimatedTotalCollValue = 51.456
+  let estimatedTotalCollDollarPrice = 8403.59
 	
 	return {
-		tickerIcon: tickerIcon,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
+		tickerIcon,
+		tickerName,
+		tickerSymbol,
 		price,
 		totalCollValue,
 		totalHealthScore,
 		tokenData: tokenDataResult.value,
-		comet
+		comet,
+    recenterCost,
+    recenterCostDollarPrice,
+    recenterCollValue,
+    healthScore,
+    prevHealthScore,
+    estimatedTotalCollValue,
+    estimatedTotalCollDollarPrice
 	}
 }
 
@@ -68,6 +84,13 @@ export interface PositionInfo {
 	totalHealthScore: number
 	tokenData: TokenData,
 	comet: Comet | undefined
+  recenterCost: number
+  recenterCostDollarPrice: number
+  recenterCollValue: number
+  healthScore: number
+  prevHealthScore: number
+  estimatedTotalCollValue: number
+  estimatedTotalCollDollarPrice: number
 }
 
 interface GetProps {
@@ -77,11 +100,11 @@ interface GetProps {
 	enabled?: boolean
 }
 
-export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const { getInceptApp } = useIncept()
 	return useQuery(
-		['liquidityPosition', userPubKey, index],
-		() => fetchLiquidityDetail({ program: getInceptApp(), userPubKey, index }),
+		['recenterInfo', userPubKey, index],
+		() => fetchRecenterInfo({ program: getInceptApp(), userPubKey, index }),
 		{
 			refetchOnMount,
 			enabled,

@@ -7,7 +7,7 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	onShowEditDialog: (poolIndex: number) => void
-	onShowRecenterDialog: any
+	onShowRecenterDialog: (poolIndex: number) => void
 }
 
 const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, onShowEditDialog, onShowRecenterDialog }) => {
@@ -22,7 +22,7 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 				</Box>
 				<AmountView>
 					${value?.toFixed(3)}
-					<RecenterButton onClick={onShowRecenterDialog}>Recenter</RecenterButton>
+					<RecenterButton onClick={() => onShowRecenterDialog(poolIndex)}>Recenter</RecenterButton>
 				</AmountView>
 			</FormStack>
 			

@@ -30,7 +30,6 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
-    isEdit: false,
 	  refetchOnMount: true,
     enabled: open && publicKey != null
 	})
