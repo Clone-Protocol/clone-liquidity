@@ -124,6 +124,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         })
         setMaxMintable(maxUsdiPosition)
         setHealthScore(Math.max(0, healthScore))
+        setValue('mintAmount', maxUsdiPosition * mintRatio / 100)
       }
     }
     fetch()
