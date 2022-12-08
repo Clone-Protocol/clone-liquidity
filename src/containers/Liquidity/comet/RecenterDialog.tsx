@@ -51,7 +51,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
   useEffect(() => {
     if (usdiBalance && cometData) {
       // console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
-      setIsLackBalance(usdiBalance.balanceVal < cometData.usdiCost)
+      setIsLackBalance(usdiBalance.balanceVal <= cometData.usdiCost)
     }
   }, [usdiBalance, cometData])
 
@@ -186,7 +186,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
             </Stack>
 
             <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || parseInt(cometData.usdiCost.toLocaleString()) == 0}>Recenter</ActionButton>
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || cometData.usdiCost < 0.01}>Recenter</ActionButton>
 
             { isLackBalance && 
               <Stack
