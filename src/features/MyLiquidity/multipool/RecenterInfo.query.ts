@@ -7,7 +7,6 @@ import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
-
 export const fetchRecenterInfo = async ({
 	program,
 	userPubKey,
@@ -21,39 +20,42 @@ export const fetchRecenterInfo = async ({
 
 	await program.loadManager()
 
-	const [tokenDataResult, cometResult] = await Promise.allSettled([
-		program.getTokenData(), program.getComet()
-	]);
+	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
 
-	if (tokenDataResult.status === 'rejected')
-		return;
+	if (tokenDataResult.status === 'rejected' || cometResult.status === 'rejected') return
 
 	const tokenData = tokenDataResult.value
-	const pool = tokenData.pools[index]
+	const comet = cometResult.value
+	const poolIndex = Number(comet.positions[index].poolIndex)
+	const pool = tokenData.pools[poolIndex]
 
-	let assetId = index	
+	let assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 
+	let currentHealthScore = program.getHealthScore(tokenData, comet)
+
 	let totalCollValue = 0
 	let totalHealthScore = 0
-	let comet;
-	if (cometResult.status === 'fulfilled') {
-		// Only USDi for now.
-		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
-		comet = cometResult.value
-		totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
-	}
+	let recenterCost = 0
+	let prevHealthScore = currentHealthScore.healthScore
+	let healthScore = prevHealthScore
 
-  // @TODO : set data from contract
-  let recenterCost = 50.35
-  let recenterCostDollarPrice = 6700.51
-  let recenterCollValue = 10300.32
-  let healthScore = 95
-  let prevHealthScore = 75
-  let estimatedTotalCollValue = 51.456
-  let estimatedTotalCollDollarPrice = 8403.59
-	
+	// Only USDi for now.
+	totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
+	totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
+	try {
+		let recenterEstimation = program.calculateCometRecenterMultiPool(index, tokenData, comet)
+		recenterCost = recenterEstimation.usdiCost
+		healthScore = recenterEstimation.healthScore
+	} catch (e) {
+		console.log(e)
+	}
+	let recenterCostDollarPrice = recenterCost
+	let recenterCollValue = recenterCost * recenterCostDollarPrice
+	let estimatedTotalCollValue = totalCollValue - recenterCost
+	let estimatedTotalCollDollarPrice = estimatedTotalCollValue
+
 	return {
 		tickerIcon,
 		tickerName,
@@ -63,13 +65,13 @@ export const fetchRecenterInfo = async ({
 		totalHealthScore,
 		tokenData: tokenDataResult.value,
 		comet,
-    recenterCost,
-    recenterCostDollarPrice,
-    recenterCollValue,
-    healthScore,
-    prevHealthScore,
-    estimatedTotalCollValue,
-    estimatedTotalCollDollarPrice
+		recenterCost,
+		recenterCostDollarPrice,
+		recenterCollValue,
+		healthScore,
+		prevHealthScore,
+		estimatedTotalCollValue,
+		estimatedTotalCollDollarPrice,
 	}
 }
 
@@ -80,15 +82,15 @@ export interface PositionInfo {
 	price: number
 	totalCollValue: number
 	totalHealthScore: number
-	tokenData: TokenData,
+	tokenData: TokenData
 	comet: Comet | undefined
-  recenterCost: number
-  recenterCostDollarPrice: number
-  recenterCollValue: number
-  healthScore: number
-  prevHealthScore: number
-  estimatedTotalCollValue: number
-  estimatedTotalCollDollarPrice: number
+	recenterCost: number
+	recenterCostDollarPrice: number
+	recenterCollValue: number
+	healthScore: number
+	prevHealthScore: number
+	estimatedTotalCollValue: number
+	estimatedTotalCollDollarPrice: number
 }
 
 interface GetProps {

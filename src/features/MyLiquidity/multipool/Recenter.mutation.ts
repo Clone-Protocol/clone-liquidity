@@ -1,43 +1,34 @@
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
 import { useMutation } from 'react-query'
 import { useIncept } from '~/hooks/useIncept'
 
-export const callRecenter = async ({
-  program,
-  userPubKey,
-	data
-}: CallRecenterProps) => {
-  if (!userPubKey) throw new Error('no user public key')
+export const callRecenter = async ({ program, userPubKey, data }: CallRecenterProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
-  console.log('recenter data', data)
+	console.log('recenter data', data)
 
-  const { poolIndex } = data
+	await program.loadManager()
 
-  await program.loadManager()
+	// @TODO: Call to recenterMultiPoolComet
+	await program.recenterComet(data.positionIndex, 0, false)
 
-  // @TODO: Call to recenterMultiPoolComet
-  // await program.recenterComet(
-	// 	poolIndex,
-	// 	[]
-	// )
-
-  return {
-    result: true
-  }
+	return {
+		result: true,
+	}
 }
 
 type RecenterFormData = {
-  poolIndex: number
+	positionIndex: number
 }
 
 interface CallRecenterProps {
 	program: Incept
 	userPubKey: PublicKey | null
-  data: RecenterFormData
+	data: RecenterFormData
 }
 
-export function useRecenterMutation(userPubKey : PublicKey | null ) {
-  const { getInceptApp } = useIncept()
-  return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(), userPubKey, data }))
+export function useRecenterMutation(userPubKey: PublicKey | null) {
+	const { getInceptApp } = useIncept()
+	return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(), userPubKey, data }))
 }
