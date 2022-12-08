@@ -63,17 +63,6 @@ export default function useInitialized() {
 
 					// TODO: Figure out where to move this since it's a temporary solution.
 					const singlePoolCometsAccount = anchor.web3.Keypair.generate();
-					// tx.add(
-					// 	SystemProgram.createAccount({
-					// 		fromPubkey: publicKey,
-					// 		newAccountPubkey: singlePoolCometsAccount.publicKey,
-					// 		space: program.program.account.singlePoolComets.size,
-					// 		lamports: await program.provider.connection.getMinimumBalanceForRentExemption(
-					// 			program.program.account.singlePoolComets.size
-					// 		),
-					// 		programId: program.programId,
-					// 	})
-					// );
 					tx.add(
 						await program.initializeCometInstruction(
 							singlePoolCometsAccount,
@@ -81,14 +70,18 @@ export default function useInitialized() {
 							publicKey
 						)
 					);
-					// tx.add(
-					// 	await program.initializeSinglePoolCometsInstruction(
-					// 		singlePoolCometsAccount, publicKey
-					// 	)
-					// );
+
+					const multiPoolCometsAccount = anchor.web3.Keypair.generate();
+					tx.add(
+						await program.initializeCometInstruction(
+							multiPoolCometsAccount,
+							false,
+							publicKey
+						)
+					);
 
 					try {
-						await program.provider.send!(tx, [singlePoolCometsAccount]);
+						await program.provider.send!(tx, [singlePoolCometsAccount, multiPoolCometsAccount]);
 
 						// store account to localstorage
 						console.log('store account')

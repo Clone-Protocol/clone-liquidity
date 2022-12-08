@@ -83,7 +83,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   useEffect(() => {
     async function fetch() {
       const program = getInceptApp()
-      //await program.loadManager()
 
       if (collAmount && !mintAmount) {
         const {

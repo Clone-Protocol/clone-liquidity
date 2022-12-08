@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
+import MultipoolComet from '~/containers/Liquidity/multipool/MultipoolComet'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType, FilterTypeMap } from '~/data/filter'
@@ -32,10 +33,7 @@ const LiquidityTable = () => {
   }, [ltab])
 
 	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-    // MEMO: temporary multiple comet not enabled
-    if (newValue <= 2) {
-      setTab(newValue) 
-    }
+    setTab(newValue) 
 	}
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
@@ -50,13 +48,6 @@ const LiquidityTable = () => {
         <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
         <StyledTab value={3} label="Multipool Comet Liquidity" icon={tab === 3 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} sx={{ background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
-
-      {/* { (tab === 0 || tab === 2) && (
-          <Box sx={{ marginTop: '24px' }}>
-            <LiquidityPositions ltype={tab} />
-          </Box>
-        )
-      } */}
       
       <Box
         sx={{
@@ -67,14 +58,20 @@ const LiquidityTable = () => {
           color: '#fff',
           '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '13px' },
         }}>
-        <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
-          <PageTabs value={filter} onChange={handleFilterChange}>
-            {Object.keys(FilterTypeMap).map((f) => (
-              <PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
-            ))}
-          </PageTabs>
-        </Stack>
-        <StyledDivider />
+        { tab <= 2 &&
+          (
+            <>
+              <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
+                <PageTabs value={filter} onChange={handleFilterChange}>
+                  {Object.keys(FilterTypeMap).map((f) => (
+                    <PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
+                  ))}
+                </PageTabs>
+              </Stack>
+              <StyledDivider />
+            </>
+          )
+        }
         <TabPanel value={tab} index={0}>
           <GridComet filter={filter} />
         </TabPanel>
@@ -84,7 +81,9 @@ const LiquidityTable = () => {
         <TabPanel value={tab} index={2}>
           <GridBorrow filter={filter} />
         </TabPanel>
-        <TabPanel value={tab} index={3}>Multiple Comet</TabPanel>
+        <TabPanel value={tab} index={3}>
+          <MultipoolComet />
+        </TabPanel>
       </Box>
     </div>
 	)
