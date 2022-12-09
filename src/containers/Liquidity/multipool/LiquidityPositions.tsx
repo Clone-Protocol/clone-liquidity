@@ -1,14 +1,21 @@
-import { Box, Stack, Grid, Button } from '@mui/material'
+import { Box, Stack, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
+import { useSnackbar } from 'notistack'
+import { useWallet } from '@solana/wallet-adapter-react'
+import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import RecenterDialog from './Dialogs/RecenterDialog'
 import AddPositionDialog from './Dialogs/AddPositionDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
 import NewLiquidityDialog from './Dialogs/NewLiquidityDialog'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
+import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 
 const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: any }) => {
+  const { publicKey } = useWallet()
+  const { enqueueSnackbar } = useSnackbar()
+  const [loading, setLoading] = useState(false)
   const [openAddPosition, setOpenAddPosition] = useState(false)
   const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
@@ -38,8 +45,40 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
     setOpenRecenter(true)
   }
 
+  const { mutateAsync } = useRecenterAllMutation(publicKey)
+  const handleRecenterAll = async () => {
+    setLoading(true)
+    await mutateAsync(
+      {
+        poolIndex
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Success to recenterAll')
+
+            onRefetchData()
+          }
+          setLoading(false)
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to recenterAll : No price deviation detected.')
+          setLoading(false)
+        }
+      }
+    )
+  }
+
   return (
     <>
+      {loading && (
+				<LoadingWrapper>
+					<LoadingIndicator open inline />
+				</LoadingWrapper>
+			)}
+
       <Box>
         {positions.map((position, index) => 
           <LiquidityPairView
@@ -54,7 +93,7 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
       </Box>
       <Stack direction='row' justifyContent='space-between' sx={{ marginTop: '9px' }}>
         <AddButton onClick={() => setOpenAddPosition(true)}>Add Position</AddButton>
-        <RecenterAllButton onClick={() => setOpenRecenter(true)}>Recenter all</RecenterAllButton>
+        <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton>
       </Stack>
 
       <AddPositionDialog
