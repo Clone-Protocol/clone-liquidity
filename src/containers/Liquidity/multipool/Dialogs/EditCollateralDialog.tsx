@@ -156,7 +156,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                     tickerIcon={collData.tickerIcon}
                     tickerSymbol={collData.tickerSymbol}
                     collAmount={field.value}
-                    collAmountDollarPrice={field.value}
+                    collAmountDollarValue={field.value}
                     maxCollVal={editType === 0 ? collData.balance : maxWithdrawable}
                     currentCollAmount={collData.collAmount}
                     dollarPrice={collData.collAmountDollarPrice}

@@ -30,7 +30,7 @@ const Collaterals = ({ collaterals, onRefetchData } : {collaterals: Collateral[]
             tickerIcon={coll.tickerIcon}
             tickerSymbol={coll.tickerSymbol}
             value={coll.collAmount}
-            usdValue={coll.collAmountDollarPrice}
+            usdValue={coll.collAmountDollarPrice * coll.collAmount}
             handleOpenEdit={openEdit}
           />
         )}
