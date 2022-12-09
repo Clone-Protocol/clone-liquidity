@@ -5276,7 +5276,7 @@
   "version" "0.1.4"
 
 "incept-protocol-sdk@git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#private-beta":
-  "resolved" "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#8068a8fb8037e96fed8cd17e582319f03e906efa"
+  "resolved" "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#87f74aca11ea6d6fd35499b6b400c0b51e8e6f26"
   "version" "0.1.0"
   dependencies:
     "@project-serum/anchor" "^0.20.1"
