@@ -51,9 +51,9 @@ export const fetchRecenterInfo = async ({
 	} catch (e) {
 		console.log(e)
 	}
-	let recenterCostDollarPrice = recenterCost
+	let recenterCostDollarPrice = 1
 	let recenterCollValue = recenterCost * recenterCostDollarPrice
-	let estimatedTotalCollValue = totalCollValue - recenterCost
+	let estimatedTotalCollValue = totalCollValue - recenterCollValue
 	let estimatedTotalCollDollarPrice = estimatedTotalCollValue
 
 	return {
