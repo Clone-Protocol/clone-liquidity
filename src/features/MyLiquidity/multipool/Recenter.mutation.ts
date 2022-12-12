@@ -1,59 +1,69 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
 import { useMutation } from 'react-query'
 import { useIncept } from '~/hooks/useIncept'
 
-export const callRecenterAll = async ({
-  program,
-  userPubKey,
-	data
-}: CallRecenterProps) => {
-  if (!userPubKey) throw new Error('no user public key')
+export const callRecenterAll = async ({ program, userPubKey, data }: CallRecenterProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
-  console.log('recenter data', data)
+	console.log('recenter data', data)
 
-  await program.loadManager()
+	await program.loadManager()
 
-  const comet = await program.getComet()
+	const [cometResult, tokenDataResult] = await Promise.allSettled([program.getComet(), program.getTokenData()])
 
-  let calls = []
+	if (cometResult.status === 'rejected' || tokenDataResult.status === 'rejected') {
+		return {
+			result: false,
+		}
+	}
 
-  for (let i=0; i<Number(comet.numPositions); i++) {
-    calls.push(program.recenterCometInstruction(i, 0, false))
-  }
+	const comet = cometResult.value
+	const tokenData = tokenDataResult.value
 
-  let tx = new Transaction();
+	let calls = []
+	const tickCutoff = 0.01
 
-  Promise.all(calls).then(ixs => {
-    for (let ix of ixs) {
-      tx.add(ix)
-    }
-  })
+	for (let i = 0; i < Number(comet.numPositions); i++) {
+		let position = comet.positions[i]
+		let pool = tokenData.pools[Number(position.poolIndex)]
+		let initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
+		let poolPrice = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 
-  await program.provider.send!(tx)
+		if (Math.abs(initPrice - poolPrice) >= tickCutoff) {
+			calls.push(program.recenterCometInstruction(i, 0, false))
+		}
+	}
 
-  // @TODO: Call to recenterAll
-  // await program.recenterComet(
+	let tx = new Transaction()
+
+	Promise.all(calls).then((ixs) => {
+		for (let ix of ixs) {
+			tx.add(ix)
+		}
+	})
+
+	await program.provider.send!(tx)
+
+	// @TODO: Call to recenterAll
+	// await program.recenterComet(
 	// 	poolIndex,
 	// 	[]
 	// )
 
-  return {
-    result: true
-  }
+	return {
+		result: true,
+	}
 }
 
-export function useRecenterAllMutation(userPubKey : PublicKey | null ) {
-  const { getInceptApp } = useIncept()
-  return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(), userPubKey, data }))
+export function useRecenterAllMutation(userPubKey: PublicKey | null) {
+	const { getInceptApp } = useIncept()
+	return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(), userPubKey, data }))
 }
 
-export const callRecenter = async ({
-  program,
-  userPubKey,
-	data
-}: CallRecenterProps) => {
-  if (!userPubKey) throw new Error('no user public key')
+export const callRecenter = async ({ program, userPubKey, data }: CallRecenterProps) => {
+	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('recenter data', data)
 
