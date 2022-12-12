@@ -32,7 +32,7 @@ const RecenterDialog = ({ positionIndex, poolIndex, open, onRefetchData, handleC
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to recenter')
+            enqueueSnackbar('Successfully recentered the position')
 
             refetch()
             onRefetchData()
@@ -42,7 +42,7 @@ const RecenterDialog = ({ positionIndex, poolIndex, open, onRefetchData, handleC
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to recenter : No price deviation detected.')
+          enqueueSnackbar('Failed to recenter position : No price deviation detected.')
           setLoading(false)
         }
       }

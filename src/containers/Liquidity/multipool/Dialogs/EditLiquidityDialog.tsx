@@ -106,7 +106,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
       onSuccess(data) {
         if (data) {
           console.log('data', data)
-          enqueueSnackbar('Success to edit liquidity')
+          enqueueSnackbar('Successfully modified liquidity position')
           refetch()
           initData()
           handleClose()
@@ -115,7 +115,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
       },
       onError(err) {
         console.error(err)
-        enqueueSnackbar('Failed to edit liquidity')
+        enqueueSnackbar('Error modifying liquidity position')
         setLoading(false)
       }
     })

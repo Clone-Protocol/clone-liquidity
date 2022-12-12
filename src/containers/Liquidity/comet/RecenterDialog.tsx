@@ -100,7 +100,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to recenter')
+            enqueueSnackbar('Successfully recentered position')
 
             refetch()
             handleClose()
@@ -111,7 +111,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to recenter : No price deviation detected.')
+          enqueueSnackbar('Failed to recenter position : No price deviation detected.')
           setLoading(false)
         }
       }

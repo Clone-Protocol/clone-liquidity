@@ -61,7 +61,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to withdraw')
+            enqueueSnackbar('Withdrawal was successful')
 
             refetch()
             //hacky sync
@@ -71,7 +71,7 @@ const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string,
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to withdraw')
+          enqueueSnackbar('A withdrawal error occurred')
           setLoading(false)
         }
       }
