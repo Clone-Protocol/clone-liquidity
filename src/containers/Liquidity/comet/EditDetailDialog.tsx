@@ -275,7 +275,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to comet')
+            enqueueSnackbar('Success modified comet position')
             initData()
             onRefetchData()
             onHideEditForm()
@@ -284,7 +284,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to comet')
+          enqueueSnackbar('Error modifying comet position')
           setLoading(false)
         }
       }
