@@ -165,7 +165,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to comet')
+            enqueueSnackbar('Successfully established comet position')
             setLoading(false)
             initData()
             router.push('/liquidity')
@@ -173,7 +173,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to comet')
+          enqueueSnackbar('Failed to establish comet position')
           setLoading(false)
         }
       }

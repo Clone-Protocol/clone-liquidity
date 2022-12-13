@@ -106,7 +106,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to edit collateral')
+            enqueueSnackbar('Successfully modified collateral')
             refetch()
             initData()
             onRefetchData()
@@ -115,7 +115,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to edit collateral')
+          enqueueSnackbar('Error modifying collateral')
           setLoading(false)
         }
       }

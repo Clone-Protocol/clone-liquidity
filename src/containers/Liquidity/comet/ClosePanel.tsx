@@ -34,7 +34,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to close comet')
+            enqueueSnackbar('Successfully closed comet position')
             setLoading(false)
 
             if (cType === 0) {
@@ -48,7 +48,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to close comet')
+          enqueueSnackbar('Error closing comet position')
           setLoading(false)
         }
       }

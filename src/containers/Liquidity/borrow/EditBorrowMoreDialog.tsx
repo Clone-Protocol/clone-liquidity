@@ -97,7 +97,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to edit')
+            enqueueSnackbar('Successfully modified borrow position')
             initData()
             onRefetchData()
             onHideEditForm()
@@ -106,7 +106,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to edit')
+          enqueueSnackbar('Error modifying borrow position')
           setLoading(false)
         }
       }

@@ -87,7 +87,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to edit')
+            enqueueSnackbar('Successfully edited borrow details')
             initData()
             onRefetchData()
             onHideEditForm()
@@ -96,7 +96,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to edit')
+          enqueueSnackbar('Error editing borrow details')
           setLoading(false)
         }
       }

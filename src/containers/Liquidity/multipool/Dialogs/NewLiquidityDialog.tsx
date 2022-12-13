@@ -95,7 +95,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
       onSuccess(data) {
         if (data) {
           console.log('data', data)
-          enqueueSnackbar('Success to new liquidity')
+          enqueueSnackbar('Successfully established new liquidity position')
           refetch()
           initData()
         }
@@ -103,7 +103,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
       },
       onError(err) {
         console.error(err)
-        enqueueSnackbar('Failed to new liquidity')
+        enqueueSnackbar('Error establishing new liquidity position')
         setLoading(false)
       }
     })

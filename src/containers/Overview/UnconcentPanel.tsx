@@ -61,7 +61,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to liquidity')
+            enqueueSnackbar('Successfully established unconcentrated liquidity position')
             setLoading(false)
             initData()
             router.push('/liquidity?ltab=1')
@@ -69,7 +69,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to liquidity')
+          enqueueSnackbar('Error establishing unconcentrated liquidity position')
           setLoading(false)
         }
       }
