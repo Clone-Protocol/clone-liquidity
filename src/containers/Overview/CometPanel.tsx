@@ -59,7 +59,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   const initData = () => {
     setMintableAmount(0.0)
     onRefetchData()
-    
   }
 
   const { mutateAsync: mutateAsyncComet } = useCometMutation(publicKey)
@@ -184,6 +183,29 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     )
 	}
 
+  const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
+    const collVal = parseFloat(event.currentTarget.value)
+    field.onChange(collVal)
+
+    if (isNaN(collVal)) {
+        setCollAmount(' ')
+    } else {
+      setCollAmount(collVal)
+    }
+  }
+
+  const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
+    const mintVal = parseFloat(event.currentTarget.value)
+    maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
+    field.onChange(mintVal)
+
+    if (isNaN(mintVal)) {
+      setMintAmount(' ')
+    } else {
+      setMintAmount(mintVal)
+    }
+  }
+
   const validateCollAmount = (value): string => {
     if (collAmount > balances?.usdiVal) {
       return 'The collateral amount cannot exceed the balance.'
@@ -199,9 +221,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       return 'the mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
       return 'the mint amount cannot exceed the maximum mintable amout'
-    } else {
-      return false
-    }
+    } 
 
     return false
   }
@@ -280,11 +300,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                   value={isNaN(collAmount) ? "" : collAmount}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const collVal = parseFloat(event.currentTarget.value)
-                    field.onChange(collVal)
-                    setCollAmount(collVal)
-                  }}
+                  onChange={(evt) => onCollAmountInputChange(evt, field)}
                   onMax={(value: number) => {
                     field.onChange(value)
                     setCollAmount(value)
@@ -329,12 +345,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const mintVal = parseFloat(event.currentTarget.value)
-                      maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
-                      field.onChange(mintVal)
-                      setMintAmount(mintVal)
-                    }}
+                    onChange={(evt) => onMintAmountInputChange(evt, field)}
                     onMax={(value: number) => {
                       field.onChange(value)
                       setMintAmount(value)
