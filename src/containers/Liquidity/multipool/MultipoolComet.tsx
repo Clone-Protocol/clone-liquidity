@@ -35,7 +35,7 @@ const MultipoolComet = () => {
           <Image src={InfoBookIcon} />
         </Box>
         <WarningBox>
-          Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please besure to read and learn about it before first engaging with it.
+          Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please be sure to read and learn about it before first engaging with it.
         </WarningBox>
       </Stack>
 
