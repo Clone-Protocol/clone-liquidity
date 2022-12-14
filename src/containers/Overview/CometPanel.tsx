@@ -218,9 +218,9 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
   const validateMintAmount = (value) => {
     if (!mintAmount || mintAmount <= 0) {
-      return 'the mint amount should be above zero'
+      return 'The mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
-      return 'the mint amount cannot exceed the maximum mintable amout'
+      return 'The mint amount cannot exceed the maximum mintable amout'
     } 
 
     return false
