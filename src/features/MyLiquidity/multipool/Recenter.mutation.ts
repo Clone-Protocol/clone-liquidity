@@ -32,10 +32,10 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 		let pool = tokenData.pools[Number(position.poolIndex)]
 		let initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
 		let poolPrice = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
-    const {tickerName, ..._} = assetMapping(Number(position.poolIndex))
+    const {tickerSymbol, ..._} = assetMapping(Number(position.poolIndex))
 		if (Math.abs(initPrice - poolPrice) >= tickCutoff) {
 			calls.push(program.recenterCometInstruction(i, 0, false))
-      tickers.push(tickerName)
+      tickers.push(tickerSymbol)
 		}
 	}
 
