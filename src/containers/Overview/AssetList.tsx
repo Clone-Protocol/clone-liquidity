@@ -15,6 +15,8 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
+import { useGlobalState } from '~/hooks/useGlobalState'
+import { ConfirmModalState } from '~/utils/constants'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -40,6 +42,8 @@ const AssetList: React.FC = () => {
 			setSearchTerm('')
 		}
 	}, [searchTerm])
+
+	
 
 	return (
 		<Box
@@ -128,11 +132,24 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const { globalState, setGlobalState } = useGlobalState()
+
+			const handleClick = (evt: any) => {
+				if (!globalState.declinedAccountCreation) {
+					return
+				}
+				setGlobalState({
+					...globalState,
+					createAccountModalState: ConfirmModalState.Reminder
+				})
+				evt.preventDefault()
+			}
+			
 			return (
         <Stack direction="row" spacing={1}>
-          <Link href={`/assets/${params.row.id}/asset`}>
+          <Link href={`/assets/${params.row.id}/asset`} onClick={handleClick}>
             <ChangePositionButton>
-              <Image src={ChangePositionIcon} />
+              <Image src={ChangePositionIcon} onClick={handleClick} />
             </ChangePositionButton>
           </Link>
           <Link href={`/assets/${params.row.id}/asset?ltab=1`}>

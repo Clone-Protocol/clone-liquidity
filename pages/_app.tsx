@@ -12,6 +12,7 @@ import { SnackbarProvider } from 'notistack'
 import { NextPage } from 'next'
 import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvider'
+import { GlobalStateProvider } from '~/hocs/GlobalStateProvider'
 import { RecoilRoot } from 'recoil'
 import './styles.css'
 
@@ -22,27 +23,29 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		<QueryProvider>
       <RecoilRoot>
         <ThemeProvider theme={theme}>
-          <SnackbarProvider maxSnack={3}>
-            <ClientWalletProvider>
-              <DataLoadingIndicatorProvider>
-                <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
-                  <CssBaseline />
-                  <GNB />
-                  <Drawer />
+          <GlobalStateProvider>
+            <SnackbarProvider maxSnack={3}>
+              <ClientWalletProvider>
+                <DataLoadingIndicatorProvider>
+                  <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
+                    <CssBaseline />
+                    <GNB />
+                    <Drawer />
 
-                  <Box
-                    component="main"
-                    sx={{
-                      flexGrow: 1,
-                      height: '100vh',
-                      overflow: 'auto',
-                    }}>
-                    {getLayout(<Component {...pageProps} />)}
+                    <Box
+                      component="main"
+                      sx={{
+                        flexGrow: 1,
+                        height: '100vh',
+                        overflow: 'auto',
+                      }}>
+                      {getLayout(<Component {...pageProps} />)}
+                    </Box>
                   </Box>
-                </Box>
-              </DataLoadingIndicatorProvider>
-            </ClientWalletProvider>
-          </SnackbarProvider>
+                </DataLoadingIndicatorProvider>
+              </ClientWalletProvider>
+            </SnackbarProvider>
+          </GlobalStateProvider>
         </ThemeProvider>
       </RecoilRoot>
 			<ReactQueryDevtools initialIsOpen={false} />

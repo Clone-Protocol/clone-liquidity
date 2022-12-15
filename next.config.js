@@ -29,6 +29,10 @@ const nextConfig = {
       ],
     })
 
+    config.devServer = {
+      hot: false
+    }
+
     return config
   },
 }
