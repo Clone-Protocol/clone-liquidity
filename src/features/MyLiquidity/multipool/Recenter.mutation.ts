@@ -25,15 +25,13 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 
 	let calls = []
   let tickers = []
-	const tickCutoff = 0.01
 
 	for (let i = 0; i < Number(comet.numPositions); i++) {
 		let position = comet.positions[i]
-		let pool = tokenData.pools[Number(position.poolIndex)]
-		let initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
-		let poolPrice = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
     const {tickerSymbol, ..._} = assetMapping(Number(position.poolIndex))
-		if (Math.abs(initPrice - poolPrice) >= tickCutoff) {
+    let recenterEstimation = program.calculateCometRecenterMultiPool(i, tokenData, comet)
+
+		if (recenterEstimation.usdiCost > 0) {
 			calls.push(program.recenterCometInstruction(i, 0, false))
       tickers.push(tickerSymbol)
 		}
