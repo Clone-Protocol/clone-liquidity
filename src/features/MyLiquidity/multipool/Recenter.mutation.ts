@@ -15,9 +15,7 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 	const [cometResult, tokenDataResult] = await Promise.allSettled([program.getComet(), program.getTokenData()])
 
 	if (cometResult.status === 'rejected' || tokenDataResult.status === 'rejected') {
-		return {
-			result: false,
-		}
+		throw 'Network request was rejected';
 	}
 
 	const comet = cometResult.value
@@ -40,9 +38,7 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 	}
 
   if (calls.length === 0) {
-    return {
-      result: false
-    }
+    throw 'No positions are able to be recentered!'
   }
 	let tx = new Transaction()
 
@@ -53,16 +49,13 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 	})
 
 	await program.provider.send!(tx)
-
-	// @TODO: Call to recenterAll
-	// await program.recenterComet(
-	// 	poolIndex,
-	// 	[]
-	// )
+	
+	const resultMessage = tickers.length > 0 ? `The following positions were successfully recentered: ${tickers.join(', ')}.` : ''
 
 	return {
     tickers,
 		result: true,
+		resultMessage
 	}
 }
 
