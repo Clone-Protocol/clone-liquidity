@@ -78,6 +78,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       if (isDirty) {
         await trigger()
       }
+      
       const program = getInceptApp()
 
       if (isNaN(collAmount)) {
@@ -187,11 +188,8 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     const collVal = parseFloat(event.currentTarget.value)
     field.onChange(collVal)
 
-    if (isNaN(collVal)) {
-        setCollAmount(' ')
-    } else {
-      setCollAmount(collVal)
-    }
+    const amt = isNaN(collVal) ? ' ' : collVal 
+    setCollAmount(amt)
   }
 
   const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
@@ -199,14 +197,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
     field.onChange(mintVal)
 
-    if (isNaN(mintVal)) {
-      setMintAmount(' ')
-    } else {
-      setMintAmount(mintVal)
-    }
+    const amt = isNaN(mintVal) ? ' ' : mintAmount
+    setMintAmount(mintVal)
   }
 
-  const validateCollAmount = (value): string => {
+  const validateCollAmount = (): string => {
     if (collAmount > balances?.usdiVal) {
       return 'The collateral amount cannot exceed the balance.'
     } else if (!collAmount || collAmount <= 0) {
@@ -216,7 +211,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     return false
   }
 
-  const validateMintAmount = (value) => {
+  const validateMintAmount = () => {
     if (!mintAmount || mintAmount <= 0) {
       return 'The mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
@@ -288,7 +283,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               control={control}
               rules={{
                 validate(value){
-                  return validateCollAmount(value)
+                  return validateCollAmount()
                 }
               }}
               render={({ field }) => (
@@ -333,7 +328,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                 control={control}
                 rules={{
                   validate(value) {
-                    return validateMintAmount(value)
+                    return validateMintAmount()
                   }
                 }}
                 render={({ field }) => (
