@@ -23,6 +23,10 @@ import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
+import useCreateAccount from '~/hooks/useCreateAccount'
+
+import AccountSetupDialog from '~/components/Account/AccountSetupDialog'
+import AccountSetupReminderDialog from '~/components/Account/AccountSetupReminderDialog'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -84,7 +88,24 @@ const RightMenu = () => {
 	const [mintUsdi, setMintUsdi] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
-	useInitialized()
+  const [openAccountSetupDialog, setOpenAccountSetupDialog] = useState(false)
+  const [openAccountSetupReminderDialog, setOpenAccountSetupRemiderDialog] = useState(false)
+  const [createAccount, setCreateAccount] = useState(false)
+
+  useCreateAccount(createAccount)
+	useInitialized(setOpenAccountSetupDialog)
+
+	const handleCreateAccount = () => {
+
+	}
+
+	const closeAccountSetupDialog = () => {
+		setOpenAccountSetupDialog(false)
+	}
+
+	const closeAccountSetupReminderDialog = () => {
+		setOpenAccountSetupRemiderDialog(false)
+	}
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -151,45 +172,57 @@ const RightMenu = () => {
   }
 
 	return (
-		<Box display="flex">
-      <DataLoadingIndicator />
-			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
-				Get USDi
-			</HeaderButton>
-      <Box>
-        <ConnectButton
-          onClick={handleWalletClick}
-          variant="outlined"
-          sx={{ width: '163px' }}
-          disabled={connecting}
-          startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-          {!connected ? (
-            <>Connect Wallet</>
-          ) : (
-            <>
-              <div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
-              {publicKey ? (
-                <Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
-                  {shortenAddress(publicKey.toString())}
-                </Box>
-              ) : (
-                <></>
-              )}
-            </>
-          )}
-        </ConnectButton>
-        { showWalletSelectPopup && <WalletSelectBox spacing={2}>
-          <CopyToClipboard text={publicKey!!.toString()}
-            onCopy={() => enqueueSnackbar('Copied address')}>
-            <PopupButton>Copy Address</PopupButton>
-          </CopyToClipboard>
-          <PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
-          <PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
-        </WalletSelectBox> }
-      </Box>
-			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
-      <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
-		</Box>
+		<>
+			<AccountSetupDialog 
+				open={openAccountSetupDialog}
+				handleCreateAccount={handleCreateAccount}
+				handleClose={closeAccountSetupDialog} />
+
+			<AccountSetupReminderDialog
+				open={openAccountSetupReminderDialog}
+				handleCreateAccount={handleCreateAccount}
+				handleClose={closeAccountSetupReminderDialog} />
+
+			<Box display="flex">
+      	<DataLoadingIndicator />
+				<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
+					Get USDi
+				</HeaderButton>
+      	<Box>
+        	<ConnectButton
+          	onClick={handleWalletClick}
+          	variant="outlined"
+          	sx={{ width: '163px' }}
+          	disabled={connecting}
+          	startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+          	{!connected ? (
+            	<>Connect Wallet</>
+          	) : (
+            	<>
+              	<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
+              	{publicKey ? (
+                	<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
+                  	{shortenAddress(publicKey.toString())}
+                	</Box>
+              	) : (
+                	<></>
+              	)}
+            	</>
+          	)}
+        	</ConnectButton>
+        	{ showWalletSelectPopup && <WalletSelectBox spacing={2}>
+          	<CopyToClipboard text={publicKey!!.toString()}
+            	onCopy={() => enqueueSnackbar('Copied address')}>
+            	<PopupButton>Copy Address</PopupButton>
+          	</CopyToClipboard>
+          	<PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
+          	<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
+        	</WalletSelectBox> }
+      	</Box>
+				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
+      	<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
+			</Box>
+		</>
 	)
 }
 
