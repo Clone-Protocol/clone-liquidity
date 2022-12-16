@@ -26,12 +26,14 @@ export const fetchRecenterInfo = async ({
 
 	const tokenData = tokenDataResult.value
 	const comet = cometResult.value
-	const poolIndex = Number(comet.positions[index].poolIndex)
+	const position = comet.positions[index]
+	const poolIndex = Number(position.poolIndex)
 	const pool = tokenData.pools[poolIndex]
 
 	let assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+	let initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
 
 	let currentHealthScore = program.getHealthScore(tokenData, comet)
 
@@ -55,6 +57,7 @@ export const fetchRecenterInfo = async ({
 	let recenterCollValue = recenterCost * recenterCostDollarPrice
 	let estimatedTotalCollValue = totalCollValue - recenterCollValue
 	let estimatedTotalCollDollarPrice = estimatedTotalCollValue
+	let isValidToRecenter = recenterCost > 0 && Math.abs(initPrice - price) / initPrice >= 0.001
 
 	return {
 		tickerIcon,
@@ -72,6 +75,7 @@ export const fetchRecenterInfo = async ({
 		prevHealthScore,
 		estimatedTotalCollValue,
 		estimatedTotalCollDollarPrice,
+		isValidToRecenter,
 	}
 }
 

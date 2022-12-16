@@ -1,5 +1,6 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
+import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useMutation } from 'react-query'
 import { assetMapping } from '~/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -25,10 +26,13 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 
 	for (let i = 0; i < Number(comet.numPositions); i++) {
 		let position = comet.positions[i]
+    let pool = tokenData.pools[Number(position.poolIndex)]
+    const poolPrice = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+    const initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
     const {tickerSymbol, ..._} = assetMapping(Number(position.poolIndex))
     let recenterEstimation = program.calculateCometRecenterMultiPool(i, tokenData, comet)
 
-		if (recenterEstimation.usdiCost > 0) {
+		if (recenterEstimation.usdiCost > 0 && Math.abs(poolPrice - initPrice) / initPrice >= 0.001) {
 			calls.push(program.recenterCometInstruction(i, 0, false))
       tickers.push(tickerSymbol)
 		}
@@ -37,6 +41,7 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
   if (calls.length === 0) {
     throw 'No positions are able to be recentered!'
   }
+  console.log("TICKERS:", tickers)
 	let tx = new Transaction()
 
   let ixs = await Promise.all(calls);

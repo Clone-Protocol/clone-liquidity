@@ -136,7 +136,7 @@ const RecenterDialog = ({
 							</Stack>
 
 							<StyledDivider />
-							<ActionButton onClick={() => handleRecenter()} disabled={positionInfo.recenterCost <= 0.0}>
+							<ActionButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>
 								Recenter
 							</ActionButton>
 						</Box>
