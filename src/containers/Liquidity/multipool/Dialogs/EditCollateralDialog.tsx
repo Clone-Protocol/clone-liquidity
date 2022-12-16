@@ -41,7 +41,8 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 		control,
 		formState: { isDirty, errors },
 		watch,
-    setValue
+    setValue,
+    trigger,
 	} = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -71,8 +72,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
   // calculate HealthScore & totalCollValue
   useEffect(() => {
     async function fetch() {
-      if (open && collData && collAmount) {
-        
+      if (open && collData) {
         if (collData.prevHealthScore) {
           let loss = (100 - collData.prevHealthScore) * collData.collAmount;
           let collDelta = (editType === 0 ? 1 : -1) * collAmount;
@@ -88,10 +88,11 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         }
 
         setTotalCollValue(collAmount * collData.collAmountDollarPrice)
+        trigger()
       }
     }
     fetch()
-  }, [collAmount, editType])
+  }, [collData, collAmount, editType])
 
   const { mutateAsync } = useCollateralMutation(publicKey)
 	const onEdit = async () => {
@@ -155,7 +156,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                     tickerIcon={collData.tickerIcon}
                     tickerSymbol={collData.tickerSymbol}
                     collAmount={field.value}
-                    collAmountDollarPrice={field.value}
+                    collAmountDollarValue={field.value}
                     maxCollVal={editType === 0 ? collData.balance : maxWithdrawable}
                     currentCollAmount={collData.collAmount}
                     dollarPrice={collData.collAmountDollarPrice}
