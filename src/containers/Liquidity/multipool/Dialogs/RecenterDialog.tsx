@@ -38,7 +38,7 @@ const RecenterDialog = ({
     setLoading(true)
     await mutateAsync(
       {
-        poolIndex
+        positionIndex
       },
       {
         onSuccess(data) {
