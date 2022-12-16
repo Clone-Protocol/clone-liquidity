@@ -1,20 +1,11 @@
-import React, { useState } from 'react'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import React from 'react'
 import { Box, styled, Dialog, DialogContent} from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridLiquidityPool from './GridLiquidityPool'
 
 const AddPositionDialog = ({ open, handleChoosePosition, handleClose }:  { open: boolean, handleChoosePosition: (id: number) => void, handleClose: any }) => {
-  const [loading, setLoading] = useState(false)
-  
   return (
     <>
-      {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
-
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={800}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '15px 15px' }}>
           <Box sx={{ padding: '2px 15px', color: '#fff', minWidth: '650px' }}>

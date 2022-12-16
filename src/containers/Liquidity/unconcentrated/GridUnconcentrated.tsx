@@ -112,7 +112,6 @@ let columns: GridColDef[] = [
 					/>
 					<WithdrawDialog
 						assetId={params.row.id}
-            pool={params.row}
 						open={openWithdraw}
 						handleClose={() => setOpenWithdraw(false)}
 					/>

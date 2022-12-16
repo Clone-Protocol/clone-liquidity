@@ -19,10 +19,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   const borrowIndex = parseInt(borrowId)
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
-
   const [maxCollVal, setMaxCollVal] = useState(0);
-
-  //collateralAmount (minus value above if withdraw, plus value above if deposit) / getAssetInfo(poolIndex).price * borrowedIasset
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
 
   useEffect(() => {
@@ -147,7 +144,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
                       field.onChange(collAmt)
-                      // calculateBorrowAmount(collAmt, borrowDetail.collateralRatio)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)

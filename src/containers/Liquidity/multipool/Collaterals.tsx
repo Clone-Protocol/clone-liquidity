@@ -17,8 +17,6 @@ const Collaterals = ({ collaterals, onRefetchData } : {collaterals: Collateral[]
   }
 
   const handleChooseCollateral = (collId: number) => {
-    console.log('collId', collId)
-
     setOpenChooseCollateral(false)
   }
 

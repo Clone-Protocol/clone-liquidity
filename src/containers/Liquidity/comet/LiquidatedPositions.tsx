@@ -6,7 +6,6 @@ import ArrowDownIcon from 'public/images/arrow-down.svg'
 import { useState } from "react"
 
 const LiquidityPositions = ({ ltype }: {ltype : number}) => {
-
   const [showArea, setShowArea] = useState(true)
   const positionInfo = {
     tickerIcon: '/images/assets/USDi.png',

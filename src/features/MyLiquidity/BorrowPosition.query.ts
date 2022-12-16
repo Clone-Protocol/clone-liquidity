@@ -106,8 +106,8 @@ export interface PositionInfo {
 	oPrice: number
 	stableCollateralRatio: number
 	cryptoCollateralRatio: number
-	borrowedIasset: number
-	collateralAmount: number
+	borrowedIasset: number | Number
+	collateralAmount: number | Number
 	collateralRatio: number
 	minCollateralRatio: number
   usdiVal: number

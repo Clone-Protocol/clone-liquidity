@@ -19,18 +19,13 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const borrowIndex = parseInt(borrowId)
-
   const [editType, setEditType] = useState(0) // 0 : borrow more , 1: repay
-
   const [maxCollVal, setMaxCollVal] = useState(0);
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
   const isRisk = editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
   const isLackBalance = editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal
-
   const isWarning = isRisk || isLackBalance
-
-  //collateralAmount / getAssetInfo(poolIndex).price * (borrowedIasset (minus value above if repay, plus value above if borrow more))
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
 
   //max borrowable
