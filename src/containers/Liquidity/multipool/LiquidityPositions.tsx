@@ -54,17 +54,17 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
       },
       {
         onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            enqueueSnackbar('Success to recenterAll')
+          console.log('data', data)
+          if (data.result) {
+            enqueueSnackbar(data.resultMessage)
 
             onRefetchData()
           }
           setLoading(false)
         },
-        onError(err) {
-          console.error(err)
-          enqueueSnackbar('Failed to recenterAll : No price deviation detected.')
+        onError(err: string) {
+          console.error('err', err)
+          enqueueSnackbar(err)
           setLoading(false)
         }
       }

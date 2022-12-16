@@ -19,6 +19,7 @@ interface CometInfo {
   currentCollateral: number
   usdiCost: number
   centerPrice: number
+  poolPrice: number
 	lowerLimit: number
   upperLimit: number
 }
@@ -36,6 +37,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
     currentCollateral: 0,
     usdiCost: 0,
     centerPrice: 0,
+    poolPrice: 0,
     lowerLimit: 0,
     upperLimit: 0
   })
@@ -51,7 +53,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
   useEffect(() => {
     if (usdiBalance && cometData) {
       // console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
-      setIsLackBalance(usdiBalance.balanceVal < cometData.usdiCost)
+      setIsLackBalance(usdiBalance.balanceVal <= cometData.usdiCost)
     }
   }, [usdiBalance, cometData])
 
@@ -81,15 +83,14 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
           currentCollateral: toNumber(singlePoolCometResult.value.collaterals[cometIndex].collateralAmount),
           usdiCost,
           centerPrice: centerPrice,
-          lowerLimit: Math.min(lowerPrice,centerPrice),
+          poolPrice: price,
+          lowerLimit: Math.min(lowerPrice, centerPrice),
           upperLimit: Math.max(upperPrice, centerPrice)
         })
       }
     }
     fetch()
   }, [open])
-  
-
   const handleRecenter = async () => {
     setLoading(true)
     await mutateAsync(
@@ -115,6 +116,16 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
           setLoading(false)
         }
       }
+    )
+  }
+
+  const isValidToRecenter = () => {
+    if (cometData.centerPrice === 0 || cometData.poolPrice === 0)
+      return false
+
+    return (
+      cometData.usdiCost > 0 && 
+      Math.abs(cometData.centerPrice - cometData.poolPrice) / cometData.centerPrice >= 0.001
     )
   }
 
@@ -186,7 +197,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
             </Stack>
 
             <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || parseInt(cometData.usdiCost.toLocaleString()) == 0}>Recenter</ActionButton>
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || !isValidToRecenter()}>Recenter</ActionButton>
 
             { isLackBalance && 
               <Stack
