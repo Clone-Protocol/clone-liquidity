@@ -7,7 +7,7 @@ import { useIncept } from '~/hooks/useIncept'
 export const callRecenterAll = async ({ program, userPubKey, data }: CallRecenterProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	console.log('recenter data', data)
+	console.log('recenterAll data', data)
 
 	await program.loadManager()
 
@@ -39,11 +39,10 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
   }
 	let tx = new Transaction()
 
-	Promise.all(calls).then((ixs) => {
-		for (let ix of ixs) {
-			tx.add(ix)
-		}
-	})
+  let ixs = await Promise.all(calls);
+  for (let ix of ixs) {
+    tx.add(ix)
+  }
 
 	await program.provider.send!(tx)
 	
