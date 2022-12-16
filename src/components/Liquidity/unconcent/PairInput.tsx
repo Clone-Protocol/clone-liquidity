@@ -3,7 +3,6 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerName: string | null
 	tickerSymbol: string | null
 	value?: number
   valueDollarPrice?: number
@@ -18,7 +17,6 @@ interface Props {
 
 const PairInput: React.FC<Props> = ({
 	tickerIcon,
-	tickerName,
 	tickerSymbol,
 	value,
   valueDollarPrice,
@@ -44,7 +42,6 @@ const PairInput: React.FC<Props> = ({
             <Image src={tickerIcon} width="28px" height="28px" />
             <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
               <TickerSymbol>{tickerSymbol}</TickerSymbol>
-              {/* <TickerName>{tickerName}</TickerName> */}
             </Box>
           </Box>
           <Box>

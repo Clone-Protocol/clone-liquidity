@@ -8,7 +8,6 @@ import {
 	DialogTitle,
 	IconButton,
 	List,
-	ListItem,
   Box,
 	styled,
 	Theme,

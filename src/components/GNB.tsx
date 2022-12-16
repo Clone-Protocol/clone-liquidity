@@ -193,16 +193,6 @@ const RightMenu = () => {
 	)
 }
 
-const LiquidityTitle = styled('div')`
-	font-size: 21px;
-	font-weight: bold;
-	background-image: linear-gradient(91deg, #00f0ff -1%, #0038ff 109%);
-	-webkit-background-clip: text;
-	margin-left: 7px;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
-`
-
 const StyledAppBar = styled(AppBar)`
 	z-index: 200;
 	background-color: #000;

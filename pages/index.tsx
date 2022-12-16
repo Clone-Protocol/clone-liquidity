@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
-import { Container, Box, Stack, Grow } from '@mui/material'
+import { Container, Box, Stack } from '@mui/material'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import LineChart from '~/containers/Overview/LineChart'
 import BarChart from '~/containers/Overview/BarChart'

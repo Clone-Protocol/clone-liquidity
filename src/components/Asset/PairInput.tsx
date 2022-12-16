@@ -3,7 +3,6 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerName: string | null
 	tickerSymbol: string | null
 	value?: number
 	headerTitle?: string
@@ -14,7 +13,6 @@ interface Props {
 
 const PairInput: React.FC<Props> = ({
 	tickerIcon,
-	tickerName,
 	tickerSymbol,
 	value,
 	headerTitle,

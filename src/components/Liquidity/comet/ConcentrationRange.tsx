@@ -158,9 +158,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 	})
 
 	useEffect(() => {
-		// if (cometData.lowerLimit && cometData.upperLimit) {
-			setValue([parseFloat(cometData.lowerLimit.toFixed(3)), parseFloat(cometData.upperLimit.toFixed(3))])
-		// }
+		setValue([parseFloat(cometData.lowerLimit.toFixed(3)), parseFloat(cometData.upperLimit.toFixed(3))])
 	}, [cometData.lowerLimit, cometData.upperLimit])
 
 	return (
