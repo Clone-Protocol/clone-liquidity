@@ -33,37 +33,37 @@ const RecenterDialog = ({
 		enabled: open && publicKey != null,
 	})
 
-	const { mutateAsync } = useRecenterMutation(publicKey)
-	const handleRecenter = async () => {
-		setLoading(true)
-		await mutateAsync(
-			{
-				positionIndex,
-			},
-			{
-				onSuccess(data) {
-					if (data) {
-						console.log('data', data)
-						enqueueSnackbar('Success to recenter')
+  const { mutateAsync } = useRecenterMutation(publicKey)
+  const handleRecenter = async () => {
+    setLoading(true)
+    await mutateAsync(
+      {
+        poolIndex
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Successfully recentered the position')
 
-						refetch()
-						onRefetchData()
-						handleClose()
-					}
-					setLoading(false)
-				},
-				onError(err) {
-					console.error(err)
-					enqueueSnackbar('Failed to recenter : No price deviation detected.')
-					setLoading(false)
-				},
-			}
-		)
-	}
+            refetch()
+            onRefetchData()
+            handleClose()
+          }
+          setLoading(false)
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Failed to recenter position : No price deviation detected.')
+          setLoading(false)
+        }
+      }
+    )
+  }
 
-	return positionInfo ? (
-		<>
-			{loading && (
+  return positionInfo ? (
+    <>
+      {loading && (
 				<LoadingWrapper>
 					<LoadingIndicator open inline />
 				</LoadingWrapper>

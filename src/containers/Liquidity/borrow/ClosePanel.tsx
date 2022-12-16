@@ -32,14 +32,14 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to close')
+            enqueueSnackbar('Successfully closed position')
             setLoading(false)
             router.push('/liquidity?ltab=2')
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to close')
+          enqueueSnackbar('Error closing position')
           setLoading(false)
         }
       }

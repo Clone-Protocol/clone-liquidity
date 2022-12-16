@@ -107,7 +107,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to edit collateral')
+            enqueueSnackbar('Successfully modified collateral')
             refetch()
             initData()
             onRefetchData()
@@ -116,7 +116,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to edit collateral')
+          enqueueSnackbar('Error modifying collateral')
           setLoading(false)
         }
       }
@@ -156,7 +156,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                     tickerIcon={collData.tickerIcon}
                     tickerSymbol={collData.tickerSymbol}
                     collAmount={field.value}
-                    collAmountDollarPrice={field.value}
+                    collAmountDollarValue={field.value}
                     maxCollVal={editType === 0 ? collData.balance : maxWithdrawable}
                     currentCollAmount={collData.collAmount}
                     dollarPrice={collData.collAmountDollarPrice}

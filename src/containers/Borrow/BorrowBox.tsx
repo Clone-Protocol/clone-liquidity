@@ -146,14 +146,14 @@ const BorrowBox = () => {
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to borrow')
+            enqueueSnackbar('Successfully established borrow position')
             setLoading(false)
             initData()
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to borrow')
+          enqueueSnackbar('Error establishing borrow position')
           setLoading(false)
         }
       }

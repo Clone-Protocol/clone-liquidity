@@ -58,7 +58,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to deposit')
+            enqueueSnackbar('Deposit was successful')
 
             refetch()
             //hacky sync
@@ -68,7 +68,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to deposit')
+          enqueueSnackbar('A deposit error occurred')
           setLoading(false)
         }
       }

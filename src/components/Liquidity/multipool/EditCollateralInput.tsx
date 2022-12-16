@@ -9,7 +9,7 @@ interface Props {
 	tickerSymbol: string | null
   maxCollVal: number
 	collAmount: number
-  collAmountDollarPrice?: number
+  collAmountDollarValue?: number
   currentCollAmount?: number
   dollarPrice?: number
   onChangeType?: any
@@ -24,7 +24,7 @@ const EditCollateralInput: React.FC<Props> = ({
 	tickerSymbol,
   maxCollVal,
 	collAmount,
-  collAmountDollarPrice,
+  collAmountDollarValue,
   currentCollAmount,
   dollarPrice,
   onChangeType,
@@ -55,11 +55,11 @@ const EditCollateralInput: React.FC<Props> = ({
           </Box>
           <Box>
             <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={Number(collAmount).toString()} onChange={onChangeAmount} />
-            <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (collAmountDollarPrice && collAmountDollarPrice > 0) ? ('$' + collAmountDollarPrice?.toLocaleString()) : '' }</div>
+            <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (collAmountDollarValue && collAmountDollarValue > 0) ? ('$' + collAmountDollarValue!.toLocaleString()) : '' }</div>
           </Box>
         </FormStack>
         <BottomBox>
-          Current Collateral ({tickerSymbol}): <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
+          Current Collateral ({tickerSymbol}): <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+(currentCollAmount! * dollarPrice!).toLocaleString() +')' }</span>
         </BottomBox>
       </Box>
 		</FormControl>

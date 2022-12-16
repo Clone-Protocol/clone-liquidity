@@ -139,7 +139,7 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 				tickerIcon : info.tickerIcon,
 				tickerSymbol : info.tickerSymbol,
 				tickerName : info.tickerName,
-				liquidityDollarPrice: toNumber(position.borrowedUsdi),
+				liquidityDollarPrice: toNumber(position.borrowedUsdi) * 2,
 				positionIndex: i,
 				poolIndex: poolIndex
 			} as LiquidityPosition
