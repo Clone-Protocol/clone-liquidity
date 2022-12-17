@@ -8,7 +8,7 @@ import * as anchor from "@project-serum/anchor"
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import useLocalStorage from '~/hooks/useLocalStorage'
 
-export default function useCreateAccount(shouldCreateAccount: boolean) {
+export default function useCreateAccount(startAccountCreation: boolean, setShouldCreateAccount : () => void) {
 	const { enqueueSnackbar } = useSnackbar()
 	const { getInceptApp } = useIncept()
 	const { connected, publicKey } = useWallet()
@@ -71,15 +71,15 @@ export default function useCreateAccount(shouldCreateAccount: boolean) {
 				// store account to localstorage
 				console.log('store account')
 				setLocalAccount(publicKey.toString())
+				setShouldCreateAccount(false)
 			} catch (err) {
 				console.log(err)
 				console.log('err: Attempt to debit an account but found no record of a prior credit.')
 				enqueueSnackbar('Attempt to debit an account but found no record of a prior credit. Get SOL in Faucet or exchanges')
 			}
 		}
-
-		if (shouldCreateAccount) {
+		if (startAccountCreation) {
 			createAccount()
 		}
-	}, [shouldCreateAccount])
+	}, [startAccountCreation])
 }

@@ -7,6 +7,7 @@ import menuLiquidityIcon from 'public/images/menu/position-icon.svg'
 import menuBorrowIcon from 'public/images/menu/borrow-icon.svg'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import { Links } from '~/data/links'
 
 const Drawer: React.FC = () => {
 	const router = useRouter()
@@ -15,28 +16,28 @@ const Drawer: React.FC = () => {
 		<StyledDrawer variant="permanent" open={true}>
       <Fade in timeout={1500}>
         <List component="nav">
-          <Link href="/">
-            <StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
+          <Link href={Links["overview"].path}>
+            <StyledListItemButton className={Links["overview"].classNameFunc(router)}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuOverviewIcon} alt="overview" />
               </ListItemIcon>
-              <StyledListItemText>Overview</StyledListItemText>
+              <StyledListItemText>{Links["overview"].text}</StyledListItemText>
             </StyledListItemButton>
           </Link>
-          <Link href="/liquidity">
-            <StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''}>
+          <Link href={Links["liquidity"].path}>
+            <StyledListItemButton className={Links["liquidity"].classNameFunc(router)}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuLiquidityIcon} alt="portfolio" />
               </ListItemIcon>
-              <StyledListItemText>My Liquidity</StyledListItemText>
+              <StyledListItemText>{Links["liquidity"].text}</StyledListItemText>
             </StyledListItemButton>
           </Link>
-          <Link href="/borrow">
-            <StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''}>
+          <Link href={Links["borrow"].path}>
+            <StyledListItemButton className={Links["borrow"].classNameFunc(router)}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuBorrowIcon} alt="markets" />
               </ListItemIcon>
-              <StyledListItemText>Borrow</StyledListItemText>
+              <StyledListItemText>{Links["borrow"].text}</StyledListItemText>
             </StyledListItemButton>
           </Link>
         </List>

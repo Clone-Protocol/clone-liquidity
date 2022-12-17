@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router' 
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -23,7 +24,9 @@ import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
-import useCreateAccount from '~/hooks/useCreateAccount'
+import { useRouter } from 'next/router'
+import { Links } from '~/data/links'
+import { createAccount } from '~/utils/account'
 
 import AccountSetupDialog from '~/components/Account/AccountSetupDialog'
 import AccountSetupReminderDialog from '~/components/Account/AccountSetupReminderDialog'
@@ -88,24 +91,77 @@ const RightMenu = () => {
 	const [mintUsdi, setMintUsdi] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
-  const [openAccountSetupDialog, setOpenAccountSetupDialog] = useState(false)
-  const [openAccountSetupReminderDialog, setOpenAccountSetupRemiderDialog] = useState(false)
-  const [createAccount, setCreateAccount] = useState(false)
+  const [declinedAccountCreation, setDeclinedAccountCreation] = useState(false)
 
-  useCreateAccount(createAccount)
-	useInitialized(setOpenAccountSetupDialog)
+  const [dialogState, setDialogState] = useState({
+  	open: false,
+  	openCount: 0
+  })
 
-	const handleCreateAccount = () => {
+  const router = useRouter()
 
-	}
+  
+  // on initialize, set to open account creation 
+  // confirmation dialog if wallet is connected and account doesn't exist
+  useInitialized(setDialogState)
 
-	const closeAccountSetupDialog = () => {
-		setOpenAccountSetupDialog(false)
-	}
+  // create the account when the user clicks the create account button 
+  // on the account setup dialog
+  const handleCreateAccount = () => {
+  	createAccount()
+  		.then(() => {
+  			setDeclinedAccountCreation(false)
+  		})
+  		.catch((err) => {
+  			enqueueSnackbar(err)
+  		})
+  }
 
-	const closeAccountSetupReminderDialog = () => {
-		setOpenAccountSetupRemiderDialog(false)
-	}
+  const closeAccountSetupDialog = (declined: boolean = true) => {
+  	setDialogState({
+  		dialogState,
+  		open: false
+  	})
+
+  	if (declined) { // TODO should this check be removed? 
+  		setDeclinedAccountCreation(true)
+  	}
+  }
+
+  const navCatcher = (path: string) => {
+  	const link = Links[path]
+
+  	if (declinedAccountCreation && link && link.requiresAccount) {
+  		setDialogState({
+  			openCount: dialogState.openCount + 1,
+  			open: true
+  		})
+  		throw new Error('account creation required')
+  	} 
+
+  	router.push(path)
+  }
+
+	/**useEffect(() => {
+		const handleRouteChange = (path: string) => {
+			const link = Links[path]
+
+  		if (declinedAccountCreation && link && link.requiresAccount) {
+  			setDialogState({
+  				openCount: dialogState.openCount + 1,
+  				open: true
+  			})
+  			throw new Error('account creation required')
+  		} 
+
+  		router.push(path)
+		}
+
+		router.events.on('routeChangeStart', handleRouteChange)
+		return () => {
+			router.events.off('routeChangeStart', handleRouteChange)
+		}
+	}, [])**/
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -174,14 +230,14 @@ const RightMenu = () => {
 	return (
 		<>
 			<AccountSetupDialog 
-				open={openAccountSetupDialog}
+				open={dialogState.open && dialogState.openCount === 1}
 				handleCreateAccount={handleCreateAccount}
 				handleClose={closeAccountSetupDialog} />
 
 			<AccountSetupReminderDialog
-				open={openAccountSetupReminderDialog}
+				open={dialogState.open && dialogState.openCount > 1}
 				handleCreateAccount={handleCreateAccount}
-				handleClose={closeAccountSetupReminderDialog} />
+				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
       	<DataLoadingIndicator />

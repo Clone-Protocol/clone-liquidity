@@ -5,7 +5,7 @@ import { getTokenAccount } from '~/utils/token_accounts'
 import useLocalStorage from '~/hooks/useLocalStorage'
 
 
-export default function useInitialized(setOpenAccountSetupDialog: (open: boolean) => void) {
+export default function useInitialized(setDialogState: () => void) {
 	const { connected, publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
@@ -34,7 +34,10 @@ export default function useInitialized(setOpenAccountSetupDialog: (open: boolean
 				} catch (error) {
 					console.log("error:", error);
 					console.log('err', 'Account does not exist')
-					setOpenAccountSetupDialog(true)
+					setDialogState({
+						open: true,
+						openCount: 1
+					})
 				}
 			}
 		}
