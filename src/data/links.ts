@@ -2,6 +2,7 @@ import { Router } from 'next/router'
 
 export interface LinkRecord {
 	path: string
+	text: string
 	requiresAccount: boolean
 	classNameFunc: (router: Router) => string
 }

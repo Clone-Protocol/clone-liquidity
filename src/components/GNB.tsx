@@ -93,17 +93,13 @@ const RightMenu = () => {
   const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
   const [declinedAccountCreation, setDeclinedAccountCreation] = useState(false)
 
-  const [dialogState, setDialogState] = useState({
-  	open: false,
-  	openCount: 0
-  })
-
+  const [currentAccountConfirmDialog, setCurrentAccountConfirmDialog] = useState(0) // 0 for none, 1 for initial, 2 for reminder dialog
   const router = useRouter()
 
   
   // on initialize, set to open account creation 
   // confirmation dialog if wallet is connected and account doesn't exist
-  useInitialized(setDialogState)
+  useInitialized(setCurrentAccountConfirmDialog)
 
   // create the account when the user clicks the create account button 
   // on the account setup dialog
@@ -117,51 +113,41 @@ const RightMenu = () => {
   		})
   }
 
-  const closeAccountSetupDialog = (declined: boolean = true) => {
-  	setDialogState({
-  		dialogState,
-  		open: false
-  	})
-
-  	if (declined) { // TODO should this check be removed? 
-  		setDeclinedAccountCreation(true)
-  	}
+  const closeAccountSetupDialog = () => {
+  	setCurrentAccountConfirmDialog(0)
+  	setDeclinedAccountCreation(true)
   }
 
-  const navCatcher = (path: string) => {
-  	const link = Links[path]
-
-  	if (declinedAccountCreation && link && link.requiresAccount) {
-  		setDialogState({
-  			openCount: dialogState.openCount + 1,
-  			open: true
-  		})
-  		throw new Error('account creation required')
-  	} 
-
-  	router.push(path)
-  }
-
-	/**useEffect(() => {
+	useEffect(() => {
 		const handleRouteChange = (path: string) => {
-			const link = Links[path]
+			if (!declinedAccountCreation) {
+				return
+			}
 
-  		if (declinedAccountCreation && link && link.requiresAccount) {
-  			setDialogState({
-  				openCount: dialogState.openCount + 1,
-  				open: true
-  			})
-  			throw new Error('account creation required')
-  		} 
+			let pathNeedsAccount = false;
 
-  		router.push(path)
+			if (router.asPath.startsWith('/assets')) {
+				pathNeedsAccount = true
+			} else {
+				for (let linkItem in Links) {
+					if (path === Links[linkItem].path) {
+						setCurrentAccountConfirmDialog(2)
+						pathNeedsAccount = true
+					}
+				}
+			}
+
+			if (pathNeedsAccount) {
+				throw 'Account needed. Abort route change' // this is the way to prevent route change
+			}
 		}
 
 		router.events.on('routeChangeStart', handleRouteChange)
+
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange)
 		}
-	}, [])**/
+	}, [declinedAccountCreation])
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -192,7 +178,11 @@ const RightMenu = () => {
 	}, [mintUsdi, connected, publicKey])
 
 	const handleGetUsdiClick = () => {
-		setMintUsdi(true)
+		if (declinedAccountCreation) {
+			setCurrentAccountConfirmDialog(2)
+		} else {
+			setMintUsdi(true)
+		}
 	}
 
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -230,12 +220,12 @@ const RightMenu = () => {
 	return (
 		<>
 			<AccountSetupDialog 
-				open={dialogState.open && dialogState.openCount === 1}
+				open={currentAccountConfirmDialog === 1}
 				handleCreateAccount={handleCreateAccount}
 				handleClose={closeAccountSetupDialog} />
 
 			<AccountSetupReminderDialog
-				open={dialogState.open && dialogState.openCount > 1}
+				open={currentAccountConfirmDialog === 2}
 				handleCreateAccount={handleCreateAccount}
 				handleClose={closeAccountSetupDialog} />
 
