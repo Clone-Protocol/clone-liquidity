@@ -222,7 +222,6 @@ const BorrowBox = () => {
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={fromPair.tickerIcon}
-                    tickerName={fromPair.tickerName}
                     tickerSymbol={fromPair.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     balance={usdiBalance?.balanceVal}
@@ -254,13 +253,6 @@ const BorrowBox = () => {
               <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
               <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
-                {/* <SelectPairInput
-                  assets={ASSETS}
-                  selAssetId={assetIndex}
-                  value={borrowAmount}
-                  onChangeAsset={handleChangeAssetIdx}
-                  onChangeAmount={handleChangeBorrowAmount}
-                /> */}
                 <Controller
                   name="borrowAmount"
                   control={control}
@@ -274,7 +266,6 @@ const BorrowBox = () => {
                   render={({ field }) => (
                     <PairInput
                       tickerIcon={ASSETS[assetIndex].tickerIcon}
-                      tickerName={ASSETS[assetIndex].tickerName}
                       tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                       balanceDisabled
                       value={field.value}

@@ -93,7 +93,7 @@ let columns: GridColDef[] = [
       return (isNaN(params.row.cPrice)) ? <></> : 
 			(
         <Box sx={{ width: '65px', textAlign: 'center'}}>
-          <CellDigitValue value={params.value.toFixed(2)} symbol="%" />
+          <CellDigitValue value={params.value?.toFixed(2)} symbol="%" />
         </Box>
       )
 		},

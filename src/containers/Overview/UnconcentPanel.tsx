@@ -138,7 +138,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               render={({ field }) => (
                 <PairInput
                   tickerIcon={assetData.tickerIcon}
-                  tickerName={assetData.tickerName}
                   tickerSymbol={assetData.tickerSymbol}
                   value={field.value}
                   headerTitle="Balance"
@@ -178,7 +177,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               render={({ field }) => (
                 <PairInput
                   tickerIcon={'/images/assets/USDi.png'}
-                  tickerName="USDi Coin"
                   tickerSymbol="USDi"
                   value={field.value}
                   headerTitle="Balance"

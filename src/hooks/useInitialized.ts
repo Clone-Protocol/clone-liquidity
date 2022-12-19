@@ -2,12 +2,11 @@ import { useEffect } from 'react'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import { useIncept } from '~/hooks/useIncept'
-import { getTokenAccount, createTokenAccountInstruction } from '~/utils/token_accounts'
-import { Transaction, SystemProgram } from "@solana/web3.js";
+import { getTokenAccount } from '~/utils/token_accounts'
+import { Transaction } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor"
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import useLocalStorage from '~/hooks/useLocalStorage'
-
 
 export default function useInitialized() {
 	const { enqueueSnackbar } = useSnackbar()

@@ -1,5 +1,4 @@
 import { Box, Slider, styled } from '@mui/material'
-import { relative } from 'path'
 
 interface Props {
 	min?: number
@@ -48,7 +47,6 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, onChange }) => {
 	const max = min + 100 + 50
-	const normValue = (value !== max) ? 180 - (value % 150) : 30
 
 	const valueLabelFormat = (val: number) => {
 		if (value > max) {
@@ -76,7 +74,6 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				<StyledSlider
 					sx={{
 						'& .MuiSlider-track': {
-              // background: `linear-gradient(to right, #f00 -22%, #809cff ${normValue}%)`
 							background: `linear-gradient(to right, #f00 -160px, #809cff 270px)`
             }
 					}}
@@ -141,14 +138,6 @@ const FlagBox = styled(Box)`
   line-height: 3px;
 	text-align: center;
   margin-top: 0px;
-  // &::after {
-  //   position: absolute;
-  //   width: 100px;
-  //   height: 16px;
-  //   top: 10px;
-  //   left: 30px;
-  //   background: #fff;
-  // }
 `
 
 const Stick = styled('div')`

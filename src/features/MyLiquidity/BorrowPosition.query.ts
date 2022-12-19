@@ -66,10 +66,6 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     setStartTimer
   })
 
-  // MEMO : calculation of maxWithdrawableCollateral
-  // borrow_amount_in_iasset = collateral_amount / (iasset_oracle_price * collateral_ratio)
-  // min_collateral_amount = borrow_amount_in_iasset * iasset_oracle_price * minCollateralRatio
-  // max_withdrawable_collateral = collateral_amount - min_collateral_amount
   const borrowAmountInIasset = Number(positionData![3]);
   const minCollateralRatio = positionData![6];
   const minCollateralAmount = borrowAmountInIasset * oraclePrice * Number(minCollateralRatio);
@@ -106,8 +102,8 @@ export interface PositionInfo {
 	oPrice: number
 	stableCollateralRatio: number
 	cryptoCollateralRatio: number
-	borrowedIasset: number
-	collateralAmount: number
+	borrowedIasset: number | Number
+	collateralAmount: number | Number
 	collateralRatio: number
 	minCollateralRatio: number
   usdiVal: number

@@ -6,7 +6,6 @@ import { toNumber, getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
 import * as anchor from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
-import { sleep } from 'react-query/types/core/utils';
 
 export const callRecenter = async ({
   program,

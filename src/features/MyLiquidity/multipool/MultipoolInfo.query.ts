@@ -31,23 +31,6 @@ export const fetchInfos = async ({
 	let totalLiquidity = 0
 	let collaterals: Collateral[] = [];
 	let positions: LiquidityPosition[] = [];
-	// let collaterals: Collateral[] = [
-	//   {
-	// 	tickerIcon : '/images/assets/USDi.png',
-	// 	tickerSymbol : 'USDi',
-	// 	tickerName : 'USDi',
-	// 	collAmount,
-	// 	collAmountDollarPrice
-	//   }
-	// ]
-	// let positions: LiquidityPosition[] = [
-	//   {
-	// 	tickerIcon: '/images/assets/solana.png',
-	// 	tickerName: 'iSOL',
-	// 	tickerSymbol: 'iSOL',
-	// 	liquidityDollarPrice: 1005.04
-	//   }
-	// ]
 
 	const [cometResult, tokenDataResult] = await Promise.allSettled([
 		program.getComet(), program.getTokenData()
@@ -69,7 +52,7 @@ export const fetchInfos = async ({
 		}
 	}
 
-	let result = {
+	const result = {
     healthScore,
     totalCollValue,
     totalLiquidity,

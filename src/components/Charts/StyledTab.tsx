@@ -1,5 +1,5 @@
 import { styled } from '@mui/system'
-import { Tabs, Tab, Box } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 
 export interface TabPanelProps {
 	children?: React.ReactNode

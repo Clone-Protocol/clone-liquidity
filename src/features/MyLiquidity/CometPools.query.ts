@@ -6,7 +6,7 @@ import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getUserSinglePoolCometInfos } from '~/utils/user/'
+import { getUserSinglePoolCometInfos } from '~/utils/user'
 
 export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []

@@ -21,7 +21,7 @@ const CustomPopper = function (props : any) {
   return <StyledPopper {...props} placement="bottom" />;
 };
 
-const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset }) => {
+const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
 	return (
 		<Box sx={{ display: 'flex'}}>
       <StyledAutocomplete
@@ -44,24 +44,6 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
       <Box sx={{ position: 'relative', right: '30px', top: '8px' }}>
         <Image src={SearchIcon} />
       </Box>
-
-      {/* <Select
-        sx={{ color: '#fff' }}
-        id="selectAsset"
-        label=""
-        value={selAssetId}
-        onChange={(e) => onChangeAsset(e.target.value)}>
-        {assets.map((asset, index) => (
-          <MenuItem key={index} value={index}>
-            <Box display="flex">
-              <Image src={asset.tickerIcon} width="28px" height="28px" />
-              <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
-                <TickerSymbol>{asset.tickerSymbol}</TickerSymbol>
-              </Box>
-            </Box>
-          </MenuItem>
-        ))}
-      </Select> */}
     </Box>
 	)
 }

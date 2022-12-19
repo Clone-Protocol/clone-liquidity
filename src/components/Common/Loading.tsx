@@ -1,6 +1,5 @@
 import { Box, Skeleton, LinearProgress } from '@mui/material'
 
-
 export const LoadingProgress = () => (
   <Box sx={{ width: '100%', }}>
     <LinearProgress color="inherit" />
