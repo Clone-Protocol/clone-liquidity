@@ -1,4 +1,4 @@
-import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
+import { Box, Stack, Button, Divider, FormHelperText, ControllerRenderProps } from '@mui/material'
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
@@ -75,14 +75,13 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   
   useEffect(() => {
     async function fetch() {
-      if (isDirty) {
-        await trigger()
-      }
+      await trigger()
       
       const program = getInceptApp()
 
       if (isNaN(collAmount)) {
         setMintAmount(0)
+        setHealthScore(0)
         return
       }
       
@@ -111,7 +110,9 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         })
       }
 
-      setHealthScore(Math.max(0, healthScore))
+      const chosenHealthScore = Math.max(0, healthScore)
+
+      setHealthScore(isNaN(chosenHealthScore) ? 0 : chosenHealthScore)
       setMaxMintable(maxUsdiPosition)
       setMintableAmount(maxUsdiPosition)
     }
@@ -184,34 +185,32 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     )
 	}
 
-  const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
+  const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps) => {
     const collVal = parseFloat(event.currentTarget.value)
     field.onChange(collVal)
-
-    const amt = isNaN(collVal) ? ' ' : collVal 
-    setCollAmount(amt)
+    setCollAmount(collVal)
   }
 
-  const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
+  const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps) => {
     const mintVal = parseFloat(event.currentTarget.value)
     maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
     field.onChange(mintVal)
-
-    const amt = isNaN(mintVal) ? ' ' : mintAmount
     setMintAmount(mintVal)
   }
 
-  const validateCollAmount = (): string => {
+  const validateCollAmount = (): string | boolean => {
     if (collAmount > balances?.usdiVal) {
       return 'The collateral amount cannot exceed the balance.'
-    } else if (!collAmount || collAmount <= 0) {
-      return false
-    }
+    } 
 
     return false
   }
 
-  const validateMintAmount = () => {
+  const validateMintAmount = (): string | boolean => {
+    if (!isDirty) {
+      return false
+    }
+
     if (!mintAmount || mintAmount <= 0) {
       return 'The mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
@@ -291,11 +290,10 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerName="USDi Coin"
                   tickerSymbol="USDi"
-                  placeholder="0.00"
                   value={isNaN(collAmount) ? "" : collAmount}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
-                  onChange={(evt) => onCollAmountInputChange(evt, field)}
+                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(evt, field)}
                   onMax={(value: number) => {
                     field.onChange(value)
                     setCollAmount(value)
@@ -336,11 +334,10 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                     tickerIcon={'/images/assets/USDi.png'}
                     tickerName="USDi Coin"
                     tickerSymbol="USDi"
-                    placeholder="0.00"
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
-                    onChange={(evt) => onMintAmountInputChange(evt, field)}
+                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(evt, field)}
                     onMax={(value: number) => {
                       field.onChange(value)
                       setMintAmount(value)
