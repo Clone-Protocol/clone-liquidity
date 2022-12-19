@@ -3,6 +3,7 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { styled } from '@mui/system'
+import { StyledSection } from 'pages'
 import Container from '@mui/material/Container'
 import TipMsg from '~/components/Common/TipMsg'
 import AssetView from '~/containers/Overview/AssetView'
@@ -33,15 +34,6 @@ const AssetPage: NextPage = () => {
 		</div>
 	)
 }
-
-const StyledSection = styled('section')`
-	${(props) => props.theme.breakpoints.up('md')} {
-		padding-top: 100px;
-	}
-	${(props) => props.theme.breakpoints.down('md')} {
-		padding: 50px 0px;
-	}
-`
 
 const BoldText = styled('span')`
 	color: #fff;

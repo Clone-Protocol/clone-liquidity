@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, useCallback } from 'react'
+import React, { FC, ReactNode, useCallback } from 'react'
 import { Provider } from '@project-serum/anchor'
 import { Connection } from '@solana/web3.js'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
@@ -12,7 +12,6 @@ export interface InceptProviderProps {
 
 export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
 	const wallet = useAnchorWallet()
-	// const { connection } = useConnection()
 
 	const getInceptApp = useCallback((): Incept | null => {
     const opts = {

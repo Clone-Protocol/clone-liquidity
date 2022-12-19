@@ -17,9 +17,9 @@ export const fetchDefaultCollateral = async ({
 	if (!userPubKey) return
 	await program.loadManager()
 
-	let [cometResult, healthScoreResult, usdiAccountResult] = await Promise.allSettled([
+	let [cometResult, tokenDataResult, usdiAccountResult] = await Promise.allSettled([
 		program.getComet(),
-		program.getHealthScore(),
+		program.getTokenData(),
 		getUSDiAccount(program),
 	])
 
@@ -32,12 +32,11 @@ export const fetchDefaultCollateral = async ({
 		balance = tokenBalance.value.uiAmount!
 	}
 
-	if (healthScoreResult.status === 'fulfilled') {
-		prevHealthScore = healthScoreResult.value.healthScore
-	}
-
 	if (cometResult.status === 'fulfilled') {
 		collAmount = toNumber(cometResult.value.collaterals[index].collateralAmount)
+    if (tokenDataResult.status === 'fulfilled') {
+      prevHealthScore = program.getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+    }
 	}
 	let collAmountDollarPrice = 1 // Since its USDi.
 	let totalCollValue = collAmount * collAmountDollarPrice

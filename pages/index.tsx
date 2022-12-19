@@ -34,7 +34,7 @@ const Overview: NextPage = () => {
 	)
 }
 
-const StyledSection = styled('section')`
+export const StyledSection = styled('section')`
 	${(props) => props.theme.breakpoints.up('md')} {
 		padding-top: 100px;
 	}

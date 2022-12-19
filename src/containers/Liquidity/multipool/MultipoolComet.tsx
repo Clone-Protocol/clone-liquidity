@@ -35,7 +35,7 @@ const MultipoolComet = () => {
           <Image src={InfoBookIcon} />
         </Box>
         <WarningBox>
-          Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please besure to read and learn about it before first engaging with it.
+          Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please be sure to read and learn about it before first engaging with it.
         </WarningBox>
       </Stack>
 
@@ -43,7 +43,7 @@ const MultipoolComet = () => {
 			  <Grid item xs={12} md={2}>
           <CardWrapper>
             <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
-            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)}</span>/100</SubValue>
+            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{!infos.healthScore || Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)}</span>/100</SubValue>
           </CardWrapper>
           <CardWrapper style={{ marginTop: '13px' }}>
             <Box>

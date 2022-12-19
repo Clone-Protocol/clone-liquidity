@@ -103,7 +103,6 @@ const RightMenu = () => {
 						await program.provider.send!(tx);
 
 					} else {
-						console.log("USDI token account:", usdiTokenAccount.toString());
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
 					} 
 				} finally {

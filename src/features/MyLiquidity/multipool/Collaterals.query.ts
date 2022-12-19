@@ -40,30 +40,6 @@ export const fetchCollaterals = async ({
 			isEnabled: true,
 		},
 	]
-
-	// const result: CollateralList[] = [
-	// 	{
-	// 		id: 0,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		balance: 20.355,
-	// 		isEnabled: false,
-	// 	},
-	// 	{
-	// 		id: 1,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		balance: 20.355,
-	// 		isEnabled: true,
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		balance: 20.355,
-	// 		isEnabled: true,
-	// 	},
-	// ]
 	return result
 }
 
