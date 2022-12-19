@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
@@ -39,7 +39,7 @@ export const fetchAssets = async ({ program, setStartTimer }: { program: Incept,
 interface GetAssetsProps {
 	filter: FilterType
   searchTerm: string
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

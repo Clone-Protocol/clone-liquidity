@@ -13,8 +13,7 @@ interface Props {
 	assets: AssetType[]
 	selAssetId: number
 	value?: number
-	onChangeAsset?: any
-	onChangeAmount?: any
+	onChangeAsset?: (data: any) => void
 }
 
 const CustomPopper = function (props : any) {
@@ -27,7 +26,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
       <StyledAutocomplete
         selectOnFocus
         clearOnBlur
-        onChange={(e, value) => onChangeAsset(value)}
+        onChange={(e, value) => onChangeAsset && onChangeAsset(value)}
         getOptionLabel={(option: any) => option.tickerName}
         options={assets}
         clearIcon={null}

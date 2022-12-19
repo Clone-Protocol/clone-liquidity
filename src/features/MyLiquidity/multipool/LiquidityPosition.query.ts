@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept, TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { assetMapping } from 'src/data/assets'
@@ -69,7 +69,7 @@ export interface PositionInfo {
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
-	refetchOnMount?: QueryObserverOptions['refetchOnMount']
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 	enabled?: boolean
 }
 

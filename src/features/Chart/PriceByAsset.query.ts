@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 
 export const fetchPriceHistory = async ({ tickerSymbol } : { tickerSymbol: string | undefined}) => {
   if (!tickerSymbol) return null
@@ -49,7 +49,7 @@ export interface PriceHistory {
 
 interface GetProps {
   tickerSymbol: string | undefined
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
@@ -65,7 +65,7 @@ export const fetchInfos = async ({
 
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: QueryObserverOptions['refetchOnMount']
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 	enabled?: boolean
 }
 
