@@ -120,7 +120,7 @@ const BorrowBox = () => {
     }
   }, [assetIndex, borrowAsset])
 
-	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
+	const handleChangeCollRatio = useCallback((event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => {
 		if (typeof newValue === 'number' && borrowDetail) {
         if (!isNaN(newValue)) {
           setCollRatio(newValue)

@@ -9,21 +9,21 @@ interface Props {
 	cometData: CometInfo
   currentLowerLimit: number
   currentUpperLimit: number
-  onChange: any
+  onChange?: (limit: number, isLower: boolean) => void
 }
 
 const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, currentLowerLimit, currentUpperLimit, onChange }) => {
   const handleChangeLowerLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value) {
 			const limit = parseFloat(e.currentTarget.value)
-      onChange(limit, true)
+      onChange && onChange(limit, true)
     }
   }
 
   const handleChangeUpperLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value) {
 			const limit = parseFloat(e.currentTarget.value)
-      onChange(limit, false)
+      onChange && onChange(limit, false)
     }
   }
 

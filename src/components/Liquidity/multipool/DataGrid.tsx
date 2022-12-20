@@ -1,10 +1,10 @@
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid'
 import { Box } from '@mui/material'
 
 interface GridProps {
   headers: GridColDef[],
   rows: any,
-  onRowClick: any,
+  onRowClick: (params: GridRowParams) => void,
   minHeight?: number
 }
 

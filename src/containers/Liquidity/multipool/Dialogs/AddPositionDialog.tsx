@@ -3,7 +3,7 @@ import { Box, styled, Dialog, DialogContent} from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridLiquidityPool from './GridLiquidityPool'
 
-const AddPositionDialog = ({ open, handleChoosePosition, handleClose }:  { open: boolean, handleChoosePosition: (id: number) => void, handleClose: any }) => {
+const AddPositionDialog = ({ open, handleChoosePosition, handleClose }:  { open: boolean, handleChoosePosition: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={800}>

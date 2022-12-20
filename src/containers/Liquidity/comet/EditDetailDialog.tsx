@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 import OneIcon from 'public/images/one-icon.svg'
@@ -18,12 +19,12 @@ import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 
-const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: any) => {
+const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
 	const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
-  const cometIndex = parseInt(cometId)
+  const cometIndex = cometId
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const [cometData, setCometData] = useState<CometInfo>({

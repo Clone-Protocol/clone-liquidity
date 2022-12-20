@@ -10,11 +10,11 @@ interface Props {
   maxCollVal: number
 	collAmount: number
   collAmountDollarPrice?: number
-  currentCollAmount?: number
+  currentCollAmount: number
   dollarPrice?: number
-  onChangeType?: any
-	onChangeAmount?: any
-  onMax?: any
+  onChangeType: (event: React.SyntheticEvent, newValue: number) => void
+	onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
+  onMax: (value: number) => void
 }
 
 const EditBorrowedInput: React.FC<Props> = ({
@@ -71,9 +71,9 @@ const EditBorrowedInput: React.FC<Props> = ({
           Current dept: 
             {
               editType === 0 ?
-                <span style={{ color: '#fff', marginLeft: '4px' }}>{currentCollAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
+                <span style={{ color: '#fff', marginLeft: '4px' }}>{currentCollAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
               :
-                <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
+                <span style={{ color: '#90e4fe', cursor: 'pointer', marginLeft: '4px' }} onClick={() => onMax(currentCollAmount)}>{currentCollAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
             }
             <span style={{ color: '#fff', marginLeft: '5px' }}>{ dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
         </BottomBox>

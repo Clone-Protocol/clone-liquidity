@@ -5,7 +5,7 @@ interface Props {
 	value: number
   hideValueBox?: boolean
 	showChangeRatio?: boolean
-	onChange?: (event: Event, newValue: number | number[]) => void
+	onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
@@ -66,7 +66,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
 			{showChangeRatio &&
 				<Box display='flex'>
-					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
 					<div style={{ marginLeft: '-24px', marginRight: '10px', marginTop: '16px' }}>%</div>
 				</Box>
 			}

@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: any }) => {
+const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)

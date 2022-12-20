@@ -8,7 +8,7 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	usdValue?: number
-	handleOpenEdit?: any
+	handleOpenEdit: (type: number) => void
 }
 
 const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, usdValue, handleOpenEdit }) => {

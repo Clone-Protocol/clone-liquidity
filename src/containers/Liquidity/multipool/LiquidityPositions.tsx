@@ -12,7 +12,7 @@ import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 
-const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: any }) => {
+const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)

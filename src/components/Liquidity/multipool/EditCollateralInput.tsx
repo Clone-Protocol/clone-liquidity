@@ -12,10 +12,10 @@ interface Props {
   collAmountDollarValue?: number
   currentCollAmount?: number
   dollarPrice?: number
-  onChangeType?: any
-	onChangeAmount?: any
-  onMax?: any
-  onHandleChoose?: any
+  onChangeType: (event: React.SyntheticEvent, newValue: number) => void
+	onChangeAmount?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onMax?: (value: number) => void
+  onHandleChoose?: React.MouseEventHandler
 }
 
 const EditCollateralInput: React.FC<Props> = ({
@@ -42,7 +42,7 @@ const EditCollateralInput: React.FC<Props> = ({
           </StyledTabs>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494', marginRight: '15px'}}>
-          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
+          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax && onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span>
         </Box>
       </Stack>
       <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', boxShadow: '0 0 0 1px #444444 inset' }}>

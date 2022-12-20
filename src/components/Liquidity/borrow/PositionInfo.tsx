@@ -7,8 +7,8 @@ import InfoTooltip from '~/components/Common/InfoTooltip';
 
 interface Props {
 	positionInfo: PI
-  onShowEditForm: any
-  onShowBorrowMore: any
+  onShowEditForm: () => void
+  onShowBorrowMore: () => void
 }
 
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {

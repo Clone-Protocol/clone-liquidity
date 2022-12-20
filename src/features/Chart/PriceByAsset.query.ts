@@ -1,4 +1,5 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
+import { ChartElem } from './Liquidity.query'
 
 export const fetchPriceHistory = async ({ tickerSymbol } : { tickerSymbol: string | undefined}) => {
   if (!tickerSymbol) return null
@@ -41,7 +42,7 @@ export const fetchPriceHistory = async ({ tickerSymbol } : { tickerSymbol: strin
 }
 
 export interface PriceHistory {
-  chartData: any[]
+  chartData: ChartElem[]
   assetPrice: number
   rateOfPrice: number
   percentOfRate: number
@@ -49,7 +50,7 @@ export interface PriceHistory {
 
 interface GetProps {
   tickerSymbol: string | undefined
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

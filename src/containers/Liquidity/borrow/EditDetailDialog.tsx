@@ -9,10 +9,11 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
+import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
+const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: string, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()

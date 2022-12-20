@@ -209,12 +209,12 @@ export const callEdit = async ({
     await program.updatePricesInstruction()
   );
 
-  let result: any = {
+  let result = {
     result: false,
     msg: '',
     iassetMint: pool.assetInfo.iassetMint
-
   };
+
   if (collAmount != 0) {
     /// Deposit
     if (editType === 0) {
@@ -234,17 +234,18 @@ export const callEdit = async ({
       };
     } else { 
     /// Withdraw
-    tx.add(
-      await program.withdrawCollateralFromSinglePoolCometInstruction(
-        collateralAssociatedTokenAccount!,
-        new anchor.BN(collAmount * 10 ** 8),
-        cometIndex,
-      )
-    );
+      tx.add(
+        await program.withdrawCollateralFromSinglePoolCometInstruction(
+          collateralAssociatedTokenAccount!,
+          new anchor.BN(collAmount * 10 ** 8),
+          cometIndex,
+        )
+      );
   
       result = {
         result: true,
-        msg: 'withdraw collateral from comet'
+        msg: 'withdraw collateral from comet',
+        iassetMint: pool.assetInfo.iassetMint
       }
     }
   }

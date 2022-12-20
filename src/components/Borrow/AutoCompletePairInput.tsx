@@ -1,4 +1,4 @@
-import { styled, Box, Autocomplete, TextField, Popper } from '@mui/material'
+import { styled, Box, Autocomplete, TextField, Popper, PopperProps } from '@mui/material'
 import Image from 'next/image'
 import SearchIcon from 'public/images/search-icon.svg'
 import 'animate.css'
@@ -13,11 +13,10 @@ interface Props {
 	assets: AssetType[]
 	selAssetId: number
 	value?: number
-	onChangeAsset?: any
-	onChangeAmount?: any
+	onChangeAsset?: (data: any) => void
 }
 
-const CustomPopper = function (props : any) {
+const CustomPopper = function (props : PopperProps) {
   return <StyledPopper {...props} placement="bottom" />;
 };
 
@@ -27,7 +26,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
       <StyledAutocomplete
         selectOnFocus
         clearOnBlur
-        onChange={(e, value) => onChangeAsset(value)}
+        onChange={(e, value) => onChangeAsset && onChangeAsset(value)}
         getOptionLabel={(option: any) => option.tickerName}
         options={assets}
         clearIcon={null}
