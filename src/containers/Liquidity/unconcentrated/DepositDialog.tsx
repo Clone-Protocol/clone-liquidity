@@ -13,7 +13,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 
-const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
+const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: boolean, handleClose: () => void }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)

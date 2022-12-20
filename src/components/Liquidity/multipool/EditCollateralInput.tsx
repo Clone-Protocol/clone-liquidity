@@ -12,10 +12,10 @@ interface Props {
   collAmountDollarValue?: number
   currentCollAmount?: number
   dollarPrice?: number
-  onChangeType?: any
-	onChangeAmount?: any
+  onChangeType: (event: React.SyntheticEvent, newValue: number) => void
+	onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
-  onHandleChoose?: any
+  onHandleChoose?: React.MouseEventHandler
 }
 
 const EditCollateralInput: React.FC<Props> = ({

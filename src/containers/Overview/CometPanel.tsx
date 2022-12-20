@@ -26,7 +26,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import throttle from 'lodash.throttle'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 
-const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: any }) => {
+const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()

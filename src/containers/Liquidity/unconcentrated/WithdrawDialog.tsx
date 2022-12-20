@@ -10,7 +10,7 @@ import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidit
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { SliderTransition } from '~/components/Common/Dialog'
 
-const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open: any, handleClose: any }) => {
+const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open: boolean, handleClose: () => void }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)

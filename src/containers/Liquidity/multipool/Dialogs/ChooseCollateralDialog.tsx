@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, styled, Dialog, DialogContent} from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridCollateral from './GridCollateral'
 
-const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  { open: any, handleChooseCollateral: (id: number) => void, handleClose: any }) => {
+const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  { open: boolean, handleChooseCollateral: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={360}>

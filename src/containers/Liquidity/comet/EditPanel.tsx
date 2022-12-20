@@ -6,7 +6,7 @@ import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPos
 import EditDetailDialog from './EditDetailDialog'
 import RecenterDialog from './RecenterDialog'
 
-const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: any }) => {
+const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: () => void }) => {
 	const assetData: PI = {
     tickerIcon: cometDetail.tickerIcon,
     tickerName: cometDetail.tickerName,

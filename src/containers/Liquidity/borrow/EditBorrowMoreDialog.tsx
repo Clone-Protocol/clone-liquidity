@@ -9,12 +9,13 @@ import {
 } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditBorrowedInput from '~/components/Liquidity/comet/EditBorrowedInput'
 import WarningIcon from 'public/images/warning-icon.png'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: any) => {
+const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: string, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -30,7 +31,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(editType === 0 ? ((borrowDetail.collateralAmount * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - borrowDetail.borrowedIasset : borrowDetail.iassetVal)
+    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.collateralAmount) * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedIasset) : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
@@ -71,9 +72,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   useEffect(() => {
     if (borrowAmount) {
       if (editType === 0) { // borrow more
-        setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset + borrowAmount)))
+        setExpectedCollRatio(Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.oPrice * (Number(borrowDetail.borrowedIasset) + borrowAmount)))
       } else { // repay
-        setExpectedCollRatio(borrowDetail.collateralAmount * 100 / (borrowDetail.oPrice * (borrowDetail.borrowedIasset - borrowAmount)))
+        setExpectedCollRatio(Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.oPrice * (Number(borrowDetail.borrowedIasset) - borrowAmount)))
       }
     } else {
       setExpectedCollRatio(borrowDetail.collateralRatio)
@@ -142,8 +143,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     collAmount={field.value}
                     collAmountDollarPrice={field.value * borrowDetail.oPrice}
                     maxCollVal={maxCollVal}
-                    currentCollAmount={borrowDetail.borrowedIasset}
-                    dollarPrice={borrowDetail.borrowedIasset * borrowDetail.oPrice}
+                    currentCollAmount={Number(borrowDetail.borrowedIasset)}
+                    dollarPrice={Number(borrowDetail.borrowedIasset) * borrowDetail.oPrice}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)
