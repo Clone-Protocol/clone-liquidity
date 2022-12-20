@@ -10,7 +10,7 @@ import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateral
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
-const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: any) => {
+const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()

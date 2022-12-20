@@ -13,7 +13,7 @@ interface Props {
   currentCollAmount?: number
   dollarPrice?: number
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
-	onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
+	onChangeAmount?: (e: React.ChangeEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
 }
 

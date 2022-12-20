@@ -6,10 +6,11 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { darken } from 'polished'
+import { ChartElem } from '~/features/Chart/Liquidity.query';
 dayjs.extend(utc)
 
 export type LineChartProps = {
-  data: any[]
+  data: ChartElem[]
   color?: string | undefined
   height?: number | undefined
   minHeight?: number

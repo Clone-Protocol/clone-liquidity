@@ -1,4 +1,4 @@
-import { styled, Box, Autocomplete, TextField, Popper } from '@mui/material'
+import { styled, Box, Autocomplete, TextField, Popper, PopperProps } from '@mui/material'
 import Image from 'next/image'
 import SearchIcon from 'public/images/search-icon.svg'
 import 'animate.css'
@@ -16,7 +16,7 @@ interface Props {
 	onChangeAsset?: (data: any) => void
 }
 
-const CustomPopper = function (props : any) {
+const CustomPopper = function (props : PopperProps) {
   return <StyledPopper {...props} placement="bottom" />;
 };
 

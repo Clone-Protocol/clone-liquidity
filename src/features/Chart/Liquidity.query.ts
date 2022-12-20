@@ -1,6 +1,11 @@
 import { Query, useQuery } from 'react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 
+export interface ChartElem {
+  time: string
+  value: number
+}
+
 export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTime}) => {
 	const chartData = [
     {

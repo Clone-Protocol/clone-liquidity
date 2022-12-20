@@ -8,7 +8,7 @@ interface Props {
 	balance?: number
 	balanceDisabled?: boolean
 	disabled?: boolean
-	onChange?: (e: React.FormEvent<HTMLInputElement>) => void
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
 }
 
