@@ -1,15 +1,13 @@
 import React from 'react'
-import { CreateAccountDialogStates } from '~/utils/constants'
-import React, { useState } from 'react'
 import { 
 	Button,
 	Box,  
 	Dialog, 
 	DialogTitle, 
 	DialogContent,
-	styled,
-	Theme
+	styled
 } from '@mui/material'
+import { CreateAccountDialogStates } from '~/utils/constants'
 
 interface CreateAccountSetupDialogProps {
 	state: CreateAccountDialogStates
@@ -22,15 +20,15 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	handleCreateAccount,
 	handleClose
 }) => {
-	const getInitialDialogHeader = () => {
+	const getInitialDialogHeader = (): React.ReactElement => {
 		return <HeaderText>This is the first time connecting this wallet with Incept Liquidity</HeaderText>
 	}
 
-	const getReminderDialogHeader = () => {
-		return <HeaderText className="centered">This is a new wallet, please open account first</HeaderText>
+	const getReminderDialogHeader = (): React.ReactElement => {
+		return <HeaderTextCentered>This is a new wallet, please open account first</HeaderTextCentered>
 	}
 
-	const getInitialDialogContent = () => {
+	const getInitialDialogContent = (): React.ReactElement => {
 		return (
 			<ContentText>
 				Please note that the Solana network requires a higher than usual one-time
@@ -39,7 +37,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 		)
 	}
 
-	const getReminderDialogContent = () => {
+	const getReminderDialogContent = (): React.ReactElement => {
 		return (
 			<ContentText>
 				In order to access the feature, please open an account with this wallet by 
@@ -49,7 +47,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 		)
 	}
 
-	const ContentBody = () => {
+	const ContentBody = (): React.ReactElement => {
 		if (state == CreateAccountDialogStates.Initial) {
 			return getInitialDialogContent()
 		} else if (state == CreateAccountDialogStates.Reminder) {
@@ -59,7 +57,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 		return <></>
 	}
 
-	const Header = () => {
+	const Header = (): React.ReactElement => {
 		if (state == CreateAccountDialogStates.Initial) {
 			return getInitialDialogHeader()
 		} else if (state == CreateAccountDialogStates.Reminder) {
@@ -73,8 +71,6 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
 	}
 	
-
-
 	return (
 		<Dialog open={shouldDialogOpen()} onClose={handleClose}>
 			<ContentContainer>
@@ -95,11 +91,19 @@ const HeaderText = styled(DialogTitle)`
   font-weight: 500;
   color: #fff;
 `
+
+const HeaderTextCentered = styled(DialogTitle)`
+	font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+`
+
 const ContentContainer = styled('div')`
 	padding: 15px;
 	background-color: #151618;
 `
-const ContentText = styled('Box')`
+const ContentText = styled(Box)`
 	font-size: 14px;
 	color: #989898;
 `
@@ -123,5 +127,8 @@ const SubmitButton = styled(Button)`
 	display: block;
 	width: 240px;
 `
+const centeredTextStyle = {
+
+}
 
 export default CreateAccountSetupDialog

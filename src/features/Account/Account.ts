@@ -1,39 +1,44 @@
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Transaction } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor"
 import { useIncept } from '~/hooks/useIncept'
-import { getTokenAccount, createTokenAccountInstruction } from '~/utils/token_accounts'
+import { getTokenAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
+import useLocalStorage from '~/hooks/useLocalStorage'
 
 export const createAccount = (): Promise<void> => {
 	const { getInceptApp } = useIncept()
 	const { publicKey } = useWallet()
+	const [_, setLocalAccount] = useLocalStorage("currentAccount", '')
+	const pubKey = publicKey as anchor.web3.PublicKey
 
 	return new Promise(async (resolve, reject) => {
 		const program = getInceptApp()
 		await program.loadManager()
 
+
 		let tx = new Transaction();
-		const usdiTokenAccount = await getTokenAccount(program.manager!.usdiMint, publicKey, program.provider.connection); 
+		const usdiTokenAccount = await getTokenAccount(program.manager!.usdiMint, pubKey, program.provider.connection); 
 	
 		if (usdiTokenAccount === undefined) {
 			console.log("NO USDI ACCOUNT!")
 			const associatedToken = await getAssociatedTokenAddress(
 				program.manager!.usdiMint,
-				publicKey
+				publicKey as anchor.web3.PublicKey
 			);
 
 			tx.add(
 				createAssociatedTokenAccountInstruction(
-					publicKey,
+					pubKey,
 					associatedToken,
-					publicKey,
+					pubKey,
 					program.manager!.usdiMint
 				)
 			);
 		}
 
 		tx.add(
-			await program.initializeUserInstruction(publicKey)
+			await program.initializeUserInstruction(pubKey)
 		);
 
 		// TODO: Figure out where to move this since it's a temporary solution.
@@ -42,7 +47,7 @@ export const createAccount = (): Promise<void> => {
 			await program.initializeCometInstruction(
 				singlePoolCometsAccount,
 				true,
-				publicKey
+				pubKey
 			)
 		);
 
@@ -51,7 +56,7 @@ export const createAccount = (): Promise<void> => {
 			await program.initializeCometInstruction(
 				multiPoolCometsAccount,
 				false,
-				publicKey
+				pubKey
 			)
 		);
 
@@ -60,7 +65,7 @@ export const createAccount = (): Promise<void> => {
 
 			// store account to localstorage
 			console.log('store account')
-			setLocalAccount(publicKey.toString())
+			setLocalAccount(pubKey.toString())
 			resolve()
 		} catch (err) {
 			console.log(err)

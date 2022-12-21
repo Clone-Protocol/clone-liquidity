@@ -16,7 +16,7 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
-import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
+import { handleLinkNeedingAccountClick } from '~/utils/navigation'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -132,22 +132,11 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
-			const declinedAccountCreation = useRecoilValue(declinedAccountCreationState)
-
-			const handleClick = (evt: any) => {
-				if (!declinedAccountCreation) {
-					return
-				}
-				setCreateAccountDialogState(CreateAccountDialogStates.Reminder)
-				evt.preventDefault()
-			}
-			
 			return (
         <Stack direction="row" spacing={1}>
-          <Link href={`/assets/${params.row.id}/asset`} onClick={handleClick}>
+          <Link href={`/assets/${params.row.id}/asset`} onClick={handleLinkNeedingAccountClick}>
             <ChangePositionButton>
-              <Image src={ChangePositionIcon} onClick={handleClick} />
+              <Image src={ChangePositionIcon} onClick={handleLinkNeedingAccountClick} />
             </ChangePositionButton>
           </Link>
           <Link href={`/assets/${params.row.id}/asset?ltab=1`}>

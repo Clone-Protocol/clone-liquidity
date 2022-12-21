@@ -26,9 +26,9 @@ import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
 import { createAccount } from '~/features/Account/Account'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import useAccountCreationEnforcer from '~/hooks/useAccountCreationEnforcer'
 import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
 import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
+import { handleLinkNeedingAccountClick } from '~/utils/navigation'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -88,36 +88,35 @@ const RightMenu = () => {
 	const { setOpen } = useWalletDialog()
 	const { getInceptApp } = useIncept()
 	const [mintUsdi, setMintUsdi] = useState(false)
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
-  const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
-  const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
+	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
+	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
 
-  // on initialize, set to open account creation 
-  // confirmation dialog if wallet is connected and account doesn't exist
-  //useAccountCreationEnforcer()
-  useInitialized()
+	// on initialize, set to open account creation 
+	// confirmation dialog if wallet is connected and account doesn't exist
+	useInitialized()
 
-  // create the account when the user clicks the create account button 
-  // on the account setup dialog
-  const handleCreateAccount = () => {
-  	createAccount()
-  		.then(() => {
-  			setDeclinedAccountCreation(false)
-  		})
-  		.catch((err) => {
-  			enqueueSnackbar(err)
-  			setDeclinedAccountCreation(true)
-  		})
-  		.finally(() => {
-  			setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
-  		})
-  }
-
-  const closeAccountSetupDialog = () => {
-  	setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
-  	setDeclinedAccountCreation(true)
-  }
+	// create the account when the user clicks the create account button 
+	// on the account setup dialog
+	const handleCreateAccount = () => {
+		createAccount()
+			.then(() => {
+				setDeclinedAccountCreation(false)
+			})
+			.catch((err) => {
+				enqueueSnackbar(err)
+				setDeclinedAccountCreation(true)
+			})
+			.finally(() => {
+				setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
+			})
+	}
+	
+	const closeAccountSetupDialog = () => {
+		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
+		setDeclinedAccountCreation(true)
+	}
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -146,12 +145,9 @@ const RightMenu = () => {
 		userMintUsdi()
 	}, [mintUsdi, connected, publicKey])
 
-	const handleGetUsdiClick = () => {	
-		if (declinedAccountCreation) {
-			setCreateAccountDialogStatus(CreateAccountDialogStates.Reminder)
-		} else {
-			setMintUsdi(true)
-		}
+	const handleGetUsdiClick = (evt: any) => {	
+		handleLinkNeedingAccountClick(evt)
+		setMintUsdi(true)
 	}
 
 	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -178,7 +174,7 @@ const RightMenu = () => {
 	const handleChangeWallet = () => {
 		disconnect()
 		setShowWalletSelectPopup(false)
-		setOpen(true)
+		setOpen(true) 
 	}
 
 	const handleDisconnect = () => {
@@ -194,43 +190,43 @@ const RightMenu = () => {
 				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
-      	<DataLoadingIndicator />
+				<DataLoadingIndicator />
 				<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
 					Get USDi
 				</HeaderButton>
-      	<Box>
-        	<ConnectButton
-          	onClick={handleWalletClick}
-          	variant="outlined"
-          	sx={{ width: '163px' }}
-          	disabled={connecting}
-          	startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-          	{!connected ? (
-            	<>Connect Wallet</>
-          	) : (
-            	<>
-              	<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
-              	{publicKey ? (
-                	<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
-                  	{shortenAddress(publicKey.toString())}
-                	</Box>
-              	) : (
-                	<></>
-              	)}
-            	</>
-          	)}
-        	</ConnectButton>
-        	{ showWalletSelectPopup && <WalletSelectBox spacing={2}>
-          	<CopyToClipboard text={publicKey!!.toString()}
-            	onCopy={() => enqueueSnackbar('Copied address')}>
-            	<PopupButton>Copy Address</PopupButton>
-          	</CopyToClipboard>
-          	<PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
-          	<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
-        	</WalletSelectBox> }
-      	</Box>
+				<Box>
+					<ConnectButton
+						onClick={handleWalletClick}
+						variant="outlined"
+						sx={{ width: '163px' }}
+						disabled={connecting}
+						startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+						{!connected ? (
+							<>Connect Wallet</>
+						) : (
+							<>
+								<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
+								{publicKey ? (
+									<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
+										{shortenAddress(publicKey.toString())}
+									</Box>
+								) : (
+									<></>
+								)}
+							</>
+						)}
+					</ConnectButton>
+					{showWalletSelectPopup && <WalletSelectBox spacing={2}>
+						<CopyToClipboard text={publicKey!!.toString()}
+							onCopy={() => enqueueSnackbar('Copied address')}>
+							<PopupButton>Copy Address</PopupButton>
+						</CopyToClipboard>
+						<PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
+						<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
+					</WalletSelectBox>}
+				</Box>
 				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
-      	<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
+				<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 			</Box>
 		</>
 	)

@@ -8,6 +8,7 @@ import menuBorrowIcon from 'public/images/menu/borrow-icon.svg'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { Links } from '~/data/links'
+import { handleLinkNeedingAccountClick } from '~/utils/navigation'
 
 const Drawer: React.FC = () => {
 	const router = useRouter()
@@ -16,7 +17,7 @@ const Drawer: React.FC = () => {
 		<StyledDrawer variant="permanent" open={true}>
       <Fade in timeout={1500}>
         <List component="nav">
-          <Link href={Links["overview"].path}>
+          <Link href={Links["overview"].path} onClick={handleLinkNeedingAccountClick}>
             <StyledListItemButton className={Links["overview"].classNameFunc(router)}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuOverviewIcon} alt="overview" />
@@ -25,7 +26,7 @@ const Drawer: React.FC = () => {
             </StyledListItemButton>
           </Link>
           <Link href={Links["liquidity"].path}>
-            <StyledListItemButton className={Links["liquidity"].classNameFunc(router)}>
+            <StyledListItemButton className={Links["liquidity"].classNameFunc(router)} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuLiquidityIcon} alt="portfolio" />
               </ListItemIcon>
@@ -33,7 +34,7 @@ const Drawer: React.FC = () => {
             </StyledListItemButton>
           </Link>
           <Link href={Links["borrow"].path}>
-            <StyledListItemButton className={Links["borrow"].classNameFunc(router)}>
+            <StyledListItemButton className={Links["borrow"].classNameFunc(router)} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuBorrowIcon} alt="markets" />
               </ListItemIcon>
