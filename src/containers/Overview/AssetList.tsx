@@ -1,6 +1,7 @@
 import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useState, useCallback } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -15,8 +16,7 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
-import { useGlobalState } from '~/hooks/useGlobalState'
-import { ConfirmModalState } from '~/utils/constants'
+import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -132,16 +132,14 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			const { globalState, setGlobalState } = useGlobalState()
+			const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
+			const declinedAccountCreation = useRecoilValue(declinedAccountCreationState)
 
 			const handleClick = (evt: any) => {
-				if (!globalState.declinedAccountCreation) {
+				if (!declinedAccountCreation) {
 					return
 				}
-				setGlobalState({
-					...globalState,
-					createAccountModalState: ConfirmModalState.Reminder
-				})
+				setCreateAccountDialogState(CreateAccountDialogStates.Reminder)
 				evt.preventDefault()
 			}
 			

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useRecoilState } from 'recoil'
 import { useRouter } from 'next/router' 
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
@@ -23,13 +24,11 @@ import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
-import { createAccount } from '~/utils/account'
-import { ConfirmModalState } from '~/utils/constants'
-import { useGlobalState } from '~/hooks/useGlobalState'
+import { createAccount } from '~/features/Account/Account'
+import { CreateAccountDialogStates } from '~/utils/constants'
 import useAccountCreationEnforcer from '~/hooks/useAccountCreationEnforcer'
-
-import AccountSetupDialog from '~/components/Account/AccountSetupDialog'
-import AccountSetupReminderDialog from '~/components/Account/AccountSetupReminderDialog'
+import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
+import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -91,11 +90,12 @@ const RightMenu = () => {
 	const [mintUsdi, setMintUsdi] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
-  const { globalState, setGlobalState } = useGlobalState()
+  const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
+  const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
 
   // on initialize, set to open account creation 
   // confirmation dialog if wallet is connected and account doesn't exist
-  useAccountCreationEnforcer()
+  //useAccountCreationEnforcer()
   useInitialized()
 
   // create the account when the user clicks the create account button 
@@ -103,28 +103,20 @@ const RightMenu = () => {
   const handleCreateAccount = () => {
   	createAccount()
   		.then(() => {
-  			setGlobalState({
-  				...globalState,
-  				createAccountModalState: ConfirmModalState.Closed,
-  				declinedAccountCreation: false
-  			})
+  			setDeclinedAccountCreation(false)
   		})
   		.catch((err) => {
   			enqueueSnackbar(err)
-  			setGlobalState({
-  				...globalState,
-  				createAccountModalState: ConfirmModalState.Closed,
-  				declinedAccountCreation: true
-  			})
+  			setDeclinedAccountCreation(true)
+  		})
+  		.finally(() => {
+  			setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
   		})
   }
 
   const closeAccountSetupDialog = () => {
-  	setGlobalState({
-  		...globalState,
-  		createAccountModalState: ConfirmModalState.Closed,
-  		declinedAccountCreation: true
-  	})
+  	setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
+  	setDeclinedAccountCreation(true)
   }
 
 	useEffect(() => {
@@ -155,13 +147,8 @@ const RightMenu = () => {
 	}, [mintUsdi, connected, publicKey])
 
 	const handleGetUsdiClick = () => {	
-		const declinedAccountCreation = globalState.declinedAccountCreation
-
 		if (declinedAccountCreation) {
-			setGlobalState({
-				...globalState,
-				createAccountModalState: ConfirmModalState.Reminder
-			})
+			setCreateAccountDialogStatus(CreateAccountDialogStates.Reminder)
 		} else {
 			setMintUsdi(true)
 		}
@@ -201,13 +188,8 @@ const RightMenu = () => {
 
 	return (
 		<>
-			<AccountSetupDialog 
-				open={globalState.createAccountModalState === ConfirmModalState.Initial}
-				handleCreateAccount={handleCreateAccount}
-				handleClose={closeAccountSetupDialog} />
-
-			<AccountSetupReminderDialog
-				open={globalState.createAccountModalState === ConfirmModalState.Reminder}
+			<CreateAccountSetupDialog 
+				state={createAccountDialogStatus}
 				handleCreateAccount={handleCreateAccount}
 				handleClose={closeAccountSetupDialog} />
 

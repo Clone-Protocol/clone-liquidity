@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
+import { useSetRecoilState } from 'recoil'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import useLocalStorage from '~/hooks/useLocalStorage'
-import { useGlobalState } from '~/hooks/useGlobalState'
-import { ConfirmModalState } from '~/utils/constants'
+import { CreateAccountDialogStates } from '~/utils/constants'
+import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
 
 
 export default function useInitialized() {
@@ -11,7 +12,7 @@ export default function useInitialized() {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
 	const [localAccount, setLocalAccount] = useLocalStorage("currentAccount", '')
-	const { globalState, setGlobalState } = useGlobalState()
+	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 
 	useEffect(() => {
 		async function getAccount() {			
@@ -34,10 +35,7 @@ export default function useInitialized() {
 				} catch (error) {
 					console.log("error:", error);
 					console.log('err', 'Account does not exist')
-					setGlobalState({
-						...globalState,
-						createAccountModalState: ConfirmModalState.Initial
-					})
+					setCreateAccountDialogState(CreateAccountDialogStates.Initial)
 				}
 			}
 		}

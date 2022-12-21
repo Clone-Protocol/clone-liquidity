@@ -1,16 +1,18 @@
 import { useEffect } from 'react'
-import { useGlobalState } from '~/hooks/useGlobalState'
+import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { Links } from '~/data/links'
 import { useRouter } from 'next/router'
-import { ConfirmModalState } from '~/utils/constants'
+import { CreateAccountDialogStates } from '~/utils/constants'
+import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
 
 export default function useAccountCreationEnforcer() {
-	const { globalState, setGlobalState } = useGlobalState()
+	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
+	const declinedAccountCreation = useRecoilValue(declinedAccountCreationState)
 	const router = useRouter()
 
 	useEffect(() => {
 		const handleRouteChange = (path: string) => {
-			if (!globalState.declinedAccountCreation) {
+			if (!declinedAccountCreation) {
 				return
 			}
 
@@ -21,10 +23,7 @@ export default function useAccountCreationEnforcer() {
 			} else {
 				for (let linkItem in Links) {
 					if (path === Links[linkItem].path) {
-						setGlobalState({
-							...globalState,
-							createAccountModalState: ConfirmModalState.Reminder
-						})
+						setCreateAccountDialogState(CreateAccountDialogStates.Reminder)
 						pathNeedsAccount = true
 					}
 				}

@@ -45,11 +45,6 @@ const ContentContainer = styled('div')`
 	background-color: #151618;
 `
 
-const ContentText = styled('Box')`
-	font-size: 14px;
-	color: #989898;
-`
-
 const Emph = styled('span')`
 	color: #ffb800
 `
