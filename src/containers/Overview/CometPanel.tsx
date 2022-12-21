@@ -1,4 +1,4 @@
-import { Box, Stack, Button, Divider, FormHelperText, ControllerRenderProps } from '@mui/material'
+import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
@@ -19,11 +19,10 @@ import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.qu
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import throttle from 'lodash.throttle'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
@@ -75,6 +74,8 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   
   useEffect(() => {
     async function fetch() {
+      if (!tokenData) return
+
       await trigger()
       
       const program = getInceptApp()
@@ -111,7 +112,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       }
 
       const chosenHealthScore = Math.max(0, healthScore)
-
       setHealthScore(isNaN(chosenHealthScore) ? 0 : chosenHealthScore)
       setMaxMintable(maxUsdiPosition)
       setMintableAmount(maxUsdiPosition)
@@ -125,37 +125,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       setMintableAmount(maxMintable)
 	  }
 	}, [maxMintable, cometData])
-
-  // @deprecated throttling with call contract : (1sec)
-  const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
-    console.log('calculateUSDiAmount', lowerLimit)
-    const program = getInceptApp()
-    //await program.loadManager()
-
-    const {
-      usdiBorrowed
-    } = program.calculateNewSinglePoolCometFromRange(
-      assetIndex,
-      collAmount,
-      lowerLimit,
-      true,
-      tokenData
-    )
-    setMintAmount(usdiBorrowed)
-    setMintRatio(usdiBorrowed * 100 / maxMintable)
-  }, 1000), [mintAmount])
-	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
-		const newData = {
-			...cometData,
-			isTight,
-      lowerLimit: Math.min(lowerLimit, assetData.centerPrice),
-      upperLimit: Math.max(upperLimit, assetData.centerPrice)
-		}
-		setCometData(newData)
-	}, [cometData])
-  const handleChangeCommittedRange = (lowerLimit: number, upperLimit: number) => {
-    calculateUSDiAmountFromRange(lowerLimit)
-  }
 
 	const onComet = async () => {
     setLoading(true)
@@ -288,7 +257,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               render={({ field }) => (
                 <PairInput
                   tickerIcon={'/images/assets/USDi.png'}
-                  tickerName="USDi Coin"
                   tickerSymbol="USDi"
                   value={isNaN(collAmount) ? "" : collAmount}
                   headerTitle="Balance"
@@ -332,7 +300,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={'/images/assets/USDi.png'}
-                    tickerName="USDi Coin"
                     tickerSymbol="USDi"
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     headerTitle="Max amount mintable"
@@ -365,8 +332,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               <ConcentrationRange
                 assetData={assetData}
                 cometData={cometData}
-                onChange={handleChangeConcentRange}
-                onChangeCommitted={handleChangeCommittedRange}
                 max={assetData.maxRange}
                 defaultLower={(assetData.price / 2)}
                 defaultUpper={((assetData.price * 3) / 2)}

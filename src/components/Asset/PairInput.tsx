@@ -7,7 +7,7 @@ interface Props {
 	value?: number | string
 	headerTitle?: string
 	headerValue?: number
-	onChange?: (e: React.FormEvent<HTMLInputElement>) => void
+	onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
 }
 
