@@ -72,7 +72,6 @@ export const callRecenter = async ({ program, userPubKey, data }: CallRecenterPr
 
 	await program.loadManager()
 
-	// @TODO: Call to recenterMultiPoolComet
 	await program.recenterComet(data.positionIndex, 0, false)
 
 	return {

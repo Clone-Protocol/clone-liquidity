@@ -112,15 +112,4 @@ const StyledBox = styled(Box)`
   background: rgba(21, 22, 24, 0.75);
 `
 
-const TxtPriceRate = styled('div')`
-  font-size: 10px;
-  font-weight: 500;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: left;
-  color: #59c23a;
-`
-
 export default withSuspense(ManageComet, <LoadingProgress />)

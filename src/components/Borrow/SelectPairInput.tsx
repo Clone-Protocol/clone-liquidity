@@ -11,8 +11,8 @@ interface Props {
 	assets: AssetType[]
 	selAssetId: number
 	value?: number
-	onChangeAsset?: any
-	onChangeAmount?: any
+	onChangeAsset: (value: string | number) => void
+	onChangeAmount?: React.ChangeEventHandler
 }
 
 const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeAsset, onChangeAmount }) => {

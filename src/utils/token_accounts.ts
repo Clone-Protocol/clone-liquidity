@@ -1,12 +1,10 @@
 import {
     TOKEN_PROGRAM_ID,
-    ASSOCIATED_TOKEN_PROGRAM_ID,
     getAccount,
     getAssociatedTokenAddress,
     TokenAccountNotFoundError,
-    createAssociatedTokenAccountInstruction
   } from "@solana/spl-token";
-import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { Incept } from "incept-protocol-sdk/sdk/src/incept";
 
 export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connection: Connection): Promise<PublicKey | undefined> => {
@@ -42,22 +40,4 @@ export const getUSDiAccount = async (incept: Incept): Promise<PublicKey | undefi
     incept.connection
   );
   return usdiTokenAccount!;
-}
-
-export const createTokenAccountInstruction = async (mint: PublicKey, incept: Incept): Promise<TransactionInstruction> => {
-  const associatedToken = await getAssociatedTokenAddress(
-    mint,
-    incept.provider.publicKey!,
-    false,
-    TOKEN_PROGRAM_ID,
-    ASSOCIATED_TOKEN_PROGRAM_ID
-  );
-  return createAssociatedTokenAccountInstruction(
-    incept.provider.publicKey!,
-    associatedToken,
-    incept.provider.publicKey!,
-    mint,
-    TOKEN_PROGRAM_ID,
-    ASSOCIATED_TOKEN_PROGRAM_ID
-  );
 }

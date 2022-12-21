@@ -12,7 +12,7 @@ import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 
-const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: any }) => {
+const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -26,20 +26,17 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
   const [poolIndex, setPoolIndex] = useState(0)
 
   const handleChoosePosition = (assetId: number) => {
-    console.log('assetId', assetId)
     setSelectAssetId(assetId)
     setOpenNewLiquidity(true)
   }
 
   const handleChooseEditPosition = (positionIndex: number) => {
-    console.log('positionIndex', positionIndex)
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenEditLiquidity(true)
   }
 
   const handleChooseRecenter = (positionIndex: number) => {
-    console.log('positionIndex', positionIndex)
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenRecenter(true)

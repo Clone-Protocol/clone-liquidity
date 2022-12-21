@@ -1,28 +1,10 @@
 import { useEffect, useRef, useReducer } from 'react';
-import { AssetList as AssetListType, fetchAssets } from '~/features/Overview/Assets.query'
+import { fetchAssets } from '~/features/Overview/Assets.query'
+import { useDataLoading } from '~/hooks/useDataLoading'
 
-
-export const getFetch = async (program: any, publicKey: any, filter: any, cache: any, tag: string) => {
-  console.log('cache', cache.current[tag])
-  if (cache.current[tag]) {
-    const data = cache.current[tag]
-    return data
-  } else {
-    const data = await fetchAssets({
-      program,
-      userPubKey: publicKey,
-      filter,
-    })
-    console.log('dd', data)
-    if (data.length > 0) {
-      cache.current[tag] = data
-    }
-    return data
-  }
-}
-
-export const useFetch = (program: any, publicKey: any, filter: any, tag: string) => {
+export const useFetch = (program: any, tag: string) => {
 	const cache = useRef<any>({})
+	const { setStartTimer } = useDataLoading()
 
 	const initialState = {
 		status: 'idle',
@@ -55,8 +37,7 @@ export const useFetch = (program: any, publicKey: any, filter: any, tag: string)
 				try {
 					const data = await fetchAssets({
             program,
-            userPubKey: publicKey,
-            filter,
+						setStartTimer
           })
           if (data.length > 0) {
             cache.current[tag] = data

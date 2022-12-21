@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: any }) => {
+const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -138,7 +138,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               render={({ field }) => (
                 <PairInput
                   tickerIcon={assetData.tickerIcon}
-                  tickerName={assetData.tickerName}
                   tickerSymbol={assetData.tickerSymbol}
                   value={field.value}
                   headerTitle="Balance"
@@ -178,7 +177,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               render={({ field }) => (
                 <PairInput
                   tickerIcon={'/images/assets/USDi.png'}
-                  tickerName="USDi Coin"
                   tickerSymbol="USDi"
                   value={field.value}
                   headerTitle="Balance"

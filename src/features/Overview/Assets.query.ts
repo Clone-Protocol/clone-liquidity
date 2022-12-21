@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
@@ -10,8 +10,8 @@ import { getiAssetInfos} from '~/utils/assets';
 export const fetchAssets = async ({ program, setStartTimer }: { program: Incept, setStartTimer: (start: boolean) => void}) => {
 	console.log('fetchAssets')
 	// start timer in data-loading-indicator
-  	setStartTimer(false);
-  	setStartTimer(true);
+	setStartTimer(false);
+	setStartTimer(true);
     
 	await program.loadManager()
 	const tokenData = await program.getTokenData();
@@ -33,26 +33,13 @@ export const fetchAssets = async ({ program, setStartTimer }: { program: Incept,
 			baselineAPY: 0, //coming soon
 		})
 	}
-
-  // const result: AssetList[] = [
-	//   {
-	//     id: 1,
-	//     tickerName: 'iSolana',
-	//     tickerSymbol: 'iSOL',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     price: 160.51,
-	//     liquidity: 2551,
-	//     volume24h: 15898343,
-	//     baselineAPY: 28.9
-	//   },
-	// ]
 	return result
 }
 
 interface GetAssetsProps {
 	filter: FilterType
   searchTerm: string
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

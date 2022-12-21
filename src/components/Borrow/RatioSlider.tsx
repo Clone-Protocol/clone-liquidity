@@ -1,12 +1,11 @@
 import { Box, Slider, styled } from '@mui/material'
-import { relative } from 'path'
 
 interface Props {
 	min?: number
 	value: number
   hideValueBox?: boolean
 	showChangeRatio?: boolean
-	onChange?: (event: Event, newValue: number | number[]) => void
+	onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
@@ -48,7 +47,6 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, onChange }) => {
 	const max = min + 100 + 50
-	const normValue = (value !== max) ? 180 - (value % 150) : 30
 
 	const valueLabelFormat = (val: number) => {
 		if (value > max) {
@@ -68,7 +66,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
 			{showChangeRatio &&
 				<Box display='flex'>
-					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event: any) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
 					<div style={{ marginLeft: '-24px', marginRight: '10px', marginTop: '16px' }}>%</div>
 				</Box>
 			}
@@ -76,7 +74,6 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				<StyledSlider
 					sx={{
 						'& .MuiSlider-track': {
-              // background: `linear-gradient(to right, #f00 -22%, #809cff ${normValue}%)`
 							background: `linear-gradient(to right, #f00 -160px, #809cff 270px)`
             }
 					}}
@@ -141,14 +138,6 @@ const FlagBox = styled(Box)`
   line-height: 3px;
 	text-align: center;
   margin-top: 0px;
-  // &::after {
-  //   position: absolute;
-  //   width: 100px;
-  //   height: 16px;
-  //   top: 10px;
-  //   left: 30px;
-  //   background: #fff;
-  // }
 `
 
 const Stick = styled('div')`

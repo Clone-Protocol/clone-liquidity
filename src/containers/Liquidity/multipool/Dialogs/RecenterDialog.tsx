@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, styled, Button, Stack, Dialog, DialogContent } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, DialogContent, ModalProps } from '@mui/material'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterInfoQuery } from '~/features/MyLiquidity/multipool/RecenterInfo.query'
 import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
@@ -19,8 +19,8 @@ const RecenterDialog = ({
 	positionIndex: number
 	poolIndex: number
 	open: boolean
-	onRefetchData: any
-	handleClose: any
+	onRefetchData: () => void
+	handleClose: () => void
 }) => {
 	const { publicKey } = useWallet()
 	const { enqueueSnackbar } = useSnackbar()

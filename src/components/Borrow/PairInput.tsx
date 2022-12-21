@@ -3,19 +3,17 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerName: string | null
 	tickerSymbol: string | null
 	value?: number
 	balance?: number
 	balanceDisabled?: boolean
 	disabled?: boolean
-	onChange?: any
-  onMax?: any
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onMax?: (value: number) => void
 }
 
 const PairInput: React.FC<Props> = ({
 	tickerIcon,
-	tickerName,
 	tickerSymbol,
 	value,
 	balance,
@@ -27,7 +25,7 @@ const PairInput: React.FC<Props> = ({
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '10px' }}>Balance: <span style={{ color:'#90e4fe', cursor: 'pointer' }} onClick={() => onMax(balance)}>{balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span></Box> : <></>}
+				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '10px' }}>Balance: <span style={{ color:'#90e4fe', cursor: 'pointer' }} onClick={() => onMax && onMax(balance!)}>{balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span></Box> : <></>}
 			</Stack>
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">

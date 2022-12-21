@@ -6,27 +6,18 @@ import * as anchor from "@project-serum/anchor"
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
-import { initial } from 'lodash';
 
 export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
-  	const { index, amount, percent } = data
+  	const { index, percent } = data
 
 	let fractionClaimable = percent / 100;
 
 	let liquidityPosition = await program.getLiquidityPosition(index)
 
-	let pool = await program.getPool(liquidityPosition.poolIndex)
-
-	// let liquidityTokenSupplyBeforeComet = (
-	// 	await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed")
-	// ).value!.uiAmount
-
-	// let balances = await program.getPoolBalances(liquidityPosition.poolIndex)
-
-	let liquidityTokenAmount = getMantissa(liquidityPosition.liquidityTokenValue) * fractionClaimable;//((amount / 2) * liquidityTokenSupplyBeforeComet!) / balances[1]
+	let liquidityTokenAmount = getMantissa(liquidityPosition.liquidityTokenValue) * fractionClaimable;
 
 	let iassetMint = (await program.getAssetInfo(liquidityPosition.poolIndex)).iassetMint
 	let liquidityTokenMint = (await program.getPool(liquidityPosition.poolIndex)).liquidityTokenMint
@@ -236,15 +227,6 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 	);
 
 	await program.provider.send!(tx, signers);
-
-	// await program.initializeLiquidityPosition(
-	// 	new anchor.BN(iassetAmount * 10 ** 8),
-	// 	collateralAssociatedTokenAccount!,
-	// 	iassetAssociatedTokenAccount!,
-	// 	liquidityAssociatedTokenAccount!,
-	// 	iassetIndex,
-	// 	[]
-	// )
 
 	return {
     result: true

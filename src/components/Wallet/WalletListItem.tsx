@@ -1,4 +1,4 @@
-import { Button, ListItem, ListItemProps, Box } from '@mui/material'
+import { Button, ListItem, ListItemProps } from '@mui/material'
 import { Wallet } from '@solana/wallet-adapter-react'
 import React, { FC, MouseEventHandler } from 'react'
 import { WalletIcon } from './WalletIcon'

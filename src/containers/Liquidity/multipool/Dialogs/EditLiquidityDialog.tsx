@@ -13,7 +13,7 @@ import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiqui
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
  
-const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }:  { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: any, handleClose: any }) => {
+const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }:  { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()

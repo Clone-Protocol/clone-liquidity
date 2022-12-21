@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
@@ -31,23 +31,6 @@ export const fetchInfos = async ({
 	let totalLiquidity = 0
 	let collaterals: Collateral[] = [];
 	let positions: LiquidityPosition[] = [];
-	// let collaterals: Collateral[] = [
-	//   {
-	// 	tickerIcon : '/images/assets/USDi.png',
-	// 	tickerSymbol : 'USDi',
-	// 	tickerName : 'USDi',
-	// 	collAmount,
-	// 	collAmountDollarPrice
-	//   }
-	// ]
-	// let positions: LiquidityPosition[] = [
-	//   {
-	// 	tickerIcon: '/images/assets/solana.png',
-	// 	tickerName: 'iSOL',
-	// 	tickerSymbol: 'iSOL',
-	// 	liquidityDollarPrice: 1005.04
-	//   }
-	// ]
 
 	const [cometResult, tokenDataResult] = await Promise.allSettled([
 		program.getComet(), program.getTokenData()
@@ -69,7 +52,7 @@ export const fetchInfos = async ({
 		}
 	}
 
-	let result = {
+	const result = {
     healthScore,
     totalCollValue,
     totalLiquidity,
@@ -82,7 +65,7 @@ export const fetchInfos = async ({
 
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: QueryObserverOptions['refetchOnMount']
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 	enabled?: boolean
 }
 

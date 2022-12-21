@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled } from '@mui/material'
-import { GridColDef, GridRenderCellParams, GridRowParams, MuiEvent, GridCallbackDetails } from '@mui/x-data-grid'
+import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
 import { Grid } from '~/components/Liquidity/multipool/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
@@ -19,7 +19,7 @@ const GridCollateral: React.FC<Props> = ({ onChoose }) => {
     enabled: publicKey != null
 	})
 
-	const handleChoose = (params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
+	const handleChoose = (params: GridRowParams) => {
 		if (params.row.isEnabled) {
 			const id = params.row.id
 		  onChoose && onChoose(id)

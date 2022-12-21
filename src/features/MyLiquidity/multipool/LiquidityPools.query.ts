@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
@@ -42,24 +42,12 @@ export const fetchPools = async ({
 			isEnabled: true,
 		})
 	}
-
-	// const result: PoolList[] = [
-	// 	{
-	// 		id: 0,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		totalLiquidity: 10582845,
-	// 		volume24H: 10582845,
-	// 		averageAPY: 20.355,
-	// 		isEnabled: false,
-	// 	},
-	// ]
 	return result
 }
 
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: QueryObserverOptions['refetchOnMount']
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 	enabled?: boolean
 }
 

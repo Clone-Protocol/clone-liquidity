@@ -9,8 +9,8 @@ import InfoTooltip from '~/components/Common/InfoTooltip';
 interface Props {
 	assetData: PI
 	cometDetail: CometDetail
-  onShowEditForm: any
-  onRecenter: any
+  onShowEditForm: () => void
+  onRecenter: () => void
 }
 
 const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm, onRecenter }) => {

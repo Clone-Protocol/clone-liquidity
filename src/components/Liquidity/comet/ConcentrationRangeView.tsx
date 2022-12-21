@@ -1,8 +1,6 @@
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
-// import { AssetData } from '~/features/Overview/Asset.query'
-import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
   centerPrice: number

@@ -1,20 +1,11 @@
-import React, { useState } from 'react'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import React from 'react'
 import { Box, styled, Dialog, DialogContent} from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridCollateral from './GridCollateral'
 
-const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  { open: any, handleChooseCollateral: (id: number) => void, handleClose: any }) => {
-  const [loading, setLoading] = useState(false)
-  
+const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }:  { open: boolean, handleChooseCollateral: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
-      {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
-
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={360}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '10px 15px' }}>
           <Box sx={{ padding: '8px 15px', color: '#fff', minWidth: '350px' }}>

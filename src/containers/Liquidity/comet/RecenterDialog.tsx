@@ -24,7 +24,7 @@ interface CometInfo {
   upperLimit: number
 }
 
-const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: string, centerPrice: number, open: any, handleClose: any }) => {
+const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: string, centerPrice: number, open: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
@@ -52,7 +52,6 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
 
   useEffect(() => {
     if (usdiBalance && cometData) {
-      // console.log('d', usdiBalance.balanceVal +"/"+ Number(cometData.usdiCost) +"/"+ (usdiBalance.balanceVal < cometData.usdiCost) )
       setIsLackBalance(usdiBalance.balanceVal <= cometData.usdiCost)
     }
   }, [usdiBalance, cometData])

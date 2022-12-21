@@ -3,18 +3,16 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerName: string | null
 	tickerSymbol: string | null
 	value?: number | string
 	headerTitle?: string
 	headerValue?: number
-	onChange?: any
-  onMax?: any
+	onChange?: (e: React.FormEvent<HTMLInputElement>) => void
+  onMax?: (value: number) => void
 }
 
 const PairInput: React.FC<Props> = ({
 	tickerIcon,
-	tickerName,
 	tickerSymbol,
 	value,
 	headerTitle,
@@ -27,7 +25,7 @@ const PairInput: React.FC<Props> = ({
 			{headerTitle ? (
 				<Stack direction="row" justifyContent="flex-end">
 					<Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '2px', color: '#949494', marginRight: '15px' }}>
-						{headerTitle}: {headerValue || headerValue == 0 ? (<span  style={{color: '#90e4fe', cursor: 'pointer'}} onClick={() => onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</span>) : '_'}
+						{headerTitle}: {headerValue || headerValue == 0 ? (<span  style={{color: '#90e4fe', cursor: 'pointer'}} onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</span>) : '_'}
 					</Box>
 				</Stack>
 			) : (

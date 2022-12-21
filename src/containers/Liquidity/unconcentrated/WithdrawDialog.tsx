@@ -8,10 +8,9 @@ import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPositio
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 
-const WithdrawDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
+const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open: boolean, handleClose: () => void }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)

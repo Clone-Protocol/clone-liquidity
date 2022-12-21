@@ -1,4 +1,4 @@
-import { FormControl, styled, Stack, Box, Button } from '@mui/material'
+import { styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
@@ -8,12 +8,10 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	usdValue?: number
-	handleOpenEdit?: any
+	handleOpenEdit: (type: number) => void
 }
 
 const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, usdValue, handleOpenEdit }) => {
-	
-	
 	return (
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">

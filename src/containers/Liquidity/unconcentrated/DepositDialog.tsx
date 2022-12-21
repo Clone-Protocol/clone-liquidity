@@ -13,7 +13,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 
-const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: any, handleClose: any }) => {
+const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: boolean, handleClose: () => void }) => {
 	const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -108,7 +108,6 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={unconcentData.tickerIcon}
-                    tickerName={unconcentData.tickerName}
                     tickerSymbol={unconcentData.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     valueDollarPrice={field.value * unconcentData.price}
@@ -148,7 +147,6 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={'/images/assets/USDi.png'}
-                    tickerName="USDi Coin"
                     tickerSymbol="USDi"
                     value={parseFloat(field.value.toFixed(3))}
                     valueDollarPrice={field.value}

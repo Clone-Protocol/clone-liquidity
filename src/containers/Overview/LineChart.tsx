@@ -48,7 +48,7 @@ const LineChart: React.FC = () => {
 
   // const formattedData = useMemo(() => {
   //   if (chartData) {
-  //     return chartData.map((day: any) => {
+  //     return chartData.map((day: ChartElem) => {
   //       return {
   //         time: unixToDate(day.date),
   //         value: day.liquidity,

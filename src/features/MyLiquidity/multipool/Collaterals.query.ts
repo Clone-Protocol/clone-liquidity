@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
@@ -40,36 +40,12 @@ export const fetchCollaterals = async ({
 			isEnabled: true,
 		},
 	]
-
-	// const result: CollateralList[] = [
-	// 	{
-	// 		id: 0,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		balance: 20.355,
-	// 		isEnabled: false,
-	// 	},
-	// 	{
-	// 		id: 1,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		balance: 20.355,
-	// 		isEnabled: true,
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		tickerSymbol: 'iEUR',
-	// 		tickerIcon: '/images/assets/euro.png',
-	// 		balance: 20.355,
-	// 		isEnabled: true,
-	// 	},
-	// ]
 	return result
 }
 
 interface GetProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: QueryObserverOptions['refetchOnMount']
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 	enabled?: boolean
 }
 
