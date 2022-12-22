@@ -138,9 +138,12 @@ const RightMenu = () => {
 		userMintUsdi()
 	}, [mintUsdi, connected, publicKey])
 
-	const handleGetUsdiClick = (evt: any) => {	
-		handleLinkNeedingAccountClick(evt)
-		setMintUsdi(true)
+	const handleGetUsdiClick = (evt: any) => {
+		if (declinedAccountCreation) {
+			setCreateAccountDialogStatus(CreateAccountDialogStates.Reminder)
+		} else {
+			setMintUsdi(true)
+		}
 	}
 
 	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
