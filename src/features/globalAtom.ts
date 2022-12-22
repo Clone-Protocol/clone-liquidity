@@ -8,10 +8,15 @@ export const syncFetchNetworkState = atom({
 
 export const createAccountDialogState = atom({
   key: 'createAccountDialogState',
-  default: CreateAccountDialogStates.Closed,
+  default: CreateAccountDialogStates.Closed
 })
 
 export const declinedAccountCreationState = atom({
   key: 'declinedAccountCreationState',
-  default: false,
+  default: false
+})
+
+export const isCreatingAccountState = atom({
+  key: 'isCreatingAccountState',
+  default: false
 })

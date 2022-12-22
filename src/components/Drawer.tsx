@@ -8,10 +8,11 @@ import menuBorrowIcon from 'public/images/menu/borrow-icon.svg'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { Links } from '~/data/links'
-import { handleLinkNeedingAccountClick } from '~/utils/navigation'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const Drawer: React.FC = () => {
 	const router = useRouter()
+	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
 	return (
 		<StyledDrawer variant="permanent" open={true}>

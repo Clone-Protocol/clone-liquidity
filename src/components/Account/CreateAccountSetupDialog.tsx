@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useCallback } from 'react'
+import { useRecoilValue } from 'recoil'
 import { 
 	Button,
 	Box,  
@@ -8,6 +9,7 @@ import {
 	styled
 } from '@mui/material'
 import { CreateAccountDialogStates } from '~/utils/constants'
+import { isCreatingAccountState } from '~/features/globalAtom'
 
 interface CreateAccountSetupDialogProps {
 	state: CreateAccountDialogStates
@@ -20,67 +22,45 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	handleCreateAccount,
 	handleClose
 }) => {
-	const getInitialDialogHeader = (): React.ReactElement => {
-		return <HeaderText>This is the first time connecting this wallet with Incept Liquidity</HeaderText>
-	}
-
-	const getReminderDialogHeader = (): React.ReactElement => {
-		return <HeaderTextCentered>This is a new wallet, please open account first</HeaderTextCentered>
-	}
-
-	const getInitialDialogContent = (): React.ReactElement => {
-		return (
-			<ContentText>
-				Please note that the Solana network requires a higher than usual one-time
-				gas fee <Emph>(~0.3 SOL)</Emph> when opening an account for the most optimal experience.
-			</ContentText>
-		)
-	}
-
-	const getReminderDialogContent = (): React.ReactElement => {
-		return (
-			<ContentText>
-				In order to access the feature, please open an account with this wallet by 
-				clicking the button below. Please note that Solana Network requires a higher than usual
-				one-time gas fee <Emph>(~0.3 SOL)</Emph> when opening an account for the most optimal experience.
-			</ContentText>
-		)
-	}
-
-	const ContentBody = (): React.ReactElement => {
-		if (state == CreateAccountDialogStates.Initial) {
-			return getInitialDialogContent()
-		} else if (state == CreateAccountDialogStates.Reminder) {
-			return getReminderDialogContent()
-		}
-
-		return <></>
-	}
-
-	const Header = (): React.ReactElement => {
-		if (state == CreateAccountDialogStates.Initial) {
-			return getInitialDialogHeader()
-		} else if (state == CreateAccountDialogStates.Reminder) {
-			return getReminderDialogHeader()
-		}
-
-		return <></>
-	}
+	const isCreatingAccount = useRecoilValue(isCreatingAccountState)
 
 	const shouldDialogOpen = (): boolean => {
 		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
 	}
 	
+	const InitialDialogContent = useCallback(() => (
+		<>
+			<HeaderText>This is the first time connecting this wallet with Incept Liquidity</HeaderText>	
+			<DialogContent>
+				<ContentText>
+					Please note that the Solana network requires a higher than usual one-time
+					gas fee <Emph>(~0.3 SOL)</Emph> when opening an account for the most optimal experience.
+				</ContentText>
+			</DialogContent>
+		</>
+	), [])
+	
+	const ReminderDialogContent = useCallback(() => (
+		<>
+			<HeaderTextCentered>This is a new wallet, please open account first</HeaderTextCentered>
+			<DialogContent>
+				<ContentText>
+					In order to access the feature, please open an account with this wallet by 
+					clicking the button below. Please note that Solana Network requires a higher than usual
+					one-time gas fee <Emph>(~0.3 SOL)</Emph> when opening an account for the most optimal experience.
+				</ContentText>
+			</DialogContent>
+		</>
+	), [])
+	
 	return (
 		<Dialog open={shouldDialogOpen()} onClose={handleClose}>
 			<ContentContainer>
-				<Header />
-				<DialogContent>
-					<ContentBody />
-					<ButtonBox>
-						<SubmitButton onClick={handleCreateAccount}>Open Account</SubmitButton>
-					</ButtonBox>
-				</DialogContent>
+				{(state === CreateAccountDialogStates.Initial) && <InitialDialogContent />}
+				{(state === CreateAccountDialogStates.Reminder) && <ReminderDialogContent />}
+				<ButtonBox>
+					<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>Open Account</SubmitButton>
+				</ButtonBox>
 			</ContentContainer>
 		</Dialog>
 	)

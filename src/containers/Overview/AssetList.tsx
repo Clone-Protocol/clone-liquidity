@@ -16,7 +16,7 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
-import { handleLinkNeedingAccountClick } from '~/utils/navigation'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -132,6 +132,8 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+			
 			return (
         <Stack direction="row" spacing={1}>
           <Link href={`/assets/${params.row.id}/asset`} onClick={handleLinkNeedingAccountClick}>

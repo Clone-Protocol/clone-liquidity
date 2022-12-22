@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router' 
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
@@ -24,11 +24,11 @@ import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
-import { createAccount } from '~/features/Account/Account'
+import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
 import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
-import { handleLinkNeedingAccountClick } from '~/utils/navigation'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -92,25 +92,18 @@ const RightMenu = () => {
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
+	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
 
 	// on initialize, set to open account creation 
 	// confirmation dialog if wallet is connected and account doesn't exist
 	useInitialized()
+	useCreateAccount()
 
 	// create the account when the user clicks the create account button 
 	// on the account setup dialog
 	const handleCreateAccount = () => {
-		createAccount()
-			.then(() => {
-				setDeclinedAccountCreation(false)
-			})
-			.catch((err) => {
-				enqueueSnackbar(err)
-				setDeclinedAccountCreation(true)
-			})
-			.finally(() => {
-				setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
-			})
+		setIsCreatingAccount(true)
 	}
 	
 	const closeAccountSetupDialog = () => {
