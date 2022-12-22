@@ -1,15 +1,17 @@
+
 import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
 
-export const handleLinkNeedingAccountClick = (evt) => {
+
+export const useOnLinkNeedingAccountClick = () => {
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 	const declinedAccountCreation = useRecoilValue(declinedAccountCreationState)
-
-	if (!declinedAccountCreation) {
-		return
+	
+	return (evt: any) => {
+		if (declinedAccountCreation) {
+			evt.preventDefault()
+			setCreateAccountDialogState(CreateAccountDialogStates.Reminder)
+		}
 	}
-
-	setCreateAccountDialogState(CreateAccountDialogStates.Reminder)
-	evt.preventDefault()
-} 
+}
