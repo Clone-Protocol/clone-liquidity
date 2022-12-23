@@ -26,13 +26,13 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import throttle from 'lodash.throttle'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 
-const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
+const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  
+
   const [mintRatio, setMintRatio] = useState(50)
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
@@ -46,7 +46,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
   const [collAmount, setCollAmount] = useState(NaN) // NaN is used here so the input placeholder is displayed first
   const [mintAmount, setMintAmount] = useState(0.0)
-  
+
   const { handleSubmit, trigger, control, formState: { isDirty, errors } } = useForm({ mode: 'onChange' })
   const [mintableAmount, setMintableAmount] = useState(0.0)
 
@@ -72,21 +72,21 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     }
     fetch()
   }, [])
-  
+
   useEffect(() => {
     async function fetch() {
       if (isDirty) {
         await trigger()
       }
-      
+
       const program = getInceptApp()
 
       if (isNaN(collAmount)) {
         setMintAmount(0)
         return
       }
-      
-      console.log('calculateRange', collAmount +"/"+mintAmount)
+
+      console.log('calculateRange', collAmount + "/" + mintAmount)
 
       const {
         maxUsdiPosition,
@@ -118,15 +118,15 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     fetch()
   }, [collAmount, mintAmount])
 
-	const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
-	  if (typeof newValue === 'number') {
+  const handleChangeMintRatio = useCallback(async (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
       setMintRatio(newValue)
       setMintableAmount(maxMintable)
-	  }
-	}, [maxMintable, cometData])
+    }
+  }, [maxMintable, cometData])
 
   // @deprecated throttling with call contract : (1sec)
-  const calculateUSDiAmountFromRange = useCallback( throttle(async (lowerLimit: number) => {
+  const calculateUSDiAmountFromRange = useCallback(throttle(async (lowerLimit: number) => {
     console.log('calculateUSDiAmount', lowerLimit)
     const program = getInceptApp()
     //await program.loadManager()
@@ -143,20 +143,20 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     setMintAmount(usdiBorrowed)
     setMintRatio(usdiBorrowed * 100 / maxMintable)
   }, 1000), [mintAmount])
-	const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
-		const newData = {
-			...cometData,
-			isTight,
+  const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
+    const newData = {
+      ...cometData,
+      isTight,
       lowerLimit: Math.min(lowerLimit, assetData.centerPrice),
       upperLimit: Math.max(upperLimit, assetData.centerPrice)
-		}
-		setCometData(newData)
-	}, [cometData])
+    }
+    setCometData(newData)
+  }, [cometData])
   const handleChangeCommittedRange = (lowerLimit: number, upperLimit: number) => {
     calculateUSDiAmountFromRange(lowerLimit)
   }
 
-	const onComet = async () => {
+  const onComet = async () => {
     setLoading(true)
     await mutateAsyncComet(
       {
@@ -182,13 +182,13 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         }
       }
     )
-	}
+  }
 
   const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
     const collVal = parseFloat(event.currentTarget.value)
     field.onChange(collVal)
 
-    const amt = isNaN(collVal) ? ' ' : collVal 
+    const amt = isNaN(collVal) ? ' ' : collVal
     setCollAmount(amt)
   }
 
@@ -216,7 +216,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       return 'The mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
       return 'The mint amount cannot exceed the maximum mintable amout'
-    } 
+    }
 
     return false
   }
@@ -224,7 +224,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   const isFormValid = (): boolean => {
     if (errors.collAmount && errors.collAmount.message !== "") {
       return false
-    } 
+    }
 
     if (errors.mintAmount && errors.mintAmount.message !== "") {
       return false
@@ -234,17 +234,17 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
   }
 
   const isFormDirty = (): boolean => {
-    return !isDirty || !isFormValid() || (isNaN(collAmount) || collAmount <= 0) || (isNaN(mintAmount)  || mintAmount <= 0)
+    return !isDirty || !isFormValid() || (isNaN(collAmount) || collAmount <= 0) || (isNaN(mintAmount) || mintAmount <= 0)
   }
 
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
-    
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
+
       <Box>
         <PriceIndicatorBox
           tickerIcon={assetData.tickerIcon}
@@ -282,7 +282,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               name="collAmount"
               control={control}
               rules={{
-                validate(value){
+                validate(value) {
                   return validateCollAmount()
                 }
               }}
@@ -317,7 +317,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
             </SubTitle>
             <Box sx={{ marginTop: '15px' }}>
               <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px' }}>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
               </Box>
@@ -382,7 +382,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
           <Box>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></Box>
-            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{cometHealthScore.toFixed(2)}</span>/100</Box>
+            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</Box>
           </Box>
 
           <StyledDivider />
