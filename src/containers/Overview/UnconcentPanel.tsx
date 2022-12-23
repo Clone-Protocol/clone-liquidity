@@ -16,7 +16,7 @@ import { useLiquidityMutation } from '~/features/UnconcentratedLiquidity/Liquidi
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
 const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
@@ -74,19 +74,19 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
   	triggerValidation()
   }, [borrowFrom, borrowTo])
 
-  const onBorrowToInputChange = (currentValue: number, field: ControllerRenderProps) => {
+  const onBorrowToInputChange = (currentValue: number, field: ControllerRenderProps<FieldValues, "borrowTo">) => {
   	setBorrowTo(currentValue)
     field.onChange(currentValue)
     setBorrowFrom(currentValue / assetData.price)
   }
 
-  const onBorrowFromInputChange = (currentValue: number, field: ControllerRenderProps) => {
+  const onBorrowFromInputChange = (currentValue: number, field: ControllerRenderProps<FieldValues, "borrowFrom">) => {
     field.onChange(currentValue)
     setBorrowFrom(currentValue)
     setBorrowTo(currentValue * assetData.price)
   }
   
-  const validateBorrowFrom = (): string | void => {
+  const validateBorrowFrom = () => {
   	if (isNaN(borrowFrom)) {
   		clearErrors('borrowFrom')
   		return 
@@ -99,7 +99,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
   }
 
 
-  const validateBorrowTo = (): string | void => {
+  const validateBorrowTo = () => {
     if (!isDirty) {
       clearErrors('borrowTo')
       return
@@ -112,18 +112,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
     }
 
     clearErrors('borrowTo')
-  }
-
-  const isFormValid = (): boolean => {
-    if (errors.borrowTo && errors.borrowTo.message !== "") {
-      return false
-    }
-
-    if (errors.borrowFrom && errors.borrowFrom.message !== "") {
-      return false
-    }
-
-    return true
   }
   
   const formHasErrors = (): boolean => {
@@ -205,9 +193,8 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
                   value={isNaN(borrowFrom) ? "" : borrowFrom}
                   headerTitle="Balance"
                   headerValue={balances?.iassetVal}
-                  onBlur={field.onBlur}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onBorrowFromInputChange(parseFloat(evt.currentTarget.value), field)}
-                  onMax={(value: number) => onBorrowFromInputChange(number, field)}
+                  onMax={(value: number) => onBorrowFromInputChange(value, field)}
                 />
               )}
             />
@@ -225,8 +212,8 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               name="borrowTo"
               control={control}
               rules={{
-                validate(value) {
-                  return validateBorrowTo(value)
+                validate() {
+                  return validateBorrowTo()
                 }
               }}
               render={({ field }) => (
@@ -236,8 +223,9 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
                   value={isNaN(borrowTo) ? "" : borrowTo}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
-                  onBlur={field.onBlur}
-                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onBorrowToInputChange(parseFloat(evt.currentTarget.value), field)}
+                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
+                    onBorrowToInputChange(parseFloat(evt.currentTarget.value), field)
+                  }}
                   onMax={(value: number) => onBorrowToInputChange(value, field)}
                 />
               )}
