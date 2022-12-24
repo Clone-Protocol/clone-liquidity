@@ -136,9 +136,9 @@ let columns: GridColDef[] = [
 			
 			return (
         <Stack direction="row" spacing={1}>
-          <Link href={`/assets/${params.row.id}/asset`} onClick={handleLinkNeedingAccountClick}>
-            <ChangePositionButton>
-              <Image src={ChangePositionIcon} onClick={handleLinkNeedingAccountClick} />
+          <Link href={`/assets/${params.row.id}/asset`}>
+            <ChangePositionButton onClick={handleLinkNeedingAccountClick}>
+              <Image src={ChangePositionIcon} />
             </ChangePositionButton>
           </Link>
           <Link href={`/assets/${params.row.id}/asset?ltab=1`}>

@@ -107,8 +107,5 @@ const SubmitButton = styled(Button)`
 	display: block;
 	width: 240px;
 `
-const centeredTextStyle = {
-
-}
 
 export default CreateAccountSetupDialog
