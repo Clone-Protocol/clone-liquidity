@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
+const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -41,12 +41,12 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
     onRefetchData()
   }
 
-	const onLiquidity = async () => {
+  const onLiquidity = async () => {
     setLoading(true)
     await mutateAsyncLiquidity(
       {
         iassetIndex: assetIndex,
-			  iassetAmount: borrowFrom,
+        iassetAmount: borrowFrom,
       },
       {
         onSuccess(data) {
@@ -65,17 +65,17 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
         }
       }
     )
-	}
+  }
   
   useEffect(() => {
-  	async function triggerValidation() {
-  		await trigger()
-  	}
-  	triggerValidation()
+    async function triggerValidation() {
+      await trigger()
+    }
+    triggerValidation()
   }, [borrowFrom, borrowTo])
 
   const onBorrowToInputChange = (currentValue: number, field: ControllerRenderProps<FieldValues, "borrowTo">) => {
-  	setBorrowTo(currentValue)
+    setBorrowTo(currentValue)
     field.onChange(currentValue)
     setBorrowFrom(currentValue / assetData.price)
   }
@@ -87,14 +87,14 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
   }
   
   const validateBorrowFrom = () => {
-  	if (isNaN(borrowFrom)) {
-  		clearErrors('borrowFrom')
-  		return 
-  	} else if (borrowFrom > balances?.iassetVal) {
+    if (isNaN(borrowFrom)) {
+      clearErrors('borrowFrom')
+      return 
+    } else if (borrowFrom > balances?.iassetVal) {
       return 'The borrowing amount cannot exceed the balance.'
     }
 	
-	clearErrors('borrowFrom')
+    clearErrors('borrowFrom')
     return 
   }
 
@@ -115,32 +115,32 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
   }
   
   const formHasErrors = (): boolean => {
-  	if ((errors.borrowTo && errors.borrowTo.message !== "") || (errors.borrowFrom && errors.borrowFrom.message !== "")) {
-  		return true
-  	}
+    if ((errors.borrowTo && errors.borrowTo.message !== "") || (errors.borrowFrom && errors.borrowFrom.message !== "")) {
+      return true
+    }
   	
-  	return false
+    return false
   } 
   
   const disableSubmitButton = (): boolean => {
-  	if (!isDirty || formHasErrors()) {
-  		return true
-  	}
+    if (!isDirty || formHasErrors()) {
+      return true
+    }
   	
-  	return false
+    return false
   }
 
   const onFormSubmit = async () => {
-      await onLiquidity()
+    await onLiquidity()
   }
   
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Box>
         <PriceIndicatorBox
