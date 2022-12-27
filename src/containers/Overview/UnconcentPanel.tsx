@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
@@ -16,46 +16,37 @@ import { useLiquidityMutation } from '~/features/UnconcentratedLiquidity/Liquidi
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 
-const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
+const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { mutateAsync: mutateAsyncLiquidity } = useLiquidityMutation(publicKey)
-
-  const {
-		handleSubmit,
-    setValue,
-		control,
-		formState: { isDirty, errors },
-		watch,
-	} = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      borrowFrom: NaN,
-      borrowTo: NaN,
-    }
-	})
-  const [borrowFrom, borrowTo] = watch([
-		'borrowFrom',
-		'borrowTo',
-	])
+  const [borrowFrom, setBorrowFrom] = useState(NaN)
+  const [borrowTo, setBorrowTo] = useState(NaN)
+  const { 
+    control,
+    trigger,
+    clearErrors, 
+    formState: { isDirty, errors, isSubmitting }, 
+    handleSubmit
+  } = useForm({ mode: 'onChange' })
 
   const initData = () => {
-    setValue('borrowFrom', 0.0)
-    setValue('borrowTo', 0.0)
+    setBorrowFrom(0.0)
+    setBorrowTo(0.0)
     onRefetchData()
   }
 
-	const onLiquidity = async () => {
+  const onLiquidity = async () => {
     setLoading(true)
     await mutateAsyncLiquidity(
       {
         iassetIndex: assetIndex,
-			  iassetAmount: borrowFrom,
+        iassetAmount: borrowFrom,
       },
       {
         onSuccess(data) {
@@ -74,17 +65,82 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
         }
       }
     )
-	}
+  }
+  
+  useEffect(() => {
+    async function triggerValidation() {
+      await trigger()
+    }
+    triggerValidation()
+  }, [borrowFrom, borrowTo])
 
-  const isValid = Object.keys(errors).length === 0
+  const onBorrowToInputChange = (currentValue: number, field: ControllerRenderProps<FieldValues, "borrowTo">) => {
+    setBorrowTo(currentValue)
+    field.onChange(currentValue)
+    setBorrowFrom(currentValue / assetData.price)
+  }
 
+  const onBorrowFromInputChange = (currentValue: number, field: ControllerRenderProps<FieldValues, "borrowFrom">) => {
+    field.onChange(currentValue)
+    setBorrowFrom(currentValue)
+    setBorrowTo(currentValue * assetData.price)
+  }
+  
+  const validateBorrowFrom = () => {
+    if (isNaN(borrowFrom)) {
+      clearErrors('borrowFrom')
+      return 
+    } else if (borrowFrom > balances?.iassetVal) {
+      return 'The borrowing amount cannot exceed the balance.'
+    }
+	
+    clearErrors('borrowFrom')
+    return 
+  }
+
+
+  const validateBorrowTo = () => {
+    if (!isDirty) {
+      clearErrors('borrowTo')
+      return
+    }
+
+    if (!borrowTo || borrowTo <= 0) {
+      return 'the amount should be above zero.'
+    } else if (borrowTo > balances?.usdiVal) {
+      return 'The amount cannot exceed the balance.'
+    }
+
+    clearErrors('borrowTo')
+  }
+  
+  const formHasErrors = (): boolean => {
+    if ((errors.borrowTo && errors.borrowTo.message !== "") || (errors.borrowFrom && errors.borrowFrom.message !== "")) {
+      return true
+    }
+  	
+    return false
+  } 
+  
+  const disableSubmitButton = (): boolean => {
+    if (!isDirty || formHasErrors()) {
+      return true
+    }
+  	
+    return false
+  }
+
+  const onFormSubmit = async () => {
+    await onLiquidity()
+  }
+  
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Box>
         <PriceIndicatorBox
@@ -114,7 +170,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
             </WarningBox>
           </Stack>
-
           <Box>
             <SubTitle>
               <Image src={OneIcon} />{' '}
@@ -127,34 +182,25 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               name="borrowFrom"
               control={control}
               rules={{
-                validate(value) {
-                  if (!value || value <= 0) {
-                    return '' //'the borrowing amount should be above zero.'
-                  } else if (value > balances?.iassetVal) {
-                    return 'The borrowing amount cannot exceed the balance.'
-                  }
+                validate() {
+                  return validateBorrowFrom()
                 }
               }}
               render={({ field }) => (
                 <PairInput
                   tickerIcon={assetData.tickerIcon}
                   tickerSymbol={assetData.tickerSymbol}
-                  value={field.value}
+                  value={isNaN(borrowFrom) ? "" : borrowFrom}
                   headerTitle="Balance"
                   headerValue={balances?.iassetVal}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    field.onChange(parseFloat(event.currentTarget.value))
-                    setValue('borrowTo', parseFloat(event.currentTarget.value) * assetData.price);
-                  }}
-                  onMax={(value: number) => {
-                    field.onChange(value)
-                    setValue('borrowTo', value * assetData.price);
-                  }}
+                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onBorrowFromInputChange(parseFloat(evt.currentTarget.value), field)}
+                  onMax={(value: number) => onBorrowFromInputChange(value, field)}
                 />
               )}
             />
             <FormHelperText error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
           </Box>
+          
           <StyledDivider />
 
           <Box>
@@ -166,29 +212,21 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
               name="borrowTo"
               control={control}
               rules={{
-                validate(value) {
-                  if (!value || value <= 0) {
-                    return 'the amount should be above zero.'
-                  } else if (value > balances?.usdiVal) {
-                    return 'The amount cannot exceed the balance.'
-                  }
+                validate() {
+                  return validateBorrowTo()
                 }
               }}
               render={({ field }) => (
                 <PairInput
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerSymbol="USDi"
-                  value={field.value}
+                  value={isNaN(borrowTo) ? "" : borrowTo}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    field.onChange(parseFloat(event.currentTarget.value))
-                    setValue('borrowFrom', parseFloat(event.currentTarget.value) / assetData.price);
+                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
+                    onBorrowToInputChange(parseFloat(evt.currentTarget.value), field)
                   }}
-                  onMax={(value: number) => {
-                    field.onChange(value)
-                    setValue('borrowFrom', value / assetData.price);
-                  }}
+                  onMax={(value: number) => onBorrowToInputChange(value, field)}
                 />
               )}
             />
@@ -196,7 +234,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData } : { b
           </Box>
           <StyledDivider />
 
-          <LiquidityButton onClick={handleSubmit(onLiquidity)} disabled={!isDirty || !isValid}>Create Unconcentrated Liquidity Position</LiquidityButton>
+          <LiquidityButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Create Unconcentrated Liquidity Position</LiquidityButton>
         </Box>
       </Box>
     </>
