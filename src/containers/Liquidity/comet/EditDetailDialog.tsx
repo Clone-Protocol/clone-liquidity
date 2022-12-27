@@ -24,8 +24,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
+  const [collAmount, setCollAmount] = useState(0.0)
+  const [mintAmount, setMintAmount] = useState(0.0)
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = cometId
+  const calculateMintAmount = (mintable: number, ratio: number): number => mintable * ratio / 100;
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const [cometData, setCometData] = useState<CometInfo>({
@@ -36,28 +39,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [refresh, setRefresh] = useState(true);
 
   const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { isDirty, errors },
-    watch,
-  } = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      collAmount: 0.0,
-      mintAmount: 0.0,
-    }
-  })
-  const [collAmount, mintAmount] = watch([
-    'collAmount',
-    'mintAmount',
-  ])
-
-  const initData = () => {
-    setValue('collAmount', 0.0)
-    setValue('mintAmount', 0.0)
-  }
-
+		handleSubmit,
+		control,
+    clearErrors,
+		formState: { isDirty, errors, isSubmitting },
+	} = useForm({
+    mode: 'onChange'
+	})
+  
   const { mutateAsync } = useEditMutation(publicKey, () => setRefresh(true))
   const [defaultValues, setDefaultValues] = useState({
     lowerLimit: cometDetail.lowerLimit,
@@ -132,7 +121,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
         setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
-        setValue('mintAmount', cometDetail.mintAmount)
+        setMintAmount(cometDetail.mintAmount)
 
         setDefaultValues({
           lowerLimit: lowerPrice,
@@ -161,7 +150,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       setMaxWithdrawable(defaultValues.maxWithdrawable)
       setDefaultMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
       setMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
-      setValue('mintAmount', cometDetail.mintAmount)
+      setMintAmount(cometDetail.mintAmount)
     }
   }, [editType])
 
@@ -198,7 +187,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
         setMintRatio(newDefaultMintRatio)
-        setValue('mintAmount', cometDetail.mintAmount);
+        setMintAmount(cometDetail.mintAmount)
       }
     }
     fetch()
@@ -242,26 +231,46 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     fetch()
   }, [mintRatio])
 
-  const calculateCollAmount = useCallback(throttle((collAmount: number) => {
-    setValue('collAmount', collAmount)
-  }, 1000), [collAmount])
+  const validateCollAmount = () => {
+    if (!isDirty || collAmount < 0) {
+      clearErrors('collAmount')
+      return
+    }
 
-  const handleChangeCollAmount = useCallback((collAmount: number) => {
-    calculateCollAmount(collAmount)
-  }, [collAmount])
+    if ((editType === 0 && collAmount > balance) || (editType === 1 && collAmount > maxWithdrawable)) {
+      return 'The collateral amount cannot exceed the balance.'
+    }
+  }
 
-  const calculateMintAmount = useCallback(throttle((mintAmount: number) => {
-    setValue('mintAmount', mintAmount)
-  }, 1000), [mintAmount])
+  const onCollAmountInputChange = (val: number) => {
+    setCollAmount(isNaN(val) ? 0 : val)
+  }
+
+  const formHasErrors = (): boolean => {
+     if (errors.collAmount && errors.collAmount.message !== "") {
+      return true
+    }
+
+    return false
+  }
+
+  const disableSubmitButton = (): boolean => {
+    if (!isDirty || formHasErrors() || healthScore <= 0) {
+      return true 
+    }
+
+    return false
+  }
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
-    calculateMintAmount(newRatio * maxMintable / 100)
+    const mintAmount = calculateMintAmount(maxMintable, newRatio)
+    setMintAmount(mintAmount)
     setMintRatio(newRatio)
   }, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    calculateMintAmount(mintAmount)
-    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+    setMintAmount(mintAmount)
+    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {
@@ -293,8 +302,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     )
   }
 
-  const isValid = Object.keys(errors).length === 0 && healthScore > 0
-
   return (
     <>
       {loading && (
@@ -320,11 +327,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   control={control}
                   rules={{
                     validate(value) {
-                      if (value < 0) {
-                        return ''
-                      } else if ((editType === 0 && value > balance) || (editType === 1 && value > maxWithdrawable)) {
-                        return 'The collateral amount cannot exceed the balance.'
-                      }
+                      return validateCollAmount()
                     }
                   }}
                   render={({ field }) => (
@@ -332,20 +335,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       editType={editType}
                       tickerIcon={'/images/assets/USDi.png'}
                       tickerSymbol="USDi"
-                      collAmount={parseFloat(field.value.toFixed(3))}
-                      collAmountDollarPrice={field.value}
+                      collAmount={collAmount.toFixed(3)}
+                      collAmountDollarPrice={collAmount}
                       maxCollVal={editType === 0 ? balance : maxWithdrawable}
                       currentCollAmount={cometDetail.collAmount}
                       dollarPrice={cometDetail.collAmount}
                       onChangeType={handleChangeType}
-                      onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        let collAmt = parseFloat(e.currentTarget.value)
-                        collAmt = isNaN(collAmt) ? 0 : collAmt
-                        handleChangeCollAmount(collAmt)
-                      }}
-                      onMax={(amount: number) => {
-                        handleChangeCollAmount(amount)
-                      }}
+                      onChangeAmount={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(e.currentTarget.value))}
+                      onMax={(amount: number) => onCollAmountInputChange(number)}
                     />
                   )}
                 />
@@ -380,7 +377,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <StyledDivider />
 
-              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isValid}>Edit Comet</ActionButton>
+              <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet</ActionButton>
             </Box>
           </BoxWrapper>
         </DialogContent>
