@@ -7,7 +7,6 @@ import menuLiquidityIcon from 'public/images/menu/position-icon.svg'
 import menuBorrowIcon from 'public/images/menu/borrow-icon.svg'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
-import { Links } from '~/data/links'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const Drawer: React.FC = () => {
@@ -18,28 +17,28 @@ const Drawer: React.FC = () => {
 		<StyledDrawer variant="permanent" open={true}>
       <Fade in timeout={1500}>
         <List component="nav">
-          <Link href={Links["overview"].path} onClick={handleLinkNeedingAccountClick}>
-            <StyledListItemButton className={Links["overview"].classNameFunc(router)}>
+          <Link href="/">
+            <StyledListItemButton className={(router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : '')} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuOverviewIcon} alt="overview" />
               </ListItemIcon>
-              <StyledListItemText>{Links["overview"].text}</StyledListItemText>
+              <StyledListItemText>Overview</StyledListItemText>
             </StyledListItemButton>
           </Link>
-          <Link href={Links["liquidity"].path}>
-            <StyledListItemButton className={Links["liquidity"].classNameFunc(router)} onClick={handleLinkNeedingAccountClick}>
+          <Link href="/liquidity">
+            <StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuLiquidityIcon} alt="portfolio" />
               </ListItemIcon>
-              <StyledListItemText>{Links["liquidity"].text}</StyledListItemText>
+              <StyledListItemText>My Liquidity</StyledListItemText>
             </StyledListItemButton>
           </Link>
-          <Link href={Links["borrow"].path}>
-            <StyledListItemButton className={Links["borrow"].classNameFunc(router)} onClick={handleLinkNeedingAccountClick}>
+          <Link href="/borrow">
+            <StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuBorrowIcon} alt="markets" />
               </ListItemIcon>
-              <StyledListItemText>{Links["borrow"].text}</StyledListItemText>
+              <StyledListItemText>Borrow</StyledListItemText>
             </StyledListItemButton>
           </Link>
         </List>

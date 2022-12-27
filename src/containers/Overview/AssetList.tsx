@@ -142,7 +142,7 @@ let columns: GridColDef[] = [
             </ChangePositionButton>
           </Link>
           <Link href={`/assets/${params.row.id}/asset?ltab=1`}>
-            <TradeButton>
+            <TradeButton onClick={handleLinkNeedingAccountClick}>
               <Image src={TradeIcon} />
             </TradeButton>
           </Link>
