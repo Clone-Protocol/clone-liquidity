@@ -31,7 +31,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
   const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  
+
   const [mintRatio, setMintRatio] = useState(50)
   const [cometData, setCometData] = useState<CometInfo>({
     isTight: false,
@@ -46,9 +46,9 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
   const [collAmount, setCollAmount] = useState(NaN) // NaN is used here so the input placeholder is displayed first
   const [mintAmount, setMintAmount] = useState(0.0)
   const [mintableAmount, setMintableAmount] = useState(0.0)
-  const { 
-    trigger, 
-    control, 
+  const {
+    trigger,
+    control,
     formState: { isDirty, errors, isSubmitting },
     handleSubmit,
     clearErrors
@@ -76,13 +76,13 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
     }
     fetch()
   }, [])
-  
+
   useEffect(() => {
     async function fetch() {
       if (!tokenData) return
 
       await trigger()
-      
+
       const program = getInceptApp()
 
       if (isNaN(collAmount)) {
@@ -90,7 +90,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
         setHealthScore(0)
         return
       }
-      
+
       console.log('calculateRange', collAmount + "/" + mintAmount)
 
       const {
@@ -163,7 +163,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
     await submit()
   }
 
-	
+
   const onCollAmountInputChange = (val: number, field: ControllerRenderProps<FieldValues, "collAmount">) => {
     field.onChange(val)
     setCollAmount(val)
@@ -178,7 +178,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
   const validateCollAmount = () => {
     if (collAmount > balances?.usdiVal) {
       return 'The collateral amount cannot exceed the balance.'
-    } 
+    }
 
     clearErrors('collAmountAmount')
   }
@@ -193,7 +193,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
       return 'The mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
       return 'The mint amount cannot exceed the maximum mintable amout'
-    } 
+    }
 
     clearErrors('mintAmount')
   }
@@ -204,7 +204,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
     }
 
     return false
-  } 
+  }
 
   const disableSubmitButton = (): boolean => {
     if (!isDirty || formHasErrors()) {
@@ -221,7 +221,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
           <LoadingIndicator open inline />
         </LoadingWrapper>
       )}
-    
       <Box>
         <PriceIndicatorBox
           tickerIcon={assetData.tickerIcon}

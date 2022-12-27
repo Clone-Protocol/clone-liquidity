@@ -18,7 +18,7 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { useIncept } from '~/hooks/useIncept'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import MoreMenu from '~/components/Common/MoreMenu';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
@@ -76,14 +76,14 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu = () => {
-  const { enqueueSnackbar } = useSnackbar()
+	const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const { getInceptApp } = useIncept()
 	const [mintUsdi, setMintUsdi] = useState(false)
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	useInitialized()
 
 	useEffect(() => {
@@ -104,7 +104,7 @@ const RightMenu = () => {
 
 					} else {
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
-					} 
+					}
 				} finally {
 					setMintUsdi(false)
 				}
@@ -117,9 +117,9 @@ const RightMenu = () => {
 		setMintUsdi(true)
 	}
 
-  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  }
+	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	}
 
 	const handleWalletClick = () => {
 		try {
@@ -129,65 +129,65 @@ const RightMenu = () => {
 				} else {
 					connect()
 				}
-        setShowWalletSelectPopup(false)
+				setShowWalletSelectPopup(false)
 			} else {
-        setShowWalletSelectPopup(!showWalletSelectPopup)
+				setShowWalletSelectPopup(!showWalletSelectPopup)
 			}
 		} catch (error) {
 			console.log('Error connecting to the wallet: ', error)
 		}
 	}
 
-  const handleChangeWallet = () => {
-    disconnect()
-    setShowWalletSelectPopup(false)
-    setOpen(true) 
-  }
+	const handleChangeWallet = () => {
+		disconnect()
+		setShowWalletSelectPopup(false)
+		setOpen(true)
+	}
 
-  const handleDisconnect = () => {
-    disconnect()
-    setShowWalletSelectPopup(false)
-  }
+	const handleDisconnect = () => {
+		disconnect()
+		setShowWalletSelectPopup(false)
+	}
 
 	return (
 		<Box display="flex">
-      <DataLoadingIndicator />
+			<DataLoadingIndicator />
 			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
 				Get USDi
 			</HeaderButton>
-      <Box>
-        <ConnectButton
-          onClick={handleWalletClick}
-          variant="outlined"
-          sx={{ width: '163px' }}
-          disabled={connecting}
-          startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-          {!connected ? (
-            <>Connect Wallet</>
-          ) : (
-            <>
-              <div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
-              {publicKey ? (
-                <Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
-                  {shortenAddress(publicKey.toString())}
-                </Box>
-              ) : (
-                <></>
-              )}
-            </>
-          )}
-        </ConnectButton>
-        { showWalletSelectPopup && <WalletSelectBox spacing={2}>
-          <CopyToClipboard text={publicKey!!.toString()}
-            onCopy={() => enqueueSnackbar('Copied address')}>
-            <PopupButton>Copy Address</PopupButton>
-          </CopyToClipboard>
-          <PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
-          <PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
-        </WalletSelectBox> }
-      </Box>
+			<Box>
+				<ConnectButton
+					onClick={handleWalletClick}
+					variant="outlined"
+					sx={{ width: '163px' }}
+					disabled={connecting}
+					startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+					{!connected ? (
+						<>Connect Wallet</>
+					) : (
+						<>
+							<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
+							{publicKey ? (
+								<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
+									{shortenAddress(publicKey.toString())}
+								</Box>
+							) : (
+								<></>
+							)}
+						</>
+					)}
+				</ConnectButton>
+				{showWalletSelectPopup && <WalletSelectBox spacing={2}>
+					<CopyToClipboard text={publicKey!!.toString()}
+						onCopy={() => enqueueSnackbar('Copied address')}>
+						<PopupButton>Copy Address</PopupButton>
+					</CopyToClipboard>
+					<PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
+					<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
+				</WalletSelectBox>}
+			</Box>
 			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
-      <MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
+			<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 		</Box>
 	)
 }
