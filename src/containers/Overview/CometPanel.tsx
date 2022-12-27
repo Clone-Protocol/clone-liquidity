@@ -19,13 +19,13 @@ import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.qu
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
-import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 
-const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
+const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
@@ -45,10 +45,14 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
   const [collAmount, setCollAmount] = useState(NaN) // NaN is used here so the input placeholder is displayed first
   const [mintAmount, setMintAmount] = useState(0.0)
-  
-  const { handleSubmit, trigger, control, formState: { isDirty, errors } } = useForm({ mode: 'onChange' })
   const [mintableAmount, setMintableAmount] = useState(0.0)
-
+  const { 
+    trigger, 
+    control, 
+    formState: { isDirty, errors, isSubmitting },
+    handleSubmit,
+    clearErrors
+  } = useForm({ mode: 'onChange' })
   const calculateMintAmount = (mintable: number, ratio: number): number => mintable * ratio / 100;
   useMemo(
     () => setMintAmount(calculateMintAmount(mintableAmount, mintRatio)),
@@ -57,6 +61,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
   const initData = () => {
     setMintableAmount(0.0)
+    setCollAmount(NaN)
     onRefetchData()
   }
 
@@ -86,7 +91,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         return
       }
       
-      console.log('calculateRange', collAmount +"/"+mintAmount)
+      console.log('calculateRange', collAmount + "/" + mintAmount)
 
       const {
         maxUsdiPosition,
@@ -119,14 +124,14 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
     fetch()
   }, [collAmount, mintAmount])
 
-	const handleChangeMintRatio = useCallback( async (event: Event, newValue: number | number[]) => {
-	  if (typeof newValue === 'number') {
+  const handleChangeMintRatio = useCallback(async (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
       setMintRatio(newValue)
       setMintableAmount(maxMintable)
-	  }
-	}, [maxMintable, cometData])
+    }
+  }, [maxMintable, cometData])
 
-	const onComet = async () => {
+  async function submit() {
     setLoading(true)
     await mutateAsyncComet(
       {
@@ -152,32 +157,36 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
         }
       }
     )
-	}
-
-  const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps) => {
-    const collVal = parseFloat(event.currentTarget.value)
-    field.onChange(collVal)
-    setCollAmount(collVal)
   }
 
-  const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps) => {
-    const mintVal = parseFloat(event.currentTarget.value)
-    maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
-    field.onChange(mintVal)
-    setMintAmount(mintVal)
+  const onFormSubmit = async () => {
+    await submit()
   }
 
-  const validateCollAmount = (): string | boolean => {
+	
+  const onCollAmountInputChange = (val: number, field: ControllerRenderProps<FieldValues, "collAmount">) => {
+    field.onChange(val)
+    setCollAmount(val)
+  }
+
+  const onMintAmountInputChange = (val: number, field: ControllerRenderProps<FieldValues, "mintAmount">) => {
+    maxMintable > 0 ? setMintRatio(val * 100 / maxMintable) : 0
+    field.onChange(val)
+    setMintAmount(val)
+  }
+
+  const validateCollAmount = () => {
     if (collAmount > balances?.usdiVal) {
       return 'The collateral amount cannot exceed the balance.'
     } 
 
-    return false
+    clearErrors('collAmountAmount')
   }
 
-  const validateMintAmount = (): string | boolean => {
+  const validateMintAmount = () => {
     if (!isDirty) {
-      return false
+      clearErrors('mintAmount')
+      return
     }
 
     if (!mintAmount || mintAmount <= 0) {
@@ -186,32 +195,32 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
       return 'The mint amount cannot exceed the maximum mintable amout'
     } 
 
-    return false
+    clearErrors('mintAmount')
   }
 
-  const isFormValid = (): boolean => {
-    if (errors.collAmount && errors.collAmount.message !== "") {
-      return false
-    } 
-
-    if (errors.mintAmount && errors.mintAmount.message !== "") {
-      return false
+  const formHasErrors = (): boolean => {
+    if ((errors.collAmount && errors.collAmount.message !== "") || (errors.mintAmount && errors.mintAmount.message !== "")) {
+      return true
     }
 
-    return true
-  }
+    return false
+  } 
 
-  const isFormDirty = (): boolean => {
-    return !isDirty || !isFormValid() || (isNaN(collAmount) || collAmount <= 0) || (isNaN(mintAmount)  || mintAmount <= 0)
+  const disableSubmitButton = (): boolean => {
+    if (!isDirty || formHasErrors()) {
+      return true
+    }
+
+    return false
   }
 
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
     
       <Box>
         <PriceIndicatorBox
@@ -250,7 +259,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
               name="collAmount"
               control={control}
               rules={{
-                validate(value){
+                validate() {
                   return validateCollAmount()
                 }
               }}
@@ -261,11 +270,8 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                   value={isNaN(collAmount) ? "" : collAmount}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
-                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(evt, field)}
-                  onMax={(value: number) => {
-                    field.onChange(value)
-                    setCollAmount(value)
-                  }}
+                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(evt.currentTarget.value), field)}
+                  onMax={(value: number) => onCollAmountInputChange(value, field)}
                 />
               )}
             />
@@ -283,7 +289,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
             </SubTitle>
             <Box sx={{ marginTop: '15px' }}>
               <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px' }}>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
               </Box>
@@ -293,7 +299,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                 name="mintAmount"
                 control={control}
                 rules={{
-                  validate(value) {
+                  validate() {
                     return validateMintAmount()
                   }
                 }}
@@ -304,12 +310,8 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
-                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(evt, field)}
-                    onMax={(value: number) => {
-                      field.onChange(value)
-                      setMintAmount(value)
-                      maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
-                    }}
+                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(parseFloat(evt.currentTarget.value), field)}
+                    onMax={(value: number) => onMintAmountInputChange(value, field)}
                   />
                 )}
               />
@@ -344,12 +346,12 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData } : { balan
 
           <Box>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></Box>
-            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{cometHealthScore.toFixed(2)}</span>/100</Box>
+            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</Box>
           </Box>
 
           <StyledDivider />
 
-          <CometButton onClick={handleSubmit(onComet)} disabled={isFormDirty()}>Create Comet Position</CometButton>
+          <CometButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Create Comet Position</CometButton>
         </Box>
       </Box>
     </>
