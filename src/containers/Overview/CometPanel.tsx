@@ -19,11 +19,10 @@ import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.qu
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps } from 'react-hook-form'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import throttle from 'lodash.throttle'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
@@ -75,14 +74,15 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
 
   useEffect(() => {
     async function fetch() {
-      if (isDirty) {
-        await trigger()
-      }
+      if (!tokenData) return
+
+      await trigger()
 
       const program = getInceptApp()
 
       if (isNaN(collAmount)) {
         setMintAmount(0)
+        setHealthScore(0)
         return
       }
 
@@ -111,7 +111,8 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
         })
       }
 
-      setHealthScore(Math.max(0, healthScore))
+      const chosenHealthScore = Math.max(0, healthScore)
+      setHealthScore(isNaN(chosenHealthScore) ? 0 : chosenHealthScore)
       setMaxMintable(maxUsdiPosition)
       setMintableAmount(maxUsdiPosition)
     }
@@ -124,37 +125,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
       setMintableAmount(maxMintable)
     }
   }, [maxMintable, cometData])
-
-  // @deprecated throttling with call contract : (1sec)
-  const calculateUSDiAmountFromRange = useCallback(throttle(async (lowerLimit: number) => {
-    console.log('calculateUSDiAmount', lowerLimit)
-    const program = getInceptApp()
-    //await program.loadManager()
-
-    const {
-      usdiBorrowed
-    } = program.calculateNewSinglePoolCometFromRange(
-      assetIndex,
-      collAmount,
-      lowerLimit,
-      true,
-      tokenData
-    )
-    setMintAmount(usdiBorrowed)
-    setMintRatio(usdiBorrowed * 100 / maxMintable)
-  }, 1000), [mintAmount])
-  const handleChangeConcentRange = useCallback((isTight: boolean, lowerLimit: number, upperLimit: number) => {
-    const newData = {
-      ...cometData,
-      isTight,
-      lowerLimit: Math.min(lowerLimit, assetData.centerPrice),
-      upperLimit: Math.max(upperLimit, assetData.centerPrice)
-    }
-    setCometData(newData)
-  }, [cometData])
-  const handleChangeCommittedRange = (lowerLimit: number, upperLimit: number) => {
-    calculateUSDiAmountFromRange(lowerLimit)
-  }
 
   const onComet = async () => {
     setLoading(true)
@@ -184,34 +154,32 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
     )
   }
 
-  const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
+  const onCollAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps) => {
     const collVal = parseFloat(event.currentTarget.value)
     field.onChange(collVal)
-
-    const amt = isNaN(collVal) ? ' ' : collVal
-    setCollAmount(amt)
+    setCollAmount(collVal)
   }
 
-  const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field) => {
+  const onMintAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps) => {
     const mintVal = parseFloat(event.currentTarget.value)
     maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
     field.onChange(mintVal)
-
-    const amt = isNaN(mintVal) ? ' ' : mintAmount
     setMintAmount(mintVal)
   }
 
-  const validateCollAmount = (): string => {
+  const validateCollAmount = (): string | boolean => {
     if (collAmount > balances?.usdiVal) {
       return 'The collateral amount cannot exceed the balance.'
-    } else if (!collAmount || collAmount <= 0) {
-      return false
     }
 
     return false
   }
 
-  const validateMintAmount = () => {
+  const validateMintAmount = (): string | boolean => {
+    if (!isDirty) {
+      return false
+    }
+
     if (!mintAmount || mintAmount <= 0) {
       return 'The mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
@@ -289,13 +257,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
               render={({ field }) => (
                 <PairInput
                   tickerIcon={'/images/assets/USDi.png'}
-                  tickerName="USDi Coin"
                   tickerSymbol="USDi"
-                  placeholder="0.00"
                   value={isNaN(collAmount) ? "" : collAmount}
                   headerTitle="Balance"
                   headerValue={balances?.usdiVal}
-                  onChange={(evt) => onCollAmountInputChange(evt, field)}
+                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(evt, field)}
                   onMax={(value: number) => {
                     field.onChange(value)
                     setCollAmount(value)
@@ -334,13 +300,11 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={'/images/assets/USDi.png'}
-                    tickerName="USDi Coin"
                     tickerSymbol="USDi"
-                    placeholder="0.00"
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
-                    onChange={(evt) => onMintAmountInputChange(evt, field)}
+                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(evt, field)}
                     onMax={(value: number) => {
                       field.onChange(value)
                       setMintAmount(value)
@@ -368,8 +332,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
               <ConcentrationRange
                 assetData={assetData}
                 cometData={cometData}
-                onChange={handleChangeConcentRange}
-                onChangeCommitted={handleChangeCommittedRange}
                 max={assetData.maxRange}
                 defaultLower={(assetData.price / 2)}
                 defaultUpper={((assetData.price * 3) / 2)}

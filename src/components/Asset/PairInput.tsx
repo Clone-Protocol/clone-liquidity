@@ -4,10 +4,10 @@ import Image from 'next/image'
 interface Props {
 	tickerIcon: string
 	tickerSymbol: string | null
-	value?: number
+	value?: number | string
 	headerTitle?: string
 	headerValue?: number
-	onChange?: (e: React.FormEvent<HTMLInputElement>) => void
+	onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
 }
 
