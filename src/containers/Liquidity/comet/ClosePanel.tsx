@@ -34,13 +34,14 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully closed comet position')
             setLoading(false)
 
             if (cType === 0) {
+              enqueueSnackbar("Comet partially closed, please proceed to next step")
               onRefetchData()
             } else {
-              router.replace('/liquidity').then(() => {
+              enqueueSnackbar("Comet successfully closed")
+              router.replace("/liquidity").then(() => {
                 router.reload()
               })
             }
