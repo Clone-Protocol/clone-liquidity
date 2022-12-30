@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Stack, Button } from '@mui/material'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -14,16 +14,23 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, cometDetail: CometDetail, onRefetchData: () => void }) => {
-	const { publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [noBorrowedAsset, setNoBorrowedAsset] = useState(false)
 
   const { mutateAsync } = useCloseMutation(publicKey)
 
-	const cometIndex = parseInt(assetId)
+  const cometIndex = parseInt(assetId)
 
-	const onClose = async (cType: number) => {
+  useEffect(() => {
+    if (cometDetail) {
+      setNoBorrowedAsset(cometDetail.mintIassetAmount === 0 && cometDetail.mintAmount === 0)
+    }
+  }, [cometDetail])
+
+  const onClose = async (cType: number) => {
     setLoading(true)
     await mutateAsync(
       {
@@ -39,6 +46,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
             if (cType === 0) {
               enqueueSnackbar("Comet partially closed, please proceed to next step")
               onRefetchData()
+              setNoBorrowedAsset(true)
             } else {
               enqueueSnackbar("Comet successfully closed")
               router.replace("/liquidity").then(() => {
@@ -54,17 +62,15 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         }
       }
     )
-	}
+  }
 
-  const noBorrowedAsset = cometDetail.mintIassetAmount === 0 && cometDetail.mintAmount === 0
-
-	return (
+  return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Box sx={{ padding: '30px', background: 'rgba(21, 22, 24, 0.75)', borderRadius: '10px', marginTop: '17px' }}>
         <WarningBox>
@@ -81,16 +87,16 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
             <TotalValue>{cometDetail.collAmount.toLocaleString()} USDi</TotalValue>
           </Stack>
         </Box>
-        
+
         <ActionButton onClick={() => onClose(0)} disabled={noBorrowedAsset}>
-          <Image src={OneIcon} width={17} /> 
-          <div>Withdraw liquidity & pay ILD</div> 
-          <div>{ noBorrowedAsset && <CheckCircleOutlineRoundedIcon fontSize="small" sx={{ color:'#809cff', marginTop: '2px'}}  />}</div>
+          <Image src={OneIcon} width={17} />
+          <div>Withdraw liquidity & pay ILD</div>
+          <div>{noBorrowedAsset && <CheckCircleOutlineRoundedIcon fontSize="small" sx={{ color: '#809cff', marginTop: '2px' }} />}</div>
         </ActionButton>
         <ActionButton onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <div>Close comet & withdraw Collateral</div> <div></div></ActionButton>
       </Box>
     </>
-	)
+  )
 }
 
 const WarningBox = styled(Box)`
