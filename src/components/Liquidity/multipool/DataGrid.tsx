@@ -10,7 +10,7 @@ interface GridProps {
 
 const CustomNoRowsOverlay = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '60px', fontSize: '12px', fontWeight: '500', color: '#fff'}}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '60px', fontSize: '12px', fontWeight: '500', color: '#fff' }}>
       No position to display.
     </Box>
   )
@@ -28,7 +28,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         marginRight: '6px',
       },
       '& .MuiDataGrid-columnHeaderTitle': {
-        color: '#9d9d9d', 
+        color: '#9d9d9d',
         fontSize: '11px'
       },
       '& .last--header': {
@@ -80,7 +80,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       NoResultsOverlay: CustomNoRowsOverlay
     }}
     getRowClassName={(params) => {
-      return rows[params.id].isEnabled ? 'super-app-theme--row' : 'disabled--row'
+      return rows[params.id]?.isEnabled ? 'super-app-theme--row' : 'disabled--row'
     }}
     disableColumnFilter
     disableSelectionOnClick
