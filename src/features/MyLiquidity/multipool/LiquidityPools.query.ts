@@ -25,24 +25,44 @@ export const fetchPools = async ({
 	setStartTimer(false)
 	setStartTimer(true)
 
-	const tokenData = await program.getTokenData()
-	const assetInfos = getiAssetInfos(tokenData)
-
-	let result = []
-
-	for (let asset of assetInfos) {
+	
+	const [tokenDataResult, cometResult] = await Promise.allSettled([
+		program.getTokenData(),
+		program.getComet(),
+	  ])
+	  if (tokenDataResult.status === "rejected" || cometResult.status === "rejected") {
+		throw new Error("Couldn't fetch data!")
+	  }
+	  const tokenData = tokenDataResult.value
+	  const comet = cometResult.value
+	  const assetInfos = getiAssetInfos(tokenData)
+	
+	  let currentPoolSet = new Set()
+	
+	  for (let i = 0; i < Number(comet.numPositions); i++) {
+		const poolIndex = Number(comet.positions[i].poolIndex)
+		currentPoolSet.add(poolIndex)
+	  }
+	
+	  let result = []
+	
+	  for (let asset of assetInfos) {
+		if (currentPoolSet.has(asset[0])) {
+		  continue
+		}
 		let { tickerIcon, tickerSymbol } = assetMapping(asset[0])
 		result.push({
-			id: asset[0],
-			tickerSymbol,
-			tickerIcon,
-			totalLiquidity: asset[2],
-			volume24H: 0,
-			averageAPY: 0,
-			isEnabled: true,
+		  id: asset[0],
+		  tickerSymbol,
+		  tickerIcon,
+		  totalLiquidity: asset[2],
+		  volume24H: 0,
+		  averageAPY: 0,
+		  isEnabled: true,
 		})
-	}
-	return result
+	  }
+	
+	  return result
 }
 
 interface GetPoolsProps {
