@@ -6,13 +6,14 @@ import { formatDollarAmount } from '~/utils/numbers'
 
 interface Props {
   iPrice: number
-	centerPrice: number
+  centerPrice: number
   lowerLimit: number
   upperLimit: number
+  max: number
 }
 
-const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit }) => {
-	const centerPricePercent = (centerPrice * 100) / upperLimit
+const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit, max }) => {
+  const centerPricePercent = (centerPrice * 100) / max
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -25,20 +26,20 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
   };
 
   const open = Boolean(anchorEl);
-	
-	return (
+
+  return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px'}} 
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}>
         <LeftBox>{formatDollarAmount(lowerLimit, 2, true).slice(1)}</LeftBox>
         <Box sx={{ position: 'relative' }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
             <LeftRangeStick />
             <RangeBar />
             <RightRangeStick />
           </Box>
-          
+
           <CenterStick sx={{ marginLeft: '50%' }} />
           <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
         </Box>
@@ -74,14 +75,14 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
             <div>Indicator Price:</div>
             <div>$ {iPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}</div>
           </Stack>
-          <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '5px'}}>
+          <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '5px' }}>
             <div>Center Price:</div>
             <div>$ {centerPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}</div>
           </Stack>
-        </HoverBox> 
+        </HoverBox>
       </Popover>
     </Box>
-	)
+  )
 }
 
 const LeftRangeStick = styled('div')`
