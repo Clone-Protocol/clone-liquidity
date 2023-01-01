@@ -12,7 +12,7 @@ import TwoIcon from 'public/images/two-icon.svg'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
 import { SliderTransition } from '~/components/Common/Dialog'
@@ -24,7 +24,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
-  const [collAmount, setCollAmount] = useState(0.0)
+  const [collAmount, setCollAmount] = useState(NaN)
   const [mintAmount, setMintAmount] = useState(0.0)
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = cometId
@@ -39,6 +39,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [refresh, setRefresh] = useState(true);
 
   const {
+    trigger,
 		handleSubmit,
 		control,
     clearErrors,
@@ -46,8 +47,12 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 	} = useForm({
     mode: 'onChange'
 	})
+
+  const mutateRefresh = () => {
+    setRefresh(true)
+  }
   
-  const { mutateAsync } = useEditMutation(publicKey, () => setRefresh(true))
+  const { mutateAsync } = useEditMutation(publicKey, () => mutateRefresh())
   const [defaultValues, setDefaultValues] = useState({
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit,
@@ -68,6 +73,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
     setEditType(newValue)
   }, [editType])
+
+  const initData = () => {
+    setCollAmount(NaN)
+    setMintAmount(0.0)
+  }
 
   // Initialize state data.
   useEffect(() => {
@@ -103,8 +113,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           lowerPrice,
           upperPrice
         } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
-          tokenDataState,
-          singlePoolCometState,
+          tokenDataState as TokenData,
+          singlePoolCometState as Comet,
           cometIndex,
           0,
           0
@@ -231,6 +241,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     fetch()
   }, [mintRatio])
 
+  useEffect(() => {
+    trigger()
+  }, [collAmount])
+
   const validateCollAmount = () => {
     if (!isDirty || collAmount < 0) {
       clearErrors('collAmount')
@@ -242,8 +256,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     }
   }
 
-  const onCollAmountInputChange = (val: number) => {
-    setCollAmount(isNaN(val) ? 0 : val)
+  const onCollAmountInputChange = (val: number, field: ControllerRenderProps<FieldValues, "collAmount">) => {
+    setCollAmount(val)
+    field.onChange(val)
   }
 
   const formHasErrors = (): boolean => {
@@ -335,14 +350,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       editType={editType}
                       tickerIcon={'/images/assets/USDi.png'}
                       tickerSymbol="USDi"
-                      collAmount={collAmount.toFixed(3)}
+                      collAmount={isNaN(collAmount) ? '' : collAmount}
                       collAmountDollarPrice={collAmount}
                       maxCollVal={editType === 0 ? balance : maxWithdrawable}
                       currentCollAmount={cometDetail.collAmount}
                       dollarPrice={cometDetail.collAmount}
                       onChangeType={handleChangeType}
-                      onChangeAmount={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(e.currentTarget.value))}
-                      onMax={(amount: number) => onCollAmountInputChange(number)}
+                      onChangeAmount={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(evt.currentTarget.value), field)}
+                      onMax={(amount: number) => onCollAmountInputChange(amount, field)}
                     />
                   )}
                 />
@@ -372,7 +387,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <HealthScoreTitle>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></HealthScoreTitle>
-                <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{healthScore.toFixed(2)}</span>/100</HealthScoreValue>
+                <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{isNaN(healthScore) ? 0 : healthScore.toFixed(2)}</span>/100</HealthScoreValue>
               </Box>
 
               <StyledDivider />
