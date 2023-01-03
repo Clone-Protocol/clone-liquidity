@@ -13,9 +13,9 @@ const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => 
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-					</Box>
+					</TickerWrapper>
 				</Box>
 				<InputAmount id="ip-amount" disabled value={value} />
 			</FormStack>
@@ -31,6 +31,12 @@ const FormStack = styled(Stack)`
   background: rgba(21, 22, 24, 0.75);
 	border-radius: 8px;
 	border: solid 1px #5c5c5c;
+`
+
+const TickerWrapper = styled(Box)`
+	width: 100px; 
+	margin-left: 8px; 
+	text-align: left;
 `
 
 const TickerSymbol = styled('div')`

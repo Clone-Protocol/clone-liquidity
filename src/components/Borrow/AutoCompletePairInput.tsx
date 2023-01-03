@@ -4,25 +4,25 @@ import SearchIcon from 'public/images/search-icon.svg'
 import 'animate.css'
 
 export interface AssetType {
-	tickerIcon: string
-	tickerName: string
-	tickerSymbol: string
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string
 }
 
 interface Props {
-	assets: AssetType[]
-	selAssetId: number
-	value?: number
-	onChangeAsset?: (data: any) => void
+  assets: AssetType[]
+  selAssetId: number
+  value?: number
+  onChangeAsset?: (data: any) => void
 }
 
-const CustomPopper = function (props : PopperProps) {
+const CustomPopper = function (props: PopperProps) {
   return <StyledPopper {...props} placement="bottom" />;
 };
 
 const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
-	return (
-		<Box sx={{ display: 'flex'}}>
+  return (
+    <Box sx={{ display: 'flex' }}>
       <StyledAutocomplete
         selectOnFocus
         clearOnBlur
@@ -40,11 +40,9 @@ const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
         )}
       />
 
-      <Box sx={{ position: 'relative', right: '30px', top: '8px' }}>
-        <Image src={SearchIcon} />
-      </Box>
+      <SearchIconWrapper><Image src={SearchIcon} /></SearchIconWrapper>
     </Box>
-	)
+  )
 }
 
 const StyledAutocomplete = styled(Autocomplete)`
@@ -118,9 +116,6 @@ const StyledPopper = styled(Popper)`
 
   & .MuiAutocomplete-listbox {
     background: #151618;
-    // border: solid 1px #444;
-    // border-left-bottom-radius: 10px;
-    // border-right-bottom-radius: 10px;
 
     & :hover {
       background: #1f1f1f;
@@ -135,7 +130,7 @@ const SelectBox = styled(Box)`
   animation: fadeInDown;
   animation-duration: 1s;
 `
- 
+
 const StyledTextField = styled(TextField)`
   line-height: 3px;
 `
@@ -149,6 +144,12 @@ const TickerName = styled('div')`
   line-height: normal;
   letter-spacing: normal;
   margin: 5px;
+`
+
+const SearchIconWrapper = styled(Box)`
+  position: relative; 
+  right: 30px; 
+  top: 8px;
 `
 
 export default SelectPairInput
