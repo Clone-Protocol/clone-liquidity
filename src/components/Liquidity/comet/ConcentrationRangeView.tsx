@@ -10,7 +10,6 @@ interface Props {
 
 const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit }) => {
   const centerPricePercent = (centerPrice - lowerLimit) * 100 / (upperLimit - lowerLimit)
-  console.log('cc', centerPricePercent)
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px', marginBottom: '16px' }}>
