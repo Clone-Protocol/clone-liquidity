@@ -12,6 +12,7 @@ import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -53,6 +54,13 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     }
   }, [cometDetail])
 
+  const iAssetPriceTooltipText = `The price of the iAsset on Incept Markets, this value is calculated using the ratio of USDi to iAsset in the pool.`
+  const editCometTabTooltipText = `The Edit Comet interface provides you with the tools to manage their comet position.`
+  const closeCometTabTooltipText = `The Close Comet interface allows you to close their comet and reclaim their collateral.`
+
+  const editCometTabLabel = <React.Fragment>Edit Comet <InfoTooltip title={editCometTabTooltipText} /> </React.Fragment>
+  const closeCometTabLabel = <React.Fragment>Close Comet <InfoTooltip title={closeCometTabTooltipText} /> </React.Fragment>
+
 	return (cometDetail && usdiBalance) ? (
 		<Stack direction='row' spacing={2} justifyContent="center">
       { (tab === 0 && cometDetail.tickerIcon) &&
@@ -81,7 +89,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
               />
             }
             <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-              Indicator Price
+              <Box>iAsset Price <InfoTooltip title={iAssetPriceTooltipText} /></Box>
             </Box>
           </StyledBox>
 			  </Box>
@@ -89,8 +97,8 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
 			<Box>
         <Box sx={{ width: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label="Edit Comet"></StyledTab>
-            <StyledTab value={1} label="Close Comet"></StyledTab>
+            <StyledTab value={0} label={editCometTabLabel}></StyledTab>
+            <StyledTab value={1} label={closeCometTabLabel}></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
             <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetch()} />

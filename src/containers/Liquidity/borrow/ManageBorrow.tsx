@@ -11,6 +11,7 @@ import EditPanel from '~/containers/Liquidity/borrow/EditPanel'
 import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
 import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -33,6 +34,13 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
     refetchOnMount: false,
     enabled: borrowDetail != null
   })
+
+  const editBorrowPositionTooltipText = `The Edit Borrow Position interface provides you with the tools to manage your borrow position.`
+  const closeBorrowPositionTooltipText = `The Close Borrow Position interface allows you to close your position by paying off your iAsset debt and reclaim your collateral.`
+  const oraclePriceTooltipText = `The "true" price of the real world asset represented by the iAsset you have borrowed. This price is what is used to calculate your collateral ratio.`
+
+  const editBorrowPositionTabLabel = <React.Fragment>Edit Borrow Position <InfoTooltip title={editBorrowPositionTooltipText} /> </React.Fragment>
+  const closeBorrowPositionTabLabel = <React.Fragment>Close Borrow Position <InfoTooltip title={closeBorrowPositionTooltipText} /> </React.Fragment>
 
   return (borrowDetail && priceHistory) ? (
     <Stack direction='row' spacing={2} justifyContent="center">
@@ -57,15 +65,18 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
             color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-            Indicator Price
+            <Box>
+              Oracle Price
+              <InfoTooltip title={oraclePriceTooltipText} />
+            </Box>
           </Box>
         </StyledBox>
 			</Box>
 			<Box>
         <Box sx={{ width: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label="Edit Borrow Position"></StyledTab>
-            <StyledTab value={1} label="Close Borrow Position"></StyledTab>
+            <StyledTab value={0} label={editBorrowPositionTabLabel}></StyledTab>
+            <StyledTab value={1} label={closeBorrowPositionTabLabel}></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
             <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()}   />

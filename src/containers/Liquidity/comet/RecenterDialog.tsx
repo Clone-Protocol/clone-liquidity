@@ -131,6 +131,9 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
   const recenterCostDisplay = () => {
     return Math.max(0, cometData.usdiCost).toLocaleString()
   }
+  const recenteringCostTooltipText = `The cost necessary to pay off the impermenant loss debt to recenter.`
+  const projectedPriceRangeTooltipText = `The approximate price range of the single pool comet after recentering.`
+  const projectedHealthScoreTooltipText = `The appoximate health score of the single pool comet after recentering.`
 
   return (
     <>
@@ -151,7 +154,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
                 Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
               </WalletBalance>
               <Stack sx={{ borderTopRightRadius: '10px', borderTopLeftRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
-                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost <InfoTooltip title="recenter cost" /></div>
+                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost <InfoTooltip title={recenteringCostTooltipText} /></div>
                 <div style={{ fontSize: '16px', fontWeight: '500', color: '#fff'}}>
                   {recenterCostDisplay()} USDi
                   <div style={{ fontSize: '10px', color: '#b9b9b9', textAlign: 'right'}}>${recenterCostDisplay()}</div>
@@ -164,7 +167,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
 
             <StyledDivider />
           
-            <SubTitle>Projected Price Range <InfoTooltip title="projected price range" /></SubTitle>
+            <SubTitle>Projected Price Range <InfoTooltip title={projectedPriceRangeTooltipText} /></SubTitle>
             <Box sx={{ margin: '0 auto', marginTop: '20px', marginBottom: '33px', width: '345px' }}>
               <ConcentrationRangeView
                 centerPrice={cometData.centerPrice}
@@ -186,14 +189,14 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
               </Stack>
             </Box>
             <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Projected Health Score <InfoTooltip title="projected health score" /></SubTitle>
+              <SubTitle>Projected Health Score <InfoTooltip title={projectedHealthScoreTooltipText} /></SubTitle>
               <DetailValue>
                 {cometData.healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {cometData.prevHealthScore.toFixed(2)}/100)</span>
               </DetailValue>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Estimated Collateral After Recentering <InfoTooltip title="estimated collateral after recentering" /></SubTitle>
+              <SubTitle>Estimated Collateral After Recentering</SubTitle>
               <DetailValue>
                 {(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi <span style={{ color: '#949494' }}>(${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()})</span>
               </DetailValue>

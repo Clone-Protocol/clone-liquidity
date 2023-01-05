@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import DepositDialog from '~/containers/Liquidity/unconcentrated/DepositDialog'
@@ -10,6 +10,7 @@ import { FilterType } from '~/data/filter'
 import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 interface Props {
 	filter: FilterType
@@ -34,6 +35,11 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 	)
 }
 
+const iAssetColTooltipText = `The price of the iAsset on Incept Markets, this value is calculated using the ratio of USDi to iAsset in the pool.`
+const liquidityiAssetColTooltipText = `Number of iAsset you have provided to the pool using this unconcentrated liquidity position.`
+const liquidityUsdiColTooltipText = `Number of USDi you have provided to the pool using this unconcentrated liquidity position.`
+const liquidityValueColTooltipText = `Combined value in USD of the total liquidity you have provided to the pool with this unconcentrated liquidity position. `
+
 let columns: GridColDef[] = [
 	{
 		field: 'pools',
@@ -51,8 +57,13 @@ let columns: GridColDef[] = [
 		field: 'price',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'iAsset price',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				iAsset price	 
+				<InfoTooltip title={iAssetColTooltipText} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -63,6 +74,12 @@ let columns: GridColDef[] = [
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Liquidity (iAsset)',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Liquidity (iAsset)	 
+				<InfoTooltip title={liquidityiAssetColTooltipText} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
         <CellDigitValue value={params.value} symbol={params.row.tickerSymbol} />
@@ -73,8 +90,13 @@ let columns: GridColDef[] = [
 		field: 'liquidityUSD',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Liquidity (USDi)',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Liquidity (USDi)	 
+				<InfoTooltip title={liquidityUsdiColTooltipText} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -83,10 +105,15 @@ let columns: GridColDef[] = [
 		field: 'liquidityVal',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Liquidity value',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Liquidity value	 
+				<InfoTooltip title={liquidityValueColTooltipText} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USDi" />
+			return <CellDigitValue value={params.value} symbol="USD" />
 		},
 	},
 	{

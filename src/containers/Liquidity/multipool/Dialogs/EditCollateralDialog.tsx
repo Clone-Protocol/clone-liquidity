@@ -124,6 +124,8 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
   }
 
   const isValid = Object.keys(errors).length === 0
+  const projectedMultipoolHealthScoreTooltipText = `The approximate health score of the multipool comet after altering the total collateral value.`
+  const totalCollateralValueTooltipText = `The total collateral value in USD of the position after depositing/withdrawing <- depending on which action is selected`
 
   return collData ? (
     <>
@@ -177,11 +179,11 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 
             <Box sx={{ padding: '10px 3px 5px 3px' }}>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
+                <DetailHeader>Projected Multipool Health Score <InfoTooltip title={projectedMultipoolHealthScoreTooltipText} /></DetailHeader>
                 <DetailValue>{healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
+                <DetailHeader>Total Collateral Value <InfoTooltip title={totalCollateralValueTooltipText} /></DetailHeader>
                 <DetailValue>${totalCollValue.toLocaleString()}</DetailValue>
               </Stack>
             </Box>

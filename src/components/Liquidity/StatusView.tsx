@@ -19,6 +19,8 @@ const StatusView: React.FC<Props> = ({ status }) => {
     }
 	}
 
+  const totalValueTooltipText = `Represents the total value of all your positions on Incept Liquidity.`
+
 	return status ? (
 		<StyledPaper>
       <StyledTabs value={tab} onChange={handleChangeTab}>
@@ -32,7 +34,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
       <TabPanel value={tab} index={0}>
         <Box>
-          <Title>Total Value <InfoTooltip title="Total Value" /></Title>
+          <Title>Total Value <InfoTooltip title={totalValueTooltipText} /></Title>
           <BalanceValue>
             <NumValue>{status.totalVal.toLocaleString()}</NumValue> USD
           </BalanceValue>

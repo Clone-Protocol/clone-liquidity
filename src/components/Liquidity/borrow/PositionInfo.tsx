@@ -12,12 +12,18 @@ interface Props {
 }
 
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {
+  const collateralRatioTooltipText = `Designates the ratio in terms of value of the collateral and the borrowed iAsset. For example, if you borrow $100 of iSOL with 200 USDi, then the collateral ratio is 200%. 
+  A borrow position is subject to liquidation if the ratio falls below 150%, but we recommend opening a position with a safer ratio of atleast 250%.`
+  
+  const collateralTooltipText = `The amount of collateral backing your borrow position.`
+  const borrowedTooltipText = `The amount of iAsset borrowed, also referred to as the your debt.`
+
 	return positionInfo ? (
 		<Box sx={{ color: '#fff', padding: '25px 35px', marginTop: '15px' }}>
       <Title>Borrow Position</Title>
       <Box sx={{ borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)'}}>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '27px', width: '400px', height: '65px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '10px', marginTop: '18px', marginBottom: '9px' }}>
-          <SubTitle>Collateral Ratio <InfoTooltip title="collateral ratio" /></SubTitle>
+          <SubTitle>Collateral Ratio <InfoTooltip title={collateralRatioTooltipText} /></SubTitle>
           { positionInfo.borrowedIasset > 0 ?
             <Box sx={{ fontSize: '16px', fontWeight: '500' }}>
               {positionInfo.collateralRatio.toFixed(2)}% 
@@ -30,7 +36,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 
         <EditRowBox>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '27px' }}>
-            <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
+            <SubTitle>Collateral <InfoTooltip title={collateralTooltipText} /></SubTitle>
             <Box sx={{ fontSize: '12px', fontWeight: '500' }}>{positionInfo.collateralAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })} USDi</Box>
           </Box>
           <EditBox onClick={onShowEditForm}>
@@ -40,7 +46,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 
         <EditRowBox>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '27px' }}>
-            <SubTitle>Borrowed <InfoTooltip title="borrowed" /></SubTitle>
+            <SubTitle>Borrowed <InfoTooltip title={borrowedTooltipText} /></SubTitle>
             <Box sx={{ fontSize: '12px', fontWeight: '500' }}>
               {positionInfo.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {positionInfo.tickerSymbol}
             </Box>

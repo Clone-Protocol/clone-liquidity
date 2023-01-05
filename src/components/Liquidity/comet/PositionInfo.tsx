@@ -21,13 +21,26 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
     upperLimit: cometDetail.upperLimit
   }
 
+  const collateralTooltipText = `Designates the amount of collateral provided to back the comet.`
+  const priceRangeTooltipText = `The range within which the designated comet postion will remain active. 
+  If the iAsset price leaves this range it is likely that the position will be subject to liquidation.`
+  
+  const ildColTooltipText = `Stands for Impermanent Loss Debt and represents the amount of debt needed to be payed to offset 
+  the impermanent loss and close or recenter the position.`
+
+  const healthScoreColTooltipText = `The health score gives you a sense of the level of danger of the comet. A higher score means
+  a lower risk of future liquidation. If the score reaches 0, the position is subject to liquidiation.`
+
+  const recenterTooltipText = `Recentering allows you to improve your health score by paying off the Impermenant Loss Debt without having to close the comet.`
+
+
   return assetData ? (
     <Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
       <Title>Comet Position</Title>
       <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)' }}>
         <Box display="flex">
           <Box sx={{ padding: '22px', minWidth: '365px' }}>
-            <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
+            <SubTitle>Collateral <InfoTooltip title={collateralTooltipText} /></SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
               {cometDetail.collAmount.toLocaleString()} <span style={{ fontSize: '14px' }}>USDi</span>
             </Box>
@@ -47,7 +60,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             </Box>
             <StyledDivider />
 
-            <SubTitle>Price Range <InfoTooltip title="price range" /></SubTitle>
+            <SubTitle>Price Range <InfoTooltip title={priceRangeTooltipText} /></SubTitle>
             <Box sx={{ marginTop: '20px' }}>
               <ConcentrationRangeView
                 centerPrice={assetData?.centerPrice}
@@ -81,7 +94,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
       <Box sx={{ display: 'flex', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '13px 27px' }}>
         <Box sx={{ width: '45%', marginLeft: '15px' }}>
-          <SubTitle>Health Score <InfoTooltip title="health score" /></SubTitle>
+          <SubTitle>Health Score <InfoTooltip title={healthScoreColTooltipText} /></SubTitle>
           <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
             {cometDetail.healthScore.toFixed(2)}/100
           </Box>
@@ -89,7 +102,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box sx={{ display: 'flex', width: '50%' }}>
           <div style={{ background: '#535353', width: '1px', height: '56px' }}></div>
           <Box sx={{ marginLeft: '35px' }}>
-            <SubTitle>ILD <InfoTooltip title="ild" /></SubTitle>
+            <SubTitle>ILD <InfoTooltip title={ildColTooltipText} /></SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginTop: '10px' }}>
               {Math.abs(cometDetail.ild).toFixed(2)} USDi
             </Box>
@@ -98,7 +111,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </Box>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title="recenter" /></ActionButton>
+      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title={recenterTooltipText} /></ActionButton>
     </Box>
   ) : (
     <></>

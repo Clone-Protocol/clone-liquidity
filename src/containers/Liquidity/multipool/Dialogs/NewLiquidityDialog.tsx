@@ -110,7 +110,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   }
 
   const isValid = Object.keys(errors).length === 0
-
+  const projectedMultipoolHealthScoreTooltipText = `The approximate health score of the multipool comet after establishing the new liquidity position.`
   return positionInfo ? (
     <>
       {loading && (
@@ -188,7 +188,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
+                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title={projectedMultipoolHealthScoreTooltipText} /></Box>
                   <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
                 </Box>
                 <Divider />
