@@ -88,11 +88,12 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     const {
       lowerPrice,
       upperPrice
-    } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
-      Number(position.poolIndex),
-      collAmount,
-      mintAmount,
-      tokenData
+    } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+      tokenData,
+      comet,
+      index,
+      0,
+      0
     )
     console.log('fdd', upperPrice);
     lowerLimit = lowerPrice
