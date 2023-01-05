@@ -6,29 +6,27 @@ interface Props {
   centerPrice: number
   lowerLimit: number
   upperLimit: number
-	max: number
 }
 
-const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit, max }) => {
-	const maxLimit = max
-	const centerPricePercent = (centerPrice * 100) / maxLimit
-	
-	return (
+const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit }) => {
+  const centerPricePercent = (centerPrice - lowerLimit) * 100 / (upperLimit - lowerLimit)
+
+  return (
     <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px', marginBottom: '16px' }}>
       <LeftBox>{lowerLimit.toFixed(2)}</LeftBox>
       <Box sx={{ position: 'relative' }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
           <LeftRangeStick />
           <RangeBar />
           <RightRangeStick />
         </Box>
-        
+
         <CenterStick sx={{ marginLeft: '50%' }} />
         <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
       </Box>
       <RightBox>{upperLimit.toFixed(2)}</RightBox>
     </Box>
-	)
+  )
 }
 
 const LeftRangeStick = styled('div')`

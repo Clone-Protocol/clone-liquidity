@@ -7,8 +7,8 @@ import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import InfoTooltip from '~/components/Common/InfoTooltip';
 
 interface Props {
-	assetData: PI
-	cometDetail: CometDetail
+  assetData: PI
+  cometDetail: CometDetail
   onShowEditForm: () => void
   onRecenter: () => void
 }
@@ -21,10 +21,10 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
     upperLimit: cometDetail.upperLimit
   }
 
-	return assetData ? (
+  return assetData ? (
     <Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
       <Title>Comet Position</Title>
-      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)'}}>
+      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)' }}>
         <Box display="flex">
           <Box sx={{ padding: '22px', minWidth: '365px' }}>
             <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
@@ -46,14 +46,13 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
               </Stack>
             </Box>
             <StyledDivider />
-          
+
             <SubTitle>Price Range <InfoTooltip title="price range" /></SubTitle>
             <Box sx={{ marginTop: '20px' }}>
               <ConcentrationRangeView
                 centerPrice={assetData?.centerPrice}
                 lowerLimit={cometData.lowerLimit}
                 upperLimit={cometData.upperLimit}
-                max={cometData.upperLimit}
               />
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Center price</DetailHeader>
@@ -88,7 +87,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
           </Box>
         </Box>
         <Box sx={{ display: 'flex', width: '50%' }}>
-          <div style={{ background: '#535353', width: '1px', height: '56px'}}></div>
+          <div style={{ background: '#535353', width: '1px', height: '56px' }}></div>
           <Box sx={{ marginLeft: '35px' }}>
             <SubTitle>ILD <InfoTooltip title="ild" /></SubTitle>
             <Box sx={{ fontSize: '14px', fontWeight: '500', marginTop: '10px' }}>
@@ -101,9 +100,9 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
       <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title="recenter" /></ActionButton>
     </Box>
-	) : (
-		<></>
-	)
+  ) : (
+    <></>
+  )
 }
 
 const StyledDivider = styled(Divider)`
