@@ -61,6 +61,10 @@ const RecenterDialog = ({
     )
   }
 
+  const displayRecenterCost = () => {
+	return Math.max(0, positionInfo!.recenterCost).toLocaleString()
+  }
+
   return positionInfo ? (
     <>
       {loading && (
@@ -98,7 +102,7 @@ const RecenterDialog = ({
 										Recentering Cost <InfoTooltip title="recenter cost" />
 									</div>
 									<div style={{ fontSize: '16px', fontWeight: '500', color: '#fff' }}>
-										{positionInfo.recenterCost.toLocaleString()} USDi
+										{displayRecenterCost()} USDi
 										<div style={{ fontSize: '10px', color: '#b9b9b9', textAlign: 'right' }}>
 											${positionInfo.recenterCostDollarPrice.toLocaleString()}
 										</div>
