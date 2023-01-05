@@ -14,7 +14,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
-  
+
   const collIndex = 0 // NOTE: currently only support USDi
   const [editType, setEditType] = useState(isDeposit ? 0 : 1) // 0 : deposit , 1: withdraw
   const [healthScore, setHealthScore] = useState(0)
@@ -26,32 +26,32 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
   }, [isDeposit])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
-		setEditType(newValue)
-	}, [editType])
+    setEditType(newValue)
+  }, [editType])
 
   const { data: collData, refetch } = useEditCollateralQuery({
     userPubKey: publicKey,
     index: collIndex,
-	  refetchOnMount: "always",
+    refetchOnMount: "always",
     enabled: open && publicKey != null
-	})
+  })
 
   const {
-		handleSubmit,
-		control,
-		formState: { isDirty, errors },
-		watch,
+    handleSubmit,
+    control,
+    formState: { isDirty, errors },
+    watch,
     setValue,
     trigger,
-	} = useForm({
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       collAmount: 0.0,
     }
-	})
+  })
   const [collAmount] = watch([
-		'collAmount',
-	])
+    'collAmount',
+  ])
 
   const initData = () => {
     setValue('collAmount', 0.0)
@@ -76,7 +76,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         if (collData.prevHealthScore) {
           let loss = (100 - collData.prevHealthScore) * collData.collAmount;
           let collDelta = (editType === 0 ? 1 : -1) * collAmount;
-  
+
           setHealthScore(100 - loss / (collData.collAmount + collDelta))
           setMaxWithdrawable(collData.collAmount - loss / 100)
         } else {
@@ -92,14 +92,14 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
       }
     }
     fetch()
-  }, [collData, collAmount, editType])
+  }, [open, collData, collAmount, editType])
 
   const { mutateAsync } = useCollateralMutation(publicKey)
-	const onEdit = async () => {
+  const onEdit = async () => {
     setLoading(true)
     await mutateAsync(
       {
-        collIndex, 
+        collIndex,
         collAmount,
         editType
       },
@@ -121,17 +121,17 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         }
       }
     )
-	}
+  }
 
   const isValid = Object.keys(errors).length === 0
 
   return collData ? (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
@@ -144,7 +144,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                   validate(value) {
                     if (!value || value <= 0) {
                       return ''
-                    } 
+                    }
                     else if ((editType === 0 && value > collData.balance) || (editType === 1 && value >= maxWithdrawable)) {
                       return 'The collateral amount cannot exceed the balance.'
                     }
@@ -178,7 +178,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
             <Box sx={{ padding: '10px 3px 5px 3px' }}>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
-                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{color: '#949494'}}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
+                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
@@ -188,7 +188,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{ editType === 0 ? 'Deposit' : 'Withdraw' }</ActionButton>
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Deposit' : 'Withdraw'}</ActionButton>
           </Box>
         </DialogContent>
       </Dialog>
