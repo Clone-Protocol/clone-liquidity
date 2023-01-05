@@ -22,16 +22,16 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
   }
 
   return assetData ? (
-    <Box sx={{ color: '#fff', padding: '25px 30px', marginTop: '15px' }}>
+    <PositionWrapper>
       <Title>Comet Position</Title>
-      <Box sx={{ borderRadius: '10px', background: 'rgba(128, 156, 255, 0.08)' }}>
+      <WrapperBox>
         <Box display="flex">
-          <Box sx={{ padding: '22px', minWidth: '365px' }}>
+          <Box padding='22px' sx={{ minWidth: '365px' }}>
             <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
-            <Box sx={{ fontSize: '14px', fontWeight: '500' }}>
+            <CollValue>
               {cometDetail.collAmount.toLocaleString()} <span style={{ fontSize: '14px' }}>USDi</span>
-            </Box>
-            <Box sx={{ marginTop: '10px' }}>
+            </CollValue>
+            <Box marginTop='10px'>
               <Stack direction="row" justifyContent="space-between">
                 <DetailHeader>Contributed USDi</DetailHeader>
                 <DetailValue>
@@ -48,7 +48,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             <StyledDivider />
 
             <SubTitle>Price Range <InfoTooltip title="price range" /></SubTitle>
-            <Box sx={{ marginTop: '20px' }}>
+            <Box marginTop='20px'>
               <ConcentrationRangeView
                 centerPrice={assetData?.centerPrice}
                 lowerLimit={cometData.lowerLimit}
@@ -76,34 +76,45 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             <NoteAltOutlinedIcon fontSize="small" />
           </EditBox>
         </Box>
-      </Box>
+      </WrapperBox>
       <StyledDivider />
 
-      <Box sx={{ display: 'flex', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '13px 27px' }}>
-        <Box sx={{ width: '45%', marginLeft: '15px' }}>
+      <HealthScoreWrapper>
+        <Box width='45%' marginLeft='15px'>
           <SubTitle>Health Score <InfoTooltip title="health score" /></SubTitle>
-          <Box sx={{ fontSize: '18px', fontWeight: '500' }}>
+          <HealthScoreValue>
             {cometDetail.healthScore.toFixed(2)}/100
-          </Box>
+          </HealthScoreValue>
         </Box>
-        <Box sx={{ display: 'flex', width: '50%' }}>
-          <div style={{ background: '#535353', width: '1px', height: '56px' }}></div>
-          <Box sx={{ marginLeft: '35px' }}>
+        <Box display='flex' width='50%'>
+          <ColumnDivider />
+          <Box marginLeft='35px'>
             <SubTitle>ILD <InfoTooltip title="ild" /></SubTitle>
-            <Box sx={{ fontSize: '14px', fontWeight: '500', marginTop: '10px' }}>
+            <ILDValue>
               {Math.abs(cometDetail.ild).toFixed(2)} USDi
-            </Box>
+            </ILDValue>
           </Box>
         </Box>
-      </Box>
+      </HealthScoreWrapper>
       <StyledDivider />
 
       <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title="recenter" /></ActionButton>
-    </Box>
+    </PositionWrapper>
   ) : (
     <></>
   )
 }
+
+const PositionWrapper = styled(Box)`
+  color: #fff; 
+  padding: 25px 30px; 
+  margin-top: 15px;
+`
+
+const WrapperBox = styled(Box)`
+  border-radius: 10px; 
+  background: rgba(128, 156, 255, 0.08);
+`
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
@@ -124,6 +135,11 @@ const SubTitle = styled('div')`
 	font-weight: 600;
 	color: #989898;
   margin-bottom: 5px;
+`
+
+const CollValue = styled(Box)`
+  font-size: 14px; 
+  font-weight: 500;
 `
 
 const DetailHeader = styled('div')`
@@ -149,6 +165,13 @@ const EditBox = styled(Box)`
   cursor: pointer;
 `
 
+const HealthScoreWrapper = styled(Box)`
+  display: flex; 
+  border-radius: 10px; 
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 13px 27px;
+`
+
 const ActionButton = styled(Button)`
 	width: 100%;
 	height: 45px;
@@ -165,6 +188,22 @@ const ActionButton = styled(Button)`
     background-color: #444;
     color: #adadad;
   }
+`
+
+const ColumnDivider = styled('div')`
+  background: #535353; 
+  width: 1px; 
+  height: 56px;
+`
+
+const HealthScoreValue = styled(Box)`
+  font-size: 18px; 
+  font-weight: 500;
+`
+const ILDValue = styled(Box)`
+  font-size: 14px; 
+  font-weight: 500; 
+  margin-top: 10px;
 `
 
 export default withCsrOnly(PositionInfo)
