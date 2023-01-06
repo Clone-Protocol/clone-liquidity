@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, styled, Button, Stack, Dialog, DialogContent, ModalProps } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, DialogContent } from '@mui/material'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterInfoQuery } from '~/features/MyLiquidity/multipool/RecenterInfo.query'
 import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
@@ -61,6 +61,10 @@ const RecenterDialog = ({
 		)
 	}
 
+	const displayRecenterCost = () => {
+		return Math.max(0, positionInfo!.recenterCost).toLocaleString()
+	}
+
 	return positionInfo ? (
 		<>
 			{loading && (
@@ -83,7 +87,7 @@ const RecenterDialog = ({
 										Recentering Cost <InfoTooltip title="recenter cost" />
 									</StackTitle>
 									<StackValue>
-										{positionInfo.recenterCost.toLocaleString()} USDi
+										{displayRecenterCost()} USDi
 										<StackSubValue>
 											${positionInfo.recenterCostDollarPrice.toLocaleString()}
 										</StackSubValue>
@@ -225,15 +229,4 @@ const ActionButton = styled(Button)`
 		color: #adadad;
 	}
 `
-
-// const NotEnoughBox = styled(Box)`
-// 	max-width: 500px;
-//   padding-left: 36px;
-//   padding-top: 4px;
-// 	padding-right: 10px;
-// 	font-size: 11px;
-// 	font-weight: 500;
-// 	color: #989898;
-// `
-
 export default RecenterDialog

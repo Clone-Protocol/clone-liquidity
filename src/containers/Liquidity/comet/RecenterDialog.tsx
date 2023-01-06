@@ -128,6 +128,10 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
     )
   }
 
+  const recenterCostDisplay = () => {
+    return Math.max(0, cometData.usdiCost).toLocaleString()
+  }
+
   return (
     <>
       {loading && (
@@ -140,7 +144,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px', overflow: 'hidden' }}>
           <BoxWrapper>
             <WarningBox>
-              If this is your first interaction with Recenting, please click here to learn.
+              If this is your first interaction with Recentering, please click here to learn.
             </WarningBox>
             <Box marginTop='20px' marginBottom='22px'>
               <WalletBalance>
@@ -149,8 +153,8 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
               <TopStack direction="row" justifyContent="space-between">
                 <StackTitle>Recentering cost <InfoTooltip title="recenter cost" /></StackTitle>
                 <StackValue>
-                  {cometData.usdiCost.toLocaleString()} USDi
-                  <StackSubValue>${cometData.usdiCost.toLocaleString()}</StackSubValue>
+                  {recenterCostDisplay()} USDi
+                  <StackSubValue>${recenterCostDisplay()}</StackSubValue>
                 </StackValue>
               </TopStack>
               <BottomBox>
