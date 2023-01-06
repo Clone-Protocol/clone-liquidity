@@ -32,20 +32,17 @@ const FormStack = styled(Stack)`
 	border-radius: 8px;
 	border: solid 1px #5c5c5c;
 `
-
 const TickerWrapper = styled(Box)`
 	width: 100px; 
 	margin-left: 8px; 
 	text-align: left;
 `
-
 const TickerSymbol = styled('div')`
 	font-size: 14px;
 	font-weight: 600;
 	color: #5c5c5c;
   margin-top: 3px;
 `
-
 const InputAmount = styled(`input`)`
 	width: 330px;
 	margin-left: 30px;

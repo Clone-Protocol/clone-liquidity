@@ -51,12 +51,10 @@ const HeaderTitle = styled(Box)`
 	color: #949494; 
 	margin-right: 15px;
 `
-
 const MaxValue = styled('span')`
 	color: #90e4fe; 
 	cursor: pointer;
 `
-
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
@@ -69,19 +67,16 @@ const FormStack = styled(Stack)`
     border: solid 1px #809cff;
   }
 `
-
 const TickerWrapper = styled(Box)`
 	width: 100px; 
 	margin-left: 8px; 
 	text-align: left;
 `
-
 const TickerSymbol = styled('div')`
 	font-size: 14px;
 	font-weight: 600;
   margin-top: 3px;
 `
-
 const InputAmount = styled(`input`)`
 	width: 330px;
 	margin-left: 30px;

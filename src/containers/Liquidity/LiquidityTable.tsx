@@ -22,8 +22,8 @@ import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
 const LiquidityTable = () => {
   const router = useRouter()
   const { ltab } = router.query
-	const [tab, setTab] = useState(0)
-	const [filter, setFilter] = useState<FilterType>('all')
+  const [tab, setTab] = useState(0)
+  const [filter, setFilter] = useState<FilterType>('all')
 
   // sub routing for tab
   useEffect(() => {
@@ -32,15 +32,15 @@ const LiquidityTable = () => {
     }
   }, [ltab])
 
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-    setTab(newValue) 
-	}
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue)
+  }
 
-	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
-		setFilter(newValue)
-	}
+  const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
+    setFilter(newValue)
+  }
 
-	return (
+  return (
     <div>
       <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '860px' }}>
         <StyledTab value={0} label="Comet Liquidity" icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
@@ -48,17 +48,9 @@ const LiquidityTable = () => {
         <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
         <StyledTab value={3} label="Multipool Comet Liquidity" icon={tab === 3 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} sx={{ background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
-      
-      <Box
-        sx={{
-          background: 'rgba(21, 22, 24, 0.75)',
-          borderRadius: '10px',
-          minHeight: '250px',
-          marginBottom: '25px',
-          color: '#fff',
-          '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '13px' },
-        }}>
-        { tab <= 2 &&
+
+      <PanelBox>
+        {tab <= 2 &&
           (
             <>
               <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
@@ -84,9 +76,9 @@ const LiquidityTable = () => {
         <TabPanel value={tab} index={3}>
           <MultipoolComet />
         </TabPanel>
-      </Box>
+      </PanelBox>
     </div>
-	)
+  )
 }
 
 const StyledDivider = styled(Divider)`
@@ -95,6 +87,17 @@ const StyledDivider = styled(Divider)`
 	margin-top: 20px;
   width: 95%;
 	height: 1px;
+`
+const PanelBox = styled(Box)`
+  background: rgba(21, 22, 24, 0.75);
+  border-radius: 10px;
+  min-height: 250px;
+  margin-bottom: 25px;
+  color: #fff;
+  & .super-app-theme--header { 
+    color: #9d9d9d; 
+    font-size: 13px; 
+  }
 `
 
 export default LiquidityTable

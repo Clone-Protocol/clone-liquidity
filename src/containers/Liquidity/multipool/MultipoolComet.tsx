@@ -14,33 +14,23 @@ const MultipoolComet = () => {
   const { publicKey } = useWallet()
   const { data: infos, refetch } = useMultipoolInfoQuery({
     userPubKey: publicKey,
-	  refetchOnMount: "always",
+    refetchOnMount: "always",
     enabled: publicKey != null
-	})
+  })
 
   return infos ? (
     <Wrapper>
-      <Stack
-        sx={{
-          background: 'rgba(207, 170, 255, 0.09)',
-          border: '1px solid #8c73ac',
-          borderRadius: '10px',
-          color: '#989898',
-          padding: '8px',
-          marginBottom: '26px',
-          height: '41px'
-        }}
-        direction="row">
-        <Box sx={{ width: '73px', textAlign: 'center', marginTop: '2px' }}>
+      <WarningStack direction="row">
+        <IconWrapper>
           <Image src={InfoBookIcon} />
-        </Box>
+        </IconWrapper>
         <WarningBox>
           Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please be sure to read and learn about it before first engaging with it.
         </WarningBox>
-      </Stack>
+      </WarningStack>
 
       <Grid container spacing={2}>
-			  <Grid item xs={12} md={2}>
+        <Grid item xs={12} md={2}>
           <CardWrapper>
             <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
             <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{!infos.healthScore || Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)}</span>/100</SubValue>
@@ -58,15 +48,15 @@ const MultipoolComet = () => {
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={4}>
-          <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
+          <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <SubTitle>Collaterals <InfoTooltip title="Collaterals" /></SubTitle>
-            <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()}  />
+            <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
+          <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <SubTitle>Contributed Liquidity Positions <InfoTooltip title="Contributed Liquidity Positions" /></SubTitle>
-            <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()}  />
+            <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid>
       </Grid>
@@ -81,7 +71,20 @@ const Wrapper = styled(Box)`
   padding-top: 17px;
   padding-bottom: 17px;
 `
-
+const WarningStack = styled(Stack)`
+  background: rgba(207, 170, 255, 0.09);
+  border: 1px solid #8c73ac;
+  border-radius: 10px;
+  color: #989898;
+  padding: 8px;
+  margin-bottom: 26px;
+  height: 41px;
+`
+const IconWrapper = styled(Box)`
+  width: 73px; 
+  text-align: center; 
+  margin-top: 2px;
+`
 const WarningBox = styled(Box)`
 	padding-right: 10px;
 	font-size: 11px;

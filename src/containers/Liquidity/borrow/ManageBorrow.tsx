@@ -13,16 +13,16 @@ import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.qu
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
-	const { publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const [tab, setTab] = useState(0)
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
-	}
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue)
+  }
 
   const borrowIndex = parseInt(assetId)
 
-  const { data: borrowDetail, refetch } = useBorrowPositionQuery({ 
-    userPubKey: publicKey, 
+  const { data: borrowDetail, refetch } = useBorrowPositionQuery({
+    userPubKey: publicKey,
     index: borrowIndex,
     refetchOnMount: "always",
     enabled: publicKey != null
@@ -36,46 +36,46 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
 
   return (borrowDetail && priceHistory) ? (
     <Stack direction='row' spacing={2} justifyContent="center">
-			<Box>
+      <Box>
         <StyledBox>
           <Box display="flex">
             <Image src={borrowDetail.tickerIcon} width="30px" height="30px" />
-            <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
+            <TickerWrapper>
               {borrowDetail.tickerName} ({borrowDetail.tickerSymbol})
-            </Box>
+            </TickerWrapper>
           </Box>
           <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
             ${borrowDetail.oPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}
             {priceHistory.rateOfPrice >= 0 ?
               <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-            :
+              :
               <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
             }
           </Box>
-          <MiniLineChartAlt 
+          <MiniLineChartAlt
             data={priceHistory?.chartData}
-            color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+            color={priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
             Indicator Price
           </Box>
         </StyledBox>
-			</Box>
-			<Box>
+      </Box>
+      <Box>
         <Box sx={{ width: '466px', marginLeft: '18px' }}>
           <StyledTabs value={tab} onChange={handleChangeTab}>
             <StyledTab value={0} label="Edit Borrow Position"></StyledTab>
             <StyledTab value={1} label="Close Borrow Position"></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()}   />
+            <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
             <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
           </TabPanelForEdit>
         </Box>
-			</Box>
-		</Stack>
+      </Box>
+    </Stack>
   ) : <></>
 }
 
@@ -86,7 +86,13 @@ const StyledBox = styled(Box)`
   border-radius: 10px;
   background: rgba(21, 22, 24, 0.75);
 `
-
+const TickerWrapper = styled(Box)`
+  margin-left: 10px; 
+  font-size: 14px; 
+  font-weight: 600; 
+  color: #fff; 
+  margin-top: 3px;
+`
 const TxtPriceRate = styled('div')`
   font-size: 10px;
   font-weight: 500;

@@ -46,7 +46,7 @@ const PairInput: React.FC<Props> = ({
             <DollarAmount>{(valueDollarPrice && valueDollarPrice > 0) ? ('$' + valueDollarPrice?.toLocaleString()) : ''}</DollarAmount>
           </Box>
         </InputStack>
-        <CurrentPrice style={{ borderTop: '1px solid #444' }}>Current: <span style={{ color: '#fff' }}>{currentAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol} {dollarPrice && '($' + dollarPrice.toLocaleString() + ')'}</span></CurrentPrice>
+        <CurrentPrice>Current: <span style={{ color: '#fff' }}>{currentAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol} {dollarPrice && '($' + dollarPrice.toLocaleString() + ')'}</span></CurrentPrice>
       </WrapperBox>
     </FormControl>
   )
@@ -115,6 +115,7 @@ const CurrentPrice = styled('div')`
   letter-spacing: normal;
   text-align: center;
   color: #949494;
+  border-top: 1px solid #444;
 `
 
 export default PairInput

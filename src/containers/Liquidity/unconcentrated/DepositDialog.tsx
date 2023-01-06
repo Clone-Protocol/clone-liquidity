@@ -14,39 +14,39 @@ import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 
 const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: boolean, handleClose: () => void }) => {
-	const { publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
 
-	const unconcentratedIndex = parseInt(assetId)
+  const unconcentratedIndex = parseInt(assetId)
   const { mutateAsync } = useDepositMutation(publicKey)
 
   const {
-		handleSubmit,
+    handleSubmit,
     setValue,
-		control,
-		formState: { isDirty, errors },
-		watch,
-	} = useForm({
+    control,
+    formState: { isDirty, errors },
+    watch,
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       borrowFrom: NaN,
       borrowTo: NaN,
     }
-	})
+  })
   const [borrowFrom, borrowTo] = watch([
-		'borrowFrom',
-		'borrowTo',
-	])
+    'borrowFrom',
+    'borrowTo',
+  ])
 
   const { data: unconcentData, refetch } = useUnconcentDetailQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
-	  refetchOnMount: "always",
+    refetchOnMount: "always",
     enabled: open && publicKey != null
-	})
+  })
 
-	const onDeposit = async () => {
+  const onDeposit = async () => {
     setLoading(true)
     handleClose()
     await mutateAsync(
@@ -73,26 +73,26 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
         }
       }
     )
-	}
+  }
 
   const isValid = Object.keys(errors).length === 0
 
-	return unconcentData ? (
+  return unconcentData ? (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
-          <Box sx={{ padding: '8px 28px', color: '#fff' }}>
+          <BoxWrapper>
             <WarningBox>
               Acquire addtional iAsset and USDi by <span style={{ textDecoration: 'underline' }}>borrowing</span> and <span style={{ textDecoration: 'underline' }}>swaping</span>, click <span style={{ textDecoration: 'underline' }}>here</span> to learn more.
             </WarningBox>
-            <Box sx={{ marginTop: '20px'}}>
-              <SubTitle><Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>{unconcentData.tickerSymbol}</span> to deposit</Box></SubTitle>
+            <Box sx={{ marginTop: '20px' }}>
+              <SubTitle><Image src={OneIcon} /> <Box marginLeft='9px'>Provide additional <span style={{ color: '#809cff' }}>{unconcentData.tickerSymbol}</span> to deposit</Box></SubTitle>
               <Controller
                 name="borrowFrom"
                 control={control}
@@ -130,8 +130,8 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
             <StyledDivider />
 
             <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Provide additional <span style={{ color: '#809cff' }}>USDi</span> to deposit</Box></SubTitle>
-              
+              <SubTitle><Image src={TwoIcon} /> <Box marginLeft='9px'>Provide additional <span style={{ color: '#809cff' }}>USDi</span> to deposit</Box></SubTitle>
+
               <Controller
                 name="borrowTo"
                 control={control}
@@ -168,13 +168,18 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
             </Box>
             <StyledDivider />
             <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid}>Deposit</ActionButton>
-          </Box>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
-	) : <></>
+  ) : <></>
 }
 
+const BoxWrapper = styled(Box)`
+  padding: 8px 28px; 
+  color: #fff;
+  overflow-x: hidden;
+`
 const WarningBox = styled(Box)`
   max-width: 507px;
   height: 42px;

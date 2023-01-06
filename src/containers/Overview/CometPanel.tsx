@@ -229,30 +229,21 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
           value={assetData.price}
         />
 
-        <Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
-          <Stack
-            sx={{
-              background: 'rgba(128, 156, 255, 0.09)',
-              border: '1px solid #809cff',
-              borderRadius: '10px',
-              color: '#809cff',
-              padding: '8px',
-              marginBottom: '26px',
-            }}
-            direction="row">
-            <Box sx={{ width: '73px', textAlign: 'center', marginTop: '6px' }}>
+        <StyledBox>
+          <WarningStack direction="row">
+            <IconWrapper>
               <Image src={InfoBookIcon} />
-            </Box>
+            </IconWrapper>
             <WarningBox>
               Fill in two of the three parts and the third part will automatically generate.{' '}
               <br />Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
             </WarningBox>
-          </Stack>
+          </WarningStack>
 
           <Box>
             <SubTitle>
               <Image src={OneIcon} />{' '}
-              <Box sx={{ marginLeft: '9px' }}>Provide stable coins to collateralize</Box>
+              <Box marginLeft='9px'>Provide stable coins to collateralize</Box>
             </SubTitle>
             <Controller
               name="collAmount"
@@ -281,19 +272,19 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
           <Box>
             <SubTitle>
               <Image src={TwoIcon} />{' '}
-              <Box sx={{ marginLeft: '9px' }}>
+              <Box marginLeft='9px'>
                 Amount of USDi & {assetData.tickerSymbol} to mint into {assetData.tickerSymbol}{' '}
                 AMM
               </Box>
             </SubTitle>
-            <Box sx={{ marginTop: '15px' }}>
+            <Box marginTop='15px'>
               <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px' }}>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
                 <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
               </Box>
             </Box>
-            <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
+            <Box marginBottom='25px' marginTop='15px'>
               <Controller
                 name="mintAmount"
                 control={control}
@@ -326,10 +317,10 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
 
           <Box>
             <SubTitle>
-              <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title="Projected Liquidity Concentration Range" /></Box>
+              <Box marginLeft='9px'>Projected Liquidity Concentration Range <InfoTooltip title="Projected Liquidity Concentration Range" /></Box>
             </SubTitle>
 
-            <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
+            <Box marginTop='110px' marginBottom='15px'>
               <ConcentrationRange
                 assetData={assetData}
                 cometData={cometData}
@@ -344,26 +335,44 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
           <StyledDivider />
 
           <Box>
-            <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></Box>
-            <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</Box>
+            <HealthScoreTitle>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></HealthScoreTitle>
+            <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</HealthScoreValue>
           </Box>
 
           <StyledDivider />
 
           <CometButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Create Comet Position</CometButton>
-        </Box>
+        </StyledBox>
       </Box>
     </>
   )
 }
 
+const StyledBox = styled(Box)`
+  border-radius: 10px;
+  padding: 24px 32px;
+  background: rgba(21, 22, 24, 0.75);
+  margin-top: 28px;
+`
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 30px;
 	margin-top: 30px;
 	height: 1px;
 `
-
+const WarningStack = styled(Stack)`
+  background: rgba(128, 156, 255, 0.09);
+  border: 1px solid #809cff;
+  border-radius: 10px;
+  color: #809cff;
+  padding: 8px;
+  margin-bottom: 26px;
+`
+const IconWrapper = styled(Box)`
+  width: 73px; 
+  text-align: center; 
+  margin-top: 6px;
+`
 const WarningBox = styled(Box)`
 	max-width: 500px;
 	padding-right: 10px;
@@ -371,13 +380,21 @@ const WarningBox = styled(Box)`
 	font-weight: 500;
 	color: #989898;
 `
-
 const SubTitle = styled(Box)`
 	display: flex;
 	font-size: 14px;
 	font-weight: 500;
 `
-
+const HealthScoreTitle = styled(Box)`
+  font-size: 14px; 
+  font-weight: 500; 
+  margin-left: 9px;
+`
+const HealthScoreValue = styled(Box)`
+  font-size: 20px; 
+  font-weight: 500;
+  text-align: center;
+`
 const CometButton = styled(Button)`
 	width: 100%;
 	background-color: #4e609f;
