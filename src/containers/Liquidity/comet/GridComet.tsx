@@ -12,6 +12,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	filter: FilterType
@@ -36,16 +37,6 @@ const GridComet: React.FC<Props> = ({ filter }) => {
 	)
 }
 
-const collateralColTooltipText = `Designates the amount of collateral provided to back the comet.`
-const ildColTooltipText = `Stands for Impermanent Loss Debt and represents the amount of debt needed to be payed to offset 
-the impermanent loss and close or recenter the position.`
-
-const priceRangeColTooltipText = `The range within which the designated comet postion will remain active. If the iAsset price 
-leaves this range it is likely that the position will be subject to liquidation.`
-
-const healthScoreColTooltipText = `The health score gives you a sense of the level of danger of the comet. A higher score means
- a lower risk of future liquidation. If the score reaches 0, the position is subject to liquidiation.`
-
 let columns: GridColDef[] = [
 	{
 		field: 'pools',
@@ -67,7 +58,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Collateral	 
-				<InfoTooltip title={collateralColTooltipText} />
+				<InfoTooltip title={TooltipTexts.collateralDesignated} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -84,7 +75,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				ILD	 
-				<InfoTooltip title={ildColTooltipText} />
+				<InfoTooltip title={TooltipTexts.ildCol} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -99,7 +90,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Price range	 
-				<InfoTooltip title={priceRangeColTooltipText} />
+				<InfoTooltip title={TooltipTexts.priceRange} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -117,7 +108,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Health Score	 
-				<InfoTooltip title={healthScoreColTooltipText} />
+				<InfoTooltip title={TooltipTexts.healthScoreCol} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {

@@ -19,6 +19,7 @@ import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
 import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const LiquidityTable = () => {
   const router = useRouter()
@@ -41,15 +42,10 @@ const LiquidityTable = () => {
 		setFilter(newValue)
 	}
 
-  const cometLiquidityTabTooltipText = `Navigate here to view and edit all of your single pool comet positions.`
-  const unconcentratedLiquidityTabTooltipText = `Navigate here to view and edit all of your traditional unconcentrated liquidity positions.`
-  const borrowPositionTabTooltipText = `Navigate here to view and edit all of your borrow positions.`
-  const multipoolCometTabTooltipText = `Navigate here to view and edit your multipool comet position.`
-
-  const cometLiquidityTabLabel = <React.Fragment>Comet Liquidity <InfoTooltip title={cometLiquidityTabTooltipText} /> </React.Fragment>
-  const unconcentratedLiquidityTabLabel = <React.Fragment>Unconcentrated Liquidity <InfoTooltip title={unconcentratedLiquidityTabTooltipText} /> </React.Fragment>
-  const borrowPositionTabLabel = <React.Fragment>Borrow Position <InfoTooltip title={borrowPositionTabTooltipText} /> </React.Fragment> 
-  const multipoolCometTabLabel = <React.Fragment>Multipool Comet Liquidity <InfoTooltip title={multipoolCometTabTooltipText} /> </React.Fragment>   
+  const cometLiquidityTabLabel = <React.Fragment>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidityTab} /> </React.Fragment>
+  const unconcentratedLiquidityTabLabel = <React.Fragment>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidityTab} /> </React.Fragment>
+  const borrowPositionTabLabel = <React.Fragment>Borrow Position <InfoTooltip title={TooltipTexts.borrowPositionTab} /> </React.Fragment> 
+  const multipoolCometTabLabel = <React.Fragment>Multipool Comet Liquidity <InfoTooltip title={TooltipTexts.multipoolCometTab} /> </React.Fragment>   
 
 	return (
     <div>

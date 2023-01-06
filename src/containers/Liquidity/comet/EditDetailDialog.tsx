@@ -18,6 +18,7 @@ import throttle from 'lodash.throttle'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -294,9 +295,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const isValid = Object.keys(errors).length === 0 && healthScore > 0
 
-  const projectedLiquidityConcRangeTooltipText = `The approximate price range of the single pool comet after editing.`
-  const projectedHealthScoreTooltipText = `The approximate health score of the single pool comet after editing.`
-
   return (
     <>
       {loading && (
@@ -368,7 +366,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <SubTitle>
-                  <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title={projectedLiquidityConcRangeTooltipText} /></Box>
+                  <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 </SubTitle>
 
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
@@ -376,7 +374,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
               <StyledDivider />
 
               <Box>
-                <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title={projectedHealthScoreTooltipText} /></Box>
+                <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
                 <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
               </Box>
 

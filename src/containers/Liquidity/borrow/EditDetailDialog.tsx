@@ -12,6 +12,7 @@ import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInpu
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: string, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -103,9 +104,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
   const isValid = Object.keys(errors).length === 0
 
-  const expectedCollateralRatioTooltipText = `The approximate collateral ratio after (depositing/withdrawing) <- depending on which is selected`
-  const minCollateralRatioTooltipText = `The minimum collateral ratio necessary before the position is subject to liquidation.`
-
   return (
     <>
       {loading && (
@@ -160,11 +158,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
             <Box sx={{ padding: '5px 3px 5px 3px' }}>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Expected Collateral Ratio <InfoTooltip title={expectedCollateralRatioTooltipText} /></DetailHeader>
+                <DetailHeader>Expected Collateral Ratio <InfoTooltip title={TooltipTexts.expectedCollateralRatio} /></DetailHeader>
                 <DetailValue>{expectedCollRatio.toLocaleString()}% <span style={{color: '#949494'}}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
               </Stack>
               <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Min Collateral Ratio <InfoTooltip title={minCollateralRatioTooltipText} /></DetailHeader>
+                <DetailHeader>Min Collateral Ratio <InfoTooltip title={TooltipTexts.minCollateralRatio} /></DetailHeader>
                 <DetailValue>{borrowDetail.minCollateralRatio.toLocaleString()}%</DetailValue>
               </Stack>
             </Box>

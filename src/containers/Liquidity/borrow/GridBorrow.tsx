@@ -10,6 +10,7 @@ import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	filter: FilterType
@@ -34,15 +35,6 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
 	)
 }
 
-const oraclePriceColTooltipText = `The "true" price of the real world asset represented by the 
-iAsset you have borrowed. This price is what is used to calculate your collateral ratio.`
-
-const borrowedColTooltipText = `The amount of iAsset borrowed, also referred to as the your debt.`
-const collateralColTooltipText = `The amount of collateral backing your borrow position.`
-const collateralRatioTooltipText = `Designates the ratio in terms of value of the collateral and the borrowed iAsset. 
-For example, if you borrow $100 of iSOL with 200 USDi, then the collateral ratio is 200%. A borrow position is subject 
-to liquidation if the ratio falls below 150%, but we recommend opening a position with a safer ratio of atleast 250%.`
-
 let columns: GridColDef[] = [
 	{
 		field: 'asset',
@@ -64,7 +56,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Oracle price	 
-				<InfoTooltip title={oraclePriceColTooltipText} />
+				<InfoTooltip title={TooltipTexts.oraclePrice} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -79,7 +71,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Borrowed	 
-				<InfoTooltip title={borrowedColTooltipText} />
+				<InfoTooltip title={TooltipTexts.borrowed} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -94,7 +86,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Collateral	 
-				<InfoTooltip title={collateralColTooltipText} />
+				<InfoTooltip title={TooltipTexts.collateralBacking} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -109,7 +101,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Collateral Ratio	 
-				<InfoTooltip title={collateralRatioTooltipText} />
+				<InfoTooltip title={TooltipTexts.collateralRatio} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {

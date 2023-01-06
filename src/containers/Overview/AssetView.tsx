@@ -15,6 +15,7 @@ import withSuspense from '~/hocs/withSuspense'
 import CometPanel from './CometPanel'
 import UnconcentPanel from './UnconcentPanel'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -48,23 +49,17 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		setTab(newVal)
 	}
 
-	const cometLiquidityTooltipText = `The Comet Liquidity interface allows you to establish a new single pool comet position where one source 
-	of collateral will back a concentrated liquidty position for one iAsset pool.`
-
-	const unconcentratedLiquidityTooltipText = `The Unconcentrated Liquidity interface allows you to provide liquidity to pools in the traditional way,
-	by adding both USDi and iAsset directly from your wallet`
-
 	return assetData ? (
 		<StyledBox>
 			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
 				<Box sx={{ display: 'flex', maxWidth: '494px', height: '47px', alignItems: 'center', paddingLeft: '9px', paddingRight: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
 					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
 						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
-            <span style={{ marginLeft: '8px' }}>Comet Liquidity <InfoTooltip title={cometLiquidityTooltipText} /></span>
+            <span style={{ marginLeft: '8px' }}>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidity} /></span>
 					</CometTabBtn>
 					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
 						{tab===1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} /> }
-						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity <InfoTooltip title={unconcentratedLiquidityTooltipText} /></span>
+						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidity} /></span>
 					</UnconcentTabBtn>
 				</Box>
 			</Box>

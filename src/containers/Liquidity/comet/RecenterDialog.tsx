@@ -12,6 +12,7 @@ import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface CometInfo {
   healthScore: number
@@ -154,7 +155,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
                 Wallet balance: <span style={ isLackBalance ? { color: '#e9d100', marginLeft: '4px'} : {marginLeft: '4px'}}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
               </WalletBalance>
               <Stack sx={{ borderTopRightRadius: '10px', borderTopLeftRadius: '10px', border: 'solid 1px #444', padding: '12px 24px 12px 27px' }} direction="row" justifyContent="space-between">
-                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost <InfoTooltip title={recenteringCostTooltipText} /></div>
+                <div style={{ fontSize: '11px', fontWeight: '600', color: '#fff9f9', display: 'flex', alignItems: 'center'}}>Recentering cost <InfoTooltip title={TooltipTexts.recenteringCost} /></div>
                 <div style={{ fontSize: '16px', fontWeight: '500', color: '#fff'}}>
                   {recenterCostDisplay()} USDi
                   <div style={{ fontSize: '10px', color: '#b9b9b9', textAlign: 'right'}}>${recenterCostDisplay()}</div>
@@ -167,7 +168,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
 
             <StyledDivider />
           
-            <SubTitle>Projected Price Range <InfoTooltip title={projectedPriceRangeTooltipText} /></SubTitle>
+            <SubTitle>Projected Price Range <InfoTooltip title={TooltipTexts.projectedPriceRange} /></SubTitle>
             <Box sx={{ margin: '0 auto', marginTop: '20px', marginBottom: '33px', width: '345px' }}>
               <ConcentrationRangeView
                 centerPrice={cometData.centerPrice}
@@ -189,7 +190,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
               </Stack>
             </Box>
             <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Projected Health Score <InfoTooltip title={projectedHealthScoreTooltipText} /></SubTitle>
+              <SubTitle>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} /></SubTitle>
               <DetailValue>
                 {cometData.healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {cometData.prevHealthScore.toFixed(2)}/100)</span>
               </DetailValue>

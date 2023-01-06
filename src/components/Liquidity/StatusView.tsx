@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { Status } from '~/features/MyLiquidity/Status.query'
 import InfoTooltip from '../Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 import 'animate.css';
 
 interface Props {
@@ -19,8 +20,6 @@ const StatusView: React.FC<Props> = ({ status }) => {
     }
 	}
 
-  const totalValueTooltipText = `Represents the total value of all your positions on Incept Liquidity.`
-
 	return status ? (
 		<StyledPaper>
       <StyledTabs value={tab} onChange={handleChangeTab}>
@@ -34,7 +33,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
       <TabPanel value={tab} index={0}>
         <Box>
-          <Title>Total Value <InfoTooltip title={totalValueTooltipText} /></Title>
+          <Title>Total Value <InfoTooltip title={TooltipTexts.totalValue} /></Title>
           <BalanceValue>
             <NumValue>{status.totalVal.toLocaleString()}</NumValue> USD
           </BalanceValue>

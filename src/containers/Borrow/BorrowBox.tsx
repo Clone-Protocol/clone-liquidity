@@ -22,6 +22,7 @@ import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const BorrowBox = () => {
 	const { publicKey } = useWallet()
@@ -162,13 +163,6 @@ const BorrowBox = () => {
 
   const isValid = Object.keys(errors).length === 0
 
-  const oraclePriceTooltipText = `The "true" price of the real world asset represented by the iAsset you wish to borrow. 
-  This price is what is used to calculate your collateral ratio.`
-
-  const setCollateralRatioTooltipText = `Designates the ratio in terms of value of the collateral and the borrowed iAsset. 
-  example, if you borrow $100 of iSOL with 200 USDi, then the collateral ratio is 200%. A borrow position is subject to 
-  liquidation if the ratio falls below 150%, but we recommend opening a position with a safer ratio of atleast 250%.`
-
 	return priceHistory && usdiBalance ? (
     <>
       {loading && (
@@ -204,7 +198,7 @@ const BorrowBox = () => {
               color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
             />
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-              Oracle Price <InfoTooltip title={oraclePriceTooltipText} />
+              Oracle Price <InfoTooltip title={TooltipTexts.oraclePrice} />
             </Box>
           </StyledBox>
         </Box>
@@ -248,7 +242,7 @@ const BorrowBox = () => {
             <StyledDivider />
 
             <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title={setCollateralRatioTooltipText} /></Box></SubTitle>
+              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title={TooltipTexts.setCollateralRatio} /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
                 <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />

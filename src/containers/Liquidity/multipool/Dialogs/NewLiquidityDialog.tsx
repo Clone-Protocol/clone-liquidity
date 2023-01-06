@@ -14,6 +14,7 @@ import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -110,7 +111,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   }
 
   const isValid = Object.keys(errors).length === 0
-  const projectedMultipoolHealthScoreTooltipText = `The approximate health score of the multipool comet after establishing the new liquidity position.`
+  
   return positionInfo ? (
     <>
       {loading && (
@@ -188,7 +189,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title={projectedMultipoolHealthScoreTooltipText} /></Box>
+                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreEstablished} /></Box>
                   <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
                 </Box>
                 <Divider />

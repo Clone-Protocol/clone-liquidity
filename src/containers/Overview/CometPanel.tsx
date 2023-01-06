@@ -24,6 +24,7 @@ import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -214,12 +215,6 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
     return false
   }
 
-  const concentrationRangeTooltipText = `The range within which the designated comet postion will remain active. If 
-  the iAsset price leaves this range it is likely that the position will be subject to liquidation.`
-
-  const healthScoreTooltipText = `The health score gives the you a sense of the level of danger of the comet. 
-  A higher score means a lower risk of future liquidation. If the score reaches 0, the position is subject to liquidiation.`
-
   return (
     <>
       {loading && (
@@ -332,7 +327,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
 
           <Box>
             <SubTitle>
-              <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title={concentrationRangeTooltipText} /></Box>
+              <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
             </SubTitle>
 
             <Box sx={{ marginTop: '110px', marginBottom: '15px' }}>
@@ -350,7 +345,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
           <StyledDivider />
 
           <Box>
-            <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title={healthScoreTooltipText} /></Box>
+            <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
             <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</Box>
           </Box>
 

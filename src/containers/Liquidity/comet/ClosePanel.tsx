@@ -12,6 +12,7 @@ import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, cometDetail: CometDetail, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -64,11 +65,6 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
     )
   }
 
-  const ildDebtTooltipText = `The D stands for Debt in ILD so remove Debt from this, then (?) should be: Stands for Impermanent Loss Debt 
-  and represents the amount of debt needed to be payed to offset the impermanent loss and close the position.`
-
-  const collateralWithdrawTooltipText = `The amount of collateral that you can withdraw after closing the comet.`
-
   return (
     <>
       {loading && (
@@ -84,11 +80,11 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         <Title>Close Comet</Title>
         <Box sx={{ padding: '0px 24px 9px 15px' }}>
           <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>ILD Debt <InfoTooltip title={ildDebtTooltipText} /></DetailHeader>
+            <DetailHeader>ILD Debt <InfoTooltip title={TooltipTexts.ildDebt} /></DetailHeader>
             <TotalValue>{Math.abs(cometDetail.ild).toLocaleString()} USDi</TotalValue>
           </Stack>
           <Stack sx={{ marginTop: '5px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral Withdraw <InfoTooltip title={collateralWithdrawTooltipText} /></DetailHeader>
+            <DetailHeader>Collateral Withdraw <InfoTooltip title={TooltipTexts.collateralWithdrawCloseComet} /></DetailHeader>
             <TotalValue>{cometDetail.collAmount.toLocaleString()} USDi</TotalValue>
           </Stack>
         </Box>

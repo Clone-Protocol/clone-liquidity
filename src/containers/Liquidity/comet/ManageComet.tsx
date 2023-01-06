@@ -13,6 +13,7 @@ import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -54,12 +55,8 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     }
   }, [cometDetail])
 
-  const iAssetPriceTooltipText = `The price of the iAsset on Incept Markets, this value is calculated using the ratio of USDi to iAsset in the pool.`
-  const editCometTabTooltipText = `The Edit Comet interface provides you with the tools to manage their comet position.`
-  const closeCometTabTooltipText = `The Close Comet interface allows you to close their comet and reclaim their collateral.`
-
-  const editCometTabLabel = <React.Fragment>Edit Comet <InfoTooltip title={editCometTabTooltipText} /> </React.Fragment>
-  const closeCometTabLabel = <React.Fragment>Close Comet <InfoTooltip title={closeCometTabTooltipText} /> </React.Fragment>
+  const editCometTabLabel = <React.Fragment>Edit Comet <InfoTooltip title={TooltipTexts.editCometTab} /> </React.Fragment>
+  const closeCometTabLabel = <React.Fragment>Close Comet <InfoTooltip title={TooltipTexts.closeCometTab} /> </React.Fragment>
 
 	return (cometDetail && usdiBalance) ? (
 		<Stack direction='row' spacing={2} justifyContent="center">
@@ -89,7 +86,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
               />
             }
             <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-              <Box>iAsset Price <InfoTooltip title={iAssetPriceTooltipText} /></Box>
+              <Box>iAsset Price <InfoTooltip title={TooltipTexts.iAssetPrice} /></Box>
             </Box>
           </StyledBox>
 			  </Box>

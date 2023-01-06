@@ -2,16 +2,13 @@ import { styled, Box } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import Image from 'next/image'
 import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
   positionInfo: PositionInfo
 }
 
 const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
-  const multipoolCometdHealthScoreTooltipText = `The health score gives you a sense of the level of danger of your comet. 
-  A higher score means a lower risk of future liquidation. If the score reaches 0, the position is subject to liquidiation.`
-  const totalValueTooltipText = `The total value in USD of collateral backing your multipool comet.`
-
   return (
     <Box>
       <Box>
@@ -24,10 +21,10 @@ const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
         </PairBox>
       </Box>
       <DetailBox>
-        <SubTitle>Total collateral value <InfoTooltip title={totalValueTooltipText} /></SubTitle>
+        <SubTitle>Total collateral value <InfoTooltip title={TooltipTexts.totalValueMultipoolComet} /></SubTitle>
         <div style={{ marginBottom: '15px' }}>${positionInfo.totalCollValue.toLocaleString()}</div>
 
-        <SubTitle>Mulipool Comet Health Score <InfoTooltip title={multipoolCometdHealthScoreTooltipText} /></SubTitle>
+        <SubTitle>Mulipool Comet Health Score <InfoTooltip title={TooltipTexts.multipoolCometdHealthScore} /></SubTitle>
         <div style={{ textAlign: 'center' }}><span style={{ fontSize: '20px' }}>{positionInfo.totalHealthScore.toFixed(2)}</span>/100</div>
       </DetailBox>
     </Box>

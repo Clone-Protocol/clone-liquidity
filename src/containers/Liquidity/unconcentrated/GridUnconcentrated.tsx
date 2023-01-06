@@ -11,6 +11,7 @@ import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPoo
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	filter: FilterType
@@ -35,11 +36,6 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 	)
 }
 
-const iAssetColTooltipText = `The price of the iAsset on Incept Markets, this value is calculated using the ratio of USDi to iAsset in the pool.`
-const liquidityiAssetColTooltipText = `Number of iAsset you have provided to the pool using this unconcentrated liquidity position.`
-const liquidityUsdiColTooltipText = `Number of USDi you have provided to the pool using this unconcentrated liquidity position.`
-const liquidityValueColTooltipText = `Combined value in USD of the total liquidity you have provided to the pool with this unconcentrated liquidity position. `
-
 let columns: GridColDef[] = [
 	{
 		field: 'pools',
@@ -61,7 +57,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				iAsset price	 
-				<InfoTooltip title={iAssetColTooltipText} />
+				<InfoTooltip title={TooltipTexts.iAssetCol} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -77,7 +73,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Liquidity (iAsset)	 
-				<InfoTooltip title={liquidityiAssetColTooltipText} />
+				<InfoTooltip title={TooltipTexts.liquidityiAssetCol} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -94,7 +90,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Liquidity (USDi)	 
-				<InfoTooltip title={liquidityUsdiColTooltipText} />
+				<InfoTooltip title={TooltipTexts.liquidityUsdiCol} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
@@ -109,7 +105,7 @@ let columns: GridColDef[] = [
 		renderHeader: () => (
 			<React.Fragment>
 				Liquidity value	 
-				<InfoTooltip title={liquidityValueColTooltipText} />
+				<InfoTooltip title={TooltipTexts.liquidityValueCol} />
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
