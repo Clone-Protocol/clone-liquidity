@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiquidityRatioSlider'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { TooltipTexts } from '~/data/tooltipTexts'
  
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }:  { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -152,7 +153,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
+                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></Box>
                   <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}>{healthScore.toFixed(2)}/100</Box>
                 </Box>
                 <Divider />
