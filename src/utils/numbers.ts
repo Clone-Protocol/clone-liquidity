@@ -16,3 +16,15 @@ export const formatDollarAmount = (num: number | undefined, digits = 2, round = 
     },
   })
 }
+
+export const formatHealthScore = (score: string | undefined): string => {
+  let num: number = (!score) ? 0 : Number(score) 
+  if (num < 0) {
+    num = 0
+  } else if (num > 100) {
+    num = 100
+  }
+
+  return num.toFixed(2)
+
+}
