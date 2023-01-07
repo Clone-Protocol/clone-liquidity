@@ -23,6 +23,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	handleClose
 }) => {
 	const isCreatingAccount = useRecoilValue(isCreatingAccountState)
+	const approximateGasFee = 0.63
 
 	const shouldDialogOpen = (): boolean => {
 		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
@@ -34,7 +35,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 			<DialogContent>
 				<ContentText>
 					Please note that the Solana network requires a higher than usual one-time
-					gas fee <Emph>(~0.3 SOL)</Emph> when opening an account for the most optimal experience.
+					gas fee <Emph>(~{approximateGasFee} SOL)</Emph> when opening an account for the most optimal experience.
 				</ContentText>
 			</DialogContent>
 		</>
@@ -47,7 +48,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 				<ContentText>
 					In order to access the feature, please open an account with this wallet by 
 					clicking the button below. Please note that Solana Network requires a higher than usual
-					one-time gas fee <Emph>(~0.3 SOL)</Emph> when opening an account for the most optimal experience.
+					one-time gas fee <Emph>(~{approximateGasFee} SOL)</Emph> when opening an account for the most optimal experience.
 				</ContentText>
 			</DialogContent>
 		</>
