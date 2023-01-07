@@ -85,7 +85,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box width='45%' marginLeft='15px'>
           <SubTitle>Health Score <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubTitle>
           <HealthScoreValue>
-            {formatHealthScore(cometDetail.healthScore.toString())}/100
+            {formatHealthScore(cometDetail.healthScore)}/100
           </HealthScoreValue>
         </Box>
         <Box display='flex' width='50%'>

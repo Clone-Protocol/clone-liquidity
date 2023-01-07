@@ -17,14 +17,8 @@ export const formatDollarAmount = (num: number | undefined, digits = 2, round = 
   })
 }
 
-export const formatHealthScore = (score: string | undefined): string => {
-  let num: number = (!score) ? 0 : Number(score) 
-  if (num < 0) {
-    num = 0
-  } else if (num > 100) {
-    num = 100
-  }
-
-  return num.toFixed(2)
-
+export const formatHealthScore = (score: number): string => {
+  score = (isNaN(score)) ? 0 : score 
+  
+  return Math.max(0, Math.min(100, score)).toFixed(2)
 }

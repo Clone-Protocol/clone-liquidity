@@ -116,7 +116,7 @@ let columns: GridColDef[] = [
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
 					<Box sx={{ width: '65px', textAlign: 'center' }}>
-						<CellDigitValue value={formatHealthScore(params.value)} symbol="%" />
+						<CellDigitValue value={formatHealthScore(Number(params.value))} symbol="%" />
 					</Box>
 				)
 		},
