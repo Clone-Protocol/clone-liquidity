@@ -13,26 +13,26 @@ interface Props {
 
 const GridCollateral: React.FC<Props> = ({ onChoose }) => {
 	const { publicKey } = useWallet()
-  const { data: collaterals } = useCollateralsQuery({
-    userPubKey: publicKey,
-	  refetchOnMount: "always",
-    enabled: publicKey != null
+	const { data: collaterals } = useCollateralsQuery({
+		userPubKey: publicKey,
+		refetchOnMount: "always",
+		enabled: publicKey != null
 	})
 
 	const handleChoose = (params: GridRowParams) => {
 		if (params.row.isEnabled) {
 			const id = params.row.id
-		  onChoose && onChoose(id)
+			onChoose && onChoose(id)
 		}
 	}
-  
+
 	return (
-    <Grid
-      headers={columns}
-      rows={collaterals || []}
+		<Grid
+			headers={columns}
+			rows={collaterals || []}
 			onRowClick={handleChoose}
 			minHeight={380}
-    />
+		/>
 	)
 }
 
@@ -45,7 +45,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box display="flex" justifyContent="flex-start" style={{ marginLeft: '4px' }}>
+				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
 					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
 					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
 						{params.row.tickerSymbol}
@@ -54,14 +54,14 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-  {
+	{
 		field: 'balance',
 		headerClassName: 'last--header',
 		cellClassName: 'last--cell',
 		headerName: 'Wallet Balance',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-      return <CellValue>{params.value?.toLocaleString()}</CellValue>
+			return <CellValue>{params.value?.toLocaleString()}</CellValue>
 		},
 	},
 ]

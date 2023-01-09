@@ -27,11 +27,11 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
   const { mutateAsync: mutateAsyncLiquidity } = useLiquidityMutation(publicKey)
   const [borrowFrom, setBorrowFrom] = useState(NaN)
   const [borrowTo, setBorrowTo] = useState(NaN)
-  const { 
+  const {
     control,
     trigger,
-    clearErrors, 
-    formState: { isDirty, errors, isSubmitting }, 
+    clearErrors,
+    formState: { isDirty, errors, isSubmitting },
     handleSubmit
   } = useForm({ mode: 'onChange' })
 
@@ -66,7 +66,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
       }
     )
   }
-  
+
   useEffect(() => {
     async function triggerValidation() {
       await trigger()
@@ -85,17 +85,17 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
     setBorrowFrom(currentValue)
     setBorrowTo(currentValue * assetData.price)
   }
-  
+
   const validateBorrowFrom = () => {
     if (isNaN(borrowFrom)) {
       clearErrors('borrowFrom')
-      return 
+      return
     } else if (borrowFrom > balances?.iassetVal) {
       return 'The borrowing amount cannot exceed the balance.'
     }
-	
+
     clearErrors('borrowFrom')
-    return 
+    return
   }
 
 
@@ -113,27 +113,27 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
 
     clearErrors('borrowTo')
   }
-  
+
   const formHasErrors = (): boolean => {
     if ((errors.borrowTo && errors.borrowTo.message !== "") || (errors.borrowFrom && errors.borrowFrom.message !== "")) {
       return true
     }
-  	
+
     return false
-  } 
-  
+  }
+
   const disableSubmitButton = (): boolean => {
     if (!isDirty || formHasErrors()) {
       return true
     }
-  	
+
     return false
   }
 
   const onFormSubmit = async () => {
     await onLiquidity()
   }
-  
+
   return (
     <>
       {loading && (
@@ -150,30 +150,20 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
           value={assetData.price}
         />
 
-        <Box sx={{ background: 'rgba(21, 22, 24, 0.75)', paddingX: '32px', paddingY: '24px', marginTop: '28px', borderRadius: '10px' }}>
-          <Stack
-            sx={{
-              background: 'rgba(233, 209, 0, 0.04)',
-              border: '1px solid #e9d100',
-              borderRadius: '10px',
-              color: '#9d9d9d',
-              padding: '8px',
-              marginTop: '10px',
-              marginBottom: '30px',
-            }}
-            direction="row">
-            <Box sx={{ width: '53px', textAlign: 'center', marginTop: '11px' }}>
+        <StyledBox>
+          <WarningStack direction="row">
+            <IconWrapper>
               <Image src={WarningIcon} />
-            </Box>
+            </IconWrapper>
             <WarningBox>
               Unconcentrated liquidity positions are less capital efficent than coment liquidity. <br />
               Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
             </WarningBox>
-          </Stack>
+          </WarningStack>
           <Box>
             <SubTitle>
               <Image src={OneIcon} />{' '}
-              <Box sx={{ marginLeft: '9px' }}> Provide {assetData.tickerSymbol}</Box>
+              <Box marginLeft='9px'> Provide {assetData.tickerSymbol}</Box>
             </SubTitle>
             <SubTitleComment>
               Acquire {assetData.tickerSymbol} by <Link href={`/borrow?lAssetId=${assetIndex}`}><span style={{ color: '#fff', cursor: 'pointer' }}>Borrowing</span></Link>
@@ -200,12 +190,12 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
             />
             <FormHelperText error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
           </Box>
-          
+
           <StyledDivider />
 
           <Box>
             <SubTitle>
-              <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}> Provide USDi</Box>
+              <Image src={TwoIcon} /> <Box marginLeft='9px'> Provide USDi</Box>
             </SubTitle>
             <SubTitleComment>An equivalent USDi amount must be provided</SubTitleComment>
             <Controller
@@ -235,19 +225,38 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
           <StyledDivider />
 
           <LiquidityButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Create Unconcentrated Liquidity Position</LiquidityButton>
-        </Box>
+        </StyledBox>
       </Box>
     </>
   )
 }
 
+const StyledBox = styled(Box)`
+  border-radius: 10px;
+  padding: 24px 32px;
+  background: rgba(21, 22, 24, 0.75);
+  margin-top: 28px;
+`
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 30px;
 	margin-top: 30px;
 	height: 1px;
 `
-
+const WarningStack = styled(Stack)`
+  background: rgba(233, 209, 0, 0.04);
+  border: 1px solid #e9d100;
+  border-radius: 10px;
+  color: #9d9d9d;
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+`
+const IconWrapper = styled(Box)`
+  width: 53px; 
+  text-align: center; 
+  margin-top: 11px;
+`
 const SubTitle = styled(Box)`
 	display: flex;
 	font-size: 14px;

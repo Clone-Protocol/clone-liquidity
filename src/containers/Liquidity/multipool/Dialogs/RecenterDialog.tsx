@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, styled, Button, Stack, Dialog, DialogContent, ModalProps } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, DialogContent } from '@mui/material'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterInfoQuery } from '~/features/MyLiquidity/multipool/RecenterInfo.query'
 import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
@@ -34,44 +34,41 @@ const RecenterDialog = ({
 		enabled: open && publicKey != null,
 	})
 
-  const { mutateAsync } = useRecenterMutation(publicKey)
-  const handleRecenter = async () => {
-    setLoading(true)
-    await mutateAsync(
-      {
-        positionIndex
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            enqueueSnackbar('Successfully recentered the position')
+	const { mutateAsync } = useRecenterMutation(publicKey)
+	const handleRecenter = async () => {
+		setLoading(true)
+		await mutateAsync(
+			{
+				positionIndex
+			},
+			{
+				onSuccess(data) {
+					if (data) {
+						console.log('data', data)
+						enqueueSnackbar('Successfully recentered the position')
 
-            refetch()
-            onRefetchData()
-            handleClose()
-          }
-          setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          enqueueSnackbar('Failed to recenter position : No price deviation detected.')
-          setLoading(false)
-        }
-      }
-    )
-  }
+						refetch()
+						onRefetchData()
+						handleClose()
+					}
+					setLoading(false)
+				},
+				onError(err) {
+					console.error(err)
+					enqueueSnackbar('Failed to recenter position : No price deviation detected.')
+					setLoading(false)
+				}
+			}
+		)
+	}
 
-  const displayRecenterCost = () => {
-	return Math.max(0, positionInfo!.recenterCost).toLocaleString()
-  }
+	const displayRecenterCost = () => {
+		return Math.max(0, positionInfo!.recenterCost).toLocaleString()
+	}
 
-  const projectedHealthScoreTooltipText = `The total collateral value in USD of the position after depositing/withdrawing <- depending on which action is selected`
-  const recenteringCostToolTipText = `The cost necessary to pay off the impermenant loss debt to recenter.`
-  
-  return positionInfo ? (
-    <>
-      {loading && (
+	return positionInfo ? (
+		<>
+			{loading && (
 				<LoadingWrapper>
 					<LoadingIndicator open inline />
 				</LoadingWrapper>
@@ -84,34 +81,19 @@ const RecenterDialog = ({
 					<Stack direction="row" gap={4}>
 						<SelectedPoolBox positionInfo={positionInfo} />
 
-						<Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
-							<Box sx={{ marginTop: '20px', marginBottom: '22px' }}>
-								<Stack
-									sx={{
-										borderTopRightRadius: '10px',
-										borderTopLeftRadius: '10px',
-										border: 'solid 1px #444',
-										padding: '12px 24px 12px 27px',
-									}}
-									direction="row"
-									justifyContent="space-between">
-									<div
-										style={{
-											fontSize: '11px',
-											fontWeight: '600',
-											color: '#fff9f9',
-											display: 'flex',
-											alignItems: 'center',
-										}}>
+						<RightBox>
+							<Box marginTop='20px' marginBottom='22px'>
+								<TopStack direction="row" justifyContent="space-between">
+									<StackTitle>
 										Recentering Cost <InfoTooltip title={TooltipTexts.recenteringCost} />
-									</div>
-									<div style={{ fontSize: '16px', fontWeight: '500', color: '#fff' }}>
+									</StackTitle>
+									<StackValue>
 										{displayRecenterCost()} USDi
-										<div style={{ fontSize: '10px', color: '#b9b9b9', textAlign: 'right' }}>
+										<StackSubValue>
 											${positionInfo.recenterCostDollarPrice.toLocaleString()}
-										</div>
-									</div>
-								</Stack>
+										</StackSubValue>
+									</StackValue>
+								</TopStack>
 								<BottomBox>
 									Total Collateral Value:{' '}
 									<span style={{ color: '#fff' }}>${positionInfo.totalCollValue.toLocaleString()}</span>
@@ -146,7 +128,7 @@ const RecenterDialog = ({
 							<ActionButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>
 								Recenter
 							</ActionButton>
-						</Box>
+						</RightBox>
 					</Stack>
 				</DialogContent>
 			</Dialog>
@@ -170,7 +152,34 @@ const Divider = styled('div')`
 	margin-bottom: 10px;
 	background-color: #2c2c2c;
 `
-
+const RightBox = styled(Box)`
+  min-width: 550px; 
+  padding: 8px 18px; 
+  color: #fff;
+`
+const TopStack = styled(Stack)`
+  border-top-right-radius: 10px; 
+  border-top-left-radius: 10px; 
+  border: solid 1px #444; 
+  padding: 12px 24px 12px 27px;
+`
+const StackTitle = styled('div')`
+  font-size: 11px; 
+  font-weight: 600; 
+  color: #fff9f9; 
+  display: flex; 
+  align-items: center;
+`
+const StackValue = styled('div')`
+  font-size: 16px; 
+  font-weight: 500; 
+  color: #fff;
+`
+const StackSubValue = styled('div')`
+  font-size: 10px; 
+  color: #b9b9b9; 
+  text-align: right;
+`
 const BottomBox = styled(Box)`
 	background: #252627;
 	font-size: 11px;
@@ -185,7 +194,6 @@ const BottomBox = styled(Box)`
 	border-bottom-left-radius: 9px;
 	border-bottom-right-radius: 9px;
 `
-
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 10px;
@@ -198,13 +206,11 @@ const SubTitle = styled('div')`
 	font-weight: 500;
 	color: #989898;
 `
-
 const DetailValue = styled('div')`
 	font-size: 11px;
 	font-weight: 500;
 	color: #fff;
 `
-
 const ActionButton = styled(Button)`
 	width: 100%;
 	height: 45px;
@@ -223,15 +229,4 @@ const ActionButton = styled(Button)`
 		color: #adadad;
 	}
 `
-
-// const NotEnoughBox = styled(Box)`
-// 	max-width: 500px;
-//   padding-left: 36px;
-//   padding-top: 4px;
-// 	padding-right: 10px;
-// 	font-size: 11px;
-// 	font-weight: 500;
-// 	color: #989898;
-// `
-
 export default RecenterDialog

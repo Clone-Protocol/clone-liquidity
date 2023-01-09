@@ -13,26 +13,26 @@ interface Props {
 
 const GridLiquidityPool: React.FC<Props> = ({ onChoose }) => {
 	const { publicKey } = useWallet()
-  const { data: pools } = useLiquidityPoolsQuery({
-    userPubKey: publicKey,
-	  refetchOnMount: "always",
-    enabled: publicKey != null
+	const { data: pools } = useLiquidityPoolsQuery({
+		userPubKey: publicKey,
+		refetchOnMount: "always",
+		enabled: publicKey != null
 	})
 
 	const handleChoose = (params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
 		if (params.row.isEnabled) {
 			const id = params.row.id
-		  onChoose && onChoose(id)
+			onChoose && onChoose(id)
 		}
 	}
-  
+
 	return (
-    <Grid
-      headers={columns}
-      rows={pools || []}
+		<Grid
+			headers={columns}
+			rows={pools || []}
 			onRowClick={handleChoose}
 			minHeight={380}
-    />
+		/>
 	)
 }
 
@@ -45,7 +45,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box display="flex" justifyContent="flex-start" style={{ marginLeft: '4px' }}>
+				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
 					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
 					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
 						{params.row.tickerSymbol} / USDi
@@ -54,14 +54,14 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-  {
+	{
 		field: 'totalLiquidity',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Total Liquidity',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-      return <CellValue>${params.value?.toLocaleString()}</CellValue>
+			return <CellValue>${params.value?.toLocaleString()}</CellValue>
 		},
 	},
 	{
@@ -74,14 +74,14 @@ let columns: GridColDef[] = [
 			return <CellValue>${params.value?.toLocaleString()}</CellValue>
 		},
 	},
-  {
+	{
 		field: 'averageAPY',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Average APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-      return <CellValue>{params.value?.toLocaleString()}%</CellValue>
+			return <CellValue>{params.value?.toLocaleString()}%</CellValue>
 		},
 	},
 ]

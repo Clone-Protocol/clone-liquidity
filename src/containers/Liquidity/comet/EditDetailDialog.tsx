@@ -22,7 +22,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-	const { getInceptApp } = useIncept()
+  const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = cometId
@@ -36,22 +36,22 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [refresh, setRefresh] = useState(true);
 
   const {
-		handleSubmit,
-		control,
+    handleSubmit,
+    control,
     setValue,
-		formState: { isDirty, errors },
-		watch,
-	} = useForm({
+    formState: { isDirty, errors },
+    watch,
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       collAmount: 0.0,
       mintAmount: 0.0,
     }
-	})
+  })
   const [collAmount, mintAmount] = watch([
-		'collAmount',
-		'mintAmount',
-	])
+    'collAmount',
+    'mintAmount',
+  ])
 
   const initData = () => {
     setValue('collAmount', 0.0)
@@ -77,8 +77,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [singlePoolCometState, setSinglePoolCometState] = useState<Comet | null>(null);
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
-		setEditType(newValue)
-	}, [editType])
+    setEditType(newValue)
+  }, [editType])
 
   // Initialize state data.
   useEffect(() => {
@@ -106,7 +106,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const program = getInceptApp()
 
         initData()
-        
+
         let {
           maxCollateralWithdrawable,
           healthScore,
@@ -122,7 +122,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         )
 
         const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
-        
+
         setCometData({
           ...cometData,
           lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
@@ -151,7 +151,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   useEffect(() => {
     if (defaultValues) {
       initData()
-      
+
       setCometData({
         ...cometData,
         lowerLimit: defaultValues.lowerLimit,
@@ -242,33 +242,33 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     fetch()
   }, [mintRatio])
 
-  const calculateCollAmount = useCallback( throttle ((collAmount: number) => {
+  const calculateCollAmount = useCallback(throttle((collAmount: number) => {
     setValue('collAmount', collAmount)
   }, 1000), [collAmount])
 
   const handleChangeCollAmount = useCallback((collAmount: number) => {
     calculateCollAmount(collAmount)
-	}, [collAmount])
+  }, [collAmount])
 
-  const calculateMintAmount = useCallback( throttle ((mintAmount: number) => {
+  const calculateMintAmount = useCallback(throttle((mintAmount: number) => {
     setValue('mintAmount', mintAmount)
   }, 1000), [mintAmount])
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     calculateMintAmount(newRatio * maxMintable / 100)
     setMintRatio(newRatio)
-	}, [mintRatio, mintAmount])
+  }, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
     calculateMintAmount(mintAmount)
-    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
-	}, [mintRatio, mintAmount])
+    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+  }, [mintRatio, mintAmount])
 
-	const onEdit = async () => {
+  const onEdit = async () => {
     setLoading(true)
     await mutateAsync(
       {
-        cometIndex, 
+        cometIndex,
         collAmount,
         mintAmountChange: mintAmount - cometDetail.mintAmount,
         editType
@@ -291,29 +291,29 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         }
       }
     )
-	}
+  }
 
   const isValid = Object.keys(errors).length === 0 && healthScore > 0
 
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
-          <Box sx={{ padding: '8px 1px', color: '#fff', overflowX: 'hidden' }}>
+          <BoxWrapper>
             <WarningBox>
               If you are unclear about how to edit your Comet, click here to learn more.
             </WarningBox>
 
-            <Box sx={{ padding: '15px 10px' }}>
+            <Box padding='15px 10px'>
               <Box>
                 <SubTitle>
-                  <Image src={OneIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust Collateral</Box>
+                  <Image src={OneIcon} /> <Box marginLeft='9px'>Adjust Collateral</Box>
                 </SubTitle>
                 <Controller
                   name="collAmount"
@@ -355,10 +355,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <SubTitle>
-                  <Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to mint into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
+                  <Image src={TwoIcon} /> <Box marginLeft='9px'>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to mint into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
                 </SubTitle>
 
-                <Box sx={{ marginTop: '25px' }}>
+                <Box marginTop='25px'>
                   <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
               </Box>
@@ -366,7 +366,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <SubTitle>
-                  <Box sx={{ marginLeft: '9px' }}>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
+                  <Box marginLeft='9px'>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 </SubTitle>
 
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
@@ -374,21 +374,26 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
               <StyledDivider />
 
               <Box>
-                <Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '9px' }}>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
-                <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
+                <HealthScoreTitle>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></HealthScoreTitle>
+                <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{healthScore.toFixed(2)}</span>/100</HealthScoreValue>
               </Box>
 
               <StyledDivider />
 
               <ActionButton onClick={handleSubmit(onEdit)} disabled={!isValid}>Edit Comet</ActionButton>
             </Box>
-          </Box>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
   )
 }
 
+const BoxWrapper = styled(Box)`
+  padding: 8px 1px; 
+  color: #fff;
+  overflow-x: hidden;
+`
 const WarningBox = styled(Box)`
 	max-width: 520px;
   height: 42px;
@@ -402,14 +407,12 @@ const WarningBox = styled(Box)`
   text-align: center;
   margin: 0 auto;
 `
-
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 20px;
 	margin-top: 20px;
 	height: 1px;
 `
-
 const SubTitle = styled('div')`
 	display: flex;
 	font-size: 14px;
@@ -417,9 +420,18 @@ const SubTitle = styled('div')`
 	margin-bottom: 17px;
 	color: #fff;
 `
-
 const TxtPair = styled('span')`
   color: #809cff;
+`
+const HealthScoreTitle = styled(Box)`
+  font-size: 14px; 
+  font-weight: 500; 
+  margin-left: 9px;
+`
+const HealthScoreValue = styled(Box)`
+  font-size: 20px; 
+  font-weight: 500;
+  text-align: center;
 `
 
 const ActionButton = styled(Button)`

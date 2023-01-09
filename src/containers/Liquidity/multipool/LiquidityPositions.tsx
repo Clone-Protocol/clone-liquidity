@@ -12,7 +12,7 @@ import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 
-const LiquidityPositions = ({ positions, onRefetchData } : { positions: LiquidityPosition[], onRefetchData: () => void }) => {
+const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -71,14 +71,15 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Box>
-        {positions.map((position, index) => 
+        {positions.map((position, index) =>
           <LiquidityPairView
+            key={index}
             poolIndex={index}
             tickerIcon={position.tickerIcon}
             tickerSymbol={position.tickerSymbol}
@@ -88,7 +89,7 @@ const LiquidityPositions = ({ positions, onRefetchData } : { positions: Liquidit
           />
         )}
       </Box>
-      <Stack direction='row' justifyContent='space-between' sx={{ marginTop: '9px' }}>
+      <Stack direction='row' justifyContent='space-between' marginTop='9px'>
         <AddButton onClick={() => setOpenAddPosition(true)}>Add Position</AddButton>
         <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton>
       </Stack>

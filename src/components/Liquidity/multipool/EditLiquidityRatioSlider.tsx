@@ -4,9 +4,9 @@ import chroma from 'chroma-js'
 import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 
 interface Props {
-	min?: number
-	max?: number
-	ratio: number
+  min?: number
+  max?: number
+  ratio: number
   currentRatio: number
   positionInfo: PositionInfo
   totalLiquidity: number
@@ -17,26 +17,26 @@ interface Props {
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
-	color: '#FFF',
-	height: 4,
-	padding: '13px 0',
-	marginTop: '13px',
-	'& .MuiSlider-thumb': {
+  color: '#FFF',
+  height: 4,
+  padding: '13px 0',
+  marginTop: '13px',
+  '& .MuiSlider-thumb': {
     zIndex: 30,
-		height: 20,
-		width: 20,
-		backgroundColor: '#fff',
-		border: '3px solid #809cff',
-		'&:hover': {
-			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
-		},
-	},
-	'& .MuiSlider-track': {
+    height: 20,
+    width: 20,
+    backgroundColor: '#fff',
+    border: '3px solid #809cff',
+    '&:hover': {
+      boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
+    },
+  },
+  '& .MuiSlider-track': {
     zIndex: 10,
-		height: 3,
+    height: 3,
     border: 'none',
     background: 'linear-gradient(to left, #ff0000 -12%, #7d17ff 66%)'
-	},
+  },
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
     fontWeight: '600',
@@ -47,41 +47,41 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     backgroundColor: '#000',
     '&:before': { display: 'none' },
   },
-	'& .MuiSlider-rail': {
+  '& .MuiSlider-rail': {
     zIndex: 10,
-		color: '#444444',
-		height: 3,
-	},
+    color: '#444444',
+    height: 3,
+  },
 }))
 
 const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, positionInfo, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
-	const valueLabelFormat = (value: number) => {
-		return `${value.toFixed(1)}%`
-	}
+  const valueLabelFormat = (value: number) => {
+    return `${value.toFixed(1)}%`
+  }
 
   const pickHex = (x: number) => {
     const f = chroma.scale(['#7d17ff', '#ff0000']).gamma(2)
-    const rgb = f(x/100).css()
+    const rgb = f(x / 100).css()
     return rgb
   }
 
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number') {
+    if (typeof newValue === 'number') {
       onChangeRatio && onChangeRatio(newValue)
-		}
-	}
+    }
+  }
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value) {
-			const amount = parseFloat(e.currentTarget.value)
+      const amount = parseFloat(e.currentTarget.value)
       onChangeAmount && onChangeAmount(amount)
     }
   }
 
-	return (
-		<Box>
-			<Box width="100%" display="flex" sx={{ alignItems: 'center' }}>
-        <Box sx={{width: '100%', height: '48px'}}>
+  return (
+    <Box>
+      <Box width="100%" display="flex" sx={{ alignItems: 'center' }}>
+        <Box width='100%' height='48px'>
           <StyledSlider
             sx={{
               '& .MuiSlider-valueLabel': {
@@ -107,66 +107,62 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
             <FixValueLabel>{currentRatio.toFixed(1)}%</FixValueLabel>
           </Box>
         </Box>
-			</Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
-        <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
-        <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
       </Box>
-      <Box sx={{ marginTop: '25px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px', fontSize: '11px', fontWeight: '500' }}>
+        <Box>Min</Box>
+        <Box>Max</Box>
+      </Box>
+      <Box marginTop='25px'>
         <StyledBox>
           <FormBox>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display="flex">
                 <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  USDi
-                </Box>
+                <TickerWrapper>USDi</TickerWrapper>
               </Box>
               <Box>
-                <InputAmount id="ip-amount" type="number" min={0} sx={ mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
+                <InputAmount id="ip-amount" type="number" min={0} sx={mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
               </Box>
             </Stack>
           </FormBox>
           <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
         </StyledBox>
         <StyledBox>
-          <FormBox sx={{ background: '#16171a', color: '#9a9a9a'}}>
+          <FormBox sx={{ background: '#16171a', color: '#9a9a9a' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display="flex">
                 <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
-                <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                  {positionInfo.tickerSymbol}
-                </Box>
+                <TickerWrapper>{positionInfo.tickerSymbol}</TickerWrapper>
               </Box>
-              <Box sx={{ paddingRight: '10px'}}>
-                <div>{(mintAmount/positionInfo.price).toLocaleString()}</div>
-                <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a'}}>${mintAmount.toLocaleString()}</div>
+              <Box paddingRight='10px'>
+                <div>{(mintAmount / positionInfo.price).toLocaleString()}</div>
+                <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a' }}>${mintAmount.toLocaleString()}</div>
               </Box>
             </Stack>
           </FormBox>
-          <BottomBox>Current: {(currentMintAmount/positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol} (${(currentMintAmount * positionInfo.price).toLocaleString()})</BottomBox>
+          <BottomBox>Current: {(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol} (${(currentMintAmount * positionInfo.price).toLocaleString()})</BottomBox>
         </StyledBox>
         <StyledBox>
-          <FormBox sx={{ background: '#16171a', color: '#fff', fontSize: '12px', fontWeight: '500'}}>
+          <FormBox sx={{ background: '#16171a', color: '#fff', fontSize: '12px', fontWeight: '500' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box sx={{ marginLeft: '10px'}}>
-                Projected new total liquidity value of the position: 
+              <Box marginLeft='10px'>
+                Projected new total liquidity value of the position:
               </Box>
-              <Box sx={{ marginRight: '10px'}}>
+              <Box marginLeft='10px'>
                 ${totalLiquidity.toLocaleString()}
               </Box>
             </Stack>
           </FormBox>
           <BottomBox>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box sx={{ marginLeft: '20px'}}>Current total liquidity value of the position: </Box>
-              <Box sx={{ marginRight: '20px'}}>${positionInfo.totalCollValue.toLocaleString()}</Box>
+              <Box marginLeft='20px'>Current total liquidity value of the position: </Box>
+              <Box marginLeft='20px'>${positionInfo.totalCollValue.toLocaleString()}</Box>
             </Stack>
           </BottomBox>
         </StyledBox>
       </Box>
-		</Box>
-	)
+    </Box>
+  )
 }
 
 const StyledBox = styled(Box)`
@@ -197,7 +193,11 @@ const FixValueLabel = styled(Box)`
   font-weight: 600;
   color: #fff;
 `
-
+const TickerWrapper = styled(Box)`
+	width: 80px; 
+	margin-left: 8px; 
+	text-align: left;
+`
 const FormBox = styled(Box)`
   height: 54px; 
   padding: 14px 12px;

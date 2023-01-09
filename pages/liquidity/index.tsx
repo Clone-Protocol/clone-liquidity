@@ -19,10 +19,10 @@ const MyLiquidity: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-            <WelcomeMsg />
-						<Box sx={{ marginTop: '40px' }}>
+						<WelcomeMsg />
+						<Box marginTop='40px'>
 							<MyStatus />
-							<Box sx={{ marginBottom: '30px' }} />
+							<Box marginBottom='30px' />
 							<LiquidityTable />
 						</Box>
 					</Container>

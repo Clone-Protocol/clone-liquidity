@@ -13,8 +13,8 @@ import EditLiquidityRatioSlider from '~/components/Liquidity/multipool/EditLiqui
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { TooltipTexts } from '~/data/tooltipTexts'
- 
-const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }:  { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
+
+const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -31,9 +31,9 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: poolIndex,
-	  refetchOnMount: true,
+    refetchOnMount: true,
     enabled: open && publicKey != null,
-	})
+  })
 
   // initialized state
   useEffect(() => {
@@ -60,20 +60,20 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   }
 
   const {
-		handleSubmit,
-		control,
+    handleSubmit,
+    control,
     setValue,
-		formState: { isDirty, errors },
-		watch,
-	} = useForm({
+    formState: { isDirty, errors },
+    watch,
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       mintAmount: 0,
     }
-	})
+  })
   const [mintAmount] = watch([
-		'mintAmount',
-	])
+    'mintAmount',
+  ])
 
   useEffect(() => {
     if (positionInfo !== undefined) {
@@ -88,12 +88,12 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     setValue('mintAmount', maxMintable * newRatio / 100)
     setMintRatio(newRatio)
-	}, [mintRatio, mintAmount])
+  }, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
     setValue('mintAmount', mintAmount)
-    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
-	}, [mintRatio, mintAmount])
+    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+  }, [mintRatio, mintAmount])
 
   const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
@@ -103,38 +103,38 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
       changeAmount: Math.abs(mintAmount - defaultMintAmount),
       editType: mintAmount > defaultMintAmount ? 0 : 1
     },
-    {
-      onSuccess(data) {
-        if (data) {
-          console.log('data', data)
-          enqueueSnackbar('Successfully modified liquidity position')
-          refetch()
-          initData()
-          handleClose()
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Successfully modified liquidity position')
+            refetch()
+            initData()
+            handleClose()
+          }
+          setLoading(false)
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Error modifying liquidity position')
+          setLoading(false)
         }
-        setLoading(false)
-      },
-      onError(err) {
-        console.error(err)
-        enqueueSnackbar('Error modifying liquidity position')
-        setLoading(false)
-      }
-    })
+      })
   }
 
   const isValid = Object.keys(errors).length === 0
-  
+
   return positionInfo ? (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '5px 15px', overflow: 'hidden' }}>
-          <Box sx={{ padding: '8px 18px', color: '#fff' }}>
+          <BoxWrapper>
             <Stack direction="row" justifyContent='space-between' alignItems='center'>
               <IconButton sx={{ color: '#fff' }} onClick={handleClose}><ChevronLeftIcon /></IconButton>
               <HeaderText>Edit Liquidity Position</HeaderText>
@@ -144,30 +144,34 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
 
             <Stack direction='row' gap={4}>
               <SelectedPoolBox positionInfo={positionInfo} />
-              
-              <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
+
+              <RightBox>
                 <SelectLabel>Select amount of USDi & {positionInfo.tickerSymbol} to mint into {positionInfo.tickerSymbol} AMM</SelectLabel>
-                <Box sx={{ marginTop: '15px' }}>
+                <Box marginTop='15px'>
                   <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></Box>
-                  <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}>{healthScore.toFixed(2)}/100</Box>
+                  <HealthScoreTitle>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></HealthScoreTitle>
+                  <HealthScoreValue>{healthScore.toFixed(2)}/100</HealthScoreValue>
                 </Box>
                 <Divider />
 
                 <EditPositionButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount)}>Edit Liquidity Position</EditPositionButton>
-              </Box>
+              </RightBox>
             </Stack>
-          </Box>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
   ) : <></>
 }
 
+const BoxWrapper = styled(Box)`
+  padding: 8px 18px; 
+  color: #fff;
+`
 const HeaderText = styled(Box)`
   font-size: 14px;
   font-weight: 600;
@@ -182,12 +186,16 @@ const Divider = styled('div')`
   background-color: #2c2c2c;
 `
 
+const RightBox = styled(Box)`
+  min-width: 550px; 
+  padding: 8px 18px; 
+  color: #fff;
+`
 const SelectLabel = styled('div')`
   font-size: 14px;
   font-weight: 500;
   color: #fff;
 `
-
 const EditPositionButton = styled(Button)`
 	width: 100%;
 	background-color: #4e3969;
@@ -204,6 +212,17 @@ const EditPositionButton = styled(Button)`
     background-color: #444;
     color: #adadad;
   }
+`
+const HealthScoreTitle = styled(Box)`
+  font-size: 12px; 
+  font-weight: 600; 
+  color: #acacac;
+  margin-left: 9px;
+`
+const HealthScoreValue = styled(Box)`
+  font-size: 20px; 
+  font-weight: 500;
+  text-align: center;
 `
 
 export default EditLiquidityDialog

@@ -19,30 +19,30 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
-  const router = useRouter()
-  const { ltab } = router.query
+	const router = useRouter()
+	const { ltab } = router.query
 	const [tab, setTab] = useState(0)
-  const assetIndex = parseInt(assetId)
+	const assetIndex = parseInt(assetId)
 
-  // sub routing for tab
-  useEffect(() => {
-    if (ltab && parseInt(ltab.toString()) <= 1) {
-      setTab(parseInt(ltab.toString()))
-    }
-  }, [ltab])
+	// sub routing for tab
+	useEffect(() => {
+		if (ltab && parseInt(ltab.toString()) <= 1) {
+			setTab(parseInt(ltab.toString()))
+		}
+	}, [ltab])
 
-  const { data: balances, refetch } = useBalanceQuery({
-    userPubKey: publicKey,
-    index: assetIndex,
-	  refetchOnMount: "always",
-    enabled: publicKey != null
+	const { data: balances, refetch } = useBalanceQuery({
+		userPubKey: publicKey,
+		index: assetIndex,
+		refetchOnMount: "always",
+		enabled: publicKey != null
 	})
 
-  const { data: assetData } = useInitCometDetailQuery({
-    userPubKey: publicKey,
-    index: assetIndex,
-	  refetchOnMount: true,
-    enabled: publicKey != null
+	const { data: assetData } = useInitCometDetailQuery({
+		userPubKey: publicKey,
+		index: assetIndex,
+		refetchOnMount: true,
+		enabled: publicKey != null
 	})
 
 	const changeTab = (newVal: number) => {
@@ -51,19 +51,19 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 	return assetData ? (
 		<StyledBox>
-			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-				<Box sx={{ display: 'flex', maxWidth: '494px', height: '47px', alignItems: 'center', paddingLeft: '9px', paddingRight: '9px', borderRadius: '10px', background: 'rgba(21, 22, 24, 0.75)' }}>
-					<CometTabBtn active={tab===0} onClick={() => changeTab(0)}>
-						{tab===0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} /> } 
-            <span style={{ marginLeft: '8px' }}>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidity} /></span>
+			<Box borderColor='divider' borderBottom='1'>
+				<TabWrapper>
+					<CometTabBtn active={tab === 0} onClick={() => changeTab(0)}>
+						{tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />}
+						<TabTitle>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidity} /></TabTitle>
 					</CometTabBtn>
-					<UnconcentTabBtn active={tab===1} onClick={() => changeTab(1)}>
-						{tab===1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} /> }
-						<span style={{ marginLeft: '8px' }}>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidity} /></span>
+					<UnconcentTabBtn active={tab === 1} onClick={() => changeTab(1)}>
+						{tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />}
+						<TabTitle>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidity} /></TabTitle>
 					</UnconcentTabBtn>
-				</Box>
+				</TabWrapper>
 			</Box>
-			<Box sx={{ paddingY: '20px' }}>
+			<Box paddingY='20px'>
 				{tab === 0 ? (
 					<CometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
 				) : (
@@ -90,10 +90,10 @@ const StyledBox = styled(Paper)`
 `
 
 const CometTabBtn = styled((props: any) => (
-  <CometTab {...props} />
-))(({ active }: { active: boolean}) => ({
-  border: active? '1px solid transparent' : 'none',
-  color: active? '#fff' : '#989898'
+	<CometTab {...props} />
+))(({ active }: { active: boolean }) => ({
+	border: active ? '1px solid transparent' : 'none',
+	color: active ? '#fff' : '#989898'
 }))
 
 const CometTab = styled(Button)`
@@ -118,11 +118,11 @@ const CometTab = styled(Button)`
 `
 
 const UnconcentTabBtn = styled((props: any) => (
-  <UnconcentTab {...props} />
-))(({ active }: { active: boolean}) => ({
-  border: active? '1px solid #444' : '',
-  background: active? '#000': 'rgba(21, 22, 24, 0.75)',
-  color: active? '#fff' : '#989898'
+	<UnconcentTab {...props} />
+))(({ active }: { active: boolean }) => ({
+	border: active ? '1px solid #444' : '',
+	background: active ? '#000' : 'rgba(21, 22, 24, 0.75)',
+	color: active ? '#fff' : '#989898'
 }))
 
 const UnconcentTab = styled(Button)`
@@ -141,6 +141,20 @@ const UnconcentTab = styled(Button)`
   &:active {
     background: #3d3d3d;
   }
+`
+
+const TabWrapper = styled(Box)`
+	display: flex; 
+	max-width: 494px; 
+	height: 47px; 
+	align-items: center; 
+	padding-left: 9px; 
+	padding-right: 9px; 
+	border-radius: 10px; 
+	background: rgba(21, 22, 24, 0.75);
+`
+const TabTitle = styled('span')`
+	margin-left: 8px;
 `
 
 export default withSuspense(AssetView, <LoadingProgress />)

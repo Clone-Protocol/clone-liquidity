@@ -16,16 +16,16 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex" onClick={() => onShowEditDialog(poolIndex)} sx={{ cursor: 'pointer' }}>
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol} <span style={{ fontSize: '10px' }}>/ USDi</span></TickerSymbol>
-					</Box>
+					</TickerWrapper>
 				</Box>
 				<AmountView>
 					${value?.toFixed(3)}
 					<RecenterButton onClick={() => onShowRecenterDialog(poolIndex)}>Recenter</RecenterButton>
 				</AmountView>
 			</FormStack>
-			
+
 		</Box>
 	)
 }
@@ -37,6 +37,12 @@ const FormStack = styled(Stack)`
 	padding: 11px 14px 9px 13px;
   background: #2d2d2d;
 	border-radius: 8px;
+`
+
+const TickerWrapper = styled(Box)`
+  width: 100px; 
+  margin-left: 8px; 
+  text-align: left;
 `
 
 const TickerSymbol = styled('div')`

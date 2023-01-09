@@ -9,7 +9,7 @@ interface Props {
 	balanceDisabled?: boolean
 	disabled?: boolean
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onMax?: (value: number) => void
+	onMax?: (value: number) => void
 }
 
 const PairInput: React.FC<Props> = ({
@@ -20,25 +20,32 @@ const PairInput: React.FC<Props> = ({
 	balanceDisabled = false,
 	disabled = false,
 	onChange,
-  onMax
+	onMax
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="flex-end">
-				{!balanceDisabled ? <Box sx={{ fontSize: '12px', fontWeight: '500', color: '#949494', marginRight: '10px' }}>Balance: <span style={{ color:'#90e4fe', cursor: 'pointer' }} onClick={() => onMax && onMax(balance!)}>{balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</span></Box> : <></>}
+				{!balanceDisabled ? <HeaderTitle>Balance: <MaxValue onClick={() => onMax && onMax(balance!)}>{balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</MaxValue></HeaderTitle> : <></>}
 			</Stack>
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginTop: '3px', marginLeft: '8px', textAlign: 'left' }}>
+					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-					</Box>
+					</TickerWrapper>
 				</Box>
-				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" min={0} value={value} onChange={onChange} disabled={disabled} />
+				<InputAmount id="ip-amount" type="number" sx={value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" min={0} value={value} onChange={onChange} disabled={disabled} />
 			</InputStack>
 		</FormControl>
 	)
 }
+
+const HeaderTitle = styled(Box)`
+	font-size: 12px; 
+	font-weight: 500; 
+	color: #949494; 
+	margin-right: 10px;
+`
 
 const FormStack = styled(Stack)`
 	display: flex;
@@ -48,6 +55,13 @@ const FormStack = styled(Stack)`
   border: solid 1px #444;
 	border-radius: 8px;
 	background-color: #333333;
+`
+
+const TickerWrapper = styled(Box)`
+	width: 100px;
+	margin-top: 3px;
+	margin-left: 8px; 
+	text-align: left;
 `
 
 const TickerSymbol = styled('div')`
@@ -70,6 +84,11 @@ const InputAmount = styled(`input`)`
 	font-size: 16px;
 	font-weight: 500;
 	color: #adadad;
+`
+
+const MaxValue = styled('span')`
+	color: #90e4fe; 
+	cursor: pointer;
 `
 
 export default PairInput

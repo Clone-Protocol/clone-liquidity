@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import {
-	PairData
+  PairData
 } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
@@ -16,11 +16,11 @@ import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 
-const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: string, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
+const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
-  const borrowIndex = parseInt(borrowId)
+  const borrowIndex = borrowId
   const [editType, setEditType] = useState(0) // 0 : borrow more , 1: repay
   const [maxCollVal, setMaxCollVal] = useState(0);
 
@@ -36,34 +36,34 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
-		setEditType(newValue)
+    setEditType(newValue)
     initData()
-	}, [editType])
+  }, [editType])
 
   const fromPair: PairData = {
-		tickerIcon: borrowDetail.tickerIcon,
-		tickerName: borrowDetail.tickerName,
-		tickerSymbol: borrowDetail.tickerSymbol,
-	}
+    tickerIcon: borrowDetail.tickerIcon,
+    tickerName: borrowDetail.tickerName,
+    tickerSymbol: borrowDetail.tickerSymbol,
+  }
 
   const { mutateAsync } = useEditBorrowMutation(publicKey)
 
   const {
-		handleSubmit,
-		control,
-		formState: { isDirty, errors },
-		watch,
+    handleSubmit,
+    control,
+    formState: { isDirty, errors },
+    watch,
     setValue,
     reset
-	} = useForm({
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       borrowAmount: 0.0,
     }
-	})
+  })
   const [borrowAmount] = watch([
-		'borrowAmount',
-	])
+    'borrowAmount',
+  ])
 
   const initData = () => {
     setValue('borrowAmount', 0.0)
@@ -82,7 +82,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
     }
   }, [borrowAmount, editType])
 
-	const onEdit = async () => {
+  const onEdit = async () => {
     setLoading(true)
     await mutateAsync(
       {
@@ -108,21 +108,21 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         }
       }
     )
-	}
+  }
 
   const isValid = Object.keys(errors).length === 0
 
   return (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
-          <Box sx={{ padding: '8px 1px', color: '#fff' }}>
+          <BoxWrapper>
             <Box>
               <Controller
                 name="borrowAmount"
@@ -160,68 +160,61 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
               <FormHelperText error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText>
             </Box>
 
-            <Box sx={{ padding: '5px 3px 5px 3px' }}>
-              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+            <Box padding='5px 3px 5px 3px'>
+              <Stack marginTop='15px' direction="row" justifyContent="space-between">
                 <DetailHeader>Expected Collateral Ratio <InfoTooltip title={TooltipTexts.expectedCollateralRatio} /></DetailHeader>
-                <DetailValue>{ editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{color: '#949494'}}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
+                <DetailValue>{editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{ color: '#949494' }}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
               </Stack>
-              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
+              <Stack marginTop='15px' direction="row" justifyContent="space-between">
                 <DetailHeader>Min Collateral Ratio <InfoTooltip title={TooltipTexts.minCollateralRatio} /></DetailHeader>
-                <DetailValue>{ editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${borrowDetail.minCollateralRatio.toLocaleString()}%` : '-'}</DetailValue>
+                <DetailValue>{editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${borrowDetail.minCollateralRatio.toLocaleString()}%` : '-'}</DetailValue>
               </Stack>
             </Box>
 
-            { isWarning && (editType === 1 && borrowAmount >= borrowDetail.borrowedIasset) && 
-              <Stack
-                sx={{
-                  background: 'rgba(233, 209, 0, 0.04)',
-                  border: '1px solid #e9d100',
-                  borderRadius: '10px',
-                  color: '#9d9d9d',
-                  padding: '8px',
-                  marginTop: '10px',
-                  marginBottom: '30px',
-                }}
-                direction="row">
-                <Box sx={{ width: '53px', marginLeft: '20px', textAlign: 'center' }}>
+            {isWarning && (editType === 1 && borrowAmount >= borrowDetail.borrowedIasset) &&
+              <WarningStack direction="row">
+                <WarningIconBox>
                   <Image src={WarningIcon} />
-                </Box>
+                </WarningIconBox>
                 <WarningBox>
-                  { isRisk && 'This borrow position has significant risk of liquidation.' }
-                  { isLackBalance && `Not enough wallet balance to pay in full.` }
+                  {isRisk && 'This borrow position has significant risk of liquidation.'}
+                  {isLackBalance && `Not enough wallet balance to pay in full.`}
                 </WarningBox>
-              </Stack>
+              </WarningStack>
             }
 
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{ editType === 0 ? 'Borrow more' : 'Repay' }</ActionButton>
-          </Box>
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Borrow more' : 'Repay'}</ActionButton>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
-  )  
+  )
 }
 
+
+const BoxWrapper = styled(Box)`
+  padding: 8px 1px; 
+  color: #fff;
+  overflow-x: hidden;
+`
 const DetailHeader = styled('div')`
 	font-size: 12px;
 	font-weight: 500;
 	color: #949494;
 `
-
 const DetailValue = styled('div')`
 	font-size: 12px;
 	font-weight: 500;
 	color: #fff;
 `
-
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 25px;
 	margin-top: 15px;
 	height: 1px;
 `
-
 const ActionButton = styled(Button)`
 	width: 100%;
 	background: #4e609f;
@@ -238,7 +231,20 @@ const ActionButton = styled(Button)`
     color: #adadad;
   }
 `
-
+const WarningStack = styled(Stack)`
+  background: rgba(233, 209, 0, 0.04);
+  border: 1px solid #e9d100;
+  border-radius: 10px;
+  color: #9d9d9d;
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+`
+const WarningIconBox = styled(Box)`
+  width: 53px; 
+  margin-left: 20px; 
+  text-align: center;
+`
 const WarningBox = styled(Box)`
 	max-width: 500px;
   padding-left: 36px;
