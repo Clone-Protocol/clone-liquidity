@@ -79,6 +79,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     setMintAmount(0.0)
   }
 
+  const isCollAmountInvalid = (): boolean => {
+    return isNaN(collAmount) || collAmount <= 0
+  }
+
   // Initialize state data.
   useEffect(() => {
     async function fetch() {
@@ -167,6 +171,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Trigger on collAmount
   useEffect(() => {
     function fetch() {
+      if (isCollAmountInvalid()) {
+        return 
+      }
+
       const program = getInceptApp()
 
       if (open && tokenDataState && singlePoolCometState) {
@@ -254,6 +262,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     if ((editType === 0 && collAmount > balance) || (editType === 1 && collAmount > maxWithdrawable)) {
       return 'The collateral amount cannot exceed the balance.'
     }
+
+    if (collAmount <= 0) {
+      return 'The collateral amount should be greater than 0'
+    }
   }
 
   const onCollAmountInputChange = (val: number, field: ControllerRenderProps<FieldValues, "collAmount">) => {
@@ -270,7 +282,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }
 
   const disableSubmitButton = (): boolean => {
-    if (!isDirty || formHasErrors() || healthScore <= 0) {
+    if (!isDirty || formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
       return true 
     }
 
