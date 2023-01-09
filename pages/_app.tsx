@@ -12,8 +12,8 @@ import { SnackbarProvider } from 'notistack'
 import { NextPage } from 'next'
 import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvider'
-import { RecoilRoot } from 'recoil'
 import './styles.css'
+import { RecoilRoot } from 'recoil'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <SnackbarProvider maxSnack={3}>
             <ClientWalletProvider>
               <DataLoadingIndicatorProvider>
-                <Box display='flex'>
+                <Box display='flex' sx={{ backgroundColor: '#000' }}>
                   <CssBaseline />
                   <GNB />
                   <Drawer />
