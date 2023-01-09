@@ -24,6 +24,7 @@ import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -317,7 +318,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
 
           <Box>
             <SubTitle>
-              <Box marginLeft='9px'>Projected Liquidity Concentration Range <InfoTooltip title="Projected Liquidity Concentration Range" /></Box>
+              <Box marginLeft='9px'>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
             </SubTitle>
 
             <Box marginTop='110px' marginBottom='15px'>
@@ -335,7 +336,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
           <StyledDivider />
 
           <Box>
-            <HealthScoreTitle>Projected Healthscore <InfoTooltip title="Projected Healthscore" /></HealthScoreTitle>
+            <HealthScoreTitle>Projected Healthscore <InfoTooltip title={TooltipTexts.healthScoreCol} /></HealthScoreTitle>
             <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</HealthScoreValue>
           </Box>
 

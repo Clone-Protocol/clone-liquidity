@@ -1,6 +1,6 @@
 import { Box, Stack, Divider } from '@mui/material'
 import { styled } from '@mui/system'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
@@ -18,6 +18,8 @@ import UlIconOn from 'public/images/ul-icon-on.svg'
 import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
 import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const LiquidityTable = () => {
   const router = useRouter()
@@ -40,13 +42,18 @@ const LiquidityTable = () => {
     setFilter(newValue)
   }
 
+  const cometLiquidityTabLabel = <React.Fragment>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidityTab} /> </React.Fragment>
+  const unconcentratedLiquidityTabLabel = <React.Fragment>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidityTab} /> </React.Fragment>
+  const borrowPositionTabLabel = <React.Fragment>Borrow Position <InfoTooltip title={TooltipTexts.borrowPositionTab} /> </React.Fragment>
+  const multipoolCometTabLabel = <React.Fragment>Multipool Comet Liquidity <InfoTooltip title={TooltipTexts.multipoolCometTab} /> </React.Fragment>
+
   return (
     <div>
-      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '860px' }}>
-        <StyledTab value={0} label="Comet Liquidity" icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
-        <StyledTab value={1} label="Unconcentrated Liquidity" icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
-        <StyledTab value={2} label="Borrow Position" icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
-        <StyledTab value={3} label="Multipool Comet Liquidity" icon={tab === 3 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} sx={{ background: 'rgba(24, 24, 40, 0.75)' }} />
+      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px' }}>
+        <StyledTab value={0} label={cometLiquidityTabLabel} icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
+        <StyledTab value={1} label={unconcentratedLiquidityTabLabel} icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
+        <StyledTab value={2} label={borrowPositionTabLabel} icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
+        <StyledTab value={3} label={multipoolCometTabLabel} icon={tab === 3 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} sx={{ background: 'rgba(24, 24, 40, 0.75)' }} />
       </StyledTabs>
 
       <PanelBox>

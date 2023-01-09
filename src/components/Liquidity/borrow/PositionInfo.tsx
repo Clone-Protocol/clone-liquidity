@@ -4,6 +4,7 @@ import { styled } from '@mui/system'
 import { PositionInfo as PI } from '~/features/MyLiquidity/BorrowPosition.query'
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import InfoTooltip from '~/components/Common/InfoTooltip';
+import { TooltipTexts } from '~/data/tooltipTexts';
 
 interface Props {
   positionInfo: PI
@@ -17,7 +18,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
       <Title>Borrow Position</Title>
       <Box>
         <CollRatioBox>
-          <SubTitle>Collateral Ratio <InfoTooltip title="collateral ratio" /></SubTitle>
+          <SubTitle>Collateral Ratio <InfoTooltip title={TooltipTexts.collateralRatio} /></SubTitle>
           {positionInfo.borrowedIasset > 0 ?
             <Box>
               {positionInfo.collateralRatio.toFixed(2)}%
@@ -30,7 +31,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 
         <EditRowBox>
           <InfoBox>
-            <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
+            <SubTitle>Collateral <InfoTooltip title={TooltipTexts.collateralBacking} /></SubTitle>
             <SubValue>{positionInfo.collateralAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })} USDi</SubValue>
           </InfoBox>
           <EditBox onClick={onShowEditForm}>
@@ -40,7 +41,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 
         <EditRowBox>
           <InfoBox>
-            <SubTitle>Borrowed <InfoTooltip title="borrowed" /></SubTitle>
+            <SubTitle>Borrowed <InfoTooltip title={TooltipTexts.borrowed} /></SubTitle>
             <SubValue>
               {positionInfo.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {positionInfo.tickerSymbol}
             </SubValue>

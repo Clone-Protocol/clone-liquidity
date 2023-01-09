@@ -14,6 +14,7 @@ import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { open: boolean, assetIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -187,7 +188,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
 
                 <Divider />
                 <Box>
-                  <HealthScoreTitle>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></HealthScoreTitle>
+                  <HealthScoreTitle>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreEstablished} /></HealthScoreTitle>
                   <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{healthScore.toFixed(2)}</span>/100</HealthScoreValue>
                 </Box>
                 <Divider />

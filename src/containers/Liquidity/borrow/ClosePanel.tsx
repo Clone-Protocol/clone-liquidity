@@ -12,6 +12,7 @@ import withSuspense from '~/hocs/withSuspense'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import WarningIcon from 'public/images/warning-icon.png'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
   const { publicKey } = useWallet()
@@ -61,21 +62,21 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
 
         <PositionWrapper>
           <Stack direction="row" justifyContent="space-between">
-            <DetailHeader>Dept Amount <InfoTooltip title="dept amount" /></DetailHeader>
+            <DetailHeader>Debt Amount <InfoTooltip title={TooltipTexts.debtAmount} /></DetailHeader>
             <DetailValue>{borrowDetail.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack marginTop='10px' direction="row" justifyContent="space-between">
-            <DetailHeader>Indepted Asset Wallet Balance <InfoTooltip title="indepted asset wallet balance" /></DetailHeader>
+            <DetailHeader>Indebted Asset Wallet Balance <InfoTooltip title={TooltipTexts.indebtedAssetWalletBalance} /></DetailHeader>
             <DetailValue>{borrowDetail.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</DetailValue>
           </Stack>
           <Stack marginTop='10px' direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral <InfoTooltip title="collateral" /></DetailHeader>
+            <DetailHeader>Collateral <InfoTooltip title={TooltipTexts.collateralBacking} /></DetailHeader>
             <DetailValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</DetailValue>
           </Stack>
         </PositionWrapper>
         <Box padding='0px 20px 9px 17px'>
           <Stack marginTop='15px' direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral Withdraw <InfoTooltip title="collateral withdraw" /></DetailHeader>
+            <DetailHeader>Collateral Withdraw <InfoTooltip title={TooltipTexts.collateralWithdraw} /></DetailHeader>
             <CollWithdrawValue>{borrowDetail.collateralAmount.toLocaleString()} USDi</CollWithdrawValue>
           </Stack>
         </Box>

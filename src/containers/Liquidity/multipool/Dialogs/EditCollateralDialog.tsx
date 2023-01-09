@@ -9,6 +9,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateralInput'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -177,11 +178,11 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 
             <Box padding='10px 3px 5px 3px'>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
+                <DetailHeader>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScore} /></DetailHeader>
                 <DetailValue>{healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
+                <DetailHeader>Total Collateral Value <InfoTooltip title={TooltipTexts.totalCollateralValueLong} /></DetailHeader>
                 <DetailValue>${totalCollValue.toLocaleString()}</DetailValue>
               </Stack>
             </Box>

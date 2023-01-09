@@ -2,6 +2,7 @@ import { styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 import 'animate.css'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	tickerIcon?: string
@@ -18,7 +19,7 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
 				<TickerWrapper>{tickerName} ({tickerSymbol})</TickerWrapper>
 			</Box>
 			<PriceWrapper>
-				<PriceHeader>iAsset Price <InfoTooltip title="iAsset Price" /></PriceHeader>
+				<PriceHeader>iAsset Price <InfoTooltip title={TooltipTexts.priceIndicator} /></PriceHeader>
 				<PriceValue>
 					{value?.toFixed(2)} <span style={{ fontSize: '14px' }}>USD</span>
 				</PriceValue>

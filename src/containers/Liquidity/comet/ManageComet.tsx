@@ -12,6 +12,8 @@ import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -53,6 +55,9 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     }
   }, [cometDetail])
 
+  const editCometTabLabel = <React.Fragment>Edit Comet <InfoTooltip title={TooltipTexts.editCometTab} /> </React.Fragment>
+  const closeCometTabLabel = <React.Fragment>Close Comet <InfoTooltip title={TooltipTexts.closeCometTab} /> </React.Fragment>
+
   return (cometDetail && usdiBalance) ? (
     <Stack direction='row' spacing={2} justifyContent="center">
       {(tab === 0 && cometDetail.tickerIcon) &&
@@ -80,15 +85,17 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
                 color={priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
               />
             }
-            <TipText>Indicator Price</TipText>
+            <TipText>
+              <Box>iAsset Price <InfoTooltip title={TooltipTexts.iAssetPrice} /></Box>
+            </TipText>
           </StyledBox>
         </Box>
       }
       <Box>
         <RightBox>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label="Edit Comet"></StyledTab>
-            <StyledTab value={1} label="Close Comet"></StyledTab>
+            <StyledTab value={0} label={editCometTabLabel}></StyledTab>
+            <StyledTab value={1} label={closeCometTabLabel}></StyledTab>
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
             <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetch()} />

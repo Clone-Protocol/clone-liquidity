@@ -8,6 +8,7 @@ import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.m
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const RecenterDialog = ({
 	positionIndex,
@@ -84,7 +85,7 @@ const RecenterDialog = ({
 							<Box marginTop='20px' marginBottom='22px'>
 								<TopStack direction="row" justifyContent="space-between">
 									<StackTitle>
-										Recentering Cost <InfoTooltip title="recenter cost" />
+										Recentering Cost <InfoTooltip title={TooltipTexts.recenteringCost} />
 									</StackTitle>
 									<StackValue>
 										{displayRecenterCost()} USDi
@@ -103,7 +104,7 @@ const RecenterDialog = ({
 
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<SubTitle>
-									Projected Health Score <InfoTooltip title="projected health score" />
+									Projected Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} />
 								</SubTitle>
 								<DetailValue>
 									{positionInfo.healthScore.toFixed(2)}/100{' '}
@@ -114,7 +115,6 @@ const RecenterDialog = ({
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<SubTitle>
 									Estimated Total Collateral After Recentering{' '}
-									<InfoTooltip title="Estimated collateral after recentering" />
 								</SubTitle>
 								<DetailValue>
 									{positionInfo.estimatedTotalCollValue.toLocaleString()} USDi{' '}

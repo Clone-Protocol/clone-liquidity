@@ -15,6 +15,7 @@ import withSuspense from '~/hocs/withSuspense'
 import CometPanel from './CometPanel'
 import UnconcentPanel from './UnconcentPanel'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -54,11 +55,11 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				<TabWrapper>
 					<CometTabBtn active={tab === 0} onClick={() => changeTab(0)}>
 						{tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />}
-						<TabTitle>Comet Liquidity <InfoTooltip title="Comet Liquidity" /></TabTitle>
+						<TabTitle>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidity} /></TabTitle>
 					</CometTabBtn>
 					<UnconcentTabBtn active={tab === 1} onClick={() => changeTab(1)}>
 						{tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />}
-						<TabTitle>Unconcentrated Liquidity <InfoTooltip title="Unconcentrated Liquidity" /></TabTitle>
+						<TabTitle>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidity} /></TabTitle>
 					</UnconcentTabBtn>
 				</TabWrapper>
 			</Box>

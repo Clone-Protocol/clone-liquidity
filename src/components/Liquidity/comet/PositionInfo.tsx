@@ -5,6 +5,7 @@ import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPos
 import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import InfoTooltip from '~/components/Common/InfoTooltip';
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
   assetData: PI
@@ -27,7 +28,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       <WrapperBox>
         <Box display="flex">
           <Box padding='22px' sx={{ minWidth: '365px' }}>
-            <SubTitle>Collateral <InfoTooltip title="collateral" /></SubTitle>
+            <SubTitle>Collateral <InfoTooltip title={TooltipTexts.collateralDesignated} /></SubTitle>
             <CollValue>
               {cometDetail.collAmount.toLocaleString()} <span style={{ fontSize: '14px' }}>USDi</span>
             </CollValue>
@@ -47,7 +48,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             </Box>
             <StyledDivider />
 
-            <SubTitle>Price Range <InfoTooltip title="price range" /></SubTitle>
+            <SubTitle>Price Range <InfoTooltip title={TooltipTexts.priceRange} /></SubTitle>
             <Box marginTop='20px'>
               <ConcentrationRangeView
                 centerPrice={assetData?.centerPrice}
@@ -81,7 +82,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
       <HealthScoreWrapper>
         <Box width='45%' marginLeft='15px'>
-          <SubTitle>Health Score <InfoTooltip title="health score" /></SubTitle>
+          <SubTitle>Health Score <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubTitle>
           <HealthScoreValue>
             {cometDetail.healthScore.toFixed(2)}/100
           </HealthScoreValue>
@@ -89,7 +90,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box display='flex' width='50%'>
           <ColumnDivider />
           <Box marginLeft='35px'>
-            <SubTitle>ILD <InfoTooltip title="ild" /></SubTitle>
+            <SubTitle>ILD <InfoTooltip title={TooltipTexts.ildCol} /></SubTitle>
             <ILDValue>
               {Math.abs(cometDetail.ild).toFixed(2)} USDi
             </ILDValue>
@@ -98,7 +99,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </HealthScoreWrapper>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title="recenter" /></ActionButton>
+      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title={TooltipTexts.recenter} /></ActionButton>
     </PositionWrapper>
   ) : (
     <></>
