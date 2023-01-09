@@ -7,16 +7,18 @@ import menuLiquidityIcon from 'public/images/menu/position-icon.svg'
 import menuBorrowIcon from 'public/images/menu/borrow-icon.svg'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const Drawer: React.FC = () => {
 	const router = useRouter()
+	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
 	return (
 		<StyledDrawer variant="permanent" open={true}>
       <Fade in timeout={1500}>
         <List component="nav">
           <Link href="/">
-            <StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
+            <StyledListItemButton className={(router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : '')} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuOverviewIcon} alt="overview" />
               </ListItemIcon>
@@ -24,7 +26,7 @@ const Drawer: React.FC = () => {
             </StyledListItemButton>
           </Link>
           <Link href="/liquidity">
-            <StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''}>
+            <StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuLiquidityIcon} alt="portfolio" />
               </ListItemIcon>
@@ -32,7 +34,7 @@ const Drawer: React.FC = () => {
             </StyledListItemButton>
           </Link>
           <Link href="/borrow">
-            <StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''}>
+            <StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
               <ListItemIcon sx={{ marginLeft: '10px' }}>
                 <Image src={menuBorrowIcon} alt="markets" />
               </ListItemIcon>

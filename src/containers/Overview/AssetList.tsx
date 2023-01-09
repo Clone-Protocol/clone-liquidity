@@ -1,6 +1,7 @@
 import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useState, useCallback } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -15,6 +16,7 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -40,6 +42,8 @@ const AssetList: React.FC = () => {
 			setSearchTerm('')
 		}
 	}, [searchTerm])
+
+	
 
 	return (
 		<Box
@@ -128,15 +132,17 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+			
 			return (
         <Stack direction="row" spacing={1}>
           <Link href={`/assets/${params.row.id}/asset`}>
-            <ChangePositionButton>
+            <ChangePositionButton onClick={handleLinkNeedingAccountClick}>
               <Image src={ChangePositionIcon} />
             </ChangePositionButton>
           </Link>
           <Link href={`/assets/${params.row.id}/asset?ltab=1`}>
-            <TradeButton>
+            <TradeButton onClick={handleLinkNeedingAccountClick}>
               <Image src={TradeIcon} />
             </TradeButton>
           </Link>

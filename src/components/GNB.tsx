@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRouter } from 'next/router' 
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -7,7 +9,6 @@ import { useSnackbar } from 'notistack'
 import { IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { GNB_ROUTES } from '~/routes'
-import { useRouter } from 'next/router'
 import CancelIcon from './Icons/CancelIcon'
 import MenuIcon from './Icons/MenuIcon'
 import { useScroll } from '~/hooks/useScroll'
@@ -23,6 +24,11 @@ import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
+import { useCreateAccount } from '~/hooks/useCreateAccount'
+import { CreateAccountDialogStates } from '~/utils/constants'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
+import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -84,7 +90,26 @@ const RightMenu = () => {
 	const [mintUsdi, setMintUsdi] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
+	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
+	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
+	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
+
+	// on initialize, set to open account creation 
+	// confirmation dialog if wallet is connected and account doesn't exist
 	useInitialized()
+	useCreateAccount()
+
+	// create the account when the user clicks the create account button 
+	// on the account setup dialog
+	const handleCreateAccount = () => {
+		setIsCreatingAccount(true)
+	}
+	
+	const closeAccountSetupDialog = () => {
+		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
+		setDeclinedAccountCreation(true)
+	}
 
 	useEffect(() => {
 		async function userMintUsdi() {
@@ -113,8 +138,12 @@ const RightMenu = () => {
 		userMintUsdi()
 	}, [mintUsdi, connected, publicKey])
 
-	const handleGetUsdiClick = () => {
-		setMintUsdi(true)
+	const handleGetUsdiClick = (evt: any) => {
+		if (declinedAccountCreation) {
+			setCreateAccountDialogStatus(CreateAccountDialogStates.Reminder)
+		} else {
+			setMintUsdi(true)
+		}
 	}
 
 	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -141,7 +170,7 @@ const RightMenu = () => {
 	const handleChangeWallet = () => {
 		disconnect()
 		setShowWalletSelectPopup(false)
-		setOpen(true)
+		setOpen(true) 
 	}
 
 	const handleDisconnect = () => {
@@ -150,45 +179,52 @@ const RightMenu = () => {
 	}
 
 	return (
-		<Box display="flex">
-			<DataLoadingIndicator />
-			<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
-				Get USDi
-			</HeaderButton>
-			<Box>
-				<ConnectButton
-					onClick={handleWalletClick}
-					variant="outlined"
-					sx={{ width: '163px' }}
-					disabled={connecting}
-					startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-					{!connected ? (
-						<>Connect Wallet</>
-					) : (
-						<>
-							<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
-							{publicKey ? (
-								<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
-									{shortenAddress(publicKey.toString())}
-								</Box>
-							) : (
-								<></>
-							)}
-						</>
-					)}
-				</ConnectButton>
-				{showWalletSelectPopup && <WalletSelectBox spacing={2}>
-					<CopyToClipboard text={publicKey!!.toString()}
-						onCopy={() => enqueueSnackbar('Copied address')}>
-						<PopupButton>Copy Address</PopupButton>
-					</CopyToClipboard>
-					<PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
-					<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
-				</WalletSelectBox>}
+		<>
+			<CreateAccountSetupDialog 
+				state={createAccountDialogStatus}
+				handleCreateAccount={handleCreateAccount}
+				handleClose={closeAccountSetupDialog} />
+
+			<Box display="flex">
+				<DataLoadingIndicator />
+				<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
+					Get USDi
+				</HeaderButton>
+				<Box>
+					<ConnectButton
+						onClick={handleWalletClick}
+						variant="outlined"
+						sx={{ width: '163px' }}
+						disabled={connecting}
+						startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+						{!connected ? (
+							<>Connect Wallet</>
+						) : (
+							<>
+								<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
+								{publicKey ? (
+									<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
+										{shortenAddress(publicKey.toString())}
+									</Box>
+								) : (
+									<></>
+								)}
+							</>
+						)}
+					</ConnectButton>
+					{showWalletSelectPopup && <WalletSelectBox spacing={2}>
+						<CopyToClipboard text={publicKey!!.toString()}
+							onCopy={() => enqueueSnackbar('Copied address')}>
+							<PopupButton>Copy Address</PopupButton>
+						</CopyToClipboard>
+						<PopupButton onClick={handleChangeWallet}>Change Wallet</PopupButton>
+						<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
+					</WalletSelectBox>}
+				</Box>
+				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
+				<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 			</Box>
-			<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
-			<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
-		</Box>
+		</>
 	)
 }
 
