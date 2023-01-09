@@ -2,7 +2,6 @@ import { Box, Grid, Divider } from '@mui/material'
 import { styled } from '@mui/system'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
-import InfoTooltip from '~/components/Common/InfoTooltip'
 
 interface Props {
   assetData: PI
@@ -21,7 +20,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
-					Lower Limit <InfoTooltip title="Lower Limit" />
+					Lower Limit
 				</Box>
 				<Box
 					sx={{
@@ -45,7 +44,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
-					Center Price <InfoTooltip title="Center Price" />
+					Center Price
 				</Box>
 				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', paddingTop: '8px',
             paddingBottom: '8px' }}>
@@ -63,7 +62,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						textAlign: 'center',
 						marginBottom: '5px',
 					}}>
-					Upper Limit <InfoTooltip title="Upper Limit" />
+					Upper Limit
 				</Box>
 				<Box
 					sx={{

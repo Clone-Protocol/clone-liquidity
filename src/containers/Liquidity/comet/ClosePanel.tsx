@@ -12,6 +12,7 @@ import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, cometDetail: CometDetail, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -79,11 +80,11 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         <Title>Close Comet</Title>
         <Box sx={{ padding: '0px 24px 9px 15px' }}>
           <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>ILD Dept <InfoTooltip title="ild dept" /></DetailHeader>
+            <DetailHeader>ILD <InfoTooltip title={TooltipTexts.ildDebt} /></DetailHeader>
             <TotalValue>{Math.abs(cometDetail.ild).toLocaleString()} USDi</TotalValue>
           </Stack>
           <Stack sx={{ marginTop: '5px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral Withdraw <InfoTooltip title="collateral withdraw" /></DetailHeader>
+            <DetailHeader>Collateral Withdraw <InfoTooltip title={TooltipTexts.collateralWithdrawCloseComet} /></DetailHeader>
             <TotalValue>{cometDetail.collAmount.toLocaleString()} USDi</TotalValue>
           </Stack>
         </Box>

@@ -8,6 +8,7 @@ import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.m
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const RecenterDialog = ({
 	positionIndex,
@@ -65,6 +66,9 @@ const RecenterDialog = ({
 	return Math.max(0, positionInfo!.recenterCost).toLocaleString()
   }
 
+  const projectedHealthScoreTooltipText = `The total collateral value in USD of the position after depositing/withdrawing <- depending on which action is selected`
+  const recenteringCostToolTipText = `The cost necessary to pay off the impermenant loss debt to recenter.`
+  
   return positionInfo ? (
     <>
       {loading && (
@@ -99,7 +103,7 @@ const RecenterDialog = ({
 											display: 'flex',
 											alignItems: 'center',
 										}}>
-										Recentering Cost <InfoTooltip title="recenter cost" />
+										Recentering Cost <InfoTooltip title={TooltipTexts.recenteringCost} />
 									</div>
 									<div style={{ fontSize: '16px', fontWeight: '500', color: '#fff' }}>
 										{displayRecenterCost()} USDi
@@ -118,7 +122,7 @@ const RecenterDialog = ({
 
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<SubTitle>
-									Projected Health Score <InfoTooltip title="projected health score" />
+									Projected Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} />
 								</SubTitle>
 								<DetailValue>
 									{positionInfo.healthScore.toFixed(2)}/100{' '}
@@ -129,7 +133,6 @@ const RecenterDialog = ({
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<SubTitle>
 									Estimated Total Collateral After Recentering{' '}
-									<InfoTooltip title="Estimated collateral after recentering" />
 								</SubTitle>
 								<DetailValue>
 									{positionInfo.estimatedTotalCollValue.toLocaleString()} USDi{' '}

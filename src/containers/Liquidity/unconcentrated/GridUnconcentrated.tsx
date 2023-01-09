@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import DepositDialog from '~/containers/Liquidity/unconcentrated/DepositDialog'
@@ -10,6 +10,8 @@ import { FilterType } from '~/data/filter'
 import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	filter: FilterType
@@ -51,8 +53,13 @@ let columns: GridColDef[] = [
 		field: 'price',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'iAsset price',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				iAsset price	 
+				<InfoTooltip title={TooltipTexts.iAssetCol} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -63,6 +70,12 @@ let columns: GridColDef[] = [
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Liquidity (iAsset)',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Liquidity (iAsset)	 
+				<InfoTooltip title={TooltipTexts.liquidityiAssetCol} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
         <CellDigitValue value={params.value} symbol={params.row.tickerSymbol} />
@@ -73,8 +86,13 @@ let columns: GridColDef[] = [
 		field: 'liquidityUSD',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Liquidity (USDi)',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Liquidity (USDi)	 
+				<InfoTooltip title={TooltipTexts.liquidityUsdiCol} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -83,10 +101,15 @@ let columns: GridColDef[] = [
 		field: 'liquidityVal',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Liquidity value',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Liquidity value	 
+				<InfoTooltip title={TooltipTexts.liquidityValueCol} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USDi" />
+			return <CellDigitValue value={params.value} symbol="USD" />
 		},
 	},
 	{

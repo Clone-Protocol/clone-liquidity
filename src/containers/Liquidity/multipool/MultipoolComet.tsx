@@ -9,6 +9,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip';
 import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const MultipoolComet = () => {
   const { publicKey } = useWallet()
@@ -42,30 +43,30 @@ const MultipoolComet = () => {
       <Grid container spacing={2}>
 			  <Grid item xs={12} md={2}>
           <CardWrapper>
-            <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
+            <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title={TooltipTexts.multipoolCometdHealthScore} /></SubTitle>
             <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{!infos.healthScore || Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)}</span>/100</SubValue>
           </CardWrapper>
           <CardWrapper style={{ marginTop: '13px' }}>
             <Box>
-              <SubTitle style={{ marginLeft: '16px' }}>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></SubTitle>
+              <SubTitle style={{ marginLeft: '16px' }}>Total Collateral Value <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubTitle>
               <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalCollValue.toLocaleString()}</span> USD</SubValue>
             </Box>
             <Divider />
             <Box>
-              <SubTitle style={{ marginLeft: '16px' }}>Total Liquidity <InfoTooltip title="Total Liquidity" /></SubTitle>
+              <SubTitle style={{ marginLeft: '16px' }}>Total Liquidity <InfoTooltip title={TooltipTexts.totalLiquidity} /></SubTitle>
               <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalLiquidity.toLocaleString()}</span> USD</SubValue>
             </Box>
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={4}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
-            <SubTitle>Collaterals <InfoTooltip title="Collaterals" /></SubTitle>
+            <SubTitle>Collaterals <InfoTooltip title={TooltipTexts.collaterals} /></SubTitle>
             <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()}  />
           </CardWrapper>
         </Grid>
         <Grid item xs={12} md={6}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px'}}>
-            <SubTitle>Contributed Liquidity Positions <InfoTooltip title="Contributed Liquidity Positions" /></SubTitle>
+            <SubTitle>Contributed Liquidity Positions <InfoTooltip title={TooltipTexts.contributedLiquidityPositions} /></SubTitle>
             <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()}  />
           </CardWrapper>
         </Grid>
