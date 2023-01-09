@@ -12,7 +12,7 @@ import TwoIcon from 'public/images/two-icon.svg'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import throttle from 'lodash.throttle'
 import { SliderTransition } from '~/components/Common/Dialog'
@@ -24,8 +24,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const [loading, setLoading] = useState(false)
+  const [collAmount, setCollAmount] = useState(NaN)
+  const [mintAmount, setMintAmount] = useState(0.0)
   const { enqueueSnackbar } = useSnackbar()
   const cometIndex = cometId
+  const calculateMintAmount = (mintable: number, ratio: number): number => mintable * ratio / 100;
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const [cometData, setCometData] = useState<CometInfo>({
@@ -36,29 +39,20 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [refresh, setRefresh] = useState(true);
 
   const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { isDirty, errors },
-    watch,
-  } = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      collAmount: 0.0,
-      mintAmount: 0.0,
-    }
-  })
-  const [collAmount, mintAmount] = watch([
-    'collAmount',
-    'mintAmount',
-  ])
+    trigger,
+		handleSubmit,
+		control,
+    clearErrors,
+		formState: { isDirty, errors, isSubmitting },
+	} = useForm({
+    mode: 'onChange'
+	})
 
-  const initData = () => {
-    setValue('collAmount', 0.0)
-    setValue('mintAmount', 0.0)
+  const mutateRefresh = () => {
+    setRefresh(true)
   }
-
-  const { mutateAsync } = useEditMutation(publicKey, () => setRefresh(true))
+  
+  const { mutateAsync } = useEditMutation(publicKey, () => mutateRefresh())
   const [defaultValues, setDefaultValues] = useState({
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit,
@@ -79,6 +73,15 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
     setEditType(newValue)
   }, [editType])
+
+  const initData = () => {
+    setCollAmount(NaN)
+    setMintAmount(0.0)
+  }
+
+  const isCollAmountInvalid = (): boolean => {
+    return isNaN(collAmount) || collAmount <= 0
+  }
 
   // Initialize state data.
   useEffect(() => {
@@ -114,8 +117,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           lowerPrice,
           upperPrice
         } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
-          tokenDataState,
-          singlePoolCometState,
+          tokenDataState as TokenData,
+          singlePoolCometState as Comet,
           cometIndex,
           0,
           0
@@ -132,7 +135,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
         setDefaultMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
         setMintRatio(maxUsdiPosition > 0 ? mintRatio : 0)
-        setValue('mintAmount', cometDetail.mintAmount)
+        setMintAmount(cometDetail.mintAmount)
 
         setDefaultValues({
           lowerLimit: lowerPrice,
@@ -161,13 +164,17 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       setMaxWithdrawable(defaultValues.maxWithdrawable)
       setDefaultMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
       setMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
-      setValue('mintAmount', cometDetail.mintAmount)
+      setMintAmount(cometDetail.mintAmount)
     }
   }, [editType])
 
   // Trigger on collAmount
   useEffect(() => {
     function fetch() {
+      if (isCollAmountInvalid()) {
+        return 
+      }
+
       const program = getInceptApp()
 
       if (open && tokenDataState && singlePoolCometState) {
@@ -198,7 +205,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
         setMintRatio(newDefaultMintRatio)
-        setValue('mintAmount', cometDetail.mintAmount);
+        setMintAmount(cometDetail.mintAmount)
       }
     }
     fetch()
@@ -242,26 +249,55 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     fetch()
   }, [mintRatio])
 
-  const calculateCollAmount = useCallback(throttle((collAmount: number) => {
-    setValue('collAmount', collAmount)
-  }, 1000), [collAmount])
-
-  const handleChangeCollAmount = useCallback((collAmount: number) => {
-    calculateCollAmount(collAmount)
+  useEffect(() => {
+    trigger()
   }, [collAmount])
 
-  const calculateMintAmount = useCallback(throttle((mintAmount: number) => {
-    setValue('mintAmount', mintAmount)
-  }, 1000), [mintAmount])
+  const validateCollAmount = () => {
+    if (!isDirty || collAmount < 0) {
+      clearErrors('collAmount')
+      return
+    }
+
+    if ((editType === 0 && collAmount > balance) || (editType === 1 && collAmount > maxWithdrawable)) {
+      return 'The collateral amount cannot exceed the balance.'
+    }
+
+    if (collAmount <= 0) {
+      return 'The collateral amount should be greater than 0'
+    }
+  }
+
+  const onCollAmountInputChange = (val: number, field: ControllerRenderProps<FieldValues, "collAmount">) => {
+    setCollAmount(val)
+    field.onChange(val)
+  }
+
+  const formHasErrors = (): boolean => {
+     if (errors.collAmount && errors.collAmount.message !== "") {
+      return true
+    }
+
+    return false
+  }
+
+  const disableSubmitButton = (): boolean => {
+    if (!isDirty || formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
+      return true 
+    }
+
+    return false
+  }
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
-    calculateMintAmount(newRatio * maxMintable / 100)
+    const mintAmount = calculateMintAmount(maxMintable, newRatio)
+    setMintAmount(mintAmount)
     setMintRatio(newRatio)
   }, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    calculateMintAmount(mintAmount)
-    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+    setMintAmount(mintAmount)
+    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {
@@ -293,8 +329,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     )
   }
 
-  const isValid = Object.keys(errors).length === 0 && healthScore > 0
-
   return (
     <>
       {loading && (
@@ -320,11 +354,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   control={control}
                   rules={{
                     validate(value) {
-                      if (value < 0) {
-                        return ''
-                      } else if ((editType === 0 && value > balance) || (editType === 1 && value > maxWithdrawable)) {
-                        return 'The collateral amount cannot exceed the balance.'
-                      }
+                      return validateCollAmount()
                     }
                   }}
                   render={({ field }) => (
@@ -332,20 +362,14 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       editType={editType}
                       tickerIcon={'/images/assets/USDi.png'}
                       tickerSymbol="USDi"
-                      collAmount={parseFloat(field.value.toFixed(3))}
-                      collAmountDollarPrice={field.value}
+                      collAmount={isNaN(collAmount) ? '' : collAmount}
+                      collAmountDollarPrice={collAmount}
                       maxCollVal={editType === 0 ? balance : maxWithdrawable}
                       currentCollAmount={cometDetail.collAmount}
                       dollarPrice={cometDetail.collAmount}
                       onChangeType={handleChangeType}
-                      onChangeAmount={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        let collAmt = parseFloat(e.currentTarget.value)
-                        collAmt = isNaN(collAmt) ? 0 : collAmt
-                        handleChangeCollAmount(collAmt)
-                      }}
-                      onMax={(amount: number) => {
-                        handleChangeCollAmount(amount)
-                      }}
+                      onChangeAmount={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(evt.currentTarget.value), field)}
+                      onMax={(amount: number) => onCollAmountInputChange(amount, field)}
                     />
                   )}
                 />
@@ -375,12 +399,12 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <Box>
                 <HealthScoreTitle>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></HealthScoreTitle>
-                <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{healthScore.toFixed(2)}</span>/100</HealthScoreValue>
+                <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{isNaN(healthScore) ? 0 : healthScore.toFixed(2)}</span>/100</HealthScoreValue>
               </Box>
 
               <StyledDivider />
 
-              <ActionButton onClick={handleSubmit(onEdit)} disabled={!isValid}>Edit Comet</ActionButton>
+              <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet</ActionButton>
             </Box>
           </BoxWrapper>
         </DialogContent>
