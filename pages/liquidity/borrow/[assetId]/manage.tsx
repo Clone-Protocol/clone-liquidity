@@ -20,7 +20,7 @@ const Manage: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-						<Box sx={{ marginTop: '40px', marginLeft: '24px' }}>
+						<Box marginTop='40px' marginLeft='24px'>
 							<ManageBorrow assetId={assetId} />
 						</Box>
 					</Container>

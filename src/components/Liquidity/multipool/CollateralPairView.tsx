@@ -17,16 +17,16 @@ const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, 
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-					</Box>
+					</TickerWrapper>
 				</Box>
 				<Box>
 					<AmountView>{value?.toFixed(3)}</AmountView>
 					<DollarView>${usdValue?.toLocaleString()}</DollarView>
 				</Box>
 			</FormStack>
-			<Box sx={{ marginLeft: '8px' }}>
+			<Box marginLeft='8px'>
 				<PlusButton onClick={() => handleOpenEdit(0)}><AddRoundedIcon fontSize='small' /></PlusButton>
 				<MinusButton onClick={() => handleOpenEdit(1)}><RemoveRoundedIcon fontSize='small' /></MinusButton>
 			</Box>
@@ -41,6 +41,12 @@ const FormStack = styled(Stack)`
 	padding: 11px 14px 9px 13px;
   background: #2d2d2d;
 	border-radius: 8px;
+`
+
+const TickerWrapper = styled(Box)`
+  width: 100px; 
+  margin-left: 8px; 
+  text-align: left;
 `
 
 const TickerSymbol = styled('div')`

@@ -11,6 +11,9 @@ import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
+import { formatHealthScore } from '~/utils/numbers'
 
 interface Props {
 	filter: FilterType
@@ -52,8 +55,13 @@ let columns: GridColDef[] = [
 		field: 'collateral',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Collateral',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Collateral	 
+				<InfoTooltip title={TooltipTexts.collateralDesignated} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<CellDigitValue value={params.value} symbol="USDi" />
@@ -64,8 +72,13 @@ let columns: GridColDef[] = [
 		field: 'ild',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'ILD',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				ILD	 
+				<InfoTooltip title={TooltipTexts.ildCol} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -74,8 +87,13 @@ let columns: GridColDef[] = [
 		field: 'priceRange',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Price range',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Price range	 
+				<InfoTooltip title={TooltipTexts.priceRange} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
@@ -87,13 +105,18 @@ let columns: GridColDef[] = [
 		field: 'healthScore',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Health Score',
 		flex: 2,
+		renderHeader: () => (
+			<React.Fragment>
+				Health Score	 
+				<InfoTooltip title={TooltipTexts.healthScoreCol} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
 					<Box sx={{ width: '65px', textAlign: 'center' }}>
-						<CellDigitValue value={params.value?.toFixed(2)} symbol="%" />
+						<CellDigitValue value={formatHealthScore(Number(params.value))} symbol="%" />
 					</Box>
 				)
 		},

@@ -8,7 +8,7 @@ import ManageComet from '~/containers/Liquidity/comet/ManageComet'
 const Manage: NextPage = () => {
 	const router = useRouter()
 	const { assetId } = router.query
-	
+
 	return (
 		<div>
 			<Head>
@@ -20,7 +20,7 @@ const Manage: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-						<Box sx={{ marginTop: '40px', marginLeft: '24px' }}>
+						<Box marginTop='40px' marginLeft='24px'>
 							<ManageComet assetId={assetId} />
 						</Box>
 					</Container>

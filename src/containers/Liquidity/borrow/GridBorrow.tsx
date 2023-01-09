@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
@@ -8,6 +9,8 @@ import { FilterType } from '~/data/filter'
 import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	filter: FilterType
@@ -49,8 +52,13 @@ let columns: GridColDef[] = [
 		field: 'oPrice',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Oracle price',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Oracle price	 
+				<InfoTooltip title={TooltipTexts.oraclePrice} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USD" />
 		},
@@ -59,8 +67,13 @@ let columns: GridColDef[] = [
 		field: 'borrowed',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Borrowed',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Borrowed	 
+				<InfoTooltip title={TooltipTexts.borrowed} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol={params.row.tickerSymbol} />
 		},
@@ -69,8 +82,13 @@ let columns: GridColDef[] = [
 		field: 'collateral',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Collateral',
 		flex: 1,
+		renderHeader: () => (
+			<React.Fragment>
+				Collateral	 
+				<InfoTooltip title={TooltipTexts.collateralBacking} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -79,8 +97,13 @@ let columns: GridColDef[] = [
 		field: 'collateralRatio',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Collateral Ratio',
 		flex: 2,
+		renderHeader: () => (
+			<React.Fragment>
+				Collateral Ratio	 
+				<InfoTooltip title={TooltipTexts.collateralRatio} />
+			</React.Fragment>
+		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return params.row.borrowed > 0 ?
 			 (<Box sx={{ fontSize: '12px', fontWeight: '600' }}>{params.value?.toLocaleString()}% <span style={{ fontSize: '11px', fontWeight: '500' }}>(min {params.row.minCollateralRatio.toLocaleString()}%)</span></Box>)

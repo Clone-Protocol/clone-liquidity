@@ -14,8 +14,9 @@ import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
-const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  { open: boolean, assetIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
+const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { open: boolean, assetIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -30,9 +31,9 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
-	  refetchOnMount: true,
+    refetchOnMount: true,
     enabled: open && publicKey != null
-	})
+  })
 
   useEffect(() => {
     if (open && positionInfo !== undefined) {
@@ -50,28 +51,28 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   }
 
   const {
-		handleSubmit,
-		control,
+    handleSubmit,
+    control,
     setValue,
     trigger,
-		formState: { isDirty, errors },
-		watch,
-	} = useForm({
+    formState: { isDirty, errors },
+    watch,
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       mintAmount: 0,
     }
-	})
+  })
 
   const [mintAmount] = watch([
-		'mintAmount',
-	])
+    'mintAmount',
+  ])
 
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
-	  if (typeof newValue === 'number') {
+    if (typeof newValue === 'number') {
       setMintRatio(newValue)
-	  }
-	}
+    }
+  }
 
   useEffect(() => {
     if (positionInfo !== undefined) {
@@ -91,22 +92,22 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
       poolIndex: assetIndex,
       changeAmount: mintAmount,
     },
-    {
-      onSuccess(data) {
-        if (data) {
-          console.log('data', data)
-          enqueueSnackbar('Successfully established new liquidity position')
-          refetch()
-          initData()
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            enqueueSnackbar('Successfully established new liquidity position')
+            refetch()
+            initData()
+          }
+          setLoading(false)
+        },
+        onError(err) {
+          console.error(err)
+          enqueueSnackbar('Error establishing new liquidity position')
+          setLoading(false)
         }
-        setLoading(false)
-      },
-      onError(err) {
-        console.error(err)
-        enqueueSnackbar('Error establishing new liquidity position')
-        setLoading(false)
-      }
-    })
+      })
   }
 
   const isValid = Object.keys(errors).length === 0
@@ -114,14 +115,14 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
   return positionInfo ? (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '5px 15px' }}>
-          <Box sx={{ padding: '8px 18px', color: '#fff' }}>
+          <BoxWrapper>
             <Stack direction="row" justifyContent='space-between' alignItems='center'>
               <IconButton sx={{ color: '#fff' }} onClick={handleClose}><ChevronLeftIcon /></IconButton>
               <HeaderText>Establish New Liquidity Position</HeaderText>
@@ -130,18 +131,18 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
             <Divider />
 
             <Stack direction='row' gap={4}>
-              <SelectedPoolBox positionInfo={positionInfo}  />
-              
-              <Box sx={{ minWidth: '550px', padding: '8px 18px', color: '#fff' }}>
+              <SelectedPoolBox positionInfo={positionInfo} />
+
+              <RightBox>
                 <SelectLabel>Select amount of USDi & {positionInfo.tickerSymbol} to mint into {positionInfo.tickerSymbol} AMM</SelectLabel>
-                <Box sx={{ marginTop: '15px' }}>
+                <Box marginTop='15px'>
                   <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px'}}>
-                    <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
-                    <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px', fontSize: '11px', fontWeight: '500' }}>
+                    <Box>Min</Box>
+                    <Box>Max</Box>
                   </Box>
                 </Box>
-                <Box sx={{ marginBottom: '25px', marginTop: '15px' }}>
+                <Box marginBottom='25px' marginTop='15px'>
                   <Controller
                     name="mintAmount"
                     control={control}
@@ -155,7 +156,6 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
                     render={({ field }) => (
                       <PairInput
                         tickerIcon={'/images/assets/USDi.png'}
-                        tickerName="USDi Coin"
                         tickerSymbol="USDi"
                         value={parseFloat(field.value.toFixed(3))}
                         headerTitle="Max amount mintable"
@@ -188,21 +188,25 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }:  {
 
                 <Divider />
                 <Box>
-                  <Box sx={{ fontSize: '12px', fontWeight: '600', color: '#acacac', marginLeft: '9px' }}>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></Box>
-                  <Box sx={{ fontSize: '20px', fontWeight: '500', textAlign: 'center' }}><span style={{fontSize: '32px', fontWeight: 'bold'}}>{healthScore.toFixed(2)}</span>/100</Box>
+                  <HealthScoreTitle>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreEstablished} /></HealthScoreTitle>
+                  <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{healthScore.toFixed(2)}</span>/100</HealthScoreValue>
                 </Box>
                 <Divider />
 
                 <NewPositionButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)}>Establish New Position</NewPositionButton>
-              </Box>
+              </RightBox>
             </Stack>
-          </Box>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
   ) : <></>
 }
 
+const BoxWrapper = styled(Box)`
+  padding: 8px 18px; 
+  color: #fff;
+`
 const HeaderText = styled(Box)`
   font-size: 14px;
   font-weight: 600;
@@ -231,7 +235,11 @@ const FormStack = styled(Stack)`
   font-size: 12px;
   font-weight: 500;
 `
-
+const RightBox = styled(Box)`
+  min-width: 550px; 
+  padding: 8px 18px; 
+  color: #fff;
+`
 const SelectLabel = styled('div')`
   font-size: 14px;
   font-weight: 500;
@@ -255,6 +263,16 @@ const NewPositionButton = styled(Button)`
     color: #adadad;
   }
 `
-
+const HealthScoreTitle = styled(Box)`
+  font-size: 12px; 
+  font-weight: 600; 
+  color: #acacac;
+  margin-left: 9px;
+`
+const HealthScoreValue = styled(Box)`
+  font-size: 20px; 
+  font-weight: 500;
+  text-align: center;
+`
 export default NewLiquidityDialog
 

@@ -9,6 +9,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateralInput'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -135,7 +136,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
-          <Box sx={{ padding: '4px 10px', color: '#fff' }}>
+          <BoxWrapper>
             <Box>
               <Controller
                 name="collAmount"
@@ -175,13 +176,13 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
 
-            <Box sx={{ padding: '10px 3px 5px 3px' }}>
+            <Box padding='10px 3px 5px 3px'>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Projected Multipool Health Score <InfoTooltip title="Projected Multipool Health Score" /></DetailHeader>
+                <DetailHeader>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScore} /></DetailHeader>
                 <DetailValue>{healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Total Collateral Value <InfoTooltip title="Total Collateral Value" /></DetailHeader>
+                <DetailHeader>Total Collateral Value <InfoTooltip title={TooltipTexts.totalCollateralValueLong} /></DetailHeader>
                 <DetailValue>${totalCollValue.toLocaleString()}</DetailValue>
               </Stack>
             </Box>
@@ -189,19 +190,22 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
             <StyledDivider />
 
             <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Deposit' : 'Withdraw'}</ActionButton>
-          </Box>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
   ) : <></>
 }
 
+const BoxWrapper = styled(Box)`
+  padding: 4px 10px; 
+  color: #fff;
+`
 const DetailHeader = styled('div')`
 	font-size: 12px;
 	font-weight: 500;
 	color: #949494;
 `
-
 const DetailValue = styled('div')`
 	font-size: 12px;
 	font-weight: 500;

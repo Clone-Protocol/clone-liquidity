@@ -11,27 +11,27 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import { SliderTransition } from '~/components/Common/Dialog'
 
 const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open: boolean, handleClose: () => void }) => {
-	const { publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
-	const [amount, setAmount] = useState(0.0)
-	const [percent, setPercent] = useState(50)
-	const unconcentratedIndex = parseInt(assetId)
+  const [amount, setAmount] = useState(0.0)
+  const [percent, setPercent] = useState(50)
+  const unconcentratedIndex = parseInt(assetId)
   const { mutateAsync } = useWithdrawMutation(publicKey)
 
   const { data, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
-	  refetchOnMount: "always",
+    refetchOnMount: "always",
     enabled: open && publicKey != null
-	})
+  })
 
   const { data: unconcentData } = useUnconcentDetailQuery({
     userPubKey: publicKey,
     index: unconcentratedIndex,
-	  refetchOnMount: true,
+    refetchOnMount: true,
     enabled: open && publicKey != null
-	})
+  })
 
   //default amount
   useEffect(() => {
@@ -40,14 +40,14 @@ const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open:
     }
   }, [data?.maxVal])
 
-	const handleChangePercent = useCallback((event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number' && data?.maxVal) {
-			setPercent(newValue)
-			setAmount((data?.maxVal * newValue) / 100)
-		}
-	}, [data?.maxVal, amount, percent])
+  const handleChangePercent = useCallback((event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number' && data?.maxVal) {
+      setPercent(newValue)
+      setAmount((data?.maxVal * newValue) / 100)
+    }
+  }, [data?.maxVal, amount, percent])
 
-	const onWithdraw = async () => {
+  const onWithdraw = async () => {
     setLoading(true)
     handleClose()
     await mutateAsync(
@@ -75,19 +75,19 @@ const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open:
         }
       }
     )
-	}
+  }
 
-	return unconcentData ? (
+  return unconcentData ? (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ width: '570px', backgroundColor: '#16171a', padding: '20px 6px' }}>
-          <Box sx={{ padding: '8px 32px', color: '#fff' }}>		
+          <BoxWrapper>
             <SubTitle>Select withdraw amount</SubTitle>
             <RatioSlider
               min={0}
@@ -103,13 +103,11 @@ const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open:
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center">
                       <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                      <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                        USDi
-                      </Box>
+                      <TickerWrapper>USDi</TickerWrapper>
                     </Box>
-                    <Box sx={{ color: '#949494'}}>
-                      <Box sx={{ fontSize: '16px', fontWeight: '500', lineHeight: '14px' }}>{amount.toLocaleString()}</Box>
-                      <Box sx={{ fontSize: '10px', textAlign: 'right' }}>${amount.toLocaleString()}</Box>
+                    <Box sx={{ color: '#949494' }}>
+                      <StackValue>{amount.toLocaleString()}</StackValue>
+                      <StackSubValue>${amount.toLocaleString()}</StackSubValue>
                     </Box>
                   </Stack>
                 </FormBox>
@@ -120,30 +118,33 @@ const WithdrawDialog = ({ assetId, open, handleClose }: { assetId: string, open:
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center">
                       <Image src={unconcentData.tickerIcon} width="28px" height="28px" />
-                      <Box sx={{ width: '80px', marginLeft: '8px', textAlign: 'left' }}>
-                        {unconcentData.tickerSymbol}
-                      </Box>
+                      <TickerWrapper>{unconcentData.tickerSymbol}</TickerWrapper>
                     </Box>
-                    <Box sx={{ color: '#949494'}}>
-                      <Box sx={{ fontSize: '16px', fontWeight: '500', lineHeight: '14px' }}>{(amount/unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</Box>
-                      <Box sx={{ fontSize: '10px', textAlign: 'right' }}>${(amount * unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</Box>
+                    <Box sx={{ color: '#949494' }}>
+                      <StackValue>{(amount / unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</StackValue>
+                      <StackSubValue>${(amount * unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</StackSubValue>
                     </Box>
                   </Stack>
                 </FormBox>
-                <BottomBox>Withdrawable: {(data?.maxVal!/unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })} {unconcentData.tickerSymbol}</BottomBox>
+                <BottomBox>Withdrawable: {(data?.maxVal! / unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })} {unconcentData.tickerSymbol}</BottomBox>
               </StyledBox>
             </Stack>
-              
+
             <StyledDivider />
 
             <ActionButton onClick={onWithdraw}>Withdraw</ActionButton>
-          </Box>
+          </BoxWrapper>
         </DialogContent>
       </Dialog>
     </>
-	) : <></>
+  ) : <></>
 }
 
+const BoxWrapper = styled(Box)`
+  padding: 8px 32px; 
+  color: #fff;
+  overflow-x: hidden;
+`
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 20px;
@@ -192,7 +193,20 @@ const BottomBox = styled(Box)`
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 `
-
+const TickerWrapper = styled(Box)`
+	width: 80px; 
+	margin-left: 8px; 
+	text-align: left;
+`
+const StackValue = styled(Box)`
+  font-size: 16px; 
+  font-weight: 500; 
+  line-height: 14px;
+`
+const StackSubValue = styled(Box)`
+  font-size: 10px; 
+  text-align: right;
+`
 const ActionButton = styled(Button)`
   width: 100%;
   background: #4e609f;

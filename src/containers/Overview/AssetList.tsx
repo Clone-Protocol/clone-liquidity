@@ -1,6 +1,7 @@
 import { Box, Stack } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useState, useCallback } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -15,24 +16,25 @@ import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
+import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
-  const [searchTerm, setSearchTerm] = useState('')
-  const debounceSearchTerm = useDebounce(searchTerm, 500)
+	const [searchTerm, setSearchTerm] = useState('')
+	const debounceSearchTerm = useDebounce(searchTerm, 500)
 
 	const { data: assets } = useAssetsQuery({
-    filter,
-    searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
-	  refetchOnMount: "always",
-    enabled: true
+		filter,
+		searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
+		refetchOnMount: "always",
+		enabled: true
 	})
 
 	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
 	}
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
 		if (newVal) {
 			setSearchTerm(newVal)
@@ -41,30 +43,25 @@ const AssetList: React.FC = () => {
 		}
 	}, [searchTerm])
 
+
+
 	return (
-		<Box
-			sx={{
-				background: 'rgba(21, 22, 24, 0.75)',
-				color: '#fff',
-        padding: '18px 36px',
-        borderRadius: '10px',
-        '& .super-app-theme--header': { color: '#9d9d9d', fontSize: '11px' },
-			}}>
+		<PanelBox>
 			<Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
 				<PageTabs value={filter} onChange={handleFilterChange}>
 					{Object.keys(FilterTypeMap).map((f) => (
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
 				</PageTabs>
-        <SearchInput onChange={handleSearch} />
+				<SearchInput onChange={handleSearch} />
 			</Stack>
-      <Divider sx={{ backgroundColor: '#535353' }} />
-      <Grid
-        headers={columns}
+			<Divider sx={{ backgroundColor: '#535353' }} />
+			<Grid
+				headers={columns}
 				rows={assets || []}
 				minHeight={680}
-      />
-		</Box>
+			/>
+		</PanelBox>
 	)
 }
 
@@ -77,7 +74,7 @@ let columns: GridColDef[] = [
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-        <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
+				<CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
 			)
 		},
 	},
@@ -128,24 +125,36 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+
 			return (
-        <Stack direction="row" spacing={1}>
-          <Link href={`/assets/${params.row.id}/asset`}>
-            <ChangePositionButton>
-              <Image src={ChangePositionIcon} />
-            </ChangePositionButton>
-          </Link>
-          <Link href={`/assets/${params.row.id}/asset?ltab=1`}>
-            <TradeButton>
-              <Image src={TradeIcon} />
-            </TradeButton>
-          </Link>
-        </Stack>
+				<Stack direction="row" spacing={1}>
+					<Link href={`/assets/${params.row.id}/asset`}>
+						<ChangePositionButton onClick={handleLinkNeedingAccountClick}>
+							<Image src={ChangePositionIcon} />
+						</ChangePositionButton>
+					</Link>
+					<Link href={`/assets/${params.row.id}/asset?ltab=1`}>
+						<TradeButton onClick={handleLinkNeedingAccountClick}>
+							<Image src={TradeIcon} />
+						</TradeButton>
+					</Link>
+				</Stack>
 			)
 		},
 	},
 ]
 
+const PanelBox = styled(Box)`
+	padding: 18px 36px;
+  background: rgba(21, 22, 24, 0.75);
+  border-radius: 10px;
+  color: #fff;
+  & .super-app-theme--header { 
+    color: #9d9d9d; 
+    font-size: 11px; 
+  }
+`
 const ChangePositionButton = styled(Box)`
 	width: 25px;
 	height: 25px;
@@ -160,7 +169,6 @@ const ChangePositionButton = styled(Box)`
 		border-color: #809CFF;
 	}
 `
-
 const TradeButton = styled(Box)`
 	width: 25px;
 	height: 25px;

@@ -2,6 +2,7 @@ import { styled, Box } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import Image from 'next/image'
 import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
   positionInfo: PositionInfo
@@ -20,10 +21,10 @@ const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
         </PairBox>
       </Box>
       <DetailBox>
-        <SubTitle>Total collateral value <InfoTooltip title="Total collateral value" /></SubTitle>
+        <SubTitle>Total collateral value <InfoTooltip title={TooltipTexts.totalValueMultipoolComet} /></SubTitle>
         <div style={{ marginBottom: '15px' }}>${positionInfo.totalCollValue.toLocaleString()}</div>
 
-        <SubTitle>Mulipool Comet Health Score <InfoTooltip title="Mulipool Comet Health Score" /></SubTitle>
+        <SubTitle>Mulipool Comet Health Score <InfoTooltip title={TooltipTexts.multipoolCometdHealthScore} /></SubTitle>
         <div style={{ textAlign: 'center' }}><span style={{ fontSize: '20px' }}>{positionInfo.totalHealthScore.toFixed(2)}</span>/100</div>
       </DetailBox>
     </Box>

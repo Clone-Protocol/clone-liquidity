@@ -2,6 +2,7 @@ import { styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 import 'animate.css'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	tickerIcon?: string
@@ -15,16 +16,14 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
 		<StyledStack direction="row" justifyContent="space-between" alignItems="center">
 			<Box display="flex">
 				<Image src={tickerIcon!} width="28px" height="28px" />
-				<Box sx={{ marginLeft: '14px', fontSize: '15px', fontWeight: '600', marginTop: '3px' }}>
-					{tickerName} ({tickerSymbol})
-				</Box>
+				<TickerWrapper>{tickerName} ({tickerSymbol})</TickerWrapper>
 			</Box>
-			<Box sx={{ textAlign: 'right', display: 'flex', alignItems: 'center' }}>
-				<Box sx={{ fontSize: '12px', fontWeight: '500', color: '#6c6c6c' }}>iAsset Price <InfoTooltip title="iAsset Price" /></Box>
-				<Box sx={{ fontSize: '18px', fontWeight: '500', marginLeft: '15px' }}>
+			<PriceWrapper>
+				<PriceHeader>iAsset Price <InfoTooltip title={TooltipTexts.priceIndicator} /></PriceHeader>
+				<PriceValue>
 					{value?.toFixed(2)} <span style={{ fontSize: '14px' }}>USD</span>
-				</Box>
-			</Box>
+				</PriceValue>
+			</PriceWrapper>
 		</StyledStack>
 	)
 }
@@ -37,6 +36,30 @@ const StyledStack = styled(Stack)`
 	height: 61px;
   animation: fadeIn;
   animation-duration: 1s;
+`
+
+const TickerWrapper = styled(Box)`
+	margin-left: 14px; 
+	font-size: 15px; 
+	font-weight: 600; 
+	margin-top: 3px;
+`
+
+const PriceWrapper = styled(Box)`
+	text-align: right; 
+	display: flex; 
+	align-items: center;
+`
+
+const PriceHeader = styled(Box)`
+	font-size: 12px; 
+	font-weight: 500; 
+	color: #6c6c6c;
+`
+const PriceValue = styled(Box)`
+	font-size: 18px; 
+	font-weight: 500;
+	margin-left: 15px;
 `
 
 export default PriceIndicatorBox

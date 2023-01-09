@@ -8,6 +8,6 @@ export const LoadingProgress = () => (
 
 export const LoadingTable = () => (
   <Box>
-    <Skeleton  sx={{ bgcolor: 'grey.300' }} component="div" width="100%" height="100%" animation="wave" />
-  </Box>  
+    <Skeleton sx={{ bgcolor: 'grey.300' }} component="div" width="100%" height="100%" animation="wave" />
+  </Box>
 )

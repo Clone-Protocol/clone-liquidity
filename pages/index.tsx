@@ -20,11 +20,11 @@ const Overview: NextPage = () => {
 				<StyledSection>
 					<Container>
 						<WelcomeMsg />
-						<Box sx={{ marginTop: '40px' }}>
-              <Stack direction="row" spacing={2} sx={{ marginBottom: '19px' }}>
-                <LineChart />
-                <BarChart />
-              </Stack>
+						<Box marginTop='40px'>
+							<Stack direction="row" spacing={2} marginBottom='19px'>
+								<LineChart />
+								<BarChart />
+							</Stack>
 							<AssetList />
 						</Box>
 					</Container>

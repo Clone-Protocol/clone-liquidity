@@ -12,6 +12,7 @@ import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, cometDetail: CometDetail, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -72,18 +73,18 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         </LoadingWrapper>
       )}
 
-      <Box sx={{ padding: '30px', background: 'rgba(21, 22, 24, 0.75)', borderRadius: '10px', marginTop: '17px' }}>
+      <Wrapper>
         <WarningBox>
           Click here to learn more about how closing comet works.
         </WarningBox>
         <Title>Close Comet</Title>
-        <Box sx={{ padding: '0px 24px 9px 15px' }}>
-          <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>ILD Dept <InfoTooltip title="ild dept" /></DetailHeader>
+        <Box padding='0px 24px 9px 15px'>
+          <Stack marginTop='15px' direction="row" justifyContent="space-between">
+            <DetailHeader>ILD <InfoTooltip title={TooltipTexts.ildDebt} /></DetailHeader>
             <TotalValue>{Math.abs(cometDetail.ild).toLocaleString()} USDi</TotalValue>
           </Stack>
-          <Stack sx={{ marginTop: '5px' }} direction="row" justifyContent="space-between">
-            <DetailHeader>Collateral Withdraw <InfoTooltip title="collateral withdraw" /></DetailHeader>
+          <Stack marginTop='5px' direction="row" justifyContent="space-between">
+            <DetailHeader>Collateral Withdraw <InfoTooltip title={TooltipTexts.collateralWithdrawCloseComet} /></DetailHeader>
             <TotalValue>{cometDetail.collAmount.toLocaleString()} USDi</TotalValue>
           </Stack>
         </Box>
@@ -94,11 +95,17 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
           <div>{noBorrowedAsset && <CheckCircleOutlineRoundedIcon fontSize="small" sx={{ color: '#809cff', marginTop: '2px' }} />}</div>
         </ActionButton>
         <ActionButton onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <div>Close comet & withdraw Collateral</div> <div></div></ActionButton>
-      </Box>
+      </Wrapper>
     </>
   )
 }
 
+const Wrapper = styled(Box)`
+  margin-top: 17px;
+  background: rgba(21, 22, 24, 0.75);
+  border-radius: 10px;
+  padding: 30px;
+`
 const WarningBox = styled(Box)`
 	max-width: 401px;
   height: 42px;
@@ -113,7 +120,6 @@ const WarningBox = styled(Box)`
   margin: 0 auto;
   margin-bottom: 23px;
 `
-
 const Title = styled('div')`
 	font-size: 16px;
 	font-weight: 600;
@@ -121,19 +127,16 @@ const Title = styled('div')`
   margin-left: 15px;
 	margin-bottom: 15px;
 `
-
 const DetailHeader = styled('div')`
 	font-size: 12px;
 	font-weight: 600;
 	color: #989898;
 `
-
 const TotalValue = styled('div')`
   font-size: 14px;
   font-weight: 500;
   color: #fff;
 `
-
 const ActionButton = styled(Button)`
   display: flex;
   justify-content: space-between;

@@ -12,20 +12,20 @@ import { SnackbarProvider } from 'notistack'
 import { NextPage } from 'next'
 import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvider'
-import { RecoilRoot } from 'recoil'
 import './styles.css'
+import { RecoilRoot } from 'recoil'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const getLayout = Component.getLayout ?? ((page) => page)
+  const getLayout = Component.getLayout ?? ((page) => page)
 
-	return (
-		<QueryProvider>
+  return (
+    <QueryProvider>
       <RecoilRoot>
         <ThemeProvider theme={theme}>
           <SnackbarProvider maxSnack={3}>
             <ClientWalletProvider>
               <DataLoadingIndicatorProvider>
-                <Box sx={{ display: 'flex', backgroundColor: '#000' }}>
+                <Box display='flex' sx={{ backgroundColor: '#000' }}>
                   <CssBaseline />
                   <GNB />
                   <Drawer />
@@ -45,18 +45,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           </SnackbarProvider>
         </ThemeProvider>
       </RecoilRoot>
-			<ReactQueryDevtools initialIsOpen={false} />
-		</QueryProvider>
-	)
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryProvider>
+  )
 }
 
 type NextPageWithLayout = NextPage & {
-	// eslint-disable-next-line no-unused-vars
-	getLayout?: (page: ReactElement) => ReactNode
+  // eslint-disable-next-line no-unused-vars
+  getLayout?: (page: ReactElement) => ReactNode
 }
 
 type AppPropsWithLayout = AppProps & {
-	Component: NextPageWithLayout
+  Component: NextPageWithLayout
 }
 
 export default MyApp
