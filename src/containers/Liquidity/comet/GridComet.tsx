@@ -13,6 +13,7 @@ import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { formatHealthScore } from '~/utils/numbers'
 
 interface Props {
 	filter: FilterType
@@ -115,7 +116,7 @@ let columns: GridColDef[] = [
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
 					<Box sx={{ width: '65px', textAlign: 'center' }}>
-						<CellDigitValue value={params.value?.toFixed(2)} symbol="%" />
+						<CellDigitValue value={formatHealthScore(Number(params.value))} symbol="%" />
 					</Box>
 				)
 		},

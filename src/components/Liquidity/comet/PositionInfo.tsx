@@ -6,6 +6,7 @@ import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRa
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import InfoTooltip from '~/components/Common/InfoTooltip';
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { formatHealthScore } from '~/utils/numbers'
 
 interface Props {
   assetData: PI
@@ -84,7 +85,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
         <Box width='45%' marginLeft='15px'>
           <SubTitle>Health Score <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubTitle>
           <HealthScoreValue>
-            {cometDetail.healthScore.toFixed(2)}/100
+            {formatHealthScore(cometDetail.healthScore)}/100
           </HealthScoreValue>
         </Box>
         <Box display='flex' width='50%'>
