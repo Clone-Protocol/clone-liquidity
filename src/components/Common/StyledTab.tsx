@@ -15,7 +15,7 @@ interface StyledTabsProps {
 }
 
 interface StyledTabProps {
-	label: string
+  label: string | ReactElement
   value: number
   icon?: ReactElement
 }
