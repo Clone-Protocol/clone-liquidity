@@ -52,7 +52,7 @@
     "react-hook-form": "^7.31.1",
     "react-query": "^3.34.14",
     "recharts": "2.1.2",
-    "recoil": "^0.7.3-alpha.2"
+    "recoil": "^0.7.6"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.7.2",
