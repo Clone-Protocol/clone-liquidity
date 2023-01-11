@@ -80,7 +80,7 @@ let columns: GridColDef[] = [
 			</React.Fragment>
 		),
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USDi" />
+			return <CellDigitValue value={params.row.ild} symbol="USDi" />
 		},
 	},
 	{
