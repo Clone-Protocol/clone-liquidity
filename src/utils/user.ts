@@ -76,8 +76,8 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
         ];
         let ammPrice = poolBalances[1] / poolBalances[0];
         let oraclePrice = toNumber(assetInfo.price);
-        let borrowedIasset = toNumber(cometPosition.borrowedUsdi);
-        let borrowedUsdi = toNumber(cometPosition.borrowedIasset);
+        let borrowedIasset = toNumber(cometPosition.borrowedIasset);
+        let borrowedUsdi = toNumber(cometPosition.borrowedUsdi);
         let totalCollateralAmount = toNumber(cometCollateral.collateralAmount);
         let data = editInfoCalc(
           tokenData,
