@@ -10,7 +10,7 @@ import TwitterIcon from 'public/images/more/twitter-icon.svg'
 
 interface Props {
   anchorEl: null | HTMLElement
-  onClose?: any 
+  onClose?: () => void 
 }
 
 const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {

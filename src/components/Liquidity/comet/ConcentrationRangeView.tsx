@@ -1,37 +1,40 @@
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
-// import { AssetData } from '~/features/Overview/Asset.query'
-import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
   centerPrice: number
   lowerLimit: number
   upperLimit: number
-	max: number
 }
 
-const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit, max }) => {
-	const maxLimit = max
-	const centerPricePercent = (centerPrice * 100) / maxLimit
-	
-	return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '30px', marginBottom: '16px' }}>
+const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit }) => {
+  const centerPricePercent = (centerPrice - lowerLimit) * 100 / (upperLimit - lowerLimit)
+
+  return (
+    <RangeWrapper>
       <LeftBox>{lowerLimit.toFixed(2)}</LeftBox>
-      <Box sx={{ position: 'relative' }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%'}}>
+      <Box position='relative'>
+        <Box display='flex' alignItems='flex-end' height='100%'>
           <LeftRangeStick />
           <RangeBar />
           <RightRangeStick />
         </Box>
-        
+
         <CenterStick sx={{ marginLeft: '50%' }} />
         <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
       </Box>
       <RightBox>{upperLimit.toFixed(2)}</RightBox>
-    </Box>
-	)
+    </RangeWrapper>
+  )
 }
+
+const RangeWrapper = styled(Box)`
+  display: flex;
+  justify-content: center; 
+  margin-top: 30px; 
+  margin-bottom: 16px;
+`
 
 const LeftRangeStick = styled('div')`
   position: relative;

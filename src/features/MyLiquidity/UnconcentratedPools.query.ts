@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
@@ -6,7 +6,7 @@ import { FilterType } from '~/data/filter'
 import { assetMapping, AssetType } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-
+import { getUserLiquidityInfos } from '~/utils/user'
 export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
 
@@ -16,65 +16,40 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
   setStartTimer(true);
 
 	await program.loadManager()
-	let iassetInfos : number[][] = []
-
-  try {
-    iassetInfos = await program.getUserLiquidityInfos()
-  } catch (e) {
-    console.error(e)
-  }
-
 	const result: PoolList[] = []
 
-	let i = 0
-	for (const info of iassetInfos) {
-    const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+	const [tokenDataResult, liquidityPositionsResult] = await Promise.allSettled([
+		program.getTokenData(), program.getLiquidityPositions()
+	]);
 
-		result.push({
-			id: i,
-			tickerName: tickerName,
-			tickerSymbol: tickerSymbol,
-			tickerIcon: tickerIcon,
-			price: info[1],
-			assetType: assetType,
-			liquidityAsset: info[2],
-			liquidityUSD: info[3],
-			liquidityVal: info[3] * 2,
-		})
-    i++
+	if (tokenDataResult.status === "fulfilled" && liquidityPositionsResult.status === "fulfilled") {
+		let iassetInfos = getUserLiquidityInfos(tokenDataResult.value, liquidityPositionsResult.value)
+		let i = 0
+		for (const info of iassetInfos) {
+		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+
+			result.push({
+				id: i,
+				tickerName: tickerName,
+				tickerSymbol: tickerSymbol,
+				tickerIcon: tickerIcon,
+				price: info[1],
+				assetType: assetType,
+				liquidityAsset: info[2],
+				liquidityUSD: info[3],
+				liquidityVal: info[3] * 2,
+			})
+		i++
+		}
 	}
 
-	// const result2: PoolList[] = [
-	//   {
-	//     id: 0,
-	//     tickerName: 'iSolana',
-	//     tickerSymbol: 'iSOL',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     price: 160.51,
-  //     assetType: AssetType.Stocks,
-	//     liquidityAsset: 90.11,
-	//     liquidityUSD: 111.48,
-	//     liquidityVal: 15898343,
-	//   },
-  //   {
-	//     id: 1,
-	//     tickerName: 'iSolana',
-	//     tickerSymbol: 'iSOL',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     price: 160.51,
-  //     assetType: AssetType.Stocks,
-	//     liquidityAsset: 90.11,
-	//     liquidityUSD: 111.48,
-	//     liquidityVal: 15898343,
-	//   },
-	// ]
 	return result
 }
 
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

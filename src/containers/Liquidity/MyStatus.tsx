@@ -8,14 +8,14 @@ import withSuspense from '~/hocs/withSuspense'
 const MyStatus = () => {
 	const { publicKey } = useWallet()
 
-  const { data: status } = useStatusQuery({
-    userPubKey: publicKey,
-	  refetchOnMount: true,
-    enabled: publicKey != null
+	const { data: status } = useStatusQuery({
+		userPubKey: publicKey,
+		refetchOnMount: "always",
+		enabled: publicKey != null
 	})
 
 	return (
-		<Box sx={{ maxWidth: '812px' }}>
+		<Box maxWidth='812px'>
 			<StatusView status={status} />
 		</Box>
 	)

@@ -6,7 +6,7 @@ import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosit
 import EditDetailDialog from './EditDetailDialog'
 import EditBorrowMoreDialog from './EditBorrowMoreDialog'
 
-const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, borrowDetail: BorrowDetail, onRefetchData: any }) => {
+const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, borrowDetail: BorrowDetail, onRefetchData: () => void }) => {
   const [openEditDetail, setOpenEditDetail] = useState(false)
   const [openBorrowMore, setOpenBorrowMore] = useState(false)
   const borrowIndex = parseInt(assetId)

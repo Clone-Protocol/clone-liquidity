@@ -1,33 +1,32 @@
-import { styled, Box, Autocomplete, TextField, Popper } from '@mui/material'
+import { styled, Box, Autocomplete, TextField, Popper, PopperProps } from '@mui/material'
 import Image from 'next/image'
 import SearchIcon from 'public/images/search-icon.svg'
 import 'animate.css'
 
 export interface AssetType {
-	tickerIcon: string
-	tickerName: string
-	tickerSymbol: string
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string
 }
 
 interface Props {
-	assets: AssetType[]
-	selAssetId: number
-	value?: number
-	onChangeAsset?: any
-	onChangeAmount?: any
+  assets: AssetType[]
+  selAssetId: number
+  value?: number
+  onChangeAsset?: (data: any) => void
 }
 
-const CustomPopper = function (props : any) {
+const CustomPopper = function (props: PopperProps) {
   return <StyledPopper {...props} placement="bottom" />;
 };
 
-const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset }) => {
-	return (
-		<Box sx={{ display: 'flex'}}>
+const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
+  return (
+    <Box sx={{ display: 'flex' }}>
       <StyledAutocomplete
         selectOnFocus
         clearOnBlur
-        onChange={(e, value) => onChangeAsset(value)}
+        onChange={(e, value) => onChangeAsset && onChangeAsset(value)}
         getOptionLabel={(option: any) => option.tickerName}
         options={assets}
         clearIcon={null}
@@ -41,29 +40,9 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, onChangeAsset })
         )}
       />
 
-      <Box sx={{ position: 'relative', right: '30px', top: '8px' }}>
-        <Image src={SearchIcon} />
-      </Box>
-
-      {/* <Select
-        sx={{ color: '#fff' }}
-        id="selectAsset"
-        label=""
-        value={selAssetId}
-        onChange={(e) => onChangeAsset(e.target.value)}>
-        {assets.map((asset, index) => (
-          <MenuItem key={index} value={index}>
-            <Box display="flex">
-              <Image src={asset.tickerIcon} width="28px" height="28px" />
-              <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
-                <TickerSymbol>{asset.tickerSymbol}</TickerSymbol>
-              </Box>
-            </Box>
-          </MenuItem>
-        ))}
-      </Select> */}
+      <SearchIconWrapper><Image src={SearchIcon} /></SearchIconWrapper>
     </Box>
-	)
+  )
 }
 
 const StyledAutocomplete = styled(Autocomplete)`
@@ -137,9 +116,6 @@ const StyledPopper = styled(Popper)`
 
   & .MuiAutocomplete-listbox {
     background: #151618;
-    // border: solid 1px #444;
-    // border-left-bottom-radius: 10px;
-    // border-right-bottom-radius: 10px;
 
     & :hover {
       background: #1f1f1f;
@@ -154,7 +130,7 @@ const SelectBox = styled(Box)`
   animation: fadeInDown;
   animation-duration: 1s;
 `
- 
+
 const StyledTextField = styled(TextField)`
   line-height: 3px;
 `
@@ -168,6 +144,12 @@ const TickerName = styled('div')`
   line-height: normal;
   letter-spacing: normal;
   margin: 5px;
+`
+
+const SearchIconWrapper = styled(Box)`
+  position: relative; 
+  right: 30px; 
+  top: 8px;
 `
 
 export default SelectPairInput

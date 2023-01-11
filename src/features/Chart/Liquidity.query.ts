@@ -1,5 +1,10 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
+
+export interface ChartElem {
+  time: string
+  value: number
+}
 
 export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTime}) => {
 	const chartData = [
@@ -119,7 +124,7 @@ export const fetchTotalLiquidation = async ({ timeframe } : { timeframe: FilterT
 
 interface GetProps {
   timeframe: FilterTime
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

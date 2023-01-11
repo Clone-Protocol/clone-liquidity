@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
@@ -27,7 +27,7 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 
 	let balances = await program.getPoolBalances(liquidityPosition.poolIndex)
 
-	let maxVal = ((balances[1] * liquidityTokenBalance) / liquidityTokenSupplyBeforeComet!) * 2
+	let maxVal = ((balances[1] * liquidityTokenBalance) / liquidityTokenSupplyBeforeComet!)
 
 	return {
 		maxVal: maxVal,
@@ -37,7 +37,7 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

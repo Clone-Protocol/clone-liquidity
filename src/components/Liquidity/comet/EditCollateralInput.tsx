@@ -4,64 +4,64 @@ import { StyledTabs, StyledTab } from '~/components/Liquidity/comet/StyledTab'
 
 interface Props {
   editType: number
-	tickerIcon: string
-	tickerName?: string | null
-	tickerSymbol: string | null
+  tickerIcon: string
+  tickerName?: string | null
+  tickerSymbol: string | null
   maxCollVal: number
-	collAmount: number
+  collAmount: number
   collAmountDollarPrice?: number
   currentCollAmount?: number
   dollarPrice?: number
-  onChangeType?: any
-	onChangeAmount?: any
-  onMax?: any
+  onChangeType: (event: React.SyntheticEvent, newValue: number) => void
+  onChangeAmount?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onMax: (value: number) => void
 }
 
 const EditCollateralInput: React.FC<Props> = ({
   editType,
-	tickerIcon,
-	tickerSymbol,
+  tickerIcon,
+  tickerSymbol,
   maxCollVal,
-	collAmount,
+  collAmount,
   collAmountDollarPrice,
   currentCollAmount,
   dollarPrice,
   onChangeType,
-	onChangeAmount,
+  onChangeAmount,
   onMax
 }) => {
-	return (
-		<FormControl variant="standard" sx={{ width: '100%' }}>
-      <Stack sx={{ height: '40px' }} direction="row" justifyContent="space-between">
-        <Box sx={{ paddingTop: '5px', borderTopLeftRadius: '10px', borderTopRightRadius: '10px', background: '#252627', border: '1px solid #444' }}>
+  return (
+    <FormControl variant="standard" sx={{ width: '100%' }}>
+      <Stack height='40px' direction="row" justifyContent="space-between">
+        <UpperTabBox>
           <StyledTabs value={editType} onChange={onChangeType}>
             <StyledTab value={0} label="Deposit"></StyledTab>
             <StyledTab value={1} label="Withdraw"></StyledTab>
           </StyledTabs>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', fontSize: '12px', fontWeight: '500' , color: '#949494', marginRight: '15px'}}>
-          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <span style={{ fontSize: '13px', color: '#90e4fe', marginLeft: '4px', cursor: 'pointer' }} onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString()} {tickerSymbol}</span>
-        </Box>
+        </UpperTabBox>
+        <HeaderTitle>
+          Max {editType === 0 ? 'depositable' : 'withdrawable'} : <MaxPointerValue onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</MaxPointerValue>
+        </HeaderTitle>
       </Stack>
-      <Box sx={{ borderBottomLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomRightRadius: '10px', boxShadow: '0 0 0 1px #444444 inset' }}>
+      <CenterBox>
         <FormStack direction="row" justifyContent="space-between" alignItems="center">
           <Box display="flex">
             <Image src={tickerIcon} width="28px" height="28px" />
-            <Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+            <TickerWrapper>
               <TickerSymbol>{tickerSymbol}</TickerSymbol>
-            </Box>
+            </TickerWrapper>
           </Box>
           <Box>
-            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={ collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={Number(collAmount).toString()} onChange={onChangeAmount} />
-            <div style={{ fontSize: '10px', textAlign: 'right', color: '#b9b9b9', marginRight: '18px'}}>{ (collAmountDollarPrice && collAmountDollarPrice > 0) ? ('$' + collAmountDollarPrice?.toLocaleString()) : '' }</div>
+            <InputAmount id="ip-amount" type="number" min={0} max={maxCollVal} sx={collAmount && collAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={collAmount} onChange={onChangeAmount} />
+            <DollarAmount>{(collAmountDollarPrice && collAmountDollarPrice > 0) ? ('$' + collAmountDollarPrice?.toLocaleString()) : ''}</DollarAmount>
           </Box>
         </FormStack>
         <BottomBox>
-          Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} { dollarPrice && '($'+dollarPrice.toLocaleString() +')' }</span>
+          Current Collateral: <span style={{ color: '#fff' }}>{currentCollAmount?.toLocaleString()} {tickerSymbol} {dollarPrice && '($' + dollarPrice.toLocaleString() + ')'}</span>
         </BottomBox>
-      </Box>
-		</FormControl>
-	)
+      </CenterBox>
+    </FormControl>
+  )
 }
 
 const FormStack = styled(Stack)`
@@ -75,6 +75,43 @@ const FormStack = styled(Stack)`
   &:hover {
     box-shadow: 0 0 0 1px #809cff inset;
   }
+`
+
+const UpperTabBox = styled(Box)`
+  padding-top: 5px; 
+  border-top-left-radius: 10px; 
+  border-top-right-radius: 10px; 
+  background: #252627; 
+  border: 1px solid #444;
+`
+
+const HeaderTitle = styled(Box)`
+  display: flex; 
+  align-items: flex-end; 
+  font-size: 12px; 
+  font-weight: 500; 
+  color: #949494; 
+  margin-right: 15px;
+`
+
+const MaxPointerValue = styled('span')`
+  font-size: 13px; 
+  color: #90e4fe; 
+  margin-left: 4px;
+  cursor: pointer;
+`
+
+const CenterBox = styled(Box)`
+  border-bottom-left-radius: 10px; 
+  border-top-right-radius: 10px; 
+  border-bottom-right-radius: 10px; 
+  box-shadow: 0 0 0 1px #444444 inset;
+`
+
+const TickerWrapper = styled(Box)`
+  width: 100px; 
+  margin-left: 8px; 
+  text-align: left;
 `
 
 const TickerSymbol = styled('div')`
@@ -92,6 +129,13 @@ const InputAmount = styled(`input`)`
 	font-size: 16px;
 	font-weight: 500;
 	color: #adadad;
+`
+
+const DollarAmount = styled('div')`
+  font-size: 10px; 
+  text-align: right; 
+  color: #b9b9b9; 
+  margin-right: 18px;
 `
 
 const BottomBox = styled(Box)`

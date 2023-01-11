@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { styled } from '@mui/system'
+import { StyledSection } from 'pages'
 import { useRouter } from 'next/router'
 import { Container, Box } from '@mui/material'
 import ManageBorrow from '~/containers/Liquidity/borrow/ManageBorrow'
@@ -20,7 +20,7 @@ const Manage: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-						<Box sx={{ marginTop: '40px', marginLeft: '24px' }}>
+						<Box marginTop='40px' marginLeft='24px'>
 							<ManageBorrow assetId={assetId} />
 						</Box>
 					</Container>
@@ -29,14 +29,5 @@ const Manage: NextPage = () => {
 		</div>
 	)
 }
-
-const StyledSection = styled('section')`
-	${(props) => props.theme.breakpoints.up('md')} {
-		padding-top: 100px;
-	}
-	${(props) => props.theme.breakpoints.down('md')} {
-		padding: 50px 0px;
-	}
-`
 
 export default Manage

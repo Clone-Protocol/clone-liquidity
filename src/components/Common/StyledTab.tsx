@@ -1,5 +1,6 @@
 import { styled } from '@mui/system'
 import { Tabs, Tab, Box } from '@mui/material'
+import { ReactElement } from 'react'
 
 export interface TabPanelProps {
 	children?: React.ReactNode
@@ -14,9 +15,9 @@ interface StyledTabsProps {
 }
 
 interface StyledTabProps {
-	label: string
+  label: string | ReactElement
   value: number
-  icon?: any
+  icon?: ReactElement
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (

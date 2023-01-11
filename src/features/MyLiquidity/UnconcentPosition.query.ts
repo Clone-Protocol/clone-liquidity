@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
@@ -26,7 +26,7 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 	  usdiVal = Number(usdiBalance.value.amount) / 100000000;
 	}
   
-	const pool = await program.getPool(index);
+	const pool = await program.getPool(poolIndex);
 	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.wallet.publicKey, program.connection);
 	if (iassetTokenAccountAddress !== undefined) {
 	  const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress, "processed");
@@ -47,7 +47,7 @@ export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { pro
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

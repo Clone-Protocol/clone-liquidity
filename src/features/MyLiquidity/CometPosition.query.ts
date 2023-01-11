@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
@@ -8,39 +8,46 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
-	if (!userPubKey) return
+  if (!userPubKey) return
 
-	await program.loadManager()
+  await program.loadManager()
 
-	const balances = await program.getPoolBalances(index)
-	let price = balances[1] / balances[0]
-	let tightRange = price * 0.1
-	let maxRange = 2 * price
-	let centerPrice = price
+  const balances = await program.getPoolBalances(index)
+  let price = balances[1] / balances[0]
+  let tightRange = price * 0.1
+  let maxRange = 2 * price
+  let centerPrice = price
 
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
-	return {
-		tickerIcon: tickerIcon,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
-		price,
-		tightRange,
-		maxRange,
-		centerPrice,
-	}
+  return {
+    tickerIcon: tickerIcon,
+    tickerName: tickerName,
+    tickerSymbol: tickerSymbol,
+    price,
+    tightRange,
+    maxRange,
+    centerPrice,
+  }
 }
 
 export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
-	if (!userPubKey) return
+  if (!userPubKey) return
 
   console.log('fetchCometDetail', index)
   // start timer in data-loading-indicator
   setStartTimer(false);
   setStartTimer(true);
 
-	await program.loadManager()
+  await program.loadManager()
 
-  const comet = await program.getSinglePoolComets();
+
+  const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
+    program.getTokenData(), program.getSinglePoolComets()
+  ]);
+
+  if (tokenDataResult.status !== "fulfilled" || singlePoolCometResult.status !== "fulfilled") return null;
+  const comet = singlePoolCometResult.value;
+  const tokenData = tokenDataResult.value;
   const position = comet.positions[index];
 
   console.log('comet', comet)
@@ -49,7 +56,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   const mintAmount = toNumber(position.borrowedUsdi)
   const mintIassetAmount = toNumber(position.borrowedIasset)
   const collAmount = toNumber(comet.collaterals[index].collateralAmount)
-  
+
   let price = 0
   let tightRange = 0
   let maxRange = 0
@@ -63,7 +70,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   let upperLimit = 0
 
   if (Number(position.poolIndex) < 255) {
-    const balances = await program.getPoolBalances(Number(position.poolIndex))
+    let pool = tokenData.pools[position.poolIndex];
+    const balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
     price = balances[1] / balances[0]
     tightRange = price * 0.1
     maxRange = 2 * price
@@ -73,23 +81,26 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     tickerIcon = asset.tickerIcon
     tickerName = asset.tickerName
     tickerSymbol = asset.tickerSymbol
-    const singlePoolHealthScore =  await program.getSinglePoolHealthScore(index)
+    const singlePoolHealthScore = program.getSinglePoolHealthScore(index, tokenData, comet);
     ild = singlePoolHealthScore.ILD
     healthScore = singlePoolHealthScore.healthScore
 
     const {
       lowerPrice,
       upperPrice
-    } = await program.calculateNewSinglePoolCometFromUsdiBorrowed(
-      Number(position.poolIndex),
-      collAmount,
-      mintAmount
+    } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+      tokenData,
+      comet,
+      index,
+      0,
+      0
     )
+    console.log('fdd', upperPrice);
     lowerLimit = lowerPrice
     upperLimit = upperPrice
   }
 
-	return {
+  return {
     mintAmount,
     mintIassetAmount,
     collAmount,
@@ -97,36 +108,36 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     upperLimit,
     ild,
     healthScore,
-		tickerIcon: tickerIcon,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
-		price,
-		tightRange,
-		maxRange,
-		centerPrice
-	}
+    tickerIcon: tickerIcon,
+    tickerName: tickerName,
+    tickerSymbol: tickerSymbol,
+    price,
+    tightRange,
+    maxRange,
+    centerPrice
+  }
 }
 
 interface GetProps {
-	userPubKey: PublicKey | null
-	index: number
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  userPubKey: PublicKey | null
+  index: number
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
 export interface PositionInfo {
-	tickerIcon: string
-	tickerName: string
-	tickerSymbol: string | null
-	price: number
-	tightRange: number
-	maxRange: number
-	centerPrice: number
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string | null
+  price: number
+  tightRange: number
+  maxRange: number
+  centerPrice: number
 }
 
 export interface CometInfo {
   isTight: boolean
-	lowerLimit: number
+  lowerLimit: number
   upperLimit: number
 }
 

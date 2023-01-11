@@ -4,7 +4,7 @@ interface Props {
 	min?: number
 	max?: number
 	value: number
-  hideValueBox?: boolean
+	hideValueBox?: boolean
 	onChange?: (event: Event, newValue: number | number[]) => void
 }
 
@@ -24,18 +24,18 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 	'& .MuiSlider-track': {
 		height: 4,
-    border: 'none',
-    background: '#809cff'
+		border: 'none',
+		background: '#809cff'
 	},
-  '& .MuiSlider-valueLabel': {
-    fontSize: '11px',
-    fontWeight: '600',
-    padding: '4px 8px 4px 8px',
-    borderRadius: '10px',
-    border: 'solid 1px #809cff',
-    backgroundColor: '#000',
-    '&:before': { display: 'none' },
-  },
+	'& .MuiSlider-valueLabel': {
+		fontSize: '11px',
+		fontWeight: '600',
+		padding: '4px 8px 4px 8px',
+		borderRadius: '10px',
+		border: 'solid 1px #809cff',
+		backgroundColor: '#000',
+		'&:before': { display: 'none' },
+	},
 	'& .MuiSlider-rail': {
 		color: '#444444',
 		height: 3,
@@ -48,10 +48,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 	}
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-			}}>
+		<Box display='flex'>
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
 			<Box width="100%">
 				<StyledSlider

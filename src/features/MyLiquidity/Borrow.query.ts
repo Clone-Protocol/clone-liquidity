@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
@@ -6,46 +6,47 @@ import { FilterType } from '~/data/filter'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getUserMintInfos } from '~/utils/user'
 
 export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: Borrow.query')
 	// start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
+  	setStartTimer(false);
+  	setStartTimer(true);
 
 	await program.loadManager()
-	let mintInfos : any = []
-
-	try {
-		mintInfos = await program.getUserMintInfos()
-	} catch (e) {
-		console.error(e)
-	}
-
 	const result: AssetList[] = []
 
-	let i = 0
-	for (const info of mintInfos) {
-    const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
-    const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+	const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
+		program.getTokenData(), program.getMintPositions()
+	]);
 
-		result.push({
-			id: i,
-			tickerName: tickerName,
-			tickerSymbol: tickerSymbol,
-			tickerIcon: tickerIcon,
-			collateralName: collateralName,
-			oPrice: info[2],
-			assetType: assetType,
-			collateralType: collateralType,
-			borrowed: info[3],
-			collateral: info[4],
-			collateralRatio: info[5] * 100,
-			minCollateralRatio: info[6] * 100,
-		})
-    i++
+	if (tokenDataResult.status === "fulfilled" && mintPositionResult.status === "fulfilled") {
+		let mintInfos = getUserMintInfos(tokenDataResult.value, mintPositionResult.value);
+
+		let i = 0
+		for (const info of mintInfos) {
+		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+		const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+
+			result.push({
+				id: i,
+				tickerName: tickerName,
+				tickerSymbol: tickerSymbol,
+				tickerIcon: tickerIcon,
+				collateralName: collateralName,
+				oPrice: info[2],
+				assetType: assetType,
+				collateralType: collateralType,
+				borrowed: info[3],
+				collateral: info[4],
+				collateralRatio: Number(info[5]) * 100,
+				minCollateralRatio: Number(info[6]) * 100,
+			})
+		i++
+		}
 	}
 
 	// const result2: AssetList[] = [
@@ -70,7 +71,7 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 interface GetAssetsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

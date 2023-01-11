@@ -1,4 +1,4 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
@@ -7,6 +7,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getUserMintInfos } from '~/utils/user';
 
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
@@ -43,29 +44,32 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 
   await program.loadManager()
 
-  let mint = await program.getMintPosition(index)
+  const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
+		program.getTokenData(), program.getMintPositions()
+	]);
+
+  if (tokenDataResult.status !== "fulfilled" || mintPositionResult.status !== "fulfilled") return
+
+  let mint = mintPositionResult.value.mintPositions[index];
   const poolIndex = Number(mint.poolIndex)
   
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
-  const assetInfo = await program.getAssetInfo(poolIndex);
+  const assetInfo = tokenDataResult.value.pools[poolIndex].assetInfo;
   const oraclePrice = toNumber(assetInfo.price);
-  const positionData = await program.getUserMintInfo(index)
+  const positionsData = getUserMintInfos(tokenDataResult.value, mintPositionResult.value);
+  const positionData = positionsData[index];
 
   const balance = await fetchBalance({
     program,
     userPubKey,
-    index,
+    index: poolIndex,
     setStartTimer
   })
 
-  // MEMO : calculation of maxWithdrawableCollateral
-  // borrow_amount_in_iasset = collateral_amount / (iasset_oracle_price * collateral_ratio)
-  // min_collateral_amount = borrow_amount_in_iasset * iasset_oracle_price * minCollateralRatio
-  // max_withdrawable_collateral = collateral_amount - min_collateral_amount
-  const borrowAmountInIasset = positionData![1] / (oraclePrice * positionData![2]);
-  const minCollateralRatio = positionData![3];
-  const minCollateralAmount = borrowAmountInIasset * oraclePrice * minCollateralRatio;
-  const maxWithdrawableColl = positionData![1] - minCollateralAmount;
+  const borrowAmountInIasset = Number(positionData![3]);
+  const minCollateralRatio = positionData![6];
+  const minCollateralAmount = borrowAmountInIasset * oraclePrice * Number(minCollateralRatio);
+  const maxWithdrawableColl = Number(positionData![4]) - minCollateralAmount;
   
   return {
 		tickerIcon: tickerIcon,
@@ -74,10 +78,10 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 		oPrice: oraclePrice,
 		stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
 		cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
-    borrowedIasset: positionData![0],
-    collateralAmount: positionData![1],
-    collateralRatio: positionData![2] * 100,
-    minCollateralRatio: positionData![3] * 100,
+    borrowedIasset: positionData![3],
+    collateralAmount: positionData![4],
+    collateralRatio: Number(positionData![5]) * 100,
+    minCollateralRatio: Number(positionData![6]) * 100,
     usdiVal: balance?.usdiVal!,
     iassetVal: balance?.iassetVal!,
     maxWithdrawableColl
@@ -87,7 +91,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
@@ -98,8 +102,8 @@ export interface PositionInfo {
 	oPrice: number
 	stableCollateralRatio: number
 	cryptoCollateralRatio: number
-	borrowedIasset: number
-	collateralAmount: number
+	borrowedIasset: number | Number
+	collateralAmount: number | Number
 	collateralRatio: number
 	minCollateralRatio: number
   usdiVal: number

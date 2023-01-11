@@ -11,8 +11,8 @@ interface Props {
 	assets: AssetType[]
 	selAssetId: number
 	value?: number
-	onChangeAsset?: any
-	onChangeAmount?: any
+	onChangeAsset: (value: string | number) => void
+	onChangeAmount?: React.ChangeEventHandler
 }
 
 const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeAsset, onChangeAmount }) => {
@@ -29,14 +29,14 @@ const SelectPairInput: React.FC<Props> = ({ assets, selAssetId, value, onChangeA
 						<MenuItem key={index} value={index}>
 							<Box display="flex">
 								<Image src={asset.tickerIcon} width="28px" height="28px" />
-								<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+								<TickerWrapper>
 									<TickerSymbol>{asset.tickerSymbol}</TickerSymbol>
-								</Box>
+								</TickerWrapper>
 							</Box>
 						</MenuItem>
 					))}
 				</Select>
-				<InputAmount id="ip-amount" type="number" sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={value} onChange={onChangeAmount} />
+				<InputAmount id="ip-amount" type="number" sx={value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={value} onChange={onChangeAmount} />
 			</FormStack>
 		</FormControl>
 	)
@@ -49,6 +49,12 @@ const FormStack = styled(Stack)`
 	padding: 13px 21px 13px 30px;
 	border-radius: 8px;
 	background-color: #333333;
+`
+
+const TickerWrapper = styled(Box)`
+	width: 100px;
+	margin-left: 8px; 
+	text-align: left;
 `
 
 const TickerSymbol = styled('div')`

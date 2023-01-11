@@ -1,6 +1,5 @@
 import Paper from '@mui/material/Paper'
 import Slide from '@mui/material/Slide';
-
 import { styled } from '@mui/material'
 
 const WelcomeMsg = () => {

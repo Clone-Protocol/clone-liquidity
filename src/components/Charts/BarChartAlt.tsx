@@ -5,6 +5,7 @@ import { styled } from '@mui/system'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import { ChartElem } from '~/features/Chart/Liquidity.query';
 dayjs.extend(utc)
 
 enum VolumeWindow {
@@ -40,7 +41,7 @@ const CustomBar = ({
 }
 
 export type LineChartProps = {
-  data: any[]
+  data: ChartElem[]
   color?: string | undefined
   height?: number | undefined
   minHeight?: number

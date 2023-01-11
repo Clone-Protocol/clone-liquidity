@@ -2,10 +2,9 @@ import { Box, Grid, Divider } from '@mui/material'
 import { styled } from '@mui/system'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
-import InfoTooltip from '~/components/Common/InfoTooltip'
 
 interface Props {
-  assetData: PI
+	assetData: PI
 	cometData: CometInfo
 }
 
@@ -13,68 +12,49 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 	return cometData ? (
 		<Grid container spacing={2}>
 			<Grid item xs={4}>
-				<Box
-					sx={{
-						fontSize: '12px',
-						fontWeight: '500',
-						color: '#809cff',
-						textAlign: 'center',
-						marginBottom: '5px',
-					}}>
-					Lower Limit <InfoTooltip title="Lower Limit" />
-				</Box>
+				<LimitBox sx={{ color: '#809cff' }}>
+					Lower Limit
+				</LimitBox>
 				<Box
 					sx={{
 						background: '#171717',
 						borderRadius: '10px',
 						border: 'solid 1px #809cff',
 						paddingTop: '8px',
-            paddingBottom: '8px'
+						paddingBottom: '8px'
 					}}>
 					<PriceValue>{cometData.lowerLimit.toFixed(5)}</PriceValue>
-          <StyledDivider />
+					<StyledDivider />
 					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
-				<Box
-					sx={{
-						fontSize: '12px',
-						fontWeight: '500',
-						color: '#FFF',
-						textAlign: 'center',
-						marginBottom: '5px',
-					}}>
-					Center Price <InfoTooltip title="Center Price" />
-				</Box>
-				<Box sx={{ borderRadius: '10px', border: 'solid 1px #FFF', paddingTop: '8px',
-            paddingBottom: '8px' }}>
+				<LimitBox sx={{ color: '#FFF' }}>
+					Center Price
+				</LimitBox>
+				<Box sx={{
+					borderRadius: '10px', border: 'solid 1px #FFF', paddingTop: '8px',
+					paddingBottom: '8px'
+				}}>
 					<PriceValue>{assetData.price.toFixed(5)}</PriceValue>
-          <StyledDivider />
+					<StyledDivider />
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
-				<Box
-					sx={{
-						fontSize: '12px',
-						fontWeight: '500',
-						color: '#0038ff',
-						textAlign: 'center',
-						marginBottom: '5px',
-					}}>
-					Upper Limit <InfoTooltip title="Upper Limit" />
-				</Box>
+				<LimitBox sx={{ color: '#0038ff' }}>
+					Upper Limit
+				</LimitBox>
 				<Box
 					sx={{
 						background: '#171717',
 						borderRadius: '10px',
 						border: 'solid 1px #0038ff',
 						paddingTop: '8px',
-            paddingBottom: '8px'
+						paddingBottom: '8px'
 					}}>
 					<PriceValue>{cometData.upperLimit.toFixed(5)}</PriceValue>
-          <StyledDivider />
+					<StyledDivider />
 					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
 				</Box>
 			</Grid>
@@ -102,6 +82,13 @@ const RangePair = styled('div')`
 	padding-top: 8px;
 	text-align: center;
   color: #5c5c5c;
+`
+
+const LimitBox = styled(Box)`
+	font-size: 12px;
+	font-weight: 500;
+	text-align: center;
+	margin-bottom: 5px;
 `
 
 export default withCsrOnly(ConcentrationRangeBox)

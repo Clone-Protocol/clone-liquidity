@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { styled } from '@mui/system'
-import { Container, Box, Stack, Grow } from '@mui/material'
+import { Container, Box, Stack } from '@mui/material'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import LineChart from '~/containers/Overview/LineChart'
 import BarChart from '~/containers/Overview/BarChart'
@@ -20,11 +20,11 @@ const Overview: NextPage = () => {
 				<StyledSection>
 					<Container>
 						<WelcomeMsg />
-						<Box sx={{ marginTop: '40px' }}>
-              <Stack direction="row" spacing={2} sx={{ marginBottom: '19px' }}>
-                <LineChart />
-                <BarChart />
-              </Stack>
+						<Box marginTop='40px'>
+							<Stack direction="row" spacing={2} marginBottom='19px'>
+								<LineChart />
+								<BarChart />
+							</Stack>
 							<AssetList />
 						</Box>
 					</Container>
@@ -34,7 +34,7 @@ const Overview: NextPage = () => {
 	)
 }
 
-const StyledSection = styled('section')`
+export const StyledSection = styled('section')`
 	${(props) => props.theme.breakpoints.up('md')} {
 		padding-top: 100px;
 	}

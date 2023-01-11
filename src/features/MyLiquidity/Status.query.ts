@@ -1,6 +1,6 @@
-import { QueryObserverOptions, useQuery } from 'react-query'
+import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept, Comet } from "incept-protocol-sdk/sdk/src/incept"
+import { Incept } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -20,62 +20,64 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 	let borrow = 0
 	let unconcentrated = 0
 	let comet = 0
+  // TODO:
+  let multipoolComet = 0
+  let liquidated = 0
 
-  try {
-    let mintPositions = await program.getMintPositions()
-    let liquidityPositions = await program.getLiquidityPositions()
-    let comets = await program.getSinglePoolComets()
-    let cometInfos = await program.getUserSinglePoolCometInfos()
+  const [mintPositionsResult, singlePoolCometsResult, liquidityPositionsResult, cometsResult] = await Promise.allSettled([
+    program.getMintPositions(), 
+    program.getSinglePoolComets(), 
+    program.getLiquidityPositions(),
+    program.getComet()
+  ]);
 
-    // comets
-    for (const info of cometInfos) {
-      const hasPool = Number(info[info.length-1])
-
-      // unless poolIndex is 255
-      if (hasPool) {
-        const collateralAmount = Number(info[6])
-        totalVal += collateralAmount
-        comet += collateralAmount
-      }
-    }
-
+  if (mintPositionsResult.status === "fulfilled") {
+    const mintPositions = mintPositionsResult.value;
     for (var i = 0; i < Number(mintPositions.numPositions); i++) {
       let mintPosition = mintPositions.mintPositions[i]
       let collateralAmount = toNumber(mintPosition.collateralAmount)
       totalVal += collateralAmount
       borrow += collateralAmount
     }
+  }
 
+  if (liquidityPositionsResult.status === "fulfilled") {
+    const liquidityPositions = liquidityPositionsResult.value;
+    const tokenData = await program.getTokenData();
     for (var i = 0; i < Number(liquidityPositions.numPositions); i++) {
       let liquidityPosition = liquidityPositions.liquidityPositions[i]
       let liquidityTokenAmount = toNumber(liquidityPosition.liquidityTokenValue)
       let poolIndex = liquidityPosition.poolIndex
-      let pool = await program.getPool(poolIndex)
-      let liquidityTokenSupply = (await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed"))
-        .value!.uiAmount
-      let balances = await program.getPoolBalances(poolIndex)
-      let amount = ((balances[1] * liquidityTokenAmount) / liquidityTokenSupply!) * 2
+      let pool = tokenData.pools[poolIndex];//await program.getPool(poolIndex)
+      let liquidityTokenSupply = toNumber(pool.liquidityTokenSupply);//(await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed"))
+        // .value!.uiAmount
+      let balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];//await program.getPoolBalances(poolIndex)
+      let amount = ((balances[1] * liquidityTokenAmount) / liquidityTokenSupply) * 2
       totalVal += amount
       unconcentrated += amount
     }
+  }
 
-    comets.collaterals.slice(0, comets.numCollaterals.toNumber()).forEach(collateral => {
-      let collateralAmount = toNumber(collateral.collateralAmount);
+  if (singlePoolCometsResult.status === "fulfilled") {
+    const comets = singlePoolCometsResult.value;
+    for (let i = 0; i < Number(comets.numCollaterals.toNumber()); i++) {
+      let collateralAmount = toNumber(comets.collaterals[i].collateralAmount);
       totalVal += collateralAmount;
       comet += collateralAmount;
-    });
+    }
+  }
 
-  } catch (e) {
-    console.error(e)
+  if (cometsResult.status === "fulfilled") {
+    const comets = cometsResult.value
+    // Only take usdi value for now.
+    let usdiValue = toNumber(comets.collaterals[0].collateralAmount)
+    totalVal += usdiValue
+    multipoolComet += usdiValue
   }
 
 	let borrowPercent = totalVal > 0 ? (borrow / totalVal) * 100 : 0
 	let unconcentratedPercent = totalVal > 0 ? (unconcentrated / totalVal) * 100 : 0
 	let cometPercent = totalVal > 0 ? (comet / totalVal) * 100 : 0
-
-  // TODO:
-  let multipoolComet = 0
-  let liquidated = 0
 
 	return {
 		totalVal,
@@ -92,7 +94,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 
 interface GetProps {
 	userPubKey: PublicKey | null
-  refetchOnMount?: QueryObserverOptions['refetchOnMount']
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 

@@ -3,32 +3,30 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerName: string | null
 	tickerSymbol: string | null
-	value?: number
+	value?: number | string
 	headerTitle?: string
 	headerValue?: number
-	onChange?: any
-  onMax?: any
+	onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void
+	onMax?: (value: number) => void
 }
 
 const PairInput: React.FC<Props> = ({
 	tickerIcon,
-	tickerName,
 	tickerSymbol,
 	value,
 	headerTitle,
 	headerValue,
 	onChange,
-  onMax
+	onMax
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (
 				<Stack direction="row" justifyContent="flex-end">
-					<Box sx={{ fontSize: '12px', fontWeight: '500', marginBottom: '2px', color: '#949494', marginRight: '15px' }}>
-						{headerTitle}: {headerValue || headerValue == 0 ? (<span  style={{color: '#90e4fe', cursor: 'pointer'}} onClick={() => onMax(headerValue)}>{headerValue.toFixed(2)}</span>) : '_'}
-					</Box>
+					<HeaderTitle>
+						{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
+					</HeaderTitle>
 				</Stack>
 			) : (
 				<></>
@@ -36,16 +34,27 @@ const PairInput: React.FC<Props> = ({
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<Box sx={{ width: '100px', marginLeft: '8px', textAlign: 'left' }}>
+					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-					</Box>
+					</TickerWrapper>
 				</Box>
-				<InputAmount id="ip-amount" type="number" placeholder='0.00' min={0} max={headerValue} sx={ value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={Number(value).toString()} onChange={onChange} />
+				<InputAmount id="ip-amount" type="number" placeholder='0.00' step='any' min={0} max={headerValue} sx={value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChange} />
 			</FormStack>
 		</FormControl>
 	)
 }
 
+const HeaderTitle = styled(Box)`
+	font-size: 12px; 
+	font-weight: 500; 
+	margin-bottom: 2px; 
+	color: #949494; 
+	margin-right: 15px;
+`
+const MaxValue = styled('span')`
+	color: #90e4fe; 
+	cursor: pointer;
+`
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
@@ -58,13 +67,16 @@ const FormStack = styled(Stack)`
     border: solid 1px #809cff;
   }
 `
-
+const TickerWrapper = styled(Box)`
+	width: 100px; 
+	margin-left: 8px; 
+	text-align: left;
+`
 const TickerSymbol = styled('div')`
 	font-size: 14px;
 	font-weight: 600;
   margin-top: 3px;
 `
-
 const InputAmount = styled(`input`)`
 	width: 330px;
 	margin-left: 30px;

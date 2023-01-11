@@ -22,19 +22,20 @@ import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const BorrowBox = () => {
-	const { publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
   const { lAssetId } = router.query
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
-		tickerName: 'USDi Coin',
-		tickerSymbol: 'USDi',	
+    tickerName: 'USDi Coin',
+    tickerSymbol: 'USDi',
   }
-	const [assetIndex, setAssetIndex] = useState(0)
+  const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
 
   // sub routing for asset id
@@ -58,30 +59,30 @@ const BorrowBox = () => {
     enabled: publicKey != null
   })
 
-  const { data: usdiBalance, refetch } = useBalanceQuery({ 
-    userPubKey: publicKey, 
+  const { data: usdiBalance, refetch } = useBalanceQuery({
+    userPubKey: publicKey,
     refetchOnMount: "always",
     enabled: publicKey != null
   });
 
   const {
-		handleSubmit,
-		control,
-		formState: { isDirty, errors },
-		watch,
+    handleSubmit,
+    control,
+    formState: { isDirty, errors },
+    watch,
     setValue
-	} = useForm({
+  } = useForm({
     mode: 'onChange',
     defaultValues: {
       collAmount: NaN,
       borrowAmount: NaN,
     }
-	})
-  
+  })
+
   const [collAmount, borrowAmount] = watch([
-		'collAmount',
-		'borrowAmount',
-	])
+    'collAmount',
+    'borrowAmount',
+  ])
 
   const [collRatio, setCollRatio] = useState(100)
 
@@ -92,13 +93,13 @@ const BorrowBox = () => {
   }
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
-    const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
+    const assetOraclePrice = borrowDetail ? borrowDetail.oPrice : 1
     const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
     setValue('borrowAmount', borrowAmount)
   }
 
   const calculateCollRatio = (inputBorrowAmount: number) => {
-    const assetOraclePrice = borrowDetail? borrowDetail.oPrice : 1
+    const assetOraclePrice = borrowDetail ? borrowDetail.oPrice : 1
     setCollRatio((collAmount * 100) / (inputBorrowAmount * assetOraclePrice))
   }
 
@@ -116,23 +117,24 @@ const BorrowBox = () => {
       const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
       setAssetIndex(index)
       setBorrowAsset(ASSETS[index])
+      initData()
     }
   }, [assetIndex, borrowAsset])
 
-	const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
-		if (typeof newValue === 'number' && borrowDetail) {
-        if (!isNaN(newValue)) {
-          setCollRatio(newValue)
-          calculateBorrowAmount(collAmount, newValue)
-        } else {
-          setCollRatio(0)
-          calculateBorrowAmount(collAmount, 0)
-        }
-        
-		}
-	}, [collAmount, collRatio])
+  const handleChangeCollRatio = useCallback((event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => {
+    if (typeof newValue === 'number' && borrowDetail) {
+      if (!isNaN(newValue)) {
+        setCollRatio(newValue)
+        calculateBorrowAmount(collAmount, newValue)
+      } else {
+        setCollRatio(0)
+        calculateBorrowAmount(collAmount, 0)
+      }
 
-	const onBorrow = async () => {
+    }
+  }, [collAmount, collRatio])
+
+  const onBorrow = async () => {
     setLoading(true)
     await mutateAsync(
       {
@@ -145,29 +147,29 @@ const BorrowBox = () => {
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to borrow')
+            enqueueSnackbar('Successfully established borrow position')
             setLoading(false)
             initData()
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to borrow')
+          enqueueSnackbar('Error establishing borrow position')
           setLoading(false)
         }
       }
     )
-	}
+  }
 
   const isValid = Object.keys(errors).length === 0
 
-	return priceHistory && usdiBalance ? (
+  return priceHistory && usdiBalance ? (
     <>
       {loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
 
       <Stack direction="row" spacing={3}>
         <Box>
@@ -179,24 +181,24 @@ const BorrowBox = () => {
           <StyledBox>
             <Box display="flex">
               <Image src={borrowAsset.tickerIcon} width="30px" height="30px" layout="fixed" />
-              <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
+              <TickerWrapper>
                 {borrowAsset.tickerName} ({borrowAsset.tickerSymbol})
-              </Box>
+              </TickerWrapper>
             </Box>
             <Box sx={{ marginTop: '10px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
               ${borrowDetail?.oPrice.toFixed(2)}
               {priceHistory.rateOfPrice >= 0 ?
                 <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-              :
+                :
                 <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
               }
             </Box>
-            <MiniLineChartAlt 
+            <MiniLineChartAlt
               data={priceHistory?.chartData}
-              color={ priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
+              color={priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
             />
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-              Oracle Price <InfoTooltip title="Oracle Price" />
+              Oracle Price <InfoTooltip title={TooltipTexts.oraclePrice} />
             </Box>
           </StyledBox>
         </Box>
@@ -221,7 +223,6 @@ const BorrowBox = () => {
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={fromPair.tickerIcon}
-                    tickerName={fromPair.tickerName}
                     tickerSymbol={fromPair.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     balance={usdiBalance?.balanceVal}
@@ -241,7 +242,7 @@ const BorrowBox = () => {
             <StyledDivider />
 
             <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title="Set collateral ratio" /></Box></SubTitle>
+              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title={TooltipTexts.setCollateralRatio} /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
                 <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
@@ -253,13 +254,6 @@ const BorrowBox = () => {
               <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
               <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
-                {/* <SelectPairInput
-                  assets={ASSETS}
-                  selAssetId={assetIndex}
-                  value={borrowAmount}
-                  onChangeAsset={handleChangeAssetIdx}
-                  onChangeAmount={handleChangeBorrowAmount}
-                /> */}
                 <Controller
                   name="borrowAmount"
                   control={control}
@@ -273,10 +267,9 @@ const BorrowBox = () => {
                   render={({ field }) => (
                     <PairInput
                       tickerIcon={ASSETS[assetIndex].tickerIcon}
-                      tickerName={ASSETS[assetIndex].tickerName}
                       tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                       balanceDisabled
-                      value={parseFloat(field.value.toFixed(3))}
+                      value={field.value}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const borrowAmt = parseFloat(event.currentTarget.value)
                         field.onChange(borrowAmt)
@@ -295,7 +288,7 @@ const BorrowBox = () => {
         </Box>
       </Stack>
     </>
-	) : <></>
+  ) : <></>
 }
 
 const StyledBox = styled(Box)`
@@ -306,7 +299,13 @@ const StyledBox = styled(Box)`
   background: rgba(21, 22, 24, 0.75);
   margin-top: 22px;
 `
-
+const TickerWrapper = styled(Box)`
+  margin-left: 10px; 
+  font-size: 14px; 
+  font-weight: 600; 
+  color: #fff; 
+  margin-top: 3px;
+`
 const StyledPaper = styled(Paper)`
 	width: 620px;
 	font-size: 14px;
