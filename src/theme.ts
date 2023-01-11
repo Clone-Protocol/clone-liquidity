@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles'
+import React from 'react';
 
 const defaultTheme = createTheme()
 const { breakpoints } = defaultTheme
@@ -57,23 +58,23 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 				root: {
 					marginBottom: '0px',
 					flexGrow: 1,
-          '& .MuiDataGrid-cell:hover': {
-            backgroundColor: 'rgba(38, 38, 38, 0.5)'
-          },
+					'& .MuiDataGrid-cell:hover': {
+						backgroundColor: 'rgba(38, 38, 38, 0.5)'
+					},
 				},
 			},
 		},
-    MuiDialog: {
+		MuiDialog: {
 			styleOverrides: {
 				root: {
-          '& .MuiDialog-paper': {
-            background: '#10141f',  
-            boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
-            borderRadius: '10px'
-          }
-        }
-      }
-    },
+					'& .MuiDialog-paper': {
+						background: '#10141f',
+						boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
+						borderRadius: '10px'
+					}
+				}
+			}
+		},
 		MuiTextField: {
 			styleOverrides: {
 				root: {
@@ -104,7 +105,6 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			'Pretendard',
 			'-apple-system',
 			'BlinkMacSystemFont',
-			'"Segoe UI"',
 			'Roboto',
 			'"Helvetica Neue"',
 			'Arial',
@@ -113,6 +113,74 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			'"Segoe UI Emoji"',
 			'"Segoe UI Symbol"',
 		].join(','),
+		h1: {
+			fontSize: '43px',
+			fontWeight: 600
+		},
+		h2: {
+			fontSize: '35.8px',
+			fontWeight: 600
+		},
+		h3: {
+			fontSize: '29.9px',
+			fontWeight: 600
+		},
+		h4: {
+			fontSize: '24.9px',
+			fontWeight: 600
+		},
+		h5: {
+			fontSize: '20.7px',
+			fontWeight: 600
+		},
+		h6: {
+			fontSize: '17.3px',
+			fontWeight: 600
+		},
+		h7: {
+			fontSize: '14.4px',
+			fontWeight: 600
+		},
+		h8: {
+			fontSize: '12px',
+			fontWeight: 600
+		},
+		p_xxxlg: {
+			fontSize: '24.9px',
+			fontWeight: 500
+		},
+		p_xxlg: {
+			fontSize: '20.7px',
+			fontWeight: 500
+		},
+		p_xlg: {
+			fontSize: '17.3px',
+			fontWeight: 500
+		},
+		p_lg: {
+			fontSize: '14.4px',
+			fontWeight: 500
+		},
+		p: {
+			fontSize: '12px',
+			fontWeight: 500
+		},
+		p_sm: {
+			fontSize: '10px',
+			fontWeight: 500
+		},
+		p_xsm: {
+			fontSize: '8.3px',
+			fontWeight: 500
+		},
+		p_xxsm: {
+			fontSize: '6.9px',
+			fontWeight: 500
+		},
+		p_xxxsm: {
+			fontSize: '5.8px',
+			fontWeight: 500
+		}
 	},
 	palette: {
 		common: {
@@ -120,19 +188,131 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			white: '#ffffff',
 		},
 		primary: {
-			light: '#bfbdba',
-			main: '#000000',
-			dark: '#595957',
-			contrastText: '#3C3336',
+			light: '#4fe5ff',
+			main: '#4fe5ff',
+			dark: '#4fe5ff',
 		},
-		secondary: {
-			light: '#959ba5',
-			main: '#232323',
-			dark: '#191b20',
-			contrastText: '#ffffff',
+		hover: '#37a0b3',
+		info: {
+			main: '#258ded',
+		},
+		warning: {
+			main: '#ff8e4f',
+		},
+		error: {
+			main: '#ed2525',
 		},
 		text: {
-			primary: '#333',
+			primary: '#ffffff',
+			secondary: '#989898'
 		},
 	},
+	boxes: {
+		darkBlack: '#1b1b1b',
+		black: '#242424',
+		lightBlack: '#2d2d2d',
+		blackShade: '#363636',
+		greyShade: '#3f3f3f',
+		grey: '#767676'
+	},
+	gradients: {
+		metallic: 'linear-gradient(81deg, #258ded 0%, #4fe5ff 24%, #96efff 36%, #fff 48%, #96efff 60%, #4fe5ff 72%, #258ded 96%)',
+		temperatureL2H: 'linear-gradient(to right, #fff 0%, #ff8e4f 100%)',
+		purpleMetallic: 'linear-gradient(84deg, #8925ed 1%, #7d4fff 25%, #ab96ff 36%, #fff 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
+		simple: 'linear-gradient(to right, #fff 21%, #4fe5ff 96%)',
+		temperatureH2L: 'linear-gradient(to right, #ff8e4f 0%, #fff 100%)',
+		healthscore: 'linear-gradient(to right, #ed2525 0%, #ff8e4f 26%, #4fe5ff 100%)',
+	}
 })
+
+declare module '@mui/material/styles' {
+	interface TypographyVariants {
+		h7: React.CSSProperties;
+		h8: React.CSSProperties;
+		p_xxxlg: React.CSSProperties;
+		p_xxlg: React.CSSProperties;
+		p_xlg: React.CSSProperties;
+		p_lg: React.CSSProperties;
+		p: React.CSSProperties;
+		p_sm: React.CSSProperties;
+		p_xsm: React.CSSProperties;
+		p_xxsm: React.CSSProperties;
+		p_xxxsm: React.CSSProperties;
+	}
+
+	// allow configuration using `createTheme`
+	interface TypographyVariantsOptions {
+		h7?: React.CSSProperties;
+		h8?: React.CSSProperties;
+		p_xxxlg?: React.CSSProperties;
+		p_xxlg?: React.CSSProperties;
+		p_xlg?: React.CSSProperties;
+		p_lg?: React.CSSProperties;
+		p?: React.CSSProperties;
+		p_sm?: React.CSSProperties;
+		p_xsm?: React.CSSProperties;
+		p_xxsm?: React.CSSProperties;
+		p_xxxsm?: React.CSSProperties;
+	}
+
+	interface Palette {
+		hover: React.CSSProperties['color'];
+	}
+	interface PaletteOptions {
+		hover?: React.CSSProperties['color'];
+	}
+
+	interface Theme {
+		boxes: {
+			darkBlack: React.CSSProperties['color'];
+			black: React.CSSProperties['color'];
+			lightBlack: React.CSSProperties['color'];
+			blackShade: React.CSSProperties['color'];
+			greyShade: React.CSSProperties['color'];
+			grey: React.CSSProperties['color'];
+		};
+		gradients: {
+			metallic: React.CSSProperties['color'];
+			temperatureL2H: React.CSSProperties['color'];
+			purpleMetallic: React.CSSProperties['color'];
+			simple: React.CSSProperties['color'];
+			temperatureH2L: React.CSSProperties['color'];
+			healthscore: React.CSSProperties['color'];
+		}
+	}
+	interface ThemeOptions {
+		boxes: {
+			darkBlack?: React.CSSProperties['color'];
+			black?: React.CSSProperties['color'];
+			lightBlack?: React.CSSProperties['color'];
+			blackShade?: React.CSSProperties['color'];
+			greyShade?: React.CSSProperties['color'];
+			grey?: React.CSSProperties['color'];
+		};
+		gradients: {
+			metallic?: React.CSSProperties['color'];
+			temperatureL2H?: React.CSSProperties['color'];
+			purpleMetallic?: React.CSSProperties['color'];
+			simple?: React.CSSProperties['color'];
+			temperatureH2L?: React.CSSProperties['color'];
+			healthscore?: React.CSSProperties['color'];
+		}
+	}
+}
+
+// Update the Typography's variant prop options
+declare module '@mui/material/Typography' {
+	interface TypographyPropsVariantOverrides {
+		h7: true;
+		h8: true;
+		p_xxxlg: true;
+		p_xxlg: true;
+		p_xlg: true;
+		p_lg: true;
+		p: true;
+		p_sm: true;
+		p_xsm: true;
+		p_xxsm: true;
+		p_xxxsm: true;
+	}
+}
