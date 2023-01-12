@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
-import { useRouter } from 'next/router' 
+import { useRouter } from 'next/router'
 import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -28,7 +28,6 @@ import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
 import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
-import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -92,7 +91,6 @@ const RightMenu = () => {
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
-	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
 
 	// on initialize, set to open account creation 
@@ -105,7 +103,7 @@ const RightMenu = () => {
 	const handleCreateAccount = () => {
 		setIsCreatingAccount(true)
 	}
-	
+
 	const closeAccountSetupDialog = () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
@@ -170,7 +168,7 @@ const RightMenu = () => {
 	const handleChangeWallet = () => {
 		disconnect()
 		setShowWalletSelectPopup(false)
-		setOpen(true) 
+		setOpen(true)
 	}
 
 	const handleDisconnect = () => {
@@ -180,7 +178,7 @@ const RightMenu = () => {
 
 	return (
 		<>
-			<CreateAccountSetupDialog 
+			<CreateAccountSetupDialog
 				state={createAccountDialogStatus}
 				handleCreateAccount={handleCreateAccount}
 				handleClose={closeAccountSetupDialog} />

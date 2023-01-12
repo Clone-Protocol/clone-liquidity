@@ -21,10 +21,10 @@ const Overview: NextPage = () => {
 					<Container>
 						<WelcomeMsg />
 						<Box marginTop='40px'>
-							<Stack direction="row" spacing={2} marginBottom='19px'>
+							<Box marginBottom='19px'>
 								<LineChart />
-								<BarChart />
-							</Stack>
+								{/* <BarChart /> */}
+							</Box>
 							<AssetList />
 						</Box>
 					</Container>

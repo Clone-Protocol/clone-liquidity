@@ -1,10 +1,6 @@
 import MuiDrawer from '@mui/material/Drawer'
-import { styled, List, ListItemButton, ListItemIcon, Box, Stack, Fade } from '@mui/material'
+import { styled, List, ListItemButton, Box, Stack, Fade, Typography } from '@mui/material'
 import Link from 'next/link'
-import Image from 'next/image'
-import menuOverviewIcon from 'public/images/menu/overview-icon.svg'
-import menuLiquidityIcon from 'public/images/menu/position-icon.svg'
-import menuBorrowIcon from 'public/images/menu/borrow-icon.svg'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
@@ -19,26 +15,17 @@ const Drawer: React.FC = () => {
 				<List component="nav">
 					<Link href="/">
 						<StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
-							<ListItemIcon sx={{ marginLeft: '10px' }}>
-								<Image src={menuOverviewIcon} alt="overview" />
-							</ListItemIcon>
-							<StyledListItemText>Overview</StyledListItemText>
+							<Typography variant="p">Overview</Typography>
 						</StyledListItemButton>
 					</Link>
 					<Link href="/liquidity">
 						<StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
-							<ListItemIcon sx={{ marginLeft: '10px' }}>
-								<Image src={menuLiquidityIcon} alt="portfolio" />
-							</ListItemIcon>
-							<StyledListItemText>My Liquidity</StyledListItemText>
+							<Typography variant="p">My Liquidity</Typography>
 						</StyledListItemButton>
 					</Link>
 					<Link href="/borrow">
 						<StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
-							<ListItemIcon sx={{ marginLeft: '10px' }}>
-								<Image src={menuBorrowIcon} alt="markets" />
-							</ListItemIcon>
-							<StyledListItemText>Borrow</StyledListItemText>
+							<Typography variant="p">Borrow</Typography>
 						</StyledListItemButton>
 					</Link>
 				</List>
@@ -56,13 +43,11 @@ export default withCsrOnly(Drawer)
 const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
 	'& .MuiDrawer-paper': {
 		position: 'relative',
-		background: 'rgba(20, 20, 20, 0.75)',
-		color: '#fff',
+		background: theme.palette.common.black,
 		whiteSpace: 'nowrap',
-		width: 241,
-		marginTop: 62,
-		paddingTop: 26,
-		borderTopRightRadius: '10px',
+		width: 144,
+		marginTop: 60,
+		paddingTop: 20,
 		transition: theme.transitions.create('width', {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.enteringScreen,
@@ -83,26 +68,20 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 }))
 
 const StyledListItemButton = styled(ListItemButton)`
-  border-radius: 10px;
-  height: 41px;
-  margin-left: 12px;
-  margin-right: 11px;
-  margin-bottom: 13px;
+	color: ${(props) => props.theme.palette.text.secondary};
+	width: 100px;
+  height: 40px;
+  margin-left: 14px;
+  margin-right: 14px;
+  margin-bottom: 8px;
+	line-height: 1.33;
   &.selected {
-    border: solid 1px #3f3f3f;
-    background-image: linear-gradient(to bottom, #000 0%, #000 100%); 
+    color: ${(props) => props.theme.palette.common.white};
     transition: all 0.3s ease 0.2s;
   }
   &:hover {
-    background-color: rgba(38, 38, 38, 0.5);
+    background-color: ${(props) => props.theme.boxes.darkBlack};
   }
-`
-const StyledListItemText = styled(Box)`
-	font-size: 12px;
-	font-weight: bold;
-	height: 44px;
-	line-height: 44px;
-  margin-left: -15px;
 `
 const BottomStack = styled(Stack)`
 	position: absolute;
