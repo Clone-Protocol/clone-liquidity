@@ -55,7 +55,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 					toPriceRange: Number(info[5]),
 					collateral: Number(info[6]),
 					ildIsIasset: Boolean(info[7]),
-					ild: Number(info[8]),
+					ild: Number(healthData.ILD),
 					borrowedIasset: Number(info[9]),
 					borrowedUsdi: Number(info[10]),
 					liquidityTokenAmount: Number(info[11]),

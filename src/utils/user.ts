@@ -115,7 +115,7 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
         let iassetValue =
           (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply;
         let usdiValue =
-          (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply;
+          (poolBalances[1] * liquidityTokenAmount) / liquidityTokenSupply;
         let ildIsIasset: boolean;
         let ild: number;
         if (borrowedIasset > iassetValue) {
@@ -128,6 +128,7 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
           ildIsIasset = false;
           ild = 0;
         }
+        
         cometInfos.push([
           poolIndex,
           collateralIndex,
