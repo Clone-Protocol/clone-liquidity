@@ -120,7 +120,7 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
         let ild: number;
         if (borrowedIasset > iassetValue) {
           ildIsIasset = true;
-          ild = borrowedIasset - iassetValue;
+          ild = ammPrice / (borrowedIasset - iassetValue);
         } else if (borrowedUsdi > usdiValue) {
           ildIsIasset = false;
           ild = borrowedUsdi - usdiValue;
