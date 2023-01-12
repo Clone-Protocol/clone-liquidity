@@ -52,6 +52,7 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 					borderRadius: '50px',
 					textTransform: 'initial',
 					lineHeight: 1.2,
+					background: '#000'
 				},
 			},
 			defaultProps: {

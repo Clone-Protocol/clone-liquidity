@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
-import { AppBar, Box, Button, Stack, Toolbar, Container } from '@mui/material'
+import { AppBar, Box, Button, Stack, Toolbar, Container, Typography } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
@@ -184,28 +184,24 @@ const RightMenu = () => {
 				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
-				<DataLoadingIndicator />
-				<HeaderButton onClick={handleGetUsdiClick} variant="outlined" sx={{ width: '86px' }}>
-					Get USDi
+				{/* <DataLoadingIndicator /> */}
+				<HeaderButton onClick={handleGetUsdiClick}>
+					<Typography variant='p'>Devnet Faucet</Typography>
 				</HeaderButton>
+				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
+				<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 				<Box>
 					<ConnectButton
 						onClick={handleWalletClick}
-						variant="outlined"
 						sx={{ width: '163px' }}
 						disabled={connecting}
-						startIcon={!publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+						startIcon={<Image src={walletIcon} alt="wallet" />}>
 						{!connected ? (
-							<>Connect Wallet</>
+							<Typography variant='p'>Connect Wallet</Typography>
 						) : (
 							<>
-								<div style={{ width: '15px', height: '15px', backgroundImage: 'radial-gradient(circle at 0 0, #63ffda, #816cff)', borderRadius: '99px' }} />
-								{publicKey ? (
-									<Box sx={{ marginLeft: '10px', color: '#fff', fontSize: '11px', fontWeight: '600' }}>
-										{shortenAddress(publicKey.toString())}
-									</Box>
-								) : (
-									<></>
+								{publicKey && (
+									<Typography variant='p'>{shortenAddress(publicKey.toString())}</Typography>
 								)}
 							</>
 						)}
@@ -219,8 +215,6 @@ const RightMenu = () => {
 						<PopupButton onClick={handleDisconnect}>Disconnect</PopupButton>
 					</WalletSelectBox>}
 				</Box>
-				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} variant="outlined" onClick={handleMoreClick}>...</HeaderButton>
-				<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
 			</Box>
 		</>
 	)
@@ -267,37 +261,26 @@ const NavPlaceholder = styled('div')`
 `
 
 const HeaderButton = styled(Button)`
-	border: 1px solid #404040;
 	padding: 12px;
-	border-radius: 10px;
-	font-size: 11px;
-	font-weight: 600;
   margin-left: 16px;
-	color: #fff;
-  min-width: 40px;
+	color: ${(props) => props.theme.palette.text.secondary};
 	height: 35px;
   &:hover {
-    border: 1px solid #404040;
-    background-color: rgba(38, 38, 38, 0.5);
+    background-color: ${(props) => props.theme.boxes.darkBlack};
   }
+	&:active {
+		background-color: ${(props) => props.theme.boxes.darkBlack};
+	}
 `
 
 const ConnectButton = styled(Button)`
-  border: solid 1px #00218f;
-  background-color: #001149;
+  background-color: ${(props) => props.theme.boxes.black};
 	padding: 12px;
-	border-radius: 10px;
-	font-size: 11px;
-	font-weight: 600;
   margin-left: 16px;
 	color: #fff;
 	height: 35px;
   &:hover {
-    background-color: #00165f;
-  }
-  &:active {
-    border: solid 1px #003bff;
-    background-color: #00165f;
+    background-color: ${(props) => props.theme.boxes.black};
   }
 `
 
