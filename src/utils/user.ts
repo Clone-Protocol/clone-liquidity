@@ -77,7 +77,7 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
         let ammPrice = poolBalances[1] / poolBalances[0];
         let oraclePrice = toNumber(assetInfo.price);
         let borrowedIasset = toNumber(cometPosition.borrowedIasset);
-        let borrowedUsdi = toNumber(cometPosition.borrowedIasset);
+        let borrowedUsdi = toNumber(cometPosition.borrowedUsdi);
         let totalCollateralAmount = toNumber(cometCollateral.collateralAmount);
         let data = editInfoCalc(
           tokenData,
@@ -115,12 +115,12 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
         let iassetValue =
           (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply;
         let usdiValue =
-          (poolBalances[0] * liquidityTokenAmount) / liquidityTokenSupply;
+          (poolBalances[1] * liquidityTokenAmount) / liquidityTokenSupply;
         let ildIsIasset: boolean;
         let ild: number;
         if (borrowedIasset > iassetValue) {
           ildIsIasset = true;
-          ild = borrowedIasset - iassetValue;
+          ild = ammPrice / (borrowedIasset - iassetValue);
         } else if (borrowedUsdi > usdiValue) {
           ildIsIasset = false;
           ild = borrowedUsdi - usdiValue;
@@ -128,6 +128,7 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
           ildIsIasset = false;
           ild = 0;
         }
+        
         cometInfos.push([
           poolIndex,
           collateralIndex,
