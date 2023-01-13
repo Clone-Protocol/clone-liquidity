@@ -263,8 +263,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       return 'The collateral amount cannot exceed the balance.'
     }
 
-    if (collAmount <= 0) {
-      return 'The collateral amount should be greater than 0'
+    if (collAmount < 0) {
+      return 'The collateral amount should be non-negative'
     }
   }
 

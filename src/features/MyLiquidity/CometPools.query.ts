@@ -39,7 +39,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 	
 				const healthData = program.getSinglePoolHealthScore(i, tokenDataResult.value, singlePoolCometResult.value)
 				let healthScore = healthData.healthScore
-
+				let ild = Math.max(0, healthData.ILD);
 	
 				result.push({
 					id: i,
@@ -55,7 +55,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 					toPriceRange: Number(info[5]),
 					collateral: Number(info[6]),
 					ildIsIasset: Boolean(info[7]),
-					ild: Number(info[8]),
+					ild,
 					borrowedIasset: Number(info[9]),
 					borrowedUsdi: Number(info[10]),
 					liquidityTokenAmount: Number(info[11]),
