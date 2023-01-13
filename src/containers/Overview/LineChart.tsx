@@ -18,12 +18,12 @@ const LineChart: React.FC = () => {
   const [tab, setTab] = useState(0)
   const [filterTime, setFilterTime] = useState<FilterTime>('24h')
   const [chartHover, setChartHover] = useState<number | undefined>()
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
-	}
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue)
+  }
   const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterTime) => {
-		setFilterTime(newValue)
-	}
+    setFilterTime(newValue)
+  }
 
   const { data: totalLiquidity } = useTotalLiquidityQuery({
     timeframe: filterTime,
@@ -39,9 +39,9 @@ const LineChart: React.FC = () => {
   useEffect(() => {
     if (chartHover === undefined && totalLiquidity) {
       if (tab === 0) {
-        setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length-1].value)
+        setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length - 1].value)
       } else {
-        setChartHover(totalUsers?.chartData[totalUsers?.chartData.length-1].value)
+        setChartHover(totalUsers?.chartData[totalUsers?.chartData.length - 1].value)
       }
     }
   }, [chartHover, totalLiquidity, totalUsers, tab])
@@ -69,14 +69,14 @@ const LineChart: React.FC = () => {
           <Box>
             <StyledTabs value={tab} onChange={handleChangeTab}>
               <StyledTab value={0} label="Total Liquidity"></StyledTab>
-              <StyledTab value={1} label="Total Users"></StyledTab>
+              <StyledTab value={1} label="Total Volume"></StyledTab>
             </StyledTabs>
           </Box>
           <SelectValue>{tab === 0 ? formatDollarAmount(chartHover, 0, true) : chartHover?.toLocaleString()}</SelectValue>
         </Box>
       }
       topRight={
-        <div style={{ marginTop: '4px' }}>
+        <div style={{ marginTop: '4px', marginRight: '15px' }}>
           <TimeTabs value={filterTime} onChange={handleFilterChange}>
             {Object.keys(FilterTimeMap).map((f) => (
               <TimeTab key={f} value={f} label={FilterTimeMap[f as FilterTime]} />

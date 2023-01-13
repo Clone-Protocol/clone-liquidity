@@ -6,14 +6,20 @@ body {
 	background-color: #000;
 	overflow-x: hidden;
 	overflow-y: hidden;
+	font-stretch: normal;
+	font-style: normal;
+	letter-spacing: normal;
 }
+
 input:focus {
-  outline:none;
+	outline: none;
 }
+
 input[type=number] {
-    -moz-appearance:textfield;
+	-moz-appearance: textfield;
 }
+
 input[type="number"]:hover,
 input[type="number"]:focus {
-    -moz-appearance: number-input;
+	-moz-appearance: number-input;
 }

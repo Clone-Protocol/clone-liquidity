@@ -6,22 +6,20 @@ const WelcomeMsg = () => {
 	return (
 		<Slide direction="down" in={true} mountOnEnter unmountOnExit>
 			<StyledPaper variant="outlined">
-				<Typography variant="h8">👋 Hi and welcome to Incept Liquidity. Here is where anyone can be a liquidity provider
-					(LP) of the Incept Trading Platform and earn trading fees and rewards.</Typography>
+				<Typography variant="p">Welcome to Incept Liquidity. Here is where anyone can be a liquidity provider (LP) of the Incept Trading Platform and earn trading fees and rewards.</Typography>
 			</StyledPaper>
 		</Slide>
 	)
 }
 
 const StyledPaper = styled(Paper)`
-	font-stretch: normal;
-	line-height: normal;
-	letter-spacing: normal;
+	margin: 0 auto;
+	max-width: 850px;
 	text-align: center;
-	background: rgba(21, 22, 24, 0.75);
+	background: ${(props) => props.theme.boxes.darkBlack};
 	color: #bfbebe;
-	padding: 17px 37px 17px 46px;
-	border-radius: 8px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 `
 
 export default WelcomeMsg

@@ -4,6 +4,19 @@ import React from 'react';
 const defaultTheme = createTheme()
 const { breakpoints } = defaultTheme
 
+const headingCommon = {
+	fontFamily: 'Montserrat',
+	fontWeight: 600,
+	fontStretch: 'normal',
+	letterSpacing: 'normal',
+}
+const paragraphCommon = {
+	fontFamily: 'Montserrat',
+	fontWeight: 500,
+	fontStretch: 'normal',
+	letterSpacing: 'normal',
+}
+
 export const theme: ReturnType<typeof createTheme> = createTheme({
 	...defaultTheme,
 	components: {
@@ -17,6 +30,13 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 				disableRipple: true,
 			},
 		},
+		MuiDrawer: {
+			styleOverrides: {
+				root: {
+					background: '#000'
+				}
+			}
+		},
 		MuiButton: {
 			styleOverrides: {
 				sizeMedium: {
@@ -29,9 +49,9 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 					},
 				},
 				root: {
-					borderRadius: '50px',
 					textTransform: 'initial',
 					lineHeight: 1.2,
+					background: '#000'
 				},
 			},
 			defaultProps: {
@@ -41,6 +61,12 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			},
 		},
 		MuiTab: {
+			styleOverrides: {
+				root: {
+					color: '#989898',
+					textTransform: 'none'
+				}
+			},
 			defaultProps: {
 				disableRipple: true,
 			},
@@ -114,77 +140,77 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			'"Segoe UI Symbol"',
 		].join(','),
 		h1: {
+			...headingCommon,
 			fontSize: '43px',
-			fontWeight: 600
 		},
 		h2: {
+			...headingCommon,
 			fontSize: '35.8px',
-			fontWeight: 600
 		},
 		h3: {
+			...headingCommon,
 			fontSize: '29.9px',
-			fontWeight: 600
 		},
 		h4: {
+			...headingCommon,
 			fontSize: '24.9px',
-			fontWeight: 600
 		},
 		h5: {
+			...headingCommon,
 			fontSize: '20.7px',
-			fontWeight: 600
 		},
 		h6: {
+			...headingCommon,
 			fontSize: '17.3px',
-			fontWeight: 600
 		},
 		h7: {
+			...headingCommon,
 			fontSize: '14.4px',
-			fontWeight: 600
 		},
 		h8: {
+			...headingCommon,
 			fontSize: '12px',
-			fontWeight: 600
 		},
 		p_xxxlg: {
+			...paragraphCommon,
 			fontSize: '24.9px',
-			fontWeight: 500
 		},
 		p_xxlg: {
+			...paragraphCommon,
 			fontSize: '20.7px',
-			fontWeight: 500
 		},
 		p_xlg: {
+			...paragraphCommon,
 			fontSize: '17.3px',
-			fontWeight: 500
 		},
 		p_lg: {
+			...paragraphCommon,
 			fontSize: '14.4px',
-			fontWeight: 500
 		},
 		p: {
+			...paragraphCommon,
 			fontSize: '12px',
-			fontWeight: 500
 		},
 		p_sm: {
+			...paragraphCommon,
 			fontSize: '10px',
-			fontWeight: 500
 		},
 		p_xsm: {
+			...paragraphCommon,
 			fontSize: '8.3px',
-			fontWeight: 500
 		},
 		p_xxsm: {
+			...paragraphCommon,
 			fontSize: '6.9px',
-			fontWeight: 500
 		},
 		p_xxxsm: {
+			...paragraphCommon,
 			fontSize: '5.8px',
-			fontWeight: 500
 		}
 	},
 	palette: {
 		common: {
-			black: '#232323',
+			black: '#000000',
 			white: '#ffffff',
 		},
 		primary: {

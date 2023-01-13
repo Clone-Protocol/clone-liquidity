@@ -27,7 +27,7 @@ export type LineChartProps = {
 
 const LineChartAlt: React.FC<LineChartProps> = ({
   data,
-  color = '#809cff',
+  color = '#4fe5ff',
   value,
   label,
   setValue,
@@ -73,7 +73,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
             dataKey="time"
             axisLine={false}
             tickLine={false}
-            color="#c9c9c9"
+            color="#4fe5ff"
             fontSize="8px"
             tickFormatter={(time) => dayjs(time).format('DD')}
             minTickGap={10}
@@ -89,7 +89,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
               if (setLabel && label !== formattedTime) setLabel(formattedTime)
             }}
           />
-          <Area dataKey="value" type="monotone" stroke="#c9c9c9" fill="url(#gradient)" strokeWidth={2} />
+          <Area dataKey="value" type="monotone" stroke="#4fe5ff" fill="url(#gradient)" strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     </Wrapper>
@@ -98,12 +98,12 @@ const LineChartAlt: React.FC<LineChartProps> = ({
 
 const Wrapper = styled(Card)`
   width: 100%;
-  max-width: 560px;
+  max-width: 1150px;
+  margin: 0 auto;
   height: 307px;
   padding: 1rem;
-  padding-right: 2rem;
   display: flex;
-  background-image: linear-gradient(to bottom, #151618 29%, #002888 312%);
+  background: #000;
   flex-direction: column;
   > * {
     font-size: 1rem;
