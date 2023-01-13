@@ -17,7 +17,6 @@ import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { useIncept } from '~/hooks/useIncept'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import MoreMenu from '~/components/Common/MoreMenu';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getUSDiAccount } from "~/utils/token_accounts";
@@ -193,7 +192,6 @@ const RightMenu = () => {
 				<Box>
 					<ConnectButton
 						onClick={handleWalletClick}
-						sx={{ width: '163px' }}
 						disabled={connecting}
 						startIcon={<Image src={walletIcon} alt="wallet" />}>
 						{!connected ? (
@@ -278,6 +276,7 @@ const ConnectButton = styled(Button)`
 	padding: 12px;
   margin-left: 16px;
 	color: #fff;
+	width: 163px;
 	height: 35px;
   &:hover {
     background-color: ${(props) => props.theme.boxes.black};

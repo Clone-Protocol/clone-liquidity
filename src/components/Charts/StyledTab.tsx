@@ -16,8 +16,8 @@ interface StyledTabsProps {
 
 interface StyledTabProps {
 	label: string
-  value: number
-  icon?: ReactElement
+	value: number
+	icon?: ReactElement
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (
@@ -31,30 +31,25 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	'& .MuiTabs-indicatorSpan': {
 		display: 'none'
 	},
-  backgroundColor: 'rgba(21, 22, 24, 0.75)',
-  borderRadius: '10px',
-  height: '29px',
 })
 
 export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
-  '&.MuiTab-root': {
-    height: '29px',
-    minHeight: '0px',
-    maxHeight: '29px',
-    display: 'flex',
-    gap: '5px'
-  },
-  textTransform: 'none',
-	fontWeight: '600',
-	fontSize: '11px',
-  marginLeft: '6px',
-  backgroundColor: 'rgba(21, 22, 24, 0.75)',
+	'&.MuiTab-root': {
+		height: '29px',
+		minHeight: '0px',
+		maxHeight: '29px',
+		display: 'flex',
+		gap: '5px'
+	},
+	textTransform: 'none',
+	fontWeight: '500',
+	fontSize: '12px',
+	marginLeft: '6px',
 	color: '#989898',
 	'&.Mui-selected': {
-		boxShadow:'0 0 0 1px #3f3f3f inset',
-    backgroundColor: '#000',
 		color: '#fff',
-    borderRadius: '10px'
+		textDecoration: 'underline',
+		textUnderlinePosition: 'under'
 	},
 	'&.Mui-focusVisible': {
 		backgroundColor: '#3d3d3d',

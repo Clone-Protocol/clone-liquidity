@@ -49,7 +49,6 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 					},
 				},
 				root: {
-					borderRadius: '50px',
 					textTransform: 'initial',
 					lineHeight: 1.2,
 					background: '#000'
@@ -62,6 +61,12 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			},
 		},
 		MuiTab: {
+			styleOverrides: {
+				root: {
+					color: '#989898',
+					textTransform: 'none'
+				}
+			},
 			defaultProps: {
 				disableRipple: true,
 			},

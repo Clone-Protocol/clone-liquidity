@@ -30,10 +30,6 @@ const Drawer: React.FC = () => {
 					</Link>
 				</List>
 			</Fade>
-			<BottomStack spacing={2}>
-				<div><span style={{ fontSize: '10px' }}>V1:</span> Polaris Devnet</div>
-				<Credit>© Incept 2022</Credit>
-			</BottomStack>
 		</StyledDrawer>
 	)
 }
@@ -83,17 +79,4 @@ const StyledListItemButton = styled(ListItemButton)`
     background-color: ${(props) => props.theme.boxes.darkBlack};
   }
 `
-const BottomStack = styled(Stack)`
-	position: absolute;
-	left: 65px;
-	bottom: 100px;
-	font-size: 13px;
-	font-weight: 600;
-	color: #9c9c9c;
-	text-align: center;
-`
-const Credit = styled('div')`
-	font-size: 12px; 
-	font-weight: 500;
-	color: #8c8c8c;
-`
+

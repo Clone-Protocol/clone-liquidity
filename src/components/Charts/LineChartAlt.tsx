@@ -98,13 +98,12 @@ const LineChartAlt: React.FC<LineChartProps> = ({
 
 const Wrapper = styled(Card)`
   width: 100%;
-  max-width: 1080px;
+  max-width: 1150px;
   margin: 0 auto;
   height: 307px;
   padding: 1rem;
-  padding-right: 2rem;
   display: flex;
-  background-image: linear-gradient(to bottom, #151618 29%, #000 312%);
+  background: #000;
   flex-direction: column;
   > * {
     font-size: 1rem;
