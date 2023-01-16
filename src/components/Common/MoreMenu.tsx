@@ -1,20 +1,23 @@
-import { styled } from '@mui/material'
+import { styled, Typography, Box, Divider } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import Image from 'next/image'
-import InfoIcon from 'public/images/more/info-icon.svg'
-import BookIcon from 'public/images/more/book-icon.svg'
-import DiscordIcon from 'public/images/more/discord-icon.svg'
-import TradingIcon from 'public/images/more/trading-icon.svg'
+import FaucetIcon from 'public/images/more/faucet-icon.svg'
+import DocIcon from 'public/images/more/doc-icon.svg'
+import MarketsIcon from 'public/images/more/markets-icon.svg'
+import OpportunityIcon from 'public/images/more/opportunities-icon.svg'
 import TwitterIcon from 'public/images/more/twitter-icon.svg'
+import Link from 'next/link'
+import { Stack } from '@mui/system';
 
 interface Props {
   anchorEl: null | HTMLElement
-  onClose?: () => void 
+  onClose?: () => void
 }
 
 const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
-  const open = Boolean(anchorEl);  
+  const open = Boolean(anchorEl);
 
   return <Menu
     anchorEl={anchorEl}
@@ -26,11 +29,8 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
       elevation: 0,
       sx: {
         overflow: 'visible',
-        border: 'solid 1px #fff',
-        borderRadius: '8px',
-        boxShadow: '0 0 5px 5px rgba(0, 0, 0, 0.2)',
         mt: 1.5,
-        background: '#171717',
+        background: '#1b1b1b',
         color: '#fff',
       },
     }}
@@ -38,42 +38,63 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
   >
     <StyledMenuItem>
-      <div>About</div>
-      <Image src={InfoIcon} alt="about" />
+      <Image src={FaucetIcon} alt="faucet" />
+      <Box ml='12px'>
+        <div><Typography variant='p'>Token Faucet</Typography></div>
+        <div><Typography variant='p_sm' color='#989898'>Get started on Solana devnet</Typography></div>
+      </Box>
+    </StyledMenuItem>
+    <StyledDivider />
+    <StyledMenuItem>
+      <Image src={DocIcon} alt="docs" />
+      <Box ml='12px'>
+        <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+        <div><Typography variant='p_sm' color='#989898'>Learn about Incept Liquidity</Typography></div>
+      </Box>
     </StyledMenuItem>
     <StyledMenuItem>
-      <div>Docs</div>
-      <Image src={BookIcon} alt="docs" />
+      <Image src={MarketsIcon} alt="markets" />
+      <Box ml='12px'>
+        <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Markets</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+        <div><Typography variant='p_sm' color='#989898'>Trade all kinds of iAssets</Typography></div>
+      </Box>
     </StyledMenuItem>
-    <StyledMenuItem>
-      <div>Discord</div> 
-      <Image src={DiscordIcon} alt="discord" />
-    </StyledMenuItem>
-    <StyledMenuItem>
-      <div>Twitter</div>
+    <a href={`https://join-incept.super.site/`} target='_blank' rel="noreferrer">
+      <StyledMenuItem>
+        <Image src={OpportunityIcon} alt="opportunities" />
+        <Box ml='12px'>
+          <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Opportunities</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+          <div><Typography variant='p_sm' color='#989898'>Wanna be a pioneer of Defi?</Typography></div>
+        </Box>
+      </StyledMenuItem>
+    </a>
+    <Stack justifyContent='center' my='10px'>
       <Image src={TwitterIcon} alt="twitter" />
-    </StyledMenuItem>
-    <StyledMenuItem>
-      <div>Incept Markets</div>
-      <Image src={TradingIcon} alt="markets" />
-    </StyledMenuItem>
-  </Menu>
+    </Stack>
+  </Menu >
 }
 
 const StyledMenuItem = styled(MenuItem)`
   display: flex;
-  justify-content: space-between;
-  width: 219px;
+  width: 210px;
   height: 35px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: normal;
-  letter-spacing: normal;
+  line-height: 12px;
   color: #fff;
-  padding-left: 30px;
-  padding-right: 30px;
+  margin-bottom: 10px;
+  padding-left: 25px;
+  padding-right: 15px;
   padding-top: 8px;
   padding-bottom: 8px;
+`
+const StyledDivider = styled(Divider)`
+	background-color: #3f3f3f;
+  width: 168px;
+	height: 1px;
+  margin: 0 auto;
+`
+
+const IconBase = styled('span')`
+  color: #989898;
 `
 
 export default MoreMenu;
