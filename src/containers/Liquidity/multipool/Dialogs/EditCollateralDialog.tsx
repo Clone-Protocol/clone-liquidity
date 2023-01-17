@@ -74,11 +74,12 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
   useEffect(() => {
     async function fetch() {
       if (open && collData) {
+        let collDelta = (editType === 0 ? 1 : -1) * collAmount;
+
         if (collData.prevHealthScore) {
           let loss = (100 - collData.prevHealthScore) * collData.collAmount;
-          let collDelta = (editType === 0 ? 1 : -1) * collAmount;
 
-          setHealthScore(100 - loss / (collData.collAmount + collDelta))
+          setHealthScore(100 - loss / (collData.totalCollValue + collDelta))
           setMaxWithdrawable(collData.collAmount - loss / 100)
         } else {
           if (editType === 0) {
@@ -88,7 +89,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
           }
         }
 
-        setTotalCollValue(collAmount * collData.collAmountDollarPrice)
+        setTotalCollValue(collData.totalCollValue + collDelta)
         trigger()
       }
     }
