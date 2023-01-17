@@ -8,7 +8,6 @@ import DocIcon from 'public/images/more/doc-icon.svg'
 import MarketsIcon from 'public/images/more/markets-icon.svg'
 import OpportunityIcon from 'public/images/more/opportunities-icon.svg'
 import TwitterIcon from 'public/images/more/twitter-icon.svg'
-import Link from 'next/link'
 import { Stack } from '@mui/system';
 
 interface Props {
