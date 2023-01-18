@@ -228,6 +228,8 @@ const RightMenu = () => {
 
 			<TokenFaucetDialog
 				open={openTokenFaucet}
+				isConnect={connected}
+				connectWallet={handleWalletClick}
 				onGetUsdiClick={handleGetUsdiClick}
 				onHide={() => setOpenTokenFaucet(false)}
 			/>
