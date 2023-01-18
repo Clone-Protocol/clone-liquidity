@@ -99,6 +99,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
             enqueueSnackbar('Successfully established new liquidity position')
             refetch()
             initData()
+            handleClose()
           }
           setLoading(false)
         },
