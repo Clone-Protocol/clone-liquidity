@@ -28,18 +28,27 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   const handleChoosePosition = (assetId: number) => {
     setSelectAssetId(assetId)
     setOpenNewLiquidity(true)
+    onRefetchData()
   }
 
   const handleChooseEditPosition = (positionIndex: number) => {
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenEditLiquidity(true)
+    onRefetchData()
   }
 
   const handleChooseRecenter = (positionIndex: number) => {
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenRecenter(true)
+    onRefetchData()
+  }
+
+  const hideNewLiquidityDialog = () => {
+    setOpenAddPosition(false)
+    setOpenNewLiquidity(false)
+    onRefetchData()
   }
 
   const { mutateAsync } = useRecenterAllMutation(publicKey)
@@ -103,7 +112,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         open={openNewLiquidity}
         assetIndex={selectAssetId}
         onRefetchData={onRefetchData}
-        handleClose={() => setOpenNewLiquidity(false)}
+        handleClose={hideNewLiquidityDialog}
       />
       <EditLiquidityDialog
         open={openEditLiquidity}
