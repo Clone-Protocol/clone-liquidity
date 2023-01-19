@@ -9,8 +9,6 @@ import { FilterType } from '~/data/filter'
 import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
 	filter: FilterType

@@ -11,8 +11,6 @@ import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
 import { formatHealthScore } from '~/utils/numbers'
 
 interface Props {

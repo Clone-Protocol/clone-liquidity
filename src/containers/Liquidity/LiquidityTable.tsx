@@ -1,4 +1,4 @@
-import { Box, Stack, Divider, Typography } from '@mui/material'
+import { Box, Stack, Divider, Typography, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -57,20 +57,10 @@ const LiquidityTable: React.FC<Props> = ({ status }) => {
 
         <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
 
-        <Stack direction='row'>
-          <Box width='45%'>
-            <Box><Typography variant='p' color='#989898'>Total Singlepool Comet Liquidity</Typography></Box>
-            <Box>
-              <Typography variant='p_xlg'>
-                {/* {formatDollarAmount(status.totalVal, 0, true)} */}
-                $1,535,356.02
-              </Typography>
-            </Box>
-          </Box>
-          <Box display='flex' width='50%'>
-            <ColumnDivider />
-            <Box marginLeft='35px'>
-              <Box><Typography variant='p' color='#989898'>Total Value Locked in Singlepool Comet</Typography></Box>
+        <Stack direction='row' justifyContent='space-between'>
+          <Stack direction='row'>
+            <Box width='45%'>
+              <Box><Typography variant='p' color='#989898'>Total Singlepool Comet Liquidity</Typography></Box>
               <Box>
                 <Typography variant='p_xlg'>
                   {/* {formatDollarAmount(status.totalVal, 0, true)} */}
@@ -78,7 +68,21 @@ const LiquidityTable: React.FC<Props> = ({ status }) => {
                 </Typography>
               </Box>
             </Box>
-          </Box>
+            <Box display='flex' width='50%'>
+              <ColumnDivider />
+              <Box marginLeft='35px'>
+                <Box><Typography variant='p' color='#989898'>Total Value Locked in Singlepool Comet</Typography></Box>
+                <Box>
+                  <Typography variant='p_xlg'>
+                    {/* {formatDollarAmount(status.totalVal, 0, true)} */}
+                    $1,535,356.02
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Stack>
+
+          <NewPositionButton><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
         </Stack>
       </Box>
 
@@ -129,6 +133,13 @@ const ColumnDivider = styled('div')`
   background: #535353; 
   width: 1px; 
   height: 56px;
+`
+const NewPositionButton = styled(Button)`
+  width: 100px;
+  height: 32px;
+  color: #fff;
+  padding: 8px 10px 8px 7px;
+  border: solid 1px ${(props) => props.theme.palette.text.secondary};
 `
 
 export default LiquidityTable
