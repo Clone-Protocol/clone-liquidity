@@ -55,13 +55,14 @@ let columns: GridColDef[] = [
 		field: 'collateral',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Collateral',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Collateral	 
-				<InfoTooltip title={TooltipTexts.collateralDesignated} />
-			</React.Fragment>
-		),
+		// renderHeader: () => (
+		// 	<React.Fragment>
+		// 		Collateral	 
+		// 		<InfoTooltip title={TooltipTexts.collateralDesignated} />
+		// 	</React.Fragment>
+		// ),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<CellDigitValue value={params.value} symbol="USDi" />
@@ -72,13 +73,8 @@ let columns: GridColDef[] = [
 		field: 'ild',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'ILD',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				ILD	 
-				<InfoTooltip title={TooltipTexts.ildCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -87,13 +83,8 @@ let columns: GridColDef[] = [
 		field: 'priceRange',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Price range',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Price range	 
-				<InfoTooltip title={TooltipTexts.priceRange} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
@@ -105,13 +96,8 @@ let columns: GridColDef[] = [
 		field: 'healthScore',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Health Score',
 		flex: 2,
-		renderHeader: () => (
-			<React.Fragment>
-				Health Score	 
-				<InfoTooltip title={TooltipTexts.healthScoreCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
@@ -136,7 +122,6 @@ let columns: GridColDef[] = [
 					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
 						<DefaultButton>Manage</DefaultButton>
 					</Link>
-
 
 					<RecenterDialog
 						assetId={params.row.id}

@@ -15,9 +15,9 @@ interface StyledTabsProps {
 }
 
 interface StyledTabProps {
-  label: string | ReactElement
-  value: number
-  icon?: ReactElement
+	label: string | ReactElement
+	value: number
+	icon?: ReactElement
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (
@@ -31,45 +31,48 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	'& .MuiTabs-indicatorSpan': {
 		display: 'none'
 	},
-  backgroundColor: 'rgba(21, 22, 24, 0.75)',
-  maxWidth: '620px',
-  borderRadius: '10px',
-  height: '47px',
-  paddingLeft: '8px',
-  paddingTop: '6px'
+	maxWidth: '620px',
+	borderRadius: '10px',
+	height: '47px',
+	paddingLeft: '8px',
+	paddingTop: '6px'
 })
 
 export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
-  '&.MuiTab-root': {
-    height: '35px',
-    minHeight: '0px',
-    maxHeight: '35px',
-    display: 'flex',
-    gap: '10px',
-    borderRadius: '10px',
-		backgroundColor: 'rgba(21, 22, 24, 0.75)',
-    '&:hover': {
-      backgroundColor: 'rgba(38, 38, 38, 0.5)',
-      borderRadius: '10px'
-    }
-  },
-  textTransform: 'none',
-	fontWeight: '600',
+	'&.MuiTab-root': {
+		height: '35px',
+		minHeight: '0px',
+		maxHeight: '35px',
+		display: 'flex',
+		gap: '10px',
+		borderRadius: '10px',
+		'&:hover': {
+			color: '#fff',
+		}
+	},
+	textTransform: 'none',
+	fontWeight: '500',
 	fontSize: '12px',
-  marginLeft: '12px',
-  marginRight: '12px',
-  backgroundColor: 'rgba(21, 22, 24, 0.75)',
+	marginLeft: '12px',
+	marginRight: '12px',
 	color: '#989898',
 	'&.Mui-selected': {
-    border: 'solid 1px rgba(128, 156, 255, 0.62)',
-    backgroundColor: '#000',
+		border: 'solid 1px #fff',
 		color: '#fff',
-    borderRadius: '10px'
-	},
-	'&.Mui-focusVisible': {
-		backgroundColor: '#3d3d3d',
 	},
 }))
+
+export const MultipoolTab = styled((props: StyledTabProps) => (
+	<StyledTab {...props} />
+))({
+	'&.Mui-selected': {
+		border: '1px solid transparent',
+		backgroundImage: 'linear-gradient(83deg, #8925ed 1%, #7d4fff 25%, #ab96ff 37%, var(--white) 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
+		borderImageSlice: 1,
+		backgroundOrigin: 'border-box',
+		backgroundClip: 'content-box, border-box'
+	}
+})
 
 export const TabPanel = (props: TabPanelProps) => {
 	const { children, value, index, ...other } = props

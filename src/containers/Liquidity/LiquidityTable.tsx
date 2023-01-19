@@ -1,4 +1,4 @@
-import { Box, Stack, Divider } from '@mui/material'
+import { Box, Stack, Divider, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -7,7 +7,7 @@ import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconc
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import MultipoolComet from '~/containers/Liquidity/multipool/MultipoolComet'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
-import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanel, StyledTabs, MultipoolTab, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType, FilterTypeMap } from '~/data/filter'
 import Image from 'next/image'
 import CometIconOff from 'public/images/comet-icon-off.svg'
@@ -18,10 +18,13 @@ import UlIconOn from 'public/images/ul-icon-on.svg'
 import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
 import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import { Status } from '~/features/MyLiquidity/Status.query'
+import { formatDollarAmount } from '~/utils/numbers'
 
-const LiquidityTable = () => {
+interface Props {
+  status: Status
+}
+const LiquidityTable: React.FC<Props> = ({ status }) => {
   const router = useRouter()
   const { ltab } = router.query
   const [tab, setTab] = useState(0)
@@ -42,35 +45,53 @@ const LiquidityTable = () => {
     setFilter(newValue)
   }
 
-  const cometLiquidityTabLabel = <React.Fragment>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidityTab} /> </React.Fragment>
-  const unconcentratedLiquidityTabLabel = <React.Fragment>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidityTab} /> </React.Fragment>
-  const borrowPositionTabLabel = <React.Fragment>Borrow Position <InfoTooltip title={TooltipTexts.borrowPositionTab} /> </React.Fragment>
-  const multipoolCometTabLabel = <React.Fragment>Multipool Comet Liquidity <InfoTooltip title={TooltipTexts.multipoolCometTab} /> </React.Fragment>
-
   return (
     <div>
-      <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px' }}>
-        <StyledTab value={0} label={cometLiquidityTabLabel} icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
-        <StyledTab value={1} label={unconcentratedLiquidityTabLabel} icon={tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
-        <StyledTab value={2} label={borrowPositionTabLabel} icon={tab === 2 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
-        <StyledTab value={3} label={multipoolCometTabLabel} icon={tab === 3 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} sx={{ background: 'rgba(24, 24, 40, 0.75)' }} />
-      </StyledTabs>
+      <Box>
+        <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px' }}>
+          <MultipoolTab value={0} label='Multipool Comet' icon={tab === 0 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} />
+          <StyledTab value={1} label='Singlepool Comet' icon={tab === 1 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
+          <StyledTab value={2} label='Unconcentrated' icon={tab === 2 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
+          <StyledTab value={3} label='Borrow' icon={tab === 3 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
+        </StyledTabs>
+
+        <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
+
+        <Stack direction='row'>
+          <Box width='45%'>
+            <Box><Typography variant='p' color='#989898'>Total Singlepool Comet Liquidity</Typography></Box>
+            <Box>
+              <Typography variant='p_xlg'>
+                {/* {formatDollarAmount(status.totalVal, 0, true)} */}
+                $1,535,356.02
+              </Typography>
+            </Box>
+          </Box>
+          <Box display='flex' width='50%'>
+            <ColumnDivider />
+            <Box marginLeft='35px'>
+              <Box><Typography variant='p' color='#989898'>Total Value Locked in Singlepool Comet</Typography></Box>
+              <Box>
+                <Typography variant='p_xlg'>
+                  {/* {formatDollarAmount(status.totalVal, 0, true)} */}
+                  $1,535,356.02
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Stack>
+      </Box>
 
       <PanelBox>
-        {tab <= 2 &&
-          (
-            <>
-              <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
-                <PageTabs value={filter} onChange={handleFilterChange}>
-                  {Object.keys(FilterTypeMap).map((f) => (
-                    <PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
-                  ))}
-                </PageTabs>
-              </Stack>
-              <StyledDivider />
-            </>
-          )
-        }
+        {/* <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
+          <PageTabs value={filter} onChange={handleFilterChange}>
+            {Object.keys(FilterTypeMap).map((f) => (
+              <PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
+            ))}
+          </PageTabs>
+        </Stack> */}
+        <StyledDivider />
+
         <TabPanel value={tab} index={0}>
           <GridComet filter={filter} />
         </TabPanel>
@@ -89,15 +110,13 @@ const LiquidityTable = () => {
 }
 
 const StyledDivider = styled(Divider)`
-	background-color: #535353;
+	background-color: #3f3f3f;
   margin: 0 auto;
 	margin-top: 20px;
-  width: 95%;
+  width: 96%;
 	height: 1px;
 `
 const PanelBox = styled(Box)`
-  background: rgba(21, 22, 24, 0.75);
-  border-radius: 10px;
   min-height: 250px;
   margin-bottom: 25px;
   color: #fff;
@@ -105,6 +124,11 @@ const PanelBox = styled(Box)`
     color: #9d9d9d; 
     font-size: 13px; 
   }
+`
+const ColumnDivider = styled('div')`
+  background: #535353; 
+  width: 1px; 
+  height: 56px;
 `
 
 export default LiquidityTable
