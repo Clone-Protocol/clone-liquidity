@@ -64,11 +64,21 @@ export const MultipoolTab = styled((props: StyledTabProps) => (
 	<StyledTab {...props} />
 ))({
 	'&.Mui-selected': {
-		border: '1px solid transparent',
-		backgroundImage: 'linear-gradient(83deg, #8925ed 1%, #7d4fff 25%, #ab96ff 37%, var(--white) 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
+		borderStyle: 'solid',
+		borderImage: 'linear-gradient(83deg, #8925ed 1%, #7d4fff 25%, #ab96ff 37%, #fff 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
+		borderWidth: '1px',
 		borderImageSlice: 1,
-		backgroundOrigin: 'border-box',
-		backgroundClip: 'content-box, border-box'
+	}
+})
+
+export const SinglepoolTab = styled((props: StyledTabProps) => (
+	<StyledTab {...props} />
+))({
+	'&.Mui-selected': {
+		borderStyle: 'solid',
+		borderImage: 'linear-gradient(81deg, #258ded 0%, #4fe5ff 24%, #96efff 36%, #fff 48%, #96efff 60%, #4fe5ff 72%, #258ded 96%)',
+		borderWidth: '1px',
+		borderImageSlice: 1,
 	}
 })
 

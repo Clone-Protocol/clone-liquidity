@@ -6,7 +6,7 @@ import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import MultipoolComet from '~/containers/Liquidity/multipool/MultipoolComet'
-import { TabPanel, StyledTabs, MultipoolTab, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType } from '~/data/filter'
 import Image from 'next/image'
 import CometIconOff from 'public/images/comet-icon-off.svg'
@@ -45,7 +45,7 @@ const LiquidityTable: React.FC = () => {
       <Box>
         <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
           <MultipoolTab value={0} label='Multipool Comet' icon={tab === 0 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} />
-          <StyledTab value={1} label='Singlepool Comet' icon={tab === 1 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
+          <SinglepoolTab value={1} label='Singlepool Comet' icon={tab === 1 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
           <StyledTab value={2} label='Unconcentrated' icon={tab === 2 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
           <StyledTab value={3} label='Borrow' icon={tab === 3 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
         </StyledTabs>

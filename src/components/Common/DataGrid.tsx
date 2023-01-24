@@ -69,6 +69,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         borderRadius: '10px',
         marginLeft: '-5px'
       },
+      // '.super-app-theme--row': {
+      //   borderLeft: '1px solid #ff8e4f'
+      // }
     }}
     components={{
       NoResultsOverlay: CustomNoRowsOverlay
