@@ -1,6 +1,6 @@
 import { styled } from '@mui/system'
 import { Tabs, Tab, Box } from '@mui/material'
-import { ReactElement } from 'react'
+import { MouseEventHandler, ReactElement } from 'react'
 
 export interface TabPanelProps {
 	children?: React.ReactNode
@@ -18,6 +18,7 @@ interface StyledTabProps {
 	label: string | ReactElement
 	value: number
 	icon?: ReactElement
+	onMouseEnter?: MouseEventHandler
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (
@@ -34,7 +35,6 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	maxWidth: '620px',
 	borderRadius: '10px',
 	height: '47px',
-	paddingLeft: '8px',
 	paddingTop: '6px'
 })
 
@@ -45,12 +45,10 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 		maxHeight: '35px',
 		display: 'flex',
 		gap: '10px',
-		borderRadius: '10px',
 		'&:hover': {
 			color: '#fff',
 		}
 	},
-	textTransform: 'none',
 	fontWeight: '500',
 	fontSize: '12px',
 	marginLeft: '12px',
@@ -85,7 +83,7 @@ export const TabPanel = (props: TabPanelProps) => {
 			aria-labelledby={`simple-tab-${index}`}
 			{...other}>
 			{value === index && (
-				<Box sx={{ pl: 3, pr: 3 }}>
+				<Box>
 					<div>{children}</div>
 				</Box>
 			)}

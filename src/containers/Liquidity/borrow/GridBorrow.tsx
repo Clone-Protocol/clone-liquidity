@@ -1,14 +1,13 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
-import Link from 'next/link'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { FilterType } from '~/data/filter'
 import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
+import { GridEventListener } from '@mui/x-data-grid'
 
 interface Props {
 	filter: FilterType
@@ -24,11 +23,19 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
 		enabled: publicKey != null
 	})
 
+	const handleRowClick: GridEventListener<'rowClick'> = (
+		params,
+	) => {
+		const link = `/liquidity/borrow/${params.row.id}/manage`
+		location.href = link
+	}
+
 	return (
 		<Grid
 			headers={columns}
 			rows={assets || []}
 			minHeight={380}
+			onRowClick={handleRowClick}
 		/>
 	)
 }
@@ -39,7 +46,7 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'iAsset',
-		flex: 2,
+		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
@@ -53,7 +60,11 @@ let columns: GridColDef[] = [
 		headerName: 'Oracle price',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USD" />
+			return (
+				<>
+					$<CellDigitValue value={params.value} symbol="USD" />
+				</>
+			)
 		},
 	},
 	{
@@ -81,27 +92,11 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Collateral Ratio',
-		flex: 2,
+		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return params.row.borrowed > 0 ?
-				(<Box sx={{ fontSize: '12px', fontWeight: '600' }}>{params.value?.toLocaleString()}% <span style={{ fontSize: '11px', fontWeight: '500' }}>(min {params.row.minCollateralRatio.toLocaleString()}%)</span></Box>)
+				(<><Typography variant='p'>{params.value?.toLocaleString()}% (min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></>)
 				: (<></>)
-		},
-	},
-	{
-		field: 'action',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'last--cell',
-		headerName: '',
-		flex: 2,
-		renderCell(params: GridRenderCellParams<string>) {
-			return (
-				<Box display="flex">
-					<Link href={`/liquidity/borrow/${params.row.id}/manage`}>
-						<DefaultButton>Manage</DefaultButton>
-					</Link>
-				</Box>
-			)
 		},
 	},
 ]

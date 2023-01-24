@@ -47,7 +47,7 @@ export default withCsrOnly(StatusView)
 
 const StyledPaper = styled(Box)`
 	color: #fff;
-	padding: 10px 18px;
+	padding-y: 18px;
 	height: 138px;
 `
 const BalanceValue = styled('div')`

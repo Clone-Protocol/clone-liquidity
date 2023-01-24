@@ -23,7 +23,6 @@ const MyLiquidity: NextPage = () => {
 						<Box marginTop='40px'>
 							<MyStatus />
 							<Divider sx={{ backgroundColor: '#3f3f3f' }} />
-							<Box marginBottom='30px' />
 							<LiquidityTable />
 						</Box>
 					</Container>

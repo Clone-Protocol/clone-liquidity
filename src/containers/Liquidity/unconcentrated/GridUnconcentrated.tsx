@@ -10,8 +10,7 @@ import { FilterType } from '~/data/filter'
 import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import { GridEventListener } from '@mui/x-data-grid'
 
 interface Props {
 	filter: FilterType
@@ -27,11 +26,19 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 		enabled: publicKey != null
 	})
 
+	const handleRowClick: GridEventListener<'rowClick'> = (
+		params,
+	) => {
+		const link = `/liquidity/borrow/${params.row.id}/manage`
+		location.href = link
+	}
+
 	return (
 		<Grid
 			headers={columns}
 			rows={pools || []}
 			minHeight={380}
+			onRowClick={handleRowClick}
 		/>
 	)
 }

@@ -1,0 +1,19 @@
+<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#dfsdle9kxa)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16.165 14.475 14.48 16.16c-1.403 1.402-2.53 1.402-3.932 0l-1.684-1.685c-1.403-1.402-1.403-2.529 0-3.931l1.684-1.685c1.402-1.402 2.529-1.402 3.931 0l1.685 1.685c1.402 1.413 1.402 2.529 0 3.931v0z" stroke="url(#yyosp240vb)"/>
+        <path d="m20.978 14.48-1.684 1.685c-1.403 1.403-2.53 1.403-3.932 0l-.444-.443 1.242-1.241c1.402-1.403 1.402-2.53 0-3.932l-1.242-1.241.444-.443c1.402-1.403 2.529-1.403 3.932 0l1.684 1.684c1.402 1.403 1.402 2.529 0 3.932zM4.052 10.55l1.684-1.684c1.403-1.403 2.529-1.403 3.932 0l.443.443-1.241 1.241c-1.403 1.403-1.403 2.529 0 3.932l1.24 1.24-.442.444c-1.403 1.403-2.53 1.403-3.932 0l-1.684-1.684c-1.403-1.403-1.403-2.53 0-3.932z" stroke="url(#7697m5zbhc)"/>
+    </g>
+    <defs>
+        <linearGradient id="yyosp240vb" x1="9.707" y1="9.702" x2="15.115" y2="15.11" gradientUnits="userSpaceOnUse">
+            <stop offset=".214" stop-color="#fff"/>
+            <stop offset="1" stop-color="#4FE5FF"/>
+        </linearGradient>
+        <linearGradient id="7697m5zbhc" x1="7.3" y1="7.3" x2="17.343" y2="17.343" gradientUnits="userSpaceOnUse">
+            <stop offset=".214" stop-color="#fff"/>
+            <stop offset="1" stop-color="#4FE5FF"/>
+        </linearGradient>
+        <clipPath id="dfsdle9kxa">
+            <path fill="#fff" transform="rotate(45 6.257 15.106)" d="M0 0h17.698v17.698H0z"/>
+        </clipPath>
+    </defs>
+</svg>
