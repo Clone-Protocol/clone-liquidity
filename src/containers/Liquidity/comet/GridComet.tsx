@@ -2,21 +2,27 @@ import React, { useState } from 'react'
 import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
-import Link from 'next/link'
-import { StableButton, DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
-import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import Image from 'next/image'
+import ManageIconOff from 'public/images/iconsax-linear-forwarditem-off.svg'
+import ManageIconOn from 'public/images/iconsax-linear-forwarditem-on.svg'
 import { formatHealthScore } from '~/utils/numbers'
+import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
+import { GridEventListener } from '@mui/x-data-grid'
 
 interface Props {
 	filter: FilterType
+}
+
+const enum HealthScoreType {
+	Normal = '#fff',
+	Warning = '#ff8e4f',
+	Poor = '#ed2525'
 }
 
 const GridComet: React.FC<Props> = ({ filter }) => {
@@ -29,11 +35,21 @@ const GridComet: React.FC<Props> = ({ filter }) => {
 		enabled: publicKey != null
 	})
 
+	const handleRowClick: GridEventListener<'rowClick'> = (
+		params,
+		event
+	) => {
+		event.preventDefault()
+		const link = `/liquidity/comet/${params.row.id}/manage`
+		location.href = link
+	}
+
 	return (
 		<Grid
 			headers={columns}
 			rows={cometPools || []}
 			minHeight={380}
+			onRowClick={handleRowClick}
 		/>
 	)
 }
@@ -55,13 +71,14 @@ let columns: GridColDef[] = [
 		field: 'collateral',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Collateral',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Collateral	 
-				<InfoTooltip title={TooltipTexts.collateralDesignated} />
-			</React.Fragment>
-		),
+		// renderHeader: () => (
+		// 	<React.Fragment>
+		// 		Collateral	 
+		// 		<InfoTooltip title={TooltipTexts.collateralDesignated} />
+		// 	</React.Fragment>
+		// ),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<CellDigitValue value={params.value} symbol="USDi" />
@@ -72,13 +89,8 @@ let columns: GridColDef[] = [
 		field: 'ild',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'ILD',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				ILD	 
-				<InfoTooltip title={TooltipTexts.ildCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -87,14 +99,11 @@ let columns: GridColDef[] = [
 		field: 'priceRange',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Price range',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Price range	 
-				<InfoTooltip title={TooltipTexts.priceRange} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
+			const scoreTypeColor = HealthScoreType.Normal;
+
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
 					<MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.toPriceRange} />
@@ -105,18 +114,15 @@ let columns: GridColDef[] = [
 		field: 'healthScore',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		flex: 2,
-		renderHeader: () => (
-			<React.Fragment>
-				Health Score	 
-				<InfoTooltip title={TooltipTexts.healthScoreCol} />
-			</React.Fragment>
-		),
+		headerName: 'Health Score',
+		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const scoreTypeColor = HealthScoreType.Normal;
+
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
-					<Box sx={{ width: '65px', textAlign: 'center' }}>
-						<CellDigitValue value={formatHealthScore(Number(params.value))} symbol="%" />
+					<Box sx={{ width: '65px', textAlign: 'center', color: scoreTypeColor }}>
+						<CellDigitValue value={formatHealthScore(Number(params.value))} />
 					</Box>
 				)
 		},
@@ -126,17 +132,21 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'last--cell',
 		headerName: '',
-		flex: 2,
+		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const [isHovering, setIsHovering] = useState(false)
 			const [openRecenter, setOpenRecenter] = useState(false)
 
-			return (
-				<Box display="flex">
-					<StableButton onClick={() => setOpenRecenter(true)} disabled={isNaN(params.row.cPrice)}>Recenter</StableButton>
-					<Link href={`/liquidity/comet/${params.row.id}/manage`}>
-						<DefaultButton>Manage</DefaultButton>
-					</Link>
+			const showRecenterDialog = (e: any) => {
+				e.stopPropagation()
+				if (!isNaN(params.row.cPrice)) {
+					setOpenRecenter(true)
+				}
+			}
 
+			return (
+				<Box>
+					<Image src={isHovering ? ManageIconOn : ManageIconOff} onClick={showRecenterDialog} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} />
 
 					<RecenterDialog
 						assetId={params.row.id}

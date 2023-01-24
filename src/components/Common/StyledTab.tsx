@@ -1,6 +1,6 @@
 import { styled } from '@mui/system'
 import { Tabs, Tab, Box } from '@mui/material'
-import { ReactElement } from 'react'
+import { MouseEventHandler, ReactElement } from 'react'
 
 export interface TabPanelProps {
 	children?: React.ReactNode
@@ -15,9 +15,10 @@ interface StyledTabsProps {
 }
 
 interface StyledTabProps {
-  label: string | ReactElement
-  value: number
-  icon?: ReactElement
+	label: string | ReactElement
+	value: number
+	icon?: ReactElement
+	onMouseEnter?: MouseEventHandler
 }
 
 export const StyledTabs = styled((props: StyledTabsProps) => (
@@ -31,45 +32,55 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	'& .MuiTabs-indicatorSpan': {
 		display: 'none'
 	},
-  backgroundColor: 'rgba(21, 22, 24, 0.75)',
-  maxWidth: '620px',
-  borderRadius: '10px',
-  height: '47px',
-  paddingLeft: '8px',
-  paddingTop: '6px'
+	maxWidth: '620px',
+	borderRadius: '10px',
+	height: '47px',
+	paddingTop: '6px'
 })
 
 export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
-  '&.MuiTab-root': {
-    height: '35px',
-    minHeight: '0px',
-    maxHeight: '35px',
-    display: 'flex',
-    gap: '10px',
-    borderRadius: '10px',
-		backgroundColor: 'rgba(21, 22, 24, 0.75)',
-    '&:hover': {
-      backgroundColor: 'rgba(38, 38, 38, 0.5)',
-      borderRadius: '10px'
-    }
-  },
-  textTransform: 'none',
-	fontWeight: '600',
+	'&.MuiTab-root': {
+		height: '35px',
+		minHeight: '0px',
+		maxHeight: '35px',
+		display: 'flex',
+		gap: '10px',
+		'&:hover': {
+			color: '#fff',
+		}
+	},
+	fontWeight: '500',
 	fontSize: '12px',
-  marginLeft: '12px',
-  marginRight: '12px',
-  backgroundColor: 'rgba(21, 22, 24, 0.75)',
+	marginLeft: '12px',
+	marginRight: '12px',
 	color: '#989898',
 	'&.Mui-selected': {
-    border: 'solid 1px rgba(128, 156, 255, 0.62)',
-    backgroundColor: '#000',
+		border: 'solid 1px #fff',
 		color: '#fff',
-    borderRadius: '10px'
-	},
-	'&.Mui-focusVisible': {
-		backgroundColor: '#3d3d3d',
 	},
 }))
+
+export const MultipoolTab = styled((props: StyledTabProps) => (
+	<StyledTab {...props} />
+))({
+	'&.Mui-selected': {
+		borderStyle: 'solid',
+		borderImage: 'linear-gradient(83deg, #8925ed 1%, #7d4fff 25%, #ab96ff 37%, #fff 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
+		borderWidth: '1px',
+		borderImageSlice: 1,
+	}
+})
+
+export const SinglepoolTab = styled((props: StyledTabProps) => (
+	<StyledTab {...props} />
+))({
+	'&.Mui-selected': {
+		borderStyle: 'solid',
+		borderImage: 'linear-gradient(81deg, #258ded 0%, #4fe5ff 24%, #96efff 36%, #fff 48%, #96efff 60%, #4fe5ff 72%, #258ded 96%)',
+		borderWidth: '1px',
+		borderImageSlice: 1,
+	}
+})
 
 export const TabPanel = (props: TabPanelProps) => {
 	const { children, value, index, ...other } = props
@@ -82,7 +93,7 @@ export const TabPanel = (props: TabPanelProps) => {
 			aria-labelledby={`simple-tab-${index}`}
 			{...other}>
 			{value === index && (
-				<Box sx={{ pl: 3, pr: 3 }}>
+				<Box>
 					<div>{children}</div>
 				</Box>
 			)}

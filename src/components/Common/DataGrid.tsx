@@ -1,5 +1,5 @@
 import { DataGrid, GridColDef, GridEventListener } from '@mui/x-data-grid'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 
 interface GridProps {
@@ -52,7 +52,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         cursor: 'pointer'
       },
       '& .MuiDataGrid-row:hover': {
-        // backgroundColor: 'rgba(38, 38, 38, 0.8)'
+        backgroundColor: '#1b1b1b'
       },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
@@ -69,6 +69,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         borderRadius: '10px',
         marginLeft: '-5px'
       },
+      // '.super-app-theme--row': {
+      //   borderLeft: '1px solid #ff8e4f'
+      // }
     }}
     components={{
       NoResultsOverlay: CustomNoRowsOverlay
@@ -97,17 +100,19 @@ export interface TickerType {
 }
 
 export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, tickerSymbol }) => (
-  <Box display="flex" justifyContent="flex-start" style={{ marginLeft: '4px' }}>
+  <Box display="flex" justifyContent="flex-start" marginLeft='4px'>
     {tickerIcon && <Image src={tickerIcon} width="27px" height="27px" layout="fixed" />}
-    <Box sx={{ marginLeft: '16px', display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ display: 'block', fontSize: '14px', fontWeight: '500', maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{tickerName}</Box>
-      <Box sx={{ color: '#6c6c6c', fontSize: '12px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
-        {tickerSymbol}
+    <Box display='flex' alignItems='center' marginLeft='16px'>
+      <Box sx={{ maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+        <Typography variant='p_lg'>{tickerName}</Typography>
+      </Box>
+      <Box sx={{ color: '#989898' }} marginLeft='8px' marginTop='3px'>
+        <Typography variant='p'>{tickerSymbol}</Typography>
       </Box>
     </Box>
   </Box>
 )
 
 export const CellDigitValue = ({ value, symbol }: { value: string | undefined, symbol?: string }) => (
-  <Box sx={{ fontSize: '12px', fontWeight: '500', marginLeft: '5px' }}>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} <span style={{ fontSize: '11px' }}>{symbol}</span></Box>
+  <Box marginLeft='5px'><Typography variant='p'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography></Box>
 )

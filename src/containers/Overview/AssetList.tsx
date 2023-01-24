@@ -11,7 +11,6 @@ import Divider from '@mui/material/Divider';
 import Link from 'next/link'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.svg'
-import ChangePositionIcon from 'public/images/change-position-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'

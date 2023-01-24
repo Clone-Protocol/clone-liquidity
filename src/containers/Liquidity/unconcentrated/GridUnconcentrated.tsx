@@ -10,29 +10,36 @@ import { FilterType } from '~/data/filter'
 import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import { GridEventListener } from '@mui/x-data-grid'
 
 interface Props {
 	filter: FilterType
 }
 
 const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
-  const { publicKey } = useWallet()
+	const { publicKey } = useWallet()
 
-  const { data: pools } = useUnconcentPoolsQuery({
-    userPubKey: publicKey,
-    filter,
-	  refetchOnMount: "always",
-    enabled: publicKey != null
+	const { data: pools } = useUnconcentPoolsQuery({
+		userPubKey: publicKey,
+		filter,
+		refetchOnMount: "always",
+		enabled: publicKey != null
 	})
+
+	const handleRowClick: GridEventListener<'rowClick'> = (
+		params,
+	) => {
+		const link = `/liquidity/borrow/${params.row.id}/manage`
+		location.href = link
+	}
 
 	return (
 		<Grid
-      headers={columns}
-      rows={pools || []}
+			headers={columns}
+			rows={pools || []}
 			minHeight={380}
-    />
+			onRowClick={handleRowClick}
+		/>
 	)
 }
 
@@ -53,13 +60,8 @@ let columns: GridColDef[] = [
 		field: 'price',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'iAsset price',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				iAsset price	 
-				<InfoTooltip title={TooltipTexts.iAssetCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -70,15 +72,9 @@ let columns: GridColDef[] = [
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Liquidity (iAsset)',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Liquidity (iAsset)	 
-				<InfoTooltip title={TooltipTexts.liquidityiAssetCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-        <CellDigitValue value={params.value} symbol={params.row.tickerSymbol} />
+				<CellDigitValue value={params.value} symbol={params.row.tickerSymbol} />
 			)
 		},
 	},
@@ -86,13 +82,8 @@ let columns: GridColDef[] = [
 		field: 'liquidityUSD',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Liquidity (USDi)',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Liquidity (USDi)	 
-				<InfoTooltip title={TooltipTexts.liquidityUsdiCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USDi" />
 		},
@@ -101,13 +92,8 @@ let columns: GridColDef[] = [
 		field: 'liquidityVal',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
+		headerName: 'Liquidity Value',
 		flex: 1,
-		renderHeader: () => (
-			<React.Fragment>
-				Liquidity value	 
-				<InfoTooltip title={TooltipTexts.liquidityValueCol} />
-			</React.Fragment>
-		),
 		renderCell(params: GridRenderCellParams<string>) {
 			return <CellDigitValue value={params.value} symbol="USD" />
 		},
@@ -124,12 +110,12 @@ let columns: GridColDef[] = [
 
 			return (
 				<Box display="flex">
-					<DefaultButton sx={{ border: '1px solid #809cff'}} onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>
+					<DefaultButton sx={{ border: '1px solid #809cff' }} onClick={() => setOpenDeposit(true)}>Deposit</DefaultButton>
 					<DefaultButton onClick={() => setOpenWithdraw(true)}>Withdraw</DefaultButton>
 
 					<DepositDialog
 						assetId={params.row.id}
-            pool={params.row}
+						pool={params.row}
 						open={openDeposit}
 						handleClose={() => setOpenDeposit(false)}
 					/>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { Box, Stack, Popover } from '@mui/material'
+import { Box, Stack, Popover, Typography } from '@mui/material'
 import { formatDollarAmount } from '~/utils/numbers'
 
 interface Props {
@@ -51,9 +51,7 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
           pointerEvents: 'none',
           marginTop: '-60px',
           '& .MuiPopover-paper': {
-            borderRadius: '10px',
-            border: 'solid 1px #616161',
-            backgroundColor: 'rgba(52, 52, 52, 0.9)'
+            backgroundColor: '#3f3f3f'
           }
         }}
         open={open}
@@ -71,12 +69,12 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
       >
         <HoverBox>
           <Stack direction="row" justifyContent="space-between">
-            <div>Indicator Price:</div>
-            <div>$ {iPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}</div>
+            <Typography variant='p_sm'>iAsset Price:</Typography>
+            <Typography variant='p_sm'>${iPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })} USDi</Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '5px' }}>
-            <div>Center Price:</div>
-            <div>$ {centerPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}</div>
+            <Typography variant='p_sm'>Center Price:</Typography>
+            <Typography variant='p_sm'>${centerPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })} USDi</Typography>
           </Stack>
         </HoverBox>
       </Popover>
@@ -87,7 +85,7 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
 const LeftRangeStick = styled('div')`
   position: relative;
   border-radius: 0;
-  background: #809cff;
+  background: #fff;
   width: 1px;
   height: 9px;
   margin-top: -12px;
@@ -97,7 +95,7 @@ const LeftRangeStick = styled('div')`
 const RightRangeStick = styled('div')`
   position: relative;
   border-radius: 0;
-  background: #809cff;
+  background: #fff;
   width: 1px;
   height: 9px;
   margin-top: -12px;
@@ -109,8 +107,8 @@ const CenterStick = styled('div')`
 	border-radius: 0;
 	background: #fff;
 	width: 2px;
-	height: 6px;
-	margin-top: -6px;
+	height: 5px;
+	margin-top: -10px;
   z-index: 20;
 `
 
@@ -119,8 +117,8 @@ const Stick = styled('div')`
 	border-radius: 0;
 	background: #fff;
 	width: 2px;
-	height: 15px;
-	margin-top: -9px;
+	height: 5px;
+	margin-top: 0px;
   z-index: 20;
 `
 
@@ -147,16 +145,14 @@ const RightBox = styled(Box)`
 const RangeBar = styled('div')`
   width: 68px;
   height: 2px;  
-  background: #809cff;
+  background: #fff;
 `
 
 const HoverBox = styled(Box)`
-  width: 152px;
-  height: 54px;
-  padding: 9px 11px 8px 12px;
-  background-color: rgba(52, 52, 52, 0.9);
-  font-size: 9px;
-  font-weight: 500;
+  width: 172px;
+  height: 45px;
+  padding: 6px 17px;
+  background-color: ${(props) => props.theme.boxes.greyShade};
   color: #fff;
 `
 
