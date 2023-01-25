@@ -5,19 +5,12 @@ import Image from 'next/image'
 interface GridProps {
   headers: GridColDef[],
   rows: any,
+  customNoRowsOverlay: () => JSX.Element,
   minHeight?: number,
   onRowClick?: GridEventListener<'rowClick'>
 }
 
-const CustomNoRowsOverlay = () => {
-  return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '60px', fontSize: '12px', fontWeight: '500', color: '#fff' }}>
-      No position to display.
-    </Box>
-  )
-}
-
-export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRowClick }) => (
+export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, minHeight = 260, onRowClick }) => (
   <DataGrid
     sx={{
       border: 0,
@@ -66,17 +59,31 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       },
       '& .MuiDataGrid-withBorder': {
         borderRight: '0px solid #1b1b1b',
-        borderRadius: '10px',
         marginLeft: '-5px'
       },
+      '.border-warning--row': {
+        borderLeft: '1px solid #ff8e4f',
+        borderRight: '1px solid #ff8e4f',
+      },
+      '.border-poor--row': {
+        borderLeft: '1px solid #ed2525',
+        borderRight: '1px solid #ed2525'
+      }
       // '.super-app-theme--row': {
-      //   borderLeft: '1px solid #ff8e4f'
       // }
     }}
     components={{
-      NoResultsOverlay: CustomNoRowsOverlay
+      NoResultsOverlay: customNoRowsOverlay
     }}
-    getRowClassName={(params) => 'super-app-theme--row'}
+    getRowClassName={(params) => {
+      //@TODO: set proper position for the row data
+      if (params.row.id === 1) {
+        return 'border-warning--row'
+      } else if (params.row.id === 2) {
+        return 'border-poor--row'
+      }
+      return 'super-app-theme--row'
+    }}
     disableColumnFilter
     disableSelectionOnClick
     disableColumnSelector
@@ -92,6 +99,14 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
     rows={rows || []}
   />
 )
+
+export const CustomNoRowsOverlay = (msg: string) => {
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '21px' }}>
+      <Typography variant='p'>{msg}</Typography>
+    </Box>
+  )
+}
 
 export interface TickerType {
   tickerIcon: string

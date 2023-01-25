@@ -40,6 +40,9 @@ const LiquidityTable: React.FC = () => {
   //   setFilter(newValue)
   // }
 
+  //TODO : set no position
+  const hasNoPosition = true
+
   return (
     <div>
       <Box>
@@ -52,10 +55,10 @@ const LiquidityTable: React.FC = () => {
 
         <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
 
-        <Stack direction='row' justifyContent='space-between' alignItems='center' paddingTop='22px'>
+        <Stack direction='row' justifyContent='space-between' alignItems='flex-end' paddingTop='22px'>
           <MyStatusValues tab={tab} />
 
-          <NewPositionButton><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
+          <NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
         </Stack>
       </Box>
 
@@ -108,6 +111,9 @@ const NewPositionButton = styled(Button)`
   color: #fff;
   padding: 8px 10px 8px 7px;
   border: solid 1px ${(props) => props.theme.palette.text.secondary};
+  &:hover {
+    background: ${(props) => props.theme.boxes.darkBlack};
+  }
 `
 
 export default LiquidityTable

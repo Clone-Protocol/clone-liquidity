@@ -11,6 +11,7 @@ import { useUnconcentPoolsQuery } from '~/features/MyLiquidity/UnconcentratedPoo
 import { DefaultButton } from '~/components/Liquidity/LiquidityButton'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GridEventListener } from '@mui/x-data-grid'
+import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 
 interface Props {
 	filter: FilterType
@@ -38,6 +39,7 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 			headers={columns}
 			rows={pools || []}
 			minHeight={380}
+			customNoRowsOverlay={() => CustomNoRowsOverlay('Your active Unconcentrated liquidity positions will appear here.')}
 			onRowClick={handleRowClick}
 		/>
 	)

@@ -8,6 +8,7 @@ import { FilterType } from '~/data/filter'
 import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GridEventListener } from '@mui/x-data-grid'
+import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 
 interface Props {
 	filter: FilterType
@@ -35,6 +36,7 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
 			headers={columns}
 			rows={assets || []}
 			minHeight={380}
+			customNoRowsOverlay={() => CustomNoRowsOverlay('Your active borrow positions will appear here.')}
 			onRowClick={handleRowClick}
 		/>
 	)

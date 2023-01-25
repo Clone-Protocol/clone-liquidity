@@ -3,6 +3,13 @@ import { styled } from '@mui/system'
 
 const MyStatusValues = ({ tab }: { tab: number }) => {
 
+  const statusValues = {
+    totalCometLiquidity: 1535356.02,
+    totalCometValLocked: 1535356.02,
+    totalUnconcentPositionVal: 1535356.02,
+    totalBorrowLiquidity: 1535356.02,
+    totalBorrowCollateralVal: 535356.02,
+  }
 
   return (
     <>
@@ -12,8 +19,11 @@ const MyStatusValues = ({ tab }: { tab: number }) => {
             <Box><Typography variant='p' color='#989898'>Total Singlepool Comet Liquidity</Typography></Box>
             <Box>
               <Typography variant='p_xlg'>
-                {/* {formatDollarAmount(status.totalVal, 0, true)} */}
-                $1,535,356.02
+                {
+                  statusValues.totalCometLiquidity > 0 ?
+                    `$${statusValues.totalCometLiquidity.toLocaleString()}`
+                    : ''
+                }
               </Typography>
             </Box>
           </Box>
@@ -23,8 +33,11 @@ const MyStatusValues = ({ tab }: { tab: number }) => {
               <Box><Typography variant='p' color='#989898'>Total Value Locked in Singlepool Comet</Typography></Box>
               <Box>
                 <Typography variant='p_xlg'>
-                  {/* {formatDollarAmount(status.totalVal, 0, true)} */}
-                  $1,535,356.02
+                  {
+                    statusValues.totalCometValLocked > 0 ?
+                      `$${statusValues.totalCometValLocked.toLocaleString()}`
+                      : ''
+                  }
                 </Typography>
               </Box>
             </Box>
@@ -36,8 +49,11 @@ const MyStatusValues = ({ tab }: { tab: number }) => {
           <Box><Typography variant='p' color='#989898'>Total Position Value</Typography></Box>
           <Box>
             <Typography variant='p_xlg'>
-              {/* {formatDollarAmount(status.totalVal, 0, true)} */}
-              $1,535,356.02
+              {
+                statusValues.totalUnconcentPositionVal > 0 ?
+                  `$${statusValues.totalUnconcentPositionVal.toLocaleString()}`
+                  : ''
+              }
             </Typography>
           </Box>
         </Box>
@@ -48,8 +64,11 @@ const MyStatusValues = ({ tab }: { tab: number }) => {
             <Box><Typography variant='p' color='#989898'>Total Liquidity Value</Typography></Box>
             <Box>
               <Typography variant='p_xlg'>
-                {/* {formatDollarAmount(status.totalVal, 0, true)} */}
-                $1,535,356.02
+                {
+                  statusValues.totalBorrowLiquidity > 0 ?
+                    `$${statusValues.totalBorrowLiquidity.toLocaleString()}`
+                    : ''
+                }
               </Typography>
             </Box>
           </Box>
@@ -59,8 +78,11 @@ const MyStatusValues = ({ tab }: { tab: number }) => {
               <Box><Typography variant='p' color='#989898'>Total Collateral Value</Typography></Box>
               <Box>
                 <Typography variant='p_xlg'>
-                  {/* {formatDollarAmount(status.totalVal, 0, true)} */}
-                  $535,356.02
+                  {
+                    statusValues.totalBorrowCollateralVal > 0 ?
+                      `$${statusValues.totalBorrowCollateralVal.toLocaleString()}`
+                      : ''
+                  }
                 </Typography>
               </Box>
             </Box>
