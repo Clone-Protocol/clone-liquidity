@@ -3307,9 +3307,9 @@ imurmurhash@^0.1.4:
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==
 
-"incept-protocol-sdk@git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#private-beta":
+"incept-protocol-sdk@git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#private-beta":
   version "0.1.0"
-  resolved "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#ea418851747081dad8e7caaf50f13283988d0fd3"
+  resolved "git+https://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:x-oauth-basic@github.com/Incept-Protocol/incept-protocol.git#c1e0470c38a12dce73fa988f61fb6a3087a6e649"
   dependencies:
     "@project-serum/anchor" "^0.20.1"
     "@pythnetwork/client" "^2.6.0"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
@@ -14,6 +14,7 @@ import ManageIconOn from 'public/images/iconsax-linear-forwarditem-on.svg'
 import { formatHealthScore } from '~/utils/numbers'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import { GridEventListener } from '@mui/x-data-grid'
+import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 
 interface Props {
 	filter: FilterType
@@ -24,6 +25,14 @@ const enum HealthScoreType {
 	Warning = '#ff8e4f',
 	Poor = '#ed2525'
 }
+
+// const CustomNoRowsOverlay = () => {
+// 	return (
+// 		<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '21px' }}>
+// 			<Typography variant='p'>Your active Singlepool Comet liquidity positions will appear here.</Typography>
+// 		</Box>
+// 	)
+// }
 
 const GridComet: React.FC<Props> = ({ filter }) => {
 	const { publicKey } = useWallet()
@@ -49,6 +58,7 @@ const GridComet: React.FC<Props> = ({ filter }) => {
 			headers={columns}
 			rows={cometPools || []}
 			minHeight={380}
+			customNoRowsOverlay={() => CustomNoRowsOverlay('Your active Singlepool Comet liquidity positions will appear here.')}
 			onRowClick={handleRowClick}
 		/>
 	)
@@ -75,7 +85,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		// renderHeader: () => (
 		// 	<React.Fragment>
-		// 		Collateral	 
+		// 		Collateral
 		// 		<InfoTooltip title={TooltipTexts.collateralDesignated} />
 		// 	</React.Fragment>
 		// ),
