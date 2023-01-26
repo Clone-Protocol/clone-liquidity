@@ -50,9 +50,9 @@ export const ASSETS = [
 		tickerIcon: '/images/assets/bitcoin.png',
 	},
 	{
-		tickerName: 'iLuna',
-		tickerSymbol: 'iLUNA',
-		tickerIcon: '/images/assets/terra.png',
+		tickerName: 'iBNB',
+		tickerSymbol: 'iBNB',
+		tickerIcon: '/images/assets/bnb.png',
 	},
 	{
 		tickerName: 'iAvalanche',
@@ -113,9 +113,9 @@ export const assetMapping = (index: number) => {
 			assetType = AssetType.Crypto
 			break
 		case Asset.Luna:
-			tickerName = 'iLuna'
-			tickerSymbol = 'iLUNA'
-			tickerIcon = '/images/assets/terra.png'
+			tickerName = 'iBNB'
+			tickerSymbol = 'iBNB'
+			tickerIcon = '/images/assets/bnb.png'
 			assetType = AssetType.Crypto
 			break
 		case Asset.Avalanche:
