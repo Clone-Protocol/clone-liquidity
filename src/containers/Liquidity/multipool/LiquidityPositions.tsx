@@ -1,4 +1,4 @@
-import { Box, Stack, Button } from '@mui/material'
+import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
 import { useSnackbar } from 'notistack'
@@ -90,8 +90,8 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         )}
       </Box>
       <Stack direction='row' justifyContent='space-between' marginTop='9px'>
-        <AddButton onClick={() => setOpenAddPosition(true)}>Add Position</AddButton>
-        <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton>
+        <AddButton onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
+        {/* <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton> */}
       </Stack>
 
       <AddPositionDialog
@@ -125,17 +125,16 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
 }
 
 const AddButton = styled(Button)`
-  background: #1d1d1d;
-  width: 112px;
-  height: 26px;
+  width: 100%;
+  height: 28px;
   padding: 4px 0;
-  border-radius: 10px;
-  border: solid 1px #535353;
-  font-size: 10px;
-  font-weight: 500;
-  color: #fff;
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  color: ${(props) => props.theme.palette.text.secondary};
+  margin-top: 9px;
+  &:hover {
+    background: ${(props) => props.theme.boxes.darkBlack};
+  }
 `
-
 const RecenterAllButton = styled(Button)`
   width: 109px;
   height: 26px;

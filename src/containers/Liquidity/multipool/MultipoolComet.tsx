@@ -1,15 +1,11 @@
-import { Box, Stack, Grid } from '@mui/material'
+import { Box, Stack, Grid, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useWallet } from '@solana/wallet-adapter-react'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import Image from 'next/image'
-import InfoBookIcon from 'public/images/info-book-icon.svg'
-import InfoTooltip from '~/components/Common/InfoTooltip';
 import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
-import { TooltipTexts } from '~/data/tooltipTexts'
 
 const MultipoolComet = () => {
   const { publicKey } = useWallet()
@@ -21,46 +17,61 @@ const MultipoolComet = () => {
 
   return infos ? (
     <Wrapper>
-      <WarningStack direction="row">
+      {/* <WarningStack direction="row">
         <IconWrapper>
           <Image src={InfoBookIcon} />
         </IconWrapper>
         <WarningBox>
           Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please be sure to read and learn about it before first engaging with it.
         </WarningBox>
-      </WarningStack>
+      </WarningStack> */}
+      <Stack direction='row'>
+        <Box marginRight='31px'>
+          <Box><Typography variant='p' color='#989898'>Multipool Health Score</Typography></Box>
+          <Box>
+            <Typography variant='p_xlg'>
+              {!infos.healthScore || Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)} / 100
+            </Typography>
+          </Box>
+        </Box>
+        <Box display='flex'>
+          <ColumnDivider />
+          <Box marginLeft='31px' marginRight='31px'>
+            <Box><Typography variant='p' color='#989898'>Multipool Colleteral Value</Typography></Box>
+            <Box>
+              <Typography variant='p_xlg'>
+                {infos.totalCollValue.toLocaleString()}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+        <Box display='flex'>
+          <ColumnDivider />
+          <Box marginLeft='31px'>
+            <Box><Typography variant='p' color='#989898'>Multipool Liquidity</Typography></Box>
+            <Box>
+              <Typography variant='p_xlg'>
+                {infos.totalLiquidity.toLocaleString()}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Stack>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={2}>
-          <CardWrapper>
-            <SubTitle style={{ marginLeft: '8px' }}>Mulipool Comet Health Score <InfoTooltip title={TooltipTexts.multipoolCometdHealthScore} /></SubTitle>
-            <SubValue style={{ textAlign: 'center' }}><span style={{ fontSize: '16px', fontWeight: '600' }}>{!infos.healthScore || Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)}</span>/100</SubValue>
-          </CardWrapper>
-          <CardWrapper style={{ marginTop: '13px' }}>
-            <Box>
-              <SubTitle style={{ marginLeft: '16px' }}>Total Collateral Value <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubTitle>
-              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalCollValue.toLocaleString()}</span> USD</SubValue>
-            </Box>
-            <Divider />
-            <Box>
-              <SubTitle style={{ marginLeft: '16px' }}>Total Liquidity <InfoTooltip title={TooltipTexts.totalLiquidity} /></SubTitle>
-              <SubValue style={{ marginLeft: '16px' }}><span style={{ fontSize: '14px', fontWeight: '500' }}>{infos.totalLiquidity.toLocaleString()}</span> USD</SubValue>
-            </Box>
-          </CardWrapper>
-        </Grid>
+      <BoxGrid container>
         <Grid item xs={12} md={4}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
-            <SubTitle>Collaterals <InfoTooltip title={TooltipTexts.collaterals} /></SubTitle>
+            <Typography variant='p_lg'>Collateral</Typography>
             <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid >
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={8}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
-            <SubTitle>Contributed Liquidity Positions <InfoTooltip title={TooltipTexts.contributedLiquidityPositions} /></SubTitle>
+            <Typography variant='p_lg'>Liquidity</Typography>
             <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid>
-      </Grid >
+      </BoxGrid >
     </Wrapper >
   ) : <></>
 }
@@ -72,62 +83,18 @@ const Wrapper = styled(Box)`
   padding-top: 17px;
   padding-bottom: 17px;
 `
-const WarningStack = styled(Stack)`
-  background: rgba(207, 170, 255, 0.09);
-  border: 1px solid #8c73ac;
-  border-radius: 10px;
-  color: #989898;
-  padding: 8px;
-  margin-bottom: 26px;
-  height: 41px;
-`
-const IconWrapper = styled(Box)`
-  width: 73px; 
-  text-align: center; 
-  margin-top: 2px;
-`
-const WarningBox = styled(Box)`
-	padding-right: 10px;
-	font-size: 11px;
-	font-weight: 500;
-	color: #989898;
-  margin-top: 3px;
-`
 
 const CardWrapper = styled(Box)`
   padding: 9px 0 12px;
-  border-radius: 10px;
-  background-color: #1d1d1d;
 `
-
-const SubTitle = styled('div')`
-  font-family: Montserrat;
-  font-size: 10px;
-  font-weight: 500;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: left;
-	color: #989898;
+const ColumnDivider = styled('div')`
+  background: #535353; 
+  width: 1px; 
+  height: 49px;
 `
-
-const SubValue = styled('div')`
-  font-family: Montserrat;
-  font-size: 10px;
-  font-weight: 500;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  color: #fff;
-`
-
-const Divider = styled('div')`
-  width: 140px;
-  height: 1px;
-  margin: 18px 12px 12px 10px;
-  background-color: #535353;
+const BoxGrid = styled(Grid)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  margin-top: 25px;
 `
 
 export default withSuspense(MultipoolComet, <LoadingProgress />)
