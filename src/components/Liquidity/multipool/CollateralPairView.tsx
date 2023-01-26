@@ -70,25 +70,25 @@ const DollarView = styled('div')`
 	margin-right: 18px;
 `
 
-const PlusButton = styled('div')`
-	width: 26px;
-	height: 25px;
-	padding-left: 2px;
-  border-radius: 10px;
-  border: solid 1px #8c73ac;
-	cursor: pointer;
-	line-height: 20px;
-`
+// const PlusButton = styled('div')`
+// 	width: 26px;
+// 	height: 25px;
+// 	padding-left: 2px;
+//   border-radius: 10px;
+//   border: solid 1px #8c73ac;
+// 	cursor: pointer;
+// 	line-height: 20px;
+// `
 
-const MinusButton = styled('div')`
-	width: 26px;
-	height: 25px;
-	padding-left: 2px;
-	border-radius: 10px;
-	border: solid 1px #535353;
-	cursor: pointer;
-	line-height: 20px;
-	margin-top: 4px;
-`
+// const MinusButton = styled('div')`
+// 	width: 26px;
+// 	height: 25px;
+// 	padding-left: 2px;
+// 	border-radius: 10px;
+// 	border: solid 1px #535353;
+// 	cursor: pointer;
+// 	line-height: 20px;
+// 	margin-top: 4px;
+// `
 
 export default CollateralPairView

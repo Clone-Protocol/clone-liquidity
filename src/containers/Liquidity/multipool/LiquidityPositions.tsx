@@ -77,6 +77,12 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       )}
 
       <Box>
+        <PairHeader>
+          <Box><Typography variant="p_sm">Pool</Typography></Box>
+          <Box><Typography variant="p_sm">Liquidity Value</Typography></Box>
+          <Box><Typography variant="p_sm">ILD</Typography></Box>
+          <Box></Box>
+        </PairHeader>
         {positions.map((position, index) =>
           <LiquidityPairView
             key={index}
@@ -124,6 +130,15 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
 
 }
 
+const PairHeader = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 26px;
+  color: ${(props) => props.theme.palette.text.secondary};
+  border-top: 1px solid ${(props) => props.theme.boxes.greyShade};
+`
+
 const AddButton = styled(Button)`
   width: 100%;
   height: 28px;
@@ -133,21 +148,23 @@ const AddButton = styled(Button)`
   margin-top: 9px;
   &:hover {
     background: ${(props) => props.theme.boxes.darkBlack};
+    color: #fff;
+    border-color: ${(props) => props.theme.palette.text.secondary};
   }
 `
-const RecenterAllButton = styled(Button)`
-  width: 109px;
-  height: 26px;
-  padding: 1px 0;
-  font-size: 10px;
-  font-weight: 500;
-  color: #fff;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  border-image-slice: 1;
-  background-image: linear-gradient(to bottom, #000, #000), linear-gradient(to bottom, #8c73ac 0%, #7d17ff 100%);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-`
+// const RecenterAllButton = styled(Button)`
+//   width: 109px;
+//   height: 26px;
+//   padding: 1px 0;
+//   font-size: 10px;
+//   font-weight: 500;
+//   color: #fff;
+//   border-radius: 10px;
+//   border: 1px solid transparent;
+//   border-image-slice: 1;
+//   background-image: linear-gradient(to bottom, #000, #000), linear-gradient(to bottom, #8c73ac 0%, #7d17ff 100%);
+//   background-origin: border-box;
+//   background-clip: content-box, border-box;
+// `
 
 export default LiquidityPositions

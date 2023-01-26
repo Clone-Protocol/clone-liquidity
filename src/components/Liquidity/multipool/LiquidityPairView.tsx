@@ -7,11 +7,18 @@ interface Props {
 	tickerIcon: string
 	tickerSymbol: string | null
 	value?: number
+	ildValue?: number
 	onShowEditDialog: (poolIndex: number) => void
 	onShowRecenterDialog: (poolIndex: number) => void
 }
 
-const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, onShowEditDialog, onShowRecenterDialog }) => {
+const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, ildValue, onShowEditDialog, onShowRecenterDialog }) => {
+
+	const showRecenterDialog = (e: any) => {
+		e.stopPropagation()
+		onShowRecenterDialog(poolIndex)
+	}
+
 	return (
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center" onClick={() => onShowEditDialog(poolIndex)}>
@@ -21,10 +28,11 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 						<Typography variant='p'>{tickerSymbol} / USDi</Typography>
 					</TickerWrapper>
 				</Box>
-				<AmountView>
-					${value?.toFixed(3)}
-					<RecenterButton onClick={() => onShowRecenterDialog(poolIndex)}></RecenterButton>
-				</AmountView>
+				<Box><Typography variant='p'>${value?.toFixed(3)}</Typography></Box>
+				<Box><Typography variant='p'>${ildValue?.toFixed(3)}</Typography></Box>
+				<Box>
+					<RecenterButton onClick={showRecenterDialog}></RecenterButton>
+				</Box>
 			</FormStack>
 
 		</Box>
@@ -46,11 +54,6 @@ const TickerWrapper = styled(Box)`
   width: 100px; 
   margin-left: 8px; 
   text-align: left;
-`
-const AmountView = styled(`div`)`
-	text-align: right;
-	font-size: 14px;
-	color: #fff;
 `
 
 // const RecenterButton = styled(Button)`

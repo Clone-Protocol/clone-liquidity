@@ -63,6 +63,8 @@ const AddButton = styled(Button)`
   margin-top: 9px;
   &:hover {
     background: ${(props) => props.theme.boxes.darkBlack};
+    color: #fff;
+    border-color: ${(props) => props.theme.palette.text.secondary};
   }
 `
 

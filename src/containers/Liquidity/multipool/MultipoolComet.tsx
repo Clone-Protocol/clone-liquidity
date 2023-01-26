@@ -61,13 +61,17 @@ const MultipoolComet = () => {
       <BoxGrid container>
         <Grid item xs={12} md={4}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
-            <Typography variant='p_lg'>Collateral</Typography>
+            <Box marginBottom='12px'>
+              <Typography variant='p_lg'>Collateral</Typography>
+            </Box>
             <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid >
         <Grid item xs={12} md={8}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
-            <Typography variant='p_lg'>Liquidity</Typography>
+            <Box marginBottom='12px'>
+              <Typography variant='p_lg'>Liquidity</Typography>
+            </Box>
             <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid>
