@@ -55,11 +55,13 @@ const LiquidityTable: React.FC = () => {
 
         <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
 
-        <Stack direction='row' justifyContent='space-between' alignItems='flex-end' paddingTop='22px'>
-          <MyStatusValues tab={tab} />
+        {tab > 0 &&
+          <Stack direction='row' justifyContent='space-between' alignItems='flex-end' paddingTop='22px'>
+            <MyStatusValues tab={tab} />
 
-          <NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
-        </Stack>
+            <NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
+          </Stack>
+        }
       </Box>
 
       <PanelBox>
@@ -70,7 +72,10 @@ const LiquidityTable: React.FC = () => {
             ))}
           </PageTabs>
         </Stack> */}
-        <StyledDivider />
+
+        {tab > 0 &&
+          <StyledDivider />
+        }
 
         <TabPanel value={tab} index={0}>
           <MultipoolComet />

@@ -1,4 +1,4 @@
-import { Box, Stack, Button } from '@mui/material'
+import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
 import { useSnackbar } from 'notistack'
@@ -77,6 +77,12 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       )}
 
       <Box>
+        <PairHeader>
+          <Box><Typography variant="p_sm">Pool</Typography></Box>
+          <Box><Typography variant="p_sm">Liquidity Value</Typography></Box>
+          <Box><Typography variant="p_sm">ILD</Typography></Box>
+          <Box></Box>
+        </PairHeader>
         {positions.map((position, index) =>
           <LiquidityPairView
             key={index}
@@ -90,8 +96,12 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         )}
       </Box>
       <Stack direction='row' justifyContent='space-between' marginTop='9px'>
-        <AddButton onClick={() => setOpenAddPosition(true)}>Add Position</AddButton>
-        <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton>
+        {positions.length > 0 ?
+          <AddButton onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
+          :
+          <AddButtonNoPosition onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
+        }
+        {/* <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton> */}
       </Stack>
 
       <AddPositionDialog
@@ -124,31 +134,49 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
 
 }
 
-const AddButton = styled(Button)`
-  background: #1d1d1d;
-  width: 112px;
+const PairHeader = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   height: 26px;
-  padding: 4px 0;
-  border-radius: 10px;
-  border: solid 1px #535353;
-  font-size: 10px;
-  font-weight: 500;
-  color: #fff;
+  color: ${(props) => props.theme.palette.text.secondary};
+  border-top: 1px solid ${(props) => props.theme.boxes.greyShade};
 `
 
-const RecenterAllButton = styled(Button)`
-  width: 109px;
-  height: 26px;
-  padding: 1px 0;
-  font-size: 10px;
-  font-weight: 500;
-  color: #fff;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  border-image-slice: 1;
-  background-image: linear-gradient(to bottom, #000, #000), linear-gradient(to bottom, #8c73ac 0%, #7d17ff 100%);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
+const AddButton = styled(Button)`
+  width: 100%;
+  height: 28px;
+  padding: 4px 0;
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  color: ${(props) => props.theme.palette.text.secondary};
+  margin-top: 9px;
+  &:hover {
+    background: ${(props) => props.theme.boxes.darkBlack};
+    color: #fff;
+    border-color: ${(props) => props.theme.palette.text.secondary};
+  }
 `
+const AddButtonNoPosition = styled(AddButton)`
+  border-color: ${(props) => props.theme.palette.info.main};
+  color: #fff;
+  &:hover {
+    border-color: ${(props) => props.theme.palette.info.main};
+  }
+`
+
+// const RecenterAllButton = styled(Button)`
+//   width: 109px;
+//   height: 26px;
+//   padding: 1px 0;
+//   font-size: 10px;
+//   font-weight: 500;
+//   color: #fff;
+//   border-radius: 10px;
+//   border: 1px solid transparent;
+//   border-image-slice: 1;
+//   background-image: linear-gradient(to bottom, #000, #000), linear-gradient(to bottom, #8c73ac 0%, #7d17ff 100%);
+//   background-origin: border-box;
+//   background-clip: content-box, border-box;
+// `
 
 export default LiquidityPositions

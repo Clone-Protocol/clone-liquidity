@@ -9,12 +9,11 @@ import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
 import Image from 'next/image'
-import ManageIconOff from 'public/images/iconsax-linear-forwarditem-off.svg'
-import ManageIconOn from 'public/images/iconsax-linear-forwarditem-on.svg'
 import { formatHealthScore } from '~/utils/numbers'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
+import { RecenterButton } from '~/components/Liquidity/LiquidityButton'
 
 interface Props {
 	filter: FilterType
@@ -156,7 +155,7 @@ let columns: GridColDef[] = [
 
 			return (
 				<Box>
-					<Image src={isHovering ? ManageIconOn : ManageIconOff} onClick={showRecenterDialog} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} />
+					<RecenterButton onClick={showRecenterDialog} />
 
 					<RecenterDialog
 						assetId={params.row.id}
