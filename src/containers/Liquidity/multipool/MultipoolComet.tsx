@@ -6,6 +6,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
+import HealthscoreView from '~/components/Liquidity/multipool/HealthscoreView'
 
 const MultipoolComet = () => {
   const { publicKey } = useWallet()
@@ -29,9 +30,10 @@ const MultipoolComet = () => {
         <Box marginRight='31px'>
           <Box><Typography variant='p' color='#989898'>Multipool Health Score</Typography></Box>
           <Box>
-            <Typography variant='p_xlg'>
-              {!infos.healthScore || Number.isNaN(infos.healthScore) ? '--' : infos.healthScore.toFixed(2)} / 100
-            </Typography>
+            {!infos.healthScore || Number.isNaN(infos.healthScore) ?
+              <></> :
+              <HealthscoreView score={infos.healthScore} />
+            }
           </Box>
         </Box>
         <Box display='flex'>
@@ -40,7 +42,7 @@ const MultipoolComet = () => {
             <Box><Typography variant='p' color='#989898'>Multipool Colleteral Value</Typography></Box>
             <Box>
               <Typography variant='p_xlg'>
-                {infos.totalCollValue.toLocaleString()}
+                {infos.totalCollValue > 0 ? infos.totalCollValue.toLocaleString() : ''}
               </Typography>
             </Box>
           </Box>
@@ -51,7 +53,7 @@ const MultipoolComet = () => {
             <Box><Typography variant='p' color='#989898'>Multipool Liquidity</Typography></Box>
             <Box>
               <Typography variant='p_xlg'>
-                {infos.totalLiquidity.toLocaleString()}
+                {infos.totalLiquidity > 0 ? infos.totalLiquidity.toLocaleString() : ''}
               </Typography>
             </Box>
           </Box>
@@ -59,7 +61,7 @@ const MultipoolComet = () => {
       </Stack>
 
       <BoxGrid container>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={4} sx={{ borderRight: '1px solid #535353' }}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <Box marginBottom='12px'>
               <Typography variant='p_lg'>Collateral</Typography>
@@ -94,11 +96,12 @@ const CardWrapper = styled(Box)`
 const ColumnDivider = styled('div')`
   background: #535353; 
   width: 1px; 
-  height: 49px;
+  height: 120px;
 `
 const BoxGrid = styled(Grid)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
   margin-top: 25px;
+  padding: 15px 5px;
 `
 
 export default withSuspense(MultipoolComet, <LoadingProgress />)

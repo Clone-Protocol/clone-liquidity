@@ -96,7 +96,11 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         )}
       </Box>
       <Stack direction='row' justifyContent='space-between' marginTop='9px'>
-        <AddButton onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
+        {positions.length > 0 ?
+          <AddButton onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
+          :
+          <AddButtonNoPosition onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
+        }
         {/* <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton> */}
       </Stack>
 
@@ -152,6 +156,14 @@ const AddButton = styled(Button)`
     border-color: ${(props) => props.theme.palette.text.secondary};
   }
 `
+const AddButtonNoPosition = styled(AddButton)`
+  border-color: ${(props) => props.theme.palette.info.main};
+  color: #fff;
+  &:hover {
+    border-color: ${(props) => props.theme.palette.info.main};
+  }
+`
+
 // const RecenterAllButton = styled(Button)`
 //   width: 109px;
 //   height: 26px;

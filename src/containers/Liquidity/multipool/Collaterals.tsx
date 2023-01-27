@@ -34,7 +34,12 @@ const Collaterals = ({ collaterals, onRefetchData }: { collaterals: Collateral[]
           />
         )}
       </Box>
-      <AddButton onClick={() => openEdit(0)}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
+
+      {collaterals.length > 0 ?
+        <AddButton onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
+        :
+        <AddButtonNoPosition onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
+      }
 
       <EditCollateralDialog
         open={openEditCollateral}
@@ -65,6 +70,13 @@ const AddButton = styled(Button)`
     background: ${(props) => props.theme.boxes.darkBlack};
     color: #fff;
     border-color: ${(props) => props.theme.palette.text.secondary};
+  }
+`
+const AddButtonNoPosition = styled(AddButton)`
+  border-color: ${(props) => props.theme.palette.info.main};
+  color: #fff;
+  &:hover {
+    border-color: ${(props) => props.theme.palette.info.main};
   }
 `
 
