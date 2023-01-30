@@ -17,6 +17,7 @@ import PairInputView from '~/components/Asset/PairInputView'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
+import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 
@@ -35,7 +36,10 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     lowerLimit: assetData.price / 2,
     upperLimit: (assetData.price * 3) / 2
   })
+  const [cometHealthScore, setHealthScore] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
+  const [tokenData, setTokenData] = useState<TokenData | null>(null);
+
   const [collAmount, setCollAmount] = useState(NaN) // NaN is used here so the input placeholder is displayed first
   const [mintAmount, setMintAmount] = useState(0.0)
   const [mintableAmount, setMintableAmount] = useState(0.0)
@@ -64,6 +68,53 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     }
     fetch()
   }, [])
+
+  useEffect(() => {
+    async function fetch() {
+      if (!tokenData) return
+
+      await trigger()
+
+      const program = getInceptApp()
+
+      if (isNaN(collAmount)) {
+        setMintAmount(0)
+        setHealthScore(0)
+        return
+      }
+
+      console.log('calculateRange', collAmount + "/" + mintAmount)
+
+      const {
+        maxUsdiPosition,
+        healthScore,
+        lowerPrice,
+        upperPrice
+      } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
+        assetIndex,
+        collAmount,
+        mintAmount,
+        tokenData
+      )
+
+      if (mintAmount > 0) {
+        console.log('l', lowerPrice)
+        console.log('u', upperPrice)
+
+        setCometData({
+          ...cometData,
+          lowerLimit: Math.min(lowerPrice, assetData.centerPrice),
+          upperLimit: Math.max(upperPrice, assetData.centerPrice)
+        })
+      }
+
+      const chosenHealthScore = Math.max(0, healthScore)
+      setHealthScore(isNaN(chosenHealthScore) ? 0 : chosenHealthScore)
+      setMaxMintable(maxUsdiPosition)
+      setMintableAmount(maxUsdiPosition)
+    }
+    fetch()
+  }, [collAmount, mintAmount])
 
   const validateCollAmount = () => {
     if (collAmount > balances?.usdiVal) {
@@ -136,6 +187,21 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
       setMintableAmount(maxMintable)
     }
   }, [maxMintable, cometData])
+
+  const disableSubmitButton = (): boolean => {
+    const formHasErrors = (): boolean => {
+      if ((errors.collAmount && errors.collAmount.message !== "") || (errors.mintAmount && errors.mintAmount.message !== "")) {
+        return true
+      }
+      return false
+    }
+
+    if (!isDirty || formHasErrors()) {
+      return true
+    }
+
+    return false
+  }
 
   return (
     <>
