@@ -1,4 +1,4 @@
-import { Box, Button, Paper } from '@mui/material'
+import { Box, Button, Paper, Stack } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
@@ -12,10 +12,13 @@ import UlIconOff from 'public/images/ul-icon-off.svg'
 import { useInitCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
+import SinglepoolCometPanel from './SinglepoolCometPanel'
 import CometPanel from './CometPanel'
 import UnconcentPanel from './UnconcentPanel'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import PriceChart from '~/components/Overview/PriceChart'
+import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -51,25 +54,34 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 	return assetData ? (
 		<StyledBox>
-			<Box borderColor='divider' borderBottom='1'>
-				<TabWrapper>
-					<CometTabBtn active={tab === 0} onClick={() => changeTab(0)}>
-						{tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />}
-						<TabTitle>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidity} /></TabTitle>
-					</CometTabBtn>
-					<UnconcentTabBtn active={tab === 1} onClick={() => changeTab(1)}>
-						{tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />}
-						<TabTitle>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidity} /></TabTitle>
-					</UnconcentTabBtn>
-				</TabWrapper>
-			</Box>
-			<Box paddingY='20px'>
-				{tab === 0 ? (
-					<CometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
-				) : (
-					<UnconcentPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
-				)}
-			</Box>
+			<Stack direction='row' spacing={2} justifyContent="center">
+				<Box>
+					<Box borderColor='divider' borderBottom='1'>
+						<TabWrapper>
+							<CometTabBtn active={tab === 0} onClick={() => changeTab(0)}>
+								{tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />}
+								<TabTitle>Comet Liquidity <InfoTooltip title={TooltipTexts.cometLiquidity} /></TabTitle>
+							</CometTabBtn>
+							<UnconcentTabBtn active={tab === 1} onClick={() => changeTab(1)}>
+								{tab === 1 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />}
+								<TabTitle>Unconcentrated Liquidity <InfoTooltip title={TooltipTexts.unconcentratedLiquidity} /></TabTitle>
+							</UnconcentTabBtn>
+						</TabWrapper>
+					</Box>
+					<Box paddingY='20px'>
+						{tab === 0 ? (
+							<CometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
+						) : (
+							// <UnconcentPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
+							<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
+						)}
+					</Box>
+				</Box>
+				<Box>
+					<PriceChart />
+					<PoolAnalytics />
+				</Box>
+			</Stack>
 		</StyledBox>
 	) : <></>
 }

@@ -6,7 +6,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { Balance } from '~/features/Borrow/Balance.query'
-import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
+import { Box, Stack, Button, Divider, FormHelperText, Typography } from '@mui/material'
 import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
@@ -20,6 +20,7 @@ import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 
 const COLLATERAL_INDEX = 0 // USDi
 
@@ -284,8 +285,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
         </Box>
         <StyledDivider />
 
-        <Box>
-          <Box>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
+        <BoxWithBorder>
+          <Box><Typography variant="p">Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
 
           <Box marginTop='110px' marginBottom='15px'>
             <ConcentrationRange
@@ -298,19 +299,23 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
           </Box>
 
           <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
-        </Box>
-        <StyledDivider />
 
-        <Box>
-          <Box>Projected Healthscore <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-          {/* <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</HealthScoreValue> */}
-        </Box>
+          <Box my="20px">
+            <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
+            <HealthscoreBar score={cometHealthScore} />
+            {/* <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</HealthScoreValue> */}
+          </Box>
+        </BoxWithBorder>
 
         <SubmitButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Open Singlepool Comet Position</SubmitButton>
       </Box>
     </>
   )
 }
+
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+`
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;

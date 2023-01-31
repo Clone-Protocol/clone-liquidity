@@ -4,20 +4,20 @@ const PoolAnalytics = () => {
   return (
     <Box>
       <DataBox>
-        <Box>Total Liquidity</Box>
-        <Box>$15,430,459.49 USD <span>+$245,345.55 (1.58%) past 24h</span></Box>
+        <Box><Typography variant="p_sm">Total Liquidity</Typography></Box>
+        <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <span>+$245,345.55 (1.58%) past 24h</span></Box>
       </DataBox>
       <DataBox>
-        <Box>TVL</Box>
-        <Box>$15,430,459.49 USD <span>+$245,345.55 (1.58%) past 24h</span></Box>
+        <Box><Typography variant="p_sm">TVL</Typography></Box>
+        <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <span>+$245,345.55 (1.58%) past 24h</span></Box>
       </DataBox>
       <DataBox>
-        <Box>24h Trading Volume</Box>
-        <Box>$15,430,459.49 USD <span>-$513,551 (-8.35%) past 24h</span></Box>
+        <Box><Typography variant="p_sm">24h Trading Volume</Typography></Box>
+        <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <span>-$513,551 (-8.35%) past 24h</span></Box>
       </DataBox>
       <DataBox>
-        <Box>24h Fee Revenue </Box>
-        <Box>$30,459.12 USD <span>-$513,551 (-8.35%) past 24h</span></Box>
+        <Box><Typography variant="p_sm">24h Fee Revenue</Typography></Box>
+        <Box><Typography variant="p_lg">$30,459.12 USD</Typography> <span>-$513,551 (-8.35%) past 24h</span></Box>
       </DataBox>
     </Box>
   )
