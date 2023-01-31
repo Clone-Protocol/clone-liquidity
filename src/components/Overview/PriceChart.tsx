@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
 // import dynamic from 'next/dynamic'
-import { formatDollarAmount } from '~/utils/numbers'
-import LineChartAlt from '~/components/Charts/LineChartAlt'
+import { useTotalLiquidityQuery, useTotalUsersQuery } from '~/features/Chart/Liquidity.query'
+import LineChart from '~/components/Charts/LineChart'
 // import { unixToDate } from '~/utils/date'
 
 const PriceChart: React.FC = () => {
@@ -21,15 +21,19 @@ const PriceChart: React.FC = () => {
   //   }
   // }, [chartData])
 
+  // TODO: need to change other query
+  const { data: totalLiquidity } = useTotalLiquidityQuery({
+    timeframe: '24h',
+    refetchOnMount: false,
+    enabled: true
+  })
+
   return (
-    <LineChartAlt
-      data={[]}
-      topLeft={
-        <Box>
-          <SelectValue>0</SelectValue>
-        </Box>
-      }
-    />
+    <>
+      <LineChart
+        data={totalLiquidity?.chartData}
+      />
+    </>
   )
 }
 

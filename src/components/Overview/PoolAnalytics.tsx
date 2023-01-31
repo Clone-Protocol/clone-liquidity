@@ -3,6 +3,7 @@ import { styled, Typography, Box } from '@mui/material'
 const PoolAnalytics = () => {
   return (
     <Box>
+      <Box mb="12px"><Typography variant="p_lg">iSOL/USDi Pool Analytics</Typography></Box>
       <DataBox>
         <Box><Typography variant="p_sm">Total Liquidity</Typography></Box>
         <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <span>+$245,345.55 (1.58%) past 24h</span></Box>
@@ -26,7 +27,7 @@ const PoolAnalytics = () => {
 const DataBox = styled(Box)`
   width: 100%;
   height: 61px;
-  padding: 8px;
+  padding: 4px 16px;
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
 
