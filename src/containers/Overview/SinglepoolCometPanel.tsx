@@ -213,7 +213,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
       )}
       <Box>
         <Box>
-          <Box>Collateral Amount</Box>
+          <Box><Typography variant='p_lg'>Collateral Amount</Typography></Box>
           <Controller
             name="collAmount"
             control={control}
@@ -237,9 +237,9 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
           <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
         </Box>
         <StyledDivider />
-        <Box>
+        <Box mb='13px'>
           <Box>
-            Liquidity Amount
+            <Typography variant='p_lg'>Liquidity Amount</Typography>
           </Box>
           <Box marginTop='15px'>
             <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
@@ -248,44 +248,49 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
               <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
             </Box>
           </Box>
-          <Box marginBottom='25px' marginTop='15px'>
-            <Controller
-              name="mintAmount"
-              control={control}
-              rules={{
-                validate() {
-                  return validateMintAmount()
-                }
-              }}
-              render={({ field }) => (
-                <PairInput
-                  tickerIcon={'/images/assets/USDi.png'}
-                  tickerSymbol="USDi"
-                  value={isNaN(mintAmount) ? "" : mintAmount}
-                  headerTitle="Max amount mintable"
-                  headerValue={maxMintable}
-                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(parseFloat(evt.currentTarget.value), field)}
-                  onMax={(value: number) => onMintAmountInputChange(value, field)}
-                />
-              )}
-            />
-            <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-          </Box>
-          <PairInputView
-            tickerIcon={assetData.tickerIcon}
-            tickerSymbol={assetData.tickerSymbol}
-            value={mintAmount / assetData.price}
-          />
+          <Stack direction='row' alignItems='flex-end' gap={1}>
+            <Box width='275px'>
+              <Controller
+                name="mintAmount"
+                control={control}
+                rules={{
+                  validate() {
+                    return validateMintAmount()
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    tickerIcon={'/images/assets/USDi.png'}
+                    tickerSymbol="USDi"
+                    value={isNaN(mintAmount) ? "" : mintAmount}
+                    headerTitle="Max amount mintable"
+                    headerValue={maxMintable}
+                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(parseFloat(evt.currentTarget.value), field)}
+                    onMax={(value: number) => onMintAmountInputChange(value, field)}
+                  />
+                )}
+              />
+              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+            </Box>
+            <Box width='275px'>
+              <PairInputView
+                tickerIcon={assetData.tickerIcon}
+                tickerSymbol={assetData.tickerSymbol}
+                value={mintAmount / assetData.price}
+                dollarPrice={1445}
+              />
+            </Box>
+          </Stack>
         </Box>
-        <StyledDivider />
-        <Box>
-          <Box>
-            Aggregate Liquidity Value
-          </Box>
-        </Box>
+        <BoxWithBorder padding="15px 24px">
+          <Stack direction='row' justifyContent='space-between'>
+            <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
+            <Box><Typography variant="p_xlg">$2,543.04</Typography></Box>
+          </Stack>
+        </BoxWithBorder>
         <StyledDivider />
 
-        <BoxWithBorder>
+        <BoxWithBorder padding="20px 24px">
           <Box><Typography variant="p">Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
 
           <Box marginTop='110px' marginBottom='15px'>
@@ -319,8 +324,8 @@ const BoxWithBorder = styled(Box)`
 
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
-	margin-bottom: 30px;
-	margin-top: 30px;
+	margin-bottom: 21px;
+	margin-top: 21px;
 	height: 1px;
 `
 const SubmitButton = styled(Button)`
@@ -328,6 +333,7 @@ const SubmitButton = styled(Button)`
 	background-color: #4e609f;
 	color: #fff;
 	border-radius: 10px;
+  margin-top: 25px;
 	margin-bottom: 15px;
   font-size: 13px;
   font-weight: 600;
