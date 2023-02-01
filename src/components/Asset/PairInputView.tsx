@@ -1,57 +1,43 @@
-import { FormControl, styled, Stack, Box } from '@mui/material'
+import { FormControl, styled, Stack, Box, Typography } from '@mui/material'
 import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
 	tickerSymbol: string | null
 	value?: number
+	dollarPrice?: number
 }
 
-const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value }) => {
+const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, dollarPrice }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex">
+				<Box display="flex" alignItems='center'>
 					<Image src={tickerIcon} width="28px" height="28px" />
-					<TickerWrapper>
-						<TickerSymbol>{tickerSymbol}</TickerSymbol>
-					</TickerWrapper>
+					<Box ml='10px'>
+						<Typography variant='p_lg'>{tickerSymbol}</Typography>
+					</Box>
 				</Box>
-				<InputAmount id="ip-amount" disabled value={value} />
+				<Box lineHeight={0.93}>
+					<Box><Typography variant='p_xlg'>{value}</Typography></Box>
+					<Box><Typography variant='p' color='#989898'>{dollarPrice}</Typography></Box>
+				</Box>
 			</FormStack>
-		</FormControl>
+		</FormControl >
 	)
 }
 
 const FormStack = styled(Stack)`
-	display: flex;
 	width: 100%;
-	height: 54px;
+	height: 70px;
 	padding: 9px 21px 8px 24px;
   background: rgba(21, 22, 24, 0.75);
-	border-radius: 8px;
-	border: solid 1px #5c5c5c;
+	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
 const TickerWrapper = styled(Box)`
 	width: 100px; 
 	margin-left: 8px; 
 	text-align: left;
-`
-const TickerSymbol = styled('div')`
-	font-size: 14px;
-	font-weight: 600;
-	color: #5c5c5c;
-  margin-top: 3px;
-`
-const InputAmount = styled(`input`)`
-	width: 330px;
-	margin-left: 30px;
-	text-align: right;
-	border: 0px;
-	background-color: rgba(21, 22, 24, 0.75);
-	font-size: 16px;
-	font-weight: 500;
-	color: #5c5c5c;
 `
 
 export default PairInputView

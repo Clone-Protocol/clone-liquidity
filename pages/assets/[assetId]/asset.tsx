@@ -2,12 +2,13 @@ import * as React from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { styled } from '@mui/system'
 import { StyledSection } from 'pages'
 import Container from '@mui/material/Container'
 import TipMsg from '~/components/Common/TipMsg'
 import AssetView from '~/containers/Overview/AssetView'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
+import Image from 'next/image'
+import InfoIcon from 'public/images/info-icon.svg'
 
 const AssetPage: NextPage = () => {
 	const router = useRouter()
@@ -22,10 +23,9 @@ const AssetPage: NextPage = () => {
 				<StyledSection>
 					<Container>
 						<TipMsg>
-							💡 Tip: Learn about our <BoldText>Comet Liquidity System</BoldText> that allows our LPs to
-							maximize their concentrated liquidity experience.{' '}
+							<Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
 						</TipMsg>
-						<Box display='flex' justifyContent='center'>
+						<Box display='flex' justifyContent='center' mt="30px">
 							<AssetView assetId={assetId} />
 						</Box>
 					</Container>
@@ -34,10 +34,5 @@ const AssetPage: NextPage = () => {
 		</div>
 	)
 }
-
-const BoldText = styled('span')`
-	color: #fff;
-  text-decoration: underline;
-`
 
 export default AssetPage

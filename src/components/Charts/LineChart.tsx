@@ -1,72 +1,66 @@
-import React, { useEffect, useRef } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
+import { styled } from '@mui/system'
+import { Card } from '@mui/material'
+import { ResponsiveContainer, LineChart as ReLineChart, Line } from 'recharts'
 import { withCsrOnly } from '~/hocs/CsrOnly'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import { ChartElem } from '~/features/Chart/Liquidity.query';
+dayjs.extend(utc)
 
-interface Props {
-}
+export type LineChartProps = {
+  data: ChartElem[]
+  color?: string | undefined
+  height?: number | undefined
+  minHeight?: number
+  setValue?: Dispatch<SetStateAction<number | undefined>> // used for value on hover
+  setLabel?: Dispatch<SetStateAction<string | undefined>> // used for label of valye
+  value?: number
+  label?: string
+} & React.HTMLAttributes<HTMLDivElement>
 
-const LineChart: React.FC<Props> = ({
+
+const LineChart: React.FC<LineChartProps> = ({
+  data,
+  color = '#4fe5ff',
+  value,
+  label,
+  setValue,
+  setLabel,
+  minHeight = 109,
+  ...rest
 }) => {
-  const chartContainerRef = useRef();
-
-  // useEffect(
-	// 	() => {
-  //     const initialData = [
-  //       { time: '2021-12-22', value: 32.51 },
-  //       { time: '2021-12-23', value: 31.11 },
-  //       { time: '2021-12-24', value: 27.02 },
-  //       { time: '2021-12-25', value: 27.32 },
-  //       { time: '2021-12-26', value: 25.17 },
-  //       { time: '2021-12-27', value: 28.89 },
-  //       { time: '2021-12-28', value: 25.46 },
-  //       { time: '2021-12-29', value: 23.92 },
-  //       { time: '2021-12-30', value: 22.68 },
-  //       { time: '2021-12-31', value: 22.67 },
-  //     ];
-
-	// 		const chart = createChart(chartContainerRef.current, {
-	// 			width: 578,
-	// 			height: 300,
-  //       layout: {
-  //         textColor: '#c9c9c9',
-  //         backgroundColor: 'linear-gradient(to bottom, #151618 29%, #002888 312%)',
-  //       },
-  //       crosshair: {
-  //         vertLine: {
-  //           width: 5,
-  //           color: 'rgba(224, 227, 235, 0.1)',
-  //           style: 0,
-  //         },
-  //         horzLine: {
-  //           visible: false,
-  //           labelVisible: false,
-  //         },
-  //       },
-  //       grid: {
-  //         vertLines: {
-  //           color: 'rgba(42, 46, 57, 0)',
-  //         },
-  //         horzLines: {
-  //           color: 'rgba(42, 46, 57, 0)',
-  //         },
-  //       },
-	// 		});
-	// 		chart.timeScale().fitContent();
-
-	// 		const newSeries = chart.addAreaSeries({
-  //       topColor: '#151618',
-  //       bottomColor: '#002888',
-  //       lineColor: '#fff',
-  //       lineWidth: 2,
-  //     });
-	// 		newSeries.setData(initialData);
-	// 	},
-	// 	[]
-	// );
-
-  return (
-    // <div ref={chartContainerRef} />
-    <div />
-  )
+  return data ? (
+    <Wrapper>
+      <ResponsiveContainer width="100%" height="100%">
+        <ReLineChart
+          width={462}
+          height={288}
+          data={data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <Line dataKey="value" type="monotone" dot={false} stroke={color} strokeWidth={1} />
+        </ReLineChart>
+      </ResponsiveContainer>
+    </Wrapper>
+  ) : <></>
 }
+
+const Wrapper = styled(Card)`
+  background: rgba(21, 22, 24, 0.25);
+  width: 462px;
+  max-width: 462px;
+  height: 288px;
+  display: flex;
+  flex-direction: column;
+  > * {
+    font-size: 1rem;
+  }
+`
 
 export default withCsrOnly(LineChart)

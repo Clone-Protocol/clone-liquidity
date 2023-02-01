@@ -4,7 +4,7 @@ import { styled } from '@mui/system'
 import { Container, Box, Stack } from '@mui/material'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import LineChart from '~/containers/Overview/LineChart'
-import BarChart from '~/containers/Overview/BarChart'
+// import BarChart from '~/containers/Overview/BarChart'
 import AssetList from '~/containers/Overview/AssetList'
 
 const Overview: NextPage = () => {
