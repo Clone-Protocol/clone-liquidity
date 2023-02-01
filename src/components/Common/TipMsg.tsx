@@ -1,27 +1,24 @@
-import Paper from '@mui/material/Paper'
 import Slide from '@mui/material/Slide';
-import { styled } from '@mui/material'
+import { styled, Box } from '@mui/material'
 
 const TipMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
 	return (
-    <Slide direction="down" in={true} mountOnEnter unmountOnExit>
-      <StyledPaper variant="outlined">{children}</StyledPaper>
-    </Slide>
-  )
+		<Slide direction="down" in={true} mountOnEnter unmountOnExit>
+			<StyledBox>{children}</StyledBox>
+		</Slide>
+	)
 }
 
-const StyledPaper = styled(Paper)`
+const StyledBox = styled(Box)`
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	font-size: 12px;
 	font-weight: 500;
-	font-stretch: normal;
-	font-style: normal;
-	line-height: normal;
-	letter-spacing: normal;
 	text-align: center;
-	border-radius: 10px;
-	background-color: rgba(21, 22, 24, 0.75);
-	color: #989898;
-	padding: 17px 37px 17px 46px;
+	background-color: ${(props) => props.theme.boxes.darkBlack};
+	color: ${(props) => props.theme.palette.text.secondary};
+	height: 38px;
 `
 
 export default TipMsg

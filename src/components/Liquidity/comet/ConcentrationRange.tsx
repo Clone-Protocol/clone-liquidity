@@ -1,21 +1,21 @@
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import React, { useState, useEffect } from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import Slider, { SliderThumb } from '@mui/material/Slider'
 import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
-const BACKGROUND_VALID_RANGE_COLOR = 'linear-gradient(to right, #809cff -1%, #0038ff 109%)'
+const BACKGROUND_VALID_RANGE_COLOR = 'linear-gradient(to right, #fff 21%, #4fe5ff 96%)'
 const BACKGROUND_WARNING_RANGE_COLOR = '#e9d100'
 
-const LEFT_SLIDER_THUMB_COLOR = '#809cff'
-const RIGHT_SLIDER_THUMB_COLOR = '#0038ff'
+const LEFT_SLIDER_THUMB_COLOR = '#fff'
+const RIGHT_SLIDER_THUMB_COLOR = '#4fe5ff'
 
 interface Props {
-  assetData: PositionInfo
+	assetData: PositionInfo
 	cometData: CometInfo
 	onChange?: (isTight: boolean, lowerLimit: number, upperLimit: number) => void
-  onChangeCommitted?: (lowerLimit: number, upperLimit: number) => void
+	onChangeCommitted?: (lowerLimit: number, upperLimit: number) => void
 	max: number
 	defaultLower: number
 	defaultUpper: number
@@ -23,28 +23,24 @@ interface Props {
 
 const RangeSlider = styled(Slider)(({ theme }) => ({
 	color: '#0038ff',
-	height: 3,
+	height: 1,
 	padding: '13px 0',
 	//leftThumb
 	'& .MuiSlider-thumb[data-index="0"]': {
 		height: 30,
 		width: 75,
-    backgroundColor: '#171717',
-		marginTop: '-37px',
-		marginLeft: '-37px',
-    borderTopLeftRadius: '8px',
-    borderTopRightRadius: '8px',
-    borderBottomRightRadius: '0px',
-    borderBottomLeftRadius: '8px',
+		backgroundColor: '#171717',
+		marginTop: '-20px',
+		marginLeft: '-10px',
 		'&::after': {
-			width: '1px',
-			height: '23px',
+			width: '3px',
+			height: '7px',
 			position: 'absolute',
-      borderRadius: '0px',
-      borderTopRightRadius: '8px',
-      borderBottomLeftRadius: '8px',
-			left: '74px',
-			top: '40px',
+			borderRadius: '0px',
+			borderTopRightRadius: '8px',
+			borderBottomLeftRadius: '8px',
+			left: '49px',
+			top: '33px',
 		},
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
@@ -57,7 +53,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 			marginRight: 1,
 		},
 		'& .MuiSlider-valueLabel': {
-			fontSize: '11px',
+			fontSize: '12px',
 			fontWeight: '500',
 			top: 25,
 			left: 9,
@@ -77,24 +73,19 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 		height: 30,
 		width: 75,
 		backgroundColor: '#171717',
-    borderTopLeftRadius: '8px',
-    borderTopRightRadius: '8px',
-    borderBottomRightRadius: '8px',
-    borderBottomLeftRadius: '0px',
-		marginTop: '-37px',
-		marginLeft: '37px',
+		marginTop: '-20px',
 		'&::after': {
-			width: '1px',
-			height: '23px',
+			width: '3px',
+			height: '7px',
 			position: 'absolute',
-			left: '-1px',
-			top: '40px',
-      borderRadius: '0px',
-      borderTopLeftRadius: '8px',
-      borderBottomRightRadius: '8px',
+			left: '36px',
+			top: '33px',
+			borderRadius: '0px',
+			borderTopLeftRadius: '8px',
+			borderBottomRightRadius: '8px',
 		},
 		'& .MuiSlider-valueLabel': {
-			fontSize: '11px',
+			fontSize: '12px',
 			fontWeight: '500',
 			top: 26,
 			left: 12,
@@ -112,7 +103,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 	'& .MuiSlider-track': {
 		height: 3,
 		border: 0,
-		background: 'linear-gradient(to right, #00f0ff -1%, #0038ff 109%)',
+		background: 'linear-gradient(to right, #fff 21%, #4fe5ff 96%)',
 	},
 	'& .MuiSlider-rail': {
 		color: theme.palette.mode === 'dark' ? '#bfbfbf' : '#333333',
@@ -121,7 +112,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-interface ThumbComponentProps extends React.HTMLAttributes<unknown> {}
+interface ThumbComponentProps extends React.HTMLAttributes<unknown> { }
 
 function ThumbComponent(props: ThumbComponentProps) {
 	const { children, ...other } = props
@@ -144,13 +135,11 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 			background: BACKGROUND_VALID_RANGE_COLOR,
 		},
 		'& .MuiSlider-thumb[data-index="0"]': {
-			border: `solid 1px ${LEFT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
 				borderLeft: `1px solid ${LEFT_SLIDER_THUMB_COLOR}`,
 			},
 		},
 		'& .MuiSlider-thumb[data-index="1"]': {
-			border: `solid 1px ${RIGHT_SLIDER_THUMB_COLOR}`,
 			'&::after': {
 				borderRight: `1px solid ${RIGHT_SLIDER_THUMB_COLOR}`,
 			},
@@ -162,7 +151,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 	}, [cometData.lowerLimit, cometData.upperLimit])
 
 	return (
-		<Box sx={{ position: 'relative' }}>
+		<Box sx={{ position: 'relative' }} width='404px' margin='0 auto'>
 			<RangeSlider
 				sx={trackCss}
 				min={minLimit}
@@ -175,7 +164,7 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 				value={value}
 			/>
 			<CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 35px)` }}>
-				{assetData.price.toFixed(3)}
+				<Typography variant='p'>{assetData.price.toFixed(3)}</Typography>
 				<Stick />
 			</CenterPriceBox>
 		</Box>
@@ -185,23 +174,17 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 const CenterPriceBox = styled(Box)`
 	position: absolute;
 	left: calc(50% - 30px);
-	bottom: 81px;
+	bottom: 40px;
 	width: 74px;
-	height: 30px;
-	border-radius: 10px;
-	border: solid 1px #fffdfd;
+	height: 20px;
 	text-align: center;
-	font-size: 11px;
-	font-weight: 500;
-	color: #fff;
-	line-height: 28px;
 `
 
 const Stick = styled('div')`
 	border-radius: 0;
 	background: #fff;
-	width: 1px;
-	height: 63px;
+	width: 3px;
+	height: 19px;
 	margin-top: 0px;
 	margin-left: 34px;
 `

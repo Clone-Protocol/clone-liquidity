@@ -5,7 +5,7 @@ interface Props {
 	min?: number
 	max?: number
 	value: number
-  hideValueBox?: boolean
+	hideValueBox?: boolean
 	onChange?: (event: Event, newValue: number | number[]) => void
 }
 
@@ -25,18 +25,17 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 	'& .MuiSlider-track': {
 		height: 3,
-    border: 'none',
-    background: 'linear-gradient(to left, #f00 -12%, #809cff 66%)'
+		border: 'none',
+		background: 'linear-gradient(to left, #ff8e4f 0%, #fff 100%)'
 	},
-  '& .MuiSlider-valueLabel': {
-    fontSize: '11px',
-    fontWeight: '600',
-    padding: '4px 8px 4px 8px',
-    borderRadius: '10px',
-    border: 'solid 1px #809cff',
-    backgroundColor: '#000',
-    '&:before': { display: 'none' },
-  },
+	'& .MuiSlider-valueLabel': {
+		fontSize: '12px',
+		fontWeight: '500',
+		padding: '4px 8px 4px 8px',
+		border: 'solid 1px #fff',
+		background: 'unset',
+		'&:before': { display: 'none' },
+	},
 	'& .MuiSlider-rail': {
 		color: '#444444',
 		height: 3,
@@ -48,11 +47,11 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 		return `${value}%`
 	}
 
-  const pickHex = (x: number) => {
-    const f = chroma.scale(['#809cff', '#f00']).gamma(2)
-    const rgb = f(x/100).css()
-    return rgb
-  }
+	const pickHex = (x: number) => {
+		const f = chroma.scale(['#fff', '#ff8e4f']).gamma(2)
+		const rgb = f(x / 100).css()
+		return rgb
+	}
 
 	return (
 		<Box
@@ -62,17 +61,17 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
 			<Box width="100%">
 				<StyledSlider
-          sx={{
-            '& .MuiSlider-valueLabel': {
-              border: `solid 1px ${pickHex(value)}`,
-            },
-            '& .MuiSlider-thumb': {
-              border: `3px solid ${pickHex(value)}`,
-            },
-            '& .MuiSlider-track': {
-              background: `linear-gradient(to left, #f00 -12%, #809cff ${value}%)`
-            }
-          }}
+					sx={{
+						'& .MuiSlider-valueLabel': {
+							border: `solid 1px ${pickHex(value)}`,
+						},
+						'& .MuiSlider-thumb': {
+							border: `0px`,
+						},
+						'& .MuiSlider-track': {
+							background: `linear-gradient(to left, #ff8e4f 0%, #fff ${value}%)`
+						}
+					}}
 					value={parseFloat(value.toFixed(2))}
 					min={min}
 					step={10}

@@ -54,8 +54,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 	return assetData ? (
 		<StyledBox>
-			<Stack direction='row' spacing={2} justifyContent="center">
-				<Box>
+			<Stack direction='row' spacing={3} justifyContent="center">
+				<LeftBoxWrapper>
 					<Box borderColor='divider' borderBottom='1'>
 						<TabWrapper>
 							<CometTabBtn active={tab === 0} onClick={() => changeTab(0)}>
@@ -76,18 +76,17 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 							<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
 						)}
 					</Box>
-				</Box>
-				<Box>
+				</LeftBoxWrapper>
+				<RightBoxWrapper>
 					<PriceChart />
 					<PoolAnalytics />
-				</Box>
+				</RightBoxWrapper>
 			</Stack>
 		</StyledBox>
 	) : <></>
 }
 
 const StyledBox = styled(Paper)`
-	maxwidth: 768px;
 	font-size: 14px;
 	font-weight: 500;
 	text-align: center;
@@ -95,10 +94,18 @@ const StyledBox = styled(Paper)`
 	border-radius: 8px;
 	text-align: left;
 	background: #000;
-	padding-left: 30px;
-	padding-top: 36px;
-	padding-bottom: 42px;
-	padding-right: 33px;
+`
+
+const LeftBoxWrapper = styled(Box)`
+	width: 607px; 
+	padding: 22px 25px;
+	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+`
+
+const RightBoxWrapper = styled(Box)`
+	width: 450px;
+	padding: 20px;
+
 `
 
 const CometTabBtn = styled((props: any) => (

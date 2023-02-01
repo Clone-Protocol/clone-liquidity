@@ -241,11 +241,11 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
           <Box>
             <Typography variant='p_lg'>Liquidity Amount</Typography>
           </Box>
-          <Box marginTop='15px'>
+          <Box marginTop='15px' marginBottom='10px'>
             <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px' }}>
-              <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Min</Box>
-              <Box sx={{ fontSize: '11px', fontWeight: '500' }}>Max</Box>
+            <Box display='flex' justifyContent='space-between' marginTop='-10px'>
+              <Box><Typography variant='p_sm'>Min</Typography></Box>
+              <Box><Typography variant='p_sm'>Max</Typography></Box>
             </Box>
           </Box>
           <Stack direction='row' alignItems='flex-end' gap={1}>
@@ -293,7 +293,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
         <BoxWithBorder padding="20px 24px">
           <Box><Typography variant="p">Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
 
-          <Box marginTop='110px' marginBottom='15px'>
+          <Box marginTop='45px' marginBottom='5px'>
             <ConcentrationRange
               assetData={assetData}
               cometData={cometData}
@@ -323,7 +323,7 @@ const BoxWithBorder = styled(Box)`
 `
 
 const StyledDivider = styled(Divider)`
-	background-color: #535353;
+	background-color: ${(props) => props.theme.boxes.blackShade};
 	margin-bottom: 21px;
 	margin-top: 21px;
 	height: 1px;

@@ -23,8 +23,8 @@ const HealthscoreBar: React.FC<Props> = ({ score }) => {
 }
 
 const ScorePointer = styled(Box)`
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: -10px;
+  margin-right: -10px;
   width: 34px;
   height: 28px;
   padding: 3px 6px;
@@ -38,7 +38,7 @@ const ScorePointer = styled(Box)`
   }
 `
 const ScoreBar = styled(Box)`
-  width: 500px;
+  width: 490px;
   height: 4px;
   background-image: ${(props) => props.theme.gradients.healthscore};
 `

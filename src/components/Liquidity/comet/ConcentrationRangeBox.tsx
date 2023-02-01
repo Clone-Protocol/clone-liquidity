@@ -1,4 +1,4 @@
-import { Box, Grid, Divider } from '@mui/material'
+import { Box, Grid, Divider, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
@@ -12,9 +12,9 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 	return cometData ? (
 		<Grid container spacing={2}>
 			<Grid item xs={4}>
-				<LimitBox sx={{ color: '#809cff' }}>
-					Lower Limit
-				</LimitBox>
+				<Box textAlign='center'>
+					<Typography variant='p_sm'>Lower Limit</Typography>
+				</Box>
 				<Box
 					sx={{
 						background: '#171717',
@@ -23,28 +23,26 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						paddingTop: '8px',
 						paddingBottom: '8px'
 					}}>
-					<PriceValue>{cometData.lowerLimit.toFixed(5)}</PriceValue>
-					<StyledDivider />
-					<RangePair>USD / {assetData.tickerSymbol}</RangePair>
+					<Box textAlign='center'><Typography variant='p_lg'>{cometData.lowerLimit.toFixed(5)}</Typography></Box>
+					<Box textAlign='center'><Typography variant='p_sm' color='#989898'>USD / {assetData.tickerSymbol}</Typography></Box>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
-				<LimitBox sx={{ color: '#FFF' }}>
-					Center Price
-				</LimitBox>
+				<Box textAlign='center'>
+					<Typography variant='p_sm'>Center Price</Typography>
+				</Box>
 				<Box sx={{
 					borderRadius: '10px', border: 'solid 1px #FFF', paddingTop: '8px',
 					paddingBottom: '8px'
 				}}>
-					<PriceValue>{assetData.price.toFixed(5)}</PriceValue>
-					<StyledDivider />
-					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
+					<Box textAlign='center'><Typography variant='p_lg'>{assetData.price.toFixed(5)}</Typography></Box>
+					<Box textAlign='center'><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
 				</Box>
 			</Grid>
 			<Grid item xs={4}>
-				<LimitBox sx={{ color: '#0038ff' }}>
-					Upper Limit
-				</LimitBox>
+				<Box textAlign='center'>
+					<Typography variant='p_sm'>Upper Limit</Typography>
+				</Box>
 				<Box
 					sx={{
 						background: '#171717',
@@ -53,9 +51,8 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 						paddingTop: '8px',
 						paddingBottom: '8px'
 					}}>
-					<PriceValue>{cometData.upperLimit.toFixed(5)}</PriceValue>
-					<StyledDivider />
-					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
+					<Box textAlign='center'><Typography variant='p_lg'>{cometData.upperLimit.toFixed(5)}</Typography></Box>
+					<Box textAlign='center'><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
 				</Box>
 			</Grid>
 		</Grid>
@@ -82,13 +79,6 @@ const RangePair = styled('div')`
 	padding-top: 8px;
 	text-align: center;
   color: #5c5c5c;
-`
-
-const LimitBox = styled(Box)`
-	font-size: 12px;
-	font-weight: 500;
-	text-align: center;
-	margin-bottom: 5px;
 `
 
 export default withCsrOnly(ConcentrationRangeBox)
