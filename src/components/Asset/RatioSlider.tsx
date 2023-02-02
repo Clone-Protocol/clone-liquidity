@@ -31,7 +31,8 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	'& .MuiSlider-valueLabel': {
 		fontSize: '12px',
 		fontWeight: '500',
-		padding: '4px 8px 4px 8px',
+		marginTop: '5px',
+		padding: '4px 8px',
 		border: 'solid 1px #fff',
 		background: 'unset',
 		'&:before': { display: 'none' },

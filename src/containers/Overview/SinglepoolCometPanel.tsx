@@ -52,6 +52,12 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     clearErrors
   } = useForm({ mode: 'onChange' })
 
+  const calculateMintAmount = (mintable: number, ratio: number): number => mintable * ratio / 100;
+  useMemo(
+    () => setMintAmount(calculateMintAmount(mintableAmount, mintRatio)),
+    [mintableAmount, mintRatio]
+  )
+
   const initData = () => {
     setMintableAmount(0.0)
     setCollAmount(NaN)
@@ -117,13 +123,12 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     fetch()
   }, [collAmount, mintAmount])
 
-  const validateCollAmount = () => {
-    if (collAmount > balances?.usdiVal) {
-      return 'The collateral amount cannot exceed the balance.'
+  const handleChangeMintRatio = useCallback(async (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
+      setMintRatio(newValue)
+      setMintableAmount(maxMintable)
     }
-
-    clearErrors('collAmountAmount')
-  }
+  }, [maxMintable, cometData])
 
   async function submit() {
     setLoading(true)
@@ -167,6 +172,14 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     setMintAmount(val)
   }
 
+  const validateCollAmount = () => {
+    if (collAmount > balances?.usdiVal) {
+      return 'The collateral amount cannot exceed the balance.'
+    }
+
+    clearErrors('collAmountAmount')
+  }
+
   const validateMintAmount = () => {
     if (!isDirty) {
       clearErrors('mintAmount')
@@ -181,13 +194,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
     clearErrors('mintAmount')
   }
-
-  const handleChangeMintRatio = useCallback(async (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === 'number') {
-      setMintRatio(newValue)
-      setMintableAmount(maxMintable)
-    }
-  }, [maxMintable, cometData])
 
   const disableSubmitButton = (): boolean => {
     const formHasErrors = (): boolean => {
@@ -227,6 +233,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                 tickerIcon={'/images/assets/USDi.png'}
                 tickerSymbol="USDi"
                 value={isNaN(collAmount) ? "" : collAmount}
+                dollarPrice={0}
                 headerTitle="Balance"
                 headerValue={balances?.usdiVal}
                 onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(evt.currentTarget.value), field)}
@@ -263,6 +270,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                     tickerIcon={'/images/assets/USDi.png'}
                     tickerSymbol="USDi"
                     value={isNaN(mintAmount) ? "" : mintAmount}
+                    dollarPrice={0}
                     headerTitle="Max amount mintable"
                     headerValue={maxMintable}
                     onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onMintAmountInputChange(parseFloat(evt.currentTarget.value), field)}
@@ -312,7 +320,9 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
           </Box>
         </BoxWithBorder>
 
-        <SubmitButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Open Singlepool Comet Position</SubmitButton>
+        <SubmitButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>
+          <Typography variant='p_lg'>Open Singlepool Comet Position</Typography>
+        </SubmitButton>
       </Box>
     </>
   )
@@ -330,9 +340,9 @@ const StyledDivider = styled(Divider)`
 `
 const SubmitButton = styled(Button)`
 	width: 100%;
-	background-color: #4e609f;
-	color: #fff;
-	border-radius: 10px;
+	background-color: #767676;
+	color: #000;
+  border-radius: 0px;
   margin-top: 25px;
 	margin-bottom: 15px;
   font-size: 13px;
@@ -341,8 +351,8 @@ const SubmitButton = styled(Button)`
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 
