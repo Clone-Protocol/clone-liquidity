@@ -5,7 +5,7 @@ interface Props {
 	tickerIcon: string
 	tickerSymbol: string | null
 	value?: number | string
-	dollarPrice?: number
+	dollarPrice?: number | undefined
 	headerTitle?: string
 	headerValue?: number
 	onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void
@@ -42,7 +42,7 @@ const PairInput: React.FC<Props> = ({
 				</Box>
 				<Box lineHeight={0.93} textAlign='right'>
 					<InputAmount id="ip-amount" type="number" placeholder='0.00' step='any' min={0} max={headerValue} sx={value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChange} />
-					<Box><Typography variant='p' color='#989898'>{dollarPrice}</Typography></Box>
+					{dollarPrice ? <Box><Typography variant='p' color='#989898'>${dollarPrice.toLocaleString()} USD</Typography></Box> : <></>}
 				</Box>
 			</FormStack>
 		</FormControl>
@@ -62,16 +62,6 @@ const FormStack = styled(Stack)`
   &:hover {
     border: solid 1px #809cff;
   }
-`
-const TickerWrapper = styled(Box)`
-	width: 100px; 
-	margin-left: 8px; 
-	text-align: left;
-`
-const TickerSymbol = styled('div')`
-	font-size: 14px;
-	font-weight: 600;
-  margin-top: 3px;
 `
 const InputAmount = styled(`input`)`
 	width: 65%;

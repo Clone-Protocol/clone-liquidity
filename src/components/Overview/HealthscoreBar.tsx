@@ -6,10 +6,11 @@ interface Props {
 }
 
 const HealthscoreBar: React.FC<Props> = ({ score }) => {
+  const scorePoint = score ? 490 * score / 100 - 15 : -15
   return (
     <Box>
       <Box>
-        <ScorePointer><Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score?.toFixed(0)}</Typography></Box></ScorePointer>
+        <ScorePointer sx={{ marginLeft: `${scorePoint}px` }}><Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score?.toFixed(0)}</Typography></Box></ScorePointer>
         <Box width='500px' margin='0 auto'>
           <ScoreBar />
           <Box display="flex" justifyContent='space-between'>

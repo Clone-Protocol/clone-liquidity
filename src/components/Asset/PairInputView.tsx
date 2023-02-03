@@ -18,9 +18,9 @@ const PairInputView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, dolla
 						<Typography variant='p_lg'>{tickerSymbol}</Typography>
 					</Box>
 				</Box>
-				<Box lineHeight={0.93}>
-					<Box><Typography variant='p_xlg'>{value}</Typography></Box>
-					<Box><Typography variant='p' color='#989898'>{dollarPrice}</Typography></Box>
+				<Box lineHeight={0.93} textAlign='right'>
+					<Box><Typography variant='p_xlg'>{value?.toFixed(8)}</Typography></Box>
+					<Box>{dollarPrice ? <Typography variant='p' color='#989898'>${dollarPrice.toLocaleString()} USD</Typography> : <></>}</Box>
 				</Box>
 			</FormStack>
 		</FormControl >
