@@ -64,8 +64,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 					<Box><Typography variant='p_lg'>Select Pool</Typography></Box>
 					<SelectPoolBox>
 						<Stack direction='row' gap={1}>
-							<Image src={'/images/assets/solana.png'} width="27px" height="27px" />
-							<Typography variant='p_xlg'>iSOL {'<>'} USDi</Typography>
+							<Image src={assetData.tickerIcon} width="27px" height="27px" />
+							<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} USDi</Typography>
 						</Stack>
 						<Image src={SelectArrowIcon} />
 					</SelectPoolBox>
@@ -86,6 +86,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 								<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
 							</TabPanel>
 							<TabPanel value={tab} index={2}>
+								<UnconcentPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
 							</TabPanel>
 						</Box>
 
@@ -96,8 +97,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				</Box>
 
 				<RightBoxWrapper>
-					<PriceChart />
-					<PoolAnalytics />
+					<PriceChart assetData={assetData} />
+					<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
 				</RightBoxWrapper>
 			</Stack>
 		</StyledBox>
@@ -121,7 +122,7 @@ const StyledDivider = styled(Divider)`
 `
 const LeftBoxWrapper = styled(Box)`
 	width: 607px; 
-	padding: 22px 25px;
+	padding: 8px 25px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	margin-bottom: 25px;
 `
@@ -134,6 +135,7 @@ const SelectPoolBox = styled(Box)`
 	justify-content: space-between;
 	width: 261px;
 	height: 45px;
+	margin-bottom: 28px;
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `

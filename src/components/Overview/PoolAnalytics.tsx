@@ -12,10 +12,10 @@ const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
   }
 }
 
-const PoolAnalytics = () => {
+const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
   return (
     <Box>
-      <Box mb="12px"><Typography variant="p_lg">iSOL/USDi Pool Analytics</Typography></Box>
+      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/USDi Pool Analytics</Typography></Box>
       <DataBox>
         <Box><Typography variant="p_sm">Total Liquidity</Typography></Box>
         <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <TxtPriceRate val={245345.55} rate={1.58} /></Box>
