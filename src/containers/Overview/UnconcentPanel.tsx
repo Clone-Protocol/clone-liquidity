@@ -1,4 +1,4 @@
-import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
+import { Box, Stack, Button, Divider, FormHelperText, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { styled } from '@mui/system'
@@ -7,10 +7,9 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
-import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
-import WarningIcon from 'public/images/warning-icon.png'
+import LightBulbIcon from 'public/images/lightbulb-outline.svg'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useLiquidityMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
@@ -143,31 +142,18 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
       )}
 
       <Box>
-        <PriceIndicatorBox
-          tickerIcon={assetData.tickerIcon}
-          tickerName={assetData.tickerName}
-          tickerSymbol={assetData.tickerSymbol}
-          value={assetData.price}
-        />
-
-        <StyledBox>
+        <Box>
           <WarningStack direction="row">
-            <IconWrapper>
-              <Image src={WarningIcon} />
-            </IconWrapper>
-            <WarningBox>
-              Unconcentrated liquidity positions are less capital efficent than coment liquidity. <br />
-              Learn more <span style={{ textDecoration: 'underline' }}>here</span>.
-            </WarningBox>
+            <Image src={LightBulbIcon} />
+            <Typography variant='p' ml='8px'>Unconcentrated positions are capital less efficient compared to any Comet positions</Typography>
           </WarningStack>
           <Box>
-            <SubTitle>
-              <Image src={OneIcon} />{' '}
-              <Box marginLeft='9px'> Provide {assetData.tickerSymbol}</Box>
-            </SubTitle>
-            <SubTitleComment>
+            <Box>
+              <Typography variant='p_lg'>Provide iAsset</Typography>
+            </Box>
+            {/* <SubTitleComment>
               Acquire {assetData.tickerSymbol} by <Link href={`/borrow?lAssetId=${assetIndex}`}><span style={{ color: '#fff', cursor: 'pointer' }}>Borrowing</span></Link>
-            </SubTitleComment>
+            </SubTitleComment> */}
             <Controller
               name="borrowFrom"
               control={control}
@@ -181,7 +167,8 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
                   tickerIcon={assetData.tickerIcon}
                   tickerSymbol={assetData.tickerSymbol}
                   value={isNaN(borrowFrom) ? "" : borrowFrom}
-                  headerTitle="Balance"
+                  dollarPrice={0}
+                  headerTitle="Wallet Balance"
                   headerValue={balances?.iassetVal}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onBorrowFromInputChange(parseFloat(evt.currentTarget.value), field)}
                   onMax={(value: number) => onBorrowFromInputChange(value, field)}
@@ -194,10 +181,9 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
           <StyledDivider />
 
           <Box>
-            <SubTitle>
-              <Image src={TwoIcon} /> <Box marginLeft='9px'> Provide USDi</Box>
-            </SubTitle>
-            <SubTitleComment>An equivalent USDi amount must be provided</SubTitleComment>
+            <Box>
+              <Typography variant='p_lg'>Provide USDi</Typography>
+            </Box>
             <Controller
               name="borrowTo"
               control={control}
@@ -211,7 +197,8 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerSymbol="USDi"
                   value={isNaN(borrowTo) ? "" : borrowTo}
-                  headerTitle="Balance"
+                  dollarPrice={0}
+                  headerTitle="Wallet Balance"
                   headerValue={balances?.usdiVal}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
                     onBorrowToInputChange(parseFloat(evt.currentTarget.value), field)
@@ -224,74 +211,42 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
           </Box>
           <StyledDivider />
 
-          <LiquidityButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Create Unconcentrated Liquidity Position</LiquidityButton>
-        </StyledBox>
+          <LiquidityButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Open Unconcentrated Position</LiquidityButton>
+        </Box>
       </Box>
     </>
   )
 }
 
-const StyledBox = styled(Box)`
-  border-radius: 10px;
-  padding: 24px 32px;
-  background: rgba(21, 22, 24, 0.75);
-  margin-top: 28px;
-`
 const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 30px;
-	margin-top: 30px;
+	background-color: ${(props) => props.theme.boxes.blackShade};
+	margin-bottom: 21px;
+	margin-top: 21px;
 	height: 1px;
 `
 const WarningStack = styled(Stack)`
-  background: rgba(233, 209, 0, 0.04);
-  border: 1px solid #e9d100;
-  border-radius: 10px;
-  color: #9d9d9d;
-  padding: 8px;
-  margin-top: 10px;
-  margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid ${(props) => props.theme.palette.text.secondary};
+  color: ${(props) => props.theme.palette.text.secondary};
 `
-const IconWrapper = styled(Box)`
-  width: 53px; 
-  text-align: center; 
-  margin-top: 11px;
-`
-const SubTitle = styled(Box)`
-	display: flex;
-	font-size: 14px;
-	font-weight: 500;
-`
-
-const SubTitleComment = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #989898;
-	margin-top: 10px;
-`
-
-const WarningBox = styled(Box)`
-	max-width: 500px;
-	padding-right: 10px;
-	font-size: 11px;
-	font-weight: 500;
-	color: #989898;
-`
-
 const LiquidityButton = styled(Button)`
-	width: 100%;
-  background-color: #4e609f;
-	color: #fff;
-  font-size: 13px;
-	border-radius: 10px;
-	margin-bottom: 15px;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 25px;
+  margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
-  } 
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
+  }
 `
 
 export default withSuspense(UnconcentPanel, <LoadingProgress />)

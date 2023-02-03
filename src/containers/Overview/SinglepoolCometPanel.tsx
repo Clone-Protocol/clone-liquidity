@@ -21,8 +21,10 @@ import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const COLLATERAL_INDEX = 0 // USDi
+const RISK_SCORE_VAL = 20
 
 const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -187,9 +189,9 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     }
 
     if (!mintAmount || mintAmount <= 0) {
-      return 'The mint amount should be above zero'
+      return 'Mint amount should be above zero'
     } if (mintAmount >= maxMintable) {
-      return 'The mint amount cannot exceed the maximum mintable amout'
+      return 'Mint amount cannot exceed the max mintable amount'
     }
 
     clearErrors('mintAmount')
@@ -209,6 +211,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
     return false
   }
+
+  const hasRiskScore = cometHealthScore < RISK_SCORE_VAL
 
   return (
     <>
@@ -313,17 +317,19 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
           <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
 
-          <Box my="20px">
+          <Box my="15px">
             <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
             <HealthscoreBar score={cometHealthScore} />
-            {/* <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{cometHealthScore.toFixed(2)}</span>/100</HealthScoreValue> */}
+            {hasRiskScore &&
+              <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+            }
           </Box>
         </BoxWithBorder>
 
-        <SubmitButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>
-          <Typography variant='p_lg'>Open Singlepool Comet Position</Typography>
+        <SubmitButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
+          <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Singlepool Comet Position</Typography>
         </SubmitButton>
-      </Box>
+      </Box >
     </>
   )
 }
@@ -331,7 +337,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
-
 const StyledDivider = styled(Divider)`
 	background-color: ${(props) => props.theme.boxes.blackShade};
 	margin-bottom: 21px;
@@ -340,13 +345,11 @@ const StyledDivider = styled(Divider)`
 `
 const SubmitButton = styled(Button)`
 	width: 100%;
-	background-color: #767676;
+	background-color: ${(props) => props.theme.palette.primary.main};
 	color: #000;
   border-radius: 0px;
   margin-top: 25px;
 	margin-bottom: 15px;
-  font-size: 13px;
-  font-weight: 600;
   &:hover {
     background-color: #7A86B6;
   }
@@ -354,6 +357,15 @@ const SubmitButton = styled(Button)`
     background-color: ${(props) => props.theme.boxes.grey};
     color: #000;
   }
+`
+const WarningStack = styled(Stack)`
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid ${(props) => props.theme.palette.error.main};
+  color: ${(props) => props.theme.palette.text.secondary};
 `
 
 export default withSuspense(SinglepoolCometPanel, <LoadingProgress />)
