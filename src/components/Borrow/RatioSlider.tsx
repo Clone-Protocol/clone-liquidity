@@ -1,4 +1,4 @@
-import { Box, Slider, styled } from '@mui/material'
+import { Box, Slider, styled, Typography } from '@mui/material'
 
 interface Props {
 	min?: number
@@ -15,33 +15,31 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	marginTop: '13px',
 	'& .MuiSlider-thumb': {
 		zIndex: 30,
-		height: 20,
-		width: 20,
+		height: 16,
+		width: 16,
 		backgroundColor: '#fff',
-		border: '3px solid #809cff',
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
 		},
 	},
 	'& .MuiSlider-track': {
 		zIndex: 10,
-		height: 3,
+		height: 4,
 		border: 'none',
-		background: 'linear-gradient(to right, #f00 -12%, #809cff 66%)'
 	},
 	'& .MuiSlider-valueLabel': {
-		fontSize: '11px',
-		fontWeight: '600',
+		width: '65px',
+		fontSize: '12px',
+		fontWeight: '500',
+		border: '1px solid #fff',
 		padding: '4px 8px 4px 8px',
-		borderRadius: '10px',
-		border: 'solid 1px #809cff',
 		backgroundColor: '#000',
 		'&:before': { display: 'none' },
 	},
 	'& .MuiSlider-rail': {
 		zIndex: 10,
-		color: '#444444',
-		height: 3,
+		color: '#3f3f3f',
+		height: 4,
 	},
 }))
 
@@ -59,22 +57,19 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 	}
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-			}}>
-			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
+		<Box display='flex'>
+			{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 			{showChangeRatio &&
 				<Box display='flex'>
 					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-					<div style={{ marginLeft: '-24px', marginRight: '10px', marginTop: '16px' }}>%</div>
+					<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '14px' }}><Typography variant='p_xlg'>%</Typography></div>
 				</Box>
 			}
 			<Box width="100%">
 				<StyledSlider
 					sx={{
 						'& .MuiSlider-track': {
-							background: `linear-gradient(to right, #f00 -160px, #809cff 270px)`
+							background: `linear-gradient(to right, #ff8e4f 90px, #ffffff 550px)`
 						}
 					}}
 					value={value > min ? value : min}
@@ -87,7 +82,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				/>
 				<Box display='flex'>
 					<Box marginLeft='30px'><Stick /><FlagBox>min {min}%</FlagBox></Box>
-					<Box marginLeft='163px'><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
+					<Box marginLeft='165px'><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
 				</Box>
 			</Box>
 		</Box>
@@ -96,30 +91,25 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 
 const ValueBox = styled(Box)`
 	text-align: center;
-	background-color: #333;
-  border: solid 1px #444;
-	border-radius: 10px;
-	width: 102px;
-	height: 54px;
+	background-color: ${(props) => props.theme.boxes.black};
+	width: 108px;
+	height: 48px;
 	line-height: 28px;
-	font-size: 16px;
-	font-weight: 500;
 	color: #fff;
 	padding: 12px 18px 12px 26px;
 `
 
 const InputAmount = styled(`input`)`
 	text-align: center;
-	background-color: #333;
-	border: solid 1px #444;
-	border-radius: 10px;
-	width: 102px;
-	height: 54px;
-	line-height: 28px;
-	font-size: 16px;
-	font-weight: 500;
+	background-color: ${(props) => props.theme.boxes.black};
+	width: 108px;
+	height: 48px;
+	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	line-height: 15px;
 	color: #fff;
-	padding: 12px 18px 12px 26px;
+	font-size: 17.3px;
+	font-weight: 500;
+	padding: 12px 18px;
 	cursor: pointer;
 	&:hover {
     border: solid 1px #809cff;
@@ -130,22 +120,18 @@ const FlagBox = styled(Box)`
   width: 90px;
   height: 23px;
   padding: 8px;
-  border-radius: 10px;
-  border: solid 1px #444;
-  background-color: #000;
   font-size: 11px;
   font-weight: 500;
   line-height: 3px;
-	text-align: center;
   margin-top: 0px;
 `
 
 const Stick = styled('div')`
   z-index: 20;
 	border-radius: 0;
-	background: #444;
+	background: #fff;
 	width: 1px;
-	height: 16px;
+	height: 13px;
 	margin-top: -22px;
 	margin-left: 34px;
 `

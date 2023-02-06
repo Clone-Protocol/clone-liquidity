@@ -20,6 +20,12 @@ const PriceChart: React.FC<Props> = ({ assetData }) => {
     enabled: true
   })
 
+  // const { data: priceHistory } = usePriceHistoryQuery({
+  //   tickerSymbol: borrowAsset?.tickerSymbol,
+  //   refetchOnMount: false,
+  //   enabled: borrowAsset != null
+  // })
+
   return (
     <>
       <Box display="flex">
