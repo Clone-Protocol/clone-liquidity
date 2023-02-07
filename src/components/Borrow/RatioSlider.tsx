@@ -1,10 +1,12 @@
-import { Box, Slider, styled, Typography } from '@mui/material'
+import { Box, Slider, styled, Typography, Stack } from '@mui/material'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 interface Props {
 	min?: number
 	value: number
 	hideValueBox?: boolean
 	showChangeRatio?: boolean
+	hasRiskRatio?: boolean
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => void
 }
 
@@ -43,7 +45,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }))
 
-const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, onChange }) => {
+const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, hasRiskRatio, onChange }) => {
 	const max = min + 100 + 50
 
 	const valueLabelFormat = (val: number) => {
@@ -56,35 +58,49 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 		}
 	}
 
+	const hasLowerMin = value < min;
+
 	return (
-		<Box display='flex'>
-			{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
-			{showChangeRatio &&
-				<Box display='flex'>
-					<InputAmount id="ip-amount" type="number" min={0} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-					<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '14px' }}><Typography variant='p_xlg'>%</Typography></div>
-				</Box>
-			}
-			<Box width="100%">
-				<StyledSlider
-					sx={{
-						'& .MuiSlider-track': {
-							background: `linear-gradient(to right, #ff8e4f 90px, #ffffff 550px)`
-						}
-					}}
-					value={value > min ? value : min}
-					min={min - 25}
-					step={5}
-					max={min + 100 + 50}
-					valueLabelFormat={valueLabelFormat}
-					onChange={onChange}
-					valueLabelDisplay={'on'}
-				/>
-				<Box display='flex'>
-					<Box marginLeft='30px'><Stick /><FlagBox>min {min}%</FlagBox></Box>
-					<Box marginLeft='165px'><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
+		<Box>
+			<Box display='flex'>
+				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
+				{showChangeRatio &&
+					<Box display='flex' style={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}}>
+						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { color: '#ed2525', border: '1px solid #ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '14px' }}><Typography variant='p_xlg'>%</Typography></div>
+					</Box>
+				}
+				<Box width="100%">
+					<StyledSlider
+						sx={{
+							'& .MuiSlider-track': {
+								background: `linear-gradient(to right, #ff8e4f 35%, #ffffff 250px)`
+							}
+						}}
+						value={value > min ? value : min}
+						min={min - 25}
+						step={5}
+						max={min + 100 + 50}
+						valueLabelFormat={valueLabelFormat}
+						onChange={onChange}
+						valueLabelDisplay={'on'}
+					/>
+					<Box display='flex'>
+						<Box marginLeft='30px'><Stick /><FlagBox style={hasLowerMin ? { color: '#ed2525' } : {}}>min {min}%</FlagBox></Box>
+						<Box marginLeft='165px'><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
+					</Box>
 				</Box>
 			</Box>
+			{hasLowerMin &&
+				<Box>
+					<Typography variant='p' color='#ed2525'>
+						The Collateral Ratio must be greater than minimum value
+					</Typography>
+				</Box>
+			}
+			{hasRiskRatio &&
+				<WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+			}
 		</Box>
 	)
 }
@@ -135,5 +151,15 @@ const Stick = styled('div')`
 	margin-top: -22px;
 	margin-left: 34px;
 `
-
+const WarningStack = styled(Stack)`
+	max-width: 500px;
+  justify-content: center;
+  align-items: center;
+	margin: 0 auto;
+  margin-top: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid ${(props) => props.theme.palette.error.main};
+  color: ${(props) => props.theme.palette.text.secondary};
+`
 export default RatioSlider

@@ -10,9 +10,10 @@ import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
   assetData: PositionInfo
+  priceTitle: string
 }
 
-const PriceChart: React.FC<Props> = ({ assetData }) => {
+const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
   // TODO: need to change other query
   const { data: totalLiquidity } = useTotalLiquidityQuery({
     timeframe: '24h',
@@ -36,10 +37,10 @@ const PriceChart: React.FC<Props> = ({ assetData }) => {
       </Box>
       <Box display='flex' alignItems='center'>
         <Typography variant='p_xxxlg'>
-          ${assetData.price.toLocaleString(undefined, { maximumFractionDigits: 3 })}
+          ${assetData.price?.toLocaleString(undefined, { maximumFractionDigits: 3 })}
         </Typography>
         <Typography variant='p_sm' color='#989898' ml='10px'>
-          iAsset Price
+          {priceTitle}
         </Typography>
       </Box>
       {/* 

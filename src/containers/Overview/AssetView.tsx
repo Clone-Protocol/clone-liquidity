@@ -14,7 +14,6 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/components/Common/StyledTab'
 import SinglepoolCometPanel from './SinglepoolCometPanel'
-import BorrowPanel from './BorrowPanel'
 import UnconcentPanel from './UnconcentPanel'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
@@ -78,7 +77,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 						<Box paddingY='10px'>
 							<TabPanel value={tab} index={0}>
-								<BorrowPanel />
+								{/* <BorrowPanel /> */}
 							</TabPanel>
 							<TabPanel value={tab} index={1}>
 								<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
@@ -95,7 +94,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				</Box>
 
 				<RightBoxWrapper>
-					<PriceChart assetData={assetData} />
+					<PriceChart assetData={assetData} priceTitle='iAsset Price' />
 					<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
 				</RightBoxWrapper>
 			</Stack>

@@ -18,27 +18,29 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 
-const BorrowPanel = () => {
+const RISK_RATIO_VAL = 170
+
+const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
   const { publicKey } = useWallet()
-  const router = useRouter()
+  // const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
-  const { lAssetId } = router.query
+  // const { lAssetId } = router.query
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
     tickerName: 'USDi Coin',
     tickerSymbol: 'USDi',
   }
-  const [assetIndex, setAssetIndex] = useState(0)
-  const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
+  // const [assetIndex, setAssetIndex] = useState(0)
+  // const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
 
   // sub routing for asset id
-  useEffect(() => {
-    if (lAssetId) {
-      setAssetIndex(parseInt(lAssetId.toString()))
-      setBorrowAsset(ASSETS[parseInt(lAssetId.toString())])
-    }
-  }, [lAssetId])
+  // useEffect(() => {
+  //   if (lAssetId) {
+  //     setAssetIndex(parseInt(lAssetId.toString()))
+  //     setBorrowAsset(ASSETS[parseInt(lAssetId.toString())])
+  //   }
+  // }, [lAssetId])
 
   const { data: borrowDetail } = useBorrowDetailQuery({
     userPubKey: publicKey,
@@ -150,6 +152,7 @@ const BorrowPanel = () => {
   }
 
   const isValid = Object.keys(errors).length === 0
+  const hasRiskRatio = collRatio < RISK_RATIO_VAL
 
   return usdiBalance ? (
     <>
@@ -209,7 +212,7 @@ const BorrowPanel = () => {
 
           <Box><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
           <Box sx={{ marginTop: '20px' }}>
-            <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
+            <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
           </Box>
 
           <StyledDivider />
@@ -244,8 +247,8 @@ const BorrowPanel = () => {
             </Box>
           </Box>
 
-          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)}>
-            <Typography variant='p_lg'>Borrow</Typography>
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+            <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow</Typography>
           </SubmitButton>
         </Box>
       </Box>
