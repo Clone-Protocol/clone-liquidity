@@ -14,10 +14,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/components/Common/StyledTab'
 import SinglepoolCometPanel from './SinglepoolCometPanel'
-import CometPanel from './CometPanel'
 import UnconcentPanel from './UnconcentPanel'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
 import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
@@ -80,7 +77,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 						<Box paddingY='10px'>
 							<TabPanel value={tab} index={0}>
-								<CometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
+								{/* <BorrowPanel /> */}
 							</TabPanel>
 							<TabPanel value={tab} index={1}>
 								<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
@@ -97,7 +94,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				</Box>
 
 				<RightBoxWrapper>
-					<PriceChart assetData={assetData} />
+					<PriceChart assetData={assetData} priceTitle='iAsset Price' />
 					<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
 				</RightBoxWrapper>
 			</Stack>
@@ -135,6 +132,7 @@ const SelectPoolBox = styled(Box)`
 	justify-content: space-between;
 	width: 261px;
 	height: 45px;
+	margin-top: 15px;
 	margin-bottom: 28px;
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};

@@ -44,8 +44,13 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 }))
 
 const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox = false, onChange }) => {
+	const isOverMax = value >= 100
 	const valueLabelFormat = (value: number) => {
-		return `${value}%`
+		if (value >= 100) {
+			return `>100%`
+		} else {
+			return `${value.toFixed(0)}%`
+		}
 	}
 
 	const pickHex = (x: number) => {
@@ -65,6 +70,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 					sx={{
 						'& .MuiSlider-valueLabel': {
 							border: `solid 1px ${pickHex(value)}`,
+							color: value >= 100 ? '#ed2525' : ''
 						},
 						'& .MuiSlider-thumb': {
 							border: `0px`,

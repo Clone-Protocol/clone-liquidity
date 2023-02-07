@@ -22,7 +22,6 @@ import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
 
 const BorrowBox = () => {
   const { publicKey } = useWallet()
@@ -117,11 +116,10 @@ const BorrowBox = () => {
       const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
       setAssetIndex(index)
       setBorrowAsset(ASSETS[index])
-      initData()
     }
   }, [assetIndex, borrowAsset])
 
-  const handleChangeCollRatio = useCallback((event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => {
+  const handleChangeCollRatio = useCallback((event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number' && borrowDetail) {
       if (!isNaN(newValue)) {
         setCollRatio(newValue)
@@ -147,14 +145,14 @@ const BorrowBox = () => {
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established borrow position')
+            enqueueSnackbar('Success to borrow')
             setLoading(false)
             initData()
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error establishing borrow position')
+          enqueueSnackbar('Failed to borrow')
           setLoading(false)
         }
       }
@@ -181,9 +179,9 @@ const BorrowBox = () => {
           <StyledBox>
             <Box display="flex">
               <Image src={borrowAsset.tickerIcon} width="30px" height="30px" layout="fixed" />
-              <TickerWrapper>
+              <Box sx={{ marginLeft: '10px', fontSize: '14px', fontWeight: '600', color: '#fff', marginTop: '3px' }}>
                 {borrowAsset.tickerName} ({borrowAsset.tickerSymbol})
-              </TickerWrapper>
+              </Box>
             </Box>
             <Box sx={{ marginTop: '10px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
               ${borrowDetail?.oPrice.toFixed(2)}
@@ -198,7 +196,7 @@ const BorrowBox = () => {
               color={priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
             />
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-              Oracle Price <InfoTooltip title={TooltipTexts.oraclePrice} />
+              Oracle Price <InfoTooltip title="Oracle Price" />
             </Box>
           </StyledBox>
         </Box>
@@ -223,6 +221,7 @@ const BorrowBox = () => {
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={fromPair.tickerIcon}
+                    tickerName={fromPair.tickerName}
                     tickerSymbol={fromPair.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     balance={usdiBalance?.balanceVal}
@@ -242,7 +241,7 @@ const BorrowBox = () => {
             <StyledDivider />
 
             <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title={TooltipTexts.setCollateralRatio} /></Box></SubTitle>
+              <SubTitle><Image src={TwoIcon} /> <Box sx={{ marginLeft: '9px' }}>Set collateral ratio <InfoTooltip title="Set collateral ratio" /></Box></SubTitle>
               <SubTitleComment>Liquidation will be triggerd when the position’s collateral ratio is below minimum.</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
                 <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
@@ -254,6 +253,13 @@ const BorrowBox = () => {
               <SubTitle><Image src={ThreeIcon} /> <Box sx={{ marginLeft: '9px' }}>Borrow Amount</Box></SubTitle>
               <SubTitleComment>The position can be closed when the full borrowed amount is repayed</SubTitleComment>
               <Box sx={{ marginTop: '20px' }}>
+                {/* <SelectPairInput
+                  assets={ASSETS}
+                  selAssetId={assetIndex}
+                  value={borrowAmount}
+                  onChangeAsset={handleChangeAssetIdx}
+                  onChangeAmount={handleChangeBorrowAmount}
+                /> */}
                 <Controller
                   name="borrowAmount"
                   control={control}
@@ -267,9 +273,10 @@ const BorrowBox = () => {
                   render={({ field }) => (
                     <PairInput
                       tickerIcon={ASSETS[assetIndex].tickerIcon}
+                      tickerName={ASSETS[assetIndex].tickerName}
                       tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                       balanceDisabled
-                      value={field.value}
+                      value={parseFloat(field.value.toFixed(3))}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const borrowAmt = parseFloat(event.currentTarget.value)
                         field.onChange(borrowAmt)
@@ -299,13 +306,7 @@ const StyledBox = styled(Box)`
   background: rgba(21, 22, 24, 0.75);
   margin-top: 22px;
 `
-const TickerWrapper = styled(Box)`
-  margin-left: 10px; 
-  font-size: 14px; 
-  font-weight: 600; 
-  color: #fff; 
-  margin-top: 3px;
-`
+
 const StyledPaper = styled(Paper)`
 	width: 620px;
 	font-size: 14px;
