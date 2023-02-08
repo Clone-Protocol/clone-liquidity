@@ -3,9 +3,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
-import { Balance } from '~/features/Borrow/Balance.query'
 import { Box, Stack, Button, Divider, FormHelperText, Typography } from '@mui/material'
-import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { styled } from '@mui/system'
@@ -19,6 +17,9 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import MultipoolBlank from '~/components/Overview/MultipoolBlank'
+import DataPlusIcon from 'public/images/database-plus.svg'
+import AirballoonIcon from 'public/images/airballoon-outline.svg'
 
 const RISK_SCORE_VAL = 20
 
@@ -118,6 +119,15 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
+
+  const BlankNoCollateral = () => (
+    <MultipoolBlank title='Deposit collaterals to multipool to get started' subtitle='Multipool Liquidity Positions are designed to enable advanced users to 
+    fully leverage the CLS' icon={DataPlusIcon} />
+  )
+
+  const BlankAlreadyPool = () => (
+    <MultipoolBlank title='Liquidity position for this pool already exists for Multipool' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} />
+  )
 
   return positionInfo ? (
     <>
