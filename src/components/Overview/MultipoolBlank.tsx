@@ -5,17 +5,20 @@ const MultipoolBlank = ({ title, subtitle, icon }: { title: string, subtitle: st
   return (
     <BoxWrapper>
       <Box><Typography variant="p">{title}</Typography></Box>
-      <Box><Typography>{subtitle}</Typography></Box>
-      <Box><Image src={icon} /></Box>
+      <Box maxWidth='414px'><Typography variant="p" color="#989898">{subtitle}</Typography></Box>
+      <Box my="20px"><Image src={icon} /></Box>
     </BoxWrapper>
   )
 }
 
 const BoxWrapper = styled(Box)`
+  height: 173px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-	text-align: center;
+  line-height: 16px;
+	text-align: center;  
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	color: #bfbebe;
 	padding-top: 8px;

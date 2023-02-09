@@ -20,6 +20,7 @@ import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
+import { position } from 'polished'
 
 const RISK_SCORE_VAL = 20
 
@@ -64,6 +65,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
     trigger,
     formState: { isDirty, errors },
     watch,
+    clearErrors
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -78,6 +80,19 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
       setMintRatio(newValue)
+    }
+  }
+
+  const validateMintAmount = () => {
+    if (!isDirty) {
+      clearErrors('mintAmount')
+      return
+    }
+
+    if (!mintAmount || mintAmount <= 0) {
+      return 'Mint amount should be above zero'
+    } else if (mintAmount >= maxMintable) {
+      return 'Mint amount cannot exceed the max mintable amount'
     }
   }
 
@@ -129,143 +144,151 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
     <MultipoolBlank title='Liquidity position for this pool already exists for Multipool' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} />
   )
 
-  return positionInfo ? (
-    <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-      <Box>
-        <BoxWithBorder p='20px'>
-          <Box>
-            <Typography variant='p_lg'>Current Multipool Stat</Typography>
-          </Box>
-          <Box my='15px'>
-            <Box mb='15px'><Typography variant='p'>Total Multipool Collateral Value</Typography></Box>
-            <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
-          </Box>
-          <Box>
-            <Box mb='15px'><Typography variant='p'>Current Multipool Healthscore</Typography></Box>
-            <HealthscoreBar score={positionInfo.totalHealthScore} />
-          </Box>
-        </BoxWithBorder>
-
-        <StyledDivider />
-        <Box mb='13px'>
-          <Box>
-            <Typography variant='p_lg'>Liquidity Amount</Typography>
-          </Box>
-          <Box mt='15px' mb='10px'>
-            <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-            <Box display='flex' justifyContent='space-between' marginTop='-10px'>
-              <Box><Typography variant='p_sm'>Min</Typography></Box>
-              <Box><Typography variant='p_sm'>Max</Typography></Box>
+  const MultipoolComet = () => {
+    return positionInfo ? (
+      <>
+        {loading && (
+          <LoadingWrapper>
+            <LoadingIndicator open inline />
+          </LoadingWrapper>
+        )}
+        <Box>
+          <BoxWithBorder p='20px'>
+            <Box>
+              <Typography variant='p_lg'>Current Multipool Stat</Typography>
             </Box>
-          </Box>
-          <Stack direction='row' alignItems='flex-end' gap={1}>
-            <Box width='275px'>
-              <Controller
-                name="mintAmount"
-                control={control}
-                rules={{
-                  validate(value) {
-                    if (!value || value < 0) {
-                      return ''
+            <Box my='15px'>
+              <Box mb='15px'><Typography variant='p'>Total Multipool Collateral Value</Typography></Box>
+              <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
+            </Box>
+            <Box>
+              <Box mb='15px'><Typography variant='p'>Current Multipool Healthscore</Typography></Box>
+              <HealthscoreBar score={positionInfo.totalHealthScore} />
+            </Box>
+          </BoxWithBorder>
+
+          <StyledDivider />
+          <Box mb='13px'>
+            <Box>
+              <Typography variant='p_lg'>Liquidity Amount</Typography>
+            </Box>
+            <Box mt='15px' mb='10px'>
+              <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+              <Box display='flex' justifyContent='space-between' marginTop='-10px'>
+                <Box><Typography variant='p_sm'>Min</Typography></Box>
+                <Box><Typography variant='p_sm'>Max</Typography></Box>
+              </Box>
+            </Box>
+            <Stack direction='row' alignItems='flex-end' gap={1}>
+              <Box width='275px'>
+                <Controller
+                  name="mintAmount"
+                  control={control}
+                  rules={{
+                    validate() {
+                      return validateMintAmount()
                     }
-                  }
-                }}
-                render={({ field }) => (
-                  <PairInput
-                    tickerIcon={'/images/assets/USDi.png'}
-                    tickerSymbol="USDi"
-                    value={parseFloat(field.value.toFixed(3))}
-                    dollarPrice={0}
-                    headerTitle="Max amount mintable"
-                    headerValue={maxMintable}
-                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
-                      let mintVal = parseFloat(evt.currentTarget.value)
-                      mintVal = isNaN(mintVal) ? 0 : mintVal
-                      field.onChange(mintVal)
-                      maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
-                    }}
-                    onMax={(value: number) => {
-                      field.onChange(value)
-                      maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
-                    }}
-                  />
-                )}
-              />
-              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-            </Box>
-            <Box width='275px'>
-              <PairInputView
-                tickerIcon={positionInfo.tickerIcon}
-                tickerSymbol={positionInfo.tickerSymbol}
-                value={mintAmount / positionInfo.price}
-                dollarPrice={1445}
-              />
-            </Box>
-          </Stack>
-        </Box>
-        <BoxWithBorder padding="15px 24px">
-          <Stack direction='row' justifyContent='space-between'>
-            <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
-            <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
-          </Stack>
-        </BoxWithBorder>
-        <StyledDivider />
-
-        <BoxWithBorder padding="20px 24px">
-          <Box my="15px">
-            <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-            <HealthscoreBar score={healthScore} />
-            {hasRiskScore &&
-              <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
-            }
+                  }}
+                  render={({ field }) => (
+                    <PairInput
+                      tickerIcon={'/images/assets/USDi.png'}
+                      tickerSymbol="USDi"
+                      value={parseFloat(field.value.toFixed(3))}
+                      dollarPrice={0}
+                      headerTitle="Max amount mintable"
+                      headerValue={maxMintable}
+                      onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
+                        let mintVal = parseFloat(evt.currentTarget.value)
+                        mintVal = isNaN(mintVal) ? 0 : mintVal
+                        field.onChange(mintVal)
+                        maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
+                      }}
+                      onMax={(value: number) => {
+                        field.onChange(value)
+                        maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
+                      }}
+                    />
+                  )}
+                />
+                <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+              </Box>
+              <Box width='275px'>
+                <PairInputView
+                  tickerIcon={positionInfo.tickerIcon}
+                  tickerSymbol={positionInfo.tickerSymbol}
+                  value={mintAmount / positionInfo.price}
+                  dollarPrice={1445}
+                />
+              </Box>
+            </Stack>
           </Box>
-        </BoxWithBorder>
+          <BoxWithBorder padding="15px 24px">
+            <Stack direction='row' justifyContent='space-between'>
+              <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
+              <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
+            </Stack>
+          </BoxWithBorder>
+          <StyledDivider />
 
-        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
-          <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
-        </SubmitButton>
-      </Box >
-    </>
-  ) : <></>
+          <BoxWithBorder padding="20px 24px">
+            <Box my="15px">
+              <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
+              <HealthscoreBar score={healthScore} />
+              {hasRiskScore &&
+                <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+              }
+            </Box>
+          </BoxWithBorder>
+
+          <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
+            <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
+          </SubmitButton>
+        </Box >
+      </>
+    ) : <></>
+  }
+
+  if (positionInfo?.hasNoCollateral) {
+    return <BlankNoCollateral />
+  } else if (positionInfo?.hasAlreadyPool) {
+    return <BlankAlreadyPool />
+  } else {
+    return <MultipoolComet />
+  }
 }
 
 const BoxWithBorder = styled(Box)`
-        border: solid 1px ${(props) => props.theme.boxes.greyShade};
-        `
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+`
 const StyledDivider = styled(Divider)`
-        background-color: ${(props) => props.theme.boxes.blackShade};
-        margin-bottom: 21px;
-        margin-top: 21px;
-        height: 1px;
-        `
+  background-color: ${(props) => props.theme.boxes.blackShade};
+  margin-bottom: 21px;
+  margin-top: 21px;
+  height: 1px;
+`
 const SubmitButton = styled(Button)`
-        width: 100%;
-        background-color: ${(props) => props.theme.palette.primary.main};
-        color: #000;
-        border-radius: 0px;
-        margin-top: 25px;
-        margin-bottom: 15px;
-        &:hover {
-          background - color: #7A86B6;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  &:hover {
+    background - color: #7A86B6;
   }
-        &:disabled {
-          background - color: ${(props) => props.theme.boxes.grey};
-        color: #000;
+  &:disabled {
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
-        `
+`
 const WarningStack = styled(Stack)`
-        justify-content: center;
-        align-items: center;
-        margin-top: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        border: 1px solid ${(props) => props.theme.palette.error.main};
-        color: ${(props) => props.theme.palette.text.secondary};
-        `
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid ${(props) => props.theme.palette.error.main};
+  color: ${(props) => props.theme.palette.text.secondary};
+`
 
 export default withSuspense(MultipoolCometPanel, <LoadingProgress />)
