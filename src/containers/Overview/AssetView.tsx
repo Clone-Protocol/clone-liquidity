@@ -21,6 +21,7 @@ import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import MultipoolCometPanel from './MultipoolCometPanel'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -77,7 +78,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 						<Box paddingY='10px'>
 							<TabPanel value={tab} index={0}>
-								{/* <BorrowPanel /> */}
+								<MultipoolCometPanel assetIndex={assetIndex} onRefetchData={() => refetch()} />
 							</TabPanel>
 							<TabPanel value={tab} index={1}>
 								<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />

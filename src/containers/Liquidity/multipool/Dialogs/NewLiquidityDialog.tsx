@@ -182,7 +182,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
                 />
 
                 <FormStack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box>Total liquidity value of the position: </Box>
+                  <Box>Aggregate Liquidity Value</Box>
                   <Box sx={{ fontSize: '16px' }}>${totalLiquidity.toLocaleString()}</Box>
                 </FormStack>
 

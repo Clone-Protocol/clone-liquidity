@@ -190,11 +190,9 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
     if (!mintAmount || mintAmount <= 0) {
       return 'Mint amount should be above zero'
-    } if (mintAmount >= maxMintable) {
+    } else if (mintAmount >= maxMintable) {
       return 'Mint amount cannot exceed the max mintable amount'
     }
-
-    clearErrors('mintAmount')
   }
 
   const disableSubmitButton = (): boolean => {

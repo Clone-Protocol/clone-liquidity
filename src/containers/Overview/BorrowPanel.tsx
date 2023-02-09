@@ -2,7 +2,6 @@ import { Box, Button, Divider, Stack, FormHelperText, Typography } from '@mui/ma
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 // import PairInput from '~/components/Borrow/PairInput'
 import PairInput from '~/components/Asset/PairInput'
@@ -22,25 +21,13 @@ const RISK_RATIO_VAL = 170
 
 const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
   const { publicKey } = useWallet()
-  // const router = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
-  // const { lAssetId } = router.query
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
     tickerName: 'USDi Coin',
     tickerSymbol: 'USDi',
   }
-  // const [assetIndex, setAssetIndex] = useState(0)
-  // const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
-
-  // sub routing for asset id
-  // useEffect(() => {
-  //   if (lAssetId) {
-  //     setAssetIndex(parseInt(lAssetId.toString()))
-  //     setBorrowAsset(ASSETS[parseInt(lAssetId.toString())])
-  //   }
-  // }, [lAssetId])
 
   const { data: borrowDetail } = useBorrowDetailQuery({
     userPubKey: publicKey,

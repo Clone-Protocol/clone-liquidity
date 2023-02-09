@@ -36,11 +36,22 @@ export const fetchLiquidityDetail = async ({
 	let totalCollValue = 0
 	let totalHealthScore = 0
 	let comet;
+	let hasNoCollateral = false
+	let hasAlreadyPool = false
 	if (cometResult.status === 'fulfilled') {
 		// Only USDi for now.
 		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 		comet = cometResult.value
 		totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
+		hasNoCollateral = Number(comet.numCollaterals) === 0
+
+		for (let i = 0; i < Number(comet.numPositions); i++) {
+			const poolIndex = Number(comet.positions[i].poolIndex)
+			if (assetId === poolIndex) {
+				hasAlreadyPool = true
+				break;
+			}
+		}
 	}
 
 	return {
@@ -51,7 +62,9 @@ export const fetchLiquidityDetail = async ({
 		totalCollValue,
 		totalHealthScore,
 		tokenData: tokenDataResult.value,
-		comet
+		comet,
+		hasNoCollateral,
+		hasAlreadyPool
 	}
 }
 
@@ -64,6 +77,8 @@ export interface PositionInfo {
 	totalHealthScore: number
 	tokenData: TokenData,
 	comet: Comet | undefined
+	hasNoCollateral: boolean
+	hasAlreadyPool: boolean
 }
 
 interface GetProps {
