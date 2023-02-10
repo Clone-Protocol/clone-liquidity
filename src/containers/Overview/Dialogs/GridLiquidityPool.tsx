@@ -1,26 +1,25 @@
-/// @deprecated 
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled } from '@mui/material'
-import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
+import { GridColDef, GridRenderCellParams, GridRowParams, MuiEvent, GridCallbackDetails } from '@mui/x-data-grid'
 import { Grid } from '~/components/Liquidity/multipool/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { useCollateralsQuery } from '~/features/MyLiquidity/multipool/Collaterals.query'
+import { useLiquidityPoolsQuery } from '~/features/MyLiquidity/multipool/LiquidityPools.query'
 
 interface Props {
 	onChoose: (id: number) => void
 }
 
-const GridCollateral: React.FC<Props> = ({ onChoose }) => {
+const GridLiquidityPool: React.FC<Props> = ({ onChoose }) => {
 	const { publicKey } = useWallet()
-	const { data: collaterals } = useCollateralsQuery({
+	const { data: pools } = useLiquidityPoolsQuery({
 		userPubKey: publicKey,
 		refetchOnMount: "always",
 		enabled: publicKey != null
 	})
 
-	const handleChoose = (params: GridRowParams) => {
+	const handleChoose = (params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
 		if (params.row.isEnabled) {
 			const id = params.row.id
 			onChoose && onChoose(id)
@@ -30,7 +29,7 @@ const GridCollateral: React.FC<Props> = ({ onChoose }) => {
 	return (
 		<Grid
 			headers={columns}
-			rows={collaterals || []}
+			rows={pools || []}
 			onRowClick={handleChoose}
 			minHeight={380}
 		/>
@@ -49,30 +48,40 @@ let columns: GridColDef[] = [
 				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
 					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
 					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
-						{params.row.tickerSymbol}
+						{params.row.tickerSymbol} / USDi
 					</Box>
 				</Box>
 			)
 		},
 	},
 	{
-		field: 'balance',
-		headerClassName: 'last--header',
-		cellClassName: 'last--cell',
-		headerName: 'Wallet Balance',
+		field: 'totalLiquidity',
+		headerClassName: 'super-app-theme--header',
+		cellClassName: 'super-app-theme--cell',
+		headerName: 'Total Liquidity',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellValue>{params.value?.toLocaleString()}</CellValue>
+			return <CellValue>${params.value?.toLocaleString()}</CellValue>
 		},
 	},
+	{
+		field: 'volume24H',
+		headerClassName: 'super-app-theme--header',
+		cellClassName: 'super-app-theme--cell',
+		headerName: '24h Volume',
+		flex: 1,
+		renderCell(params: GridRenderCellParams<string>) {
+			return <CellValue>${params.value?.toLocaleString()}</CellValue>
+		},
+	}
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
 const CellValue = styled(Box)`
 	font-size: 14px;
-	text-align: right;
+	text-align: left;
   color: #fff;
 `
 
-export default withSuspense(GridCollateral, <LoadingProgress />)
+export default withSuspense(GridLiquidityPool, <LoadingProgress />)

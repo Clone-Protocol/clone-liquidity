@@ -1,4 +1,3 @@
-/// @deprecated 
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
@@ -6,15 +5,16 @@ import { Grid } from '~/components/Liquidity/multipool/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { useCollateralsQuery } from '~/features/MyLiquidity/multipool/Collaterals.query'
+import { useAssetsQuery } from '~/features/Borrow/Assets.query'
 
 interface Props {
 	onChoose: (id: number) => void
 }
 
-const GridCollateral: React.FC<Props> = ({ onChoose }) => {
+const GridAssets: React.FC<Props> = ({ onChoose }) => {
 	const { publicKey } = useWallet()
-	const { data: collaterals } = useCollateralsQuery({
+
+	const { data: assets } = useAssetsQuery({
 		userPubKey: publicKey,
 		refetchOnMount: "always",
 		enabled: publicKey != null
@@ -30,7 +30,7 @@ const GridCollateral: React.FC<Props> = ({ onChoose }) => {
 	return (
 		<Grid
 			headers={columns}
-			rows={collaterals || []}
+			rows={assets || []}
 			onRowClick={handleChoose}
 			minHeight={380}
 		/>
@@ -42,7 +42,7 @@ let columns: GridColDef[] = [
 		field: 'asset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Asset',
+		headerName: 'Token',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
@@ -75,4 +75,4 @@ const CellValue = styled(Box)`
   color: #fff;
 `
 
-export default withSuspense(GridCollateral, <LoadingProgress />)
+export default withSuspense(GridAssets, <LoadingProgress />)

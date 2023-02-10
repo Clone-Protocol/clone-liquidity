@@ -10,6 +10,7 @@ interface Props {
 	headerValue?: number
 	onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void
 	onMax?: (value: number) => void
+	onTickerClicked?: () => void
 }
 
 const PairInput: React.FC<Props> = ({
@@ -20,7 +21,8 @@ const PairInput: React.FC<Props> = ({
 	headerTitle,
 	headerValue,
 	onChange,
-	onMax
+	onMax,
+	onTickerClicked
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
@@ -34,7 +36,7 @@ const PairInput: React.FC<Props> = ({
 				<></>
 			)}
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex" alignItems='center' width='100px'>
+				<Box display="flex" alignItems='center' width='100px' onClick={onTickerClicked} style={onTickerClicked ? { cursor: 'pointer' } : {}}>
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<Box ml='10px'>
 						<Typography variant='p_lg'>{tickerSymbol}</Typography>

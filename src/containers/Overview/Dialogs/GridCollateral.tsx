@@ -1,4 +1,3 @@
-/// @deprecated 
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'

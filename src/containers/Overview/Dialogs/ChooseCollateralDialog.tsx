@@ -1,17 +1,16 @@
-/// @deprecated
 import React from 'react'
-import { Box, styled, Dialog, DialogContent } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography, Divider } from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridCollateral from './GridCollateral'
 
 const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }: { open: boolean, handleChooseCollateral: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={360}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={560}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '10px 15px' }}>
           <BoxWrapper>
-            <HeaderText>Choose Collateral</HeaderText>
-            <Divider />
+            <Box><Typography variant='h7'>Available Collateral</Typography></Box>
+            <StyledDivider />
             <GridCollateral onChoose={handleChooseCollateral} />
           </BoxWrapper>
         </DialogContent>
@@ -23,18 +22,13 @@ const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }: {
 const BoxWrapper = styled(Box)`
   padding: 8px 15px; 
   color: #fff; 
-  min-width: 350px;
+  min-width: 560px;
 `
-const HeaderText = styled(Box)`
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff9f9;
-`
-const Divider = styled('div')`
-  width: 100%;
-  height: 1px;
-  margin-top: 10px;
-  background-color: #535353;
+const StyledDivider = styled(Divider)`
+	background-color: ${(props) => props.theme.boxes.blackShade};
+	margin-bottom: 21px;
+	margin-top: 21px;
+	height: 1px;
 `
 
 export default ChooseCollateralDialog

@@ -1,3 +1,4 @@
+// @deprecated
 import React from 'react'
 import { Box, styled, Dialog, DialogContent } from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
