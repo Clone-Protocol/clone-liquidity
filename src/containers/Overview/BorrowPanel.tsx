@@ -20,10 +20,11 @@ import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 
 const RISK_RATIO_VAL = 170
 
-const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
+const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
     tickerName: 'USDi Coin',
@@ -101,8 +102,7 @@ const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
   // }, [assetIndex, borrowAsset])
 
   const handleChooseAsset = (assetId: number) => {
-    // setAssetIndex(assetId)
-    // setBorrowAsset(ASSETS[assetId])
+    onChooseAssetIndex(assetId)
     setOpenChooseAsset(false)
   }
 

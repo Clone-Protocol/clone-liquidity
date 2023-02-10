@@ -21,10 +21,8 @@ const GridAssets: React.FC<Props> = ({ onChoose }) => {
 	})
 
 	const handleChoose = (params: GridRowParams) => {
-		if (params.row.isEnabled) {
-			const id = params.row.id
-			onChoose && onChoose(id)
-		}
+		const id = params.row.id
+		onChoose && onChoose(id)
 	}
 
 	return (
