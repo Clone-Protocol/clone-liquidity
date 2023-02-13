@@ -3,15 +3,15 @@ import { Box, styled, Dialog, DialogContent, Divider, Typography } from '@mui/ma
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridLiquidityPool from './GridLiquidityPool'
 
-const ChooseLiquidityPoolsDialog = ({ open, handleChoosePool, handleClose }: { open: boolean, handleChoosePool: (id: number) => void, handleClose: () => void }) => {
+const ChooseLiquidityPoolsDialog = ({ open, noFilter, handleChoosePool, handleClose }: { open: boolean, noFilter: boolean, handleChoosePool: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={560}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={792}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '15px 15px' }}>
           <BoxWrapper>
             <Box><Typography variant='h7'>Liquidity Pools</Typography></Box>
             <StyledDivider />
-            <GridLiquidityPool onChoose={handleChoosePool} />
+            <GridLiquidityPool onChoose={handleChoosePool} noFilter={noFilter} />
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -23,7 +23,7 @@ const ChooseLiquidityPoolsDialog = ({ open, handleChoosePool, handleClose }: { o
 const BoxWrapper = styled(Box)`
   padding: 2px 15px; 
   color: #fff; 
-  min-width: 560px;
+  min-width: 792px;
 `
 const StyledDivider = styled(Divider)`
 	background-color: ${(props) => props.theme.boxes.blackShade};

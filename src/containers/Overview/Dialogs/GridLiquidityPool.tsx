@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, styled } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams, MuiEvent, GridCallbackDetails } from '@mui/x-data-grid'
 import { Grid } from '~/components/Liquidity/multipool/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
@@ -9,14 +9,16 @@ import { useLiquidityPoolsQuery } from '~/features/MyLiquidity/multipool/Liquidi
 
 interface Props {
 	onChoose: (id: number) => void
+	noFilter: boolean
 }
 
-const GridLiquidityPool: React.FC<Props> = ({ onChoose }) => {
+const GridLiquidityPool: React.FC<Props> = ({ onChoose, noFilter }) => {
 	const { publicKey } = useWallet()
 	const { data: pools } = useLiquidityPoolsQuery({
 		userPubKey: publicKey,
 		refetchOnMount: "always",
-		enabled: publicKey != null
+		enabled: publicKey != null,
+		noFilter
 	})
 
 	const handleChoose = (params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
@@ -42,13 +44,14 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Asset',
-		flex: 1,
+		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
-					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
-					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
-						{params.row.tickerSymbol} / USDi
+					<Image src={params.row.tickerIcon} width="28px" height="28px" layout="fixed" />
+					<Box marginLeft='8px' marginTop='3px'>
+						<Typography variant='p_lg'>{params.row.tickerName}</Typography>
+						<Typography variant='p_lg' color='#989898' ml='10px'>{params.row.tickerSymbol} / USDi</Typography>
 					</Box>
 				</Box>
 			)
@@ -61,7 +64,7 @@ let columns: GridColDef[] = [
 		headerName: 'Total Liquidity',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellValue>${params.value?.toLocaleString()}</CellValue>
+			return <Box><Typography variant='p_lg'>${params.value?.toLocaleString()} USD</Typography></Box>
 		},
 	},
 	{
@@ -71,17 +74,11 @@ let columns: GridColDef[] = [
 		headerName: '24h Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellValue>${params.value?.toLocaleString()}</CellValue>
+			return <Box><Typography variant='p_lg'>${params.value?.toLocaleString()} USD</Typography></Box>
 		},
 	}
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
-
-const CellValue = styled(Box)`
-	font-size: 14px;
-	text-align: left;
-  color: #fff;
-`
 
 export default withSuspense(GridLiquidityPool, <LoadingProgress />)

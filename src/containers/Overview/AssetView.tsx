@@ -29,7 +29,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	const router = useRouter()
 	const { ltab } = router.query
 	const [tab, setTab] = useState(0)
-	const assetIndex = parseInt(assetId)
+	const [assetIndex, setAssetIndex] = useState(0)
 	const [openChooseLiquidity, setOpenChooseLiquidity] = useState(false)
 
 	// sub routing for tab
@@ -38,6 +38,13 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 			setTab(parseInt(ltab.toString()))
 		}
 	}, [ltab])
+
+	useEffect(() => {
+		if (assetId) {
+			// console.log('aa', parseInt(assetId))
+			setAssetIndex(parseInt(assetId))
+		}
+	}, [assetId])
 
 	const { data: balances, refetch } = useBalanceQuery({
 		userPubKey: publicKey,
@@ -62,8 +69,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	}
 
 	const handleChoosePool = (assetId: number) => {
-		// setSelectAssetId(assetId)
-		// setOpenNewLiquidity(true)
+		setAssetIndex(assetId)
+		setOpenChooseLiquidity(false)
 	}
 
 	return assetData ? (
@@ -115,6 +122,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				open={openChooseLiquidity}
 				handleChoosePool={handleChoosePool}
 				handleClose={() => setOpenChooseLiquidity(false)}
+				noFilter={tab !== 0}
 			/>
 		</StyledBox>
 	) : <></>

@@ -34,6 +34,7 @@ export const fetchCollaterals = async ({
 	const result: CollateralList[] = [
 		{
 			id: 0,
+			tickerName: 'Incept USD',
 			tickerSymbol: 'USDi',
 			tickerIcon: '/images/assets/USDi.png',
 			balance: usdiBalance,
@@ -51,6 +52,7 @@ interface GetProps {
 
 export interface CollateralList {
 	id: number
+	tickerName: string
 	tickerSymbol: string
 	tickerIcon: string
 	balance: number

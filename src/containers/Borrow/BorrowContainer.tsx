@@ -25,10 +25,8 @@ const BorrowContainer = () => {
   }, [lAssetId])
 
   const handleChooseAssetIndex = (index: number) => {
-    if (index) {
-      setAssetIndex(index)
-      setBorrowAsset(ASSETS[index])
-    }
+    setAssetIndex(index)
+    setBorrowAsset(ASSETS[index])
   }
 
   return borrowAsset ? (
