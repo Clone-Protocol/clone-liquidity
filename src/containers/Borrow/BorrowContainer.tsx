@@ -24,13 +24,18 @@ const BorrowContainer = () => {
     }
   }, [lAssetId])
 
+  const handleChooseAssetIndex = (index: number) => {
+    setAssetIndex(index)
+    setBorrowAsset(ASSETS[index])
+  }
+
   return borrowAsset ? (
     <StyledBox>
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
           <LeftBoxWrapper>
             <Box paddingY='10px'>
-              <BorrowPanel assetIndex={assetIndex} />
+              <BorrowPanel assetIndex={assetIndex} onChooseAssetIndex={handleChooseAssetIndex} />
             </Box>
 
             <Box display='flex' justifyContent='center'>

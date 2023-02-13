@@ -25,20 +25,22 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end',
-        marginRight: '6px',
+        marginRight: '4px',
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#9d9d9d',
-        fontSize: '11px'
+        fontSize: '10px'
       },
       '& .last--header': {
         '& .MuiDataGrid-columnHeaderTitleContainer': {
           display: 'flex',
-          justifyContent: 'flex-end',
-        }
+          justifyContent: 'right'
+        },
+        borderRight: '0px !important'
       },
       '& .MuiDataGrid-columnHeaders': {
-        border: '0'
+        borderBottom: '0px',
+        marginTop: '-5px'
       },
       '& .MuiDataGrid-columnHeader:focus': {
         outline: 'none',
@@ -47,14 +49,13 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         display: 'none',
       },
       '& .MuiDataGrid-row': {
-        marginBottom: '10px',
         marginRight: '10px',
-        borderRadius: '10px',
-        background: '#2d2d2d',
-        cursor: 'pointer'
+        border: '1px solid #3f3f3f',
+        cursor: 'pointer',
+        marginBottom: '13px'
       },
       '& .MuiDataGrid-row:hover': {
-        backgroundColor: 'rgba(38, 38, 38, 0.8)'
+        backgroundColor: '#1b1b1b'
       },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
@@ -67,20 +68,15 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         outline: 'none !important'
       },
       '& .MuiDataGrid-withBorder': {
-        borderRight: '0px solid #1b1b1b',
-        borderRadius: '10px',
-        marginLeft: '-5px'
+        borderRight: '1px solid #3f3f3f',
+        marginLeft: '-1px'
       },
-      '& .disabled--row': {
-        backgroundColor: '#1c1b1b',
-        cursor: 'default'
-      }
     }}
     components={{
       NoResultsOverlay: CustomNoRowsOverlay
     }}
     getRowClassName={(params) => {
-      return rows[params.id]?.isEnabled ? 'super-app-theme--row' : 'disabled--row'
+      return 'super-app-theme--row'
     }}
     disableColumnFilter
     disableSelectionOnClick
@@ -89,11 +85,11 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
     disableDensitySelector
     disableExtendRowFullWidth
     hideFooter
-    headerHeight={40}
-    rowHeight={52}
+    headerHeight={25}
+    rowHeight={50}
     rowCount={20}
-    columns={headers}
     onRowClick={onRowClick}
+    columns={headers}
     rows={rows || []}
   />
 )

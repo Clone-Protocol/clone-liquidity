@@ -22,6 +22,9 @@ const AssetPage: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
+						<Box mb='30px'>
+							<Typography variant='p_xxlg'>New Liquidity Position</Typography>
+						</Box>
 						<TipMsg>
 							<Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
 						</TipMsg>

@@ -16,13 +16,15 @@ import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
+import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 
 const RISK_RATIO_VAL = 170
 
-const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
+const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
     tickerName: 'USDi Coin',
@@ -62,6 +64,7 @@ const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
   ])
 
   const [collRatio, setCollRatio] = useState(100)
+  const [openChooseAsset, setOpenChooseAsset] = useState(false)
 
   const initData = () => {
     setValue('collAmount', 0.0)
@@ -97,6 +100,11 @@ const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
   //     initData()
   //   }
   // }, [assetIndex, borrowAsset])
+
+  const handleChooseAsset = (assetId: number) => {
+    onChooseAssetIndex(assetId)
+    setOpenChooseAsset(false)
+  }
 
   const handleChangeCollRatio = useCallback((event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => {
     if (typeof newValue === 'number' && borrowDetail) {
@@ -152,7 +160,7 @@ const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
       <Box>
         <Box>
           <Box><Typography variant='p_lg'>iAsset to Borrow</Typography></Box>
-          <SelectPoolBox>
+          <SelectPoolBox onClick={() => setOpenChooseAsset(true)}>
             <Stack direction='row' gap={1}>
               <Image src={ASSETS[assetIndex].tickerIcon} width="27px" height="27px" />
               <Typography variant='p_xlg'>{ASSETS[assetIndex].tickerSymbol}</Typography>
@@ -239,6 +247,12 @@ const BorrowPanel = ({ assetIndex }: { assetIndex: number }) => {
           </SubmitButton>
         </Box>
       </Box>
+
+      <ChooseAssetDialog
+        open={openChooseAsset}
+        handleChooseAsset={handleChooseAsset}
+        handleClose={() => setOpenChooseAsset(false)}
+      />
     </>
   ) : <></>
 }
@@ -251,6 +265,7 @@ const SelectPoolBox = styled(Box)`
 	height: 45px;
 	margin-top: 15px;
 	margin-bottom: 28px;
+  cursor: pointer;
   background: ${(props) => props.theme.boxes.black};
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};

@@ -20,7 +20,7 @@ import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
-import { position } from 'polished'
+import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 
 const RISK_SCORE_VAL = 20
 
@@ -35,6 +35,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [validMintValue, setValidMintValue] = useState(false)
+  const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
@@ -132,6 +133,10 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
       })
   }
 
+  const handleChooseCollateral = (collId: number) => {
+    setOpenChooseCollateral(false)
+  }
+
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
@@ -207,6 +212,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
                         field.onChange(value)
                         maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
                       }}
+                      onTickerClicked={() => setOpenChooseCollateral(true)}
                     />
                   )}
                 />
@@ -244,6 +250,12 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
             <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
           </SubmitButton>
         </Box >
+
+        <ChooseCollateralDialog
+          open={openChooseCollateral}
+          handleChooseCollateral={handleChooseCollateral}
+          handleClose={() => setOpenChooseCollateral(false)}
+        />
       </>
     ) : <></>
   }

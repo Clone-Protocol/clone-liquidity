@@ -11,10 +11,12 @@ export const fetchPools = async ({
   program,
   userPubKey,
   setStartTimer,
+  noFilter,
 }: {
   program: Incept
   userPubKey: PublicKey | null
   setStartTimer: (start: boolean) => void
+  noFilter: boolean
 }) => {
   if (!userPubKey) return []
 
@@ -46,12 +48,13 @@ export const fetchPools = async ({
   let result = []
 
   for (let asset of assetInfos) {
-    if (currentPoolSet.has(asset[0])) {
+    if (!noFilter && currentPoolSet.has(asset[0])) {
       continue
     }
-    let { tickerIcon, tickerSymbol } = assetMapping(asset[0])
+    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset[0])
     result.push({
       id: asset[0],
+      tickerName,
       tickerSymbol,
       tickerIcon,
       totalLiquidity: asset[2],
@@ -68,6 +71,7 @@ interface GetPoolsProps {
   userPubKey: PublicKey | null
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
+  noFilter?: boolean
 }
 
 export interface PoolList {
@@ -84,13 +88,14 @@ export function useLiquidityPoolsQuery({
   userPubKey,
   refetchOnMount,
   enabled = true,
+  noFilter = true,
 }: GetPoolsProps) {
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   return useQuery(
     ["liquidityPools", userPubKey],
-    () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer }),
+    () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer, noFilter }),
     {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,

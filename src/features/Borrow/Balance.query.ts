@@ -6,18 +6,18 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getTokenAccount } from '~/utils/token_accounts'
 
-export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void}) => {
-	if (!userPubKey) return null
+export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+  if (!userPubKey) return null
 
   console.log('fetchBalance')
   // start timer in data-loading-indicator
   setStartTimer(false);
   setStartTimer(true);
 
-	await program.loadManager()
+  await program.loadManager()
 
-	let usdiVal = 0.0
-	let iassetVal = 0.0
+  let usdiVal = 0.0
+  let iassetVal = 0.0
 
   const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, userPubKey, program.connection);
 
@@ -33,10 +33,10 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
     iassetVal = Number(iassetBalance.value.amount) / 100000000;
   }
 
-	return {
-		usdiVal,
-		iassetVal
-	}
+  return {
+    usdiVal,
+    iassetVal
+  }
 }
 
 interface GetProps {
@@ -47,14 +47,14 @@ interface GetProps {
 }
 
 export interface Balance {
-	usdiVal: number
-	iassetVal: number
+  usdiVal: number
+  iassetVal: number
 }
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
-  
+
   return useQuery(['borrowBalance', userPubKey, index], () => fetchBalance({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
     refetchOnMount,
     refetchInterval: REFETCH_CYCLE,
