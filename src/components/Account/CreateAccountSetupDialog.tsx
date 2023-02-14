@@ -1,11 +1,10 @@
 import React from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { createAccountDialogState } from '~/features/globalAtom'
 import {
 	Button,
 	Box,
 	Dialog,
-	DialogTitle,
-	DialogContent,
 	styled,
 	Typography
 } from '@mui/material'
@@ -27,6 +26,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	handleClose
 }) => {
 	const isCreatingAccount = useRecoilValue(isCreatingAccountState)
+	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 
 	const shouldDialogOpen = (): boolean => {
 		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
@@ -34,11 +34,11 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 
 	if (state === CreateAccountDialogStates.Initial) {
 		return (
-			<Dialog open={shouldDialogOpen()} onClose={handleClose}>
+			<Dialog open={shouldDialogOpen()} onClose={handleClose} maxWidth={810}>
 				<ContentContainer style={{ background: `url(${BgDialog.src})` }}>
 					<LeftBox>
 						<Image src={logoIcon} width={187} alt="incept" />
-						<Box><Typography variant='h5'>Welcome!</Typography></Box>
+						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
 						<DescBox>
 							<Typography variant='p'>This is your first time connecting this wallet to Devnet Incept Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of <Emphasize>~0.3 Devnet SOL</Emphasize> for most optimal experience using Devnet Incept Liquidity.</Typography>
 						</DescBox>
@@ -52,11 +52,11 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	} else {
 		return (
 			<Dialog open={shouldDialogOpen()} onClose={handleClose}>
-				<Box>
-					<Box>
-						<Typography variant='p'>To access this feature, please open an account first!</Typography>
+				<Box p="23px">
+					<Box mb="23px">
+						<Typography variant='p_lg'>To access this feature, please open an account first!</Typography>
 					</Box>
-					<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
+					<SubmitButton onClick={() => setCreateAccountDialogState(CreateAccountDialogStates.Initial)} disabled={isCreatingAccount}>
 						<Typography variant='p_lg'>Take me there</Typography>
 					</SubmitButton>
 				</Box>
@@ -68,15 +68,18 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 const ContentContainer = styled('div')`
 	width: 809px;
 	height: 561px;
-	padding: 15px;
+	display: flex;
+	align-items: center;
+	padding: 40px;
 	background-color: #151618;
 `
 const LeftBox = styled(Box)`
 	width: 352px;
 `
 const DescBox = styled(Box)`
-	margin-top: 15px;
+	margin-top: 5px;
 	margin-bottom: 15px;
+	line-height: 1.33;
 	color: ${(props) => props.theme.palette.text.secondary};
 `
 const Emphasize = styled('span')`
@@ -85,12 +88,15 @@ const Emphasize = styled('span')`
 `
 const SubmitButton = styled(Button)`
 	padding: 16px 41px;
-	background-color: ${(props) => props.theme.gradients.simple};
+	background-image: ${(props) => props.theme.gradients.simple};
 	color: #000;
 	display: block;
 	width: 100%;
 	height: 48px;
 	line-height: 1.11;
+	&:hover {
+		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), linear-gradient(to right, #fff 21%, #4fe5ff 96%);
+	}
 `
 
 export default CreateAccountSetupDialog
