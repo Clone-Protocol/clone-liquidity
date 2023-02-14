@@ -1,112 +1,102 @@
-import React, { useCallback } from 'react'
-import { useRecoilValue } from 'recoil'
-import { 
+import React from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { createAccountDialogState } from '~/features/globalAtom'
+import {
 	Button,
-	Box,  
-	Dialog, 
-	DialogTitle, 
-	DialogContent,
-	styled
+	Box,
+	Dialog,
+	styled,
+	Typography
 } from '@mui/material'
+import Image from 'next/image'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { isCreatingAccountState } from '~/features/globalAtom'
+import logoIcon from 'public/images/logo-liquidity.svg'
+import BgDialog from 'public/images/new-wallet-popup.png'
 
 interface CreateAccountSetupDialogProps {
 	state: CreateAccountDialogStates
-	handleCreateAccount: () => void 
+	handleCreateAccount: () => void
 	handleClose: () => void
 }
 
-const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({ 
+const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	state,
 	handleCreateAccount,
 	handleClose
 }) => {
 	const isCreatingAccount = useRecoilValue(isCreatingAccountState)
-	const approximateGasFee = 0.63
+	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 
 	const shouldDialogOpen = (): boolean => {
 		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
 	}
-	
-	const InitialDialogContent = useCallback(() => (
-		<>
-			<HeaderText>This is the first time connecting this wallet with Incept Liquidity</HeaderText>	
-			<DialogContent>
-				<ContentText>
-					Please note that the Solana network requires a higher than usual one-time
-					gas fee <Emph>(~{approximateGasFee} SOL)</Emph> when opening an account for the most optimal experience.
-				</ContentText>
-			</DialogContent>
-		</>
-	), [])
-	
-	const ReminderDialogContent = useCallback(() => (
-		<>
-			<HeaderTextCentered>This is a new wallet, please open account first</HeaderTextCentered>
-			<DialogContent>
-				<ContentText>
-					In order to access the feature, please open an account with this wallet by 
-					clicking the button below. Please note that Solana Network requires a higher than usual
-					one-time gas fee <Emph>(~{approximateGasFee} SOL)</Emph> when opening an account for the most optimal experience.
-				</ContentText>
-			</DialogContent>
-		</>
-	), [])
-	
-	return (
-		<Dialog open={shouldDialogOpen()} onClose={handleClose}>
-			<ContentContainer>
-				{(state === CreateAccountDialogStates.Initial) && <InitialDialogContent />}
-				{(state === CreateAccountDialogStates.Reminder) && <ReminderDialogContent />}
-				<ButtonBox>
-					<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>Open Account</SubmitButton>
-				</ButtonBox>
-			</ContentContainer>
-		</Dialog>
-	)
+
+	if (state === CreateAccountDialogStates.Initial) {
+		return (
+			<Dialog open={shouldDialogOpen()} onClose={handleClose} maxWidth={810}>
+				<ContentContainer style={{ background: `url(${BgDialog.src})` }}>
+					<LeftBox>
+						<Image src={logoIcon} width={187} alt="incept" />
+						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
+						<DescBox>
+							<Typography variant='p'>This is your first time connecting this wallet to Devnet Incept Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of <Emphasize>~0.3 Devnet SOL</Emphasize> for most optimal experience using Devnet Incept Liquidity.</Typography>
+						</DescBox>
+						<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
+							<Typography variant='p_lg'>Open Devnet Account</Typography>
+						</SubmitButton>
+					</LeftBox>
+				</ContentContainer>
+			</Dialog>
+		)
+	} else {
+		return (
+			<Dialog open={shouldDialogOpen()} onClose={handleClose}>
+				<Box p="23px">
+					<Box mb="23px">
+						<Typography variant='p_lg'>To access this feature, please open an account first!</Typography>
+					</Box>
+					<SubmitButton onClick={() => setCreateAccountDialogState(CreateAccountDialogStates.Initial)} disabled={isCreatingAccount}>
+						<Typography variant='p_lg'>Take me there</Typography>
+					</SubmitButton>
+				</Box>
+			</Dialog>
+		)
+	}
 }
 
-const HeaderText = styled(DialogTitle)`
-  font-size: 16px;
-  font-weight: 500;
-  color: #fff;
-`
-
-const HeaderTextCentered = styled(DialogTitle)`
-	font-size: 16px;
-  font-weight: 500;
-  color: #fff;
-  text-align: center;
-`
-
 const ContentContainer = styled('div')`
-	padding: 15px;
+	width: 809px;
+	height: 561px;
+	display: flex;
+	align-items: center;
+	padding: 40px;
 	background-color: #151618;
 `
-const ContentText = styled(Box)`
-	font-size: 14px;
-	color: #989898;
+const LeftBox = styled(Box)`
+	width: 352px;
 `
-
-const Emph = styled('span')`
-	color: #ffb800
+const DescBox = styled(Box)`
+	margin-top: 5px;
+	margin-bottom: 15px;
+	line-height: 1.33;
+	color: ${(props) => props.theme.palette.text.secondary};
 `
-
-const ButtonBox = styled('div')`
-	margin-top: 20px;
-	width: 100%;
-`
-
-const SubmitButton = styled(Button)`
-	padding: 13px 45px;
-	border-radius: 10px;
-	background-color: #4e609f;
+const Emphasize = styled('span')`
 	color: #fff;
-	margin: 0 auto;
-	font-size: 15px;
+	font-weight: 600;
+`
+const SubmitButton = styled(Button)`
+	padding: 16px 41px;
+	background-image: ${(props) => props.theme.gradients.simple};
+	color: #000;
 	display: block;
-	width: 240px;
+	width: 100%;
+	height: 48px;
+	line-height: 1.11;
+	&:hover {
+		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), linear-gradient(to right, #fff 21%, #4fe5ff 96%);
+	}
 `
 
 export default CreateAccountSetupDialog

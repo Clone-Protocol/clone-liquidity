@@ -4,7 +4,7 @@ import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
+import { createAccountDialogState } from '~/features/globalAtom'
 
 
 export default function useInitialized() {
@@ -15,7 +15,7 @@ export default function useInitialized() {
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 
 	useEffect(() => {
-		async function getAccount() {			
+		async function getAccount() {
 			if (connected && publicKey && wallet) {
 				// for initialize once per each account
 				if (localAccount === publicKey.toString()) {

@@ -28,6 +28,7 @@ import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
 import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
+import ReminderNewWalletPopup from './Account/ReminderNewWalletPopup'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -223,6 +224,7 @@ const RightMenu = () => {
 						</Stack>
 						<NetworkInfo><Typography variant='p_xsm'>Polaris Devnet - V1</Typography></NetworkInfo>
 					</WalletSelectBox>}
+					<ReminderNewWalletPopup />
 				</Box>
 			</Box>
 
