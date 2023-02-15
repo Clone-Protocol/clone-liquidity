@@ -1,12 +1,15 @@
-import { Box, Stack, Button, Divider } from '@mui/material'
+import { Box, Stack, Button, Divider, Typography } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
-import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
-import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
+import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
+import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
+import HealthscoreView from '~/components/Liquidity/multipool/HealthscoreView'
 import InfoTooltip from '~/components/Common/InfoTooltip';
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { formatHealthScore } from '~/utils/numbers'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import Image from 'next/image'
+import EditIcon from 'public/images/edit-icon.svg'
 
 interface Props {
   assetData: PI
@@ -23,84 +26,86 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
     upperLimit: cometDetail.upperLimit
   }
 
+  const contributedLiquidity = 805043.02
+
   return assetData ? (
     <PositionWrapper>
-      <Title>Comet Position</Title>
-      <WrapperBox>
-        <Box display="flex">
+      <BoxWithBorder padding="15px 24px">
+        <Box position='relative'>
           <Box padding='22px' sx={{ minWidth: '365px' }}>
-            <SubTitle>Collateral <InfoTooltip title={TooltipTexts.collateralDesignated} /></SubTitle>
-            <CollValue>
-              {cometDetail.collAmount.toLocaleString()} <span style={{ fontSize: '14px' }}>USDi</span>
-            </CollValue>
+            <Box><Typography variant='p_lg' color='#989898'>Collateral</Typography></Box>
+            <Box>
+              <Typography variant='p_xxlg'>{cometDetail.collAmount.toLocaleString()} USDi</Typography>
+            </Box>
             <Box marginTop='10px'>
+              <Box><Typography variant='p_lg' color='#989898'>Contributed Liquidity</Typography></Box>
+              <Box>
+                <Typography variant='p_xxlg'>${contributedLiquidity.toLocaleString()} USD</Typography>
+              </Box>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Contributed USDi</DetailHeader>
-                <DetailValue>
-                  {cometDetail.mintAmount.toLocaleString()} USDi
-                </DetailValue>
+                <Box><Typography variant='p' color='#989898'>Contributed USDi</Typography></Box>
+                <Box>
+                  <Typography variant='p'>{cometDetail.mintAmount.toLocaleString()} USDi</Typography>
+                </Box>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Contributed iAsset</DetailHeader>
-                <DetailValue>
-                  {cometDetail.mintIassetAmount!.toLocaleString(undefined, { maximumFractionDigits: 5 })} {assetData.tickerSymbol}
-                </DetailValue>
+                <Box><Typography variant='p' color='#989898'>Contributed iAsset</Typography></Box>
+                <Box>
+                  <Typography variant='p'>{cometDetail.mintIassetAmount!.toLocaleString(undefined, { maximumFractionDigits: 5 })} {assetData.tickerSymbol}</Typography>
+                </Box>
               </Stack>
             </Box>
             <StyledDivider />
 
-            <SubTitle>Price Range <InfoTooltip title={TooltipTexts.priceRange} /></SubTitle>
-            <Box marginTop='20px'>
-              <ConcentrationRangeView
+            <Box><Typography variant='p_lg' color='#989898'>Concentration Range</Typography></Box>
+            <Box mt='25px'>
+              {/* <ConcentrationRangeView
                 centerPrice={assetData?.centerPrice}
                 lowerLimit={cometData.lowerLimit}
                 upperLimit={cometData.upperLimit}
+              /> */}
+              <ConcentrationRange
+                assetData={assetData}
+                cometData={cometData}
+                max={assetData.maxRange}
+                defaultLower={(assetData.price / 2)}
+                defaultUpper={((assetData.price * 3) / 2)}
               />
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Center price</DetailHeader>
-                <DetailValue>{assetData?.centerPrice.toFixed(2)} USDi</DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Lower limit</DetailHeader>
-                <DetailValue>
-                  {cometData.lowerLimit.toFixed(2)} USDi
-                </DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Upper limit</DetailHeader>
-                <DetailValue>
-                  {cometData.upperLimit.toFixed(2)} USDi
-                </DetailValue>
-              </Stack>
+              <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
             </Box>
           </Box>
           <EditBox onClick={onShowEditForm}>
-            <NoteAltOutlinedIcon fontSize="small" />
+            <Image src={EditIcon} />
           </EditBox>
         </Box>
-      </WrapperBox>
+      </BoxWithBorder>
       <StyledDivider />
 
-      <HealthScoreWrapper>
+      <Stack direction='row'>
         <Box width='45%' marginLeft='15px'>
-          <SubTitle>Health Score <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubTitle>
-          <HealthScoreValue>
+          <Box mb='10px'><Typography variant='p' color='#989898'>Comet Health Score <InfoTooltip title={TooltipTexts.healthScoreCol} /></Typography></Box>
+          {/* <HealthScoreValue>
             {formatHealthScore(cometDetail.healthScore)}/100
-          </HealthScoreValue>
+          </HealthScoreValue> */}
+          <HealthscoreView score={cometDetail.healthScore} />
         </Box>
         <Box display='flex' width='50%'>
           <ColumnDivider />
-          <Box marginLeft='35px'>
-            <SubTitle>ILD <InfoTooltip title={TooltipTexts.ildCol} /></SubTitle>
-            <ILDValue>
-              {Math.abs(cometDetail.ild).toFixed(2)} USDi
-            </ILDValue>
+          <Box ml='35px' mb='10px'>
+            <Box><Typography variant='p' color='#989898'>ILD Dept <InfoTooltip title={TooltipTexts.ildCol} /></Typography></Box>
+            <Box height='82px' display='flex' alignItems='center'>
+              <Typography variant='p_xlg'>{Math.abs(cometDetail.ild).toFixed(2)} USDi</Typography>
+            </Box>
           </Box>
         </Box>
-      </HealthScoreWrapper>
+      </Stack>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter <InfoTooltip title={TooltipTexts.recenter} /></ActionButton>
+      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter</ActionButton>
+
+      <Box display='flex' justifyContent='center'>
+        <DataLoadingIndicator />
+      </Box>
     </PositionWrapper>
   ) : (
     <></>
@@ -112,100 +117,46 @@ const PositionWrapper = styled(Box)`
   padding: 25px 30px; 
   margin-top: 15px;
 `
-
-const WrapperBox = styled(Box)`
-  border-radius: 10px; 
-  background: rgba(128, 156, 255, 0.08);
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
-
 const StyledDivider = styled(Divider)`
 	background-color: #535353;
 	margin-bottom: 15px;
 	margin-top: 15px;
 	height: 1px;
 `
-
-const Title = styled('div')`
-	font-size: 16px;
-	font-weight: 600;
-	color: #fff;
-	margin-bottom: 10px;
-`
-
-const SubTitle = styled('div')`
-	font-size: 12px;
-	font-weight: 600;
-	color: #989898;
-  margin-bottom: 5px;
-`
-
-const CollValue = styled(Box)`
-  font-size: 14px; 
-  font-weight: 500;
-`
-
-const DetailHeader = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #989898;
-`
-
-const DetailValue = styled('div')`
-	font-size: 11px;
-	font-weight: 500;
-	color: #fff;
-`
-
 const EditBox = styled(Box)`
-  width: 41px;
-  background-color: rgba(128, 156, 255, 0.2);
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  position: absolute;
+  top: -15px;
+  left: -24px;
+  width: 44px;
+  height: 44px;
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 `
-
-const HealthScoreWrapper = styled(Box)`
-  display: flex; 
-  border-radius: 10px; 
-  background-color: rgba(255, 255, 255, 0.08);
-  padding: 13px 27px;
-`
-
 const ActionButton = styled(Button)`
-	width: 100%;
-	height: 45px;
-  flex-grow: 0;
-  border-radius: 10px;
-  background-color: #4e609f;
-  font-size: 13px;
-  font-weight: 600;
-	color: #fff;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
-
 const ColumnDivider = styled('div')`
   background: #535353; 
   width: 1px; 
-  height: 56px;
-`
-
-const HealthScoreValue = styled(Box)`
-  font-size: 18px; 
-  font-weight: 500;
-`
-const ILDValue = styled(Box)`
-  font-size: 14px; 
-  font-weight: 500; 
-  margin-top: 10px;
+  height: 122px;
 `
 
 export default withCsrOnly(PositionInfo)
