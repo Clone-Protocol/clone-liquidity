@@ -1,19 +1,50 @@
 import { styled, Box, Stack, Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { useEffect, useState } from 'react';
 
 interface Props {
   score?: number
 }
 
+const enum HealthScoreType {
+  Fair = 'Fair',
+  Excellent = 'Excellent',
+  Poor = 'Poor'
+}
+
+const enum HealthScoreTypeColor {
+  Fair = '#ff8e4f',
+  Excellent = '#4fe5ff',
+  Poor = '#ed2525'
+}
+
 const HealthscoreView: React.FC<Props> = ({ score }) => {
-  const scoreType = 'Fair'
+  const scorePercent = score ? 100 - score : 0
+
+  const [scoreType, setScoreType] = useState(HealthScoreType.Fair)
+  const [scoreTypeColor, setScoreTypeColor] = useState(HealthScoreTypeColor.Fair)
+
+  useEffect(() => {
+    if (score) {
+      if (score < 30) {
+        setScoreType(HealthScoreType.Poor)
+        setScoreTypeColor(HealthScoreTypeColor.Poor)
+      } else if (score >= 30 && score < 70) {
+        setScoreType(HealthScoreType.Fair)
+        setScoreTypeColor(HealthScoreTypeColor.Fair)
+      } else {
+        setScoreType(HealthScoreType.Excellent)
+        setScoreTypeColor(HealthScoreTypeColor.Excellent)
+      }
+    }
+  }, [score])
 
   return (
     <Box>
       <Stack direction="row" height='86px'>
         <ScoreBox sx={{ color: '#ff8e4f' }}>
           {score &&
-            <Box>
+            <Box sx={{ color: scoreTypeColor }}>
               <Box marginTop="15px">
                 <Typography variant='p_xxxlg'>{score.toFixed(0)}</Typography>
               </Box>
@@ -24,7 +55,7 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
           }
         </ScoreBox>
         <Box display='flex' height='100%'>
-          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: '0px' }} />
+          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 10px)` }} />
           <ScoreBar />
           <Box height='100%'>
             <Box sx={{ position: 'relative', top: '-10px', left: '5px' }}><Typography variant='p_sm'>100 (Excellent)</Typography></Box>

@@ -74,7 +74,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	}
 
 	return assetData ? (
-		<StyledBox>
+		<Box>
 			<Stack direction='row' spacing={3} justifyContent="center">
 				<Box>
 					<Box><Typography variant='p_lg'>Select Pool</Typography></Box>
@@ -124,19 +124,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				handleClose={() => setOpenChooseLiquidity(false)}
 				noFilter={tab !== 0}
 			/>
-		</StyledBox>
+		</Box>
 	) : <></>
 }
 
-const StyledBox = styled(Paper)`
-	font-size: 14px;
-	font-weight: 500;
-	text-align: center;
-	color: #fff;
-	border-radius: 8px;
-	text-align: left;
-	background: #000;
-`
 const StyledDivider = styled(Divider)`
 	background-color: ${(props) => props.theme.boxes.blackShade};
 	margin-bottom: 11px;

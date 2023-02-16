@@ -29,7 +29,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 	'& .MuiSlider-thumb[data-index="0"]': {
 		height: 30,
 		width: 75,
-		backgroundColor: '#171717',
+		backgroundColor: 'unset',
 		marginTop: '-20px',
 		marginLeft: '-10px',
 		'&::after': {
@@ -72,7 +72,7 @@ const RangeSlider = styled(Slider)(({ theme }) => ({
 	'& .MuiSlider-thumb[data-index="1"]': {
 		height: 30,
 		width: 75,
-		backgroundColor: '#171717',
+		backgroundColor: 'unset',
 		marginTop: '-20px',
 		'&::after': {
 			width: '3px',

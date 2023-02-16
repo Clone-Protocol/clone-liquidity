@@ -125,14 +125,20 @@ interface GetProps {
   enabled?: boolean
 }
 
+export interface TickerType {
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string
+}
+
 export interface PositionInfo {
   tickerIcon: string
   tickerName: string
   tickerSymbol: string | null
   price: number
-  tightRange: number
-  maxRange: number
-  centerPrice: number
+  tightRange?: number
+  maxRange?: number
+  centerPrice?: number
 }
 
 export interface CometInfo {
