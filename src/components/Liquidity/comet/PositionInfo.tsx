@@ -10,6 +10,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
+import { useState } from 'react'
 
 interface Props {
   assetData: PI
@@ -26,44 +27,50 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
     upperLimit: cometDetail.upperLimit
   }
 
+  const [isEditBtnHover, setIsEditBtnHover] = useState(false)
   const contributedLiquidity = 805043.02
 
   return assetData ? (
     <PositionWrapper>
       <BoxWithBorder padding="15px 24px">
         <Box position='relative'>
-          <Box padding='22px' sx={{ minWidth: '365px' }}>
-            <Box><Typography variant='p_lg' color='#989898'>Collateral</Typography></Box>
-            <Box>
-              <Typography variant='p_xxlg'>{cometDetail.collAmount.toLocaleString()} USDi</Typography>
-            </Box>
-            <Box marginTop='10px'>
-              <Box><Typography variant='p_lg' color='#989898'>Contributed Liquidity</Typography></Box>
+          <Box padding='12px' sx={{ minWidth: '365px' }}>
+            <Box paddingX='20px'>
+              <Box><Typography variant='p_lg' color='#989898'>Collateral</Typography></Box>
               <Box>
-                <Typography variant='p_xxlg'>${contributedLiquidity.toLocaleString()} USD</Typography>
+                <Typography variant='p_xxlg'>{cometDetail.collAmount.toLocaleString()} USDi</Typography>
               </Box>
-              <Stack direction="row" justifyContent="space-between">
-                <Box><Typography variant='p' color='#989898'>Contributed USDi</Typography></Box>
+            </Box>
+            <StyledDivider />
+            <Box marginTop='10px'>
+              <Box paddingX='20px'>
+                <Box><Typography variant='p_lg' color='#989898'>Contributed Liquidity</Typography></Box>
                 <Box>
-                  <Typography variant='p'>{cometDetail.mintAmount.toLocaleString()} USDi</Typography>
+                  <Typography variant='p_xxlg'>${contributedLiquidity.toLocaleString()} USD</Typography>
                 </Box>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <Box><Typography variant='p' color='#989898'>Contributed iAsset</Typography></Box>
-                <Box>
-                  <Typography variant='p'>{cometDetail.mintIassetAmount!.toLocaleString(undefined, { maximumFractionDigits: 5 })} {assetData.tickerSymbol}</Typography>
-                </Box>
-              </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Box><Typography variant='p' color='#989898'>Contributed USDi</Typography></Box>
+                  <Box>
+                    <Typography variant='p'>{cometDetail.mintAmount.toLocaleString()} USDi</Typography>
+                  </Box>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Box><Typography variant='p' color='#989898'>Contributed iAsset</Typography></Box>
+                  <Box>
+                    <Typography variant='p'>{cometDetail.mintIassetAmount!.toLocaleString(undefined, { maximumFractionDigits: 5 })} {assetData.tickerSymbol}</Typography>
+                  </Box>
+                </Stack>
+              </Box>
             </Box>
             <StyledDivider />
 
-            <Box><Typography variant='p_lg' color='#989898'>Concentration Range</Typography></Box>
-            <Box mt='25px'>
+            <Box paddingX='20px'>
+              <Box mb='35px'><Typography variant='p_lg' color='#989898'>Concentration Range</Typography></Box>
               {/* <ConcentrationRangeView
-                centerPrice={assetData?.centerPrice}
-                lowerLimit={cometData.lowerLimit}
-                upperLimit={cometData.upperLimit}
-              /> */}
+                  centerPrice={assetData?.centerPrice}
+                  lowerLimit={cometData.lowerLimit}
+                  upperLimit={cometData.upperLimit}
+                /> */}
               <ConcentrationRange
                 assetData={assetData}
                 cometData={cometData}
@@ -71,14 +78,16 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
                 defaultLower={(assetData.price / 2)}
                 defaultUpper={((assetData.price * 3) / 2)}
               />
-              <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
             </Box>
+            <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
           </Box>
-          <EditBox onClick={onShowEditForm}>
+          {isEditBtnHover && <OverlayEditCometInfo><Typography variant='p'>Edit Comet Position</Typography></OverlayEditCometInfo>}
+          <EditBox onMouseOver={() => setIsEditBtnHover(true)} onMouseLeave={() => setIsEditBtnHover(false)} onClick={onShowEditForm}>
             <Image src={EditIcon} />
           </EditBox>
         </Box>
       </BoxWithBorder>
+
       <StyledDivider />
 
       <Stack direction='row'>
@@ -114,8 +123,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
 const PositionWrapper = styled(Box)`
   color: #fff; 
-  padding: 25px 30px; 
-  margin-top: 15px;
+  padding: 25px 5px; 
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
@@ -156,7 +164,20 @@ const ActionButton = styled(Button)`
 const ColumnDivider = styled('div')`
   background: #535353; 
   width: 1px; 
-  height: 122px;
+  height: 120px;
+  margin-top: 10px;
+`
+const OverlayEditCometInfo = styled(Box)`
+  position: absolute;
+  top: -18px;
+  left: -24px;
+  width: 542px;
+  height: 440px;
+  padding: 0 28px 27px 0;
+  background-color: rgba(27, 27, 27, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 export default withCsrOnly(PositionInfo)

@@ -48,5 +48,6 @@ const BoxWrapper = styled(Box)`
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	padding: 7px 6px;
 	text-align: center;
+	line-height: 11px;
 `
 export default withCsrOnly(ConcentrationRangeBox)
