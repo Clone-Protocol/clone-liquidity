@@ -1,14 +1,15 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
+import { Status } from '~/features/MyLiquidity/Status.query'
 
-const MyStatusValues = ({ tab }: { tab: number }) => {
-
+const MyStatusValues = ({ tab, status }: { tab: number, status: Status }) => {
+  // @TODO
   const statusValues = {
-    totalCometLiquidity: 1535356.02,
-    totalCometValLocked: 1535356.02,
-    totalUnconcentPositionVal: 1535356.02,
-    totalBorrowLiquidity: 1535356.02,
-    totalBorrowCollateralVal: 535356.02,
+    totalCometLiquidity: status.statusValues.totalCometLiquidity,
+    totalCometValLocked: status.statusValues.totalCometValLocked,
+    totalUnconcentPositionVal: status.statusValues.totalUnconcentPositionVal,
+    totalBorrowLiquidity: status.statusValues.totalBorrowLiquidity,
+    totalBorrowCollateralVal: status.statusValues.totalBorrowCollateralVal,
   }
 
   return (

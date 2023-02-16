@@ -8,6 +8,8 @@ import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import MultipoolComet from '~/containers/Liquidity/multipool/MultipoolComet'
 import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType } from '~/data/filter'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import Image from 'next/image'
 import CometIconOff from 'public/images/comet-icon-off.svg'
 import UlIconOff from 'public/images/ul-icon-off.svg'
@@ -18,6 +20,7 @@ import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
 import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
 import MyStatusValues from '~/components/Liquidity/MyStatusValues'
+import MyStatus from '~/containers/Liquidity/MyStatus'
 
 const LiquidityTable: React.FC = () => {
   const router = useRouter()
@@ -40,12 +43,22 @@ const LiquidityTable: React.FC = () => {
   //   setFilter(newValue)
   // }
 
+  const { publicKey } = useWallet()
+  const { data: status } = useStatusQuery({
+    userPubKey: publicKey,
+    refetchOnMount: "always",
+    enabled: publicKey != null
+  })
+
   //TODO : set no position
   const hasNoPosition = true
 
   return (
     <div>
       <Box>
+        <MyStatus status={status} />
+        <Divider sx={{ backgroundColor: '#3f3f3f' }} />
+
         <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
           <MultipoolTab value={0} label='Multipool Comet' icon={tab === 0 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} />
           <SinglepoolTab value={1} label='Singlepool Comet' icon={tab === 1 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
@@ -57,7 +70,7 @@ const LiquidityTable: React.FC = () => {
 
         {tab > 0 &&
           <Stack direction='row' justifyContent='space-between' alignItems='flex-end' paddingTop='22px'>
-            <MyStatusValues tab={tab} />
+            <MyStatusValues tab={tab} status={status} />
 
             <NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
           </Stack>

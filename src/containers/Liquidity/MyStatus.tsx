@@ -1,19 +1,10 @@
 import StatusView from '~/components/Liquidity/StatusView'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { Box } from '@mui/material'
-import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { LoadingProgress } from '~/components/Common/Loading'
+import { Status } from '~/features/MyLiquidity/Status.query'
 import withSuspense from '~/hocs/withSuspense'
 
-const MyStatus = () => {
-	const { publicKey } = useWallet()
-
-	const { data: status } = useStatusQuery({
-		userPubKey: publicKey,
-		refetchOnMount: "always",
-		enabled: publicKey != null
-	})
-
+const MyStatus = ({ status }: { status: Status }) => {
 	return (
 		<Box maxWidth='812px'>
 			<StatusView status={status} />

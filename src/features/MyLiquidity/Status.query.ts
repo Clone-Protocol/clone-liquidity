@@ -7,26 +7,25 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
-	if (!userPubKey) return null
+  if (!userPubKey) return null
 
-	console.log('fetchStatus')
-	// start timer in data-loading-indicator
-	setStartTimer(false);
-	setStartTimer(true);
+  console.log('fetchStatus')
+  // start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
 
   await program.loadManager()
-  
-	let totalVal = 0
-	let borrow = 0
-	let unconcentrated = 0
-	let comet = 0
-  // TODO:
+
+  let totalVal = 0
+  let borrow = 0
+  let unconcentrated = 0
+  let comet = 0
   let multipoolComet = 0
   let liquidated = 0
 
   const [mintPositionsResult, singlePoolCometsResult, liquidityPositionsResult, cometsResult] = await Promise.allSettled([
-    program.getMintPositions(), 
-    program.getSinglePoolComets(), 
+    program.getMintPositions(),
+    program.getSinglePoolComets(),
     program.getLiquidityPositions(),
     program.getComet()
   ]);
@@ -50,7 +49,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
       let poolIndex = liquidityPosition.poolIndex
       let pool = tokenData.pools[poolIndex];//await program.getPool(poolIndex)
       let liquidityTokenSupply = toNumber(pool.liquidityTokenSupply);//(await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed"))
-        // .value!.uiAmount
+      // .value!.uiAmount
       let balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];//await program.getPoolBalances(poolIndex)
       let amount = ((balances[1] * liquidityTokenAmount) / liquidityTokenSupply) * 2
       totalVal += amount
@@ -75,39 +74,57 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     multipoolComet += usdiValue
   }
 
-	let borrowPercent = totalVal > 0 ? (borrow / totalVal) * 100 : 0
-	let unconcentratedPercent = totalVal > 0 ? (unconcentrated / totalVal) * 100 : 0
-	let cometPercent = totalVal > 0 ? (comet / totalVal) * 100 : 0
+  let borrowPercent = totalVal > 0 ? (borrow / totalVal) * 100 : 0
+  let unconcentratedPercent = totalVal > 0 ? (unconcentrated / totalVal) * 100 : 0
+  let cometPercent = totalVal > 0 ? (comet / totalVal) * 100 : 0
 
-	return {
-		totalVal,
-		comet,
-		cometPercent,
-		unconcentrated,
-		unconcentratedPercent,
-		borrow,
-		borrowPercent,
+  const statusValues = {
+    totalCometLiquidity: 1535356.02,
+    totalCometValLocked: 1535356.02,
+    totalUnconcentPositionVal: 1535356.02,
+    totalBorrowLiquidity: 1535356.02,
+    totalBorrowCollateralVal: 535356.02,
+  }
+
+  return {
+    totalVal,
+    comet,
+    cometPercent,
+    unconcentrated,
+    unconcentratedPercent,
+    borrow,
+    borrowPercent,
     multipoolComet,
-    liquidated
-	}
+    liquidated,
+    statusValues
+  }
 }
 
 interface GetProps {
-	userPubKey: PublicKey | null
+  userPubKey: PublicKey | null
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
+interface StatusValues {
+  totalCometLiquidity: number
+  totalCometValLocked: number
+  totalUnconcentPositionVal: number
+  totalBorrowLiquidity: number
+  totalBorrowCollateralVal: number
+}
+
 export interface Status {
-	totalVal: number
-	comet: number
-	cometPercent: number
-	unconcentrated: number
-	unconcentratedPercent: number
-	borrow: number
-	borrowPercent: number
+  totalVal: number
+  comet: number
+  cometPercent: number
+  unconcentrated: number
+  unconcentratedPercent: number
+  borrow: number
+  borrowPercent: number
   multipoolComet: number
   liquidated: number
+  statusValues: StatusValues
 }
 
 export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
