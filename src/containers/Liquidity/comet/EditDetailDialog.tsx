@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
+import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
@@ -7,14 +7,11 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
-import OneIcon from 'public/images/one-icon.svg'
-import TwoIcon from 'public/images/two-icon.svg'
 import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import throttle from 'lodash.throttle'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
@@ -40,19 +37,15 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const {
     trigger,
-		handleSubmit,
-		control,
+    handleSubmit,
+    control,
     clearErrors,
-		formState: { isDirty, errors, isSubmitting },
-	} = useForm({
+    formState: { isDirty, errors, isSubmitting },
+  } = useForm({
     mode: 'onChange'
-	})
+  })
 
-  const mutateRefresh = () => {
-    setRefresh(true)
-  }
-  
-  const { mutateAsync } = useEditMutation(publicKey, () => mutateRefresh())
+  const { mutateAsync } = useEditMutation(publicKey, () => setRefresh(true))
   const [defaultValues, setDefaultValues] = useState({
     lowerLimit: cometDetail.lowerLimit,
     upperLimit: cometDetail.upperLimit,
@@ -172,7 +165,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   useEffect(() => {
     function fetch() {
       if (isCollAmountInvalid()) {
-        return 
+        return
       }
 
       const program = getInceptApp()
@@ -274,7 +267,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }
 
   const formHasErrors = (): boolean => {
-     if (errors.collAmount && errors.collAmount.message !== "") {
+    if (errors.collAmount && errors.collAmount.message !== "") {
       return true
     }
 
@@ -283,7 +276,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const disableSubmitButton = (): boolean => {
     if (!isDirty || formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
-      return true 
+      return true
     }
 
     return false
@@ -297,7 +290,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
     setMintAmount(mintAmount)
-    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {
@@ -340,15 +333,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <BoxWrapper>
-            <WarningBox>
-              If you are unclear about how to edit your Comet, click here to learn more.
-            </WarningBox>
-
             <Box padding='15px 10px'>
               <Box>
-                <SubTitle>
-                  <Image src={OneIcon} /> <Box marginLeft='9px'>Adjust Collateral</Box>
-                </SubTitle>
+                <Box><Typography variant='p_lg'>Adjust Collateral</Typography></Box>
+
                 <Controller
                   name="collAmount"
                   control={control}
@@ -378,9 +366,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
               <StyledDivider />
 
               <Box>
-                <SubTitle>
-                  <Image src={TwoIcon} /> <Box marginLeft='9px'>Adjust <TxtPair>USDi</TxtPair> & <TxtPair>{assetData.tickerSymbol}</TxtPair> to mint into <TxtPair>{assetData.tickerSymbol} AMM</TxtPair></Box>
-                </SubTitle>
+                <Box>
+                  <Typography variant='p_lg'>
+                    Adjust Liquidity to mint into USDi / {assetData.tickerSymbol} Pool
+                  </Typography>
+                </Box>
 
                 <Box marginTop='25px'>
                   <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
@@ -404,11 +394,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
               <StyledDivider />
 
-              <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet</ActionButton>
+              <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet Position</ActionButton>
             </Box>
           </BoxWrapper>
         </DialogContent>
-      </Dialog>
+      </Dialog >
     </>
   )
 }
@@ -418,24 +408,11 @@ const BoxWrapper = styled(Box)`
   color: #fff;
   overflow-x: hidden;
 `
-const WarningBox = styled(Box)`
-	max-width: 520px;
-  height: 42px;
-	font-size: 11px;
-	font-weight: 500;
-  line-height: 42px;
-	color: #989898;
-  border-radius: 10px;
-  border: solid 1px #809cff;
-  background-color: rgba(128, 156, 255, 0.09);
-  text-align: center;
-  margin: 0 auto;
-`
 const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	height: 1px;
+  background-color: ${(props) => props.theme.boxes.blackShade};
+  margin-bottom: 21px;
+  margin-top: 21px;
+  height: 1px;
 `
 const SubTitle = styled('div')`
 	display: flex;
@@ -457,20 +434,19 @@ const HealthScoreValue = styled(Box)`
   font-weight: 500;
   text-align: center;
 `
-
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #4e609f;
-	color: #fff;
-	border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+	background-color: ${(props) => props.theme.palette.primary.main};
+	color: #000;
+  border-radius: 0px;
+  margin-top: 25px;
+	margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 
