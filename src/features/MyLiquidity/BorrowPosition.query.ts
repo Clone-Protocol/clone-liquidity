@@ -1,6 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { getAssetInfo } from ""
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -10,17 +11,18 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 
 
-export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
+export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
   console.log('fetchBorrowDetail', index)
 
 	await program.loadManager()
+  const tokenData = await program.getTokenData()
 
   let oPrice = 1
   let stableCollateralRatio = 0
   let cryptoCollateralRatio = 0
-  let assetInfo = await program.getAssetInfo(index);
+  let assetInfo = tokenData.pools[index].assetInfo
   oPrice = toNumber(assetInfo.price);
   stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
   cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
@@ -37,26 +39,26 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 	}
 }
 
-const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
   console.log('fetchBorrowPosition')
 
   await program.loadManager()
 
-  const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
-		program.getTokenData(), program.getMintPositions()
+  const [tokenDataResult, borrowPositionResult] = await Promise.allSettled([
+		program.getTokenData(), program.getBorrowPositions()
 	]);
 
-  if (tokenDataResult.status !== "fulfilled" || mintPositionResult.status !== "fulfilled") return
+  if (tokenDataResult.status !== "fulfilled" || borrowPositionResult.status !== "fulfilled") return
 
-  let mint = mintPositionResult.value.mintPositions[index];
+  let mint = borrowPositionResult.value.borrowPositions[index];
   const poolIndex = Number(mint.poolIndex)
   
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
   const assetInfo = tokenDataResult.value.pools[poolIndex].assetInfo;
   const oraclePrice = toNumber(assetInfo.price);
-  const positionsData = getUserMintInfos(tokenDataResult.value, mintPositionResult.value);
+  const positionsData = getUserMintInfos(tokenDataResult.value, borrowPositionResult.value);
   const positionData = positionsData[index];
 
   const balance = await fetchBalance({

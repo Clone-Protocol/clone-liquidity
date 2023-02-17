@@ -1,6 +1,8 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { Comet } from "incept-protocol-sdk/sdk/src/interfaces"
+import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -12,7 +14,7 @@ export const fetchInfos = async ({
 	userPubKey,
 	setStartTimer,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	setStartTimer: (start: boolean) => void
 }) => {
@@ -48,7 +50,7 @@ export const fetchInfos = async ({
 			totalLiquidity += p.liquidityDollarPrice
 		})
 		if (tokenDataResult.status === "fulfilled") {
-			healthScore = program.getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+			healthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
 		}
 	}
 

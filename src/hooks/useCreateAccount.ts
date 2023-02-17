@@ -28,12 +28,12 @@ export function useCreateAccount() {
 			const pubKey = publicKey as anchor.web3.PublicKey
 
 			let tx = new Transaction();
-			const usdiTokenAccount = await getTokenAccount(program.manager!.usdiMint, pubKey, program.provider.connection); 
+			const usdiTokenAccount = await getTokenAccount(program.incept!.usdiMint, pubKey, program.provider.connection); 
 	
 			if (usdiTokenAccount === undefined) {
 				console.log("NO USDI ACCOUNT!")
 				const associatedToken = await getAssociatedTokenAddress(
-					program.manager!.usdiMint,
+					program.incept!.usdiMint,
 					publicKey as anchor.web3.PublicKey
 				);
 
@@ -42,7 +42,7 @@ export function useCreateAccount() {
 						pubKey,
 						associatedToken,
 						pubKey,
-						program.manager!.usdiMint
+						program.incept!.usdiMint
 					)
 				);
 			}

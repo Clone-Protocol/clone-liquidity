@@ -1,39 +1,38 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount } from '~/utils/token_accounts'
+import { toNumber } from "incept-protocol-sdk/sdk/src/decimal"
 
-export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
+export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
 	await program.loadManager()
+	const tokenData = await program.getTokenData()
 
-	const liquidity = await program.getLiquidityPosition(index)
-	const poolIndex = Number(liquidity.poolIndex)
+	const liquidity = (await program.getLiquidityPositions())[index]
+	const pool = tokenData.pools[liquidity.poolIndex];
 
-	const balances = await program.getPoolBalances(poolIndex)
-	let price = balances[1] / balances[0]
-
+	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 	let usdiVal = 0.0
 	let iassetVal = 0.0
 
-	const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, program.provider.wallet.publicKey, program.connection);
+	const usdiTokenAccountAddress = await getTokenAccount(program.incept!.usdiMint, program.provider.publicKey!, program.connection);
 
 	if (usdiTokenAccountAddress !== undefined) {
 	  const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress, "processed");
 	  usdiVal = Number(usdiBalance.value.amount) / 100000000;
 	}
   
-	const pool = await program.getPool(poolIndex);
-	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.wallet.publicKey, program.connection);
+	const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.publicKey!, program.connection);
 	if (iassetTokenAccountAddress !== undefined) {
 	  const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress, "processed");
 	  iassetVal = Number(iassetBalance.value.amount) / 100000000;
 	}
 	
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
+  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(liquidity.poolIndex)
 	return {
 		tickerIcon,
 		tickerName,

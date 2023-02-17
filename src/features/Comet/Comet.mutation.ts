@@ -1,7 +1,8 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 import { useMutation } from 'react-query'
-import { Incept, Comet } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { toNumber, getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
 import * as anchor from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
@@ -33,7 +34,7 @@ type RecenterFormData = {
 }
 
 interface CallRecenterProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
   data: RecenterFormData
 }
@@ -48,30 +49,30 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
   let tx = new Transaction();
   const iAssetAssociatedToken = await getAssociatedTokenAddress(
     iassetMint,
-    program.provider.wallet.publicKey,
+    program.provider.publicKey!,
   );
   if (iassetAssociatedTokenAccount === undefined) {
     tx.add(
       await createAssociatedTokenAccountInstruction(
-        program.provider.wallet.publicKey,
+        program.provider.publicKey!,
         iAssetAssociatedToken,
-        program.provider.wallet.publicKey,
+        program.provider.publicKey!,
         iassetMint
       )
     );
   }
   const usdiAssociatedToken = await getAssociatedTokenAddress(
-    program.manager!.usdiMint,
-    program.provider.wallet.publicKey,
+    program.incept!.usdiMint,
+    program.provider.publicKey!,
   );
 
   if (usdiCollateralTokenAccount === undefined) {
     tx.add(
       await createAssociatedTokenAccountInstruction(
-        program.provider.wallet.publicKey,
+        program.provider.publicKey!,
         usdiAssociatedToken,
-        program.provider.wallet.publicKey,
-        program.manager!.usdiMint
+        program.provider.publicKey!,
+        program.incept!.usdiMint
       )
     );
   }
@@ -103,7 +104,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({program, userPubKey, d
   let tx = new Transaction();
 
   const usdiAssociatedToken = await getAssociatedTokenAddress(
-    program.manager!.usdiMint,
+    program.incept!.usdiMint,
     userPubKey!,
   );
 
@@ -113,7 +114,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({program, userPubKey, d
         userPubKey!,
         usdiAssociatedToken,
         userPubKey!,
-        program.manager!.usdiMint
+        program.incept!.usdiMint
       )
     );
   }
@@ -146,9 +147,10 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
   console.log('close input data', data)
 
 	await program.loadManager()
+  const tokenData = await program.getTokenData();
 
   let singlePoolComet = await program.getSinglePoolComets();
-  let assetInfo = await program.getAssetInfo(singlePoolComet.positions[data.cometIndex].poolIndex);
+  let assetInfo = tokenData.pools[singlePoolComet.positions[data.cometIndex].poolIndex].assetInfo;
 
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
   const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, userPubKey, program.connection);
@@ -177,7 +179,7 @@ type CloseFormData = {
   iassetMint: PublicKey
 }
 interface CallCloseProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
   data: CloseFormData
 }
@@ -197,13 +199,14 @@ export const callEdit = async ({
   console.log('edit input data', data)
 
 	await program.loadManager()
+  const tokenData = await program.getTokenData();
 
   const { collAmount, mintAmountChange, cometIndex, editType } = data
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   const singlePoolComet = await program.getSinglePoolComets();
   const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
-  const pool = await program.getPool(poolIndex);
+  const pool = tokenData.pools[poolIndex];
 
   let tx = new Transaction().add(
     await program.updatePricesInstruction()
@@ -285,7 +288,7 @@ type EditFormData = {
   editType: number
 }
 interface CallEditProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
   data: EditFormData,
   setRefreshData: () => {} 
@@ -331,7 +334,7 @@ type CometFormData = {
 }
 
 interface CallCometProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
   data: CometFormData
 }

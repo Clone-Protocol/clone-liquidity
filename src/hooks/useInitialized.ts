@@ -25,9 +25,10 @@ export default function useInitialized() {
 
 				const program = getInceptApp()
 				await program.loadManager()
-				if (!program.provider.wallet) {
-					return;
-				}
+				// TODO: Figure out what do to with this since its depreciated since.
+				// if (!program.provider.wallet) {
+				// 	return;
+				// }
 
 				try {
 					await program.getUserAccount()

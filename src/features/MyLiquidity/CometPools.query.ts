@@ -1,6 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { calculateEditCometSinglePoolWithUsdiBorrowed, getSinglePoolHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -8,7 +9,7 @@ import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserSinglePoolCometInfos } from '~/utils/user'
 
-export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
+export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: CometPools.query')
@@ -25,7 +26,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 
 	if (tokenDataResult.status === "fulfilled" && singlePoolCometResult.status === "fulfilled") {
 
-		let cometInfos = getUserSinglePoolCometInfos(program.calculateEditCometSinglePoolWithUsdiBorrowed, tokenDataResult.value, singlePoolCometResult.value);
+		let cometInfos = getUserSinglePoolCometInfos(calculateEditCometSinglePoolWithUsdiBorrowed, tokenDataResult.value, singlePoolCometResult.value);
 		console.log('cometInfos', cometInfos)
 	
 		let i = 0
@@ -37,7 +38,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 			if (hasPool) {
 				const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
 	
-				const healthData = program.getSinglePoolHealthScore(i, tokenDataResult.value, singlePoolCometResult.value)
+				const healthData = getSinglePoolHealthScore(i, tokenDataResult.value, singlePoolCometResult.value)
 				let healthScore = healthData.healthScore
 
 	

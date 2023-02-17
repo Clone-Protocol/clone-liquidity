@@ -1,12 +1,12 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
-export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
 
   console.log('fetchBalance')
@@ -16,18 +16,19 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 
 	await program.loadManager()
 
-	let liquidityPosition = await program.getLiquidityPosition(index)
-	let liquidityTokenBalance = toNumber(liquidityPosition.liquidityTokenValue)
+	const tokenData = await program.getTokenData();
+	let liquidityPositions = await program.getLiquidityPositions();
 
-	let pool = await program.getPool(liquidityPosition.poolIndex)
+	let liquidityPosition = liquidityPositions[index];
+	let liquidityTokenBalance = liquidityPosition.liquidityTokens
+
+	let pool = tokenData.pools[liquidityPosition.poolIndex]
 
 	let liquidityTokenSupplyBeforeComet = (
 		await program.connection.getTokenSupply(pool.liquidityTokenMint, "processed")
 	).value!.uiAmount
 
-	let balances = await program.getPoolBalances(liquidityPosition.poolIndex)
-
-	let maxVal = ((balances[1] * liquidityTokenBalance) / liquidityTokenSupplyBeforeComet!)
+	let maxVal = ((toNumber(pool.usdiAmount) * liquidityTokenBalance) / liquidityTokenSupplyBeforeComet!)
 
 	return {
 		maxVal: maxVal,

@@ -1,11 +1,11 @@
 import { useQuery, Query } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
 import { getiAssetInfos } from '~/utils/assets';
 
-export const fetchAssets = async ({ program, userPubKey }: { program: Incept, userPubKey: PublicKey | null }) => {
+export const fetchAssets = async ({ program, userPubKey }: { program: InceptClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return null
 	console.log('fetchAssets')
 

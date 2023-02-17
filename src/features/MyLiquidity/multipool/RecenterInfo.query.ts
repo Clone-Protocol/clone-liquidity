@@ -1,16 +1,18 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept, TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { getHealthScore, calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
 
 export const fetchRecenterInfo = async ({
 	program,
 	userPubKey,
 	index,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	index: number
 }) => {
@@ -33,7 +35,7 @@ export const fetchRecenterInfo = async ({
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 	let initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
 
-	let currentHealthScore = program.getHealthScore(tokenData, comet)
+	let currentHealthScore = getHealthScore(tokenData, comet)
 
 	let totalCollValue = 0
 	let totalHealthScore = 0
@@ -43,9 +45,9 @@ export const fetchRecenterInfo = async ({
 
 	// Only USDi for now.
 	totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
-	totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
+	totalHealthScore = getHealthScore(tokenData, comet).healthScore
 	try {
-		let recenterEstimation = program.calculateCometRecenterMultiPool(index, tokenData, comet)
+		let recenterEstimation = calculateCometRecenterMultiPool(index, tokenData, comet)
 		recenterCost = recenterEstimation.usdiCost
 		healthScore = recenterEstimation.healthScore
 	} catch (e) {

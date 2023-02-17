@@ -1,16 +1,17 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { getUSDiAccount } from '~/utils/token_accounts'
+import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 
 export const fetchDefaultCollateral = async ({
 	program,
 	userPubKey,
 	index,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	index: number
 }) => {
@@ -35,7 +36,7 @@ export const fetchDefaultCollateral = async ({
 	if (cometResult.status === 'fulfilled') {
 		collAmount = toNumber(cometResult.value.collaterals[index].collateralAmount)
     if (tokenDataResult.status === 'fulfilled') {
-      prevHealthScore = program.getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+      prevHealthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
     }
 	}
 	let collAmountDollarPrice = 1 // Since its USDi.

@@ -1,7 +1,7 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
 import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
-import { Incept, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 
 export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
@@ -27,7 +27,7 @@ type NewFormData = {
 	changeAmount: number
 }
 interface CallNewProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	data: NewFormData
 }
@@ -105,7 +105,7 @@ type EditFormData = {
 	editType: number
 }
 interface CallEditProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	data: EditFormData
 }

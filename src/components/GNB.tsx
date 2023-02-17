@@ -119,9 +119,9 @@ const RightMenu = () => {
 				const usdiTokenAccount = await getUSDiAccount(program);
 				try {
 					if (usdiTokenAccount === undefined) {
-						const ata = await getAssociatedTokenAddress(program.manager!.usdiMint, publicKey);
+						const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, publicKey);
 						const tx = new Transaction().add(
-							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.manager!.usdiMint)
+							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.incept!.usdiMint)
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);

@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
@@ -8,7 +8,7 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
 
-export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
+export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: Borrow.query')
@@ -20,7 +20,7 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 	const result: AssetList[] = []
 
 	const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
-		program.getTokenData(), program.getMintPositions()
+		program.getTokenData(), program.getBorrowPositions()
 	]);
 
 	if (tokenDataResult.status === "fulfilled" && mintPositionResult.status === "fulfilled") {

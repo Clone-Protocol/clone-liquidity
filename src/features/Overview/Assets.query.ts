@@ -1,5 +1,5 @@
 import { Query, useQuery } from 'react-query'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
@@ -7,7 +7,7 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getiAssetInfos} from '~/utils/assets';
 
-export const fetchAssets = async ({ program, setStartTimer }: { program: Incept, setStartTimer: (start: boolean) => void}) => {
+export const fetchAssets = async ({ program, setStartTimer }: { program: InceptClient, setStartTimer: (start: boolean) => void}) => {
 	console.log('fetchAssets')
 	// start timer in data-loading-indicator
 	setStartTimer(false);

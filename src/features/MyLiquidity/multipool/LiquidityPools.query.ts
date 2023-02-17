@@ -1,6 +1,6 @@
 import { Query, useQuery } from "react-query"
 import { PublicKey } from "@solana/web3.js"
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from "~/hooks/useIncept"
 import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
@@ -13,7 +13,7 @@ export const fetchPools = async ({
   setStartTimer,
   noFilter,
 }: {
-  program: Incept
+  program: InceptClient
   userPubKey: PublicKey | null
   setStartTimer: (start: boolean) => void
   noFilter: boolean

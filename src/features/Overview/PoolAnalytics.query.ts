@@ -1,10 +1,10 @@
 import { Query, useQuery } from 'react-query'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
-export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: Incept, setStartTimer: (start: boolean) => void }) => {
+export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: InceptClient, setStartTimer: (start: boolean) => void }) => {
   console.log('fetchPoolAnalytics')
   // start timer in data-loading-indicator
   setStartTimer(false);

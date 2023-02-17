@@ -1,6 +1,7 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
-import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useMutation } from 'react-query'
 import { assetMapping } from '~/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -30,10 +31,10 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
     const poolPrice = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
     const initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
     const {tickerSymbol, ..._} = assetMapping(Number(position.poolIndex))
-    let recenterEstimation = program.calculateCometRecenterMultiPool(i, tokenData, comet)
+    let recenterEstimation = calculateCometRecenterMultiPool(i, tokenData, comet)
 
 		if (recenterEstimation.usdiCost > 0 && Math.abs(poolPrice - initPrice) / initPrice >= 0.001) {
-			calls.push(program.recenterCometInstruction(i, 0, false))
+			calls.push(program.recenterCometInstruction(i, 0))
       tickers.push(tickerSymbol)
 		}
 	}
@@ -72,7 +73,7 @@ export const callRecenter = async ({ program, userPubKey, data }: CallRecenterPr
 
 	await program.loadManager()
 
-	await program.recenterComet(data.positionIndex, 0, false)
+	await program.recenterComet(data.positionIndex, 0)
 
 	return {
 		result: true,
@@ -84,7 +85,7 @@ type RecenterFormData = {
 }
 
 interface CallRecenterProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	data: RecenterFormData
 }

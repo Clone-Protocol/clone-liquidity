@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 
 export interface InceptContextState {
-	getInceptApp: () => Incept
+	getInceptApp: () => InceptClient
 }
 
 export const InceptContext = createContext<InceptContextState>({} as InceptContextState)

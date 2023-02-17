@@ -1,7 +1,7 @@
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
-import { Incept, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
 import { getUSDiAccount } from '~/utils/token_accounts'
 
 export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => {
@@ -26,7 +26,6 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 			userUsdiTokenAccount!,
 			toDevnetScale(collAmount),
 			0,
-			false
 		)
 	}
   tx.add(ix)
@@ -44,7 +43,7 @@ type EditFormData = {
 	editType: number
 }
 interface CallEditProps {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	data: EditFormData
 }
