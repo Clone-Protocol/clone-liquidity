@@ -10,6 +10,8 @@ import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
+import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import CometIconOff from 'public/images/comet-icon-off.svg'
 import UlIconOff from 'public/images/ul-icon-off.svg'
@@ -134,4 +136,4 @@ const NewPositionButton = styled(Button)`
   }
 `
 
-export default LiquidityTable
+export default withSuspense(LiquidityTable, <LoadingProgress />)

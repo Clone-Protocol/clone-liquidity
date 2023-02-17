@@ -1,4 +1,4 @@
-import { Box, Divider, Paper, Stack, Typography } from '@mui/material'
+import { Box, Divider, Stack, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { styled } from '@mui/system'

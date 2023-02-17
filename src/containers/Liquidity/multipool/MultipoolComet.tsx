@@ -29,7 +29,7 @@ const MultipoolComet = () => {
       <Stack direction='row'>
         <Box marginRight='31px'>
           <Box><Typography variant='p' color='#989898'>Multipool Health Score</Typography></Box>
-          <Box>
+          <Box mt='15px'>
             {!infos.healthScore || Number.isNaN(infos.healthScore) ?
               <></> :
               <HealthscoreView score={infos.healthScore} />
@@ -40,9 +40,9 @@ const MultipoolComet = () => {
           <ColumnDivider />
           <Box marginLeft='31px' marginRight='31px'>
             <Box><Typography variant='p' color='#989898'>Multipool Colleteral Value</Typography></Box>
-            <Box>
+            <Box mt='15px'>
               <Typography variant='p_xlg'>
-                {infos.totalCollValue > 0 ? infos.totalCollValue.toLocaleString() : ''}
+                {infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : ''}
               </Typography>
             </Box>
           </Box>
@@ -51,9 +51,9 @@ const MultipoolComet = () => {
           <ColumnDivider />
           <Box marginLeft='31px'>
             <Box><Typography variant='p' color='#989898'>Multipool Liquidity</Typography></Box>
-            <Box>
+            <Box mt='15px'>
               <Typography variant='p_xlg'>
-                {infos.totalLiquidity > 0 ? infos.totalLiquidity.toLocaleString() : ''}
+                {infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : ''}
               </Typography>
             </Box>
           </Box>

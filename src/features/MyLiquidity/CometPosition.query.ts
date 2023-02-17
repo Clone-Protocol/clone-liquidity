@@ -100,6 +100,9 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     upperLimit = upperPrice
   }
 
+  //@TODO: need to set proper data
+  const contributedLiquidity = 805043.02
+
   return {
     mintAmount,
     mintIassetAmount,
@@ -114,7 +117,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     price,
     tightRange,
     maxRange,
-    centerPrice
+    centerPrice,
+    contributedLiquidity
   }
 }
 
@@ -155,6 +159,7 @@ export interface CometDetail extends PositionInfo {
   upperLimit: number
   ild: number
   healthScore: number
+  contributedLiquidity?: number
 }
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {

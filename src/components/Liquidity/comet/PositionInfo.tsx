@@ -29,7 +29,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
   const [isEditBtnHover, setIsEditBtnHover] = useState(false)
   //@TODO set proper liquidity
-  const contributedLiquidity = 805043.02
+  const contributedLiquidity = cometDetail.contributedLiquidity
 
   return assetData ? (
     <PositionWrapper>
