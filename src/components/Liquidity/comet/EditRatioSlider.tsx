@@ -34,16 +34,15 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     zIndex: 10,
     height: 3,
     border: 'none',
-    background: 'linear-gradient(to left, #f00 -12%, #809cff 66%)'
+    background: 'linear-gradient(to left, #ff8e4f 0%, #fff 100%)'
   },
   '& .MuiSlider-valueLabel': {
-    fontSize: '11px',
-    fontWeight: '600',
-    width: '51px',
-    padding: '4px 8px 4px 8px',
-    borderRadius: '10px',
-    border: 'solid 1px #809cff',
-    backgroundColor: '#000',
+    fontSize: '12px',
+    fontWeight: '500',
+    marginTop: '5px',
+    padding: '4px 8px',
+    border: 'solid 1px #fff',
+    background: 'unset',
     '&:before': { display: 'none' },
   },
   '& .MuiSlider-rail': {
@@ -59,7 +58,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
   }
 
   const pickHex = (x: number) => {
-    const f = chroma.scale(['#809cff', '#f00']).gamma(2)
+    const f = chroma.scale(['#fff', '#ff8e4f']).gamma(2)
     const rgb = f(x / 100).css()
     return rgb
   }
@@ -80,7 +79,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
   return (
     <Box>
       <Box width="100%" display="flex" sx={{ alignItems: 'center' }}>
-        <SliderTxt sx={{ marginRight: '18px', marginTop: '10px' }}>Min</SliderTxt>
+        <SliderTxt mr='14px' mt='10px'><div>0%</div> <div>Min</div></SliderTxt>
         <Box sx={{ width: '100%', height: '48px' }}>
           <StyledSlider
             sx={{
@@ -88,10 +87,10 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
                 border: `solid 1px ${pickHex(ratio)}`,
               },
               '& .MuiSlider-thumb': {
-                border: `3px solid ${pickHex(ratio)}`,
+                border: `0px`,
               },
               '& .MuiSlider-track': {
-                background: `linear-gradient(to left, #f00 -12%, #809cff ${ratio}%)`
+                background: `linear-gradient(to left, #ff8e4f 0%, #fff ${ratio}%)`
               }
             }}
             value={ratio}
@@ -107,7 +106,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
             <FixValueLabel>{currentRatio.toFixed(1)}%</FixValueLabel>
           </Box>
         </Box>
-        <SliderTxt sx={{ marginLeft: '18px', marginTop: '10px' }}>Max</SliderTxt>
+        <SliderTxt ml='14px' mt='10px'><div>100%</div> <div>Max</div></SliderTxt>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '25px' }}>
         <Stack direction="row" gap={2}>
@@ -158,13 +157,13 @@ const StyledBox = styled(Box)`
   margin-top: 8px;
 `
 
-const SliderTxt = styled('div')`
-  display: flex;
-  align-items: flex-end;
+const SliderTxt = styled(Box)`
+  width: 30px;
   font-size: 11px;
   font-weight: 500;
-  color: #fff;
+  color: ${(props) => props.theme.palette.text.secondary};
   margin-bottom: 8px;
+  line-height: 13px;
 `
 
 const FixThumb = styled('div')`
@@ -181,12 +180,11 @@ const FixValueLabel = styled(Box)`
   padding: 2px 8px;
   margin-top: 8px;
   margin-left: -16px;
-  border-radius: 10px;
-  border: solid 1px #686868;
-  background-color: #000;
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff;
+  border: solid 1px ${(props) => props.theme.palette.text.secondary};
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: ${(props) => props.theme.palette.text.secondary};
 `
 
 const FormBox = styled(Box)`

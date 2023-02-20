@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
-import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
@@ -100,7 +99,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     async function fetch() {
       if (open) {
         const program = getInceptApp()
-
         initData()
 
         let {
@@ -118,7 +116,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         )
 
         const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
-
         setCometData({
           ...cometData,
           lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
@@ -169,9 +166,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       }
 
       const program = getInceptApp()
-
       if (open && tokenDataState && singlePoolCometState) {
-
         const collateralChange = editType === 0 ? collAmount : -1 * collAmount
 
         let {
@@ -251,11 +246,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       clearErrors('collAmount')
       return
     }
-
     if ((editType === 0 && collAmount > balance) || (editType === 1 && collAmount > maxWithdrawable)) {
       return 'The collateral amount cannot exceed the balance.'
     }
-
     if (collAmount <= 0) {
       return 'The collateral amount should be greater than 0'
     }
@@ -270,7 +263,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     if (errors.collAmount && errors.collAmount.message !== "") {
       return true
     }
-
     return false
   }
 
@@ -278,7 +270,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     if (!isDirty || formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
       return true
     }
-
     return false
   }
 
@@ -330,71 +321,74 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={1000}>
         <DialogContent sx={{ backgroundColor: '#16171a' }}>
           <BoxWrapper>
             <Box padding='15px 10px'>
               <Box>
-                <Box><Typography variant='p_lg'>Adjust Collateral</Typography></Box>
+                <Typography variant='p_xlg'>Edit Comet Position</Typography>
+              </Box>
+              <StyledDivider />
+              <Stack direction='row' gap={5}>
+                <EqualBox>
+                  <Box>
+                    <Box><Typography variant='h8'>Adjust Collateral Amount</Typography></Box>
 
-                <Controller
-                  name="collAmount"
-                  control={control}
-                  rules={{
-                    validate(value) {
-                      return validateCollAmount()
-                    }
-                  }}
-                  render={({ field }) => (
-                    <EditCollateralInput
-                      editType={editType}
-                      tickerIcon={'/images/assets/USDi.png'}
-                      tickerSymbol="USDi"
-                      collAmount={isNaN(collAmount) ? '' : collAmount}
-                      collAmountDollarPrice={collAmount}
-                      maxCollVal={editType === 0 ? balance : maxWithdrawable}
-                      currentCollAmount={cometDetail.collAmount}
-                      dollarPrice={cometDetail.collAmount}
-                      onChangeType={handleChangeType}
-                      onChangeAmount={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(evt.currentTarget.value), field)}
-                      onMax={(amount: number) => onCollAmountInputChange(amount, field)}
+                    <Controller
+                      name="collAmount"
+                      control={control}
+                      rules={{
+                        validate(value) {
+                          return validateCollAmount()
+                        }
+                      }}
+                      render={({ field }) => (
+                        <EditCollateralInput
+                          editType={editType}
+                          tickerIcon={'/images/assets/USDi.png'}
+                          tickerSymbol="USDi"
+                          collAmount={isNaN(collAmount) ? '' : collAmount}
+                          collAmountDollarPrice={collAmount}
+                          maxCollVal={editType === 0 ? balance : maxWithdrawable}
+                          currentCollAmount={cometDetail.collAmount}
+                          dollarPrice={cometDetail.collAmount}
+                          onChangeType={handleChangeType}
+                          onChangeAmount={(evt: React.ChangeEvent<HTMLInputElement>) => onCollAmountInputChange(parseFloat(evt.currentTarget.value), field)}
+                          onMax={(amount: number) => onCollAmountInputChange(amount, field)}
+                        />
+                      )}
                     />
-                  )}
-                />
-                <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
-              </Box>
-              <StyledDivider />
+                    <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
+                  </Box>
+                  <StyledDivider />
 
-              <Box>
-                <Box>
-                  <Typography variant='p_lg'>
-                    Adjust Liquidity to mint into USDi / {assetData.tickerSymbol} Pool
-                  </Typography>
-                </Box>
-
-                <Box marginTop='25px'>
-                  <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
-                </Box>
-              </Box>
-              <StyledDivider />
-
-              <Box>
-                <SubTitle>
-                  <Box marginLeft='9px'>Projected Liquidity Concentration Range <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
-                </SubTitle>
-
-                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
-              </Box>
-              <StyledDivider />
-
-              <Box>
-                <HealthScoreTitle>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></HealthScoreTitle>
-                <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{isNaN(healthScore) ? 0 : healthScore.toFixed(2)}</span>/100</HealthScoreValue>
-              </Box>
-
-              <StyledDivider />
-
-              <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet Position</ActionButton>
+                  <Box>
+                    <Box>
+                      <Typography variant='h8'>
+                        Adjust Liquidity to mint into USDi / {assetData.tickerSymbol} Pool
+                      </Typography>
+                    </Box>
+                    <Box marginTop='25px'>
+                      <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
+                    </Box>
+                  </Box>
+                </EqualBox>
+                <EqualBox>
+                  <Box><Typography variant='h8'>Projected Values</Typography></Box>
+                  <BoxWithBorder padding='14px 19px'>
+                    <Box>
+                      <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
+                      <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
+                    </Box>
+                    <StyledDivider />
+                    <Box>
+                      <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
+                      <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{isNaN(healthScore) ? 0 : healthScore.toFixed(2)}</span>/100</HealthScoreValue>
+                    </Box>
+                  </BoxWithBorder>
+                  <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet Position</ActionButton>
+                </EqualBox>
+              </Stack>
             </Box>
           </BoxWrapper>
         </DialogContent>
@@ -410,24 +404,16 @@ const BoxWrapper = styled(Box)`
 `
 const StyledDivider = styled(Divider)`
   background-color: ${(props) => props.theme.boxes.blackShade};
-  margin-bottom: 21px;
-  margin-top: 21px;
+  margin-bottom: 15px;
+  margin-top: 15px;
   height: 1px;
 `
-const SubTitle = styled('div')`
-	display: flex;
-	font-size: 14px;
-	font-weight: 500;
-	margin-bottom: 17px;
-	color: #fff;
+const EqualBox = styled(Box)`
+  flex: 1 1 0;
+  min-width: 400px;
 `
-const TxtPair = styled('span')`
-  color: #809cff;
-`
-const HealthScoreTitle = styled(Box)`
-  font-size: 14px; 
-  font-weight: 500; 
-  margin-left: 9px;
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
 const HealthScoreValue = styled(Box)`
   font-size: 20px; 
