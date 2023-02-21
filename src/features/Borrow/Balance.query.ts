@@ -5,6 +5,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getTokenAccount } from '~/utils/token_accounts'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return null
@@ -53,13 +54,18 @@ export interface Balance {
 }
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(['borrowBalance', userPubKey, index], () => fetchBalance({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
-    refetchOnMount,
-    refetchInterval: REFETCH_CYCLE,
-    refetchIntervalInBackground: true,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['borrowBalance', wallet, userPubKey, index], () => fetchBalance({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled
+    })
+  } else {
+    return useQuery(['borrowBalance'], () => ({ usdiVal: 0, iassetVal: 0 }))
+  }
 }

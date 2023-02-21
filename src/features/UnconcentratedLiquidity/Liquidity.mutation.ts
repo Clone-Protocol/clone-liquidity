@@ -6,12 +6,13 @@ import * as anchor from "@project-serum/anchor"
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawProps) => {
+export const callWithdraw = async ({ program, userPubKey, data }: CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
-  	const { index, percent } = data
+	const { index, percent } = data
 	const tokenData = await program.getTokenData();
 
 	let fractionClaimable = percent / 100;
@@ -29,12 +30,12 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
 
 	let tx = new Transaction();
-	
+
 	if (iassetAssociatedTokenAccount === undefined) {
 		const iAssetAssociatedToken: PublicKey = await getAssociatedTokenAddress(
 			iassetMint,
 			program.provider.publicKey!,
-			);
+		);
 		tx.add(
 			await createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
@@ -49,7 +50,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 		const usdiAssociatedToken = await getAssociatedTokenAddress(
 			program.incept!.usdiMint,
 			program.provider.publicKey!,
-			);
+		);
 		tx.add(
 			await createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
@@ -65,7 +66,7 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 		const liquidityAssociatedToken = await getAssociatedTokenAddress(
 			liquidityTokenMint,
 			program.provider.publicKey!,
-			);
+		);
 		tx.add(
 			await createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
@@ -89,31 +90,36 @@ export const callWithdraw = async ({program, userPubKey, data} : CallWithdrawPro
 	await program.provider.send!(tx);
 
 	return {
-    result: true
-  }
+		result: true
+	}
 }
 
 type WithdrawFormData = {
-  index: number
-  amount: number,
-  percent: number
+	index: number
+	amount: number,
+	percent: number
 }
 interface CallWithdrawProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
-  data: WithdrawFormData
+	data: WithdrawFormData
 }
-export function useWithdrawMutation(userPubKey : PublicKey | null ) {
-  const { getInceptApp } = useIncept()
-  return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(), userPubKey, data }))
+export function useWithdrawMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	if (wallet) {
+		return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }
 
 
-export const callDeposit = async ({program, userPubKey, data} : CallDepositProps) => {
+export const callDeposit = async ({ program, userPubKey, data }: CallDepositProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
-  	const { index, iassetAmount } = data
+	const { index, iassetAmount } = data
 
 	const tokenData = await program.getTokenData();
 
@@ -133,7 +139,7 @@ export const callDeposit = async ({program, userPubKey, data} : CallDepositProps
 		const liquidityAssociatedToken = await getAssociatedTokenAddress(
 			liquidityTokenMint,
 			program.provider.publicKey!,
-		  );
+		);
 		tx.add(
 			await createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
@@ -154,31 +160,36 @@ export const callDeposit = async ({program, userPubKey, data} : CallDepositProps
 		)
 	);
 	await program.provider.send!(tx, []);
-	
+
 	return {
-    result: true
-  }
+		result: true
+	}
 }
 
 type DepositFormData = {
-  index: number
-  iassetAmount: number
+	index: number
+	iassetAmount: number
 }
 interface CallDepositProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
-  data: DepositFormData
+	data: DepositFormData
 }
-export function useDepositMutation(userPubKey : PublicKey | null ) {
-  const { getInceptApp } = useIncept()
-  return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(), userPubKey, data }))
+export function useDepositMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	if (wallet) {
+		return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }
 
 export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidityProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
-  	const { iassetIndex, iassetAmount } = data
+	const { iassetIndex, iassetAmount } = data
 
 	const tokenData = await program.getTokenData();
 
@@ -234,20 +245,25 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 	await program.provider.send!(tx);
 
 	return {
-    result: true
-  }
+		result: true
+	}
 }
 
 type LiquidityFormData = {
-  iassetIndex: number
+	iassetIndex: number
 	iassetAmount: number
 }
 interface CallLiquidityProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
-  data: LiquidityFormData
+	data: LiquidityFormData
 }
-export function useLiquidityMutation(userPubKey : PublicKey | null ) {
-  const { getInceptApp } = useIncept()
-  return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(), userPubKey, data }))
+export function useLiquidityMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	if (wallet) {
+		return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }

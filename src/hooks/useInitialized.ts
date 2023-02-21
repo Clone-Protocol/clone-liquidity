@@ -23,12 +23,8 @@ export default function useInitialized() {
 					return;
 				}
 
-				const program = getInceptApp()
+				const program = getInceptApp(wallet)
 				await program.loadManager()
-				// TODO: Figure out what do to with this since its depreciated since.
-				// if (!program.provider.wallet) {
-				// 	return;
-				// }
 
 				try {
 					await program.getUserAccount()

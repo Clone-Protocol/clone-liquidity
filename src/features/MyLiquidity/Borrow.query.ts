@@ -7,14 +7,15 @@ import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
+export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: Borrow.query')
 	// start timer in data-loading-indicator
-  	setStartTimer(false);
-  	setStartTimer(true);
+	setStartTimer(false);
+	setStartTimer(true);
 
 	await program.loadManager()
 	const result: AssetList[] = []
@@ -28,8 +29,8 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 
 		let i = 0
 		for (const info of mintInfos) {
-		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
-		const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+			const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+			const { collateralName, collateralType } = collateralMapping(Number(info[1]))
 
 			result.push({
 				id: i,
@@ -45,7 +46,7 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 				collateralRatio: Number(info[5]) * 100,
 				minCollateralRatio: Number(info[6]) * 100,
 			})
-		i++
+			i++
 		}
 	}
 
@@ -55,14 +56,14 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 	//     tickerName: 'iSolana',
 	//     tickerSymbol: 'iSOL',
 	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-  //     collateralName: 'USDi',
+	//     collateralName: 'USDi',
 	//     oPrice: 160.51,
-  //     assetType: 0,
-  //     collateralType: 0,
+	//     assetType: 0,
+	//     collateralType: 0,
 	//     borrowed: 90.11,
 	//     collateral: 111.48,
 	//     collateralRatio: 15898343,
-  //     minCollateralRatio: 120
+	//     minCollateralRatio: 120
 	//   },
 	// ]
 	return result
@@ -71,8 +72,8 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 interface GetAssetsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-  enabled?: boolean
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	enabled?: boolean
 }
 
 export interface AssetList {
@@ -91,26 +92,31 @@ export interface AssetList {
 }
 
 export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {
-  const { getInceptApp } = useIncept()
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
-  return useQuery(['borrowAssets', userPubKey, filter], () => fetchAssets({ program: getInceptApp(), userPubKey, setStartTimer }), {
-    refetchOnMount,
-		refetchInterval: REFETCH_CYCLE,
-		refetchIntervalInBackground: true,
-    enabled,
-		select: (assets) => {
-			return assets.filter((asset) => {
-				if (filter === 'crypto') {
-					return asset.assetType === AssetType.Crypto
-				} else if (filter === 'fx') {
-					return asset.assetType === AssetType.Fx
-				} else if (filter === 'commodities') {
-					return asset.assetType === AssetType.Commodities
-				} else if (filter === 'stocks') {
-					return asset.assetType === AssetType.Stocks
-				}
-				return true;
-			})
-		}
-  })
+	if (wallet) {
+		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+			select: (assets) => {
+				return assets.filter((asset) => {
+					if (filter === 'crypto') {
+						return asset.assetType === AssetType.Crypto
+					} else if (filter === 'fx') {
+						return asset.assetType === AssetType.Fx
+					} else if (filter === 'commodities') {
+						return asset.assetType === AssetType.Commodities
+					} else if (filter === 'stocks') {
+						return asset.assetType === AssetType.Stocks
+					}
+					return true;
+				})
+			}
+		})
+	} else {
+		return useQuery(['borrowAssets'], () => [])
+	}
 }

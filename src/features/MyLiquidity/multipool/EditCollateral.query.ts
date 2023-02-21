@@ -5,6 +5,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { getUSDiAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchDefaultCollateral = async ({
 	program,
@@ -35,9 +36,9 @@ export const fetchDefaultCollateral = async ({
 
 	if (cometResult.status === 'fulfilled') {
 		collAmount = toNumber(cometResult.value.collaterals[index].collateralAmount)
-    if (tokenDataResult.status === 'fulfilled') {
-      prevHealthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
-    }
+		if (tokenDataResult.status === 'fulfilled') {
+			prevHealthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+		}
 	}
 	let collAmountDollarPrice = 1 // Since its USDi.
 	let totalCollValue = collAmount * collAmountDollarPrice
@@ -66,13 +67,18 @@ interface GetProps {
 }
 
 export function useEditCollateralQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useQuery(
-		['editCollateral', userPubKey, index],
-		() => fetchDefaultCollateral({ program: getInceptApp(), userPubKey, index }),
-		{
-			refetchOnMount,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['editCollateral', wallet, userPubKey, index],
+			() => fetchDefaultCollateral({ program: getInceptApp(wallet), userPubKey, index }),
+			{
+				refetchOnMount,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['editCollateral'], () => { })
+	}
 }

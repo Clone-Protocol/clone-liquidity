@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useIncept } from '~/hooks/useIncept'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { Balance } from '~/features/Borrow/Balance.query'
@@ -29,6 +29,7 @@ const RISK_SCORE_VAL = 20
 const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
+  const wallet = useAnchorWallet()
   const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -70,21 +71,23 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
   useEffect(() => {
     async function fetch() {
-      const program = getInceptApp()
-      await program.loadManager()
-      const tData = await program.getTokenData();
-      setTokenData(tData);
+      if (wallet) {
+        const program = getInceptApp(wallet)
+        await program.loadManager()
+        const tData = await program.getTokenData();
+        setTokenData(tData);
+      }
     }
     fetch()
-  }, [])
+  }, [wallet])
 
   useEffect(() => {
     async function fetch() {
-      if (!tokenData) return
+      if (!tokenData || !wallet) return
 
       await trigger()
 
-      const program = getInceptApp()
+      const program = getInceptApp(wallet)
 
       if (isNaN(collAmount)) {
         setMintAmount(0)

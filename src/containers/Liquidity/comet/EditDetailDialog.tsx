@@ -3,7 +3,7 @@ import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } f
 import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import { useIncept } from '~/hooks/useIncept'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
@@ -23,6 +23,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
+  const wallet = useAnchorWallet()
   const [loading, setLoading] = useState(false)
   const [collAmount, setCollAmount] = useState(NaN)
   const [mintAmount, setMintAmount] = useState(0.0)
@@ -40,18 +41,18 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const {
     trigger,
-		handleSubmit,
-		control,
+    handleSubmit,
+    control,
     clearErrors,
-		formState: { isDirty, errors, isSubmitting },
-	} = useForm({
+    formState: { isDirty, errors, isSubmitting },
+  } = useForm({
     mode: 'onChange'
-	})
+  })
 
   const mutateRefresh = () => {
     setRefresh(true)
   }
-  
+
   const { mutateAsync } = useEditMutation(publicKey, () => mutateRefresh())
   const [defaultValues, setDefaultValues] = useState({
     lowerLimit: cometDetail.lowerLimit,
@@ -86,27 +87,29 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Initialize state data.
   useEffect(() => {
     async function fetch() {
-      const program = getInceptApp()
-      await program.loadManager()
+      if (wallet) {
+        const program = getInceptApp(wallet)
+        await program.loadManager()
 
-      const [tokenDataResult, cometResult] = await Promise.allSettled([
-        program.getTokenData(), program.getSinglePoolComets()
-      ]);
+        const [tokenDataResult, cometResult] = await Promise.allSettled([
+          program.getTokenData(), program.getSinglePoolComets()
+        ]);
 
-      if (tokenDataResult.status === "fulfilled" && cometResult.status === "fulfilled") {
-        setTokenDataState(tokenDataResult.value)
-        setSinglePoolCometState(cometResult.value)
+        if (tokenDataResult.status === "fulfilled" && cometResult.status === "fulfilled") {
+          setTokenDataState(tokenDataResult.value)
+          setSinglePoolCometState(cometResult.value)
+        }
+        setRefresh(false);
       }
-      setRefresh(false);
     }
     if (refresh) fetch();
-  }, [refresh])
+  }, [refresh, wallet])
 
   // set defaultMintRatio
   useEffect(() => {
     async function fetch() {
-      if (open) {
-        const program = getInceptApp()
+      if (open && wallet) {
+        const program = getInceptApp(wallet)
 
         initData()
 
@@ -148,7 +151,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       }
     }
     fetch()
-  }, [open])
+  }, [open, wallet])
 
   // set default when changing editType
   useEffect(() => {
@@ -171,11 +174,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Trigger on collAmount
   useEffect(() => {
     function fetch() {
-      if (isCollAmountInvalid()) {
-        return 
-      }
+      if (isCollAmountInvalid() || !wallet) return
 
-      const program = getInceptApp()
+      const program = getInceptApp(wallet)
 
       if (open && tokenDataState && singlePoolCometState) {
 
@@ -214,7 +215,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Trigger on mintAmount
   useEffect(() => {
     function fetch() {
-      const program = getInceptApp()
+      if (!wallet) return
+
+      const program = getInceptApp(wallet)
 
       if (open && tokenDataState && singlePoolCometState) {
         console.log('calculateRange', collAmount, mintAmount, cometDetail.mintAmount)
@@ -274,7 +277,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }
 
   const formHasErrors = (): boolean => {
-     if (errors.collAmount && errors.collAmount.message !== "") {
+    if (errors.collAmount && errors.collAmount.message !== "") {
       return true
     }
 
@@ -283,7 +286,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const disableSubmitButton = (): boolean => {
     if (!isDirty || formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
-      return true 
+      return true
     }
 
     return false
@@ -297,7 +300,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
     setMintAmount(mintAmount)
-    setMintRatio( maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {

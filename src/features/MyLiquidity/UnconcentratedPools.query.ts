@@ -7,13 +7,14 @@ import { assetMapping, AssetType } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserLiquidityInfos } from '~/utils/user'
-export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
+export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return []
 
-  console.log('fetchPools :: UnconcentratedPools.query')
+	console.log('fetchPools :: UnconcentratedPools.query')
 	// start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
+	setStartTimer(false);
+	setStartTimer(true);
 
 	await program.loadManager()
 	const result: PoolList[] = []
@@ -26,7 +27,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 		let iassetInfos = getUserLiquidityInfos(tokenDataResult.value, liquidityPositionsResult.value)
 		let i = 0
 		for (const info of iassetInfos) {
-		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
+			const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
 
 			result.push({
 				id: i,
@@ -39,7 +40,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 				liquidityUSD: info[3],
 				liquidityVal: info[3] * 2,
 			})
-		i++
+			i++
 		}
 	}
 
@@ -49,8 +50,8 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-  enabled?: boolean
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	enabled?: boolean
 }
 
 export interface PoolList {
@@ -66,26 +67,31 @@ export interface PoolList {
 }
 
 export function useUnconcentPoolsQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetPoolsProps) {
-  const { getInceptApp } = useIncept()
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
-  return useQuery(['unconcentPools', userPubKey, filter], () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer }), {
-    	refetchOnMount,
-		refetchInterval: REFETCH_CYCLE,
-		refetchIntervalInBackground: true,
-    enabled,
-		select: (assets) => {
-			return assets.filter((asset) => {
-				if (filter === 'crypto') {
-					return asset.assetType === AssetType.Crypto
-				} else if (filter === 'fx') {
-					return asset.assetType === AssetType.Fx
-				} else if (filter === 'commodities') {
-					return asset.assetType === AssetType.Commodities
-				} else if (filter === 'stocks') {
-					return asset.assetType === AssetType.Stocks
-				}
-				return true;
-			})
-		}
-  })
+	if (wallet) {
+		return useQuery(['unconcentPools', wallet, userPubKey, filter], () => fetchPools({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+			select: (assets) => {
+				return assets.filter((asset) => {
+					if (filter === 'crypto') {
+						return asset.assetType === AssetType.Crypto
+					} else if (filter === 'fx') {
+						return asset.assetType === AssetType.Fx
+					} else if (filter === 'commodities') {
+						return asset.assetType === AssetType.Commodities
+					} else if (filter === 'stocks') {
+						return asset.assetType === AssetType.Stocks
+					}
+					return true;
+				})
+			}
+		})
+	} else {
+		return useQuery(['unconcentPools'], () => [])
+	}
 }

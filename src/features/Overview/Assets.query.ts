@@ -5,14 +5,15 @@ import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getiAssetInfos} from '~/utils/assets';
+import { getiAssetInfos } from '~/utils/assets';
+import { AnchorWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchAssets = async ({ program, setStartTimer }: { program: InceptClient, setStartTimer: (start: boolean) => void}) => {
+export const fetchAssets = async ({ program, setStartTimer }: { program: InceptClient, setStartTimer: (start: boolean) => void }) => {
 	console.log('fetchAssets')
 	// start timer in data-loading-indicator
 	setStartTimer(false);
 	setStartTimer(true);
-    
+
 	await program.loadManager()
 	const tokenData = await program.getTokenData();
 	const iassetInfos = getiAssetInfos(tokenData);
@@ -38,9 +39,9 @@ export const fetchAssets = async ({ program, setStartTimer }: { program: InceptC
 
 interface GetAssetsProps {
 	filter: FilterType
-  searchTerm: string
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-  enabled?: boolean
+	searchTerm: string
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	enabled?: boolean
 }
 
 export interface AssetList {
@@ -56,34 +57,40 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
-  const { getInceptApp } = useIncept()
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-  return useQuery(['assets'], () => fetchAssets({ program: getInceptApp(), setStartTimer }), {
-    refetchOnMount,
-		refetchInterval: REFETCH_CYCLE,
-		refetchIntervalInBackground: true,
-    enabled,
-    select: (assets) => {
-			let filteredAssets = assets
+	if (wallet) {
+		console.log('assets', wallet)
+		return useQuery(['assets', wallet], () => fetchAssets({ program: getInceptApp(wallet), setStartTimer }), {
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+			select: (assets) => {
+				let filteredAssets = assets
 
-			filteredAssets = assets.filter((asset) => {
-				if (filter === 'crypto') {
-					return asset.assetType === AssetType.Crypto
-				} else if (filter === 'fx') {
-					return asset.assetType === AssetType.Fx
-				} else if (filter === 'commodities') {
-					return asset.assetType === AssetType.Commodities
-				} else if (filter === 'stocks') {
-					return asset.assetType === AssetType.Stocks
+				filteredAssets = assets.filter((asset) => {
+					if (filter === 'crypto') {
+						return asset.assetType === AssetType.Crypto
+					} else if (filter === 'fx') {
+						return asset.assetType === AssetType.Fx
+					} else if (filter === 'commodities') {
+						return asset.assetType === AssetType.Commodities
+					} else if (filter === 'stocks') {
+						return asset.assetType === AssetType.Stocks
+					}
+					return true;
+				})
+
+				if (searchTerm && searchTerm.length > 0) {
+					filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
 				}
-				return true;
-			})
-
-			if (searchTerm && searchTerm.length > 0) {
-				filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
+				return filteredAssets
 			}
-			return filteredAssets
-		}
-  })
+		})
+	} else {
+		return useQuery(['assets'], () => [])
+	}
 }

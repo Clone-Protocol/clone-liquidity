@@ -5,14 +5,15 @@ import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
 
-  console.log('fetchBalance')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
+	console.log('fetchBalance')
+	// start timer in data-loading-indicator
+	setStartTimer(false);
+	setStartTimer(true);
 
 	await program.loadManager()
 
@@ -38,18 +39,23 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-  enabled?: boolean
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	enabled?: boolean
 }
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
-  const { getInceptApp } = useIncept()
-  const { setStartTimer } = useDataLoading()
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	const { setStartTimer } = useDataLoading()
 
-  return useQuery(['unconcentBalance', userPubKey, index], () => fetchMax({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
-    refetchOnMount,
-    refetchInterval: REFETCH_CYCLE,
-    refetchIntervalInBackground: true,
-    enabled
-  })
+	if (wallet) {
+		return useQuery(['unconcentBalance', wallet, userPubKey, index], () => fetchMax({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled
+		})
+	} else {
+		return useQuery(['unconcentBalance'], () => ({ maxVal: 0 }))
+	}
 }
