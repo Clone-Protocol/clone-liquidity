@@ -113,8 +113,8 @@ const RightMenu = () => {
 
 	useEffect(() => {
 		async function userMintUsdi() {
-			if (connected && publicKey && mintUsdi) {
-				const program = getInceptApp()
+			if (connected && publicKey && mintUsdi && wallet) {
+				const program = getInceptApp(wallet)
 				await program.loadManager()
 				const usdiTokenAccount = await getUSDiAccount(program);
 				try {
@@ -155,6 +155,7 @@ const RightMenu = () => {
 			if (!connected) {
 				if (!wallet) {
 					setOpen(true)
+					console.log('open')
 				} else {
 					connect()
 				}

@@ -39,7 +39,7 @@
     "bn.js": "^5.2.0",
     "chroma-js": "^2.4.2",
     "dayjs": "^1.11.0",
-    "incept-protocol-sdk": "~/Workspace/incept/incept-protocol/",
+    "incept-protocol-sdk": "~/Desktop/incept/incept-protocol",
     "lightweight-charts": "^3.8.0",
     "lodash.throttle": "^4.1.1",
     "next": "12.1.0",
