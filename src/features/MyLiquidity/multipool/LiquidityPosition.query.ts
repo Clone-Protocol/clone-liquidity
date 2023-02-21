@@ -6,6 +6,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 
 export const fetchLiquidityDetail = async ({
@@ -91,13 +92,18 @@ interface GetProps {
 }
 
 export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useQuery(
-		['liquidityPosition', userPubKey, index],
-		() => fetchLiquidityDetail({ program: getInceptApp(), userPubKey, index }),
-		{
-			refetchOnMount,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['liquidityPosition', wallet, userPubKey, index],
+			() => fetchLiquidityDetail({ program: getInceptApp(wallet), userPubKey, index }),
+			{
+				refetchOnMount,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['liquidityPosition'], () => { })
+	}
 }

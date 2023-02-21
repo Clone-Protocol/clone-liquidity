@@ -9,14 +9,15 @@ import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
-	if (!userPubKey) return
+  if (!userPubKey) return
 
   console.log('fetchBorrowDetail', index)
 
-	await program.loadManager()
+  await program.loadManager()
   const tokenData = await program.getTokenData()
 
   let oPrice = 1
@@ -26,17 +27,17 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   oPrice = toNumber(assetInfo.price);
   stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
   cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
-	
+
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
 
-	return {
-		tickerIcon: tickerIcon,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
-		oPrice,
-		stableCollateralRatio,
-		cryptoCollateralRatio,
-	}
+  return {
+    tickerIcon: tickerIcon,
+    tickerName: tickerName,
+    tickerSymbol: tickerSymbol,
+    oPrice,
+    stableCollateralRatio,
+    cryptoCollateralRatio,
+  }
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
@@ -47,14 +48,14 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   await program.loadManager()
 
   const [tokenDataResult, borrowPositionResult] = await Promise.allSettled([
-		program.getTokenData(), program.getBorrowPositions()
-	]);
+    program.getTokenData(), program.getBorrowPositions()
+  ]);
 
   if (tokenDataResult.status !== "fulfilled" || borrowPositionResult.status !== "fulfilled") return
 
   let mint = borrowPositionResult.value.borrowPositions[index];
   const poolIndex = Number(mint.poolIndex)
-  
+
   const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
   const assetInfo = tokenDataResult.value.pools[poolIndex].assetInfo;
   const oraclePrice = toNumber(assetInfo.price);
@@ -72,14 +73,14 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const minCollateralRatio = positionData![6];
   const minCollateralAmount = borrowAmountInIasset * oraclePrice * Number(minCollateralRatio);
   const maxWithdrawableColl = Number(positionData![4]) - minCollateralAmount;
-  
+
   return {
-		tickerIcon: tickerIcon,
-		tickerName: tickerName,
-		tickerSymbol: tickerSymbol,
-		oPrice: oraclePrice,
-		stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
-		cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
+    tickerIcon: tickerIcon,
+    tickerName: tickerName,
+    tickerSymbol: tickerSymbol,
+    oPrice: oraclePrice,
+    stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
+    cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
     borrowedIasset: positionData![3],
     collateralAmount: positionData![4],
     collateralRatio: Number(positionData![5]) * 100,
@@ -87,54 +88,64 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     usdiVal: balance?.usdiVal!,
     iassetVal: balance?.iassetVal!,
     maxWithdrawableColl
-	}
+  }
 }
 
 interface GetProps {
-	userPubKey: PublicKey | null
-	index: number
+  userPubKey: PublicKey | null
+  index: number
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
 export interface PositionInfo {
-	tickerIcon: string
-	tickerName: string
-	tickerSymbol: string
-	oPrice: number
-	stableCollateralRatio: number
-	cryptoCollateralRatio: number
-	borrowedIasset: number | Number
-	collateralAmount: number | Number
-	collateralRatio: number
-	minCollateralRatio: number
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string
+  oPrice: number
+  stableCollateralRatio: number
+  cryptoCollateralRatio: number
+  borrowedIasset: number | Number
+  collateralAmount: number | Number
+  collateralRatio: number
+  minCollateralRatio: number
   usdiVal: number
   iassetVal: number
   maxWithdrawableColl: number
 }
 
 export interface PairData {
-	tickerIcon: string
-	tickerName: string
-	tickerSymbol: string
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string
 }
 
 export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getInceptApp(), userPubKey, index }), {
-    refetchOnMount,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getInceptApp(wallet), userPubKey, index }), {
+      refetchOnMount,
+      enabled
+    })
+  } else {
+    return useQuery(['borrowDetail'], () => { })
+  }
 }
 
 export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
-    refetchOnMount,
-    refetchInterval: REFETCH_CYCLE,
-    refetchIntervalInBackground: true,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled
+    })
+  } else {
+    return useQuery(['borrowPosition'], () => { })
+  }
 }

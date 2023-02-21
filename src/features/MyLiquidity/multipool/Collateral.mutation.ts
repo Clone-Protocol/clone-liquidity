@@ -3,6 +3,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
 import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
 import { getUSDiAccount } from '~/utils/token_accounts'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -13,7 +14,7 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 	const userUsdiTokenAccount = await getUSDiAccount(program)
 
 	const { collAmount, collIndex, editType } = data
-  
+
 	let tx = new Transaction()
 	let ix: TransactionInstruction
 	/// Deposit
@@ -21,20 +22,20 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 		ix = await program.addCollateralToCometInstruction(userUsdiTokenAccount!, toDevnetScale(collAmount), 0, false)
 		/// Withdraw
 	} else {
-    tx.add(await program.updatePricesInstruction())
+		tx.add(await program.updatePricesInstruction())
 		ix = await program.withdrawCollateralFromCometInstruction(
 			userUsdiTokenAccount!,
 			toDevnetScale(collAmount),
 			0,
 		)
 	}
-  tx.add(ix)
+	tx.add(ix)
 
 	await program.provider.send!(tx)
 
-  return {
-    result: true
-  }
+	return {
+		result: true
+	}
 }
 
 type EditFormData = {
@@ -48,6 +49,11 @@ interface CallEditProps {
 	data: EditFormData
 }
 export function useCollateralMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data }))
+	if (wallet) {
+		return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }

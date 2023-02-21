@@ -6,6 +6,7 @@ import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
 import { getiAssetInfos } from "~/utils/assets"
 import { assetMapping } from "~/data/assets"
+import { useAnchorWallet } from "@solana/wallet-adapter-react"
 
 export const fetchPools = async ({
   program,
@@ -90,17 +91,22 @@ export function useLiquidityPoolsQuery({
   enabled = true,
   noFilter = true,
 }: GetPoolsProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(
-    ["liquidityPools", userPubKey],
-    () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer, noFilter }),
-    {
-      refetchOnMount,
-      refetchInterval: REFETCH_CYCLE,
-      refetchIntervalInBackground: true,
-      enabled,
-    }
-  )
+  if (wallet) {
+    return useQuery(
+      ["liquidityPools", wallet, userPubKey],
+      () => fetchPools({ program: getInceptApp(wallet), userPubKey, setStartTimer, noFilter }),
+      {
+        refetchOnMount,
+        refetchInterval: REFETCH_CYCLE,
+        refetchIntervalInBackground: true,
+        enabled,
+      }
+    )
+  } else {
+    return useQuery(["liquidityPools"], () => [])
+  }
 }

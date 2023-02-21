@@ -8,6 +8,7 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchInfos = async ({
 	program,
@@ -39,7 +40,7 @@ export const fetchInfos = async ({
 	]);
 
 
-	if (cometResult.status === "fulfilled") {	
+	if (cometResult.status === "fulfilled") {
 		collaterals = extractCollateralInfo(cometResult.value)
 		positions = extractLiquidityPositionsInfo(cometResult.value)
 
@@ -55,12 +56,12 @@ export const fetchInfos = async ({
 	}
 
 	const result = {
-    healthScore,
-    totalCollValue,
-    totalLiquidity,
-    collaterals,
-    positions
-  }
+		healthScore,
+		totalCollValue,
+		totalLiquidity,
+		collaterals,
+		positions
+	}
 
 	return result
 }
@@ -82,17 +83,17 @@ export interface Collateral {
 const extractCollateralInfo = (comet: Comet): Collateral[] => {
 	let result: Collateral[] = [];
 
-	for (let i=0; i < Number(comet.numCollaterals); i++) {
+	for (let i = 0; i < Number(comet.numCollaterals); i++) {
 		// For now only handle USDi
 		if (Number(comet.collaterals[i].collateralIndex) === 0) {
 			result.push(
-			  {
-				tickerIcon : '/images/assets/USDi.png',
-				tickerSymbol : 'USDi',
-				tickerName : 'USDi',
-				collAmount: toNumber(comet.collaterals[i].collateralAmount),
-				collAmountDollarPrice: 1
-			  } as Collateral
+				{
+					tickerIcon: '/images/assets/USDi.png',
+					tickerSymbol: 'USDi',
+					tickerName: 'USDi',
+					collAmount: toNumber(comet.collaterals[i].collateralAmount),
+					collAmountDollarPrice: 1
+				} as Collateral
 			)
 		}
 	}
@@ -101,19 +102,19 @@ const extractCollateralInfo = (comet: Comet): Collateral[] => {
 }
 
 export interface LiquidityPosition {
-  tickerSymbol: string
-  tickerIcon: string
-  tickerName: string
-  liquidityDollarPrice: number
-  positionIndex: number
-  poolIndex: number
+	tickerSymbol: string
+	tickerIcon: string
+	tickerName: string
+	liquidityDollarPrice: number
+	positionIndex: number
+	poolIndex: number
 }
 
 
 const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 	let result: LiquidityPosition[] = [];
 
-	for (let i=0; i < comet.numPositions.toNumber(); i++) {
+	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
 		// For now only handle USDi
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
@@ -121,9 +122,9 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 
 		result.push(
 			{
-				tickerIcon : info.tickerIcon,
-				tickerSymbol : info.tickerSymbol,
-				tickerName : info.tickerName,
+				tickerIcon: info.tickerIcon,
+				tickerSymbol: info.tickerSymbol,
+				tickerName: info.tickerName,
 				liquidityDollarPrice: toNumber(position.borrowedUsdi) * 2,
 				positionIndex: i,
 				poolIndex: poolIndex
@@ -135,17 +136,22 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 }
 
 export function useMultipoolInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-	return useQuery(
-		['multipoolInfos', userPubKey],
-		() => fetchInfos({ program: getInceptApp(), userPubKey, setStartTimer }),
-		{
-			refetchOnMount,
-			refetchInterval: REFETCH_CYCLE,
-			refetchIntervalInBackground: true,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['multipoolInfos', wallet, userPubKey],
+			() => fetchInfos({ program: getInceptApp(wallet), userPubKey, setStartTimer }),
+			{
+				refetchOnMount,
+				refetchInterval: REFETCH_CYCLE,
+				refetchIntervalInBackground: true,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['multipoolInfos'], () => { })
+	}
 }

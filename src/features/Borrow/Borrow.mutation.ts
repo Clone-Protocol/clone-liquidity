@@ -5,6 +5,7 @@ import * as anchor from "@project-serum/anchor";
 import { useIncept } from '~/hooks/useIncept'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -46,8 +47,13 @@ interface CallCloseProps {
 	data: CloseFormData
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data }))
+	if (wallet) {
+		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }
 
 export const callEditCollateral = async ({ program, userPubKey, data }: CallEditProps) => {
@@ -202,12 +208,23 @@ interface CallEditProps {
 	data: EditFormData
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(), userPubKey, data }))
+	if (wallet) {
+		return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
+
 }
 export function useEditBorrowMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(), userPubKey, data }))
+	if (wallet) {
+		return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }
 
 const runMintInstructions = async (
@@ -228,15 +245,15 @@ const runMintInstructions = async (
 
 	let userAccount = await incept.getUserAccount()
 	let mintPositionAddress = userAccount.borrowPositions;
-  let signers = [];
+	let signers = [];
 	// If mint positions account not created
 	if (mintPositionAddress.equals(PublicKey.default)) {
 		const mintPositionsAccount = anchor.web3.Keypair.generate();
-    	signers.push(mintPositionsAccount);
+		signers.push(mintPositionsAccount);
 		mintPositionAddress = mintPositionsAccount.publicKey;
-    tx.add(
-      await incept.program.account.borrowPositions.createInstruction(mintPositionsAccount)
-    );
+		tx.add(
+			await incept.program.account.borrowPositions.createInstruction(mintPositionsAccount)
+		);
 		tx.add(await incept.initializeBorrowPositionsAccountInstruction(mintPositionsAccount))
 	}
 
@@ -313,6 +330,11 @@ interface CallBorrowProps {
 	data: BorrowFormData
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(), userPubKey, data }))
+	if (wallet) {
+		return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(wallet), userPubKey, data }))
+	} else {
+		throw new Error('no wallet')
+	}
 }

@@ -6,6 +6,7 @@ import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { getHealthScore, calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchRecenterInfo = async ({
 	program,
@@ -105,13 +106,18 @@ interface GetProps {
 }
 
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useQuery(
-		['recenterInfo', userPubKey, index],
-		() => fetchRecenterInfo({ program: getInceptApp(), userPubKey, index }),
-		{
-			refetchOnMount,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['recenterInfo', wallet, userPubKey, index],
+			() => fetchRecenterInfo({ program: getInceptApp(wallet), userPubKey, index }),
+			{
+				refetchOnMount,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['recenterInfo'], () => { })
+	}
 }

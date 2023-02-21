@@ -7,6 +7,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
@@ -166,21 +167,32 @@ export interface CometDetail extends PositionInfo {
 }
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useQuery(['initComet', userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(), userPubKey, index }), {
-    refetchOnMount,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(wallet), userPubKey, index }), {
+      refetchOnMount,
+      enabled
+    })
+  } else {
+    return useQuery(['initComet'], () => { })
+  }
 }
 
 export function useCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(['cometDetail', userPubKey, index], () => fetchCometDetail({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
-    refetchOnMount,
-    refetchInterval: REFETCH_CYCLE,
-    refetchIntervalInBackground: true,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['cometDetail', wallet, userPubKey, index], () => fetchCometDetail({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled
+    })
+  } else {
+    return useQuery(['cometDetail'], () => { })
+  }
+
 }

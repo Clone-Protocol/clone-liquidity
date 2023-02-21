@@ -4,6 +4,7 @@ import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
 import { getiAssetInfos } from '~/utils/assets';
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchAssets = async ({ program, userPubKey }: { program: InceptClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return null
@@ -45,10 +46,15 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ userPubKey, enabled = true, refetchOnMount }: GetAssetsProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
 
-	return useQuery(['assets', userPubKey], () => fetchAssets({ program: getInceptApp(), userPubKey }), {
-		refetchOnMount,
-		enabled
-	})
+	if (wallet) {
+		return useQuery(['assets', wallet, userPubKey], () => fetchAssets({ program: getInceptApp(wallet), userPubKey }), {
+			refetchOnMount,
+			enabled
+		})
+	} else {
+		return useQuery(['assets'], () => [])
+	}
 }
