@@ -15,6 +15,10 @@ import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import HealthscoreBar from '~/components/Overview/HealthscoreBar'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import WarningMsg from '~/components/Common/WarningMsg'
+import { RISK_SCORE_VAL } from '~/data/riskfactors'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -313,6 +317,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     )
   }
 
+  const hasRiskScore = healthScore < RISK_SCORE_VAL
+
   return (
     <>
       {loading && (
@@ -322,7 +328,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       )}
 
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={1000}>
-        <DialogContent sx={{ backgroundColor: '#16171a' }}>
+        <DialogContent sx={{ backgroundColor: '#16171a', overflow: 'hidden' }}>
           <BoxWrapper>
             <Box padding='15px 10px'>
               <Box>
@@ -332,8 +338,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
               <Stack direction='row' gap={5}>
                 <EqualBox>
                   <Box>
-                    <Box><Typography variant='h8'>Adjust Collateral Amount</Typography></Box>
-
+                    <Box mb='14px'><Typography variant='h8'>Adjust Collateral Amount</Typography></Box>
                     <Controller
                       name="collAmount"
                       control={control}
@@ -361,7 +366,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
                   </Box>
                   <StyledDivider />
-
                   <Box>
                     <Box>
                       <Typography variant='h8'>
@@ -372,21 +376,38 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                     </Box>
                   </Box>
+                  <BoxWithBorder mt='14px'>
+                    <Stack direction='row' justifyContent='space-between' padding='15px'>
+                      <Box><Typography variant='p'>New Aggregate Liquidity Value</Typography></Box>
+                      <Box><Typography variant='p_xlg'>$1,405,005.31</Typography></Box>
+                    </Stack>
+                    <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
+                      <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
+                      <Typography variant='p'>1,524,093.43 USD</Typography>
+                    </Box>
+                  </BoxWithBorder>
                 </EqualBox>
                 <EqualBox>
                   <Box><Typography variant='h8'>Projected Values</Typography></Box>
-                  <BoxWithBorder padding='14px 19px'>
+                  <BoxWithBorder mt='13px' padding='14px 19px'>
                     <Box>
                       <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                       <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
                     </Box>
-                    <StyledDivider />
-                    <Box>
+                    <Box mt='20px'>
                       <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
-                      <HealthScoreValue><span style={{ fontSize: '32px', fontWeight: 'bold' }}>{isNaN(healthScore) ? 0 : healthScore.toFixed(2)}</span>/100</HealthScoreValue>
+                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} />
+                      {hasRiskScore &&
+                        <WarningMsg> This position will have high possibility to become subject to liquidation. </WarningMsg>
+                      }
                     </Box>
                   </BoxWithBorder>
-                  <ActionButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting}>Edit Comet Position</ActionButton>
+                  <SubmitButton onClick={handleSubmit(onEdit)} disabled={disableSubmitButton() || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
+                    <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Edit Comet Position</Typography>
+                  </SubmitButton>
+                  <Box display='flex' justifyContent='center'>
+                    <DataLoadingIndicator />
+                  </Box>
                 </EqualBox>
               </Stack>
             </Box>
@@ -415,12 +436,7 @@ const EqualBox = styled(Box)`
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
-const HealthScoreValue = styled(Box)`
-  font-size: 20px; 
-  font-weight: 500;
-  text-align: center;
-`
-const ActionButton = styled(Button)`
+const SubmitButton = styled(Button)`
 	width: 100%;
 	background-color: ${(props) => props.theme.palette.primary.main};
 	color: #000;
