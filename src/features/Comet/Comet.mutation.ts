@@ -10,7 +10,7 @@ import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
 export const callRecenter = async ({
   program,
   userPubKey,
-	data
+  data
 }: CallRecenterProps) => {
   if (!userPubKey) throw new Error('no user public key')
 
@@ -19,9 +19,9 @@ export const callRecenter = async ({
   await program.loadManager()
 
   await program.recenterSinglePoolComet(
-		data.cometIndex,
-		[]
-	)
+    data.cometIndex,
+    []
+  )
 
   return {
     result: true
@@ -33,17 +33,17 @@ type RecenterFormData = {
 }
 
 interface CallRecenterProps {
-	program: Incept
-	userPubKey: PublicKey | null
+  program: Incept
+  userPubKey: PublicKey | null
   data: RecenterFormData
 }
 
-export function useRecenterMutation(userPubKey : PublicKey | null ) {
+export function useRecenterMutation(userPubKey: PublicKey | null) {
   const { getInceptApp } = useIncept()
   return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(), userPubKey, data }))
 }
 
-const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, data} : CallCloseProps, singlePoolComet: Comet, iassetMint: PublicKey, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined ) => {
+const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, iassetMint: PublicKey, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined) => {
 
   let tx = new Transaction();
   const iAssetAssociatedToken = await getAssociatedTokenAddress(
@@ -99,7 +99,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({program, userPubKey, d
   await program.provider.send!(tx);
 }
 
-const withdrawCollateralAndCloseSinglePoolComet = async ({program, userPubKey, data} : CallCloseProps, singlePoolComet: Comet, usdiCollateralTokenAccount: PublicKey | undefined ) => {
+const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, usdiCollateralTokenAccount: PublicKey | undefined) => {
   let tx = new Transaction();
 
   const usdiAssociatedToken = await getAssociatedTokenAddress(
@@ -140,12 +140,12 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({program, userPubKey, d
 }
 
 
-export const callClose = async ({program, userPubKey, data} : CallCloseProps) => {
-	if (!userPubKey) throw new Error('no user public key')
+export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
+  if (!userPubKey) throw new Error('no user public key')
 
   console.log('close input data', data)
 
-	await program.loadManager()
+  await program.loadManager()
 
   let singlePoolComet = await program.getSinglePoolComets();
   let assetInfo = await program.getAssetInfo(singlePoolComet.positions[data.cometIndex].poolIndex);
@@ -156,16 +156,16 @@ export const callClose = async ({program, userPubKey, data} : CallCloseProps) =>
   if (data.cType === 0) {
     if (Number(singlePoolComet.numPositions) !== 0) {
       await withdrawLiquidityAndPaySinglePoolCometILD(
-        {program, userPubKey, data}, singlePoolComet, assetInfo.iassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
+        { program, userPubKey, data }, singlePoolComet, assetInfo.iassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
       )
     }
 
   } else {
-    if (getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue) === 0)  {
-      await withdrawCollateralAndCloseSinglePoolComet({program, userPubKey, data}, singlePoolComet, collateralAssociatedTokenAccount);
+    if (getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue) === 0) {
+      await withdrawCollateralAndCloseSinglePoolComet({ program, userPubKey, data }, singlePoolComet, collateralAssociatedTokenAccount);
     }
   }
-  
+
   return {
     result: true
   }
@@ -177,29 +177,29 @@ type CloseFormData = {
   iassetMint: PublicKey
 }
 interface CallCloseProps {
-	program: Incept
-	userPubKey: PublicKey | null
+  program: Incept
+  userPubKey: PublicKey | null
   data: CloseFormData
 }
-export function useCloseMutation(userPubKey : PublicKey | null) {
+export function useCloseMutation(userPubKey: PublicKey | null) {
   const { getInceptApp } = useIncept()
-  return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data}))
+  return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data }))
 }
 
 export const callEdit = async ({
-	program,
-	userPubKey,
-	data,
+  program,
+  userPubKey,
+  data,
   setRefreshData
 }: CallEditProps) => {
-	if (!userPubKey) throw new Error('no user public key')
+  if (!userPubKey) throw new Error('no user public key')
 
   console.log('edit input data', data)
 
-	await program.loadManager()
+  await program.loadManager()
 
   const { collAmount, mintAmountChange, cometIndex, editType } = data
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   const singlePoolComet = await program.getSinglePoolComets();
   const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
@@ -224,16 +224,16 @@ export const callEdit = async ({
           new anchor.BN(collAmount * 10 ** 8),
           0,
           cometIndex
-      )
+        )
       );
-  
+
       result = {
         result: true,
         msg: 'added collateral to comet',
         iassetMint: pool.assetInfo.iassetMint
       };
-    } else { 
-    /// Withdraw
+    } else {
+      /// Withdraw
       tx.add(
         await program.withdrawCollateralFromSinglePoolCometInstruction(
           collateralAssociatedTokenAccount!,
@@ -241,7 +241,7 @@ export const callEdit = async ({
           cometIndex,
         )
       );
-  
+
       result = {
         result: true,
         msg: 'withdraw collateral from comet',
@@ -280,35 +280,35 @@ export const callEdit = async ({
 
 type EditFormData = {
   cometIndex: number
-	collAmount: number
+  collAmount: number
   mintAmountChange: number
   editType: number
 }
 interface CallEditProps {
-	program: Incept
-	userPubKey: PublicKey | null
+  program: Incept
+  userPubKey: PublicKey | null
   data: EditFormData,
-  setRefreshData: () => {} 
+  setRefreshData: () => {}
 }
-export function useEditMutation(userPubKey : PublicKey | null, setRefreshData: () => {}  ) {
+export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => void) {
   const { getInceptApp } = useIncept()
   return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data, setRefreshData }))
 }
 
 
 export const callComet = async ({
-	program,
-	userPubKey,
-	data
+  program,
+  userPubKey,
+  data
 }: CallCometProps) => {
-	if (!userPubKey) throw new Error('no user public key')
+  if (!userPubKey) throw new Error('no user public key')
 
   console.log('comet input data', data)
 
-	await program.loadManager()
+  await program.loadManager()
 
   const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data;
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   await program.openNewSinglePoolComet(
     collateralAssociatedTokenAccount!,
@@ -325,18 +325,18 @@ export const callComet = async ({
 
 type CometFormData = {
   collateralIndex: number
-	iassetIndex: number
-	collateralAmount: number
-	usdiAmount: number
+  iassetIndex: number
+  collateralAmount: number
+  usdiAmount: number
 }
 
 interface CallCometProps {
-	program: Incept
-	userPubKey: PublicKey | null
+  program: Incept
+  userPubKey: PublicKey | null
   data: CometFormData
 }
 
-export function useCometMutation(userPubKey : PublicKey | null ) {
+export function useCometMutation(userPubKey: PublicKey | null) {
   const { getInceptApp } = useIncept()
   return useMutation((data: CometFormData) => callComet({ program: getInceptApp(), userPubKey, data }))
 }
