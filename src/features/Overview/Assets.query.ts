@@ -21,15 +21,15 @@ export const fetchAssets = async ({ program, setStartTimer }: { program: InceptC
 	const result: AssetList[] = []
 
 	for (const info of iassetInfos) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0])
+		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info.poolIndex)
 		result.push({
-			id: info[0],
+			id: info.poolIndex,
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
-			price: info[1],
+			price: info.poolPrice,
 			assetType: assetType,
-			liquidity: parseInt(info[2].toString()),
+			liquidity: parseInt(info.liquidity.toString()),
 			volume24h: 0, //coming soon
 			baselineAPY: 0, //coming soon
 		})
