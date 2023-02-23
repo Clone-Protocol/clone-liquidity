@@ -12,10 +12,13 @@ import EditPanel from '~/containers/Liquidity/comet/EditPanel'
 import ClosePanel from '~/containers/Liquidity/comet/ClosePanel'
 import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import ManageCometIconOff from 'public/images/manage-icon-off.svg'
+import ManageCometIconOn from 'public/images/manage-icon-on.svg'
+import ManageCloseIconOff from 'public/images/close-circle-multiple-outline-off.svg'
+import ManageCloseIconOn from 'public/images/close-circle-multiple-outline-on.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
+import DisabledCloseCometWarningMsg from '~/components/Liquidity/comet/DisabledCloseCometWarningMsg'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -51,16 +54,13 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     }
   }, [cometDetail])
 
-  const editCometTabLabel = <React.Fragment>Edit Comet <InfoTooltip title={TooltipTexts.editCometTab} /> </React.Fragment>
-  const closeCometTabLabel = <React.Fragment>Close Comet <InfoTooltip title={TooltipTexts.closeCometTab} /> </React.Fragment>
-
   return (cometDetail && usdiBalance) ? (
     <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
         <LeftBoxWrapper>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label={editCometTabLabel}></StyledTab>
-            <StyledTab value={1} label={closeCometTabLabel}></StyledTab>
+            <StyledTab value={0} label="Manage Comet" icon={tab === 0 ? <Image src={ManageCometIconOn} /> : <Image src={ManageCometIconOff} />}></StyledTab>
+            <StyledTab value={1} label="Close Comet" icon={tab === 1 ? <Image src={ManageCloseIconOn} /> : <Image src={ManageCloseIconOff} />}></StyledTab>
           </StyledTabs>
           <StyledDivider />
           <TipMsg>
@@ -75,10 +75,15 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
         </LeftBoxWrapper>
       </Box>
       <RightBoxWrapper>
-        {(tab === 0 && cometDetail.tickerIcon) &&
+        {(tab === 0 || (tab === 1 && (cometDetail.mintIassetAmount !== 0 && cometDetail.mintAmount !== 0))) &&
           <Box>
             <PriceChart assetData={cometDetail} priceTitle='iAsset Price' />
             <PoolAnalytics tickerSymbol={cometDetail.tickerSymbol} />
+          </Box>
+        }
+        {tab === 1 && cometDetail.mintIassetAmount === 0 && cometDetail.mintAmount === 0 &&
+          <Box>
+            <DisabledCloseCometWarningMsg />
           </Box>
         }
       </RightBoxWrapper>
@@ -92,7 +97,7 @@ const StyledDivider = styled(Divider)`
 	height: 1px;
 `
 const LeftBoxWrapper = styled(Box)`
-	width: 607px; 
+	width: 521px; 
 	padding: 8px 25px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	margin-bottom: 25px;
