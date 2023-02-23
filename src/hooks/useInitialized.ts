@@ -6,7 +6,6 @@ import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState } from '~/features/globalAtom'
 
-
 export default function useInitialized() {
 	const { connected, publicKey } = useWallet()
 	const wallet = useAnchorWallet()
@@ -17,18 +16,18 @@ export default function useInitialized() {
 	useEffect(() => {
 		async function getAccount() {
 			if (connected && publicKey && wallet) {
+				console.log('useInitialized')
 				// for initialize once per each account
 				if (localAccount === publicKey.toString()) {
 					console.log('the account is already initialized')
 					return;
 				}
 
-				const program = getInceptApp(wallet)
-				await program.loadManager()
-
 				try {
-					await program.getUserAccount()
 					console.log('getUserAccount')
+					const program = getInceptApp(wallet)
+					await program.loadManager()
+					await program.getUserAccount()
 				} catch (error) {
 					console.log("error:", error);
 					console.log('err', 'Account does not exist')
