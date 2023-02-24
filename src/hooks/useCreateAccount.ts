@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { Transaction } from "@solana/web3.js";
@@ -11,20 +11,21 @@ import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
 
+/// @TODO: need to refactor.
 export function useCreateAccount() {
 	const [isCreatingAccount, setIsCreatingAccount] = useRecoilState(isCreatingAccountState)
 	const { getInceptApp } = useIncept()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const [_, setLocalAccount] = useLocalStorage("currentAccount", '')
-	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
-	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
+	const setCreateAccountDialogStatus = useSetRecoilState(createAccountDialogState)
+	const setDeclinedAccountCreation = useSetRecoilState(declinedAccountCreationState)
 	const { enqueueSnackbar } = useSnackbar()
 
 	useEffect(() => {
 		async function createAccount() {
 			if (wallet) {
-				const program = getInceptApp(wallet)
+				const program = getInceptApp(wallet, true)
 				await program.loadManager()
 
 				const pubKey = publicKey as anchor.web3.PublicKey

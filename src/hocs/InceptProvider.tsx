@@ -1,9 +1,12 @@
-import React, { FC, ReactNode, useCallback } from 'react'
-import { AnchorProvider, Provider } from '@project-serum/anchor'
+import React, { FC, ReactNode } from 'react'
+import { AnchorProvider } from '@project-serum/anchor'
 import { Connection } from '@solana/web3.js'
-import { AnchorWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { InceptContext } from '~/hooks/useIncept'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { useRecoilValue } from 'recoil'
+import { CreateAccountDialogStates } from '~/utils/constants'
+import { createAccountDialogState } from '~/features/globalAtom'
 import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
 import { Commitment } from '@solana/web3.js'
 
@@ -12,22 +15,27 @@ export interface InceptProviderProps {
 }
 
 export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
-	// const wallet = useAnchorWallet()
-	// console.log("ow", wallet);
+	const createAccountStatus = useRecoilValue(createAccountDialogState)
+	const getInceptApp = (wallet: AnchorWallet | undefined, force?: boolean): InceptClient => {
+		if (!force) {
+			if (!wallet) {
+				throw Error('not detect wallet')
+			}
+			if (createAccountStatus !== CreateAccountDialogStates.Closed) {
+				throw Error('the account is not initialized')
+			}
+		}
 
-	const getInceptApp = (wallet: AnchorWallet): InceptClient => {
 		console.log('wallet', wallet)
 		const opts = {
 			preflightCommitment: "processed" as Commitment,
 		}
 		const network = getNetworkDetailsFromEnv()
-		console.log(network)
+		console.log('network', network)
 		const new_connection = new Connection(network.endpoint)
 
 		const provider = new AnchorProvider(new_connection, wallet, opts)
 		const incept = new InceptClient(network.incept, provider)
-
-		console.log('anchor-wallet', provider.wallet)
 		return incept
 	}
 

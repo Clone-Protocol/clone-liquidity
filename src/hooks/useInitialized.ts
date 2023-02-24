@@ -1,20 +1,21 @@
 import { useEffect } from 'react'
 import { useSetRecoilState } from 'recoil'
-import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState } from '~/features/globalAtom'
+import { PublicKey } from '@solana/web3.js'
 
-export default function useInitialized() {
-	const { connected, publicKey } = useWallet()
-	const wallet = useAnchorWallet()
+/// @TODO: need to rewrite whole logic
+export default function useInitialized(connected: boolean, publicKey: PublicKey | null, wallet: AnchorWallet | undefined) {
 	const { getInceptApp } = useIncept()
-	const [localAccount, setLocalAccount] = useLocalStorage("currentAccount", '')
+	const [localAccount, _] = useLocalStorage("currentAccount", '')
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 
 	useEffect(() => {
 		async function getAccount() {
+			console.log('getAccount', connected + "/" + publicKey + "/" + wallet)
 			if (connected && publicKey && wallet) {
 				console.log('useInitialized')
 				// for initialize once per each account
@@ -36,7 +37,7 @@ export default function useInitialized() {
 			}
 		}
 		getAccount()
-	}, [connected, publicKey])
+	}, [connected, publicKey, wallet])
 
 	return true
 }
