@@ -103,7 +103,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
     payILDInstruction
   );
 
-  await program.provider.send!(tx);
+  await program.provider.sendAndConfirm!(tx);
 }
 
 const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, usdiCollateralTokenAccount: PublicKey | undefined) => {
@@ -143,7 +143,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
     )
   );
 
-  await program.provider.send!(tx);
+  await program.provider.sendAndConfirm!(tx);
 }
 
 
@@ -285,7 +285,7 @@ export const callEdit = async ({
       )
     );
   }
-  await program.provider.send!(tx);
+  await program.provider.sendAndConfirm!(tx);
 
   setRefreshData();
 

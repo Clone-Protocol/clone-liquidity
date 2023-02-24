@@ -74,7 +74,7 @@ export function useCreateAccount() {
 				);
 
 				try {
-					await program.provider.send!(tx, [singlePoolCometsAccount, multiPoolCometsAccount]);
+					await program.provider.sendAndConfirm!(tx, [singlePoolCometsAccount, multiPoolCometsAccount]);
 
 					// store account to localstorage
 					console.log('store account')

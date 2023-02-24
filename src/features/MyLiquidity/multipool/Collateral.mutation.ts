@@ -31,7 +31,7 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 	}
 	tx.add(ix)
 
-	await program.provider.send!(tx)
+	await program.provider.sendAndConfirm!(tx)
 
 	return {
 		result: true

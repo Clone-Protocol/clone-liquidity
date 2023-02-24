@@ -106,7 +106,7 @@ export const callEditCollateral = async ({ program, userPubKey, data }: CallEdit
 					new anchor.BN(collateralAmount * 10 ** 8)
 				)
 			)
-			await program.provider.send!(tx)
+			await program.provider.sendAndConfirm!(tx)
 		} else {
 			await program.withdrawCollateralFromBorrow(
 				collateralAssociatedTokenAccount!,
@@ -173,7 +173,7 @@ export const callEditBorrow = async ({ program, userPubKey, data }: CallEditProp
 						borrowIndex
 					)
 				)
-			program.provider.send!(transactions)
+			program.provider.sendAndConfirm!(transactions)
 		}
 
 		return {
@@ -281,7 +281,7 @@ const runMintInstructions = async (
 		)
 	)
 
-	await incept.provider.send!(tx, signers);
+	await incept.provider.sendAndConfirm!(tx, signers);
 }
 
 export const callBorrow = async ({ program, userPubKey, data }: CallBorrowProps) => {

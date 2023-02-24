@@ -16,7 +16,7 @@ export const callNew = async ({ program, userPubKey, data }: CallNewProps) => {
 
 	let tx = new Transaction().add(await program.updatePricesInstruction())
 	tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex, false))
-	await program.provider.send!(tx);
+	await program.provider.sendAndConfirm!(tx);
 
 	return {
 		result: true
@@ -98,7 +98,7 @@ export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => 
 		}
 	}
 
-	await program.provider.send!(tx)
+	await program.provider.sendAndConfirm!(tx)
 
 	return {
 		result: true
