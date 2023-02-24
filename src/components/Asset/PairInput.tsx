@@ -62,7 +62,7 @@ const FormStack = styled(Stack)`
 	padding: 9px 21px 8px 24px;
 	background-color: ${(props) => props.theme.boxes.darkBlack};
   &:hover {
-    border: solid 1px #809cff;
+		box-shadow: 0 0 0 1px #809cff inset;
   }
 `
 const InputAmount = styled(`input`)`

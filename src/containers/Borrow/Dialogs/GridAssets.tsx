@@ -61,7 +61,7 @@ let columns: GridColDef[] = [
 		headerName: 'Wallet Balance',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box><Typography variant='p_lg'>{params.value?.toLocaleString()} USD</Typography></Box>
+			return <Box><Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography></Box>
 		},
 	},
 ]

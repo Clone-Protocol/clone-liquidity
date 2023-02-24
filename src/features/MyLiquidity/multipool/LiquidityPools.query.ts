@@ -49,16 +49,16 @@ export const fetchPools = async ({
   let result = []
 
   for (let asset of assetInfos) {
-    if (!noFilter && currentPoolSet.has(asset[0])) {
+    if (!noFilter && currentPoolSet.has(asset.poolIndex)) {
       continue
     }
-    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset[0])
+    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
     result.push({
-      id: asset[0],
+      id: asset.poolIndex,
       tickerName,
       tickerSymbol,
       tickerIcon,
-      totalLiquidity: asset[2],
+      totalLiquidity: asset.liquidity,
       volume24H: 0,
       averageAPY: 0,
       isEnabled: true,
