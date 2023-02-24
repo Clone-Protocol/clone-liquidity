@@ -34,7 +34,7 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 		console.log('network', network)
 		const new_connection = new Connection(network.endpoint)
 
-		const provider = new AnchorProvider(new_connection, wallet, opts)
+		const provider = new AnchorProvider(new_connection, wallet!, opts)
 		const incept = new InceptClient(network.incept, provider)
 		return incept
 	}
