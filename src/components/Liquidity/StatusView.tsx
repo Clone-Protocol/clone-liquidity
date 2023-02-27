@@ -28,13 +28,13 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
       <TabPanel value={tab} index={0}>
         <BalanceValue>
-          <Typography variant='p_xxxlg'>{formatDollarAmount(status.totalVal, 0, true)}</Typography>
+          <Typography variant='p_xxxlg'>{formatDollarAmount(status.totalCollateralLocked, 0, true)}</Typography>
         </BalanceValue>
       </TabPanel>
 
       <TabPanel value={tab} index={1}>
         <BalanceValue>
-          <Typography variant='p_xxxlg'>{formatDollarAmount(status.totalVal, 0, true)}</Typography>
+          <Typography variant='p_xxxlg'>{formatDollarAmount(status.statusValues.totalLiquidityProvided, 0, true)}</Typography>
         </BalanceValue>
       </TabPanel>
     </StyledPaper>

@@ -21,10 +21,10 @@ import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import WarningMsg from '~/components/Common/WarningMsg'
+import { RISK_SCORE_VAL } from '~/data/riskfactors'
 
 const COLLATERAL_INDEX = 0 // USDi
-const RISK_SCORE_VAL = 20
 
 const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -322,7 +322,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
             <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
             <HealthscoreBar score={cometHealthScore} />
             {hasRiskScore &&
-              <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+              <WarningMsg>This position will have high possibility to become subject to liquidation.</WarningMsg>
             }
           </Box>
         </BoxWithBorder>

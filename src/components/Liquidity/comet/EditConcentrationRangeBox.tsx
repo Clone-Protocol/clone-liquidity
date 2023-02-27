@@ -1,93 +1,62 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { PositionInfo as PI, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
 interface Props {
-  assetData: PI
+	assetData: PI
 	cometData: CometInfo
-  currentLowerLimit: number
-  currentUpperLimit: number
-  onChange?: (limit: number, isLower: boolean) => void
+	currentLowerLimit: number
+	currentUpperLimit: number
 }
 
-const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, currentLowerLimit, currentUpperLimit, onChange }) => {
-  const handleChangeLowerLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value) {
-			const limit = parseFloat(e.currentTarget.value)
-      onChange && onChange(limit, true)
-    }
-  }
-
-  const handleChangeUpperLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value) {
-			const limit = parseFloat(e.currentTarget.value)
-      onChange && onChange(limit, false)
-    }
-  }
-
+const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, currentLowerLimit, currentUpperLimit }) => {
 	return cometData ? (
-		<Grid container spacing={2}>
+		<Grid container spacing={1}>
 			<Grid item xs={4}>
-				<Box
-					sx={{
-						fontSize: '12px',
-						fontWeight: '500',
-						color: '#809cff',
-						textAlign: 'center',
-						marginBottom: '5px',
-					}}>
-					Lower Limit
+				<Box textAlign='center'>
+					<Typography variant='p_sm'>Lower Limit</Typography>
 				</Box>
-				<Box
-					sx={{
-						borderRadius: '10px',
-						border: 'solid 1px #809cff',
-            background: '#252627'
-					}}>
-					<PriceValue><InputAmount disabled step=".01" value={parseFloat(cometData.lowerLimit.toFixed(4))} placeholder="0.00" min={0} max={assetData.price-0.01} onChange={handleChangeLowerLimit} /></PriceValue>
-					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <CurrentPrice style={{ borderTop: '1px solid #809cff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentLowerLimit.toLocaleString()} USD</CurrentPrice>
-				</Box>
+				<BoxWithBorder>
+					<LimitBox>
+						<Box><Typography variant='p_lg'>{parseFloat(cometData.lowerLimit.toFixed(4))}</Typography></Box>
+						<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+					</LimitBox>
+					<CurrentBox>
+						<Box><Typography variant='p_sm'>Current</Typography></Box>
+						<Box><Typography variant='p'>{currentLowerLimit.toLocaleString()} USDi</Typography></Box>
+					</CurrentBox>
+				</BoxWithBorder>
 			</Grid>
 			<Grid item xs={4}>
-				<Box
-					sx={{
-						fontSize: '12px',
-						fontWeight: '500',
-						color: '#FFF',
-						textAlign: 'center',
-						marginBottom: '5px',
-					}}>
-					Center Price
+				<Box textAlign='center'>
+					<Typography variant='p_sm'>Center Price</Typography>
 				</Box>
-				<Box sx={{ borderRadius: '10px', border: 'solid 1px #444', background: '#252627'}}>
-					<PriceValue style={{ background: '#171717' }}>{assetData.price.toLocaleString()}</PriceValue>
-					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <CurrentPrice style={{ borderTop: '1px solid #444'}}><span style={{ fontSize: '9px' }}>Current:</span> {assetData.price.toLocaleString()} USD</CurrentPrice>
-				</Box>
+				<BoxWithBorder>
+					<LimitBox>
+						<Box><Typography variant='p_lg'>{assetData.price.toLocaleString()}</Typography></Box>
+						<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+					</LimitBox>
+					<CurrentBox>
+						<Box><Typography variant='p_sm'>Current</Typography></Box>
+						<Box><Typography variant='p'>{assetData.price.toLocaleString()} USDi</Typography></Box>
+					</CurrentBox>
+				</BoxWithBorder>
 			</Grid>
 			<Grid item xs={4}>
-				<Box
-					sx={{
-						fontSize: '12px',
-						fontWeight: '500',
-						color: '#2e5cff',
-						textAlign: 'center',
-						marginBottom: '5px',
-					}}>
-					Upper Limit
+				<Box textAlign='center'>
+					<Typography variant='p_sm'>Upper Limit</Typography>
 				</Box>
-				<Box
-					sx={{
-						borderRadius: '10px',
-						border: 'solid 1px #2e5cff',
-            background: '#252627'
-					}}>
-					<PriceValue><InputAmount disabled step=".01" value={parseFloat(cometData.upperLimit.toFixed(4))} min={assetData.price+0.01} onChange={handleChangeUpperLimit} /></PriceValue>
-					<RangePair>USDi / {assetData.tickerSymbol}</RangePair>
-          <CurrentPrice style={{ borderTop: '1px solid #0038ff'}}><span style={{ fontSize: '9px' }}>Current:</span> {currentUpperLimit.toLocaleString()} USD</CurrentPrice>
-				</Box>
+				<BoxWithBorder>
+					<LimitBox>
+						<Box><Typography variant='p_lg'>{parseFloat(cometData.upperLimit.toFixed(4))}</Typography></Box>
+						<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+					</LimitBox>
+					<CurrentBox>
+						<Box><Typography variant='p_sm'>Current</Typography></Box>
+						<Box><Typography variant='p'>{currentUpperLimit.toLocaleString()} USDi</Typography></Box>
+					</CurrentBox>
+				</BoxWithBorder>
 			</Grid>
 		</Grid>
 	) : (
@@ -95,50 +64,20 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 	)
 }
 
-const PriceValue = styled('div')`
-  background: #171717;
-	font-size: 16px;
-	font-weight: 500;
+const BoxWithBorder = styled(Box)`
+	border: solid 1px ${(props) => props.theme.boxes.blackShade};
+`
+const LimitBox = styled(Box)`
 	text-align: center;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+	line-height: 1;
+	padding: 8px;
 `
-
-const InputAmount = styled(`input`)`
-	width: 100px;
-	border: 0px;
-	background: #171717;
-	font-size: 16px;
-	font-weight: 500;
-	color: #fff;
-  text-align: center;
-  margin-left: 12px;
-`
-
-const RangePair = styled('div')`
-  background: #171717;
-  border-top: 1px solid #444;
-	font-size: 12px;
-	font-weight: 500;
-	padding-top: 8px;
-  padding-bottom: 8px;
+const CurrentBox = styled(Box)`
 	text-align: center;
-  color: #9a9a9a;
-`
-
-const CurrentPrice = styled('div')`
-  font-size: 12px;
-  font-weight: 500;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: center;
-  color: #949494;
+	border-top: 1px solid ${(props) => props.theme.boxes.blackShade};
+	color: ${(props) => props.theme.palette.text.secondary};
+	line-height: 1;
+	padding: 8px;
 `
 
 export default withCsrOnly(EditConcentrationRangeBox)

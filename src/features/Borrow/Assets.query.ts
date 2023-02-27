@@ -3,8 +3,33 @@ import { PublicKey } from '@solana/web3.js'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
-import { getiAssetInfos } from '~/utils/assets';
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
+import { getAssociatedTokenAddress } from "@solana/spl-token";
+
+
+const fetchIassetBalances = async (program: InceptClient, tokenData: TokenData): Promise<number[]> => {
+
+	let balancesQueries = await Promise.allSettled(
+		tokenData.pools.slice(0, tokenData.numPools.toNumber()).map(async (pool) => {
+		  let ata = await getAssociatedTokenAddress(
+			pool.assetInfo.iassetMint,
+			program.provider.publicKey!
+		  );
+		  let balance = await program.provider.connection.getTokenAccountBalance(
+			ata
+		  );
+		  return balance.value.uiAmount !== null ? balance.value.uiAmount: 0;
+		})
+	  );
+	
+	return balancesQueries.map((query) => {
+		if (query.status === "rejected") 
+			return 0;
+
+		return query.value!
+	})
+}
 
 export const fetchAssets = async ({ program, userPubKey }: { program: InceptClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return null
@@ -12,19 +37,19 @@ export const fetchAssets = async ({ program, userPubKey }: { program: InceptClie
 
 	await program.loadManager()
 	const tokenData = await program.getTokenData();
-	const iassetInfos = getiAssetInfos(tokenData);
+	const balances = await fetchIassetBalances(program, tokenData);
 
 	const result: AssetList[] = []
 
-	for (const info of iassetInfos) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0])
+	for (let index = 0; index < tokenData.numPools.toNumber(); index++) {
+		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
 		result.push({
-			id: info[0],
+			id: index,
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
 			assetType: assetType,
-			balance: 0, // @TODO: set proper balance
+			balance: balances[index],
 		})
 	}
 	return result

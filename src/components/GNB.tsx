@@ -123,7 +123,7 @@ const RightMenu = () => {
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);
-						await program.provider.send!(tx);
+						await program.provider.sendAndConfirm!(tx);
 
 					} else {
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
