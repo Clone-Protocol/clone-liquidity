@@ -140,18 +140,23 @@ export function useMultipoolInfoQuery({ userPubKey, refetchOnMount, enabled = tr
 	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-	if (wallet) {
-		return useQuery(
-			['multipoolInfos', wallet, userPubKey],
-			() => fetchInfos({ program: getInceptApp(wallet), userPubKey, setStartTimer }),
-			{
-				refetchOnMount,
-				refetchInterval: REFETCH_CYCLE,
-				refetchIntervalInBackground: true,
-				enabled,
-			}
-		)
-	} else {
-		return useQuery(['multipoolInfos'], () => { })
+	let queryFunc
+	try {
+		const program = getInceptApp(wallet)
+		queryFunc = () => fetchInfos({ program, userPubKey, setStartTimer })
+	} catch (e) {
+		console.error(e)
+		queryFunc = () => { }
 	}
+
+	return useQuery(
+		['multipoolInfos', wallet, userPubKey],
+		queryFunc,
+		{
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+		}
+	)
 }

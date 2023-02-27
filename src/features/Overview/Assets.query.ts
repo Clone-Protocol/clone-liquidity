@@ -70,7 +70,7 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 		queryFunc = () => []
 	}
 
-	return useQuery(['assets'], queryFunc, {
+	return useQuery(['assets', wallet], queryFunc, {
 		refetchOnMount,
 		refetchInterval: REFETCH_CYCLE,
 		refetchIntervalInBackground: true,
