@@ -121,49 +121,12 @@ export const callDeposit = async ({ program, userPubKey, data }: CallDepositProp
 	await program.loadManager()
 	const { index, iassetAmount } = data
 
-	const tokenData = await program.getTokenData();
-
 	let liquidityPositions = await program.getLiquidityPositions();
 	let liquidityPosition = liquidityPositions[index]!;
 
-	let iassetMint = tokenData.pools[liquidityPosition.poolIndex].assetInfo.iassetMint
-	let liquidityTokenMint = tokenData.pools[liquidityPosition.poolIndex].liquidityTokenMint
-
-	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
-	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
-
-	let tx = new Transaction();
-
-	if (liquidityAssociatedTokenAccount === undefined) {
-		const liquidityAssociatedToken = await getAssociatedTokenAddress(
-			liquidityTokenMint,
-			program.provider.publicKey!,
-		);
-		tx.add(
-			await createAssociatedTokenAccountInstruction(
-				program.provider.publicKey!,
-				liquidityAssociatedToken,
-				program.provider.publicKey!,
-				liquidityTokenMint
-			)
-		);
-		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
-	}
-	tx.add(
-		await program.provideUnconcentratedLiquidityInstruction(
-			collateralAssociatedTokenAccount!,
-			iassetAssociatedTokenAccount!,
-			liquidityAssociatedTokenAccount!,
-			new anchor.BN(iassetAmount * 10 ** 8),
-			index
-		)
-	);
-	await program.provider.sendAndConfirm!(tx, []);
-
-	return {
-		result: true
-	}
+	return await callLiquidity({ program, userPubKey, data: {
+		iassetIndex: liquidityPosition.poolIndex, iassetAmount
+	}});
 }
 
 type DepositFormData = {
@@ -204,33 +167,21 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 
 	const tx = new Transaction();
 
-	// let userAccount = await program.getUserAccount();
-	// let liquidityPositionAddress = userAccount.liquidityPositions;
-	// if (liquidityPositionAddress.equals(PublicKey.default)) {
-	// 	const liquidityPositionsAccount = anchor.web3.Keypair.generate();
-	// 	signers.push(liquidityPositionsAccount);
-	// 	liquidityPositionAddress = liquidityPositionsAccount.publicKey;
-	// 	tx.add(
-	// 		await program.program.account.liquidityPositions.createInstruction(
-	// 			liquidityPositionsAccount
-	// 		)
-	// 	);
-	// 	tx.add(
-	// 		await program.initializeLiquidityPositionsInstruction(liquidityPositionsAccount)
-	// 	);
-	// }
-	// const associatedToken = await getAssociatedTokenAddress(liquidityTokenMint, program.provider.publicKey!)
-	// if (liquidityAssociatedTokenAccount === undefined) {
-	// 	tx.add(
-	// 		await createAssociatedTokenAccountInstruction(
-	// 			program.provider.publicKey!,
-	// 			associatedToken,
-	// 			program.provider.publicKey!,
-	// 			liquidityTokenMint
-	// 		)
-	// 	)
-	// 	liquidityAssociatedTokenAccount = associatedToken;
-	// }
+	if (liquidityAssociatedTokenAccount === undefined) {
+		const liquidityAssociatedToken = await getAssociatedTokenAddress(
+			liquidityTokenMint,
+			program.provider.publicKey!,
+		);
+		tx.add(
+			await createAssociatedTokenAccountInstruction(
+				program.provider.publicKey!,
+				liquidityAssociatedToken,
+				program.provider.publicKey!,
+				liquidityTokenMint
+			)
+		);
+		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
+	}
 
 	tx.add(
 		await program.provideUnconcentratedLiquidityInstruction(
