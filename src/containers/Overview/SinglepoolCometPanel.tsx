@@ -17,7 +17,8 @@ import PairInputView from '~/components/Asset/PairInputView'
 import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
-import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
+import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
+import { calculateNewSinglePoolCometFromUsdiBorrowed } from 'incept-protocol-sdk/sdk/src/healthscore'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
@@ -102,7 +103,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
         healthScore,
         lowerPrice,
         upperPrice
-      } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
+      } = calculateNewSinglePoolCometFromUsdiBorrowed(
         assetIndex,
         collAmount,
         mintAmount,
@@ -115,8 +116,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
         setCometData({
           ...cometData,
-          lowerLimit: Math.min(lowerPrice, assetData.centerPrice),
-          upperLimit: Math.max(upperPrice, assetData.centerPrice)
+          lowerLimit: Math.min(lowerPrice, assetData.centerPrice!),
+          upperLimit: Math.max(upperPrice, assetData.centerPrice!)
         })
       }
 
