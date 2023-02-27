@@ -87,7 +87,7 @@ export const callWithdraw = async ({ program, userPubKey, data }: CallWithdrawPr
 			index,
 		)
 	);
-	await program.provider.send!(tx);
+	await program.provider.sendAndConfirm!(tx);
 
 	return {
 		result: true
@@ -159,7 +159,7 @@ export const callDeposit = async ({ program, userPubKey, data }: CallDepositProp
 			index
 		)
 	);
-	await program.provider.send!(tx, []);
+	await program.provider.sendAndConfirm!(tx, []);
 
 	return {
 		result: true
@@ -242,7 +242,7 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 		)
 	);
 
-	await program.provider.send!(tx);
+	await program.provider.sendAndConfirm!(tx);
 
 	return {
 		result: true

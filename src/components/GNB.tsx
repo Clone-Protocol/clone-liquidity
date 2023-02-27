@@ -95,13 +95,11 @@ const RightMenu = () => {
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
 
-	// on initialize, set to open account creation 
-	// confirmation dialog if wallet is connected and account doesn't exist
-	useInitialized()
+	// on initialize, set to open account creation
+	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 
-	// create the account when the user clicks the create account button 
-	// on the account setup dialog
+	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
 		setIsCreatingAccount(true)
 	}
@@ -125,7 +123,7 @@ const RightMenu = () => {
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);
-						await program.provider.send!(tx);
+						await program.provider.sendAndConfirm!(tx);
 
 					} else {
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
@@ -155,7 +153,6 @@ const RightMenu = () => {
 			if (!connected) {
 				if (!wallet) {
 					setOpen(true)
-					console.log('open')
 				} else {
 					connect()
 				}

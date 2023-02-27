@@ -6,7 +6,7 @@ import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getiAssetInfos } from '~/utils/assets';
-import { AnchorWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchAssets = async ({ program, setStartTimer }: { program: InceptClient, setStartTimer: (start: boolean) => void }) => {
 	console.log('fetchAssets')
@@ -61,36 +61,40 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-	if (wallet) {
-		console.log('assets', wallet)
-		return useQuery(['assets', wallet], () => fetchAssets({ program: getInceptApp(wallet), setStartTimer }), {
-			refetchOnMount,
-			refetchInterval: REFETCH_CYCLE,
-			refetchIntervalInBackground: true,
-			enabled,
-			select: (assets) => {
-				let filteredAssets = assets
-
-				filteredAssets = assets.filter((asset) => {
-					if (filter === 'crypto') {
-						return asset.assetType === AssetType.Crypto
-					} else if (filter === 'fx') {
-						return asset.assetType === AssetType.Fx
-					} else if (filter === 'commodities') {
-						return asset.assetType === AssetType.Commodities
-					} else if (filter === 'stocks') {
-						return asset.assetType === AssetType.Stocks
-					}
-					return true;
-				})
-
-				if (searchTerm && searchTerm.length > 0) {
-					filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
-				}
-				return filteredAssets
-			}
-		})
-	} else {
-		return useQuery(['assets'], () => [])
+	let queryFunc
+	try {
+		const program = getInceptApp(wallet)
+		queryFunc = () => fetchAssets({ program, setStartTimer })
+	} catch (e) {
+		console.error(e)
+		queryFunc = () => []
 	}
+
+	return useQuery(['assets'], queryFunc, {
+		refetchOnMount,
+		refetchInterval: REFETCH_CYCLE,
+		refetchIntervalInBackground: true,
+		enabled,
+		select: (assets) => {
+			let filteredAssets = assets
+
+			filteredAssets = assets.filter((asset) => {
+				if (filter === 'crypto') {
+					return asset.assetType === AssetType.Crypto
+				} else if (filter === 'fx') {
+					return asset.assetType === AssetType.Fx
+				} else if (filter === 'commodities') {
+					return asset.assetType === AssetType.Commodities
+				} else if (filter === 'stocks') {
+					return asset.assetType === AssetType.Stocks
+				}
+				return true;
+			})
+
+			if (searchTerm && searchTerm.length > 0) {
+				filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
+			}
+			return filteredAssets
+		}
+	})
 }

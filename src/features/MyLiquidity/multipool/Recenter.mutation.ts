@@ -51,7 +51,7 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 		tx.add(ix)
 	}
 
-	await program.provider.send!(tx)
+	await program.provider.sendAndConfirm!(tx)
 
 	const resultMessage = tickers.length > 0 ? `The following positions were successfully recentered: ${tickers.join(', ')}.` : ''
 
