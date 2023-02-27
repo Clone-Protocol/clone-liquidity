@@ -23,7 +23,8 @@ import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-h
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { TokenData } from "incept-protocol-sdk/sdk/src/incept"
+import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
+import { calculateNewSinglePoolCometFromUsdiBorrowed } from "incept-protocol-sdk/sdk/src/healthscore"
 import { TooltipTexts } from '~/data/tooltipTexts'
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
@@ -102,7 +103,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
         healthScore,
         lowerPrice,
         upperPrice
-      } = program.calculateNewSinglePoolCometFromUsdiBorrowed(
+      } = calculateNewSinglePoolCometFromUsdiBorrowed(
         assetIndex,
         collAmount,
         mintAmount,
