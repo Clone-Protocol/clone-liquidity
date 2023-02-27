@@ -1,9 +1,12 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept, TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
+import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 
 export const fetchLiquidityDetail = async ({
@@ -11,7 +14,7 @@ export const fetchLiquidityDetail = async ({
 	userPubKey,
 	index,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	index: number
 }) => {
@@ -42,7 +45,7 @@ export const fetchLiquidityDetail = async ({
 		// Only USDi for now.
 		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 		comet = cometResult.value
-		totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
+		totalHealthScore = getHealthScore(tokenData, comet).healthScore
 		hasNoCollateral = Number(comet.numCollaterals) === 0
 
 		for (let i = 0; i < Number(comet.numPositions); i++) {
@@ -89,13 +92,18 @@ interface GetProps {
 }
 
 export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useQuery(
-		['liquidityPosition', userPubKey, index],
-		() => fetchLiquidityDetail({ program: getInceptApp(), userPubKey, index }),
-		{
-			refetchOnMount,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['liquidityPosition', wallet, userPubKey, index],
+			() => fetchLiquidityDetail({ program: getInceptApp(wallet), userPubKey, index }),
+			{
+				refetchOnMount,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['liquidityPosition'], () => { })
+	}
 }

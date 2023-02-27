@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSnackbar } from 'notistack'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import Image from 'next/image'
@@ -27,6 +27,7 @@ interface CometInfo {
 
 const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: string, centerPrice: number, open: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
@@ -59,8 +60,8 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
 
   useEffect(() => {
     async function fetch() {
-      if (open) {
-        const program = getInceptApp()
+      if (open && wallet) {
+        const program = getInceptApp(wallet)
         await program.loadManager()
         const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
           program.getTokenData(), program.getSinglePoolComets()
@@ -90,7 +91,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
       }
     }
     fetch()
-  }, [open])
+  }, [open, wallet])
   const handleRecenter = async () => {
     setLoading(true)
     await mutateAsync(

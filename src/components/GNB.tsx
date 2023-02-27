@@ -95,13 +95,11 @@ const RightMenu = () => {
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
 
-	// on initialize, set to open account creation 
-	// confirmation dialog if wallet is connected and account doesn't exist
-	useInitialized()
+	// on initialize, set to open account creation
+	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 
-	// create the account when the user clicks the create account button 
-	// on the account setup dialog
+	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
 		setIsCreatingAccount(true)
 	}
@@ -113,19 +111,19 @@ const RightMenu = () => {
 
 	useEffect(() => {
 		async function userMintUsdi() {
-			if (connected && publicKey && mintUsdi) {
-				const program = getInceptApp()
+			if (connected && publicKey && mintUsdi && wallet) {
+				const program = getInceptApp(wallet)
 				await program.loadManager()
 				const usdiTokenAccount = await getUSDiAccount(program);
 				try {
 					if (usdiTokenAccount === undefined) {
-						const ata = await getAssociatedTokenAddress(program.manager!.usdiMint, publicKey);
+						const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, publicKey);
 						const tx = new Transaction().add(
-							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.manager!.usdiMint)
+							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.incept!.usdiMint)
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);
-						await program.provider.send!(tx);
+						await program.provider.sendAndConfirm!(tx);
 
 					} else {
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);

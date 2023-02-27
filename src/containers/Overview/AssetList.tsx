@@ -16,6 +16,7 @@ import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
+import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -64,6 +65,7 @@ const AssetList: React.FC = () => {
 				headers={columns}
 				rows={assets || []}
 				minHeight={680}
+				customNoRowsOverlay={() => CustomNoRowsOverlay('No assets')}
 				onRowClick={handleRowClick}
 			/>
 		</PanelBox>

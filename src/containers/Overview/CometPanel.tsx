@@ -2,7 +2,7 @@ import { Box, Stack, Button, Divider, FormHelperText } from '@mui/material'
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { styled } from '@mui/system'
 import { useIncept } from '~/hooks/useIncept'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import PriceIndicatorBox from '~/components/Asset/PriceIndicatorBox'
 import InfoBookIcon from 'public/images/info-book-icon.svg'
@@ -28,6 +28,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 
 const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
@@ -70,21 +71,23 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
 
   useEffect(() => {
     async function fetch() {
-      const program = getInceptApp()
-      await program.loadManager()
-      const tData = await program.getTokenData();
-      setTokenData(tData);
+      if (wallet) {
+        const program = getInceptApp(wallet)
+        await program.loadManager()
+        const tData = await program.getTokenData();
+        setTokenData(tData);
+      }
     }
     fetch()
-  }, [])
+  }, [wallet])
 
   useEffect(() => {
     async function fetch() {
-      if (!tokenData) return
+      if (!tokenData || !wallet) return
 
       await trigger()
 
-      const program = getInceptApp()
+      const program = getInceptApp(wallet)
 
       if (isNaN(collAmount)) {
         setMintAmount(0)

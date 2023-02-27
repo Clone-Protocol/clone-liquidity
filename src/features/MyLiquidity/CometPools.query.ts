@@ -1,14 +1,16 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { calculateEditCometSinglePoolWithUsdiBorrowed, getSinglePoolHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserSinglePoolCometInfos } from '~/utils/user'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void}) => {
+export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: CometPools.query')
@@ -25,22 +27,22 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 
 	if (tokenDataResult.status === "fulfilled" && singlePoolCometResult.status === "fulfilled") {
 
-		let cometInfos = getUserSinglePoolCometInfos(program.calculateEditCometSinglePoolWithUsdiBorrowed, tokenDataResult.value, singlePoolCometResult.value);
+		let cometInfos = getUserSinglePoolCometInfos(calculateEditCometSinglePoolWithUsdiBorrowed, tokenDataResult.value, singlePoolCometResult.value);
 		console.log('cometInfos', cometInfos)
-	
+
 		let i = 0
 		for (const info of cometInfos) {
-			const hasPool = Number(info[info.length-1])
-	
+			const hasPool = Number(info[info.length - 1])
+
 			const { collateralName, collateralType } = collateralMapping(Number(info[1]))
 			// unless poolIndex is 255
 			if (hasPool) {
 				const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
-	
-				const healthData = program.getSinglePoolHealthScore(i, tokenDataResult.value, singlePoolCometResult.value)
+
+				const healthData = getSinglePoolHealthScore(i, tokenDataResult.value, singlePoolCometResult.value)
 				let healthScore = healthData.healthScore
 
-	
+
 				result.push({
 					id: i,
 					tickerName: tickerName,
@@ -83,7 +85,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 					healthScore: 0
 				})
 			}
-		i++
+			i++
 		}
 	}
 	return result
@@ -92,8 +94,8 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-  enabled?: boolean
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	enabled?: boolean
 }
 
 export interface PoolList {
@@ -114,31 +116,36 @@ export interface PoolList {
 	borrowedIasset: number
 	borrowedUsdi: number
 	liquidityTokenAmount: number
-  healthScore: number
+	healthScore: number
 }
 
 export function useCometPoolsQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetPoolsProps) {
-  const { getInceptApp } = useIncept()
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-  return useQuery(['cometPools', userPubKey, filter], () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer }), {
-    refetchOnMount,
-		refetchInterval: REFETCH_CYCLE,
-		refetchIntervalInBackground: true,
-    enabled,
-		select: (assets) => {
-			return assets.filter((asset) => {
-				if (filter === 'crypto') {
-					return asset.assetType === AssetType.Crypto
-				} else if (filter === 'fx') {
-					return asset.assetType === AssetType.Fx
-				} else if (filter === 'commodities') {
-					return asset.assetType === AssetType.Commodities
-				} else if (filter === 'stocks') {
-					return asset.assetType === AssetType.Stocks
-				}
-				return true;
-			})
-		}
-  })
+	if (wallet) {
+		return useQuery(['cometPools', wallet, userPubKey, filter], () => fetchPools({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+			select: (assets) => {
+				return assets.filter((asset) => {
+					if (filter === 'crypto') {
+						return asset.assetType === AssetType.Crypto
+					} else if (filter === 'fx') {
+						return asset.assetType === AssetType.Fx
+					} else if (filter === 'commodities') {
+						return asset.assetType === AssetType.Commodities
+					} else if (filter === 'stocks') {
+						return asset.assetType === AssetType.Stocks
+					}
+					return true;
+				})
+			}
+		})
+	} else {
+		return useQuery(['cometPools'], () => [])
+	}
 }

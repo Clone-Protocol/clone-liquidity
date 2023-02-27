@@ -1,18 +1,21 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { Comet } from "incept-protocol-sdk/sdk/src/interfaces"
+import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchInfos = async ({
 	program,
 	userPubKey,
 	setStartTimer,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	setStartTimer: (start: boolean) => void
 }) => {
@@ -37,7 +40,7 @@ export const fetchInfos = async ({
 	]);
 
 
-	if (cometResult.status === "fulfilled") {	
+	if (cometResult.status === "fulfilled") {
 		collaterals = extractCollateralInfo(cometResult.value)
 		positions = extractLiquidityPositionsInfo(cometResult.value)
 
@@ -48,17 +51,17 @@ export const fetchInfos = async ({
 			totalLiquidity += p.liquidityDollarPrice
 		})
 		if (tokenDataResult.status === "fulfilled") {
-			healthScore = program.getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+			healthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
 		}
 	}
 
 	const result = {
-    healthScore,
-    totalCollValue,
-    totalLiquidity,
-    collaterals,
-    positions
-  }
+		healthScore,
+		totalCollValue,
+		totalLiquidity,
+		collaterals,
+		positions
+	}
 
 	return result
 }
@@ -80,17 +83,17 @@ export interface Collateral {
 const extractCollateralInfo = (comet: Comet): Collateral[] => {
 	let result: Collateral[] = [];
 
-	for (let i=0; i < Number(comet.numCollaterals); i++) {
+	for (let i = 0; i < Number(comet.numCollaterals); i++) {
 		// For now only handle USDi
 		if (Number(comet.collaterals[i].collateralIndex) === 0) {
 			result.push(
-			  {
-				tickerIcon : '/images/assets/USDi.png',
-				tickerSymbol : 'USDi',
-				tickerName : 'USDi',
-				collAmount: toNumber(comet.collaterals[i].collateralAmount),
-				collAmountDollarPrice: 1
-			  } as Collateral
+				{
+					tickerIcon: '/images/assets/USDi.png',
+					tickerSymbol: 'USDi',
+					tickerName: 'USDi',
+					collAmount: toNumber(comet.collaterals[i].collateralAmount),
+					collAmountDollarPrice: 1
+				} as Collateral
 			)
 		}
 	}
@@ -99,19 +102,19 @@ const extractCollateralInfo = (comet: Comet): Collateral[] => {
 }
 
 export interface LiquidityPosition {
-  tickerSymbol: string
-  tickerIcon: string
-  tickerName: string
-  liquidityDollarPrice: number
-  positionIndex: number
-  poolIndex: number
+	tickerSymbol: string
+	tickerIcon: string
+	tickerName: string
+	liquidityDollarPrice: number
+	positionIndex: number
+	poolIndex: number
 }
 
 
 const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 	let result: LiquidityPosition[] = [];
 
-	for (let i=0; i < comet.numPositions.toNumber(); i++) {
+	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
 		// For now only handle USDi
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
@@ -119,9 +122,9 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 
 		result.push(
 			{
-				tickerIcon : info.tickerIcon,
-				tickerSymbol : info.tickerSymbol,
-				tickerName : info.tickerName,
+				tickerIcon: info.tickerIcon,
+				tickerSymbol: info.tickerSymbol,
+				tickerName: info.tickerName,
 				liquidityDollarPrice: toNumber(position.borrowedUsdi) * 2,
 				positionIndex: i,
 				poolIndex: poolIndex
@@ -133,12 +136,22 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 }
 
 export function useMultipoolInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
+	let queryFunc
+	try {
+		const program = getInceptApp(wallet)
+		queryFunc = () => fetchInfos({ program, userPubKey, setStartTimer })
+	} catch (e) {
+		console.error(e)
+		queryFunc = () => { }
+	}
+
 	return useQuery(
-		['multipoolInfos', userPubKey],
-		() => fetchInfos({ program: getInceptApp(), userPubKey, setStartTimer }),
+		['multipoolInfos', wallet, userPubKey],
+		queryFunc,
 		{
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,

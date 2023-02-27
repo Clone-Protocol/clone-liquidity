@@ -1,16 +1,19 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept, TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { getHealthScore, calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchRecenterInfo = async ({
 	program,
 	userPubKey,
 	index,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	index: number
 }) => {
@@ -33,7 +36,7 @@ export const fetchRecenterInfo = async ({
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 	let initPrice = toNumber(position.borrowedUsdi) / toNumber(position.borrowedIasset)
 
-	let currentHealthScore = program.getHealthScore(tokenData, comet)
+	let currentHealthScore = getHealthScore(tokenData, comet)
 
 	let totalCollValue = 0
 	let totalHealthScore = 0
@@ -43,9 +46,9 @@ export const fetchRecenterInfo = async ({
 
 	// Only USDi for now.
 	totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
-	totalHealthScore = program.getHealthScore(tokenData, comet).healthScore
+	totalHealthScore = getHealthScore(tokenData, comet).healthScore
 	try {
-		let recenterEstimation = program.calculateCometRecenterMultiPool(index, tokenData, comet)
+		let recenterEstimation = calculateCometRecenterMultiPool(index, tokenData, comet)
 		recenterCost = recenterEstimation.usdiCost
 		healthScore = recenterEstimation.healthScore
 	} catch (e) {
@@ -103,13 +106,18 @@ interface GetProps {
 }
 
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
-	return useQuery(
-		['recenterInfo', userPubKey, index],
-		() => fetchRecenterInfo({ program: getInceptApp(), userPubKey, index }),
-		{
-			refetchOnMount,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['recenterInfo', wallet, userPubKey, index],
+			() => fetchRecenterInfo({ program: getInceptApp(wallet), userPubKey, index }),
+			{
+				refetchOnMount,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['recenterInfo'], () => { })
+	}
 }

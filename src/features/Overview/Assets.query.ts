@@ -1,18 +1,19 @@
 import { Query, useQuery } from 'react-query'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getiAssetInfos} from '~/utils/assets';
+import { getiAssetInfos } from '~/utils/assets';
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchAssets = async ({ program, setStartTimer }: { program: Incept, setStartTimer: (start: boolean) => void}) => {
+export const fetchAssets = async ({ program, setStartTimer }: { program: InceptClient, setStartTimer: (start: boolean) => void }) => {
 	console.log('fetchAssets')
 	// start timer in data-loading-indicator
 	setStartTimer(false);
 	setStartTimer(true);
-    
+
 	await program.loadManager()
 	const tokenData = await program.getTokenData();
 	const iassetInfos = getiAssetInfos(tokenData);
@@ -20,15 +21,15 @@ export const fetchAssets = async ({ program, setStartTimer }: { program: Incept,
 	const result: AssetList[] = []
 
 	for (const info of iassetInfos) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info[0])
+		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info.poolIndex)
 		result.push({
-			id: info[0],
+			id: info.poolIndex,
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
-			price: info[1],
+			price: info.poolPrice,
 			assetType: assetType,
-			liquidity: parseInt(info[2].toString()),
+			liquidity: parseInt(info.liquidity.toString()),
 			volume24h: 0, //coming soon
 			baselineAPY: 0, //coming soon
 		})
@@ -38,9 +39,9 @@ export const fetchAssets = async ({ program, setStartTimer }: { program: Incept,
 
 interface GetAssetsProps {
 	filter: FilterType
-  searchTerm: string
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-  enabled?: boolean
+	searchTerm: string
+	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	enabled?: boolean
 }
 
 export interface AssetList {
@@ -56,15 +57,25 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
-  const { getInceptApp } = useIncept()
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-  return useQuery(['assets'], () => fetchAssets({ program: getInceptApp(), setStartTimer }), {
-    refetchOnMount,
+	let queryFunc
+	try {
+		const program = getInceptApp(wallet)
+		queryFunc = () => fetchAssets({ program, setStartTimer })
+	} catch (e) {
+		console.error(e)
+		queryFunc = () => []
+	}
+
+	return useQuery(['assets', wallet], queryFunc, {
+		refetchOnMount,
 		refetchInterval: REFETCH_CYCLE,
 		refetchIntervalInBackground: true,
-    enabled,
-    select: (assets) => {
+		enabled,
+		select: (assets) => {
 			let filteredAssets = assets
 
 			filteredAssets = assets.filter((asset) => {
@@ -85,5 +96,5 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 			}
 			return filteredAssets
 		}
-  })
+	})
 }

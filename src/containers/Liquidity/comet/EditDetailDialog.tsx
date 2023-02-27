@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Box, Stack, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useIncept } from '~/hooks/useIncept'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import { CometInfo } from '~/features/MyLiquidity/CometPosition.query'
@@ -13,7 +13,8 @@ import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-h
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/incept'
+import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
+import { calculateEditCometSinglePoolWithUsdiBorrowed } from 'incept-protocol-sdk/sdk/src/healthscore'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
@@ -23,6 +24,7 @@ import { RISK_SCORE_VAL } from '~/data/riskfactors'
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
+  const wallet = useAnchorWallet()
   const [loading, setLoading] = useState(false)
   const [collAmount, setCollAmount] = useState(NaN)
   const [mintAmount, setMintAmount] = useState(0.0)
@@ -82,27 +84,30 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Initialize state data.
   useEffect(() => {
     async function fetch() {
-      const program = getInceptApp()
-      await program.loadManager()
+      if (wallet) {
+        const program = getInceptApp(wallet)
+        await program.loadManager()
 
-      const [tokenDataResult, cometResult] = await Promise.allSettled([
-        program.getTokenData(), program.getSinglePoolComets()
-      ]);
+        const [tokenDataResult, cometResult] = await Promise.allSettled([
+          program.getTokenData(), program.getSinglePoolComets()
+        ]);
 
-      if (tokenDataResult.status === "fulfilled" && cometResult.status === "fulfilled") {
-        setTokenDataState(tokenDataResult.value)
-        setSinglePoolCometState(cometResult.value)
+        if (tokenDataResult.status === "fulfilled" && cometResult.status === "fulfilled") {
+          setTokenDataState(tokenDataResult.value)
+          setSinglePoolCometState(cometResult.value)
+        }
+        setRefresh(false);
       }
-      setRefresh(false);
     }
     if (refresh) fetch();
-  }, [refresh])
+  }, [refresh, wallet])
 
   // set defaultMintRatio
   useEffect(() => {
     async function fetch() {
-      if (open) {
-        const program = getInceptApp()
+      if (open && wallet) {
+        const program = getInceptApp(wallet)
+
         initData()
 
         let {
@@ -111,7 +116,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           maxUsdiPosition,
           lowerPrice,
           upperPrice
-        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+        } = calculateEditCometSinglePoolWithUsdiBorrowed(
           tokenDataState as TokenData,
           singlePoolCometState as Comet,
           cometIndex,
@@ -122,8 +127,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         const mintRatio = cometDetail.mintAmount * 100 / maxUsdiPosition
         setCometData({
           ...cometData,
-          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
-          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
+          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice!) : 0,
+          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice!) : Infinity
         })
         setHealthScore(Math.max(0, healthScore))
         setMaxWithdrawable(Math.abs(maxCollateralWithdrawable))
@@ -142,7 +147,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       }
     }
     fetch()
-  }, [open])
+  }, [open, wallet])
 
   // set default when changing editType
   useEffect(() => {
@@ -165,11 +170,10 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Trigger on collAmount
   useEffect(() => {
     function fetch() {
-      if (isCollAmountInvalid()) {
-        return
-      }
+      if (isCollAmountInvalid() || !wallet) return
 
-      const program = getInceptApp()
+      const program = getInceptApp(wallet)
+
       if (open && tokenDataState && singlePoolCometState) {
         const collateralChange = editType === 0 ? collAmount : -1 * collAmount
 
@@ -179,7 +183,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           upperPrice,
           maxUsdiPosition,
           healthScore,
-        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+        } = calculateEditCometSinglePoolWithUsdiBorrowed(
           tokenDataState,
           singlePoolCometState,
           cometIndex,
@@ -191,8 +195,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
-          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
-          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
+          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice!) : 0,
+          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice!) : Infinity
         })
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
@@ -206,7 +210,9 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   // Trigger on mintAmount
   useEffect(() => {
     function fetch() {
-      const program = getInceptApp()
+      if (!wallet) return
+
+      const program = getInceptApp(wallet)
 
       if (open && tokenDataState && singlePoolCometState) {
         console.log('calculateRange', collAmount, mintAmount, cometDetail.mintAmount)
@@ -219,7 +225,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
           upperPrice,
           maxUsdiPosition,
           healthScore,
-        } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+        } = calculateEditCometSinglePoolWithUsdiBorrowed(
           tokenDataState,
           singlePoolCometState,
           cometIndex,
@@ -231,8 +237,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setMaxMintable(maxUsdiPosition)
         setCometData({
           ...cometData,
-          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice) : 0,
-          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice) : Infinity
+          lowerLimit: healthScore < 100 ? Math.min(lowerPrice, assetData.centerPrice!) : 0,
+          upperLimit: healthScore < 100 ? Math.max(upperPrice, assetData.centerPrice!) : Infinity
         })
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
@@ -352,7 +358,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                           editType={editType}
                           tickerIcon={'/images/assets/USDi.png'}
                           tickerSymbol="USDi"
-                          collAmount={isNaN(collAmount) ? '' : collAmount}
+                          collAmount={isNaN(collAmount) ? 0 : collAmount}
                           collAmountDollarPrice={collAmount}
                           maxCollVal={editType === 0 ? balance : maxWithdrawable}
                           currentCollAmount={cometDetail.collAmount}

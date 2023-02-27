@@ -1,12 +1,13 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getTokenAccount } from '~/utils/token_accounts'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return null
 
   console.log('fetchBalance')
@@ -19,14 +20,15 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
   let usdiVal = 0.0
   let iassetVal = 0.0
 
-  const usdiTokenAccountAddress = await getTokenAccount(program.manager!.usdiMint, userPubKey, program.connection);
+  const usdiTokenAccountAddress = await getTokenAccount(program.incept!.usdiMint, userPubKey, program.connection);
 
   if (usdiTokenAccountAddress !== undefined) {
     const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress, "processed");
     usdiVal = Number(usdiBalance.value.amount) / 100000000;
   }
+  const tokenData = await program.getTokenData();
 
-  const pool = await program.getPool(index);
+  const pool = tokenData.pools[index];
   const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, userPubKey, program.connection);
   if (iassetTokenAccountAddress !== undefined) {
     const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress, "processed");
@@ -52,13 +54,18 @@ export interface Balance {
 }
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(['borrowBalance', userPubKey, index], () => fetchBalance({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
-    refetchOnMount,
-    refetchInterval: REFETCH_CYCLE,
-    refetchIntervalInBackground: true,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['borrowBalance', wallet, userPubKey, index], () => fetchBalance({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled
+    })
+  } else {
+    return useQuery(['borrowBalance'], () => ({ usdiVal: 0, iassetVal: 0 }))
+  }
 }

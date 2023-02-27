@@ -1,19 +1,23 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { getSinglePoolHealthScore, calculateEditCometSinglePoolWithUsdiBorrowed } from "incept-protocol-sdk/sdk/src/healthscore"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: Incept, userPubKey: PublicKey | null, index: number }) => {
+export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
 
   await program.loadManager()
 
-  const balances = await program.getPoolBalances(index)
-  let price = balances[1] / balances[0]
+  const tokenData = await program.getTokenData();
+  const pool = tokenData.pools[index];
+  //const balances = await program.getPoolBalances(index)
+  let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
   let tightRange = price * 0.1
   let maxRange = 2 * price
   let centerPrice = price
@@ -30,7 +34,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
   }
 }
 
-export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: Incept, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
   console.log('fetchCometDetail', index)
@@ -81,14 +85,14 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     tickerIcon = asset.tickerIcon
     tickerName = asset.tickerName
     tickerSymbol = asset.tickerSymbol
-    const singlePoolHealthScore = program.getSinglePoolHealthScore(index, tokenData, comet);
+    const singlePoolHealthScore = getSinglePoolHealthScore(index, tokenData, comet);
     ild = singlePoolHealthScore.ILD
     healthScore = singlePoolHealthScore.healthScore
 
     const {
       lowerPrice,
       upperPrice
-    } = program.calculateEditCometSinglePoolWithUsdiBorrowed(
+    } = calculateEditCometSinglePoolWithUsdiBorrowed(
       tokenData,
       comet,
       index,
@@ -163,21 +167,32 @@ export interface CometDetail extends PositionInfo {
 }
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useQuery(['initComet', userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(), userPubKey, index }), {
-    refetchOnMount,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(wallet), userPubKey, index }), {
+      refetchOnMount,
+      enabled
+    })
+  } else {
+    return useQuery(['initComet'], () => { })
+  }
 }
 
 export function useCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(['cometDetail', userPubKey, index], () => fetchCometDetail({ program: getInceptApp(), userPubKey, index, setStartTimer }), {
-    refetchOnMount,
-    refetchInterval: REFETCH_CYCLE,
-    refetchIntervalInBackground: true,
-    enabled
-  })
+  if (wallet) {
+    return useQuery(['cometDetail', wallet, userPubKey, index], () => fetchCometDetail({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled
+    })
+  } else {
+    return useQuery(['cometDetail'], () => { })
+  }
+
 }

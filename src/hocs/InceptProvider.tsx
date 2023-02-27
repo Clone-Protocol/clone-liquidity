@@ -1,37 +1,47 @@
-import React, { FC, ReactNode, useCallback } from 'react'
-import { Provider } from '@project-serum/anchor'
+import React, { FC, ReactNode } from 'react'
+import { AnchorProvider } from '@project-serum/anchor'
 import { Connection } from '@solana/web3.js'
-import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { InceptContext } from '~/hooks/useIncept'
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { useRecoilValue } from 'recoil'
+import { CreateAccountDialogStates } from '~/utils/constants'
+import { createAccountDialogState } from '~/features/globalAtom'
 import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
+import { Commitment } from '@solana/web3.js'
 
 export interface InceptProviderProps {
 	children: ReactNode
 }
 
 export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
-	const wallet = useAnchorWallet()
+	const createAccountStatus = useRecoilValue(createAccountDialogState)
+	const getInceptApp = (wallet: AnchorWallet | undefined, force?: boolean): InceptClient => {
+		if (!force) {
+			if (!wallet) {
+				throw Error('not detect wallet')
+			}
+			if (createAccountStatus !== CreateAccountDialogStates.Closed) {
+				throw Error('the account is not initialized')
+			}
+		}
 
-	const getInceptApp = useCallback((): Incept | null => {
-    const opts = {
-      preflightCommitment: 'processed',
-    }
-    const network = getNetworkDetailsFromEnv()
-    const new_connection = new Connection(network.endpoint)
+		console.log('wallet', wallet)
+		const opts = {
+			preflightCommitment: "processed" as Commitment,
+		}
+		const network = getNetworkDetailsFromEnv()
+		console.log('network', network)
+		const new_connection = new Connection(network.endpoint)
 
-    // @ts-ignore
-    const provider = new Provider(new_connection, wallet, opts.preflightCommitment)
-    const incept = new Incept(network.incept, provider)
-
-    console.log('anchor-wallet', provider.wallet)
-    return incept
-	}, [wallet])
+		const provider = new AnchorProvider(new_connection, wallet!, opts)
+		const incept = new InceptClient(network.incept, provider)
+		return incept
+	}
 
 	return (
 		<InceptContext.Provider
 			value={{
-				// @ts-ignore
 				getInceptApp,
 			}}>
 			{children}

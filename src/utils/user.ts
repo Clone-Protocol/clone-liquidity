@@ -1,17 +1,18 @@
-import { TokenData, LiquidityPositions, Comet, MintPositions } from "incept-protocol-sdk/sdk/src/incept";
+import { TokenData, Comet, BorrowPositions } from "incept-protocol-sdk/sdk/src/interfaces";
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 
-export const getUserLiquidityInfos = (tokenData: TokenData, liquidityPositions: LiquidityPositions) => {
+export const getUserLiquidityInfos = (tokenData: TokenData, liquidityPositions: {
+  liquidityTokens: number;
+  poolIndex: number;
+}[]) => {
     const liquidityInfos = [];
-    for (let i = 0; i < Number(liquidityPositions.numPositions); i++) {
-      let liquidityPosition = liquidityPositions.liquidityPositions[i];
+    for (let i = 0; i < Number(liquidityPositions.length); i++) {
+      let liquidityPosition = liquidityPositions[i];
       let poolIndex = liquidityPosition.poolIndex;
       let pool = tokenData.pools[poolIndex];
       let poolBalances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
       let price = poolBalances[1] / poolBalances[0];
-      let liquidityTokenAmount = toNumber(
-        liquidityPosition.liquidityTokenValue
-      );
+      let liquidityTokenAmount = liquidityPosition.liquidityTokens
       let liquidityTokenSupply = toNumber(pool.liquidityTokenSupply);
 
       let iassetValue =
@@ -152,18 +153,18 @@ export const getUserSinglePoolCometInfos = (editInfoCalc: (tokenData: TokenData,
 
 
 
-export const getUserMintInfos = (tokenData: TokenData, mintPositions: MintPositions) => {
+export const getUserMintInfos = (tokenData: TokenData, borrowPositions: BorrowPositions) => {
     const mintInfos = [];
-    for (let i = 0; i < Number(mintPositions.numPositions); i++) {
-      let mintPosition = mintPositions.mintPositions[i];
-      let poolIndex = mintPosition.poolIndex;
-      let collateralIndex = mintPosition.collateralIndex;
+    for (let i = 0; i < Number(borrowPositions.numPositions); i++) {
+      let borrowPosition = borrowPositions.borrowPositions[i];
+      let poolIndex = borrowPosition.poolIndex;
+      let collateralIndex = borrowPosition.collateralIndex;
       let pool = tokenData.pools[poolIndex];
       let assetInfo = pool.assetInfo;
       let collateral = tokenData.collaterals[collateralIndex];
-      let collateralAmount = toNumber(mintPosition.collateralAmount);
+      let collateralAmount = toNumber(borrowPosition.collateralAmount);
       let price = toNumber(assetInfo.price);
-      let borrowedIasset = toNumber(mintPosition.borrowedIasset);
+      let borrowedIasset = toNumber(borrowPosition.borrowedIasset);
       let collateralRatio: Number;
       let minCollateralRatio: Number;
       if (collateral.stable) {
@@ -172,7 +173,7 @@ export const getUserMintInfos = (tokenData: TokenData, mintPositions: MintPositi
       } else {
         let collateralAssetInfo = tokenData.pools[collateral.poolIndex.toNumber()].assetInfo;
         let collateralPrice = toNumber(collateralAssetInfo.price);
-        let collateralAmount = toNumber(mintPosition.collateralAmount);
+        let collateralAmount = toNumber(borrowPosition.collateralAmount);
         collateralRatio =
           (collateralPrice * collateralAmount) / (price * borrowedIasset);
         minCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio);

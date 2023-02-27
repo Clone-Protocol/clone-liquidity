@@ -5,7 +5,7 @@ import {
     TokenAccountNotFoundError,
   } from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { Incept } from "incept-protocol-sdk/sdk/src/incept";
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept";
 
 export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connection: Connection): Promise<PublicKey | undefined> => {
     const associatedToken = await getAssociatedTokenAddress(
@@ -33,10 +33,10 @@ export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connect
     return account.address;
 }
 
-export const getUSDiAccount = async (incept: Incept): Promise<PublicKey | undefined> => {
+export const getUSDiAccount = async (incept: InceptClient): Promise<PublicKey | undefined> => {
   const usdiTokenAccount = await getTokenAccount(
-    incept.manager!.usdiMint,
-    incept.provider.wallet.publicKey,
+    incept.incept!.usdiMint,
+    incept.provider.publicKey!,
     incept.connection
   );
   return usdiTokenAccount!;

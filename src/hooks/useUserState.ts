@@ -23,7 +23,7 @@ export const useUserState = () => {
 					await incept!.getComet(),
 					await incept!.getSinglePoolComets(),
 					await incept!.getLiquidityPositions(),
-					await incept!.getMintPositions(),
+					await incept!.getBorrowPositions(),
 				])
 			const getValueElseUndefined = <Type>(result: PromiseSettledResult<Type>): Type | undefined => {
 				return result.status == 'fulfilled' ? result.value : undefined

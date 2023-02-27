@@ -1,11 +1,13 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 import { useMutation } from 'react-query'
-import { Incept, Comet } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { toNumber, getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
 import * as anchor from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const callRecenter = async ({
   program,
@@ -33,14 +35,19 @@ type RecenterFormData = {
 }
 
 interface CallRecenterProps {
-  program: Incept
+  program: InceptClient
   userPubKey: PublicKey | null
   data: RecenterFormData
 }
 
 export function useRecenterMutation(userPubKey: PublicKey | null) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(), userPubKey, data }))
+  if (wallet) {
+    return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, data }))
+  } else {
+    throw new Error('no wallet')
+  }
 }
 
 const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, iassetMint: PublicKey, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined) => {
@@ -48,30 +55,30 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
   let tx = new Transaction();
   const iAssetAssociatedToken = await getAssociatedTokenAddress(
     iassetMint,
-    program.provider.wallet.publicKey,
+    program.provider.publicKey!,
   );
   if (iassetAssociatedTokenAccount === undefined) {
     tx.add(
       await createAssociatedTokenAccountInstruction(
-        program.provider.wallet.publicKey,
+        program.provider.publicKey!,
         iAssetAssociatedToken,
-        program.provider.wallet.publicKey,
+        program.provider.publicKey!,
         iassetMint
       )
     );
   }
   const usdiAssociatedToken = await getAssociatedTokenAddress(
-    program.manager!.usdiMint,
-    program.provider.wallet.publicKey,
+    program.incept!.usdiMint,
+    program.provider.publicKey!,
   );
 
   if (usdiCollateralTokenAccount === undefined) {
     tx.add(
       await createAssociatedTokenAccountInstruction(
-        program.provider.wallet.publicKey,
+        program.provider.publicKey!,
         usdiAssociatedToken,
-        program.provider.wallet.publicKey,
-        program.manager!.usdiMint
+        program.provider.publicKey!,
+        program.incept!.usdiMint
       )
     );
   }
@@ -96,14 +103,14 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
     payILDInstruction
   );
 
-  await program.provider.send!(tx);
+  await program.provider.sendAndConfirm!(tx);
 }
 
 const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, usdiCollateralTokenAccount: PublicKey | undefined) => {
   let tx = new Transaction();
 
   const usdiAssociatedToken = await getAssociatedTokenAddress(
-    program.manager!.usdiMint,
+    program.incept!.usdiMint,
     userPubKey!,
   );
 
@@ -113,7 +120,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
         userPubKey!,
         usdiAssociatedToken,
         userPubKey!,
-        program.manager!.usdiMint
+        program.incept!.usdiMint
       )
     );
   }
@@ -136,7 +143,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
     )
   );
 
-  await program.provider.send!(tx);
+  await program.provider.sendAndConfirm!(tx);
 }
 
 
@@ -146,9 +153,10 @@ export const callClose = async ({ program, userPubKey, data }: CallCloseProps) =
   console.log('close input data', data)
 
   await program.loadManager()
+  const tokenData = await program.getTokenData();
 
   let singlePoolComet = await program.getSinglePoolComets();
-  let assetInfo = await program.getAssetInfo(singlePoolComet.positions[data.cometIndex].poolIndex);
+  let assetInfo = tokenData.pools[singlePoolComet.positions[data.cometIndex].poolIndex].assetInfo;
 
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
   const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, userPubKey, program.connection);
@@ -177,13 +185,18 @@ type CloseFormData = {
   iassetMint: PublicKey
 }
 interface CallCloseProps {
-  program: Incept
+  program: InceptClient
   userPubKey: PublicKey | null
   data: CloseFormData
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(), userPubKey, data }))
+  if (wallet) {
+    return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, data }))
+  } else {
+    throw new Error('no wallet')
+  }
 }
 
 export const callEdit = async ({
@@ -197,13 +210,14 @@ export const callEdit = async ({
   console.log('edit input data', data)
 
   await program.loadManager()
+  const tokenData = await program.getTokenData();
 
   const { collAmount, mintAmountChange, cometIndex, editType } = data
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
   const singlePoolComet = await program.getSinglePoolComets();
   const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
-  const pool = await program.getPool(poolIndex);
+  const pool = tokenData.pools[poolIndex];
 
   let tx = new Transaction().add(
     await program.updatePricesInstruction()
@@ -271,7 +285,7 @@ export const callEdit = async ({
       )
     );
   }
-  await program.provider.send!(tx);
+  await program.provider.sendAndConfirm!(tx);
 
   setRefreshData();
 
@@ -285,14 +299,19 @@ type EditFormData = {
   editType: number
 }
 interface CallEditProps {
-  program: Incept
+  program: InceptClient
   userPubKey: PublicKey | null
   data: EditFormData,
   setRefreshData: () => {}
 }
-export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => void) {
+export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => {}) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(), userPubKey, data, setRefreshData }))
+  if (wallet) {
+    return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, data, setRefreshData }))
+  } else {
+    throw new Error('no wallet')
+  }
 }
 
 
@@ -331,13 +350,18 @@ type CometFormData = {
 }
 
 interface CallCometProps {
-  program: Incept
+  program: InceptClient
   userPubKey: PublicKey | null
   data: CometFormData
 }
 
 export function useCometMutation(userPubKey: PublicKey | null) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  return useMutation((data: CometFormData) => callComet({ program: getInceptApp(), userPubKey, data }))
+  if (wallet) {
+    return useMutation((data: CometFormData) => callComet({ program: getInceptApp(wallet), userPubKey, data }))
+  } else {
+    throw new Error('no wallet')
+  }
 }
 

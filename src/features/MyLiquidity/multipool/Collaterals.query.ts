@@ -1,17 +1,18 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { Incept } from 'incept-protocol-sdk/sdk/src/incept'
+import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUSDiAccount } from '~/utils/token_accounts'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchCollaterals = async ({
 	program,
 	userPubKey,
 	setStartTimer,
 }: {
-	program: Incept
+	program: InceptClient
 	userPubKey: PublicKey | null
 	setStartTimer: (start: boolean) => void
 }) => {
@@ -60,17 +61,22 @@ export interface CollateralList {
 }
 
 export function useCollateralsQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-	return useQuery(
-		['collaterals', userPubKey],
-		() => fetchCollaterals({ program: getInceptApp(), userPubKey, setStartTimer }),
-		{
-			refetchOnMount,
-			refetchInterval: REFETCH_CYCLE,
-			refetchIntervalInBackground: true,
-			enabled,
-		}
-	)
+	if (wallet) {
+		return useQuery(
+			['collaterals', wallet, userPubKey],
+			() => fetchCollaterals({ program: getInceptApp(wallet), userPubKey, setStartTimer }),
+			{
+				refetchOnMount,
+				refetchInterval: REFETCH_CYCLE,
+				refetchIntervalInBackground: true,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['collaterals'], () => [])
+	}
 }

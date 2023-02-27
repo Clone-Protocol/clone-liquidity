@@ -1,11 +1,12 @@
 import { Query, useQuery } from "react-query"
 import { PublicKey } from "@solana/web3.js"
-import { Incept } from "incept-protocol-sdk/sdk/src/incept"
+import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from "~/hooks/useIncept"
 import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
 import { getiAssetInfos } from "~/utils/assets"
 import { assetMapping } from "~/data/assets"
+import { useAnchorWallet } from "@solana/wallet-adapter-react"
 
 export const fetchPools = async ({
   program,
@@ -13,7 +14,7 @@ export const fetchPools = async ({
   setStartTimer,
   noFilter,
 }: {
-  program: Incept
+  program: InceptClient
   userPubKey: PublicKey | null
   setStartTimer: (start: boolean) => void
   noFilter: boolean
@@ -48,16 +49,16 @@ export const fetchPools = async ({
   let result = []
 
   for (let asset of assetInfos) {
-    if (!noFilter && currentPoolSet.has(asset[0])) {
+    if (!noFilter && currentPoolSet.has(asset.poolIndex)) {
       continue
     }
-    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset[0])
+    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
     result.push({
-      id: asset[0],
+      id: asset.poolIndex,
       tickerName,
       tickerSymbol,
       tickerIcon,
-      totalLiquidity: asset[2],
+      totalLiquidity: asset.liquidity,
       volume24H: 0,
       averageAPY: 0,
       isEnabled: true,
@@ -90,17 +91,22 @@ export function useLiquidityPoolsQuery({
   enabled = true,
   noFilter = true,
 }: GetPoolsProps) {
+  const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
-  return useQuery(
-    ["liquidityPools", userPubKey],
-    () => fetchPools({ program: getInceptApp(), userPubKey, setStartTimer, noFilter }),
-    {
-      refetchOnMount,
-      refetchInterval: REFETCH_CYCLE,
-      refetchIntervalInBackground: true,
-      enabled,
-    }
-  )
+  if (wallet) {
+    return useQuery(
+      ["liquidityPools", wallet, userPubKey],
+      () => fetchPools({ program: getInceptApp(wallet), userPubKey, setStartTimer, noFilter }),
+      {
+        refetchOnMount,
+        refetchInterval: REFETCH_CYCLE,
+        refetchIntervalInBackground: true,
+        enabled,
+      }
+    )
+  } else {
+    return useQuery(["liquidityPools"], () => [])
+  }
 }
