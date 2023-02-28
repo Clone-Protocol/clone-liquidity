@@ -6,6 +6,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { funcNoWallet } from '../baseQuery';
 
 export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -52,7 +53,7 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }
 
@@ -213,7 +214,7 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 
 }
@@ -223,7 +224,7 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }
 
@@ -318,6 +319,7 @@ export const callBorrow = async ({ program, userPubKey, data }: CallBorrowProps)
 	}
 }
 
+
 type BorrowFormData = {
 	collateralIndex: number
 	iassetIndex: number
@@ -335,6 +337,6 @@ export function useBorrowMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }

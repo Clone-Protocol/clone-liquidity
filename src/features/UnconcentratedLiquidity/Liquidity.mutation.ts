@@ -1,12 +1,12 @@
 import { PublicKey, Transaction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
-import { getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
 import * as anchor from "@project-serum/anchor"
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { funcNoWallet } from '../baseQuery'
 
 export const callWithdraw = async ({ program, userPubKey, data }: CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -110,7 +110,7 @@ export function useWithdrawMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }
 
@@ -144,7 +144,7 @@ export function useDepositMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }
 
@@ -215,6 +215,6 @@ export function useLiquidityMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }

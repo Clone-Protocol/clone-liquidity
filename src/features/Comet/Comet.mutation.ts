@@ -8,6 +8,7 @@ import * as anchor from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { funcNoWallet } from '../baseQuery'
 
 export const callRecenter = async ({
   program,
@@ -46,7 +47,7 @@ export function useRecenterMutation(userPubKey: PublicKey | null) {
   if (wallet) {
     return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, data }))
   } else {
-    throw new Error('no wallet')
+    return useMutation(() => funcNoWallet())
   }
 }
 
@@ -195,7 +196,7 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
   if (wallet) {
     return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, data }))
   } else {
-    throw new Error('no wallet')
+    return useMutation(() => funcNoWallet())
   }
 }
 
@@ -310,7 +311,7 @@ export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: ()
   if (wallet) {
     return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, data, setRefreshData }))
   } else {
-    throw new Error('no wallet')
+    return useMutation(() => funcNoWallet())
   }
 }
 
@@ -361,7 +362,7 @@ export function useCometMutation(userPubKey: PublicKey | null) {
   if (wallet) {
     return useMutation((data: CometFormData) => callComet({ program: getInceptApp(wallet), userPubKey, data }))
   } else {
-    throw new Error('no wallet')
+    return useMutation(() => funcNoWallet())
   }
 }
 
