@@ -30,8 +30,8 @@ export const ASSETS = [
 		tickerIcon: '/images/assets/euro.png',
 	},
 	{
-		tickerName: 'iSPTSGD (GOLD INDEX)',
-		tickerSymbol: 'iSPTSGD',
+		tickerName: 'iXAU (GOLD INDEX)',
+		tickerSymbol: 'iXAU',
 		tickerIcon: '/images/assets/gold.png',
 	},
 	{
@@ -89,8 +89,8 @@ export const assetMapping = (index: number) => {
 			assetType = AssetType.Fx
 			break
 		case Asset.Gold:
-			tickerName = 'iSPTSGD (GOLD INDEX)'
-			tickerSymbol = 'iSPTSGD'
+			tickerName = 'iXAU (GOLD INDEX)'
+			tickerSymbol = 'iXAU'
 			tickerIcon = '/images/assets/gold.png'
 			assetType = AssetType.Commodities
 			break
