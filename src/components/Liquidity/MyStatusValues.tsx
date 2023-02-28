@@ -3,7 +3,6 @@ import { styled } from '@mui/system'
 import { Status } from '~/features/MyLiquidity/Status.query'
 
 const MyStatusValues = ({ tab, status }: { tab: number, status: Status }) => {
-  // @TODO
   const statusValues = status ? {
     totalCometLiquidity: status.statusValues.totalCometLiquidity,
     totalCometValLocked: status.statusValues.totalCometValLocked,
