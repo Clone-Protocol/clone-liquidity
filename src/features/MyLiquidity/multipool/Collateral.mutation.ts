@@ -4,6 +4,7 @@ import { useMutation } from 'react-query'
 import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
 import { getUSDiAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { funcNoWallet } from '~/features/baseQuery'
 
 export const callEdit = async ({ program, userPubKey, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -54,6 +55,6 @@ export function useCollateralMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }

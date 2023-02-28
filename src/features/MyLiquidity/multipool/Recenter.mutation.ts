@@ -6,6 +6,7 @@ import { useMutation } from 'react-query'
 import { assetMapping } from '~/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { funcNoWallet } from '~/features/baseQuery'
 
 export const callRecenterAll = async ({ program, userPubKey, data }: CallRecenterProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -68,7 +69,7 @@ export function useRecenterAllMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }
 
@@ -102,6 +103,6 @@ export function useRecenterMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		throw new Error('no wallet')
+		return useMutation(() => funcNoWallet())
 	}
 }
