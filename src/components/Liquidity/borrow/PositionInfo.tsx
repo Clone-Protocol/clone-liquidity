@@ -15,7 +15,6 @@ interface Props {
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {
   return positionInfo ? (
     <PositionWrapper>
-      <Title>Borrow Position</Title>
       <Box>
         <CollRatioBox>
           <SubTitle>Collateral Ratio <InfoTooltip title={TooltipTexts.collateralRatio} /></SubTitle>
@@ -93,15 +92,6 @@ const InfoBox = styled(Box)`
   justify-content: center; 
   padding: 27px;
 `
-
-const Title = styled('div')`
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 10px;
-  margin-left: 10px;
-`
-
 const SubTitle = styled('div')`
   font-size: 12px;
   font-weight: 600;

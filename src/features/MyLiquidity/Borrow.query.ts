@@ -49,23 +49,6 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 			i++
 		}
 	}
-
-	// const result2: AssetList[] = [
-	//   {
-	//     id: 1,
-	//     tickerName: 'iSolana',
-	//     tickerSymbol: 'iSOL',
-	//     tickerIcon: '/images/assets/ethereum-eth-logo.svg',
-	//     collateralName: 'USDi',
-	//     oPrice: 160.51,
-	//     assetType: 0,
-	//     collateralType: 0,
-	//     borrowed: 90.11,
-	//     collateral: 111.48,
-	//     collateralRatio: 15898343,
-	//     minCollateralRatio: 120
-	//   },
-	// ]
 	return result
 }
 

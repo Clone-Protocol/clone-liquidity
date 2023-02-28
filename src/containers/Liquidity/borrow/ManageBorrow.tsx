@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
-import { Stack, Box } from '@mui/material'
+import { Stack, Box, Divider, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
+import TipMsg from '~/components/Common/TipMsg'
 import { useWallet } from '@solana/wallet-adapter-react'
+import InfoIcon from 'public/images/info-icon.svg'
 import { TabPanelForEdit, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import MiniLineChartAlt from '~/components/Charts/MiniLineChartAlt'
+import ManageCometIconOff from 'public/images/manage-icon-off.svg'
+import ManageCometIconOn from 'public/images/manage-icon-on.svg'
+import ManageCloseIconOff from 'public/images/close-circle-multiple-outline-off.svg'
+import ManageCloseIconOn from 'public/images/close-circle-multiple-outline-on.svg'
 import EditPanel from '~/containers/Liquidity/borrow/EditPanel'
 import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
 import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import PriceChart from '~/components/Overview/PriceChart'
+import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -36,12 +41,37 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
     enabled: borrowDetail != null
   })
 
-  const editBorrowPositionTabLabel = <React.Fragment>Edit Borrow Position <InfoTooltip title={TooltipTexts.editBorrowPosition} /> </React.Fragment>
-  const closeBorrowPositionTabLabel = <React.Fragment>Close Borrow Position <InfoTooltip title={TooltipTexts.closeBorrowPosition} /> </React.Fragment>
-
   return (borrowDetail && priceHistory) ? (
-    <Stack direction='row' spacing={2} justifyContent="center">
+    <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
+        <Box mb='25px'><Typography variant='p_xxlg'>New Borrow Position</Typography></Box>
+        <TipMsg>
+          <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography>
+        </TipMsg>
+        <LeftBoxWrapper mt='21px'>
+          <StyledTabs value={tab} onChange={handleChangeTab}>
+            <StyledTab value={0} label="Manage Borrow Position" icon={tab === 0 ? <Image src={ManageCometIconOn} /> : <Image src={ManageCometIconOff} />}></StyledTab>
+            <StyledTab value={1} label="Close Borrow Position" icon={tab === 1 ? <Image src={ManageCloseIconOn} /> : <Image src={ManageCloseIconOff} />}></StyledTab>
+          </StyledTabs>
+          <StyledDivider />
+          <TipMsg>
+            <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how managing borrow position works.</Typography>
+          </TipMsg>
+          <TabPanelForEdit value={tab} index={0}>
+            <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()} />
+          </TabPanelForEdit>
+          <TabPanelForEdit value={tab} index={1}>
+            <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
+          </TabPanelForEdit>
+        </LeftBoxWrapper>
+      </Box>
+      <RightBoxWrapper>
+        <Box>
+          <PriceChart assetData={borrowDetail} priceTitle='Oracle Price' />
+          <PoolAnalytics tickerSymbol={borrowDetail.tickerSymbol} />
+        </Box>
+      </RightBoxWrapper>
+      {/* <Box>
         <StyledBox>
           <Box display="flex">
             <Image src={borrowDetail.tickerIcon} width="30px" height="30px" />
@@ -68,31 +98,26 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
             </Box>
           </Box>
         </StyledBox>
-      </Box>
-      <Box>
-        <Box sx={{ width: '466px', marginLeft: '18px' }}>
-          <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label={editBorrowPositionTabLabel}></StyledTab>
-            <StyledTab value={1} label={closeBorrowPositionTabLabel}></StyledTab>
-          </StyledTabs>
-          <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()} />
-          </TabPanelForEdit>
-          <TabPanelForEdit value={tab} index={1}>
-            <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
-          </TabPanelForEdit>
-        </Box>
-      </Box>
+      </Box> */}
     </Stack>
   ) : <></>
 }
 
-const StyledBox = styled(Box)`
-  width: 315px;
-  height: 290px;
-  padding: 17px 34px 18px 35px;
-  border-radius: 10px;
-  background: rgba(21, 22, 24, 0.75);
+const StyledDivider = styled(Divider)`
+	background-color: ${(props) => props.theme.boxes.blackShade};
+	margin-bottom: 11px;
+	margin-top: 11px;
+	height: 1px;
+`
+const LeftBoxWrapper = styled(Box)`
+	width: 521px; 
+	padding: 8px 25px;
+	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	margin-bottom: 25px;
+`
+const RightBoxWrapper = styled(Box)`
+	width: 450px;
+	padding: 20px;
 `
 const TickerWrapper = styled(Box)`
   margin-left: 10px; 
