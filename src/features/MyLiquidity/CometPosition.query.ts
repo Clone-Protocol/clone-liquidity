@@ -104,8 +104,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     upperLimit = upperPrice
   }
 
-  //@TODO: need to set proper data
-  const contributedLiquidity = 805043.02
+  const contributedLiquidity = toNumber(position.borrowedUsdi) * 2
 
   return {
     mintAmount,
