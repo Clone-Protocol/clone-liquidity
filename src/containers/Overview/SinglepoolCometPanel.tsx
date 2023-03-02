@@ -127,7 +127,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
       setMaxMintable(maxUsdiPosition)
       setMintableAmount(maxUsdiPosition)
       //@TODO set proper amount
-      setAggregateLiquidity(0.0)
+      setAggregateLiquidity(mintAmount * 2)
     }
     fetch()
   }, [collAmount, mintAmount])
@@ -294,7 +294,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                 tickerIcon={assetData.tickerIcon}
                 tickerSymbol={assetData.tickerSymbol}
                 value={mintAmount / assetData.price}
-                dollarPrice={1445}
+                dollarPrice={mintAmount}
               />
             </Box>
           </Stack>

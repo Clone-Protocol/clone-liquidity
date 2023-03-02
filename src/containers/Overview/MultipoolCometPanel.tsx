@@ -223,7 +223,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
                   tickerIcon={positionInfo.tickerIcon}
                   tickerSymbol={positionInfo.tickerSymbol}
                   value={mintAmount / positionInfo.price}
-                  dollarPrice={1445}
+                  dollarPrice={mintAmount}
                 />
               </Box>
             </Stack>
