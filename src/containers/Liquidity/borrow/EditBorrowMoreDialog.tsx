@@ -32,7 +32,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.collateralAmount) * 100) / (borrowDetail.oPrice * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedIasset) : borrowDetail.iassetVal)
+    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.collateralAmount) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedIasset) : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
@@ -73,9 +73,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   useEffect(() => {
     if (borrowAmount) {
       if (editType === 0) { // borrow more
-        setExpectedCollRatio(Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.oPrice * (Number(borrowDetail.borrowedIasset) + borrowAmount)))
+        setExpectedCollRatio(Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedIasset) + borrowAmount)))
       } else { // repay
-        setExpectedCollRatio(Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.oPrice * (Number(borrowDetail.borrowedIasset) - borrowAmount)))
+        setExpectedCollRatio(Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedIasset) - borrowAmount)))
       }
     } else {
       setExpectedCollRatio(borrowDetail.collateralRatio)
@@ -142,10 +142,10 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     tickerIcon={fromPair.tickerIcon}
                     tickerSymbol={fromPair.tickerSymbol}
                     collAmount={field.value}
-                    collAmountDollarPrice={field.value * borrowDetail.oPrice}
+                    collAmountDollarPrice={field.value * borrowDetail.price}
                     maxCollVal={maxCollVal}
                     currentCollAmount={Number(borrowDetail.borrowedIasset)}
-                    dollarPrice={Number(borrowDetail.borrowedIasset) * borrowDetail.oPrice}
+                    dollarPrice={Number(borrowDetail.borrowedIasset) * borrowDetail.price}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)

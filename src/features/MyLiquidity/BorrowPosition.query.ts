@@ -1,7 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
-import { getAssetInfo } from ""
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -78,7 +77,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     tickerIcon: tickerIcon,
     tickerName: tickerName,
     tickerSymbol: tickerSymbol,
-    oPrice: oraclePrice,
+    price: oraclePrice,
     stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
     cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
     borrowedIasset: positionData![3],
@@ -102,7 +101,7 @@ export interface PositionInfo {
   tickerIcon: string
   tickerName: string
   tickerSymbol: string
-  oPrice: number
+  price: number
   stableCollateralRatio: number
   cryptoCollateralRatio: number
   borrowedIasset: number | Number

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Box, Stack, Button, Divider, Typography } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
@@ -10,7 +11,6 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
-import { useState } from 'react'
 
 interface Props {
   assetData: PI
@@ -28,8 +28,6 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
   }
 
   const [isEditBtnHover, setIsEditBtnHover] = useState(false)
-  //@TODO set proper liquidity
-  const contributedLiquidity = cometDetail.contributedLiquidity
 
   return assetData ? (
     <PositionWrapper>
@@ -47,7 +45,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
               <Box paddingX='20px'>
                 <Box><Typography variant='p_lg' color='#989898'>Contributed Liquidity</Typography></Box>
                 <Box>
-                  <Typography variant='p_xxlg'>${contributedLiquidity.toLocaleString()} USD</Typography>
+                  <Typography variant='p_xxlg'>${cometDetail.contributedLiquidity?.toLocaleString()} USD</Typography>
                 </Box>
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p' color='#989898'>Contributed USDi</Typography></Box>
@@ -94,9 +92,6 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       <Stack direction='row'>
         <Box width='45%' marginLeft='15px'>
           <Box mb='10px'><Typography variant='p' color='#989898'>Comet Health Score <InfoTooltip title={TooltipTexts.healthScoreCol} /></Typography></Box>
-          {/* <HealthScoreValue>
-            {formatHealthScore(cometDetail.healthScore)}/100
-          </HealthScoreValue> */}
           <HealthscoreView score={cometDetail.healthScore} />
         </Box>
         <Box display='flex' width='50%'>
