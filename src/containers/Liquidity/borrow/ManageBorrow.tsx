@@ -17,7 +17,7 @@ import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
 import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import PriceChart from '~/components/Overview/PriceChart'
-import PoolAnalytics from '~/components/Overview/PoolAnalytics'
+import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -68,37 +68,9 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
       <RightBoxWrapper>
         <Box>
           <PriceChart assetData={borrowDetail} priceTitle='Oracle Price' />
-          <PoolAnalytics tickerSymbol={borrowDetail.tickerSymbol} />
+          <PositionAnalytics tickerSymbol={borrowDetail.tickerSymbol} />
         </Box>
       </RightBoxWrapper>
-      {/* <Box>
-        <StyledBox>
-          <Box display="flex">
-            <Image src={borrowDetail.tickerIcon} width="30px" height="30px" />
-            <TickerWrapper>
-              {borrowDetail.tickerName} ({borrowDetail.tickerSymbol})
-            </TickerWrapper>
-          </Box>
-          <Box sx={{ marginTop: '20px', marginBottom: '27px', fontSize: '24px', fontWeight: '500', color: '#fff' }}>
-            ${borrowDetail.oPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })}
-            {priceHistory.rateOfPrice >= 0 ?
-              <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-              :
-              <TxtPriceRate style={{ color: '#ec5e2a' }}>-${Math.abs(priceHistory.rateOfPrice).toFixed(3)} (-{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-            }
-          </Box>
-          <MiniLineChartAlt
-            data={priceHistory?.chartData}
-            color={priceHistory.rateOfPrice >= 0 ? '#59c23a' : '#ec5e2a'}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '10px', color: '#6c6c6c', marginTop: '10px' }}>
-            <Box>
-              Oracle Price
-              <InfoTooltip title={TooltipTexts.oraclePrice} />
-            </Box>
-          </Box>
-        </StyledBox>
-      </Box> */}
     </Stack>
   ) : <></>
 }
@@ -118,23 +90,6 @@ const LeftBoxWrapper = styled(Box)`
 const RightBoxWrapper = styled(Box)`
 	width: 450px;
 	padding: 20px;
-`
-const TickerWrapper = styled(Box)`
-  margin-left: 10px; 
-  font-size: 14px; 
-  font-weight: 600; 
-  color: #fff; 
-  margin-top: 3px;
-`
-const TxtPriceRate = styled('div')`
-  font-size: 10px;
-  font-weight: 500;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: left;
-  color: #59c23a;
 `
 
 export default withSuspense(ManageBorrow, <LoadingProgress />)

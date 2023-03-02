@@ -1,10 +1,12 @@
-import { Box } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PositionInfo as PI } from '~/features/MyLiquidity/BorrowPosition.query'
-import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
-import InfoTooltip from '~/components/Common/InfoTooltip';
-import { TooltipTexts } from '~/data/tooltipTexts';
+import Image from 'next/image'
+import EditIcon from 'public/images/edit-icon.svg'
+import CollRatioBar from './CollRatioBar'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { useState } from 'react'
 
 interface Props {
   positionInfo: PI
@@ -13,113 +15,73 @@ interface Props {
 }
 
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {
+  const [isEditCollHover, setIsEditCollHover] = useState(false)
+  const [isEditBorrowHover, setIsEditBorrowHover] = useState(false)
+
   return positionInfo ? (
-    <PositionWrapper>
-      <Box>
-        <CollRatioBox>
-          <SubTitle>Collateral Ratio <InfoTooltip title={TooltipTexts.collateralRatio} /></SubTitle>
-          {positionInfo.borrowedIasset > 0 ?
-            <Box>
-              {positionInfo.collateralRatio.toFixed(2)}%
-              <MinText>(min: {positionInfo.minCollateralRatio.toFixed(2)}%)</MinText>
-            </Box>
-            :
-            <Box>-</Box>
-          }
-        </CollRatioBox>
+    <Box mt='21px'>
+      <BoxWithBorder mb='15px'>
+        <Box><Typography variant='p_lg' color='#989898'>Collateral Ratio</Typography></Box>
+        {positionInfo.borrowedIasset > 0 ?
+          <CollRatioBar minRatio={positionInfo.minCollateralRatio} ratio={positionInfo.collateralRatio} />
+          :
+          <Box>-</Box>
+        }
+      </BoxWithBorder>
 
-        <EditRowBox>
-          <InfoBox>
-            <SubTitle>Collateral <InfoTooltip title={TooltipTexts.collateralBacking} /></SubTitle>
-            <SubValue>{positionInfo.collateralAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })} USDi</SubValue>
-          </InfoBox>
-          <EditBox onClick={onShowEditForm}>
-            <NoteAltOutlinedIcon fontSize="small" />
-          </EditBox>
-        </EditRowBox>
+      <EditRowBox sx={isEditCollHover ? { background: '#1b1b1b' } : {}}>
+        <EditBox onClick={onShowEditForm} onMouseOver={() => setIsEditCollHover(true)} onMouseLeave={() => setIsEditCollHover(false)}>
+          <Image src={EditIcon} />
+        </EditBox>
+        <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='27px'>
+          <Typography variant='p_lg' color='#989898'>Collateral</Typography>
+          <Box lineHeight='18px' textAlign='right'>
+            <Box><Typography variant='p_xlg'>{positionInfo.collateralAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })} USDi</Typography></Box>
+            <Box><Typography variant='p' color='#989898'>$1,405,005 USD</Typography></Box>
+          </Box>
+        </Stack>
+      </EditRowBox>
 
-        <EditRowBox>
-          <InfoBox>
-            <SubTitle>Borrowed <InfoTooltip title={TooltipTexts.borrowed} /></SubTitle>
-            <SubValue>
-              {positionInfo.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {positionInfo.tickerSymbol}
-            </SubValue>
-          </InfoBox>
-          <EditBox onClick={onShowBorrowMore}>
-            <NoteAltOutlinedIcon fontSize="small" />
-          </EditBox>
-        </EditRowBox>
+      <EditRowBox sx={isEditBorrowHover ? { background: '#1b1b1b' } : {}}>
+        <EditBox onClick={onShowBorrowMore} onMouseOver={() => setIsEditBorrowHover(true)} onMouseLeave={() => setIsEditBorrowHover(false)}>
+          <Image src={EditIcon} />
+        </EditBox>
+        <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='27px'>
+          <Typography variant='p_lg' color='#989898'>Borrowed</Typography>
+          <Box lineHeight='18px' textAlign='right'>
+            <Box><Typography variant='p_xlg'>{positionInfo.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {positionInfo.tickerSymbol}</Typography></Box>
+            <Box><Typography variant='p' color='#989898'>$1,405,005 USD</Typography></Box>
+          </Box>
+        </Stack>
+      </EditRowBox>
+
+      <Box display='flex' justifyContent='center'>
+        <DataLoadingIndicator />
       </Box>
-    </PositionWrapper>
+    </Box >
   ) : (
     <></>
   )
 }
 
-const PositionWrapper = styled(Box)`
-  color: #fff; 
-  padding: 25px 35px; 
-  margin-top: 15px;
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  padding: 20px;
 `
-
-const CollRatioBox = styled(Box)`
-  display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-  padding: 27px; 
-  width: 400px; 
-  height: 65px; 
-  background-color: rgba(255, 255, 255, 0.08); 
-  border-radius: 10px; 
-  margin-top: 18px; 
-  margin-bottom: 9px;
-  font-size: 16px;
-  font-weight: 500;
-`
-
 const EditRowBox = styled(Box)`
-  display: inline-flex; 
-  width: 400px; 
-  height: 69px; 
-  background-color: rgba(128, 156, 255, 0.08); 
-  border-radius: 10px; 
-  margin-bottom: 9px;
-`
-
-const InfoBox = styled(Box)`
   display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-  padding: 27px;
+  width: 100%;
+  height: 70px; 
+  margin-bottom: 9px;
+  border: 1px solid ${(props) => props.theme.boxes.greyShade};
 `
-const SubTitle = styled('div')`
-  font-size: 12px;
-  font-weight: 600;
-  color: #989898;
-`
-
-const SubValue = styled(Box)`
-  font-size: 12px; 
-  font-weight: 500;
-`
-
-const MinText = styled('span')`
-  font-size: 12px; 
-  margin-left: 5px;
-`
-
 const EditBox = styled(Box)`
-  position: relative; 
-  margin-left: auto; 
-  right: 0;
-  width: 41px;
-  background-color: rgba(128, 156, 255, 0.2);
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 66px;
   cursor: pointer;
+  border-right: 1px solid ${(props) => props.theme.boxes.greyShade};
 `
 
 export default withCsrOnly(PositionInfo)

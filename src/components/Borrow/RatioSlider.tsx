@@ -1,5 +1,5 @@
 import { Box, Slider, styled, Typography, Stack } from '@mui/material'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import WarningMsg from '../Common/WarningMsg';
 
 interface Props {
 	min?: number
@@ -99,7 +99,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				</Box>
 			}
 			{hasRiskRatio &&
-				<WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+				<WarningMsg><Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningMsg>
 			}
 		</Box>
 	)
