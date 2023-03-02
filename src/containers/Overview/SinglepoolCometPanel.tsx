@@ -48,6 +48,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
   const [collAmount, setCollAmount] = useState(NaN) // NaN is used here so the input placeholder is displayed first
   const [mintAmount, setMintAmount] = useState(0.0)
   const [mintableAmount, setMintableAmount] = useState(0.0)
+  const [aggregateLiquidity, setAggregateLiquidity] = useState(0.0)
   const {
     trigger,
     control,
@@ -125,6 +126,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
       setHealthScore(isNaN(chosenHealthScore) ? 0 : chosenHealthScore)
       setMaxMintable(maxUsdiPosition)
       setMintableAmount(maxUsdiPosition)
+      //@TODO set proper amount
+      setAggregateLiquidity(mintAmount * 2)
     }
     fetch()
   }, [collAmount, mintAmount])
@@ -291,7 +294,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                 tickerIcon={assetData.tickerIcon}
                 tickerSymbol={assetData.tickerSymbol}
                 value={mintAmount / assetData.price}
-                dollarPrice={1445}
+                dollarPrice={mintAmount}
               />
             </Box>
           </Stack>
@@ -299,7 +302,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
         <BoxWithBorder padding="15px 24px">
           <Stack direction='row' justifyContent='space-between'>
             <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
-            <Box><Typography variant="p_xlg">$2,543.04</Typography></Box>
+            <Box><Typography variant="p_xlg">${aggregateLiquidity.toLocaleString()}</Typography></Box>
           </Stack>
         </BoxWithBorder>
         <StyledDivider />
