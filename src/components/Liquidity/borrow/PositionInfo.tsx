@@ -14,16 +14,19 @@ interface Props {
   onShowBorrowMore: () => void
 }
 
+const RISK_RATIO_VAL = 25
+
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {
   const [isEditCollHover, setIsEditCollHover] = useState(false)
   const [isEditBorrowHover, setIsEditBorrowHover] = useState(false)
+  const hasRiskRatio = positionInfo.collateralRatio - positionInfo.minCollateralRatio <= RISK_RATIO_VAL
 
   return positionInfo ? (
     <Box mt='21px'>
       <BoxWithBorder mb='15px'>
         <Box><Typography variant='p_lg' color='#989898'>Collateral Ratio</Typography></Box>
         {positionInfo.borrowedIasset > 0 ?
-          <CollRatioBar minRatio={positionInfo.minCollateralRatio} ratio={positionInfo.collateralRatio} />
+          <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={positionInfo.minCollateralRatio} ratio={positionInfo.collateralRatio} />
           :
           <Box>-</Box>
         }

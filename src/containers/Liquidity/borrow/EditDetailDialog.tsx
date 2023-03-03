@@ -1,18 +1,18 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
+import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
-import {
-  PairData
-} from '~/features/MyLiquidity/BorrowPosition.query'
+import { PairData } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { SliderTransition } from '~/components/Common/Dialog'
-import InfoTooltip from '~/components/Common/InfoTooltip'
-import { TooltipTexts } from '~/data/tooltipTexts'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
+
+const RISK_RATIO_VAL = 25
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -23,6 +23,8 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const [maxCollVal, setMaxCollVal] = useState(0);
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
+  const [hasInvalidRatio, setHasInvalidRatio] = useState(false)
+  const [hasRiskRatio, setHasRiskRatio] = useState(false)
 
   useEffect(() => {
     setMaxCollVal(borrowDetail.usdiVal)
@@ -44,6 +46,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   const {
     handleSubmit,
     control,
+    trigger,
     formState: { isDirty, errors },
     watch,
     setValue
@@ -63,15 +66,20 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   }
 
   useEffect(() => {
+    let expectedCollRatio
     if (collAmount) {
       if (editType === 0) { // deposit
-        setExpectedCollRatio((borrowDetail.collateralAmount + collAmount) * 100 / (borrowDetail.price * borrowDetail.borrowedIasset))
+        expectedCollRatio = (borrowDetail.collateralAmount + collAmount) * 100 / (borrowDetail.price * borrowDetail.borrowedIasset)
       } else { // withdraw
-        setExpectedCollRatio((borrowDetail.collateralAmount - collAmount) * 100 / (borrowDetail.price * borrowDetail.borrowedIasset))
+        expectedCollRatio = ((borrowDetail.collateralAmount - collAmount) * 100 / (borrowDetail.price * borrowDetail.borrowedIasset))
       }
     } else {
-      setExpectedCollRatio(borrowDetail.collateralRatio)
+      expectedCollRatio = borrowDetail.collateralRatio
     }
+    setExpectedCollRatio(expectedCollRatio)
+    setHasInvalidRatio(expectedCollRatio < borrowDetail.minCollateralRatio)
+    setHasRiskRatio(expectedCollRatio - borrowDetail.minCollateralRatio <= RISK_RATIO_VAL)
+    trigger()
   }, [collAmount, editType])
 
   const onEdit = async () => {
@@ -112,9 +120,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a' }}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={500}>
+        <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
+            <Typography variant='p_xlg'>Edit Collateral of Borrow Position</Typography>
+            <StyledDivider />
             <Box>
               <Controller
                 name="collAmount"
@@ -127,7 +137,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                       if (editType === 0) {
                         return 'The deposit amount exceeds wallet balance.'
                       } else {
-                        return 'The withdraw amount exceeds maximum withdraw balance.'
+                        return 'Withdraw amount cannot exceed value for Max Withdraw-able.'
                       }
                     }
                   }
@@ -156,20 +166,21 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
 
-            <Box sx={{ padding: '5px 3px 5px 3px' }}>
-              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Expected Collateral Ratio <InfoTooltip title={TooltipTexts.expectedCollateralRatio} /></DetailHeader>
-                <DetailValue>{expectedCollRatio.toLocaleString()}% <span style={{ color: '#949494' }}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
-              </Stack>
-              <Stack sx={{ marginTop: '15px' }} direction="row" justifyContent="space-between">
-                <DetailHeader>Min Collateral Ratio <InfoTooltip title={TooltipTexts.minCollateralRatio} /></DetailHeader>
-                <DetailValue>{borrowDetail.minCollateralRatio.toLocaleString()}%</DetailValue>
-              </Stack>
+            <BoxWithBorder>
+              {hasInvalidRatio ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'>N/A</Box> :
+                <Box>
+                  <Typography variant='h8'>Projected Collateral Ratio</Typography>
+                  <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
+                </Box>}
+            </BoxWithBorder>
+
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+              <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Collateral</Typography>
+            </ActionButton>
+
+            <Box display='flex' justifyContent='center'>
+              <DataLoadingIndicator />
             </Box>
-
-            <StyledDivider />
-
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Deposit' : 'Withdraw'}</ActionButton>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -178,40 +189,35 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 }
 
 const BoxWrapper = styled(Box)`
-  padding: 8px 1px; 
+  width: 500px;
   color: #fff;
   overflow-x: hidden;
 `
-const DetailHeader = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #949494;
-`
-const DetailValue = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #fff;
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  padding: 15px 18px;
+  margin-top: 16px;
+  margin-bottom: 16px;
 `
 const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 25px;
-	margin-top: 15px;
-	height: 1px;
+  background-color: ${(props) => props.theme.boxes.blackShade};
+  margin-bottom: 21px;
+  margin-top: 15px;
+  height: 1px;
 `
 const ActionButton = styled(Button)`
 	width: 100%;
-	background: #4e609f;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 2px;
+	background-color: ${(props) => props.theme.palette.primary.main};
+	color: #000;
+  border-radius: 0px;
+  margin-top: 5px;
+	margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 

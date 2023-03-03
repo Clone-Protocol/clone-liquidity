@@ -34,11 +34,11 @@ const EditCollateralInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: '100%' }}>
       <Stack height='40px' direction="row" justifyContent="space-between">
         <StyledTabs value={editType} onChange={onChangeType}>
-          <StyledTab value={0} label="Deposit"></StyledTab>
+          <StyledTab value={0} label="Deposit more"></StyledTab>
           <StyledTab value={1} label="Withdraw"></StyledTab>
         </StyledTabs>
         <HeaderTitle>
-          {editType === 0 ? 'Wallet Balance' : 'Max withdrawable'} : <MaxPointerValue onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</MaxPointerValue>
+          {editType === 0 ? 'Balance' : 'Max Withdraw-able'} : <MaxPointerValue onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</MaxPointerValue>
         </HeaderTitle>
       </Stack>
       <CenterBox>
@@ -73,13 +73,6 @@ const FormStack = styled(Stack)`
   &:hover {
     box-shadow: 0 0 0 1px #809cff inset;
   }
-`
-const UpperTabBox = styled(Box)`
-  padding-top: 5px; 
-  border-top-left-radius: 10px; 
-  border-top-right-radius: 10px; 
-  background: #252627; 
-  border: 1px solid #444;
 `
 const HeaderTitle = styled(Box)`
   display: flex; 

@@ -363,14 +363,5 @@ const SubmitButton = styled(Button)`
     color: #000;
   }
 `
-const WarningStack = styled(Stack)`
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border: 1px solid ${(props) => props.theme.palette.error.main};
-  color: ${(props) => props.theme.palette.text.secondary};
-`
 
 export default withSuspense(SinglepoolCometPanel, <LoadingProgress />)
