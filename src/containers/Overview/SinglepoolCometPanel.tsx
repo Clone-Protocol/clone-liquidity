@@ -126,7 +126,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
       setHealthScore(isNaN(chosenHealthScore) ? 0 : chosenHealthScore)
       setMaxMintable(maxUsdiPosition)
       setMintableAmount(maxUsdiPosition)
-      //@TODO set proper amount
       setAggregateLiquidity(mintAmount * 2)
     }
     fetch()

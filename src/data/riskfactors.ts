@@ -1,2 +1,2 @@
 // @TODO : set proper risk score
-export const RISK_SCORE_VAL = 20
+export const RISK_SCORE_VAL = 25
