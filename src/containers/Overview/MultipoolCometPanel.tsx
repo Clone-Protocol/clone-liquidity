@@ -245,11 +245,11 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
               }
             </Box>
           </BoxWithBorder>
+        </Box>
 
-          <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
-            <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
-          </SubmitButton>
-        </Box >
+        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
+          <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
+        </SubmitButton>
 
         <ChooseCollateralDialog
           open={openChooseCollateral}

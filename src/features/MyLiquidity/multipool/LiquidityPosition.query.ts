@@ -46,7 +46,7 @@ export const fetchLiquidityDetail = async ({
 		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 		comet = cometResult.value
 		totalHealthScore = getHealthScore(tokenData, comet).healthScore
-		hasNoCollateral = Number(comet.numCollaterals) === 0
+		hasNoCollateral = Number(comet.numCollaterals) === 0 || totalCollValue === 0
 
 		for (let i = 0; i < Number(comet.numPositions); i++) {
 			const poolIndex = Number(comet.positions[i].poolIndex)

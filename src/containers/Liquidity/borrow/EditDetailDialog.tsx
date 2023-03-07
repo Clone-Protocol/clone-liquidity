@@ -11,8 +11,7 @@ import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosit
 import { SliderTransition } from '~/components/Common/Dialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
-
-const RISK_RATIO_VAL = 25
+import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -167,7 +166,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             </Box>
 
             <BoxWithBorder>
-              {hasInvalidRatio ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'>N/A</Box> :
+              {hasInvalidRatio ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>N/A</Typography></Box> :
                 <Box>
                   <Typography variant='h8'>Projected Collateral Ratio</Typography>
                   <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
