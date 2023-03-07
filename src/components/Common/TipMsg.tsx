@@ -16,7 +16,7 @@ const StyledBox = styled(Box)`
 	font-size: 12px;
 	font-weight: 500;
 	text-align: center;
-	background-color: ${(props) => props.theme.boxes.darkBlack};
+	background-color: ${(props) => props.theme.boxes.black};
 	color: ${(props) => props.theme.palette.text.secondary};
 	height: 38px;
 `

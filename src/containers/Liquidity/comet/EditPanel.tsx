@@ -7,7 +7,7 @@ import EditDetailDialog from './EditDetailDialog'
 import RecenterDialog from './RecenterDialog'
 
 const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: () => void }) => {
-	const assetData: PI = {
+  const assetData: PI = {
     tickerIcon: cometDetail.tickerIcon,
     tickerName: cometDetail.tickerName,
     tickerSymbol: cometDetail.tickerSymbol,
@@ -19,9 +19,9 @@ const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: 
   const [openEditDetail, setOpenEditDetail] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
 
-	const cometIndex = parseInt(assetId)
+  const cometIndex = parseInt(assetId)
 
-	return assetData ? (
+  return assetData ? (
     <>
       <Wrapper>
         <PositionInfo
@@ -49,13 +49,14 @@ const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: 
 
         <RecenterDialog
           assetId={assetId}
-          centerPrice={cometDetail.centerPrice}
+          assetData={assetData}
+          centerPrice={cometDetail.centerPrice!}
           open={openRecenter}
           handleClose={() => setOpenRecenter(false)}
         />
       </Wrapper>
     </>
-	) : <></>
+  ) : <></>
 }
 
 const Wrapper = styled(Box)`

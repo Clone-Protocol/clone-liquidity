@@ -106,8 +106,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   useEffect(() => {
     async function fetch() {
       if (open && wallet) {
-        const program = getInceptApp(wallet)
-
         initData()
 
         let {
@@ -172,8 +170,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
     function fetch() {
       if (isCollAmountInvalid() || !wallet) return
 
-      const program = getInceptApp(wallet)
-
       if (open && tokenDataState && singlePoolCometState) {
         const collateralChange = editType === 0 ? collAmount : -1 * collAmount
 
@@ -211,8 +207,6 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   useEffect(() => {
     function fetch() {
       if (!wallet) return
-
-      const program = getInceptApp(wallet)
 
       if (open && tokenDataState && singlePoolCometState) {
         console.log('calculateRange', collAmount, mintAmount, cometDetail.mintAmount)
