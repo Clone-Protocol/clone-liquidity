@@ -239,7 +239,6 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: 
 
 const BoxWrapper = styled(Box)`
   width: 480px;
-  padding: 8px 18px; 
   color: #fff;
   overflow-x: hidden;
 `
