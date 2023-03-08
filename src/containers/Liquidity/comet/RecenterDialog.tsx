@@ -145,7 +145,7 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: 
           <BoxWrapper>
             <Box mb='16px'><Typography variant='p_xlg'>Recenter Comet Position</Typography></Box>
             <TipMsg>
-              <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Recentering is an important function of Comet. Click here to learn more about how recentering works.</Typography>
+              <Image src={InfoIcon} /> <Typography variant='p' ml='10px' maxWidth='340px' textAlign='left' lineHeight='13px' sx={{ cursor: 'pointer' }}>Recentering is an important function of Comet. Click here to learn more about how recentering works.</Typography>
             </TipMsg>
             <Box marginTop='20px' marginBottom='22px'>
               {/* <WalletBalance>
@@ -192,19 +192,19 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: 
               </DetailValue>
             </Stack> */}
 
-            <BoxWithBorder mt='13px' padding='14px 19px'>
+            <BoxWithBorder mt='13px' padding='21px 24px'>
               <Box>
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
               </Box>
-              <Box mt='20px'>
+              <Box mt='20px' mb='20px'>
                 <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
                 <HealthscoreBar score={cometData.healthScore} prevScore={cometData.prevHealthScore} hideIndicator={true} />
               </Box>
 
               <Stack direction="row" justifyContent="space-between">
-                <Box><Typography variant='p'>Estimated Collateral After Recentering</Typography></Box>
-                <Box>
+                <Box maxWidth='130px' lineHeight='14px'><Typography variant='p'>Estimated Collateral After Recentering</Typography></Box>
+                <Box lineHeight='14px' textAlign='right'>
                   <Box><Typography variant='p_lg'>{(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi</Typography></Box>
                   <Box><Typography variant='p' color='#989898'>${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USD</Typography></Box>
                 </Box>
@@ -244,7 +244,7 @@ const BoxWrapper = styled(Box)`
 `
 const CenterBox = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  padding: 20px 15px;
+  padding: 18px 15px;
 `
 const BottomBox = styled(Box)`
   text-align: center;
@@ -259,7 +259,7 @@ const ActionButton = styled(Button)`
   background-color: ${(props) => props.theme.palette.primary.main};
   color: #000;
   border-radius: 0px;
-  margin-top: 25px;
+  margin-top: 16px;
   margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
