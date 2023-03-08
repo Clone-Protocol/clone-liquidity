@@ -65,6 +65,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const [mintRatio, setMintRatio] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
+  const [newAggLiquidity, setNewAggLiquidity] = useState(0)
+  const [currentAggLiquidity, setCurrentAggLiquidity] = useState(0)
   const [tokenDataState, setTokenDataState] = useState<TokenData | null>(null);
   const [singlePoolCometState, setSinglePoolCometState] = useState<Comet | null>(null);
 
@@ -162,6 +164,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       setDefaultMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
       setMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
       setMintAmount(cometDetail.mintAmount)
+      //TODO
+      setCurrentAggLiquidity(1524093.43)
     }
   }, [editType])
 
@@ -198,6 +202,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setDefaultMintRatio(newDefaultMintRatio)
         setMintRatio(newDefaultMintRatio)
         setMintAmount(cometDetail.mintAmount)
+        //TODO
+        setNewAggLiquidity(1405005.31)
       }
     }
     fetch()
@@ -236,6 +242,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         })
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
+        //TODO
+        setNewAggLiquidity(1405005.31)
       }
     }
     fetch()
@@ -379,11 +387,11 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                   <BoxWithBorder mt='14px'>
                     <Stack direction='row' justifyContent='space-between' padding='15px'>
                       <Box><Typography variant='p'>New Aggregate Liquidity Value</Typography></Box>
-                      <Box><Typography variant='p_xlg'>$1,405,005.31</Typography></Box>
+                      <Box><Typography variant='p_xlg'>${newAggLiquidity.toLocaleString()}</Typography></Box>
                     </Stack>
                     <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                       <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                      <Typography variant='p'>1,524,093.43 USD</Typography>
+                      <Typography variant='p'>{currentAggLiquidity.toLocaleString()} USD</Typography>
                     </Box>
                   </BoxWithBorder>
                 </EqualBox>
