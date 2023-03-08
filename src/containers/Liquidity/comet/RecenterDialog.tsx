@@ -17,6 +17,7 @@ import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { getSinglePoolHealthScore, calculateCometRecenterSinglePool } from 'incept-protocol-sdk/sdk/src/healthscore'
 
 interface CometInfo {
   healthScore: number
@@ -77,10 +78,10 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: 
           usdiCost,
           lowerPrice,
           upperPrice
-        } = program.calculateCometRecenterSinglePool(cometIndex, tokenDataResult.value, singlePoolCometResult.value)
+        } = calculateCometRecenterSinglePool(cometIndex, tokenDataResult.value, singlePoolCometResult.value)
         const pool = tokenDataResult.value.pools[singlePoolCometResult.value.positions[cometIndex].poolIndex];
         const balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
-        const prevHScore = program.getSinglePoolHealthScore(cometIndex, tokenDataResult.value, singlePoolCometResult.value)
+        const prevHScore = getSinglePoolHealthScore(cometIndex, tokenDataResult.value, singlePoolCometResult.value)
         const price = balances[1] / balances[0]
         setCometData({
           healthScore,
