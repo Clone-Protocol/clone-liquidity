@@ -4,10 +4,14 @@ import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import Image from 'next/image'
-import WarningIcon from 'public/images/warning-icon.png'
-import { Box, Divider, styled, Button, Stack, Dialog, DialogContent } from '@mui/material'
-import ConcentrationRangeView from '~/components/Liquidity/comet/ConcentrationRangeView'
+import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
+import { PositionInfo as PI } from '~/features/MyLiquidity/CometPosition.query'
+import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
+import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import TipMsg from '~/components/Common/TipMsg'
+import InfoIcon from 'public/images/info-icon.svg'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { SliderTransition } from '~/components/Common/Dialog'
@@ -26,7 +30,7 @@ interface CometInfo {
   upperLimit: number
 }
 
-const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: string, centerPrice: number, open: boolean, handleClose: () => void }) => {
+const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: { assetId: string, assetData: PI, centerPrice: number, open: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
@@ -93,6 +97,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
     }
     fetch()
   }, [open, wallet])
+
   const handleRecenter = async () => {
     setLoading(true)
     await mutateAsync(
@@ -125,14 +130,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
     if (cometData.centerPrice === 0 || cometData.poolPrice === 0)
       return false
 
-    return (
-      cometData.usdiCost > 0 &&
-      Math.abs(cometData.centerPrice - cometData.poolPrice) / cometData.centerPrice >= 0.001
-    )
-  }
-
-  const recenterCostDisplay = () => {
-    return Math.max(0, cometData.usdiCost).toLocaleString()
+    return cometData.usdiCost > 0 && Math.abs(cometData.centerPrice - cometData.poolPrice) / cometData.centerPrice >= 0.001
   }
 
   return (
@@ -143,31 +141,31 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px', overflow: 'hidden' }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={480}>
+        <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
-            <WarningBox>
-              If this is your first interaction with Recentering, please click here to learn.
-            </WarningBox>
+            <Box mb='16px'><Typography variant='p_xlg'>Recenter Comet Position</Typography></Box>
+            <TipMsg>
+              <Image src={InfoIcon} /> <Typography variant='p' ml='10px' maxWidth='340px' textAlign='left' lineHeight='13px' sx={{ cursor: 'pointer' }}>Recentering is an important function of Comet. Click here to learn more about how recentering works.</Typography>
+            </TipMsg>
             <Box marginTop='20px' marginBottom='22px'>
-              <WalletBalance>
+              {/* <WalletBalance>
                 Wallet balance: <span style={isLackBalance ? { color: '#e9d100', marginLeft: '4px' } : { marginLeft: '4px' }}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
-              </WalletBalance>
-              <TopStack direction="row" justifyContent="space-between">
-                <StackTitle>Recentering cost <InfoTooltip title={TooltipTexts.recenteringCost} /></StackTitle>
-                <StackValue>
-                  {recenterCostDisplay()} USDi
-                  <StackSubValue>${recenterCostDisplay()}</StackSubValue>
-                </StackValue>
-              </TopStack>
+              </WalletBalance> */}
+              <CenterBox>
+                <Stack direction="row" justifyContent="space-between">
+                  <Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
+                  <Box>
+                    <Typography variant='p_xlg'>{Math.max(0, cometData.usdiCost).toLocaleString()} USDi</Typography>
+                  </Box>
+                </Stack>
+              </CenterBox>
               <BottomBox>
-                Current Collateral: <span style={{ color: '#fff' }}>{cometData.currentCollateral.toLocaleString()} USDi (${cometData.currentCollateral.toLocaleString()})</span>
+                <Typography variant='p' color='#989898'>Current Collateral: </Typography> <Typography variant='p'>{cometData.currentCollateral.toLocaleString()} USDi (${cometData.currentCollateral.toLocaleString()})</Typography>
               </BottomBox>
             </Box>
 
-            <StyledDivider />
-
-            <SubTitle>Projected Price Range <InfoTooltip title={TooltipTexts.projectedPriceRange} /></SubTitle>
+            {/* <SubTitle>Projected Price Range <InfoTooltip title={TooltipTexts.projectedPriceRange} /></SubTitle>
             <RangeWrapper>
               <ConcentrationRangeView
                 centerPrice={cometData.centerPrice}
@@ -193,19 +191,36 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
               <DetailValue>
                 {cometData.healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {cometData.prevHealthScore.toFixed(2)}/100)</span>
               </DetailValue>
-            </Stack>
+            </Stack> */}
 
-            <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Estimated Collateral After Recentering</SubTitle>
-              <DetailValue>
-                {(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi <span style={{ color: '#949494' }}>(${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()})</span>
-              </DetailValue>
-            </Stack>
+            <BoxWithBorder mt='13px' padding='21px 24px'>
+              <Box>
+                <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
+                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
+              </Box>
+              <Box mt='20px' mb='20px'>
+                <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
+                <HealthscoreBar score={cometData.healthScore} prevScore={cometData.prevHealthScore} hideIndicator={true} />
+              </Box>
 
-            <StyledDivider />
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || !isValidToRecenter()}>Recenter</ActionButton>
+              <Stack direction="row" justifyContent="space-between">
+                <Box maxWidth='130px' lineHeight='14px'><Typography variant='p'>Estimated Collateral After Recentering</Typography></Box>
+                <Box lineHeight='14px' textAlign='right'>
+                  <Box><Typography variant='p_lg'>{(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi</Typography></Box>
+                  <Box><Typography variant='p' color='#989898'>${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USD</Typography></Box>
+                </Box>
+              </Stack>
+            </BoxWithBorder>
 
-            {isLackBalance &&
+            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || !isValidToRecenter()}>
+              <Typography variant='p_lg'>Recenter Now</Typography>
+            </ActionButton>
+
+            <Box display='flex' justifyContent='center'>
+              <DataLoadingIndicator />
+            </Box>
+
+            {/* {isLackBalance &&
               <WarningStack direction="row">
                 <WarningIconBox>
                   <Image src={WarningIcon} />
@@ -214,7 +229,7 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
                   Not enough wallet balance to pay for the cost.
                 </NotEnoughBox>
               </WarningStack>
-            }
+            } */}
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -223,138 +238,36 @@ const RecenterDialog = ({ assetId, centerPrice, open, handleClose }: { assetId: 
 }
 
 const BoxWrapper = styled(Box)`
-  padding: 8px 18px; 
+  width: 480px;
   color: #fff;
   overflow-x: hidden;
 `
-const WarningStack = styled(Stack)`
-  background: rgba(233, 209, 0, 0.04);
-  border: 1px solid #e9d100;
-  border-radius: 10px;
-  color: #9d9d9d;
-  padding: 8px;
-  margin-top: 17px;
-`
-const WarningIconBox = styled(Box)`
-  width: 53px; 
-  margin-left: 20px; 
-  text-align: center;
-`
-const WarningBox = styled(Box)`
-  max-width: 507px;
-  height: 42px;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 42px;
-  color: #989898;
-  border-radius: 10px;
-  border: solid 1px #809cff;
-  background-color: rgba(128, 156, 255, 0.09);
-  text-align: center;
-  margin: 0 auto;
-  padding-left: 40px;
-  padding-right: 40px;
-`
-const TopStack = styled(Stack)`
-  border-top-right-radius: 10px; 
-  border-top-left-radius: 10px; 
-  border: solid 1px #444; 
-  padding: 12px 24px 12px 27px;
-`
-const StackTitle = styled('div')`
-  font-size: 11px; 
-  font-weight: 600; 
-  color: #fff9f9; 
-  display: flex; 
-  align-items: center;
-`
-const StackValue = styled('div')`
-  font-size: 16px; 
-  font-weight: 500; 
-  color: #fff;
-`
-const StackSubValue = styled('div')`
-  font-size: 10px; 
-  color: #b9b9b9; 
-  text-align: right;
+const CenterBox = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  padding: 18px 15px;
 `
 const BottomBox = styled(Box)`
-  background: #252627;
-  font-size: 11px;
-  font-weight: 500;
-  color: #949494;
   text-align: center;
-  height: 28px;
-  padding-top: 6px;
-  border-bottom: solid 1px #444;
-  border-left: solid 1px #444;
-  border-right: solid 1px #444;
-  border-bottom-left-radius: 9px;
-  border-bottom-right-radius: 9px;
+  height: 30px;
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 15px;
-	margin-top: 15px;
-	height: 1px;
-`
-const SubTitle = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #989898;
-  margin-bottom: 5px;
-`
-const DetailHeader = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #989898;
-`
-const DetailValue = styled('div')`
-	font-size: 11px;
-	font-weight: 500;
-	color: #fff;
-`
-const WalletBalance = styled(Box)`
-  display: flex;
-  justify-content: right;
-  color: #949494; 
-  font-size: 12px;
-  font-weight: 500; 
-  margin-right: 10px;
-  margin-bottom: 4px;
-`
-const RangeWrapper = styled(Box)`
-  margin: 0 auto; 
-  margin-top: 20px; 
-  margin-bottom: 33px; 
-  width: 345px;
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
 const ActionButton = styled(Button)`
-	width: 100%;
-	height: 45px;
-  flex-grow: 0;
-  border-radius: 10px;
-  background-color: #4e609f;
-  font-size: 13px;
-  font-weight: 600;
-	color: #fff;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 16px;
+  margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
-`
-
-const NotEnoughBox = styled(Box)`
-	max-width: 500px;
-  padding-left: 36px;
-  padding-top: 4px;
-	padding-right: 10px;
-	font-size: 11px;
-	font-weight: 500;
-	color: #989898;
 `
 
 export default RecenterDialog
