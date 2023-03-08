@@ -166,8 +166,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       setDefaultMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
       setMintRatio(defaultValues.maxUsdiPosition > 0 ? defaultValues.mintRatio : 0)
       setMintAmount(cometDetail.mintAmount)
-      //TODO
-      setCurrentAggLiquidity(1524093.43)
+      setCurrentAggLiquidity(cometDetail.mintAmount * 2)
     }
   }, [editType])
 
@@ -206,8 +205,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         setDefaultMintRatio(newDefaultMintRatio)
         setMintRatio(newDefaultMintRatio)
         setMintAmount(cometDetail.mintAmount)
-        //TODO
-        setNewAggLiquidity(1405005.31)
+        setNewAggLiquidity(cometDetail.mintAmount * 2)
       }
     }
     fetch()
@@ -248,8 +246,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         })
         const newDefaultMintRatio = maxUsdiPosition > 0 ? cometDetail.mintAmount * 100 / maxUsdiPosition : 0;
         setDefaultMintRatio(newDefaultMintRatio)
-        //TODO
-        setNewAggLiquidity(1405005.31)
+        setNewAggLiquidity(mintAmount * 2)
       }
     }
     fetch()
