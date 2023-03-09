@@ -78,7 +78,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         <Box>
           <Stack direction="row" justifyContent="space-between" mt='5px'>
             <Box><Typography variant='p_lg' color='#989898'>Current Collateral</Typography></Box>
-            <Box><Typography variant='p_lg' color='#989898'>80,530.61 USDi</Typography></Box>
+            <Box><Typography variant='p_lg' color='#989898'>{cometDetail.collAmount.toLocaleString()}  USDi</Typography></Box>
           </Stack>
           <Stack direction="row" justifyContent="space-between" mt='15px'>
             <Box><Typography variant='p_lg' color='#989898'>ILD Dept</Typography></Box>
@@ -86,7 +86,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
           </Stack>
           <Stack direction="row" justifyContent="space-between" mt="15px">
             <Box><Typography variant='p_lg'>Withdraw-able Collateral <InfoTooltip title={TooltipTexts.collateralWithdrawCloseComet} /></Typography></Box>
-            <Box><Typography variant='p_lg'>{cometDetail.collAmount.toLocaleString()} USDi</Typography></Box>
+            <Box><Typography variant='p_lg'>{(cometDetail.collAmount - Math.abs(cometDetail.ild)).toLocaleString()} USDi</Typography></Box>
           </Stack>
         </Box>
 
