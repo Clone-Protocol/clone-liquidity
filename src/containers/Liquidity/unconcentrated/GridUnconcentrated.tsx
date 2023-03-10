@@ -27,12 +27,12 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 		enabled: publicKey != null
 	})
 
-	const handleRowClick: GridEventListener<'rowClick'> = (
-		params,
-	) => {
-		const link = `/liquidity/borrow/${params.row.id}/manage`
-		location.href = link
-	}
+	// const handleRowClick: GridEventListener<'rowClick'> = (
+	// 	params,
+	// ) => {
+	// 	const link = `/liquidity/borrow/${params.row.id}/manage`
+	// 	location.href = link
+	// }
 
 	return (
 		<Grid
@@ -40,7 +40,6 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 			rows={pools || []}
 			minHeight={380}
 			customNoRowsOverlay={() => CustomNoRowsOverlay('Your active Unconcentrated liquidity positions will appear here.')}
-			onRowClick={handleRowClick}
 		/>
 	)
 }

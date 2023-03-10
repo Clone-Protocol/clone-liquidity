@@ -1,14 +1,11 @@
-import { Box, Stack, Button, Divider, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, Button, FormHelperText, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
-import OneIcon from 'public/images/one-icon.svg'
-import TwoIcon from 'public/images/two-icon.svg'
 import LightBulbIcon from 'public/images/lightbulb-outline.svg'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useLiquidityMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
@@ -17,6 +14,7 @@ import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -218,12 +216,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
   )
 }
 
-const StyledDivider = styled(Divider)`
-	background-color: ${(props) => props.theme.boxes.blackShade};
-	margin-bottom: 21px;
-	margin-top: 21px;
-	height: 1px;
-`
 const WarningStack = styled(Stack)`
   justify-content: center;
   align-items: center;

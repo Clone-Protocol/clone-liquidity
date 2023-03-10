@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Stack, Box, Divider, Typography } from '@mui/material'
+import { Stack, Box, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import TipMsg from '~/components/Common/TipMsg'
@@ -18,6 +18,7 @@ import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.qu
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -75,12 +76,6 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   ) : <></>
 }
 
-const StyledDivider = styled(Divider)`
-	background-color: ${(props) => props.theme.boxes.blackShade};
-	margin-bottom: 11px;
-	margin-top: 11px;
-	height: 1px;
-`
 const LeftBoxWrapper = styled(Box)`
 	width: 521px; 
 	padding: 8px 25px;

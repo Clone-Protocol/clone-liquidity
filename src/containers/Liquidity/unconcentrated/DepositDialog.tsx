@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText } from '@mui/material'
+import { Box, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import PairInput from '~/components/Liquidity/unconcent/PairInput'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
-import Image from 'next/image'
-import OneIcon from 'public/images/one-icon.svg'
-import TwoIcon from 'public/images/two-icon.svg'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SliderTransition } from '~/components/Common/Dialog'
+import { StyledDivider } from '~/components/Common/StyledDivider'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 
 const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -85,14 +84,12 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '20px 15px' }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={500}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
-            <WarningBox>
-              Acquire addtional iAsset and USDi by <span style={{ textDecoration: 'underline' }}>borrowing</span> and <span style={{ textDecoration: 'underline' }}>swaping</span>, click <span style={{ textDecoration: 'underline' }}>here</span> to learn more.
-            </WarningBox>
-            <Box sx={{ marginTop: '20px' }}>
-              <SubTitle><Image src={OneIcon} /> <Box marginLeft='9px'>Provide additional <span style={{ color: '#809cff' }}>{unconcentData.tickerSymbol}</span> to deposit</Box></SubTitle>
+            <Typography variant='p_xlg'>Manage Unconcentrated Liquidity Position</Typography>
+            <StyledDivider />
+            <Box>
               <Controller
                 name="borrowFrom"
                 control={control}
@@ -111,6 +108,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                     tickerSymbol={unconcentData.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     valueDollarPrice={field.value * unconcentData.price}
+                    inputTitle='Provide more iAsset'
                     balance={unconcentData?.iassetVal}
                     currentAmount={pool.liquidityAsset}
                     dollarPrice={pool.liquidityAsset * unconcentData.price}
@@ -127,11 +125,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
               />
               <FormHelperText error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
             </Box>
-            <StyledDivider />
-
-            <Box>
-              <SubTitle><Image src={TwoIcon} /> <Box marginLeft='9px'>Provide additional <span style={{ color: '#809cff' }}>USDi</span> to deposit</Box></SubTitle>
-
+            <Box mt='15px'>
               <Controller
                 name="borrowTo"
                 control={control}
@@ -150,6 +144,7 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
                     tickerSymbol="USDi"
                     value={parseFloat(field.value.toFixed(3))}
                     valueDollarPrice={field.value}
+                    inputTitle='Provide more USDi'
                     balance={unconcentData?.usdiVal}
                     currentAmount={pool.liquidityUSD}
                     dollarPrice={pool.liquidityUSD}
@@ -166,8 +161,11 @@ const DepositDialog = ({ assetId, pool, open, handleClose }: { assetId: string, 
               />
               <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
             </Box>
-            <StyledDivider />
             <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid}>Deposit</ActionButton>
+
+            <Box display='flex' justifyContent='center'>
+              <DataLoadingIndicator />
+            </Box>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -180,48 +178,19 @@ const BoxWrapper = styled(Box)`
   color: #fff;
   overflow-x: hidden;
 `
-const WarningBox = styled(Box)`
-  max-width: 507px;
-  height: 42px;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 42px;
-  color: #989898;
-  border-radius: 10px;
-  border: solid 1px #809cff;
-  background-color: rgba(128, 156, 255, 0.09);
-  text-align: center;
-  margin: 0 auto;
-`
-
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	height: 1px;
-`
-
-const SubTitle = styled('div')`
-  display: flex;
-	font-size: 14px;
-	font-weight: 500;
-	margin-bottom: 7px;
-	color: #fff;
-`
-
 const ActionButton = styled(Button)`
   width: 100%;
-  background: #4e609f;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 

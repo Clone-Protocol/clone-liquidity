@@ -1,7 +1,8 @@
 import React from 'react'
-import { Box, styled, Dialog, DialogContent, Divider, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { SliderTransition } from '~/components/Common/Dialog'
 import GridLiquidityPool from './GridLiquidityPool'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const ChooseLiquidityPoolsDialog = ({ open, noFilter, handleChoosePool, handleClose }: { open: boolean, noFilter: boolean, handleChoosePool: (id: number) => void, handleClose: () => void }) => {
   return (
@@ -24,12 +25,6 @@ const BoxWrapper = styled(Box)`
   padding: 2px 15px; 
   color: #fff; 
   min-width: 792px;
-`
-const StyledDivider = styled(Divider)`
-	background-color: ${(props) => props.theme.boxes.blackShade};
-	margin-bottom: 21px;
-	margin-top: 21px;
-	height: 1px;
 `
 
 export default ChooseLiquidityPoolsDialog
