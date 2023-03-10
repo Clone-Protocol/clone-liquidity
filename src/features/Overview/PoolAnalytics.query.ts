@@ -1,9 +1,12 @@
 import { Query, useQuery } from 'react-query'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { toNumber } from "incept-protocol-sdk/sdk/src/decimal"
 import { useIncept } from '~/hooks/useIncept'
+import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
 export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: InceptClient, setStartTimer: (start: boolean) => void }) => {
   console.log('fetchPoolAnalytics')
@@ -11,17 +14,42 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadManager()
+  await program.loadManager();
+  const tokenData = await program.getTokenData();
 
-  //@TODO : fetch proper data for this
-  const result = {
-    totalLiquidity: 15430459.49,
-    tvl: 15430459.49,
-    tradingVol24h: 15430459.49,
-    feeRevenue24h: 15430459.49,
-  }
+  const doc = new GoogleSpreadsheet(process.env.NEXT_GOOGLE_SHEETS_DOCUMENT_ID!);
+  doc.useApiKey(process.env.NEXT_GOOGLE_SHEETS_GOOGLE_API_KEY!);
 
-  return result
+  await doc.loadInfo();
+  const analyticsSheet = await doc.sheetsByTitle["Pool Analytics"]
+  await analyticsSheet.loadCells();
+
+  //@TODO: Remove tvl from this page.
+  const tvl = 15430459.49
+
+  return (() => {
+    for (let row = 1; row < 1 + tokenData.numPools.toNumber(); row++) {
+        const poolIndex = analyticsSheet.getCell(row, 0).formattedValue
+        if (poolIndex === null) {
+          continue;
+        }
+        const tradingVol = analyticsSheet.getCell(row, 2).formattedValue
+        const fees = analyticsSheet.getCell(row, 1).formattedValue
+        const info = assetMapping(poolIndex)
+        if (info.tickerSymbol === tickerSymbol) {
+          const pool = tokenData.pools[Number(poolIndex)];
+          const totalLiquidity = 2 * toNumber(pool.usdiAmount)
+          return { totalLiquidity, tvl, tradingVol, fees }
+        }
+    }
+
+    return {
+      totalLiquidity: 15430459.49,
+      tvl: 15430459.49,
+      tradingVol24h: 15430459.49,
+      feeRevenue24h: 15430459.49,
+    }
+  })();
 }
 
 interface GetAssetsProps {
