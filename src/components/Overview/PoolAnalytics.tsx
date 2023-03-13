@@ -1,4 +1,5 @@
 import { styled, Typography, Box } from '@mui/material'
+import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
 
 const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
   if (rate >= 0) {
@@ -13,24 +14,26 @@ const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
 }
 
 const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
+  const { data: resultData } = usePoolAnalyticsQuery({
+    tickerSymbol,
+    refetchOnMount: true,
+    enabled: tickerSymbol != null
+  })
+
   return (
     <Box>
       <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/USDi Pool Analytics</Typography></Box>
       <DataBox>
         <Box><Typography variant="p_sm">Total Liquidity</Typography></Box>
-        <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <TxtPriceRate val={245345.55} rate={1.58} /></Box>
-      </DataBox>
-      <DataBox>
-        <Box><Typography variant="p_sm">TVL</Typography></Box>
-        <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <TxtPriceRate val={245345.55} rate={1.58} /></Box>
+        <Box><Typography variant="p_lg">${resultData?.totalLiquidity} USD</Typography> <TxtPriceRate val={245345.55} rate={1.58} /></Box>
       </DataBox>
       <DataBox>
         <Box><Typography variant="p_sm">24h Trading Volume</Typography></Box>
-        <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <TxtPriceRate val={-513551.55} rate={-8.58} /></Box>
+        <Box><Typography variant="p_lg">${resultData?.tradingVol24h} USD</Typography> <TxtPriceRate val={-513551.55} rate={-8.58} /></Box>
       </DataBox>
       <DataBox>
         <Box><Typography variant="p_sm">24h Fee Revenue</Typography></Box>
-        <Box><Typography variant="p_lg">$30,459.12 USD</Typography> <TxtPriceRate val={-513551.55} rate={-8.58} /></Box>
+        <Box><Typography variant="p_lg">${resultData?.feeRevenue24h} USD</Typography> <TxtPriceRate val={-513551.55} rate={-8.58} /></Box>
       </DataBox>
     </Box>
   )

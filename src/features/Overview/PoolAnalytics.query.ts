@@ -16,7 +16,6 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
   //@TODO : fetch proper data for this
   const result = {
     totalLiquidity: 15430459.49,
-    tvl: 15430459.49,
     tradingVol24h: 15430459.49,
     feeRevenue24h: 15430459.49,
   }
@@ -32,7 +31,6 @@ interface GetAssetsProps {
 
 export interface AnalyticsInfo {
   totalLiquidity: number
-  tvl: number
   tradingVol24h: number
   feeRevenue24h: number
 }
