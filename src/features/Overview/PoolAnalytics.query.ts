@@ -6,7 +6,7 @@ import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { GoogleSpreadsheet } from "google-spreadsheet";
+import { getAggregatedPoolStats } from '~/utils/assets'
 
 export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: InceptClient, setStartTimer: (start: boolean) => void }) => {
   console.log('fetchPoolAnalytics')
@@ -16,36 +16,32 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
 
   await program.loadManager();
   const tokenData = await program.getTokenData();
+  const poolStats = await getAggregatedPoolStats(tokenData);
+  const calcPctGain = (current: number, prev: number) => {
+    return 100 * (current - prev) / prev
+  }
 
-  const doc = new GoogleSpreadsheet(process.env.NEXT_GOOGLE_SHEETS_DOCUMENT_ID!);
-  doc.useApiKey(process.env.NEXT_GOOGLE_SHEETS_GOOGLE_API_KEY!);
+  console.log("STATS:", poolStats)
 
-  await doc.loadInfo();
-  const analyticsSheet = await doc.sheetsByTitle["Pool Analytics"]
-  await analyticsSheet.loadCells();
+  for (let poolIndex = 0; poolIndex < tokenData.numPools.toNumber(); poolIndex++) {
+    const info = assetMapping(poolIndex)
+    if (tickerSymbol === info.tickerSymbol) {
+      const stats = poolStats[poolIndex]
 
-  return (() => {
-    for (let row = 1; row < 1 + tokenData.numPools.toNumber(); row++) {
-        const poolIndex = analyticsSheet.getCell(row, 0).formattedValue
-        if (poolIndex === null) {
-          continue;
-        }
-        const tradingVol = analyticsSheet.getCell(row, 2).formattedValue
-        const fees = analyticsSheet.getCell(row, 1).formattedValue
-        const info = assetMapping(poolIndex)
-        if (info.tickerSymbol === tickerSymbol) {
-          const pool = tokenData.pools[Number(poolIndex)];
-          const totalLiquidity = 2 * toNumber(pool.usdiAmount)
-          return { totalLiquidity, tradingVol, fees }
-        }
+      return {
+        totalLiquidity: stats.liquidityUSD,
+        liquidityGain: stats.liquidityUSD - stats.previousLiquidity,
+        liquidityGainPct: calcPctGain(stats.liquidityUSD, stats.previousLiquidity),
+        tradingVol24h: stats.volumeUSD,
+        tradingVolGain: stats.volumeUSD - stats.previousVolumeUSD,
+        tradingVolGainPct: calcPctGain(stats.volumeUSD, stats.previousVolumeUSD),
+        feeRevenue24hr: stats.fees,
+        feeRevenueGain: stats.fees - stats.previousFees,
+        feeRevenueGainPct: calcPctGain(stats.fees, stats.previousFees),
+      }
     }
-
-    return {
-      totalLiquidity: 15430459.49,
-      tradingVol24h: 15430459.49,
-      feeRevenue24h: 15430459.49,
-    }
-  })();
+  }
+  throw Error(`Invalid ticker symbol: ${tickerSymbol}!`)
 }
 
 interface GetAssetsProps {
