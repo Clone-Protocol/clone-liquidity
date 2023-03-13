@@ -1,4 +1,4 @@
-import { Box, Slider, styled } from '@mui/material'
+import { Box, Slider, styled, Typography } from '@mui/material'
 
 interface Props {
 	min?: number
@@ -12,12 +12,11 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	color: '#FFF',
 	height: 4,
 	padding: '13px 0',
-	marginTop: '13px',
+	marginTop: '4px',
 	'& .MuiSlider-thumb': {
-		height: 20,
-		width: 20,
+		height: 16,
+		width: 16,
 		backgroundColor: '#fff',
-		border: '3px solid #809cff',
 		'&:hover': {
 			boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
 		},
@@ -25,7 +24,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	'& .MuiSlider-track': {
 		height: 4,
 		border: 'none',
-		background: '#809cff'
+		background: '#4fe5ff'
 	},
 	'& .MuiSlider-valueLabel': {
 		fontSize: '11px',
@@ -48,8 +47,8 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 	}
 
 	return (
-		<Box display='flex'>
-			{!hideValueBox ? <ValueBox>{valueLabelFormat(value)}</ValueBox> : <></>}
+		<Box display='flex' alignItems='center'>
+			{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 			<Box width="100%">
 				<StyledSlider
 					value={value}
@@ -58,7 +57,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 					max={max}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
-					valueLabelDisplay="on"
+					valueLabelDisplay="off"
 				/>
 			</Box>
 		</Box>
@@ -67,16 +66,10 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 
 const ValueBox = styled(Box)`
 	text-align: center;
-	background-color: #333;
-  border: solid 1px #444;
-	border-radius: 10px;
-	width: 102px;
-	height: 54px;
-	line-height: 28px;
-	font-size: 16px;
-	font-weight: 500;
-	color: #fff;
-	padding: 12px 18px 12px 22px;
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	width: 62px;
+	height: 35px;
+	padding-top: 5px;
 `
 
 export default RatioSlider
