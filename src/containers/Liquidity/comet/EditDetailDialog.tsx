@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Stack, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useIncept } from '~/hooks/useIncept'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
@@ -20,6 +20,7 @@ import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import WarningMsg from '~/components/Common/WarningMsg'
 import { RISK_SCORE_VAL } from '~/data/riskfactors'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -427,12 +428,6 @@ const BoxWrapper = styled(Box)`
   padding: 8px 1px; 
   color: #fff;
   overflow-x: hidden;
-`
-const StyledDivider = styled(Divider)`
-  background-color: ${(props) => props.theme.boxes.blackShade};
-  margin-bottom: 15px;
-  margin-top: 15px;
-  height: 1px;
 `
 const EqualBox = styled(Box)`
   flex: 1 1 0;

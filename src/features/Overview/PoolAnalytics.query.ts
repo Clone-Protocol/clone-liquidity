@@ -24,9 +24,6 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
   const analyticsSheet = await doc.sheetsByTitle["Pool Analytics"]
   await analyticsSheet.loadCells();
 
-  //@TODO: Remove tvl from this page.
-  const tvl = 15430459.49
-
   return (() => {
     for (let row = 1; row < 1 + tokenData.numPools.toNumber(); row++) {
         const poolIndex = analyticsSheet.getCell(row, 0).formattedValue
@@ -39,13 +36,12 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
         if (info.tickerSymbol === tickerSymbol) {
           const pool = tokenData.pools[Number(poolIndex)];
           const totalLiquidity = 2 * toNumber(pool.usdiAmount)
-          return { totalLiquidity, tvl, tradingVol, fees }
+          return { totalLiquidity, tradingVol, fees }
         }
     }
 
     return {
       totalLiquidity: 15430459.49,
-      tvl: 15430459.49,
       tradingVol24h: 15430459.49,
       feeRevenue24h: 15430459.49,
     }
@@ -60,7 +56,6 @@ interface GetAssetsProps {
 
 export interface AnalyticsInfo {
   totalLiquidity: number
-  tvl: number
   tradingVol24h: number
   feeRevenue24h: number
 }

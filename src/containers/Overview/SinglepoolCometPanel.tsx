@@ -6,7 +6,7 @@ import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { Balance } from '~/features/Borrow/Balance.query'
-import { Box, Stack, Button, Divider, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, Button, FormHelperText, Typography } from '@mui/material'
 import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
@@ -24,6 +24,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import WarningMsg from '~/components/Common/WarningMsg'
 import { RISK_SCORE_VAL } from '~/data/riskfactors'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const COLLATERAL_INDEX = 0 // USDi
 
@@ -340,12 +341,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const StyledDivider = styled(Divider)`
-	background-color: ${(props) => props.theme.boxes.blackShade};
-	margin-bottom: 21px;
-	margin-top: 21px;
-	height: 1px;
 `
 const SubmitButton = styled(Button)`
 	width: 100%;

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack, Typography } from '@mui/material'
+import { Box, styled, Button, Dialog, DialogContent, FormHelperText, Stack, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
@@ -12,6 +12,7 @@ import { SliderTransition } from '~/components/Common/Dialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -197,12 +198,6 @@ const BoxWithBorder = styled(Box)`
   padding: 15px 18px;
   margin-top: 16px;
   margin-bottom: 16px;
-`
-const StyledDivider = styled(Divider)`
-  background-color: ${(props) => props.theme.boxes.blackShade};
-  margin-bottom: 21px;
-  margin-top: 15px;
-  height: 1px;
 `
 const ActionButton = styled(Button)`
 	width: 100%;

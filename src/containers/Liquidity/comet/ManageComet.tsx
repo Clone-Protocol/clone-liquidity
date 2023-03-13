@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Stack, Divider, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useWallet } from '@solana/wallet-adapter-react'
 import TipMsg from '~/components/Common/TipMsg'
@@ -19,6 +19,7 @@ import ManageCloseIconOn from 'public/images/close-circle-multiple-outline-on.sv
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import DisabledCloseCometWarningMsg from '~/components/Liquidity/comet/DisabledCloseCometWarningMsg'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -90,12 +91,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     </Stack>
   ) : <></>
 }
-const StyledDivider = styled(Divider)`
-	background-color: ${(props) => props.theme.boxes.blackShade};
-	margin-bottom: 11px;
-	margin-top: 11px;
-	height: 1px;
-`
+
 const LeftBoxWrapper = styled(Box)`
 	width: 521px; 
 	padding: 8px 25px;

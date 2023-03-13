@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Stack, FormHelperText, Typography } from '@mui/material'
+import { Box, Button, Stack, FormHelperText, Typography } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
@@ -17,6 +17,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const RISK_RATIO_VAL = 170
 
@@ -269,12 +270,6 @@ const SelectPoolBox = styled(Box)`
   background: ${(props) => props.theme.boxes.black};
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const StyledDivider = styled(Divider)`
-  background-color: ${(props) => props.theme.boxes.blackShade};
-  margin-bottom: 21px;
-  margin-top: 21px;
-  height: 1px;
 `
 const SubmitButton = styled(Button)`
 	width: 100%;
