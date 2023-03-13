@@ -3,7 +3,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
-import { Box, Stack, Button, Divider, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, Button, FormHelperText, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { styled } from '@mui/system'
@@ -21,6 +21,7 @@ import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const RISK_SCORE_VAL = 20
 
@@ -271,12 +272,6 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const StyledDivider = styled(Divider)`
-  background-color: ${(props) => props.theme.boxes.blackShade};
-  margin-bottom: 21px;
-  margin-top: 21px;
-  height: 1px;
 `
 const SubmitButton = styled(Button)`
   width: 100%;

@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
@@ -23,6 +23,7 @@ import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -128,12 +129,6 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	) : <></>
 }
 
-const StyledDivider = styled(Divider)`
-	background-color: ${(props) => props.theme.boxes.blackShade};
-	margin-bottom: 11px;
-	margin-top: 11px;
-	height: 1px;
-`
 const LeftBoxWrapper = styled(Box)`
 	width: 607px; 
 	padding: 8px 25px;
