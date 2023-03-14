@@ -2,14 +2,18 @@ import { styled, Typography, Box } from '@mui/material'
 import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
 
 const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
-  if (rate >= 0) {
-    return (
-      <Typography variant="p_sm" color='#4fe5ff'>+{val.toLocaleString()} ({rate}) past 24h</Typography>
-    )
+  if (isFinite(rate)) {
+    if (rate >= 0) {
+      return (
+        <Typography variant="p_sm" color='#4fe5ff'>+{val.toLocaleString()} ({rate}) past 24h</Typography>
+      )
+    } else {
+      return (
+        <Typography variant="p_sm" color="#258ded">-{Math.abs(val).toLocaleString()} ({rate}) past 24h</Typography>
+      )
+    }
   } else {
-    return (
-      <Typography variant="p_sm" color="#258ded">-{Math.abs(val).toLocaleString()} ({rate}) past 24h</Typography>
-    )
+    <></>
   }
 }
 
