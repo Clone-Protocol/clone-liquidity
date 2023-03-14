@@ -5,8 +5,9 @@ import CollateralPairView from '~/components/Liquidity/multipool/CollateralPairV
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 import { Collateral } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
+import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 
-const Collaterals = ({ collaterals, onRefetchData }: { collaterals: Collateral[], onRefetchData: () => void }) => {
+const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
   const [chooseEditType, setChooseEditType] = useState(0)
@@ -20,22 +21,31 @@ const Collaterals = ({ collaterals, onRefetchData }: { collaterals: Collateral[]
     setOpenChooseCollateral(false)
   }
 
+  const BlankNoCollateral = () => (
+    <MultipoolBlank title='Deposit collaterals to multipool to get started' subtitle='Multipool Liquidity Positions are designed to enable advanced users to 
+    fully leverage the CLS' />
+  )
+
   return (
     <>
-      <Box>
-        {collaterals.map((coll, id) =>
-          <CollateralPairView
-            key={id}
-            tickerIcon={coll.tickerIcon}
-            tickerSymbol={coll.tickerSymbol}
-            value={coll.collAmount}
-            usdValue={coll.collAmountDollarPrice * coll.collAmount}
-            handleOpenEdit={openEdit}
-          />
-        )}
-      </Box>
+      {hasNoCollateral ?
+        <BlankNoCollateral />
+        :
+        <Box>
+          {collaterals.map((coll, id) =>
+            <CollateralPairView
+              key={id}
+              tickerIcon={coll.tickerIcon}
+              tickerSymbol={coll.tickerSymbol}
+              value={coll.collAmount}
+              usdValue={coll.collAmountDollarPrice * coll.collAmount}
+              handleOpenEdit={openEdit}
+            />
+          )}
+        </Box>
+      }
 
-      {collaterals.length > 0 ?
+      {collaterals.length > 0 && !hasNoCollateral ?
         <AddButton onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
         :
         <AddButtonNoPosition onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
