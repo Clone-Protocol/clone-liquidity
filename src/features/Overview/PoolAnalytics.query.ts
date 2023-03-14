@@ -1,9 +1,12 @@
 import { Query, useQuery } from 'react-query'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { toNumber } from "incept-protocol-sdk/sdk/src/decimal"
 import { useIncept } from '~/hooks/useIncept'
+import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { getAggregatedPoolStats } from '~/utils/assets'
 
 export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: InceptClient, setStartTimer: (start: boolean) => void }) => {
   console.log('fetchPoolAnalytics')
@@ -11,16 +14,34 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadManager()
-
-  //@TODO : fetch proper data for this
-  const result = {
-    totalLiquidity: 15430459.49,
-    tradingVol24h: 15430459.49,
-    feeRevenue24h: 15430459.49,
+  await program.loadManager();
+  const tokenData = await program.getTokenData();
+  const poolStats = await getAggregatedPoolStats(tokenData);
+  const calcPctGain = (current: number, prev: number) => {
+    return 100 * (current - prev) / prev
   }
 
-  return result
+  console.log("STATS:", poolStats)
+
+  for (let poolIndex = 0; poolIndex < tokenData.numPools.toNumber(); poolIndex++) {
+    const info = assetMapping(poolIndex)
+    if (tickerSymbol === info.tickerSymbol) {
+      const stats = poolStats[poolIndex]
+
+      return {
+        totalLiquidity: stats.liquidityUSD,
+        liquidityGain: stats.liquidityUSD - stats.previousLiquidity,
+        liquidityGainPct: calcPctGain(stats.liquidityUSD, stats.previousLiquidity),
+        tradingVol24h: stats.volumeUSD,
+        tradingVolGain: stats.volumeUSD - stats.previousVolumeUSD,
+        tradingVolGainPct: calcPctGain(stats.volumeUSD, stats.previousVolumeUSD),
+        feeRevenue24hr: stats.fees,
+        feeRevenueGain: stats.fees - stats.previousFees,
+        feeRevenueGainPct: calcPctGain(stats.fees, stats.previousFees),
+      }
+    }
+  }
+  throw Error(`Invalid ticker symbol: ${tickerSymbol}!`)
 }
 
 interface GetAssetsProps {
