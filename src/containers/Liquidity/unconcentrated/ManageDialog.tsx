@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import Image from 'next/image'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SliderTransition } from '~/components/Common/Dialog'
@@ -29,7 +29,7 @@ const ManageDialog = ({ assetId, pool, open, handleClose }: { assetId: string, p
             </Box>
 
             <StyledTabs value={tab} onChange={handleChangeTab}>
-              <StyledTab value={0} label="Deposit More" icon={tab === 0 ? <Image src={DepositMoreOnIcon} /> : <Image src={DepositMoreOffIcon} />}></StyledTab>
+              <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} /> : <Image src={DepositMoreOffIcon} />}></StyledTab>
               <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} /> : <Image src={WithdrawOffIcon} />}></StyledTab>
             </StyledTabs>
             <StyledDivider />

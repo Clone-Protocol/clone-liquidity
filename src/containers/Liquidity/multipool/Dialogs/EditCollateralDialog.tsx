@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
+import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditCollateralQuery } from '~/features/MyLiquidity/multipool/EditCollateral.query'
@@ -10,6 +10,7 @@ import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateral
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { StyledDivider } from '~/components/Common/StyledDivider'
 
 const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -134,9 +135,12 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a' }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={500}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
+            <Box mb='5px'>
+              <Typography variant='p_xlg'>Manage Collateral</Typography>
+            </Box>
             <Box>
               <Controller
                 name="collAmount"
@@ -189,7 +193,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 
             <StyledDivider />
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Deposit' : 'Withdraw'}</ActionButton>
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Deposit more' : 'Withdraw'}</ActionButton>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -198,8 +202,8 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 }
 
 const BoxWrapper = styled(Box)`
-  padding: 4px 10px; 
   color: #fff;
+  overflow-x: hidden;
 `
 const DetailHeader = styled('div')`
 	font-size: 12px;
@@ -211,28 +215,19 @@ const DetailValue = styled('div')`
 	font-weight: 500;
 	color: #fff;
 `
-
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 18px;
-	margin-top: 10px;
-	height: 1px;
-`
-
 const ActionButton = styled(Button)`
-	width: 100%;
-	background: #4e3969;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 2px;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   &:hover {
-    background-color: #4e3969;
+    background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 
