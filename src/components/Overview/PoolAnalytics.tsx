@@ -13,7 +13,7 @@ const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
       )
     }
   } else {
-    <></>
+    return <></>
   }
 }
 
