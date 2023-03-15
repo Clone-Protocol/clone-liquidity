@@ -4,7 +4,7 @@ import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import Image from 'next/image'
-import { Box, Divider, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { PositionInfo as PI } from '~/features/MyLiquidity/CometPosition.query'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
@@ -198,9 +198,9 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: 
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
               </Box>
-              <Box mt='20px' mb='20px'>
+              <Box my='20px'>
                 <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
-                <HealthscoreBar score={cometData.healthScore} prevScore={cometData.prevHealthScore} hideIndicator={true} />
+                <HealthscoreBar score={cometData.healthScore} prevScore={cometData.prevHealthScore} hideIndicator={true} width={490} />
               </Box>
 
               <Stack direction="row" justifyContent="space-between">

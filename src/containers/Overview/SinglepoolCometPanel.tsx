@@ -324,7 +324,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
           <Box my="15px">
             <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-            <HealthscoreBar score={cometHealthScore} />
+            <HealthscoreBar score={cometHealthScore} width={490} />
             {hasRiskScore &&
               <WarningMsg>This position will have high possibility to become subject to liquidation.</WarningMsg>
             }

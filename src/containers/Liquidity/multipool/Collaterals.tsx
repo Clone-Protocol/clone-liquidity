@@ -10,11 +10,10 @@ import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
-  const [chooseEditType, setChooseEditType] = useState(0)
+  const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
 
-  const openEdit = (tab: number) => {
+  const openEdit = () => {
     setOpenEditCollateral(true)
-    setChooseEditType(tab)
   }
 
   const handleChooseCollateral = (collId: number) => {
@@ -45,15 +44,15 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
         </Box>
       }
 
-      {collaterals.length > 0 && !hasNoCollateral ?
-        <AddButton onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
+      {alreadyHasDeposit ?
+        <AddButton onClick={() => openEdit()} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
         :
-        <AddButtonNoPosition onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
+        <AddButtonNoPosition onClick={() => openEdit()} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
       }
 
       <EditCollateralDialog
         open={openEditCollateral}
-        isDeposit={chooseEditType === 0}
+        isNewDeposit={!alreadyHasDeposit}
         onRefetchData={onRefetchData}
         handleChooseColl={() => setOpenChooseCollateral(true)}
         handleClose={() => setOpenEditCollateral(false)}

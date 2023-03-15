@@ -91,7 +91,6 @@ const Wrapper = styled(Box)`
   padding-top: 17px;
   padding-bottom: 17px;
 `
-
 const CardWrapper = styled(Box)`
   padding: 9px 0 12px;
 `

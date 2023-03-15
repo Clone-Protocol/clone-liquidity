@@ -169,7 +169,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
             </Box>
             <Box>
               <Box mb='15px'><Typography variant='p'>Current Multipool Healthscore</Typography></Box>
-              <HealthscoreBar score={positionInfo.totalHealthScore} />
+              <HealthscoreBar score={positionInfo.totalHealthScore} width={490} />
             </Box>
           </BoxWithBorder>
 
@@ -240,7 +240,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
           <BoxWithBorder padding="20px 24px">
             <Box my="15px">
               <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-              <HealthscoreBar score={healthScore} />
+              <HealthscoreBar score={healthScore} width={490} />
               {hasRiskScore &&
                 <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
               }
