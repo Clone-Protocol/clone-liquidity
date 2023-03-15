@@ -6,12 +6,13 @@ interface Props {
   tickerSymbol: string | null
   value?: number
   valueDollarPrice?: number
+  rightHeaderTitle: string
   balance?: number
   inputTitle?: string
   currentAmount?: number
   dollarPrice?: number
   balanceDisabled?: boolean
-  disabled?: boolean
+  hideBottomBox?: boolean
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
 }
@@ -21,12 +22,13 @@ const PairInput: React.FC<Props> = ({
   tickerSymbol,
   value,
   valueDollarPrice,
+  rightHeaderTitle,
   balance,
   inputTitle,
   currentAmount,
   dollarPrice,
   balanceDisabled = false,
-  disabled = false,
+  hideBottomBox = false,
   onChange,
   onMax
 }) => {
@@ -36,7 +38,7 @@ const PairInput: React.FC<Props> = ({
         <Box><Typography variant='h8'>{inputTitle}</Typography></Box>
         {!balanceDisabled ?
           <Box>
-            <Typography variant='p' color='#989898'>Wallet Balance: </Typography>
+            <Typography variant='p' color='#989898'>{rightHeaderTitle}: </Typography>
             <MaxPointerValue onClick={() => onMax && onMax(balance!)}><Typography variant='p'>{balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></MaxPointerValue>
           </Box>
           : <></>}
@@ -50,16 +52,16 @@ const PairInput: React.FC<Props> = ({
             </Box>
           </Box>
           <Box>
-            <InputAmount id="ip-amount" type="number" placeholder="0.00" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} disabled={disabled} />
+            <InputAmount id="ip-amount" type="number" placeholder="0.00" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} />
             <DollarAmount>{(valueDollarPrice && valueDollarPrice > 0) ? ('$' + valueDollarPrice?.toLocaleString()) : ''}</DollarAmount>
           </Box>
         </FormStack>
       </CenterBox>
-      <BottomBox>
+      {!hideBottomBox && <BottomBox>
         <Typography variant='p' color='#989898'>Current Collateral: </Typography>
         <Typography variant='p'>{currentAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</Typography>
         <Typography variant='p' ml='3px'>{dollarPrice && '($' + dollarPrice.toLocaleString() + ')'}</Typography>
-      </BottomBox>
+      </BottomBox>}
     </FormControl>
   )
 }

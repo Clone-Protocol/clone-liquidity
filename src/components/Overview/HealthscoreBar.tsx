@@ -4,11 +4,12 @@ interface Props {
   score?: number
   prevScore?: number
   hideIndicator?: boolean
+  width: number
 }
 
-const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hideIndicator = false }) => {
-  const scorePoint = score ? 490 * score / 100 - 15 : -15
-  const prevScorePoint = prevScore ? 490 * prevScore / 100 - 15 : -15
+const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hideIndicator = false, width = 490 }) => {
+  const scorePoint = score ? width * score / 100 - 15 : -15
+  const prevScorePoint = prevScore ? width * prevScore / 100 - 15 : -15
   return (
     <Box>
       <Box>

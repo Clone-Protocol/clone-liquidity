@@ -66,7 +66,7 @@ const MultipoolComet = () => {
             <Box marginBottom='12px'>
               <Typography variant='p_lg'>Collateral</Typography>
             </Box>
-            <Collaterals collaterals={infos.collaterals} onRefetchData={() => refetch()} />
+            <Collaterals hasNoCollateral={infos.hasNoCollateral} collaterals={infos.collaterals} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid >
         <Grid item xs={12} md={8}>
@@ -74,7 +74,9 @@ const MultipoolComet = () => {
             <Box marginBottom='12px'>
               <Typography variant='p_lg'>Liquidity</Typography>
             </Box>
-            <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()} />
+            {!infos.hasNoCollateral &&
+              <LiquidityPositions positions={infos.positions} onRefetchData={() => refetch()} />
+            }
           </CardWrapper>
         </Grid>
       </BoxGrid >
@@ -89,7 +91,6 @@ const Wrapper = styled(Box)`
   padding-top: 17px;
   padding-bottom: 17px;
 `
-
 const CardWrapper = styled(Box)`
   padding: 9px 0 12px;
 `

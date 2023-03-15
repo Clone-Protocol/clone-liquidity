@@ -5,45 +5,54 @@ import CollateralPairView from '~/components/Liquidity/multipool/CollateralPairV
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 import { Collateral } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
+import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 
-const Collaterals = ({ collaterals, onRefetchData }: { collaterals: Collateral[], onRefetchData: () => void }) => {
+const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
-  const [chooseEditType, setChooseEditType] = useState(0)
+  const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
 
-  const openEdit = (tab: number) => {
+  const openEdit = () => {
     setOpenEditCollateral(true)
-    setChooseEditType(tab)
   }
 
   const handleChooseCollateral = (collId: number) => {
     setOpenChooseCollateral(false)
   }
 
+  const BlankNoCollateral = () => (
+    <MultipoolBlank title='Deposit collaterals to multipool to get started' subtitle='Multipool Liquidity Positions are designed to enable advanced users to 
+    fully leverage the CLS' />
+  )
+
   return (
     <>
-      <Box>
-        {collaterals.map((coll, id) =>
-          <CollateralPairView
-            key={id}
-            tickerIcon={coll.tickerIcon}
-            tickerSymbol={coll.tickerSymbol}
-            value={coll.collAmount}
-            usdValue={coll.collAmountDollarPrice * coll.collAmount}
-            handleOpenEdit={openEdit}
-          />
-        )}
-      </Box>
-
-      {collaterals.length > 0 ?
-        <AddButton onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
+      {hasNoCollateral ?
+        <BlankNoCollateral />
         :
-        <AddButtonNoPosition onClick={() => openEdit(0)} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
+        <Box>
+          {collaterals.map((coll, id) =>
+            <CollateralPairView
+              key={id}
+              tickerIcon={coll.tickerIcon}
+              tickerSymbol={coll.tickerSymbol}
+              value={coll.collAmount}
+              usdValue={coll.collAmountDollarPrice * coll.collAmount}
+              handleOpenEdit={openEdit}
+            />
+          )}
+        </Box>
+      }
+
+      {alreadyHasDeposit ?
+        <AddButton onClick={() => openEdit()} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
+        :
+        <AddButtonNoPosition onClick={() => openEdit()} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
       }
 
       <EditCollateralDialog
         open={openEditCollateral}
-        isDeposit={chooseEditType === 0}
+        isNewDeposit={!alreadyHasDeposit}
         onRefetchData={onRefetchData}
         handleChooseColl={() => setOpenChooseCollateral(true)}
         handleClose={() => setOpenEditCollateral(false)}

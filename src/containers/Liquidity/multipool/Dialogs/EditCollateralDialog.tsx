@@ -1,34 +1,38 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Divider, styled, Button, Dialog, DialogContent, FormHelperText, Stack } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { Box, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
+import Image from 'next/image'
 import { useEditCollateralQuery } from '~/features/MyLiquidity/multipool/EditCollateral.query'
 import { useCollateralMutation } from '~/features/MyLiquidity/multipool/Collateral.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import EditCollateralInput from '~/components/Liquidity/multipool/EditCollateralInput'
+import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { StyledDivider } from '~/components/Common/StyledDivider'
+import PairInput from '~/components/Liquidity/unconcent/PairInput'
+import DepositMoreOnIcon from 'public/images/add-liquidity-icon-on.svg'
+import DepositMoreOffIcon from 'public/images/add-liquidity-icon-off.svg'
+import WithdrawOnIcon from 'public/images/withdraw-liquidity-icon-on.svg'
+import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
+import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 
-const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
+const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
+  const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue)
+  }
   const collIndex = 0 // NOTE: currently only support USDi
-  const [editType, setEditType] = useState(isDeposit ? 0 : 1) // 0 : deposit , 1: withdraw
   const [healthScore, setHealthScore] = useState(0)
   const [totalCollValue, setTotalCollValue] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
-
-  useEffect(() => {
-    setEditType(isDeposit ? 0 : 1)
-  }, [isDeposit])
-
-  const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
-    setEditType(newValue)
-  }, [editType])
 
   const { data: collData, refetch } = useEditCollateralQuery({
     userPubKey: publicKey,
@@ -76,12 +80,12 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
       if (open && collData) {
         if (collData.prevHealthScore) {
           let loss = (100 - collData.prevHealthScore) * collData.collAmount;
-          let collDelta = (editType === 0 ? 1 : -1) * collAmount;
+          let collDelta = (tab === 0 ? 1 : -1) * collAmount;
 
           setHealthScore(100 - loss / (collData.collAmount + collDelta))
           setMaxWithdrawable(collData.collAmount - loss / 100)
         } else {
-          if (editType === 0) {
+          if (tab === 0) {
             setHealthScore(100)
           } else {
             setHealthScore(0)
@@ -93,7 +97,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
       }
     }
     fetch()
-  }, [open, collData, collAmount, editType])
+  }, [open, collData, collAmount, tab])
 
   const { mutateAsync } = useCollateralMutation(publicKey)
   const onEdit = async () => {
@@ -102,7 +106,7 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
       {
         collIndex,
         collAmount,
-        editType
+        tab
       },
       {
         onSuccess(data) {
@@ -134,10 +138,23 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition}>
-        <DialogContent sx={{ backgroundColor: '#16171a' }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={500}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
-            <Box>
+            <Box mb='5px'>
+              <Typography variant='p_xlg'>
+                {isNewDeposit ? 'Deposit New Collateral' : 'Manage Collateral'}
+              </Typography>
+            </Box>
+            {!isNewDeposit &&
+              <StyledTabs value={tab} onChange={handleChangeTab}>
+                <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} /> : <Image src={DepositMoreOffIcon} />}></StyledTab>
+                <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} /> : <Image src={WithdrawOffIcon} />}></StyledTab>
+              </StyledTabs>
+            }
+            <StyledDivider />
+
+            {/* <Box>
               <Controller
                 name="collAmount"
                 control={control}
@@ -174,22 +191,66 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
                 )}
               />
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
+            </Box> */}
+
+            <Box mb='15px'>
+              <Controller
+                name="collAmount"
+                control={control}
+                rules={{
+                  validate(value) {
+                    if (!value || value <= 0) {
+                      return ''
+                    } else if ((tab === 0 && value > collData.balance) || (tab === 1 && value >= maxWithdrawable)) {
+                      return 'The borrowing amount cannot exceed the balance.'
+                    }
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    tickerIcon={collData.tickerIcon}
+                    tickerSymbol={collData.tickerSymbol}
+                    rightHeaderTitle={tab === 0 ? 'Wallet Balance' : 'Max Withdrawable'}
+                    value={field.value}
+                    valueDollarPrice={field.value}
+                    inputTitle='Collateral'
+                    balance={tab === 0 ? collData.balance : maxWithdrawable}
+                    currentAmount={collData.collAmount}
+                    dollarPrice={collData.collAmountDollarPrice}
+                    hideBottomBox={isNewDeposit}
+                    onChange={(event: React.FormEvent<HTMLInputElement>) => {
+                      const collAmt = parseFloat(event.currentTarget.value)
+                      field.onChange(collAmt)
+                    }}
+                    onMax={(value: number) => {
+                      field.onChange(value)
+                    }}
+                  />
+                )}
+              />
+              <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
 
-            <Box padding='10px 3px 5px 3px'>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Projected Multipool Health Score <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScore} /></DetailHeader>
-                <DetailValue>{healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {Number.isNaN(collData.prevHealthScore) ? '--' : collData.prevHealthScore.toFixed()}/100)</span></DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Total Collateral Value <InfoTooltip title={TooltipTexts.totalCollateralValueLong} /></DetailHeader>
-                <DetailValue>${totalCollValue.toLocaleString()}</DetailValue>
-              </Stack>
+            <Typography variant='h8'>Projected Multipool Stat</Typography>
+            <BoxWithBorder padding='15px 20px'>
+              <Box>
+                <Box><Typography variant='p' color='#989898'>Projected Multipool Collateral Value <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Typography></Box>
+                <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
+              </Box>
+              <Box my='20px'>
+                <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
+                <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={430} /></Box>
+              </Box>
+            </BoxWithBorder>
+
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>
+              {isNewDeposit ? 'Deposit' :
+                tab === 0 ? 'Deposit more' : 'Withdraw'}
+            </ActionButton>
+
+            <Box display='flex' justifyContent='center'>
+              <DataLoadingIndicator />
             </Box>
-
-            <StyledDivider />
-
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>{editType === 0 ? 'Deposit' : 'Withdraw'}</ActionButton>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -198,41 +259,26 @@ const EditCollateralDialog = ({ open, isDeposit, onRefetchData, handleChooseColl
 }
 
 const BoxWrapper = styled(Box)`
-  padding: 4px 10px; 
+  width: 500px;
   color: #fff;
+  overflow-x: hidden;
 `
-const DetailHeader = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #949494;
+const BoxWithBorder = styled(Box)`
+	border: solid 1px ${(props) => props.theme.boxes.blackShade};
 `
-const DetailValue = styled('div')`
-	font-size: 12px;
-	font-weight: 500;
-	color: #fff;
-`
-
-const StyledDivider = styled(Divider)`
-	background-color: #535353;
-	margin-bottom: 18px;
-	margin-top: 10px;
-	height: 1px;
-`
-
 const ActionButton = styled(Button)`
-	width: 100%;
-	background: #4e3969;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 2px;
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   &:hover {
-    background-color: #4e3969;
+    background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 

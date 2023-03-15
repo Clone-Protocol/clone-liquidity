@@ -32,6 +32,7 @@ export const fetchInfos = async ({
 	let healthScore = 0
 	let totalCollValue = 0
 	let totalLiquidity = 0
+	let hasNoCollateral = false
 	let collaterals: Collateral[] = [];
 	let positions: LiquidityPosition[] = [];
 
@@ -50,6 +51,7 @@ export const fetchInfos = async ({
 		positions.forEach(p => {
 			totalLiquidity += p.liquidityDollarPrice
 		})
+		hasNoCollateral = totalCollValue === 0
 		if (tokenDataResult.status === "fulfilled") {
 			healthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
 		}
@@ -60,6 +62,7 @@ export const fetchInfos = async ({
 		totalCollValue,
 		totalLiquidity,
 		collaterals,
+		hasNoCollateral,
 		positions
 	}
 
