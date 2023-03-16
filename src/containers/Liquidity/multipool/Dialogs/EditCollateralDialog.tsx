@@ -106,7 +106,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
       {
         collIndex,
         collAmount,
-        tab
+        editType: tab
       },
       {
         onSuccess(data) {

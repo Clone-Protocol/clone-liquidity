@@ -55,6 +55,6 @@ export function useCollateralMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((data: EditFormData) => funcNoWallet())
 	}
 }
