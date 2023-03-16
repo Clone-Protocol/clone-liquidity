@@ -1,4 +1,4 @@
-import { Box, Slider, Stack, styled } from '@mui/material'
+import { Box, Slider, Stack, styled, Typography } from '@mui/material'
 import Image from 'next/image'
 import chroma from 'chroma-js'
 import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
@@ -9,6 +9,7 @@ interface Props {
   ratio: number
   currentRatio: number
   positionInfo: PositionInfo
+  maxMintable: number
   totalLiquidity: number
   mintAmount: number
   currentMintAmount: number
@@ -54,7 +55,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   },
 }))
 
-const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRatio, positionInfo, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
+const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, positionInfo, maxMintable, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
   const valueLabelFormat = (value: number) => {
     return `${value.toFixed(1)}%`
   }
@@ -63,6 +64,10 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
     const f = chroma.scale(['#7d17ff', '#ff0000']).gamma(2)
     const rgb = f(x / 100).css()
     return rgb
+  }
+
+  const handleMaxRatio = () => {
+    onChangeRatio && onChangeRatio(100)
   }
 
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
@@ -112,66 +117,60 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, 
         <Box>Min</Box>
         <Box>Max</Box>
       </Box>
-      <Box marginTop='25px'>
-        <StyledBox>
-          <FormBox>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box display="flex">
-                <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                <TickerWrapper>USDi</TickerWrapper>
-              </Box>
-              <Box>
-                <InputAmount id="ip-amount" type="number" min={0} sx={mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
-              </Box>
+      <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '25px' }}>
+        <Stack direction="row" gap={1} alignItems='flex-end'>
+          <Box>
+            <Stack direction="row" justifyContent="flex-end">
+              <Typography variant='p' color='#989898'>
+                Max Amount Mintable: <MaxValue onClick={() => handleMaxRatio()}>{maxMintable.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>
+              </Typography>
             </Stack>
-          </FormBox>
-          <BottomBox>Current: {currentMintAmount.toLocaleString()} USDi</BottomBox>
-        </StyledBox>
-        <StyledBox>
-          <FormBox sx={{ background: '#16171a', color: '#9a9a9a' }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box display="flex">
-                <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
-                <TickerWrapper>{positionInfo.tickerSymbol}</TickerWrapper>
-              </Box>
-              <Box paddingRight='10px'>
-                <div>{(mintAmount / positionInfo.price).toLocaleString()}</div>
-                <div style={{ fontSize: '10px', textAlign: 'right', color: '#9a9a9a' }}>${mintAmount.toLocaleString()}</div>
-              </Box>
-            </Stack>
-          </FormBox>
-          <BottomBox>Current: {(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol} (${(currentMintAmount * positionInfo.price).toLocaleString()})</BottomBox>
-        </StyledBox>
-        <StyledBox>
-          <FormBox sx={{ background: '#16171a', color: '#fff', fontSize: '12px', fontWeight: '500' }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box marginLeft='10px'>
-                Projected new total liquidity value of the position:
-              </Box>
-              <Box marginLeft='10px'>
-                ${totalLiquidity.toLocaleString()}
-              </Box>
-            </Stack>
-          </FormBox>
-          <BottomBox>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box marginLeft='20px'>Current total liquidity value of the position: </Box>
-              <Box marginLeft='20px'>${positionInfo.totalCollValue.toLocaleString()}</Box>
-            </Stack>
-          </BottomBox>
-        </StyledBox>
+            <StyledBox>
+              <FormBox sx={{ background: '#363636' }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box display="flex" alignItems='center'>
+                    <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                    <Box marginLeft='8px'>
+                      <Typography variant='p_lg'>USDi</Typography>
+                    </Box>
+                  </Box>
+                  <Box lineHeight='20px'>
+                    <InputAmount id="ip-amount" type="number" min={0} sx={mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
+                    <MintAmount>${mintAmount.toLocaleString()} USD</MintAmount>
+                  </Box>
+                </Stack>
+              </FormBox>
+              <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{currentMintAmount.toLocaleString()} USDi</Typography></BottomBox>
+            </StyledBox>
+          </Box>
+          <StyledBox>
+            <FormBox>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box display="flex">
+                  <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
+                  <Box marginLeft='8px'>
+                    <Typography variant='p_lg'>{positionInfo.tickerSymbol}</Typography>
+                  </Box>
+                </Box>
+                <Box textAlign='right' lineHeight='20px'>
+                  <Typography variant='p_xlg'>{(mintAmount / positionInfo.price).toLocaleString()}</Typography>
+                  <MintAmount>${mintAmount.toLocaleString()}</MintAmount>
+                </Box>
+              </Stack>
+            </FormBox>
+            <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol} (${(currentMintAmount * positionInfo.price).toLocaleString()})</Typography></BottomBox>
+          </StyledBox>
+        </Stack>
       </Box>
     </Box>
   )
 }
 
 const StyledBox = styled(Box)`
-  border-radius: 10px;
-  border: solid 1px #444;
-  width: 100%;
-  margin-top: 30px;
+  border: solid 1px ${(props) => props.theme.boxes.blackShade};
+  width: 215px;
+  margin-top: 8px;
 `
-
 const FixThumb = styled('div')`
   width: 20px;
   height: 20px;
@@ -179,62 +178,44 @@ const FixThumb = styled('div')`
   border-radius: 99999px;
   border: 3px solid #686868;
 `
-
+const MaxValue = styled('span')`
+	color: #90e4fe; 
+	cursor: pointer;
+`
 const FixValueLabel = styled(Box)`
   width: 51px;
   height: 24px;
   padding: 2px 8px;
   margin-top: 8px;
   margin-left: -16px;
-  border-radius: 10px;
-  border: solid 1px #686868;
-  background-color: #000;
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff;
-`
-const TickerWrapper = styled(Box)`
-	width: 80px; 
-	margin-left: 8px; 
-	text-align: left;
+  border: solid 1px ${(props) => props.theme.palette.text.secondary};
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: ${(props) => props.theme.palette.text.secondary};
 `
 const FormBox = styled(Box)`
-  height: 54px; 
-  padding: 14px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  font-stretch: normal;
-  background: #282828;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  height: 63px; 
+  padding: 12px;
 `
-
 const BottomBox = styled(Box)`
-  height: 23px;
-  background: #252627;
-  font-size: 11px;
-  font-weight: 500;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
+  height: 30px;
   text-align: center;
-  color: #949494;
-  padding-top: 3px;
-  border-top: 1px solid #444;
-  border-bottom-left-radius: 9px;
-  border-bottom-right-radius: 9px;
+  border-top: 1px solid ${(props) => props.theme.boxes.blackShade};
 `
-
 const InputAmount = styled(`input`)`
-	max-width: 120px;
-	margin-left: 10px;
-	text-align: right;
-	border: 0px;
-	background-color: #282828;
-	font-size: 14px;
-	font-weight: 600;
-	color: #adadad;
+  max-width: 100px;
+  margin-left: 10px;
+  text-align: right;
+  border: 0px;
+  background-color: ${(props) => props.theme.boxes.blackShade};
+  font-size: 17.3px;
+  font-weight: 500;
 `
-
+const MintAmount = styled('div')`
+  font-size: 12px; 
+  font-weight: 500;
+  text-align: right; 
+  color: ${(props) => props.theme.palette.text.secondary}; 
+`
 export default EditLiquidityRatioSlider

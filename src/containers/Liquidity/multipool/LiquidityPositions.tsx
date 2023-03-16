@@ -43,30 +43,30 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   }
 
   const { mutateAsync } = useRecenterAllMutation(publicKey)
-  const handleRecenterAll = async () => {
-    setLoading(true)
-    await mutateAsync(
-      {
-        poolIndex
-      },
-      {
-        onSuccess(data) {
-          console.log('data', data)
-          if (data.result) {
-            enqueueSnackbar(data.resultMessage)
+  // const handleRecenterAll = async () => {
+  //   setLoading(true)
+  //   await mutateAsync(
+  //     {
+  //       poolIndex
+  //     },
+  //     {
+  //       onSuccess(data) {
+  //         console.log('data', data)
+  //         if (data.result) {
+  //           enqueueSnackbar(data.resultMessage)
 
-            onRefetchData()
-          }
-          setLoading(false)
-        },
-        onError(err: string) {
-          console.error('err', err)
-          enqueueSnackbar(err)
-          setLoading(false)
-        }
-      }
-    )
-  }
+  //           onRefetchData()
+  //         }
+  //         setLoading(false)
+  //       },
+  //       onError(err: string) {
+  //         console.error('err', err)
+  //         enqueueSnackbar(err)
+  //         setLoading(false)
+  //       }
+  //     }
+  //   )
+  // }
 
   return (
     <>
@@ -99,7 +99,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         {positions.length > 0 ?
           <AddButton onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
           :
-          <AddButtonNoPosition onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
+          <AddButtonNoPosition onClick={() => setOpenEditLiquidity(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
         }
         {/* <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton> */}
       </Stack>

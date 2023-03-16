@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, IconButton } from '@mui/material'
+import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import RatioSlider from '~/components/Liquidity/multipool/RatioSlider'
@@ -12,7 +12,6 @@ import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/Liquid
 import { useNewPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { TooltipTexts } from '~/data/tooltipTexts'
 
@@ -121,14 +120,11 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
       )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '5px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
-            <Stack direction="row" justifyContent='space-between' alignItems='center'>
-              <IconButton sx={{ color: '#fff' }} onClick={handleClose}><ChevronLeftIcon /></IconButton>
-              <HeaderText>Establish New Liquidity Position</HeaderText>
-              <Box> </Box>
-            </Stack>
-            <Divider />
+            <Box mb='5px'>
+              <Typography variant='p_xlg'>Deposit New Collateral</Typography>
+            </Box>
 
             <Stack direction='row' gap={4}>
               <SelectedPoolBox positionInfo={positionInfo} />
@@ -193,7 +189,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
                 </Box>
                 <Divider />
 
-                <NewPositionButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)}>Establish New Position</NewPositionButton>
+                <ActionButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)}>Establish New Position</ActionButton>
               </RightBox>
             </Stack>
           </BoxWrapper>
@@ -245,22 +241,19 @@ const SelectLabel = styled('div')`
   font-weight: 500;
   color: #fff;
 `
-
-const NewPositionButton = styled(Button)`
-	width: 100%;
-	background-color: #4e3969;
-	color: #fff;
-	border-radius: 10px;
-  margin-top: 10px;
-	margin-bottom: 15px;
-  font-size: 14px;
-  font-weight: 600;
+const ActionButton = styled(Button)`
+  width: 100%;
+  background-color: ${(props) => props.theme.palette.primary.main};
+  color: #000;
+  border-radius: 0px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   &:hover {
     background-color: #7A86B6;
   }
   &:disabled {
-    background-color: #444;
-    color: #adadad;
+    background-color: ${(props) => props.theme.boxes.grey};
+    color: #000;
   }
 `
 const HealthScoreTitle = styled(Box)`
