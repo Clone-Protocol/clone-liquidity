@@ -17,11 +17,13 @@ import useDebounce from '~/hooks/useDebounce'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
+import { useRouter } from 'next/router'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
 	const [searchTerm, setSearchTerm] = useState('')
 	const debounceSearchTerm = useDebounce(searchTerm, 500)
+	const router = useRouter()
 
 	const { data: assets } = useAssetsQuery({
 		filter,
@@ -46,8 +48,7 @@ const AssetList: React.FC = () => {
 	const handleRowClick: GridEventListener<'rowClick'> = (
 		params
 	) => {
-		const link = `/assets/${params.row.id}/asset`
-		location.href = link
+		router.push(`/assets/${params.row.id}/asset`)
 	}
 
 	return (

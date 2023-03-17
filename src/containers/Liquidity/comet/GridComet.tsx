@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
@@ -8,12 +8,12 @@ import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import MiniPriceRange from '~/components/Liquidity/comet/MiniPriceRange'
-import Image from 'next/image'
 import { formatHealthScore } from '~/utils/numbers'
 import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { RecenterButton } from '~/components/Liquidity/LiquidityButton'
+import { useRouter } from 'next/router'
 
 interface Props {
 	filter: FilterType
@@ -35,6 +35,7 @@ const enum HealthScoreType {
 
 const GridComet: React.FC<Props> = ({ filter }) => {
 	const { publicKey } = useWallet()
+	const router = useRouter()
 
 	const { data: cometPools } = useCometPoolsQuery({
 		userPubKey: publicKey,
@@ -48,8 +49,7 @@ const GridComet: React.FC<Props> = ({ filter }) => {
 		event
 	) => {
 		event.preventDefault()
-		const link = `/liquidity/comet/${params.row.id}/manage`
-		location.href = link
+		router.push(`/liquidity/comet/${params.row.id}/manage`)
 	}
 
 	return (

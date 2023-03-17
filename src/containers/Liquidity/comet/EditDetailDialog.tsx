@@ -378,7 +378,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                         Adjust Liquidity to mint into USDi / {assetData.tickerSymbol} Pool
                       </Typography>
                     </Box>
-                    <Box marginTop='25px'>
+                    <Box mt='25px'>
                       <EditRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} assetData={assetData} mintAmount={mintAmount} currentMintAmount={cometDetail.mintAmount} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                     </Box>
                   </Box>
@@ -389,7 +389,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     </Stack>
                     <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                       <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                      <Typography variant='p'>{currentAggLiquidity.toLocaleString()} USD</Typography>
+                      <Typography variant='p'>${currentAggLiquidity.toLocaleString()} USD</Typography>
                     </Box>
                   </BoxWithBorder>
                 </EqualBox>

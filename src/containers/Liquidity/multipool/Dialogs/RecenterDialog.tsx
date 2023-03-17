@@ -1,3 +1,4 @@
+// @DEPRECATED : but not deleting now
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
