@@ -1,3 +1,4 @@
+//// @DEPRECATED
 import React, { useState, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, Typography } from '@mui/material'
@@ -123,7 +124,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>
-              <Typography variant='p_xlg'>Deposit New Collateral</Typography>
+              <Typography variant='p_xlg'>New Liquidity</Typography>
             </Box>
 
             <Stack direction='row' gap={4}>

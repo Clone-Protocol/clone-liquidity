@@ -231,17 +231,22 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
 
-            <Typography variant='h8'>Projected Multipool Stat</Typography>
-            <BoxWithBorder padding='15px 20px'>
+            { // MEMO : This is because when a user adds a new collateral type on devnet, they won’t see an exising healthscore. but will be add later on mainnet 
+              !isNewDeposit &&
               <Box>
-                <Box><Typography variant='p' color='#989898'>Projected Multipool Collateral Value <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Typography></Box>
-                <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
+                <Typography variant='h8'>Projected Multipool Stat</Typography>
+                <BoxWithBorder padding='15px 20px'>
+                  <Box>
+                    <Box><Typography variant='p' color='#989898'>Projected Multipool Collateral Value <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Typography></Box>
+                    <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
+                  </Box>
+                  <Box my='20px'>
+                    <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
+                    <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={430} /></Box>
+                  </Box>
+                </BoxWithBorder>
               </Box>
-              <Box my='20px'>
-                <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
-                <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={430} /></Box>
-              </Box>
-            </BoxWithBorder>
+            }
 
             <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>
               {isNewDeposit ? 'Deposit' :

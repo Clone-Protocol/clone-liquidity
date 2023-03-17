@@ -4,31 +4,31 @@ import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import RecenterDialog from './Dialogs/RecenterDialog'
-import AddPositionDialog from './Dialogs/AddPositionDialog'
+import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
-import NewLiquidityDialog from './Dialogs/NewLiquidityDialog'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
+import { useRouter } from 'next/router'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [openAddPosition, setOpenAddPosition] = useState(false)
-  const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
+  // const [openAddPosition, setOpenAddPosition] = useState(false)
+  // const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
 
-  const [selectAssetId, setSelectAssetId] = useState(0)
+  // const [selectAssetId, setSelectAssetId] = useState(0)
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
 
-  const handleChoosePosition = (assetId: number) => {
-    setSelectAssetId(assetId)
-    setOpenNewLiquidity(true)
-  }
+  // const handleChoosePosition = (assetId: number) => {
+  //   setSelectAssetId(assetId)
+  //   setOpenNewLiquidity(true)
+  // }
 
   const handleChooseEditPosition = (positionIndex: number) => {
     setPoolIndex(Number(positions[positionIndex].poolIndex))
@@ -40,6 +40,10 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenRecenter(true)
+  }
+
+  const redirectAddMultipoolPage = () => {
+    router.push(`/assets/0/asset`)
   }
 
   const { mutateAsync } = useRecenterAllMutation(publicKey)
@@ -97,24 +101,24 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       </Box>
       <Stack direction='row' justifyContent='space-between' marginTop='9px'>
         {positions.length > 0 ?
-          <AddButton onClick={() => setOpenAddPosition(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
+          <AddButton onClick={redirectAddMultipoolPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
           :
-          <AddButtonNoPosition onClick={() => setOpenEditLiquidity(true)}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
+          <AddButtonNoPosition onClick={redirectAddMultipoolPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
         }
         {/* <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton> */}
       </Stack>
 
-      <AddPositionDialog
+      {/* <AddPositionDialog
         open={openAddPosition}
         handleChoosePosition={handleChoosePosition}
         handleClose={() => setOpenAddPosition(false)}
-      />
-      <NewLiquidityDialog
+      /> */}
+      {/* <NewLiquidityDialog
         open={openNewLiquidity}
         assetIndex={selectAssetId}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenNewLiquidity(false)}
-      />
+      /> */}
       <EditLiquidityDialog
         open={openEditLiquidity}
         positionIndex={editAssetId}
@@ -123,12 +127,20 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         handleClose={() => setOpenEditLiquidity(false)}
       />
       <RecenterDialog
+        assetId={editAssetId.toString()}
+        centerPrice={0}
+        open={openRecenter}
+        onRefetchData={onRefetchData}
+        handleClose={() => setOpenRecenter(false)}
+      />
+
+      {/* <RecenterDialog
         open={openRecenter}
         positionIndex={editAssetId}
         poolIndex={poolIndex}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}
-      />
+      /> */}
     </>
   )
 

@@ -20,14 +20,13 @@ interface Props {
 const StyledSlider = styled(Slider)(({ theme }) => ({
   color: '#FFF',
   height: 4,
-  padding: '13px 0',
   marginTop: '13px',
   '& .MuiSlider-thumb': {
     zIndex: 30,
     height: 20,
     width: 20,
     backgroundColor: '#fff',
-    border: '3px solid #809cff',
+    border: '3px solid #fff',
     '&:hover': {
       boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
     },
@@ -36,15 +35,15 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     zIndex: 10,
     height: 3,
     border: 'none',
-    background: 'linear-gradient(to left, #ff0000 -12%, #7d17ff 66%)'
+    background: 'linear-gradient(to left, #ff8e4f -12%, #fff 66%)'
   },
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
     fontWeight: '600',
-    width: '51px',
-    padding: '4px 8px 4px 8px',
-    borderRadius: '10px',
-    border: 'solid 1px #809cff',
+    width: '47px',
+    height: '28px',
+    padding: '4px 8px',
+    border: 'solid 1px #fff',
     backgroundColor: '#000',
     '&:before': { display: 'none' },
   },
@@ -58,12 +57,6 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, positionInfo, maxMintable, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
   const valueLabelFormat = (value: number) => {
     return `${value.toFixed(1)}%`
-  }
-
-  const pickHex = (x: number) => {
-    const f = chroma.scale(['#7d17ff', '#ff0000']).gamma(2)
-    const rgb = f(x / 100).css()
-    return rgb
   }
 
   const handleMaxRatio = () => {
@@ -85,18 +78,13 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
 
   return (
     <Box>
-      <Box width="100%" display="flex" sx={{ alignItems: 'center' }}>
-        <Box width='100%' height='48px'>
+      <Stack direction='row' alignItems='center' justifyContent='center' p='12px 8px'>
+        <MinMaxVal><Box>0%</Box><Box>(Min)</Box></MinMaxVal>
+        <Box width='337px'>
           <StyledSlider
             sx={{
-              '& .MuiSlider-valueLabel': {
-                border: `solid 1px ${pickHex(ratio)}`,
-              },
-              '& .MuiSlider-thumb': {
-                border: `3px solid ${pickHex(ratio)}`,
-              },
               '& .MuiSlider-track': {
-                background: `linear-gradient(to left, #ff0000 -12%, #7d17ff ${ratio}%)`
+                background: `linear-gradient(to left, #ff8e4f -12%, #fff ${ratio}%)`
               }
             }}
             value={ratio}
@@ -107,17 +95,15 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             onChange={handleChangeMintRatio}
             valueLabelDisplay="on"
           />
-          <Box sx={{ position: 'relative', zIndex: '20', top: '-32px', left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
+          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
             <FixThumb />
             <FixValueLabel>{currentRatio.toFixed(1)}%</FixValueLabel>
-          </Box>
+          </PrevBox>
         </Box>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '-8px', fontSize: '11px', fontWeight: '500' }}>
-        <Box>Min</Box>
-        <Box>Max</Box>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: "center", marginTop: '25px' }}>
+        <MinMaxVal><Box>100%</Box><Box>(Max)</Box></MinMaxVal>
+      </Stack>
+
+      <Box>
         <Stack direction="row" gap={1} alignItems='flex-end'>
           <Box>
             <Stack direction="row" justifyContent="flex-end">
@@ -169,7 +155,6 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
 const StyledBox = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.blackShade};
   width: 215px;
-  margin-top: 8px;
 `
 const FixThumb = styled('div')`
   width: 20px;
@@ -182,9 +167,25 @@ const MaxValue = styled('span')`
 	color: #90e4fe; 
 	cursor: pointer;
 `
+const MinMaxVal = styled(Box)`
+  font-size: 11px;
+  font-weight: 500;
+  color: ${(props) => props.theme.palette.text.secondary};
+  line-height: 12px;
+  margin-bottom: 40px;
+  margin-right: 6px;
+  margin-left: 6px;
+`
+const PrevBox = styled(Box)`
+  position: relative; 
+  width: 83px;
+  text-align: center;
+  top: -32px;
+  z-index: 20;
+`
 const FixValueLabel = styled(Box)`
-  width: 51px;
-  height: 24px;
+  width: 47px;
+  height: 28px;
   padding: 2px 8px;
   margin-top: 8px;
   margin-left: -16px;

@@ -189,6 +189,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
 const BoxWrapper = styled(Box)`
   padding: 8px 18px; 
   color: #fff;
+  overflow-x: hidden;
 `
 const BoxWithBorder = styled(Box)`
 	border: solid 1px ${(props) => props.theme.boxes.blackShade};

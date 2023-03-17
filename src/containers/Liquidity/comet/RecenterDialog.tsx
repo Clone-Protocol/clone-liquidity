@@ -30,7 +30,7 @@ interface CometInfo {
   upperLimit: number
 }
 
-const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: { assetId: string, assetData: PI, centerPrice: number, open: boolean, handleClose: () => void }) => {
+const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, handleClose }: { assetId: string, assetData: PI, centerPrice: number, open: boolean, onRefetchData?: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
@@ -111,6 +111,7 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, handleClose }: 
             enqueueSnackbar('Successfully recentered position')
 
             refetch()
+            onRefetchData()
             handleClose()
             //hacky sync
             location.reload()
