@@ -128,7 +128,6 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       />
       <RecenterDialog
         assetId={editAssetId.toString()}
-        centerPrice={0}
         open={openRecenter}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}

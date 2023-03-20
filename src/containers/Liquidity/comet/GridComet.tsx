@@ -159,7 +159,6 @@ let columns: GridColDef[] = [
 
 					<RecenterDialog
 						assetId={params.row.id}
-						centerPrice={params.row.cPrice}
 						open={openRecenter}
 						handleClose={() => setOpenRecenter(false)}
 					/>

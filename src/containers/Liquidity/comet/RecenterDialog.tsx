@@ -13,6 +13,7 @@ import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
+import { useCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
 import { useBalanceQuery } from '~/features/Comet/Balance.query'
 import { SliderTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
@@ -30,7 +31,7 @@ interface CometInfo {
   upperLimit: number
 }
 
-const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, handleClose }: { assetId: string, assetData: PI, centerPrice: number, open: boolean, onRefetchData?: () => void, handleClose: () => void }) => {
+const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId: string, open: boolean, onRefetchData?: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
@@ -51,6 +52,13 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, 
 
   const cometIndex = parseInt(assetId)
 
+  const { data: cometDetail } = useCometDetailQuery({
+    userPubKey: publicKey,
+    index: cometIndex,
+    refetchOnMount: true,
+    enabled: publicKey != null
+  })
+
   const { data: usdiBalance, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     refetchOnMount: true,
@@ -65,7 +73,7 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, 
 
   useEffect(() => {
     async function fetch() {
-      if (open && wallet) {
+      if (open && wallet && cometDetail) {
         const program = getInceptApp(wallet)
         await program.loadManager()
         const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
@@ -88,15 +96,15 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, 
           prevHealthScore: prevHScore.healthScore,
           currentCollateral: toNumber(singlePoolCometResult.value.collaterals[cometIndex].collateralAmount),
           usdiCost,
-          centerPrice: centerPrice,
+          centerPrice: cometDetail.centerPrice,
           poolPrice: price,
-          lowerLimit: Math.min(lowerPrice, centerPrice),
-          upperLimit: Math.max(upperPrice, centerPrice)
+          lowerLimit: Math.min(lowerPrice, cometDetail.centerPrice),
+          upperLimit: Math.max(upperPrice, cometDetail.centerPrice)
         })
       }
     }
     fetch()
-  }, [open, wallet])
+  }, [open, wallet, cometDetail])
 
   const handleRecenter = async () => {
     setLoading(true)
@@ -111,7 +119,7 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, 
             enqueueSnackbar('Successfully recentered position')
 
             refetch()
-            onRefetchData()
+            onRefetchData && onRefetchData()
             handleClose()
             //hacky sync
             location.reload()
@@ -197,7 +205,7 @@ const RecenterDialog = ({ assetId, assetData, centerPrice, open, onRefetchData, 
             <BoxWithBorder mt='13px' padding='21px 24px'>
               <Box>
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
-                <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
+                <EditConcentrationRangeBox assetData={cometDetail} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
               </Box>
               <Box my='20px'>
                 <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
