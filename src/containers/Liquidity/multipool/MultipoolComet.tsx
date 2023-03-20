@@ -1,4 +1,5 @@
-import { Box, Stack, Grid, Typography } from '@mui/material'
+import { useState } from 'react'
+import { Box, Stack, Grid, Typography, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import { useWallet } from '@solana/wallet-adapter-react'
 import withSuspense from '~/hocs/withSuspense'
@@ -7,6 +8,7 @@ import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 import HealthscoreView from '~/components/Liquidity/multipool/HealthscoreView'
+import CloseEntireCometPoolDialog from './Dialogs/CloseEntireCometPoolDialog'
 
 const MultipoolComet = () => {
   const { publicKey } = useWallet()
@@ -15,6 +17,7 @@ const MultipoolComet = () => {
     refetchOnMount: "always",
     enabled: publicKey != null
   })
+  const [openCloseEntireDlog, setOpenCloseEntireDlog] = useState(false)
 
   return infos ? (
     <Wrapper>
@@ -68,7 +71,7 @@ const MultipoolComet = () => {
             </Box>
             <Collaterals hasNoCollateral={infos.hasNoCollateral} collaterals={infos.collaterals} onRefetchData={() => refetch()} />
           </CardWrapper>
-        </Grid >
+        </Grid>
         <Grid item xs={12} md={8}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <Box marginBottom='12px'>
@@ -79,8 +82,14 @@ const MultipoolComet = () => {
             }
           </CardWrapper>
         </Grid>
-      </BoxGrid >
-    </Wrapper >
+      </BoxGrid>
+      <CloseButton onClick={() => setOpenCloseEntireDlog(true)}><Typography variant='p_sm'>Close Entire Multi-pool</Typography></CloseButton>
+
+      <CloseEntireCometPoolDialog
+        open={openCloseEntireDlog}
+        handleClose={() => setOpenCloseEntireDlog(false)}
+      />
+    </Wrapper>
   ) : <></>
 }
 
@@ -103,6 +112,19 @@ const BoxGrid = styled(Grid)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
   margin-top: 25px;
   padding: 15px 5px;
+`
+const CloseButton = styled(Button)`
+  width: 239px;
+  height: 28px;
+  padding: 4px 0;
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  color: ${(props) => props.theme.palette.text.secondary};
+  margin-top: 9px;
+  &:hover {
+    background: ${(props) => props.theme.boxes.darkBlack};
+    color: #fff;
+    border-color: ${(props) => props.theme.palette.text.secondary};
+  }
 `
 
 export default withSuspense(MultipoolComet, <LoadingProgress />)
