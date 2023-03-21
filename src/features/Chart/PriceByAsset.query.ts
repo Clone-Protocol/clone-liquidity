@@ -1,12 +1,12 @@
 import { Query, useQuery } from 'react-query'
 import { ChartElem } from './Liquidity.query'
 
-export const fetchPriceHistory = async ({ tickerSymbol } : { tickerSymbol: string | undefined}) => {
+export const fetchPriceHistory = async ({ tickerSymbol }: { tickerSymbol: string | undefined }) => {
   if (!tickerSymbol) return null
-  
+
   // @TODO: need providing price history based on ticker symbol
-  
-	const chartData = [
+
+  const chartData = [
     {
       time: '2022-03-01',
       value: 15
@@ -29,13 +29,13 @@ export const fetchPriceHistory = async ({ tickerSymbol } : { tickerSymbol: strin
     },
   ]
 
-  const assetPrice = 160.51
+  const currentPrice = 160.51
   const rateOfPrice = 2.551 // or -2.551
   const percentOfRate = 1.58
 
   return {
     chartData,
-    assetPrice,
+    currentPrice,
     rateOfPrice,
     percentOfRate
   }
@@ -43,7 +43,7 @@ export const fetchPriceHistory = async ({ tickerSymbol } : { tickerSymbol: strin
 
 export interface PriceHistory {
   chartData: ChartElem[]
-  assetPrice: number
+  currentPrice: number
   rateOfPrice: number
   percentOfRate: number
 }

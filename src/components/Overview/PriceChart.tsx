@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useTotalLiquidityQuery } from '~/features/Chart/Liquidity.query'
 import LineChart from '~/components/Charts/LineChart'
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
+import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 // import { unixToDate } from '~/utils/date'
 
 interface Props {
@@ -14,41 +15,41 @@ interface Props {
 
 const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
   // TODO: need to change other query
-  const { data: totalLiquidity } = useTotalLiquidityQuery({
-    timeframe: '24h',
-    refetchOnMount: false,
-    enabled: true
-  })
-
-  // const { data: priceHistory } = usePriceHistoryQuery({
-  //   tickerSymbol: borrowAsset?.tickerSymbol,
+  // const { data: totalLiquidity } = useTotalLiquidityQuery({
+  //   timeframe: '24h',
   //   refetchOnMount: false,
-  //   enabled: borrowAsset != null
+  //   enabled: true
   // })
 
+  const { data: priceHistory } = usePriceHistoryQuery({
+    tickerSymbol: assetData?.tickerSymbol,
+    refetchOnMount: false,
+    enabled: assetData != null
+  })
+
   return (
-    <>
-      <Box display="flex">
-        <Box mr='10px'>
-          <Image src={assetData.tickerIcon} width={30} height={30} />
+    priceHistory ?
+      <>
+        <Box display="flex">
+          <Box mr='10px'>
+            <Image src={assetData.tickerIcon} width={30} height={30} />
+          </Box>
+          <Typography variant='p_xxlg'>{assetData.tickerName} ({assetData.tickerSymbol})</Typography>
         </Box>
-        <Typography variant='p_xxlg'>{assetData.tickerName} ({assetData.tickerSymbol})</Typography>
-      </Box>
-      <Box display='flex' alignItems='center'>
-        <Typography variant='p_xxxlg'>
-          ${assetData.price?.toLocaleString(undefined, { maximumFractionDigits: 3 })}
-        </Typography>
-        <Typography variant='p_sm' color='#989898' ml='10px'>
-          {priceTitle}
-        </Typography>
-      </Box>
-      {/* 
-        <TxtPriceRate>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</TxtPriceRate>
-       */}
-      <LineChart
-        data={totalLiquidity?.chartData}
-      />
-    </>
+        <Box display='flex' alignItems='center'>
+          <Typography variant='p_xxxlg'>
+            ${priceHistory.currentPrice?.toLocaleString(undefined, { maximumFractionDigits: 3 })}
+          </Typography>
+          <Typography variant='p_sm' color='#989898' ml='10px'>
+            {priceTitle}
+          </Typography>
+        </Box>
+        <Typography variant='p' color='#4fe5ff'>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</Typography>
+        <LineChart
+          data={priceHistory?.chartData}
+        />
+      </>
+      : <></>
   )
 }
 
