@@ -76,17 +76,19 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
         </LeftBoxWrapper>
       </Box>
       <RightBoxWrapper>
-        {(tab === 0 || (tab === 1 && (cometDetail.mintIassetAmount !== 0 && cometDetail.mintAmount !== 0))) &&
-          <Box>
-            <PriceChart assetData={cometDetail} priceTitle='iAsset Price' />
-            <PoolAnalytics tickerSymbol={cometDetail.tickerSymbol} />
-          </Box>
-        }
-        {tab === 1 && cometDetail.mintIassetAmount === 0 && cometDetail.mintAmount === 0 &&
-          <Box>
-            <DisabledCloseCometWarningMsg />
-          </Box>
-        }
+        <StickyBox>
+          {(tab === 0 || (tab === 1 && (cometDetail.mintIassetAmount !== 0 && cometDetail.mintAmount !== 0))) &&
+            <Box>
+              <PriceChart assetData={cometDetail} priceTitle='iAsset Price' />
+              <PoolAnalytics tickerSymbol={cometDetail.tickerSymbol} />
+            </Box>
+          }
+          {tab === 1 && cometDetail.mintIassetAmount === 0 && cometDetail.mintAmount === 0 &&
+            <Box>
+              <DisabledCloseCometWarningMsg />
+            </Box>
+          }
+        </StickyBox>
       </RightBoxWrapper>
     </Stack>
   ) : <></>
@@ -101,6 +103,10 @@ const LeftBoxWrapper = styled(Box)`
 const RightBoxWrapper = styled(Box)`
 	width: 450px;
 	padding: 20px;
+`
+const StickyBox = styled(Box)`
+  position: sticky;
+  top: 100px;
 `
 
 export default withSuspense(ManageComet, <LoadingProgress />)

@@ -29,13 +29,14 @@ import { createAccountDialogState, declinedAccountCreationState, isCreatingAccou
 import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import ReminderNewWalletPopup from './Account/ReminderNewWalletPopup'
+import MobileWarningDialog from './Common/MobileWarningDialog'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
 	const { pathname, push } = router
 	const [path, setPath] = useState<string>('/')
 	const [mobileNavToggle, setMobileNavToggle] = useState(false)
-	const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'))
+	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
 	const { scrolled } = useScroll()
 
@@ -74,6 +75,7 @@ const GNB: React.FC = () => {
 						</Box>
 					</Toolbar>
 				</Container>
+				<MobileWarningDialog open={isMobile} handleClose={() => { return null }} />
 			</StyledAppBar>
 		</>
 	)

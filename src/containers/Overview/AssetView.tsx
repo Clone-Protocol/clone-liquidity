@@ -114,8 +114,10 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 				</Box>
 
 				<RightBoxWrapper>
-					<PriceChart assetData={assetData} priceTitle='iAsset Price' />
-					<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
+					<StickyBox>
+						<PriceChart assetData={assetData} priceTitle='iAsset Price' />
+						<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
+					</StickyBox>
 				</RightBoxWrapper>
 			</Stack>
 
@@ -138,6 +140,10 @@ const LeftBoxWrapper = styled(Box)`
 const RightBoxWrapper = styled(Box)`
 	width: 450px;
 	padding: 20px;
+`
+const StickyBox = styled(Box)`
+  position: sticky;
+  top: 100px;
 `
 const SelectPoolBox = styled(Box)`
 	display: flex;

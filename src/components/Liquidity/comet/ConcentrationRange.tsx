@@ -1,7 +1,7 @@
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import React, { useState, useEffect } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import Slider, { SliderThumb } from '@mui/material/Slider'
 import { PositionInfo, CometInfo } from '~/features/MyLiquidity/CometPosition.query'
 
@@ -123,7 +123,7 @@ function ThumbComponent(props: ThumbComponentProps) {
 	)
 }
 
-const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, onChangeCommitted, max, defaultLower, defaultUpper }) => {
+const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, max, defaultLower, defaultUpper }) => {
 	const minLimit = 0
 	const maxLimit = max
 
@@ -147,11 +147,15 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 	})
 
 	useEffect(() => {
-		setValue([parseFloat(cometData.lowerLimit.toFixed(3)), parseFloat(cometData.upperLimit.toFixed(3))])
+		setValue([parseFloat(cometData.lowerLimit.toFixed(5)), parseFloat(cometData.upperLimit.toFixed(5))])
 	}, [cometData.lowerLimit, cometData.upperLimit])
 
 	return (
-		<Box sx={{ position: 'relative' }} width='404px' margin='0 auto'>
+		<Box sx={{ position: 'relative' }} width='100%' margin='0 auto'>
+			<Stack direction='row' justifyContent='space-between'>
+				<Box><Typography variant='p'>{cometData.lowerLimit.toFixed(5)}</Typography></Box>
+				<Box><Typography variant='p'>{cometData.upperLimit.toFixed(5)}</Typography></Box>
+			</Stack>
 			<RangeSlider
 				sx={trackCss}
 				min={minLimit}
@@ -160,11 +164,11 @@ const ConcentrationRange: React.FC<Props> = ({ assetData, cometData, onChange, o
 				components={{ Thumb: ThumbComponent }}
 				defaultValue={[defaultLower, defaultUpper]}
 				disableSwap
-				valueLabelDisplay="on"
+				valueLabelDisplay="off"
 				value={value}
 			/>
 			<CenterPriceBox sx={{ left: `calc(${centerPricePercent}% - 35px)` }}>
-				<Typography variant='p'>{assetData.price.toFixed(3)}</Typography>
+				<Typography variant='p'>{assetData.price.toFixed(5)}</Typography>
 				<Stick />
 			</CenterPriceBox>
 		</Box>
