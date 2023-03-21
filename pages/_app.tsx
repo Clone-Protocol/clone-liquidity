@@ -14,6 +14,7 @@ import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvider'
 import './styles.css'
 import { RecoilRoot } from 'recoil'
+import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
@@ -24,23 +25,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <ThemeProvider theme={theme}>
           <SnackbarProvider maxSnack={3}>
             <ClientWalletProvider>
-              <DataLoadingIndicatorProvider>
-                <Box display='flex' sx={{ backgroundColor: '#000' }}>
-                  <CssBaseline />
-                  <GNB />
-                  <Drawer />
+              <TransactionStateProvider>
+                <DataLoadingIndicatorProvider>
+                  <Box display='flex' sx={{ backgroundColor: '#000' }}>
+                    <CssBaseline />
+                    <GNB />
+                    <Drawer />
 
-                  <Box
-                    component="main"
-                    sx={{
-                      flexGrow: 1,
-                      height: '100vh',
-                      overflow: 'auto',
-                    }}>
-                    {getLayout(<Component {...pageProps} />)}
+                    <Box
+                      component="main"
+                      sx={{
+                        flexGrow: 1,
+                        height: '100vh',
+                        overflow: 'auto',
+                      }}>
+                      {getLayout(<Component {...pageProps} />)}
+                    </Box>
                   </Box>
-                </Box>
-              </DataLoadingIndicatorProvider>
+                </DataLoadingIndicatorProvider>
+              </TransactionStateProvider>
             </ClientWalletProvider>
           </SnackbarProvider>
         </ThemeProvider>

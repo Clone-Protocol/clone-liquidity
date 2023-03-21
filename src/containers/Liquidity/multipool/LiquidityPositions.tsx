@@ -8,12 +8,12 @@ import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
-import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
+// import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 import { useRouter } from 'next/router'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
-  const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
+  // const { publicKey } = useWallet()
+  // const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   // const [openAddPosition, setOpenAddPosition] = useState(false)
@@ -46,7 +46,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     router.push(`/assets/0/asset`)
   }
 
-  const { mutateAsync } = useRecenterAllMutation(publicKey)
+  // const { mutateAsync } = useRecenterAllMutation(publicKey)
   // const handleRecenterAll = async () => {
   //   setLoading(true)
   //   await mutateAsync(
@@ -128,7 +128,6 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       />
       <RecenterDialog
         assetId={editAssetId.toString()}
-        centerPrice={0}
         open={openRecenter}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}

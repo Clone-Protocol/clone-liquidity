@@ -67,10 +67,10 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
         </LeftBoxWrapper>
       </Box>
       <RightBoxWrapper>
-        <Box>
+        <StickyBox>
           <PriceChart assetData={borrowDetail} priceTitle='Oracle Price' />
           <PositionAnalytics tickerSymbol={borrowDetail.tickerSymbol} />
-        </Box>
+        </StickyBox>
       </RightBoxWrapper>
     </Stack>
   ) : <></>
@@ -85,6 +85,10 @@ const LeftBoxWrapper = styled(Box)`
 const RightBoxWrapper = styled(Box)`
 	width: 450px;
 	padding: 20px;
+`
+const StickyBox = styled(Box)`
+  position: sticky;
+  top: 100px;
 `
 
 export default withSuspense(ManageBorrow, <LoadingProgress />)

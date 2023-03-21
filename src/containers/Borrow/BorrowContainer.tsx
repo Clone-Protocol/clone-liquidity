@@ -45,8 +45,10 @@ const BorrowContainer = () => {
         </Box>
 
         <RightBoxWrapper>
-          <PriceChart assetData={borrowAsset} priceTitle='Oracle Price' />
-          <PositionAnalytics tickerSymbol={borrowAsset.tickerSymbol} />
+          <StickyBox>
+            <PriceChart assetData={borrowAsset} priceTitle='Oracle Price' />
+            <PositionAnalytics tickerSymbol={borrowAsset.tickerSymbol} />
+          </StickyBox>
         </RightBoxWrapper>
       </Stack>
     </StyledBox>
@@ -71,5 +73,9 @@ const LeftBoxWrapper = styled(Box)`
 const RightBoxWrapper = styled(Box)`
 	width: 450px;
 	padding: 20px;
+`
+const StickyBox = styled(Box)`
+  position: sticky;
+  top: 100px;
 `
 export default withSuspense(BorrowContainer, <LoadingProgress />)

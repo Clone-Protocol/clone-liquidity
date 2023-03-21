@@ -125,3 +125,29 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 		return useMutation(() => funcNoWallet())
 	}
 }
+
+export const callCloseAll = async ({ program, userPubKey }: CallCloseAllProps) => {
+	if (!userPubKey) throw new Error('no user public key')
+
+	await program.loadManager()
+
+	//@TODO
+
+	return {
+		result: true
+	}
+}
+
+interface CallCloseAllProps {
+	program: InceptClient
+	userPubKey: PublicKey | null
+}
+export function useCloseAllPositionMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	if (wallet) {
+		return useMutation(() => callCloseAll({ program: getInceptApp(wallet), userPubKey }))
+	} else {
+		return useMutation(() => funcNoWallet())
+	}
+}
