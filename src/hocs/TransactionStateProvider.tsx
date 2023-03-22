@@ -4,6 +4,7 @@ import TransactionStateSnackbar from '~/components/Common/TransactionStateSnackb
 
 export const TransactionStateProvider: FC = ({ children, ...props }) => {
   const [txState, setTxState] = useState(TransactionState.INIT)
+  // const [showSnackbar, setShowSnackbar] = useState(true)
 
   return (
     <TransactionStateContext.Provider
@@ -13,7 +14,9 @@ export const TransactionStateProvider: FC = ({ children, ...props }) => {
       }}>
       {children}
 
-      {/* <TransactionStateSnackbar open={true} handleClose={() => { return null }} /> */}
+      {txState !== TransactionState.INIT &&
+        <TransactionStateSnackbar txState={txState} txHash={''} open={true} handleClose={() => { setTxState(TransactionState.INIT) }} />
+      }
     </TransactionStateContext.Provider>
   )
 }

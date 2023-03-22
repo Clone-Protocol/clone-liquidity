@@ -7,6 +7,7 @@ import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } fr
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
+import { TransactionState, useTransactionState } from "~/hooks/useTransactionState"
 
 export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -285,7 +286,7 @@ const runMintInstructions = async (
 	await incept.provider.sendAndConfirm!(tx, signers);
 }
 
-export const callBorrow = async ({ program, userPubKey, data }: CallBorrowProps) => {
+export const callBorrow = async ({ program, userPubKey, setTxState, data }: CallBorrowProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('borrow input data', data)
@@ -304,18 +305,21 @@ export const callBorrow = async ({ program, userPubKey, data }: CallBorrowProps)
 		program.provider.connection
 	)
 
-	await runMintInstructions(
-		program,
-		new anchor.BN(iassetAmount * 10 ** 8),
-		new anchor.BN(collateralAmount * 10 ** 8),
-		iassetAssociatedTokenAccount,
-		collateralAssociatedTokenAccount!,
-		iassetIndex,
-		collateralIndex
-	)
-
-	return {
-		result: true,
+	// @TODO: need to set this on sdk part.
+	setTxState(TransactionState.PENDING)
+	try {
+		await runMintInstructions(
+			program,
+			new anchor.BN(iassetAmount * 10 ** 8),
+			new anchor.BN(collateralAmount * 10 ** 8),
+			iassetAssociatedTokenAccount,
+			collateralAssociatedTokenAccount!,
+			iassetIndex,
+			collateralIndex
+		)
+		setTxState(TransactionState.SUCCESS)
+	} catch (e) {
+		setTxState(TransactionState.FAIL)
 	}
 }
 
@@ -329,13 +333,16 @@ type BorrowFormData = {
 interface CallBorrowProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionState) => void
 	data: BorrowFormData
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation(() => funcNoWallet())
 	}
