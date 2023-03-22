@@ -1,37 +1,39 @@
+import moment from 'moment'
 import { Query, useQuery } from 'react-query'
 import { ChartElem } from './Liquidity.query'
+import { fetchPythPriceHistory } from '~/utils/pyth'
 
-export const fetchPriceHistory = async ({ tickerSymbol }: { tickerSymbol: string | undefined }) => {
-  if (!tickerSymbol) return null
 
-  // @TODO: need providing price history based on ticker symbol
+export const fetchPriceHistory = async ({ pythSymbol }: { pythSymbol: string | undefined }) => {
+  if (!pythSymbol) return null
 
-  const chartData = [
-    {
-      time: '2022-03-01',
-      value: 15
-    },
-    {
-      time: '2022-03-02',
-      value: 35
-    },
-    {
-      time: '2022-03-03',
-      value: 80
-    },
-    {
-      time: '2022-03-04',
-      value: 65
-    },
-    {
-      time: '2022-03-05',
-      value: 115
-    },
-  ]
+  const history = await fetchPythPriceHistory(
+    pythSymbol,
+    "devnet",
+    "1M"
+  );
+  
+  const chartData = history.map((data) => {
+    return {time: data.timestamp, value: data.close_price}
+  })
 
-  const currentPrice = 160.51
-  const rateOfPrice = 2.551 // or -2.551
-  const percentOfRate = 1.58
+  const lastEntry = chartData[chartData.length-1];
+
+  const previous24hrDatetime = moment(lastEntry.time).utc(
+  ).subtract(1, 'days');
+
+  let previous24hrPrice = lastEntry.value;
+  for (let {time, value} of chartData) {
+    const entryTime = moment(time).utc()
+    if (entryTime > previous24hrDatetime) {
+      break;
+    }
+    previous24hrPrice = value;
+  }
+
+  const currentPrice = lastEntry.value;
+  const rateOfPrice = currentPrice - previous24hrPrice
+  const percentOfRate = 100 * rateOfPrice / previous24hrPrice
 
   return {
     chartData,
@@ -49,13 +51,13 @@ export interface PriceHistory {
 }
 
 interface GetProps {
-  tickerSymbol: string | undefined
+  pythSymbol: string | undefined
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
-export function usePriceHistoryQuery({ tickerSymbol, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['priceHistory', tickerSymbol], () => fetchPriceHistory({ tickerSymbol }), {
+export function usePriceHistoryQuery({ pythSymbol, refetchOnMount, enabled = true }: GetProps) {
+  return useQuery(['priceHistory', pythSymbol], () => fetchPriceHistory({ pythSymbol }), {
     refetchOnMount,
     enabled
   })
