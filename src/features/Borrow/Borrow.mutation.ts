@@ -7,7 +7,8 @@ import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } fr
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
-import { TransactionState, useTransactionState } from "~/hooks/useTransactionState"
+import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
+import { sendAndConfirm } from '~/utils/tx_helper';
 
 export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -236,7 +237,8 @@ const runMintInstructions = async (
 	iassetAccount: PublicKey | undefined,
 	usdiAccount: PublicKey,
 	iassetIndex: number,
-	collateralIndex: number
+	collateralIndex: number,
+	setTxState: (state: TransactionStateType) => void
 ) => {
 	const tokenData = await incept.getTokenData();
 	let iassetMint = tokenData.pools[iassetIndex].assetInfo.iassetMint
@@ -283,7 +285,8 @@ const runMintInstructions = async (
 		)
 	)
 
-	await incept.provider.sendAndConfirm!(tx, signers);
+	// await incept.provider.sendAndConfirm!(tx, signers);
+	await sendAndConfirm(incept, tx, signers, setTxState)
 }
 
 export const callBorrow = async ({ program, userPubKey, setTxState, data }: CallBorrowProps) => {
@@ -305,21 +308,19 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 		program.provider.connection
 	)
 
-	// @TODO: need to set this on sdk part.
-	setTxState(TransactionState.PENDING)
-	try {
-		await runMintInstructions(
-			program,
-			new anchor.BN(iassetAmount * 10 ** 8),
-			new anchor.BN(collateralAmount * 10 ** 8),
-			iassetAssociatedTokenAccount,
-			collateralAssociatedTokenAccount!,
-			iassetIndex,
-			collateralIndex
-		)
-		setTxState(TransactionState.SUCCESS)
-	} catch (e) {
-		setTxState(TransactionState.FAIL)
+	await runMintInstructions(
+		program,
+		new anchor.BN(iassetAmount * 10 ** 8),
+		new anchor.BN(collateralAmount * 10 ** 8),
+		iassetAssociatedTokenAccount,
+		collateralAssociatedTokenAccount!,
+		iassetIndex,
+		collateralIndex,
+		setTxState,
+	)
+
+	return {
+		result: true
 	}
 }
 
@@ -333,7 +334,7 @@ type BorrowFormData = {
 interface CallBorrowProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
-	setTxState: (state: TransactionState) => void
+	setTxState: (state: TransactionStateType) => void
 	data: BorrowFormData
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {

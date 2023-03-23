@@ -7,9 +7,14 @@ export enum TransactionState {
   FAIL,
 }
 
+export type TransactionStateType = {
+  state: TransactionState,
+  txHash: string
+}
+
 export interface TransactionStateContextState {
-  txState: TransactionState
-  setTxState: (state: TransactionState) => void
+  txState: TransactionStateType
+  setTxState: (state: TransactionStateType) => void
 }
 
 export const TransactionStateContext = createContext<TransactionStateContextState>({} as TransactionStateContextState)
