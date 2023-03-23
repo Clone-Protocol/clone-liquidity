@@ -8,7 +8,7 @@ import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useMultipoolInfoQuery } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 import HealthscoreView from '~/components/Liquidity/multipool/HealthscoreView'
-import CloseEntireCometPoolDialog from './Dialogs/CloseEntireCometPoolDialog'
+// import CloseEntireCometPoolDialog from './Dialogs/CloseEntireCometPoolDialog'
 
 const MultipoolComet = () => {
   const { publicKey } = useWallet()
@@ -83,12 +83,12 @@ const MultipoolComet = () => {
           </CardWrapper>
         </Grid>
       </BoxGrid>
-      <CloseButton onClick={() => setOpenCloseEntireDlog(true)}><Typography variant='p_sm'>Close Entire Multi-pool</Typography></CloseButton>
+      {/* <CloseButton onClick={() => setOpenCloseEntireDlog(true)}><Typography variant='p_sm'>Close Entire Multi-pool</Typography></CloseButton>
 
       <CloseEntireCometPoolDialog
         open={openCloseEntireDlog}
         handleClose={() => setOpenCloseEntireDlog(false)}
-      />
+      /> */}
     </Wrapper>
   ) : <></>
 }
@@ -113,18 +113,18 @@ const BoxGrid = styled(Grid)`
   margin-top: 25px;
   padding: 15px 5px;
 `
-const CloseButton = styled(Button)`
-  width: 239px;
-  height: 28px;
-  padding: 4px 0;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  color: ${(props) => props.theme.palette.text.secondary};
-  margin-top: 9px;
-  &:hover {
-    background: ${(props) => props.theme.boxes.darkBlack};
-    color: #fff;
-    border-color: ${(props) => props.theme.palette.text.secondary};
-  }
-`
+// const CloseButton = styled(Button)`
+//   width: 239px;
+//   height: 28px;
+//   padding: 4px 0;
+//   border: solid 1px ${(props) => props.theme.boxes.greyShade};
+//   color: ${(props) => props.theme.palette.text.secondary};
+//   margin-top: 9px;
+//   &:hover {
+//     background: ${(props) => props.theme.boxes.darkBlack};
+//     color: #fff;
+//     border-color: ${(props) => props.theme.palette.text.secondary};
+//   }
+// `
 
 export default withSuspense(MultipoolComet, <LoadingProgress />)

@@ -121,7 +121,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
   }, [collAmount, collRatio])
 
   const onBorrow = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         collateralIndex: 0,
@@ -134,14 +134,14 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
           if (data) {
             console.log('data', data)
             enqueueSnackbar('Successfully established borrow position')
-            setLoading(false)
+            // setLoading(false)
             initData()
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error establishing borrow position')
-          setLoading(false)
+          // enqueueSnackbar('Error establishing borrow position')
+          // setLoading(false)
         }
       }
     )

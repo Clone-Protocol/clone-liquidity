@@ -46,7 +46,7 @@ const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const onError = useCallback(
 		(error: WalletError) => {
 			enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' })
-			console.error(error)
+			console.log('error', error)
 		},
 		[enqueueSnackbar]
 	)
