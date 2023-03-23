@@ -1,6 +1,7 @@
 import { Box, Stack, Divider, Typography, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import GridComet from '~/containers/Liquidity/comet/GridComet'
 import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
@@ -53,7 +54,9 @@ const LiquidityTable: React.FC = () => {
   })
 
   //TODO : set no position
-  const hasNoPosition = true
+  const hasNoPosition = false
+
+  const newPositionUrl = tab === 3 ? '/borrow' : `/assets/0/asset?ltab=${tab}`
 
   return (
     <div>
@@ -74,7 +77,7 @@ const LiquidityTable: React.FC = () => {
           <Stack direction='row' justifyContent='space-between' alignItems='flex-end' paddingTop='22px'>
             <MyStatusValues tab={tab} status={status} />
 
-            <NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton>
+            <Link href={newPositionUrl}><NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton></Link>
           </Stack>
         }
       </Box>

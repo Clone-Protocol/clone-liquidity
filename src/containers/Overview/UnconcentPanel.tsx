@@ -52,7 +52,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
             enqueueSnackbar('Successfully established unconcentrated liquidity position')
             setLoading(false)
             initData()
-            router.push('/liquidity?ltab=1')
+            router.push('/liquidity?ltab=2')
           }
         },
         onError(err) {

@@ -1,5 +1,5 @@
 import MuiDrawer from '@mui/material/Drawer'
-import { styled, List, ListItemButton, Box, Stack, Fade, Typography } from '@mui/material'
+import { styled, List, ListItemButton, Fade, Typography } from '@mui/material'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'

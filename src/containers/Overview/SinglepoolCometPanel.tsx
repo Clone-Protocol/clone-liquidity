@@ -287,7 +287,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                   />
                 )}
               />
-              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
             </Box>
             <Box width='275px'>
               <PairInputView
@@ -298,6 +297,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
               />
             </Box>
           </Stack>
+          <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
         </Box>
         <BoxWithBorder padding="15px 24px">
           <Stack direction='row' justifyContent='space-between'>
