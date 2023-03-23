@@ -46,7 +46,7 @@ const BorrowBox = () => {
   }, [lAssetId])
 
   const { data: priceHistory } = usePriceHistoryQuery({
-    tickerSymbol: borrowAsset?.tickerSymbol,
+    pythSymbol: borrowAsset?.pythSymbol,
     refetchOnMount: false,
     enabled: borrowAsset != null
   })

@@ -22,11 +22,12 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
   let maxRange = 2 * price
   let centerPrice = price
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+  const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
   return {
     tickerIcon: tickerIcon,
     tickerName: tickerName,
     tickerSymbol: tickerSymbol,
+    pythSymbol,
     price,
     tightRange,
     maxRange,
@@ -142,6 +143,7 @@ export interface PositionInfo {
   tickerIcon: string
   tickerName: string
   tickerSymbol: string | null
+  pythSymbol: string
   price: number
   tightRange?: number
   maxRange?: number
