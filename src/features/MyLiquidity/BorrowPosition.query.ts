@@ -27,12 +27,13 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
   cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(index)
+  const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
 
   return {
     tickerIcon: tickerIcon,
     tickerName: tickerName,
     tickerSymbol: tickerSymbol,
+    pythSymbol,
     oPrice,
     stableCollateralRatio,
     cryptoCollateralRatio,
@@ -55,7 +56,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   let mint = borrowPositionResult.value.borrowPositions[index];
   const poolIndex = Number(mint.poolIndex)
 
-  const { tickerIcon, tickerName, tickerSymbol } = assetMapping(poolIndex)
+  const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
   const assetInfo = tokenDataResult.value.pools[poolIndex].assetInfo;
   const oraclePrice = toNumber(assetInfo.price);
   const positionsData = getUserMintInfos(tokenDataResult.value, borrowPositionResult.value);
@@ -77,6 +78,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     tickerIcon: tickerIcon,
     tickerName: tickerName,
     tickerSymbol: tickerSymbol,
+    pythSymbol,
     price: oraclePrice,
     stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
     cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),

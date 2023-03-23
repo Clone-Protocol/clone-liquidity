@@ -37,7 +37,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   });
 
   const { data: priceHistory } = usePriceHistoryQuery({
-    tickerSymbol: borrowDetail?.tickerSymbol,
+    pythSymbol: borrowDetail?.pythSymbol,
     refetchOnMount: false,
     enabled: borrowDetail != null
   })

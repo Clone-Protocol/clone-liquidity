@@ -22,7 +22,7 @@ const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
   // })
 
   const { data: priceHistory } = usePriceHistoryQuery({
-    tickerSymbol: assetData?.tickerSymbol,
+    pythSymbol: assetData?.pythSymbol,
     refetchOnMount: false,
     enabled: assetData != null
   })
