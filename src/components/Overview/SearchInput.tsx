@@ -44,7 +44,7 @@ const StyledInput = styled(Input)`
     margin-left: 35px;
 
     &::placeholder {
-      color: ${(props) => props.theme.palette.text.secondary};
+      color: ${(props) => props.theme.palette.text.greyShade};
     }
   }
 `

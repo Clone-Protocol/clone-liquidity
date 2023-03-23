@@ -35,7 +35,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 
 	// sub routing for tab
 	useEffect(() => {
-		if (ltab && parseInt(ltab.toString()) <= 1) {
+		if (ltab && parseInt(ltab.toString()) <= 2) {
 			setTab(parseInt(ltab.toString()))
 		}
 	}, [ltab])

@@ -67,7 +67,6 @@ const DollarView = styled('div')`
 	font-size: 10px; 
 	text-align: right; 
 	color: #b9b9b9; 
-	margin-right: 18px;
 `
 
 // const PlusButton = styled('div')`

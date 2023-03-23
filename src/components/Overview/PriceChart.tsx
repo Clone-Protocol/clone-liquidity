@@ -44,7 +44,7 @@ const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
             {priceTitle}
           </Typography>
         </Box>
-        <Typography variant='p' color='#4fe5ff'>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate}%) past 24h</Typography>
+        <Typography variant='p' color='#4fe5ff'>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate.toFixed(2)}%) past 24h</Typography>
         <LineChart
           data={priceHistory?.chartData}
         />

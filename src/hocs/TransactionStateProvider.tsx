@@ -3,7 +3,11 @@ import { TransactionStateContext, TransactionState } from '~/hooks/useTransactio
 import TransactionStateSnackbar from '~/components/Common/TransactionStateSnackbar'
 
 export const TransactionStateProvider: FC = ({ children, ...props }) => {
-  const [txState, setTxState] = useState(TransactionState.INIT)
+  const [txState, setTxState] = useState({
+    state: TransactionState.INIT,
+    txHash: '',
+  })
+  // const [showSnackbar, setShowSnackbar] = useState(true)
 
   return (
     <TransactionStateContext.Provider
@@ -13,7 +17,9 @@ export const TransactionStateProvider: FC = ({ children, ...props }) => {
       }}>
       {children}
 
-      {/* <TransactionStateSnackbar open={true} handleClose={() => { return null }} /> */}
+      {txState.state !== TransactionState.INIT &&
+        <TransactionStateSnackbar txState={txState.state} txHash={txState.txHash} open={true} handleClose={() => { setTxState({ state: TransactionState.INIT, txHash: '' }) }} />
+      }
     </TransactionStateContext.Provider>
   )
 }

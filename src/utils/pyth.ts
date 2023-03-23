@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-type Network = "devnet" | "mainnet";
+type Network = "devnet" | "mainnet-beta" | "pythnet" | "testnet" | "pythtest";
 type Range = "1H" | "1D" | "1W" | "1M"
 
 export interface PythData {

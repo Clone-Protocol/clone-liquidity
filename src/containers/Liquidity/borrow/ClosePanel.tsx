@@ -38,7 +38,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
             console.log('data', data)
             enqueueSnackbar('Successfully closed position')
             setLoading(false)
-            router.push('/liquidity?ltab=2')
+            router.push('/liquidity?ltab=3')
           }
         },
         onError(err) {
