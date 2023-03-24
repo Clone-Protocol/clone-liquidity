@@ -130,6 +130,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       <RecenterDialog
         assetId={editAssetId.toString()}
         open={openRecenter}
+        isMultipool={true}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}
       />

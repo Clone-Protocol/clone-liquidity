@@ -45,7 +45,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
   await program.loadManager()
 
-
   const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
     program.getTokenData(), program.getSinglePoolComets()
   ]);
@@ -73,6 +72,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   let healthScore = 0
   let lowerLimit = 0
   let upperLimit = 0
+  let pythSymbol = ''
 
   if (Number(position.poolIndex) < 255) {
     let pool = tokenData.pools[position.poolIndex];
@@ -83,6 +83,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     centerPrice = getMantissa(position.borrowedIasset) === 0 ? 0 : getMantissa(position.borrowedUsdi) / getMantissa(position.borrowedIasset)
 
     const asset = assetMapping(Number(position.poolIndex))
+    pythSymbol = asset.pythSymbol
     tickerIcon = asset.tickerIcon
     tickerName = asset.tickerName
     tickerSymbol = asset.tickerSymbol
@@ -118,6 +119,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     tickerIcon: tickerIcon,
     tickerName: tickerName,
     tickerSymbol: tickerSymbol,
+    pythSymbol,
     price,
     tightRange,
     maxRange,

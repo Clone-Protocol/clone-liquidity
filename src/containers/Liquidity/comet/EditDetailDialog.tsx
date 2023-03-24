@@ -395,7 +395,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                 </EqualBox>
                 <EqualBox>
                   <Box><Typography variant='h8'>Projected Values</Typography></Box>
-                  <BoxWithBorder mt='13px' padding='14px 19px'>
+                  <BoxWithBorder mt='13px' padding='6px 19px'>
                     <Box>
                       <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                       <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />

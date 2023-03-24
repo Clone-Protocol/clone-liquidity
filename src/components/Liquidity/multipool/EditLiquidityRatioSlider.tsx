@@ -95,7 +95,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             onChange={handleChangeMintRatio}
             valueLabelDisplay="on"
           />
-          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 10px)` }}>
+          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 8px)` }}>
             <FixThumb />
             <FixValueLabel>{currentRatio.toFixed(1)}%</FixValueLabel>
           </PrevBox>
@@ -144,7 +144,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
                 </Box>
               </Stack>
             </FormBox>
-            <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol} (${(currentMintAmount * positionInfo.price).toLocaleString()})</Typography></BottomBox>
+            <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol}</Typography></BottomBox>
           </StyledBox>
         </Stack>
       </Box>
@@ -186,7 +186,7 @@ const PrevBox = styled(Box)`
 const FixValueLabel = styled(Box)`
   width: 47px;
   height: 28px;
-  padding: 2px 8px;
+  padding: 4px 3px;
   margin-top: 8px;
   margin-left: -16px;
   border: solid 1px ${(props) => props.theme.palette.text.secondary};
