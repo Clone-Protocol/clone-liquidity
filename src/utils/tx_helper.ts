@@ -5,8 +5,10 @@ import { TransactionStateType, TransactionState } from "~/hooks/useTransactionSt
 
 export const sendAndConfirm = async (incept: InceptClient, tx: Transaction, signers: anchor.web3.Keypair[], setTxState: (state: TransactionStateType) => void) => {
   //@TODO: we need to set txState as pending when transaction is confirming. not when the approval pop-up pops up like now
+  // const txHash = await incept.provider.send(tx, signers);
   setTxState({ state: TransactionState.PENDING, txHash: '' })
   try {
+    //confirmTransaction(txHash, incept.provider, signers);
     const txHash = await incept.provider.sendAndConfirm!(tx, signers);
     console.log('txHash', txHash)
     setTxState({ state: TransactionState.SUCCESS, txHash })

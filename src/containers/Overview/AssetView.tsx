@@ -95,7 +95,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 						</StyledTabs>
 						<StyledDivider />
 
-						<Box paddingY='10px'>
+						<Box paddingY='5px'>
 							<TabPanel value={tab} index={0}>
 								<MultipoolCometPanel assetIndex={assetIndex} onRefetchData={() => refetch()} />
 							</TabPanel>

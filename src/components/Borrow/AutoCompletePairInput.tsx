@@ -61,7 +61,7 @@ const StyledAutocomplete = styled(Autocomplete)`
   }
 
   &:hover {
-    border: solid 1px #809cff;
+    border: solid 1px ${(props) => props.theme.palette.text.secondary};
   }
 
   & .MuiOutlinedInput-root {

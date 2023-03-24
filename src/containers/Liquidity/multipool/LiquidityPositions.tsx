@@ -94,6 +94,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
             tickerIcon={position.tickerIcon}
             tickerSymbol={position.tickerSymbol}
             value={position.liquidityDollarPrice}
+            ildValue={position.ildValue}
             onShowEditDialog={handleChooseEditPosition}
             onShowRecenterDialog={handleChooseRecenter}
           />

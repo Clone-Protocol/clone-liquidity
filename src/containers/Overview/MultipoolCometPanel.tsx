@@ -164,12 +164,12 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
               <Typography variant='p_lg'>Current Multipool Stat</Typography>
             </Box>
             <Box my='15px'>
-              <Box mb='15px'><Typography variant='p'>Total Multipool Collateral Value</Typography></Box>
+              <Box mb='10px'><Typography variant='p' color='#989898'>Total Multipool Collateral Value</Typography></Box>
               <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
             </Box>
             <Box>
-              <Box mb='15px'><Typography variant='p'>Current Multipool Healthscore</Typography></Box>
-              <HealthscoreBar score={positionInfo.totalHealthScore} width={490} />
+              <Box mb='10px'><Typography variant='p' color='#989898'>Current Multipool Healthscore</Typography></Box>
+              <HealthscoreBar score={positionInfo.totalHealthScore} width={490} hiddenThumbTitle={true} />
             </Box>
           </BoxWithBorder>
 
@@ -239,8 +239,8 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
           <BoxWithBorder padding="20px 24px">
             <Box my="15px">
-              <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-              <HealthscoreBar score={healthScore} width={490} />
+              <Box mb="15px"><Typography variant="p">Projected Multipool Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
+              <HealthscoreBar score={healthScore} width={490} hideIndicator={true} />
               {hasRiskScore &&
                 <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
               }

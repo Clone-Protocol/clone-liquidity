@@ -3,17 +3,23 @@ import { styled, Box, Typography } from '@mui/material'
 interface Props {
   score?: number
   prevScore?: number
+  hiddenThumbTitle?: boolean
   hideIndicator?: boolean
   width: number
 }
 
-const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hideIndicator = false, width = 490 }) => {
+const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
   const scorePoint = score ? width * score / 100 - 15 : -15
   const prevScorePoint = prevScore ? width * prevScore / 100 - 15 : -15
   return (
     <Box>
       <Box>
-        <ScorePointer sx={{ marginLeft: `${scorePoint}px` }}><Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box></ScorePointer>
+        <Box sx={{ marginLeft: `${scorePoint}px` }}>
+          {!hiddenThumbTitle && <Box sx={{ marginLeft: '-2px' }}><Typography variant='p_sm'>New</Typography></Box>}
+          <ScorePointer>
+            <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
+          </ScorePointer>
+        </Box>
         <Box width='100%' margin='0 auto'>
           <ScoreBar />
           {!hideIndicator && <Box display="flex" justifyContent='space-between'>
