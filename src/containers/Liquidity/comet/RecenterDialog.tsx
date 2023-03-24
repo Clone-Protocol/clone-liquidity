@@ -173,34 +173,6 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
               </BottomBox>
             </Box>
 
-            {/* <SubTitle>Projected Price Range <InfoTooltip title={TooltipTexts.projectedPriceRange} /></SubTitle>
-            <RangeWrapper>
-              <ConcentrationRangeView
-                centerPrice={cometData.centerPrice}
-                lowerLimit={cometData.lowerLimit}
-                upperLimit={cometData.upperLimit}
-                max={cometData.upperLimit}
-              />
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Center price:</DetailHeader>
-                <DetailValue>{cometData.centerPrice.toLocaleString()} USD</DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Lower limit:</DetailHeader>
-                <DetailValue>{cometData.lowerLimit.toLocaleString()} USD</DetailValue>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <DetailHeader>Upper limit:</DetailHeader>
-                <DetailValue>{cometData.upperLimit.toLocaleString()} USD</DetailValue>
-              </Stack>
-            </RangeWrapper>
-            <Stack direction="row" justifyContent="space-between">
-              <SubTitle>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} /></SubTitle>
-              <DetailValue>
-                {cometData.healthScore.toFixed(2)}/100 <span style={{ color: '#949494' }}>(prev. {cometData.prevHealthScore.toFixed(2)}/100)</span>
-              </DetailValue>
-            </Stack> */}
-
             <BoxWithBorder mt='13px' padding='21px 24px'>
               <Box>
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>

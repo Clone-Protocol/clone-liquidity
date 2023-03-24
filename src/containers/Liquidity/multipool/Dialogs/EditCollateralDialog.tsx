@@ -235,12 +235,12 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               !isNewDeposit &&
               <Box>
                 <Typography variant='h8'>Projected Multipool Stat</Typography>
-                <BoxWithBorder padding='15px 20px'>
+                <BoxWithBorder padding='10px 20px'>
                   <Box>
                     <Box><Typography variant='p' color='#989898'>Projected Multipool Collateral Value <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Typography></Box>
                     <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
                   </Box>
-                  <Box my='20px'>
+                  <Box mt='10px'>
                     <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
                     <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={430} /></Box>
                   </Box>

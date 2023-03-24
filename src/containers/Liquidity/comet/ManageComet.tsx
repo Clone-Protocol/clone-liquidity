@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
+import { useRouter } from 'next/router'
 import { useWallet } from '@solana/wallet-adapter-react'
 import TipMsg from '~/components/Common/TipMsg'
 import Image from 'next/image'
@@ -20,6 +21,7 @@ import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import DisabledCloseCometWarningMsg from '~/components/Liquidity/comet/DisabledCloseCometWarningMsg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { GoBackButton } from '~/components/Common/CommonButtons'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -30,7 +32,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
       setTab(newValue)
     }
   }
-
+  const router = useRouter()
   const cometIndex = parseInt(assetId)
 
   const { data: cometDetail, refetch } = useCometDetailQuery({
@@ -58,6 +60,8 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
   return (cometDetail && usdiBalance) ? (
     <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
+        <GoBackButton onClick={() => router.back()}><Typography variant='p'>Go back</Typography></GoBackButton>
+        <Box mb='10px'><Typography variant='p_xxlg'>Manage Comet Liquidity Position</Typography></Box>
         <LeftBoxWrapper>
           <StyledTabs value={tab} onChange={handleChangeTab}>
             <StyledTab value={0} label="Manage Comet" icon={tab === 0 ? <Image src={ManageCometIconOn} /> : <Image src={ManageCometIconOff} />}></StyledTab>
@@ -93,6 +97,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     </Stack>
   ) : <></>
 }
+
 
 const LeftBoxWrapper = styled(Box)`
 	width: 521px; 

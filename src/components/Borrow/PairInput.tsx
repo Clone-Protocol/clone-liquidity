@@ -71,7 +71,7 @@ const TickerSymbol = styled('div')`
 
 const InputStack = styled(FormStack)`
   &:hover {
-    border: solid 1px #809cff;
+    border: solid 1px ${(props) => props.theme.palette.text.secondary};
   }
 `
 

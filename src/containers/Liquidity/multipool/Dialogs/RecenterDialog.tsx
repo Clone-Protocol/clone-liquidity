@@ -1,4 +1,3 @@
-// @DEPRECATED : but not deleting now
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -75,8 +74,8 @@ const RecenterDialog = ({
 				</LoadingWrapper>
 			)}
 
-			<Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
-				<DialogContent sx={{ backgroundColor: '#16171a', padding: '25px 35px', overflow: 'hidden' }}>
+			<Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={480}>
+				<DialogContent sx={{ background: '#1b1b1b' }}>
 					<HeaderText>Recenter</HeaderText>
 					<Divider />
 					<Stack direction="row" gap={4}>
