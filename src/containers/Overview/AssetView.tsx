@@ -24,6 +24,9 @@ import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import TipMsg from '~/components/Common/TipMsg'
+import InfoIcon from 'public/images/info-icon.svg'
+import { GoBackButton } from '~/components/Common/CommonButtons'
 
 const AssetView = ({ assetId }: { assetId: string }) => {
 	const { publicKey } = useWallet()
@@ -78,7 +81,14 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 		<Box>
 			<Stack direction='row' spacing={3} justifyContent="center">
 				<Box>
-					<Box><Typography variant='p_lg'>Select Pool</Typography></Box>
+					<GoBackButton onClick={() => router.back()}><Typography variant='p'>Go back</Typography></GoBackButton>
+					<Box mb='15px'>
+						<Typography variant='p_xxlg'>New Liquidity Position</Typography>
+					</Box>
+					<TipMsg>
+						<Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
+					</TipMsg>
+					<Box mt='15px'><Typography variant='p_lg'>Select Pool</Typography></Box>
 					<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
 						<Stack direction='row' gap={1}>
 							<Image src={assetData.tickerIcon} width="27px" height="27px" />
@@ -150,8 +160,8 @@ const SelectPoolBox = styled(Box)`
 	justify-content: space-between;
 	width: 261px;
 	height: 45px;
-	margin-top: 15px;
-	margin-bottom: 28px;
+	margin-top: 10px;
+	margin-bottom: 20px;
 	cursor: pointer;
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};

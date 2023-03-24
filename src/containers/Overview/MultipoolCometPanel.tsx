@@ -201,7 +201,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
                       tickerSymbol="USDi"
                       value={parseFloat(field.value.toFixed(3))}
                       dollarPrice={0}
-                      headerTitle="Max amount mintable"
+                      headerTitle="Max Amount Mintable"
                       headerValue={maxMintable}
                       onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
                         let mintVal = parseFloat(evt.currentTarget.value)
@@ -217,7 +217,6 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
                     />
                   )}
                 />
-                <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
               </Box>
               <Box width='275px'>
                 <PairInputView
@@ -228,6 +227,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
                 />
               </Box>
             </Stack>
+            <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
           </Box>
           <BoxWithBorder padding="15px 24px">
             <Stack direction='row' justifyContent='space-between'>
