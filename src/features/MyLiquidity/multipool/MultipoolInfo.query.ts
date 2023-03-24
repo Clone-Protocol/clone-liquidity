@@ -1,7 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
-import { Comet } from "incept-protocol-sdk/sdk/src/interfaces"
+import { InceptClient, DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/incept'
+import { Comet, TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -41,9 +41,9 @@ export const fetchInfos = async ({
 	]);
 
 
-	if (cometResult.status === "fulfilled") {
+	if (cometResult.status === "fulfilled" && tokenDataResult.status === "fulfilled") {
 		collaterals = extractCollateralInfo(cometResult.value)
-		positions = extractLiquidityPositionsInfo(cometResult.value)
+		positions = extractLiquidityPositionsInfo(cometResult.value, tokenDataResult.value)
 
 		collaterals.forEach(c => {
 			totalCollValue += c.collAmount * c.collAmountDollarPrice
@@ -52,9 +52,7 @@ export const fetchInfos = async ({
 			totalLiquidity += p.liquidityDollarPrice
 		})
 		hasNoCollateral = totalCollValue === 0
-		if (tokenDataResult.status === "fulfilled") {
-			healthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
-		}
+		healthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
 	}
 
 	const result = {
@@ -111,10 +109,12 @@ export interface LiquidityPosition {
 	liquidityDollarPrice: number
 	positionIndex: number
 	poolIndex: number
+	ildValue: number,
+	ildInUsdi: boolean
 }
 
 
-const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
+const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): LiquidityPosition[] => {
 	let result: LiquidityPosition[] = [];
 
 	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
@@ -122,6 +122,32 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
 		const info = assetMapping(poolIndex);
+		const pool = tokenData.pools[poolIndex]
+		
+		const [ildValue, ildInUsdi] = (() => {
+			const L = toNumber(position.liquidityTokenValue) / toNumber(pool.liquidityTokenSupply)
+			const claimableUSDi = L * toNumber(pool.usdiAmount)
+			const borrowedUsdi = toNumber(position.borrowedUsdi)
+			const claimableIasset = L * toNumber(pool.iassetAmount)
+			const borrowedIasset = toNumber(position.borrowedIasset)
+
+			const devnetScaleDifference = (x: number, y: number): number => {
+				const base = Math.floor((x - y) * Math.pow(10, DEVNET_TOKEN_SCALE))
+				return base * Math.pow(10, -DEVNET_TOKEN_SCALE);
+			}
+
+			const usdiILD = devnetScaleDifference(borrowedUsdi, claimableUSDi)
+			if (usdiILD > 0) {
+				return [usdiILD, true];
+			}
+
+			const iassetILD = devnetScaleDifference(borrowedIasset, claimableIasset)
+			if (iassetILD > 0) {
+				return [iassetILD, false];
+			}
+
+			return [0, true];
+		})();
 
 		result.push(
 			{
@@ -130,7 +156,9 @@ const extractLiquidityPositionsInfo = (comet: Comet): LiquidityPosition[] => {
 				tickerName: info.tickerName,
 				liquidityDollarPrice: toNumber(position.borrowedUsdi) * 2,
 				positionIndex: i,
-				poolIndex: poolIndex
+				poolIndex,
+				ildValue,
+				ildInUsdi
 			} as LiquidityPosition
 		)
 	}
