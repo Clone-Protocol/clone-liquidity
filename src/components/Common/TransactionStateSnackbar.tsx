@@ -42,6 +42,8 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
 const TransactionStateSnackbar = ({ txState, txHash, open, handleClose }: { txState: TransactionState, txHash: string, open: boolean, handleClose: () => void }) => {
   const [isFocusWarning, setIsFocusWarning] = useState(false)
 
+  console.log('txState', txState)
+
   return (
     <>
       {txState === TransactionState.PENDING && <BackLayer onClick={() => setIsFocusWarning(true)} />}

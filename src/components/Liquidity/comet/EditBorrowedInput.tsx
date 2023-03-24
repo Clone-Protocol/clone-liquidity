@@ -91,7 +91,7 @@ const FormStack = styled(Stack)`
 	height: 54px;
 	padding: 18px 12px;
   &:hover {
-    box-shadow: 0 0 0 1px #809cff inset;
+    box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
   }
 `
 const HeaderTitle = styled(Box)`

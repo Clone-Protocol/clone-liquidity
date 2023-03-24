@@ -165,7 +165,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
 
               <RightBox>
                 <Typography variant='h8'>Projected Values</Typography>
-                <BoxWithBorder mt='13px' padding='15px 20px'>
+                <BoxWithBorder mt='13px' padding='6px 20px'>
                   <Box>
                     <Box><Typography variant='p'>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></Typography></Box>
                     <Box p='10px'><HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} hideIndicator={true} width={430} /></Box>

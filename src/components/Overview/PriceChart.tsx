@@ -2,7 +2,6 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 // import dynamic from 'next/dynamic'
-import { useTotalLiquidityQuery } from '~/features/Chart/Liquidity.query'
 import LineChart from '~/components/Charts/LineChart'
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
@@ -14,13 +13,6 @@ interface Props {
 }
 
 const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
-  // TODO: need to change other query
-  // const { data: totalLiquidity } = useTotalLiquidityQuery({
-  //   timeframe: '24h',
-  //   refetchOnMount: false,
-  //   enabled: true
-  // })
-
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: assetData?.pythSymbol,
     refetchOnMount: false,
@@ -44,7 +36,7 @@ const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
             {priceTitle}
           </Typography>
         </Box>
-        <Typography variant='p' color='#4fe5ff'>+${priceHistory.rateOfPrice.toFixed(3)} (+{priceHistory.percentOfRate.toFixed(2)}%) past 24h</Typography>
+        <Typography variant='p' color='#4fe5ff'>{priceHistory.rateOfPrice >= 0 ? '+' : '-'}${Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate.toFixed(2)}%) past 24h</Typography>
         <LineChart
           data={priceHistory?.chartData}
         />

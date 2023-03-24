@@ -34,7 +34,7 @@ const EditCollateralInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: '100%' }}>
       <Stack height='40px' direction="row" justifyContent="space-between">
         <StyledTabs value={editType} onChange={onChangeType}>
-          <StyledTab value={0} label="Deposit more"></StyledTab>
+          <StyledTab value={0} label="Deposit"></StyledTab>
           <StyledTab value={1} label="Withdraw"></StyledTab>
         </StyledTabs>
         <HeaderTitle>

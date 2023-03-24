@@ -107,6 +107,7 @@ export interface LiquidityPosition {
 	tickerIcon: string
 	tickerName: string
 	liquidityDollarPrice: number
+	ildValue: number
 	positionIndex: number
 	poolIndex: number
 	ildValue: number,
@@ -149,12 +150,16 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 			return [0, true];
 		})();
 
+		// @TODO: set ild value
+		const ildValue = 0
+
 		result.push(
 			{
 				tickerIcon: info.tickerIcon,
 				tickerSymbol: info.tickerSymbol,
 				tickerName: info.tickerName,
 				liquidityDollarPrice: toNumber(position.borrowedUsdi) * 2,
+				ildValue,
 				positionIndex: i,
 				poolIndex,
 				ildValue,

@@ -106,7 +106,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </Stack>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}>Recenter</ActionButton>
+      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}><Typography variant='p_lg'>Recenter</Typography></ActionButton>
 
       <Box display='flex' justifyContent='center'>
         <DataLoadingIndicator />
@@ -158,7 +158,7 @@ const ActionButton = styled(Button)`
   }
 `
 const ColumnDivider = styled('div')`
-  background: #535353; 
+  background: #363636; 
   width: 1px; 
   height: 120px;
   margin-top: 10px;

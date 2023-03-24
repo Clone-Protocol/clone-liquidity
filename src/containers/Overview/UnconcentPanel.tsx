@@ -88,7 +88,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
       clearErrors('borrowFrom')
       return
     } else if (borrowFrom > balances?.iassetVal) {
-      return 'The borrowing amount cannot exceed the balance.'
+      return 'Provided amount cannot exceed wallet balance'
     }
 
     clearErrors('borrowFrom')
@@ -103,9 +103,9 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
     }
 
     if (!borrowTo || borrowTo <= 0) {
-      return 'the amount should be above zero.'
+      return 'Provided amount cannot exceed wallet balance'
     } else if (borrowTo > balances?.usdiVal) {
-      return 'The amount cannot exceed the balance.'
+      return 'Provided amount cannot exceed wallet balance'
     }
 
     clearErrors('borrowTo')
@@ -173,7 +173,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
                 />
               )}
             />
-            <FormHelperText error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
+            <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
           </Box>
 
           <StyledDivider />
@@ -205,7 +205,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
                 />
               )}
             />
-            <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
+            <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
           </Box>
           <StyledDivider />
 
