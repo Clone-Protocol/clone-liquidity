@@ -8,11 +8,12 @@ interface Props {
 	tickerSymbol: string | null
 	value?: number
 	ildValue?: number
+	ildInUsdi: boolean
 	onShowEditDialog: (poolIndex: number) => void
 	onShowRecenterDialog: (poolIndex: number) => void
 }
 
-const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, ildValue, onShowEditDialog, onShowRecenterDialog }) => {
+const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, ildValue, ildInUsdi, onShowEditDialog, onShowRecenterDialog }) => {
 
 	const showRecenterDialog = (e: any) => {
 		e.stopPropagation()
@@ -29,7 +30,7 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 					</TickerWrapper>
 				</Box>
 				<Box><Typography variant='p'>${value?.toFixed(3)}</Typography></Box>
-				<Box><Typography variant='p'>${ildValue?.toFixed(3)}</Typography></Box>
+				<Box><Typography variant='p'>${`${ildValue?.toFixed(3)} ${ildInUsdi ? "USDi" : tickerSymbol}`}</Typography></Box>
 				<Box>
 					<RecenterButton onClick={showRecenterDialog}></RecenterButton>
 				</Box>
