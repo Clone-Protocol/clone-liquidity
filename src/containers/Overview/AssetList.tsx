@@ -148,8 +148,6 @@ let columns: GridColDef[] = [
 
 const PanelBox = styled(Box)`
 	padding: 18px 36px;
-  background: rgba(21, 22, 24, 0.75);
-  border-radius: 10px;
   color: #fff;
   & .super-app-theme--header { 
     color: #9d9d9d; 

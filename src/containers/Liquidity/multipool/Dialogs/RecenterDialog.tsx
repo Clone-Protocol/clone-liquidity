@@ -5,7 +5,7 @@ import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { useRecenterInfoQuery } from '~/features/MyLiquidity/multipool/RecenterInfo.query'
 import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { TooltipTexts } from '~/data/tooltipTexts'
@@ -76,7 +76,7 @@ const RecenterDialog = ({
 				</LoadingWrapper>
 			)}
 
-			<Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={480}>
+			<Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={480}>
 				<DialogContent sx={{ background: '#1b1b1b' }}>
 					<BoxWrapper>
 						<Box mb='16px'><Typography variant='p_xlg'>Recenter Multipool Liquidity Position</Typography></Box>

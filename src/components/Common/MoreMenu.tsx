@@ -14,10 +14,11 @@ import { Stack } from '@mui/system';
 
 interface Props {
   anchorEl: null | HTMLElement
+  onShowTokenFaucet: () => void
   onClose?: () => void
 }
 
-const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
+const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => {
   const open = Boolean(anchorEl);
 
   return <Menu
@@ -38,35 +39,43 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onClose }) => {
     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
   >
-    <StyledMenuItem>
-      <Image src={FaucetIcon} alt="faucet" />
-      <Box ml='12px'>
-        <div><Typography variant='p'>Token Faucet</Typography></div>
-        <div><Typography variant='p_sm' color='#989898'>Get started on Solana devnet</Typography></div>
-      </Box>
+    <StyledMenuItem onClick={onShowTokenFaucet}>
+      <HoverStack direction='row' alignItems='center'>
+        <Image src={FaucetIcon} alt="faucet" />
+        <Box ml='12px'>
+          <div><Typography variant='p'>Token Faucet</Typography></div>
+          <div><Typography variant='p_sm' color='#989898'>Get started on Solana devnet</Typography></div>
+        </Box>
+      </HoverStack>
     </StyledMenuItem>
     <StyledDivider />
     <StyledMenuItem>
-      <Image src={DocIcon} alt="docs" />
-      <Box width='130px' ml='12px' lineHeight={0.3}>
-        <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
-        <div><Typography variant='p_sm' color='#989898'>Learn about Incept Liquidity</Typography></div>
-      </Box>
+      <HoverStack direction='row' alignItems='center'>
+        <Image src={DocIcon} alt="docs" />
+        <Box width='130px' ml='12px'>
+          <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+          <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Learn about Incept Liquidity</Typography></Box>
+        </Box>
+      </HoverStack>
     </StyledMenuItem>
     <StyledMenuItem>
-      <Image src={MarketsIcon} alt="markets" />
-      <Box width='130px' ml='12px' lineHeight={0.3}>
-        <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Markets</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
-        <div><Typography variant='p_sm' color='#989898'>Trade all kinds of iAssets</Typography></div>
-      </Box>
+      <HoverStack direction='row' alignItems='center'>
+        <Image src={MarketsIcon} alt="markets" />
+        <Box width='130px' ml='12px'>
+          <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Markets</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+          <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Trade all kinds of iAssets</Typography></Box>
+        </Box>
+      </HoverStack>
     </StyledMenuItem>
     <a href={`https://join-incept.super.site/`} target='_blank' rel="noreferrer">
       <StyledMenuItem>
-        <Image src={OpportunityIcon} alt="opportunities" />
-        <Box width='130px' ml='12px' lineHeight={0.3}>
-          <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Opportunities</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
-          <div><Typography variant='p_sm' color='#989898'>Wanna be a pioneer of Defi?</Typography></div>
-        </Box>
+        <HoverStack direction='row' alignItems='center'>
+          <Image src={OpportunityIcon} alt="opportunities" />
+          <Box width='130px' ml='12px'>
+            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Opportunities</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+            <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Wanna be a pioneer of Defi?</Typography></Box>
+          </Box>
+        </HoverStack>
       </StyledMenuItem>
     </a>
     <Stack direction='row' gap={2} justifyContent='center' my='10px'>
@@ -95,9 +104,14 @@ const StyledDivider = styled(Divider)`
 	height: 1px;
   margin: 0 auto;
 `
-
 const IconBase = styled('span')`
   color: #989898;
+`
+const HoverStack = styled(Stack)`
+  padding: 6px;
+  &:hover {
+    background-color: #2d2d2d;
+  }
 `
 
 export default MoreMenu;

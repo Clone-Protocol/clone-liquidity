@@ -11,7 +11,7 @@ import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { calculateEditCometSinglePoolWithUsdiBorrowed } from 'incept-protocol-sdk/sdk/src/healthscore'
@@ -333,7 +333,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={1000}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={1000}>
         <DialogContent sx={{ backgroundColor: '#16171a', overflow: 'hidden' }}>
           <BoxWrapper>
             <Box padding='15px 10px'>

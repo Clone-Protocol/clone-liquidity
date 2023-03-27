@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Dialog, DialogContent, Typography, Button } from '@mui/material'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { useCloseAllPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 
@@ -46,7 +46,7 @@ const CloseEntireCometPoolDialog = ({ open, handleClose }: { open: boolean, hand
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={390}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={390}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '15px 15px' }}>
           <BoxWrapper>
             <Typography variant='p_xlg'>Close Entire Multipool Comet</Typography>

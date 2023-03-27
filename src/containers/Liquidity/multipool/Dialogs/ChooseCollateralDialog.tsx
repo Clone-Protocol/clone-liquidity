@@ -1,13 +1,13 @@
 /// @deprecated
 import React from 'react'
 import { Box, styled, Dialog, DialogContent } from '@mui/material'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import GridCollateral from './GridCollateral'
 
 const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }: { open: boolean, handleChooseCollateral: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={360}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={360}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '10px 15px' }}>
           <BoxWrapper>
             <HeaderText>Choose Collateral</HeaderText>

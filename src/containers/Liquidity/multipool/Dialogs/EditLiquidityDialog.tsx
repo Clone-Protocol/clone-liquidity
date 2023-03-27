@@ -3,9 +3,8 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
-import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 import { useEditPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 import { useForm } from 'react-hook-form'
@@ -134,7 +133,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>

@@ -20,3 +20,8 @@ export const isCreatingAccountState = atom({
   key: 'isCreatingAccountState',
   default: false
 })
+
+export const openConnectWalletGuideDlogState = atom({
+  key: 'openConnectWalletGuideDlogState',
+  default: false
+})

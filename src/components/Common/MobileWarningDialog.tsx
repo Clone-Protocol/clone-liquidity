@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, styled, Dialog, DialogContent, Typography, Button } from '@mui/material'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import { StyledDivider } from './StyledDivider'
 import Image from 'next/image'
 import OctagonIcon from 'public/images/alert-octagon-outline.svg'
@@ -12,7 +12,7 @@ import { Stack } from '@mui/system'
 const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={425}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={425}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '15px' }}>
           <BoxWrapper>
             <Image src={OctagonIcon} width="55px" height="55px" />

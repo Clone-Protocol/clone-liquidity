@@ -21,9 +21,9 @@ export const PageTab = styled(Tab)`
 	&.MuiTab-root {
 		padding-left: 3px;
     padding-right: 3px;
-    margin-right: 2px;
+		margin-right: 20px;
 		height: 28px;
-    min-width: 50px;
+    min-width: 0px;
 		min-height: 28px;
 	}
 	&.Mui-selected {

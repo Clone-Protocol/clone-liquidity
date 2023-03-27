@@ -5,7 +5,7 @@ import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, Typo
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import RatioSlider from '~/components/Liquidity/multipool/RatioSlider'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import PairInput from '~/components/Asset/PairInput'
 import InfoTooltip from '~/components/Common/InfoTooltip'
@@ -120,7 +120,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>

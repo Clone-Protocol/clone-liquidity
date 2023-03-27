@@ -4,10 +4,20 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
+import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
+import { useSetRecoilState } from 'recoil'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const Drawer: React.FC = () => {
 	const router = useRouter()
+	const { connected } = useWallet()
+	const setOpenConnectWalletGuideDlogState = useSetRecoilState(openConnectWalletGuideDlogState)
 	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+
+	const handleClickNavWhenUnconnected = (evt: React.MouseEvent) => {
+		evt.preventDefault()
+		setOpenConnectWalletGuideDlogState(true)
+	}
 
 	return (
 		<StyledDrawer variant="permanent" open={true}>
@@ -19,12 +29,12 @@ const Drawer: React.FC = () => {
 						</StyledListItemButton>
 					</Link>
 					<Link href="/liquidity">
-						<StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
+						<StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
 							<Typography variant="p">My Liquidity</Typography>
 						</StyledListItemButton>
 					</Link>
 					<Link href="/borrow">
-						<StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
+						<StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
 							<Typography variant="p">Borrow</Typography>
 						</StyledListItemButton>
 					</Link>
@@ -73,7 +83,6 @@ const StyledListItemButton = styled(ListItemButton)`
 	line-height: 1.33;
   &.selected {
     color: ${(props) => props.theme.palette.common.white};
-    transition: all 0.3s ease 0.2s;
   }
   &:hover {
     background-color: ${(props) => props.theme.boxes.darkBlack};

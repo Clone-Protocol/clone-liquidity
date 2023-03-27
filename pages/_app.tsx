@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, useState } from 'react'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import QueryProvider from '~/hocs/QueryClient'
 import type { AppProps } from 'next/app'
@@ -15,9 +15,14 @@ import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvide
 import './styles.css'
 import { RecoilRoot } from 'recoil'
 import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
+import InitEnterScreen from '~/components/Common/InitEnterScreen'
+import { IS_COMPLETE_INIT } from '~/data/localstorage'
+import useLocalStorage from '~/hooks/useLocalStorage'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
+  const [isCompleteInit, _] = useLocalStorage(IS_COMPLETE_INIT, false)
+  const [isOpenInit, setIsOpenInit] = useState(true)
 
   return (
     <QueryProvider>
@@ -41,6 +46,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                       }}>
                       {getLayout(<Component {...pageProps} />)}
                     </Box>
+                    {isOpenInit && !isCompleteInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
                   </Box>
                 </DataLoadingIndicatorProvider>
               </TransactionStateProvider>

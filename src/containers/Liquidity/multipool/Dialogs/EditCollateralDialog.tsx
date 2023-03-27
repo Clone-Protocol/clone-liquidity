@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
@@ -138,7 +138,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={500}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>

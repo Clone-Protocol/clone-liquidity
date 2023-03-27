@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import Image from 'next/image'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { TabPanelForEdit, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
@@ -21,7 +21,7 @@ const ManageDialog = ({ assetId, pool, open, handleClose }: { assetId: string, p
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={500}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>

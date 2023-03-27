@@ -10,7 +10,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditBorrowedInput from '~/components/Liquidity/comet/EditBorrowedInput'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
 import { StyledDivider } from '~/components/Common/StyledDivider'
@@ -127,7 +127,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={500}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
             <Typography variant='p_xlg'>Edit Borrowed Amount of Borrow Position</Typography>

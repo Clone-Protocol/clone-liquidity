@@ -8,7 +8,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
@@ -120,7 +120,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={500}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
             <Typography variant='p_xlg'>Edit Collateral of Borrow Position</Typography>

@@ -8,6 +8,7 @@ import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import useLocalStorage from '~/hooks/useLocalStorage'
+import { CURRENT_ACCOUNT } from '~/data/localstorage';
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
 
@@ -17,7 +18,7 @@ export function useCreateAccount() {
 	const { getInceptApp } = useIncept()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
-	const [_, setLocalAccount] = useLocalStorage("currentAccount", '')
+	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogStatus = useSetRecoilState(createAccountDialogState)
 	const setDeclinedAccountCreation = useSetRecoilState(declinedAccountCreationState)
 	const { enqueueSnackbar } = useSnackbar()
