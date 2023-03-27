@@ -7,6 +7,24 @@ import Image from 'next/image'
 import { TransactionState } from '~/hooks/useTransactionState'
 import 'animate.css'
 
+const getTxnURL = (txHash: string) => {
+  // NOTE: Was having issues setting up the URL for Solscan,
+  // using SolanaFM instead.
+
+  let cluster = (() => {
+    let network = process.env.NEXT_PUBLIC_USE_NETWORK;
+    if (network === "DEV_NET") {
+      return 'devnet-qn1'
+    }
+    if (network === "MAIN_NET") {
+      return 'mainnet-qn1'
+    }
+    throw new Error(`Network ${network} not yet supported!`)
+  })();
+
+  return `https://solana.fm/tx/${txHash}?cluster=${cluster}`
+}
+
 const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHash: string }) => {
   return (<Box>
     <Box mt='10px'><Image src={isSuccess ? SuccessIcon : FailureIcon} width='47px' height='47px' /></Box>
@@ -16,7 +34,7 @@ const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHa
         {isSuccess ? 'You can now access all features.' : 'There was an error. Please try again.'}
       </Typography>
     </Box>
-    <Box mb='10px' sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={`https://solscan.io/tx/${txHash}`} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>
+    <Box mb='10px' sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>
   </Box>)
 }
 
@@ -33,7 +51,7 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
       <Box mt='10px'><Typography variant='h7'>Confirming transaction</Typography></Box>
       <Box my='10px' lineHeight={1}><Typography variant='p' color={isFocus ? '#ff8e4f' : '#989898'}>All features are disabled until the transaction is confirmed.
         <br />Transactions on Solana typically take an average of 5 seconds. </Typography></Box>
-      <Box sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={`https://solscan.io/tx/${txHash}`} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>
+      <Box sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>
       {longTimeStatus}
     </ConfirmBoxWrapper>
   )
