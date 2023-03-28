@@ -25,7 +25,7 @@ const ConnectWalletGuideDialog = ({ open, connectWallet, handleClose }: { open: 
 }
 
 const ConnectButton = styled(Button)`
-  width: 140px;
+  width: 156px;
   height: 36px;
   color: #fff;
   margin-top: 15px;

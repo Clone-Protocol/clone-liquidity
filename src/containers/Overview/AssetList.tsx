@@ -9,6 +9,8 @@ import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
 import Divider from '@mui/material/Divider';
 import Link from 'next/link'
+import { useRecoilValue } from 'recoil'
+import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
@@ -45,10 +47,17 @@ const AssetList: React.FC = () => {
 		}
 	}, [searchTerm])
 
+	const isAlreadyInitializedAccount = useRecoilValue(isAlreadyInitializedAccountState)
+	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+
 	const handleRowClick: GridEventListener<'rowClick'> = (
 		params
 	) => {
-		router.push(`/assets/${params.row.id}/asset`)
+		if (isAlreadyInitializedAccount) {
+			router.push(`/assets/${params.row.id}/asset`)
+		} else {
+			handleLinkNeedingAccountClick(undefined)
+		}
 	}
 
 	return (
@@ -133,11 +142,10 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
-
+			//@TODO: set market url
 			return (
 				<Link href={`/assets/${params.row.id}/asset?ltab=1`}>
-					<TradeButton onClick={handleLinkNeedingAccountClick}>
+					<TradeButton>
 						<Image src={TradeIcon} />
 					</TradeButton>
 				</Link>

@@ -12,7 +12,7 @@ import Image from 'next/image'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { isCreatingAccountState } from '~/features/globalAtom'
 import logoIcon from 'public/images/logo-liquidity.svg'
-import BgDialog from 'public/images/new-wallet-popup.png'
+import BgDialog from 'public/images/new-wallet-popup.svg'
 
 interface CreateAccountSetupDialogProps {
 	state: CreateAccountDialogStates
@@ -40,7 +40,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 						<Image src={logoIcon} width={187} alt="incept" />
 						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
 						<DescBox>
-							<Typography variant='p'>This is your first time connecting this wallet to Devnet Incept Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of <Emphasize>~0.3 Devnet SOL</Emphasize> for most optimal experience using Devnet Incept Liquidity.</Typography>
+							<Typography variant='p'>This is your first time connecting this wallet to Devnet Incept Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of <Emphasize>~0.63 Devnet SOL</Emphasize> for most optimal experience using Devnet Incept Liquidity.</Typography>
 						</DescBox>
 						<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
 							<Typography variant='p_lg'>Open Devnet Account</Typography>
@@ -52,14 +52,14 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	} else {
 		return (
 			<Dialog open={shouldDialogOpen()} onClose={handleClose}>
-				<Box p="23px">
+				<BoxWrapper p="20px 28px">
 					<Box mb="23px">
 						<Typography variant='p_lg'>To access this feature, please open an account first!</Typography>
 					</Box>
 					<SubmitButton onClick={() => setCreateAccountDialogState(CreateAccountDialogStates.Initial)} disabled={isCreatingAccount}>
 						<Typography variant='p_lg'>Take me there</Typography>
 					</SubmitButton>
-				</Box>
+				</BoxWrapper>
 			</Dialog>
 		)
 	}
@@ -79,7 +79,7 @@ const LeftBox = styled(Box)`
 const DescBox = styled(Box)`
 	margin-top: 5px;
 	margin-bottom: 15px;
-	line-height: 1.33;
+	line-height: 1.1;
 	color: ${(props) => props.theme.palette.text.secondary};
 `
 const Emphasize = styled('span')`
@@ -97,6 +97,10 @@ const SubmitButton = styled(Button)`
 	&:hover {
 		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), linear-gradient(to right, #fff 21%, #4fe5ff 96%);
 	}
+`
+
+const BoxWrapper = styled(Box)`
+	background-color: ${(props) => props.theme.boxes.darkBlack};
 `
 
 export default CreateAccountSetupDialog

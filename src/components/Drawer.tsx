@@ -24,7 +24,7 @@ const Drawer: React.FC = () => {
 			<Fade in timeout={1500}>
 				<List component="nav">
 					<Link href="/">
-						<StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
+						<StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
 							<Typography variant="p">Overview</Typography>
 						</StyledListItemButton>
 					</Link>

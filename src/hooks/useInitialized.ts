@@ -4,7 +4,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState } from '~/features/globalAtom'
+import { createAccountDialogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PublicKey } from '@solana/web3.js'
 import { CURRENT_ACCOUNT } from '~/data/localstorage'
 
@@ -13,6 +13,7 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 	const { getInceptApp } = useIncept()
 	const [localAccount, _] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
+	const setIsAlreadyInitializedAccountState = useSetRecoilState(isAlreadyInitializedAccountState)
 
 	useEffect(() => {
 		async function getAccount() {
@@ -22,6 +23,7 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 				// for initialize once per each account
 				if (localAccount === publicKey.toString()) {
 					console.log('the account is already initialized')
+					setIsAlreadyInitializedAccountState(true);
 					return;
 				}
 
@@ -30,9 +32,12 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 					const program = getInceptApp(wallet)
 					await program.loadManager()
 					await program.getUserAccount()
+
+					setIsAlreadyInitializedAccountState(true);
 				} catch (error) {
 					console.log("error:", error);
 					console.log('err', 'Account does not exist')
+					setIsAlreadyInitializedAccountState(false);
 					setCreateAccountDialogState(CreateAccountDialogStates.Initial)
 				}
 			}

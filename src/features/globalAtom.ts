@@ -6,6 +6,11 @@ export const syncFetchNetworkState = atom({
   default: false,
 })
 
+export const isAlreadyInitializedAccountState = atom({
+  key: 'isAlreadyInitializedAccountState',
+  default: true
+})
+
 export const createAccountDialogState = atom({
   key: 'createAccountDialogState',
   default: CreateAccountDialogStates.Closed
