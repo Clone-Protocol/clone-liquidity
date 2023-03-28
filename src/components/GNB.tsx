@@ -85,6 +85,7 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu = () => {
+	const router = useRouter()
 	const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
@@ -111,6 +112,7 @@ const RightMenu = () => {
 	const closeAccountSetupDialog = () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
+		router.replace('/')
 	}
 
 	useEffect(() => {
