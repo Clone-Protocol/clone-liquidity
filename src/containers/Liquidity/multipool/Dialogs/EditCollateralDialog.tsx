@@ -44,7 +44,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     setValue,
     trigger,
@@ -101,7 +101,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 
   const { mutateAsync } = useCollateralMutation(publicKey)
   const onEdit = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         collIndex,
@@ -112,17 +112,17 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified collateral')
+            // enqueueSnackbar('Successfully modified collateral')
             refetch()
             initData()
             onRefetchData()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying collateral')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying collateral')
+          // setLoading(false)
         }
       }
     )
@@ -248,7 +248,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               </Box>
             }
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>
+            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
               {isNewDeposit ? 'Deposit' :
                 tab === 0 ? 'Deposit more' : 'Withdraw'}
             </ActionButton>

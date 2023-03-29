@@ -5,6 +5,7 @@ import FailureIcon from 'public/images/failure-mark-icon.svg'
 import CloseIcon from 'public/images/close.svg'
 import Image from 'next/image'
 import { TransactionState } from '~/hooks/useTransactionState'
+import Slide from '@mui/material/Slide';
 import 'animate.css'
 
 const getTxnURL = (txHash: string) => {
@@ -63,35 +64,37 @@ const TransactionStateSnackbar = ({ txState, txHash, open, handleClose }: { txSt
   console.log('txState', txState)
 
   return (
-    <>
+    <Box zIndex={999999}>
       {txState === TransactionState.PENDING && <BackLayer onClick={() => setIsFocusWarning(true)} />}
-      <Snackbar open={open} autoHideDuration={60000} onClose={txState === TransactionState.PENDING ? () => { } : handleClose}>
-        <Box>
-          {txState === TransactionState.SUCCESS &&
-            <BoxWrapper>
-              <CloseButton onClick={handleClose}><Image src={CloseIcon} /></CloseButton>
-              <SuccessFailureWrapper isSuccess={true} txHash={txHash} />
-            </BoxWrapper>
-          }
-          {txState === TransactionState.FAIL &&
-            <BoxWrapper>
-              <CloseButton onClick={handleClose}><Image src={CloseIcon} /></CloseButton>
-              <SuccessFailureWrapper isSuccess={false} txHash={txHash} />
-            </BoxWrapper>
-          }
-          {txState === TransactionState.PENDING &&
-            <ConfirmingWrapper txHash={txHash} isFocus={isFocusWarning} />
-          }
-        </Box>
-      </Snackbar>
-    </>
+      <Slide direction="left" in={true} mountOnEnter unmountOnExit>
+        <Snackbar open={open} autoHideDuration={60000} onClose={txState === TransactionState.PENDING ? () => { } : handleClose}>
+          <Box>
+            {txState === TransactionState.SUCCESS &&
+              <BoxWrapper>
+                <CloseButton onClick={handleClose}><Image src={CloseIcon} /></CloseButton>
+                <SuccessFailureWrapper isSuccess={true} txHash={txHash} />
+              </BoxWrapper>
+            }
+            {txState === TransactionState.FAIL &&
+              <BoxWrapper>
+                <CloseButton onClick={handleClose}><Image src={CloseIcon} /></CloseButton>
+                <SuccessFailureWrapper isSuccess={false} txHash={txHash} />
+              </BoxWrapper>
+            }
+            {txState === TransactionState.PENDING &&
+              <ConfirmingWrapper txHash={txHash} isFocus={isFocusWarning} />
+            }
+          </Box>
+        </Snackbar>
+      </Slide>
+    </Box>
   )
 }
 
 const BackLayer = styled('div')`
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background: rgba(255,255,255,0.1);

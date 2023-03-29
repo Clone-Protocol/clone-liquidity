@@ -48,7 +48,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     setValue
   } = useForm({
@@ -133,7 +133,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established borrow position')
+            // enqueueSnackbar('Successfully established borrow position')
             // setLoading(false)
             initData()
           }
@@ -243,7 +243,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
             </Box>
           </Box>
 
-          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
             <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow</Typography>
           </SubmitButton>
         </Box>

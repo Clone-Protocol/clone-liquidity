@@ -129,9 +129,11 @@ const RightMenu = () => {
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);
-						await program.provider.sendAndConfirm!(tx);
 
+						// @TODO : change sendAndConfirm
+						await program.provider.sendAndConfirm!(tx);
 					} else {
+						// @TODO : change sendAndConfirm
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
 					}
 				} finally {

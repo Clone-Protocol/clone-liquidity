@@ -39,7 +39,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
   }
 
   const onLiquidity = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsyncLiquidity(
       {
         iassetIndex: assetIndex,
@@ -49,16 +49,16 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established unconcentrated liquidity position')
-            setLoading(false)
+            // enqueueSnackbar('Successfully established unconcentrated liquidity position')
+            // setLoading(false)
             initData()
             router.push('/liquidity?ltab=2')
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error establishing unconcentrated liquidity position')
-          setLoading(false)
+          // enqueueSnackbar('Error establishing unconcentrated liquidity position')
+          // setLoading(false)
         }
       }
     )

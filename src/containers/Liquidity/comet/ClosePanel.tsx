@@ -46,11 +46,11 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
             setLoading(false)
 
             if (cType === 0) {
-              enqueueSnackbar("Comet partially closed, please proceed to next step")
+              // enqueueSnackbar("Comet partially closed, please proceed to next step")
               onRefetchData()
               setNoBorrowedAsset(true)
             } else {
-              enqueueSnackbar("Comet successfully closed")
+              // enqueueSnackbar("Comet successfully closed")
               router.replace("/liquidity").then(() => {
                 router.reload()
               })
@@ -59,7 +59,7 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error closing comet position')
+          // enqueueSnackbar('Error closing comet position')
           setLoading(false)
         }
       }
