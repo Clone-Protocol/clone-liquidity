@@ -16,6 +16,7 @@ import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
+import { useRouter } from 'next/router'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
@@ -29,7 +30,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
-
+  const router = useRouter()
   const [mintRatio, setMintRatio] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
@@ -65,7 +66,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
     control,
     setValue,
     trigger,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     clearErrors
   } = useForm({
@@ -111,7 +112,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
   const { mutateAsync } = useNewPositionMutation(publicKey)
   const onNewLiquidity = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync({
       poolIndex: assetIndex,
       changeAmount: mintAmount,
@@ -120,16 +121,17 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established new liquidity position')
+            // enqueueSnackbar('Successfully established new liquidity position')
             refetch()
             initData()
+            router.push('/liquidity')
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error establishing new liquidity position')
-          setLoading(false)
+          // enqueueSnackbar('Error establishing new liquidity position')
+          // setLoading(false)
         }
       })
   }
@@ -248,7 +250,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
           </BoxWithBorder>
         </Box>
 
-        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
+        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
           <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
         </SubmitButton>
 

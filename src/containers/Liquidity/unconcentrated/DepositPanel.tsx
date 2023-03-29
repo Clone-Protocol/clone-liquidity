@@ -21,7 +21,7 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
     handleSubmit,
     setValue,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
   } = useForm({
     mode: 'onChange',
@@ -39,12 +39,11 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
     userPubKey: publicKey,
     index: unconcentratedIndex,
     refetchOnMount: "always",
-    enabled: open && publicKey != null
+    enabled: publicKey != null
   })
 
   const onDeposit = async () => {
-    setLoading(true)
-    handleClose()
+    // setLoading(true)
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -54,18 +53,19 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Deposit was successful')
+            // enqueueSnackbar('Deposit was successful')
 
             refetch()
             //hacky sync
             location.reload()
           }
-          setLoading(false)
+          // setLoading(false)
+          handleClose()
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('A deposit error occurred')
-          setLoading(false)
+          // enqueueSnackbar('A deposit error occurred')
+          // setLoading(false)
         }
       }
     )
@@ -156,7 +156,7 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
         />
         <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
       </Box>
-      <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid}>Deposit</ActionButton>
+      <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid || isSubmitting}>Deposit</ActionButton>
     </>
   ) : <></>
 }

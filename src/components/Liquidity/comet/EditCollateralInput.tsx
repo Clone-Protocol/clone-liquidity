@@ -68,7 +68,6 @@ const FormStack = styled(Stack)`
 	height: 54px;
 	padding: 9px 21px 8px 24px;
   border-bottom: solid 1px #444444;
-  border-top-right-radius: 10px;
 	background-color: #333333;
   &:hover {
     box-shadow: 0 0 0 1px #809cff inset;
@@ -80,7 +79,6 @@ const HeaderTitle = styled(Box)`
   font-size: 12px; 
   font-weight: 500;
   color: ${(props) => props.theme.palette.text.secondary};
-  margin-right: 15px;
 `
 const MaxPointerValue = styled('span')`
   color: #90e4fe; 

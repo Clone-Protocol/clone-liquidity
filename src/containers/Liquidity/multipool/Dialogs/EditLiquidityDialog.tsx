@@ -64,7 +64,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
     handleSubmit,
     control,
     setValue,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
   } = useForm({
     mode: 'onChange',
@@ -98,7 +98,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
 
   const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync({
       positionIndex: positionIndex,
       changeAmount: Math.abs(mintAmount - defaultMintAmount),
@@ -108,17 +108,17 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified liquidity position')
+            // enqueueSnackbar('Successfully modified liquidity position')
             refetch()
             initData()
             handleClose()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying liquidity position')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying liquidity position')
+          // setLoading(false)
         }
       })
   }
@@ -157,7 +157,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   </Stack>
                   <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                     <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                    <Typography variant='p'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography>
+                    <Typography variant='p' ml='5px'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography>
                   </Box>
                 </BoxWithBorder>
               </Box>
@@ -171,7 +171,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   </Box>
                 </BoxWithBorder>
 
-                <ActionButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount)}>Edit Liquidity Position</ActionButton>
+                <ActionButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>Edit Liquidity Position</ActionButton>
 
                 <Box display='flex' justifyContent='center'>
                   <DataLoadingIndicator />

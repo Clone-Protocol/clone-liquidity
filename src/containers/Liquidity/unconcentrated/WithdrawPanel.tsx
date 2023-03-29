@@ -13,6 +13,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [amount, setAmount] = useState(0.0)
   const [percent, setPercent] = useState(50)
   const unconcentratedIndex = parseInt(assetId)
@@ -47,8 +48,8 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
   }, [data?.maxVal, amount, percent])
 
   const onWithdraw = async () => {
-    setLoading(true)
-    handleClose()
+    setIsSubmitting(true)
+    // setLoading(true)
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -59,18 +60,21 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Withdrawal was successful')
+            // enqueueSnackbar('Withdrawal was successful')
 
             refetch()
             //hacky sync
             location.reload()
           }
-          setLoading(false)
+          setIsSubmitting(false)
+          handleClose()
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('A withdrawal error occurred')
-          setLoading(false)
+          setIsSubmitting(false)
+          // enqueueSnackbar('A withdrawal error occurred')
+          // setLoading(false)
         }
       }
     )
@@ -125,7 +129,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
         </StyledBox>
       </Stack>
 
-      <ActionButton onClick={onWithdraw}>Withdraw</ActionButton>
+      <ActionButton onClick={onWithdraw} disabled={isSubmitting}>Withdraw</ActionButton>
     </>
   ) : <></>
 }

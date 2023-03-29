@@ -295,7 +295,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         cometIndex,
@@ -307,17 +307,17 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified comet position')
+            // enqueueSnackbar('Successfully modified comet position')
             initData()
             onRefetchData()
             onHideEditForm()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying comet position')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying comet position')
+          // setLoading(false)
         }
       }
     )
@@ -389,7 +389,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     </Stack>
                     <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                       <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                      <Typography variant='p'>${currentAggLiquidity.toLocaleString()} USD</Typography>
+                      <Typography variant='p' ml='5px'>${currentAggLiquidity.toLocaleString()} USD</Typography>
                     </Box>
                   </BoxWithBorder>
                 </EqualBox>
@@ -402,7 +402,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     </Box>
                     <Box mt='20px'>
                       <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
-                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={490} />
+                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={430} />
                       {hasRiskScore &&
                         <WarningMsg> This position will have high possibility to become subject to liquidation. </WarningMsg>
                       }
@@ -431,6 +431,7 @@ const BoxWrapper = styled(Box)`
 `
 const EqualBox = styled(Box)`
   flex: 1 1 0;
+  width: 440px;
   min-width: 400px;
 `
 const BoxWithBorder = styled(Box)`
