@@ -316,7 +316,7 @@ const WalletSelectBox = styled(Box)`
   position: absolute;
   top: 60px;
   right: 0px;
-  width: 262px;
+  width: 268px;
   height: 88px;
   padding: 13px 16px;
   background-color: ${(props) => props.theme.boxes.darkBlack};

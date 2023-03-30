@@ -8,9 +8,10 @@ import {
 	DialogTitle,
 	IconButton,
 	List,
-  Box,
+	Box,
 	styled,
 	Theme,
+	Typography,
 } from '@mui/material'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -23,25 +24,25 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 		width: 400,
 		margin: 0,
 		color: '#fff',
-    background: '#10141f',
-    boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
-    borderRadius: '10px'
+		background: '#10141f',
+		boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
+		borderRadius: '10px'
 	},
 	'& .MuiDialogTitle-root': {
 		background: '#10141f',
 		lineHeight: theme.spacing(5),
-    textAlign: 'center',
+		textAlign: 'center',
 		'& .MuiIconButton-root': {
 			padding: theme.spacing(),
 			marginRight: theme.spacing(-1),
 			color: '#777',
-      '&:hover': {
-        color: '#fff'
-      }
+			'&:hover': {
+				color: '#fff'
+			}
 		},
 	},
 	'& .MuiDialogContent-root': {
-    marginTop: 25,
+		marginTop: 25,
 		padding: 0,
 		'& .MuiCollapse-root': {
 			'& .MuiList-root': {
@@ -70,9 +71,9 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 				fontSize: '1rem',
 				fontWeight: 400,
 
-        '&:hover': {
-          background: '#2d3858'
-        },
+				'&:hover': {
+					background: '#2d3858'
+				},
 			},
 			'& .MuiSvgIcon-root': {
 				color: theme.palette.grey[500],
@@ -122,14 +123,14 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 	return (
 		<RootDialog open={open} onClose={handleClose} {...props}>
 			<DialogTitle>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
-          <IconButton onClick={handleClose} size="large">
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Box sx={{ margin: '0 auto', fontSize: '24px', fontWeight: 'bold', width: '250px' }}>
-          {title}
-        </Box>
+				<Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+					<IconButton onClick={handleClose} size="large">
+						<CloseIcon />
+					</IconButton>
+				</Box>
+				<Box sx={{ margin: '0 auto', width: '250px' }}>
+					<Typography variant='h4'>{title}</Typography>
+				</Box>
 			</DialogTitle>
 			<DialogContent>
 				<List>

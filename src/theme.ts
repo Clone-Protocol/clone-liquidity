@@ -94,7 +94,7 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 			styleOverrides: {
 				root: {
 					'& .MuiDialog-paper': {
-						background: '#10141f',
+						background: 'none',
 						boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
 						borderRadius: '10px'
 					},

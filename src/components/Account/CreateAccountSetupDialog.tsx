@@ -40,7 +40,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 						<Image src={logoIcon} width={187} alt="incept" />
 						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
 						<DescBox>
-							<Typography variant='p'>This is your first time connecting this wallet to Devnet Incept Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of <Emphasize>~0.63 Devnet SOL</Emphasize> for most optimal experience using Devnet Incept Liquidity.</Typography>
+							<Typography variant='p'>This is your first time connecting this wallet to Devnet Incept Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='h8' color='#fff'>~0.63 Devnet SOL</Typography> <Typography variant='p'>for most optimal experience using Devnet Incept Liquidity.</Typography>
 						</DescBox>
 						<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
 							<Typography variant='p_lg'>Open Devnet Account</Typography>
@@ -66,12 +66,11 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 }
 
 const ContentContainer = styled('div')`
-	width: 809px;
+	width: 810px;
 	height: 561px;
 	display: flex;
 	align-items: center;
 	padding: 40px;
-	background-color: #151618;
 `
 const LeftBox = styled(Box)`
 	width: 352px;
@@ -81,10 +80,6 @@ const DescBox = styled(Box)`
 	margin-bottom: 15px;
 	line-height: 1.1;
 	color: ${(props) => props.theme.palette.text.secondary};
-`
-const Emphasize = styled('span')`
-	color: #fff;
-	font-weight: 600;
 `
 const SubmitButton = styled(Button)`
 	padding: 16px 41px;
