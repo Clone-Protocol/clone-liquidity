@@ -19,13 +19,19 @@ import useDebounce from '~/hooks/useDebounce'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
+import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
+import { useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
 	const [searchTerm, setSearchTerm] = useState('')
 	const debounceSearchTerm = useDebounce(searchTerm, 500)
+
+	const { connected } = useWallet()
 	const router = useRouter()
+	const setOpenConnectWalletGuideDlogState = useSetRecoilState(openConnectWalletGuideDlogState)
 
 	const { data: assets } = useAssetsQuery({
 		filter,
@@ -54,7 +60,11 @@ const AssetList: React.FC = () => {
 		params
 	) => {
 		if (isAlreadyInitializedAccount) {
-			router.push(`/assets/${params.row.id}/asset`)
+			if (connected) {
+				router.push(`/assets/${params.row.id}/asset`)
+			} else {
+				setOpenConnectWalletGuideDlogState(true)
+			}
 		} else {
 			handleLinkNeedingAccountClick(undefined)
 		}
