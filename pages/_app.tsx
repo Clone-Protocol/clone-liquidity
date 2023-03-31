@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useState } from 'react'
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import QueryProvider from '~/hocs/QueryClient'
 import type { AppProps } from 'next/app'
@@ -22,7 +22,14 @@ import useLocalStorage from '~/hooks/useLocalStorage'
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
   const [isCompleteInit, _] = useLocalStorage(IS_COMPLETE_INIT, false)
-  const [isOpenInit, setIsOpenInit] = useState(true)
+  const [isOpenInit, setIsOpenInit] = useState(false)
+
+  // setTimeout(() => setIsOpenInit(!isCompleteInit), 1200)
+  useEffect(() => {
+    if (!isCompleteInit) {
+      setIsOpenInit(true)
+    }
+  }, [isCompleteInit])
 
   return (
     <QueryProvider>
@@ -46,7 +53,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                       }}>
                       {getLayout(<Component {...pageProps} />)}
                     </Box>
-                    {isOpenInit && !isCompleteInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
+                    {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
                   </Box>
                 </DataLoadingIndicatorProvider>
               </TransactionStateProvider>

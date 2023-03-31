@@ -35,7 +35,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	if (state === CreateAccountDialogStates.Initial) {
 		return (
 			<Dialog open={shouldDialogOpen()} onClose={handleClose} maxWidth={810}>
-				<ContentContainer style={{ background: `url(${BgDialog.src})` }}>
+				<ContentContainer style={{ backgroundImage: `url(${BgDialog.src})` }}>
 					<LeftBox>
 						<Image src={logoIcon} width={187} alt="incept" />
 						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
@@ -66,11 +66,13 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 }
 
 const ContentContainer = styled('div')`
-	width: 810px;
+	width: 809px;
 	height: 561px;
 	display: flex;
 	align-items: center;
 	padding: 40px;
+	background: no-repeat center center;
+	background-size: cover;
 `
 const LeftBox = styled(Box)`
 	width: 352px;
