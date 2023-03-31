@@ -3,10 +3,11 @@ import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { Box, styled, Dialog, DialogContent, Typography, Button } from '@mui/material'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
+import { FadeTransition } from '~/components/Common/Dialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { useCloseAllPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const CloseEntireCometPoolDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -46,7 +47,7 @@ const CloseEntireCometPoolDialog = ({ open, handleClose }: { open: boolean, hand
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={390}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={390}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '15px 15px' }}>
           <BoxWrapper>
             <Typography variant='p_xlg'>Close Entire Multipool Comet</Typography>
@@ -63,9 +64,9 @@ const CloseEntireCometPoolDialog = ({ open, handleClose }: { open: boolean, hand
               <Typography variant='h8'>Please read: </Typography><Typography variant='p'>this workflow will prompt multiple transaction approvals in series. Please approval all transaction requests to ensure successful completion of the work flow.</Typography>
             </WarningBox>
 
-            <ActionButton onClick={() => handleEntireCloseComet()}>
+            <SubmitButton onClick={() => handleEntireCloseComet()}>
               <Typography variant='p_lg'>Close Entire Multipool</Typography>
-            </ActionButton>
+            </SubmitButton>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -86,20 +87,6 @@ const WarningBox = styled(Box)`
   margin-top: 13px;
   line-height: 1;
 `
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 16px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
+
 export default CloseEntireCometPoolDialog
 

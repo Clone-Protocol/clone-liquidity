@@ -12,6 +12,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
   const { publicKey } = useWallet()
@@ -78,9 +79,9 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         </Box>
 
         {!canCloseComet &&
-          <ActionButton onClick={redirectToMarket}><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to go to Incept Markets to acquire this iAsset</Typography></ActionButton>
+          <SubmitButton onClick={redirectToMarket}><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to go to Incept Markets to acquire this iAsset</Typography></SubmitButton>
         }
-        <ActionButton onClick={onClose} disabled={!canCloseComet}><Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography></ActionButton>
+        <SubmitButton onClick={onClose} disabled={!canCloseComet} sx={{ marginTop: '2px' }}><Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography></SubmitButton>
 
         <Box display='flex' justifyContent='center'>
           <DataLoadingIndicator />
@@ -89,23 +90,5 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
     </>
   )
 }
-
-const ActionButton = styled(Button)`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
 
 export default withSuspense(ClosePanel, <LoadingProgress />)

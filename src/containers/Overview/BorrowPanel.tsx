@@ -18,6 +18,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const RISK_RATIO_VAL = 170
 
@@ -48,7 +49,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     setValue
   } = useForm({
@@ -133,7 +134,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established borrow position')
+            // enqueueSnackbar('Successfully established borrow position')
             // setLoading(false)
             initData()
           }
@@ -213,7 +214,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
 
           <StyledDivider />
 
-          <Box>
+          <Box mb='10px'>
             <Box><Typography variant='p_lg'>Borrow Amount</Typography></Box>
             <Box sx={{ marginTop: '20px' }}>
               <Controller
@@ -243,7 +244,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
             </Box>
           </Box>
 
-          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
             <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow</Typography>
           </SubmitButton>
         </Box>
@@ -270,21 +271,6 @@ const SelectPoolBox = styled(Box)`
   background: ${(props) => props.theme.boxes.black};
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const SubmitButton = styled(Button)`
-	width: 100%;
-	background-color: ${(props) => props.theme.palette.primary.main};
-	color: #000;
-  border-radius: 0px;
-  margin-top: 25px;
-	margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default withSuspense(BorrowPanel, <LoadingProgress />)

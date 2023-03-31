@@ -6,7 +6,7 @@ import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { Balance } from '~/features/Borrow/Balance.query'
-import { Box, Stack, Button, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
@@ -25,6 +25,7 @@ import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import WarningMsg from '~/components/Common/WarningMsg'
 import { RISK_SCORE_VAL } from '~/data/riskfactors'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const COLLATERAL_INDEX = 0 // USDi
 
@@ -89,8 +90,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
       if (!tokenData || !wallet) return
 
       await trigger()
-
-      const program = getInceptApp(wallet)
 
       if (isNaN(collAmount)) {
         setMintAmount(0)
@@ -341,21 +340,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const SubmitButton = styled(Button)`
-	width: 100%;
-	background-color: ${(props) => props.theme.palette.primary.main};
-	color: #000;
-  border-radius: 0px;
-  margin-top: 25px;
-	margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default withSuspense(SinglepoolCometPanel, <LoadingProgress />)

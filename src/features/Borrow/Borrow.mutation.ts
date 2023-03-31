@@ -29,6 +29,7 @@ export const callClose = async ({ program, userPubKey, data }: CallCloseProps) =
 	)
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
 
+	// @TODO : change sendAndConfirm
 	await program.closeBorrowPosition(
 		iassetAssociatedTokenAccount!,
 		Number(borrowIndex),
@@ -59,7 +60,7 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 	}
 }
 
-export const callEditCollateral = async ({ program, userPubKey, data }: CallEditProps) => {
+export const callEditCollateral = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -73,6 +74,7 @@ export const callEditCollateral = async ({ program, userPubKey, data }: CallEdit
 
 	/// Deposit
 	if (editType === 0) {
+		// @TODO : change sendAndConfirm
 		await program.addCollateralToBorrow(
 			borrowIndex,
 			collateralAssociatedTokenAccount!,
@@ -86,7 +88,6 @@ export const callEditCollateral = async ({ program, userPubKey, data }: CallEdit
 		}
 	} else {
 		/// Withdraw
-
 		if (collateralAssociatedTokenAccount === undefined) {
 			let tx = new Transaction()
 			const usdiAssociatedToken = await getAssociatedTokenAddress(
@@ -109,8 +110,13 @@ export const callEditCollateral = async ({ program, userPubKey, data }: CallEdit
 					new anchor.BN(collateralAmount * 10 ** 8)
 				)
 			)
+
+			// @TODO : change sendAndConfirm
 			await program.provider.sendAndConfirm!(tx)
+			// await sendAndConfirm(program, tx, setTxState)
 		} else {
+
+			// @TODO : change sendAndConfirm
 			await program.withdrawCollateralFromBorrow(
 				collateralAssociatedTokenAccount!,
 				borrowIndex,
@@ -126,7 +132,7 @@ export const callEditCollateral = async ({ program, userPubKey, data }: CallEdit
 	}
 }
 
-export const callEditBorrow = async ({ program, userPubKey, data }: CallEditProps) => {
+export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -149,6 +155,7 @@ export const callEditBorrow = async ({ program, userPubKey, data }: CallEditProp
 	/// Deposit
 	if (editType === 0) {
 		if (iassetAssociatedTokenAccount !== undefined) {
+			// @TODO : change sendAndConfirm
 			await program.addIassetToBorrow(
 				iassetAssociatedTokenAccount!,
 				new anchor.BN(borrowAmount * 10 ** 8),
@@ -176,7 +183,9 @@ export const callEditBorrow = async ({ program, userPubKey, data }: CallEditProp
 						borrowIndex
 					)
 				)
+			// @TODO : change sendAndConfirm
 			program.provider.sendAndConfirm!(transactions)
+			// await sendAndConfirm(program, transactions, setTxState)
 		}
 
 		return {
@@ -185,6 +194,7 @@ export const callEditBorrow = async ({ program, userPubKey, data }: CallEditProp
 		}
 	} else {
 		/// Withdraw
+		// @TODO : change sendAndConfirm
 		await program.subtractIassetFromBorrow(
 			iassetAssociatedTokenAccount!,
 			new anchor.BN(borrowAmount * 10 ** 8),
@@ -208,13 +218,16 @@ type EditFormData = {
 interface CallEditProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation(() => funcNoWallet())
 	}
@@ -223,8 +236,10 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation(() => funcNoWallet())
 	}
@@ -286,7 +301,7 @@ const runMintInstructions = async (
 	)
 
 	// await incept.provider.sendAndConfirm!(tx, signers);
-	await sendAndConfirm(incept, tx, signers, setTxState)
+	await sendAndConfirm(incept, tx, setTxState, signers)
 }
 
 export const callBorrow = async ({ program, userPubKey, setTxState, data }: CallBorrowProps) => {
@@ -345,6 +360,6 @@ export function useBorrowMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: BorrowFormData) => funcNoWallet())
 	}
 }

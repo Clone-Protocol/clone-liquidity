@@ -7,8 +7,10 @@ import { assetMapping } from '~/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
+import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
+import { sendAndConfirm } from '~/utils/tx_helper';
 
-export const callRecenterAll = async ({ program, userPubKey, data }: CallRecenterProps) => {
+export const callRecenterAll = async ({ program, userPubKey, setTxState, data }: CallRecenterProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('recenterAll data', data)
@@ -18,7 +20,7 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 	const [cometResult, tokenDataResult] = await Promise.allSettled([program.getComet(), program.getTokenData()])
 
 	if (cometResult.status === 'rejected' || tokenDataResult.status === 'rejected') {
-		throw 'Network request was rejected';
+		throw new Error('Network request was rejected');
 	}
 
 	const comet = cometResult.value
@@ -42,7 +44,7 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 	}
 
 	if (calls.length === 0) {
-		throw 'No positions are able to be recentered!'
+		throw new Error('No positions are able to be recentered!')
 	}
 	console.log("TICKERS:", tickers)
 	let tx = new Transaction()
@@ -51,10 +53,10 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 	for (let ix of ixs) {
 		tx.add(ix)
 	}
-
-	await program.provider.sendAndConfirm!(tx)
-
 	const resultMessage = tickers.length > 0 ? `The following positions were successfully recentered: ${tickers.join(', ')}.` : ''
+
+	// await program.provider.sendAndConfirm!(tx)
+	await sendAndConfirm(program, tx, setTxState)
 
 	return {
 		tickers,
@@ -66,20 +68,23 @@ export const callRecenterAll = async ({ program, userPubKey, data }: CallRecente
 export function useRecenterAllMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation(() => funcNoWallet())
 	}
 }
 
-export const callRecenter = async ({ program, userPubKey, data }: CallRecenterProps) => {
+export const callRecenter = async ({ program, userPubKey, setTxState, data }: CallRecenterProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('recenter data', data)
 
 	await program.loadManager()
 
+	// @TODO : change sendAndConfirm
 	await program.recenterComet(data.positionIndex, 0)
 
 	return {
@@ -94,15 +99,18 @@ type RecenterFormData = {
 interface CallRecenterProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
 	data: RecenterFormData
 }
 
 export function useRecenterMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: RecenterFormData) => funcNoWallet())
 	}
 }

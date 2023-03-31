@@ -6,6 +6,11 @@ export const syncFetchNetworkState = atom({
   default: false,
 })
 
+export const isAlreadyInitializedAccountState = atom({
+  key: 'isAlreadyInitializedAccountState',
+  default: true
+})
+
 export const createAccountDialogState = atom({
   key: 'createAccountDialogState',
   default: CreateAccountDialogStates.Closed
@@ -18,5 +23,10 @@ export const declinedAccountCreationState = atom({
 
 export const isCreatingAccountState = atom({
   key: 'isCreatingAccountState',
+  default: false
+})
+
+export const openConnectWalletGuideDlogState = atom({
+  key: 'openConnectWalletGuideDlogState',
   default: false
 })

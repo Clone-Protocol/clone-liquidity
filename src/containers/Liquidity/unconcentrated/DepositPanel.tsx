@@ -8,6 +8,7 @@ import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: PoolList, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -21,7 +22,7 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
     handleSubmit,
     setValue,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
   } = useForm({
     mode: 'onChange',
@@ -39,12 +40,11 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
     userPubKey: publicKey,
     index: unconcentratedIndex,
     refetchOnMount: "always",
-    enabled: open && publicKey != null
+    enabled: publicKey != null
   })
 
   const onDeposit = async () => {
-    setLoading(true)
-    handleClose()
+    // setLoading(true)
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -54,18 +54,19 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Deposit was successful')
+            // enqueueSnackbar('Deposit was successful')
 
             refetch()
             //hacky sync
             location.reload()
           }
-          setLoading(false)
+          // setLoading(false)
+          handleClose()
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('A deposit error occurred')
-          setLoading(false)
+          // enqueueSnackbar('A deposit error occurred')
+          // setLoading(false)
         }
       }
     )
@@ -156,25 +157,9 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
         />
         <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
       </Box>
-      <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid}>Deposit</ActionButton>
+      <SubmitButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid || isSubmitting}>Deposit</SubmitButton>
     </>
   ) : <></>
 }
-
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
 
 export default DepositPanel

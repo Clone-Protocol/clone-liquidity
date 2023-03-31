@@ -1,13 +1,13 @@
 // @deprecated
 import React from 'react'
 import { Box, styled, Dialog, DialogContent } from '@mui/material'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import GridLiquidityPool from './GridLiquidityPool'
 
 const AddPositionDialog = ({ open, handleChoosePosition, handleClose }: { open: boolean, handleChoosePosition: (id: number) => void, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={800}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={800}>
         <DialogContent sx={{ backgroundColor: '#16171a', padding: '15px 15px' }}>
           <BoxWrapper>
             <HeaderText>Choose Liquidity Pool</HeaderText>

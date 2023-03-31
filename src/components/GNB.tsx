@@ -25,11 +25,12 @@ import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import ReminderNewWalletPopup from './Account/ReminderNewWalletPopup'
 import MobileWarningDialog from './Common/MobileWarningDialog'
+import ConnectWalletGuideDialog from './Common/ConnectWalletGuideDialog'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -84,6 +85,7 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu = () => {
+	const router = useRouter()
 	const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
@@ -95,6 +97,7 @@ const RightMenu = () => {
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
+	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useRecoilState(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
 
 	// on initialize, set to open account creation
@@ -109,6 +112,7 @@ const RightMenu = () => {
 	const closeAccountSetupDialog = () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
+		router.replace('/')
 	}
 
 	useEffect(() => {
@@ -125,9 +129,11 @@ const RightMenu = () => {
 						).add(
 							await program.hackathonMintUsdiInstruction(ata, 10000000000)
 						);
-						await program.provider.sendAndConfirm!(tx);
 
+						// @TODO : change sendAndConfirm
+						await program.provider.sendAndConfirm!(tx);
 					} else {
+						// @TODO : change sendAndConfirm
 						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
 					}
 				} finally {
@@ -191,7 +197,7 @@ const RightMenu = () => {
 					<Typography variant='p'>Devnet Faucet</Typography>
 				</HeaderButton>
 				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
-				<MoreMenu anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
+				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
 					<ConnectButton
 						onClick={handleWalletClick}
@@ -235,6 +241,8 @@ const RightMenu = () => {
 				onGetUsdiClick={handleGetUsdiClick}
 				onHide={() => setOpenTokenFaucet(false)}
 			/>
+
+			<ConnectWalletGuideDialog open={openConnectWalletGuideDlog} connectWallet={handleWalletClick} handleClose={() => setOpenConnectWalletGuideDialog(false)} />
 		</>
 	)
 }
@@ -308,7 +316,7 @@ const WalletSelectBox = styled(Box)`
   position: absolute;
   top: 60px;
   right: 0px;
-  width: 262px;
+  width: 268px;
   height: 88px;
   padding: 13px 16px;
   background-color: ${(props) => props.theme.boxes.darkBlack};

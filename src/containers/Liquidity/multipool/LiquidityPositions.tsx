@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import RecenterDialog from '~/containers/Liquidity/comet/RecenterDialog'
+import RecenterDialog from '~/containers/Liquidity/multipool/Dialogs/RecenterDialog'
 import LiquidityPairView from '~/components/Liquidity/multipool/LiquidityPairView'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
@@ -94,6 +94,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
             tickerIcon={position.tickerIcon}
             tickerSymbol={position.tickerSymbol}
             value={position.liquidityDollarPrice}
+            ildInUsdi={position.ildInUsdi}
             ildValue={position.ildValue}
             onShowEditDialog={handleChooseEditPosition}
             onShowRecenterDialog={handleChooseRecenter}
@@ -128,20 +129,12 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         handleClose={() => setOpenEditLiquidity(false)}
       />
       <RecenterDialog
-        assetId={editAssetId.toString()}
-        open={openRecenter}
-        isMultipool={true}
-        onRefetchData={onRefetchData}
-        handleClose={() => setOpenRecenter(false)}
-      />
-
-      {/* <RecenterDialog
         open={openRecenter}
         positionIndex={editAssetId}
         poolIndex={poolIndex}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}
-      /> */}
+      />
     </>
   )
 

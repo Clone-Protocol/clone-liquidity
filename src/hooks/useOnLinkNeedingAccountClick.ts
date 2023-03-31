@@ -7,10 +7,10 @@ import { createAccountDialogState, declinedAccountCreationState } from '~/featur
 export const useOnLinkNeedingAccountClick = () => {
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 	const declinedAccountCreation = useRecoilValue(declinedAccountCreationState)
-	
-	return (evt: React.MouseEvent) => {
+
+	return (evt: React.MouseEvent | undefined) => {
 		if (declinedAccountCreation) {
-			evt.preventDefault()
+			evt?.preventDefault()
 			setCreateAccountDialogState(CreateAccountDialogStates.Reminder)
 		}
 	}

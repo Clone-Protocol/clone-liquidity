@@ -3,9 +3,8 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
-import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 import { useEditPositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 import { useForm } from 'react-hook-form'
@@ -15,6 +14,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -65,7 +65,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
     handleSubmit,
     control,
     setValue,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
   } = useForm({
     mode: 'onChange',
@@ -99,7 +99,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
 
   const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync({
       positionIndex: positionIndex,
       changeAmount: Math.abs(mintAmount - defaultMintAmount),
@@ -109,17 +109,17 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified liquidity position')
+            // enqueueSnackbar('Successfully modified liquidity position')
             refetch()
             initData()
             handleClose()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying liquidity position')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying liquidity position')
+          // setLoading(false)
         }
       })
   }
@@ -134,7 +134,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>
@@ -158,7 +158,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   </Stack>
                   <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                     <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                    <Typography variant='p'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography>
+                    <Typography variant='p' ml='5px'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography>
                   </Box>
                 </BoxWithBorder>
               </Box>
@@ -172,7 +172,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   </Box>
                 </BoxWithBorder>
 
-                <ActionButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount)}>Edit Liquidity Position</ActionButton>
+                <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>Edit Liquidity Position</SubmitButton>
 
                 <Box display='flex' justifyContent='center'>
                   <DataLoadingIndicator />
@@ -198,21 +198,6 @@ const RightBox = styled(Box)`
   min-width: 550px; 
   padding: 8px 18px; 
   color: #fff;
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default EditLiquidityDialog

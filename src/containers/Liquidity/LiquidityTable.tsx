@@ -129,7 +129,7 @@ const PanelBox = styled(Box)`
   }
 `
 const NewPositionButton = styled(Button)`
-  width: 90px;
+  width: 100px;
   height: 28px;
   color: #fff;
   padding: 8px 10px 8px 7px;

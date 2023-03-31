@@ -11,7 +11,7 @@ import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { calculateEditCometSinglePoolWithUsdiBorrowed } from 'incept-protocol-sdk/sdk/src/healthscore'
@@ -21,6 +21,7 @@ import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import WarningMsg from '~/components/Common/WarningMsg'
 import { RISK_SCORE_VAL } from '~/data/riskfactors'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -295,7 +296,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         cometIndex,
@@ -307,17 +308,17 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified comet position')
+            // enqueueSnackbar('Successfully modified comet position')
             initData()
             onRefetchData()
             onHideEditForm()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying comet position')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying comet position')
+          // setLoading(false)
         }
       }
     )
@@ -333,7 +334,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={SliderTransition} maxWidth={1000}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={1000}>
         <DialogContent sx={{ backgroundColor: '#16171a', overflow: 'hidden' }}>
           <BoxWrapper>
             <Box padding='15px 10px'>
@@ -389,7 +390,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     </Stack>
                     <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                       <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                      <Typography variant='p'>${currentAggLiquidity.toLocaleString()} USD</Typography>
+                      <Typography variant='p' ml='5px'>${currentAggLiquidity.toLocaleString()} USD</Typography>
                     </Box>
                   </BoxWithBorder>
                 </EqualBox>
@@ -402,7 +403,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     </Box>
                     <Box mt='20px'>
                       <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
-                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={490} />
+                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={430} />
                       {hasRiskScore &&
                         <WarningMsg> This position will have high possibility to become subject to liquidation. </WarningMsg>
                       }
@@ -431,25 +432,11 @@ const BoxWrapper = styled(Box)`
 `
 const EqualBox = styled(Box)`
   flex: 1 1 0;
+  width: 440px;
   min-width: 400px;
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const SubmitButton = styled(Button)`
-	width: 100%;
-	background-color: ${(props) => props.theme.palette.primary.main};
-	color: #000;
-  border-radius: 0px;
-  margin-top: 25px;
-	margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default EditDetailDialog

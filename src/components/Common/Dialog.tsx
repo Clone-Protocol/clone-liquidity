@@ -18,5 +18,5 @@ export const FadeTransition = React.forwardRef(function Transition(
   },
   ref: React.Ref<unknown>,
 ) {
-  return <Fade timeout={500} in ref={ref} {...props} />;
+  return <Fade timeout={900} in ref={ref} {...props} />;
 });

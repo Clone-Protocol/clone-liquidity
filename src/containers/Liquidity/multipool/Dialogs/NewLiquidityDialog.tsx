@@ -5,7 +5,7 @@ import { Box, styled, Button, Stack, Dialog, FormHelperText, DialogContent, Typo
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import RatioSlider from '~/components/Liquidity/multipool/RatioSlider'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import SelectedPoolBox from '~/components/Liquidity/multipool/SelectedPoolBox'
 import PairInput from '~/components/Asset/PairInput'
 import InfoTooltip from '~/components/Common/InfoTooltip'
@@ -15,6 +15,7 @@ import PairInputView from '~/components/Asset/PairInputView'
 import { useForm, Controller } from 'react-hook-form'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { open: boolean, assetIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -120,7 +121,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={960}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>
@@ -190,7 +191,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
                 </Box>
                 <Divider />
 
-                <ActionButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)}>Establish New Position</ActionButton>
+                <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue)}>Establish New Position</SubmitButton>
               </RightBox>
             </Stack>
           </BoxWrapper>
@@ -204,13 +205,6 @@ const BoxWrapper = styled(Box)`
   padding: 8px 18px; 
   color: #fff;
 `
-const HeaderText = styled(Box)`
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  color: #fff;
-`
-
 const Divider = styled('div')`
   width: 100%;
   height: 1px;
@@ -241,21 +235,6 @@ const SelectLabel = styled('div')`
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 const HealthScoreTitle = styled(Box)`
   font-size: 12px; 

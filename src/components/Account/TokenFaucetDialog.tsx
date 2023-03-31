@@ -1,15 +1,15 @@
 import { Box, styled, Dialog, DialogContent, Stack, Typography } from '@mui/material'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import Image from 'next/image'
-import walletIcon from 'public/images/wallet-icon.svg'
+import WalletIcon from 'public/images/wallet-icon.svg'
 import infoOutlineIcon from 'public/images/info-outline.svg'
 
-const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onHide }: { open: boolean, isConnect: boolean, connectWallet: () => Promise<void>, onGetUsdiClick: () => void, onHide: () => void }) => {
+const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onHide }: { open: boolean, isConnect: boolean, connectWallet: () => void, onGetUsdiClick: () => void, onHide: () => void }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={onHide} TransitionComponent={SliderTransition}>
+      <Dialog open={open} onClose={onHide} TransitionComponent={FadeTransition}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb="21px"><Typography variant='h7'>Token Faucet</Typography></Box>
@@ -33,7 +33,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
                 <Box>
                   {
                     isConnect ? (
-                      <Image src={walletIcon} alt="wallet" />
+                      <Image src={WalletIcon} alt="wallet" />
                     ) : (
                       <ConnectWallet onClick={connectWallet}><Typography variant='p'>Connect Wallet</Typography></ConnectWallet>
                     )

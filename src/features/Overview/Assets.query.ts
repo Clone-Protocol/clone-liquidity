@@ -1,18 +1,33 @@
 import { Query, useQuery } from 'react-query'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
-import { useIncept } from '~/hooks/useIncept'
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getiAssetInfos } from '~/utils/assets';
-import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { AnchorProvider } from "@project-serum/anchor";
+import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
+import { PublicKey, Connection } from "@solana/web3.js";
 
-export const fetchAssets = async ({ program, setStartTimer }: { program: InceptClient, setStartTimer: (start: boolean) => void }) => {
+export const fetchAssets = async ({ setStartTimer }: { setStartTimer: (start: boolean) => void }) => {
 	console.log('fetchAssets')
 	// start timer in data-loading-indicator
 	setStartTimer(false);
 	setStartTimer(true);
+
+	// MEMO: to support provider without wallet adapter
+	const network = getNetworkDetailsFromEnv()
+	const new_connection = new Connection(network.endpoint)
+	const provider = new AnchorProvider(
+		new_connection,
+		{
+			signTransaction: () => Promise.reject(),
+			signAllTransactions: () => Promise.reject(),
+			publicKey: new PublicKey("BSFtCudCd4pR4LSFqWPjbtXPKSNVbGkc35gRNdnqjMCU"), // MEMO: dummy pubkey
+		},
+		{}
+	);
+	const program = new InceptClient(network.incept, provider)
 
 	await program.loadManager()
 	const tokenData = await program.getTokenData();
@@ -57,20 +72,17 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
-	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
 	let queryFunc
 	try {
-		const program = getInceptApp(wallet)
-		queryFunc = () => fetchAssets({ program, setStartTimer })
+		queryFunc = () => fetchAssets({ setStartTimer })
 	} catch (e) {
 		console.error(e)
 		queryFunc = () => []
 	}
 
-	return useQuery(['assets', wallet], queryFunc, {
+	return useQuery(['assets'], queryFunc, {
 		refetchOnMount,
 		refetchInterval: REFETCH_CYCLE,
 		refetchIntervalInBackground: true,

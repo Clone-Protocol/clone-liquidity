@@ -11,6 +11,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 interface Props {
   assetData: PI
@@ -106,7 +107,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       </Stack>
       <StyledDivider />
 
-      <ActionButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}><Typography variant='p_lg'>Recenter</Typography></ActionButton>
+      <SubmitButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}><Typography variant='p_lg'>Recenter</Typography></SubmitButton>
 
       <Box display='flex' justifyContent='center'>
         <DataLoadingIndicator />
@@ -142,21 +143,6 @@ const EditBox = styled(Box)`
   justify-content: center;
   cursor: pointer;
 `
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
 const ColumnDivider = styled('div')`
   background: #363636; 
   width: 1px; 
@@ -167,8 +153,8 @@ const OverlayEditCometInfo = styled(Box)`
   position: absolute;
   top: -18px;
   left: -24px;
-  width: 542px;
-  height: 440px;
+  width: 460px;
+  height: 460px;
   padding: 0 28px 27px 0;
   background-color: rgba(27, 27, 27, 0.9);
   display: flex;

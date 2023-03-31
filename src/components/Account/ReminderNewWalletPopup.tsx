@@ -1,6 +1,6 @@
 import React from 'react'
-import { useRecoilState } from 'recoil'
-import { createAccountDialogState } from '~/features/globalAtom'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { createAccountDialogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import {
   Box,
   styled,
@@ -10,8 +10,9 @@ import { CreateAccountDialogStates } from '~/utils/constants'
 
 
 const ReminderNewWalletPopup = () => {
-  const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
-  const shouldPopupOpen = createAccountDialogStatus === CreateAccountDialogStates.Reminder
+  const setCreateAccountDialogStatus = useSetRecoilState(createAccountDialogState)
+  const isAlreadyInitializedAccount = useRecoilValue(isAlreadyInitializedAccountState)
+  const shouldPopupOpen = !isAlreadyInitializedAccount
 
   return shouldPopupOpen ? (
     <PopupBox onClick={() => setCreateAccountDialogStatus(CreateAccountDialogStates.Initial)}>

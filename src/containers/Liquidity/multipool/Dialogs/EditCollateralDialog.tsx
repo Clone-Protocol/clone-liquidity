@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
-import { SliderTransition } from '~/components/Common/Dialog'
+import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
@@ -19,6 +19,7 @@ import DepositMoreOffIcon from 'public/images/add-liquidity-icon-off.svg'
 import WithdrawOnIcon from 'public/images/withdraw-liquidity-icon-on.svg'
 import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -44,7 +45,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     setValue,
     trigger,
@@ -101,7 +102,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 
   const { mutateAsync } = useCollateralMutation(publicKey)
   const onEdit = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         collIndex,
@@ -112,17 +113,17 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified collateral')
+            // enqueueSnackbar('Successfully modified collateral')
             refetch()
             initData()
             onRefetchData()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying collateral')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying collateral')
+          // setLoading(false)
         }
       }
     )
@@ -138,7 +139,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
         </LoadingWrapper>
       )}
 
-      <Dialog open={open} onClose={handleClose} TransitionComponent={SliderTransition} maxWidth={500}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>
@@ -248,10 +249,10 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               </Box>
             }
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid}>
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
               {isNewDeposit ? 'Deposit' :
                 tab === 0 ? 'Deposit more' : 'Withdraw'}
-            </ActionButton>
+            </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
               <DataLoadingIndicator />
@@ -270,21 +271,6 @@ const BoxWrapper = styled(Box)`
 `
 const BoxWithBorder = styled(Box)`
 	border: solid 1px ${(props) => props.theme.boxes.blackShade};
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default EditCollateralDialog

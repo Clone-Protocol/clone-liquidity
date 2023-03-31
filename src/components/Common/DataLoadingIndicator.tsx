@@ -48,7 +48,7 @@ const DataLoadingIndicator = () => {
 export default DataLoadingIndicator
 
 const Wrapper = styled(Box)`
-  width: 129px;
+  width: 135px;
   height: 35px;
   padding: 4px 11px 1px 8px;
   display: flex;

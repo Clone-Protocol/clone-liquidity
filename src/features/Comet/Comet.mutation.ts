@@ -8,7 +8,9 @@ import * as anchor from '@project-serum/anchor'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { funcNoWallet } from '../baseQuery'
+import { sendAndConfirm } from '~/utils/tx_helper';
 
 export const callRecenter = async ({
   program,
@@ -21,6 +23,7 @@ export const callRecenter = async ({
 
   await program.loadManager()
 
+  // @TODO : change sendAndConfirm
   await program.recenterSinglePoolComet(
     data.cometIndex,
     []
@@ -51,7 +54,7 @@ export function useRecenterMutation(userPubKey: PublicKey | null) {
   }
 }
 
-const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, iassetMint: PublicKey, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined) => {
+const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, setTxState, data }: CallCloseProps, singlePoolComet: Comet, iassetMint: PublicKey, iassetAssociatedTokenAccount: PublicKey | undefined, usdiCollateralTokenAccount: PublicKey | undefined) => {
 
   let tx = new Transaction();
   const iAssetAssociatedToken = await getAssociatedTokenAddress(
@@ -104,10 +107,11 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
     payILDInstruction
   );
 
-  await program.provider.sendAndConfirm!(tx);
+  // await program.provider.sendAndConfirm!(tx);
+  await sendAndConfirm(program, tx, setTxState)
 }
 
-const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, data }: CallCloseProps, singlePoolComet: Comet, usdiCollateralTokenAccount: PublicKey | undefined) => {
+const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, setTxState, data }: CallCloseProps, singlePoolComet: Comet, usdiCollateralTokenAccount: PublicKey | undefined) => {
   let tx = new Transaction();
 
   const usdiAssociatedToken = await getAssociatedTokenAddress(
@@ -144,11 +148,12 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
     )
   );
 
-  await program.provider.sendAndConfirm!(tx);
+  // await program.provider.sendAndConfirm!(tx);
+  await sendAndConfirm(program, tx, setTxState)
 }
 
 
-export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
+export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
   if (!userPubKey) throw new Error('no user public key')
 
   console.log('close input data', data)
@@ -165,13 +170,13 @@ export const callClose = async ({ program, userPubKey, data }: CallCloseProps) =
   if (data.cType === 0) {
     if (Number(singlePoolComet.numPositions) !== 0) {
       await withdrawLiquidityAndPaySinglePoolCometILD(
-        { program, userPubKey, data }, singlePoolComet, assetInfo.iassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
+        { program, userPubKey, setTxState, data }, singlePoolComet, assetInfo.iassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
       )
     }
 
   } else {
     if (getMantissa(singlePoolComet.positions[data.cometIndex].liquidityTokenValue) === 0) {
-      await withdrawCollateralAndCloseSinglePoolComet({ program, userPubKey, data }, singlePoolComet, collateralAssociatedTokenAccount);
+      await withdrawCollateralAndCloseSinglePoolComet({ program, userPubKey, setTxState, data }, singlePoolComet, collateralAssociatedTokenAccount);
     }
   }
 
@@ -183,26 +188,29 @@ export const callClose = async ({ program, userPubKey, data }: CallCloseProps) =
 type CloseFormData = {
   cometIndex: number,
   cType: number, // 0 : withdraw liquidity , 1 : close comet
-  iassetMint: PublicKey
 }
 interface CallCloseProps {
   program: InceptClient
   userPubKey: PublicKey | null
+  setTxState: (state: TransactionStateType) => void
   data: CloseFormData
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
+  const { setTxState } = useTransactionState()
+
   if (wallet) {
-    return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, data }))
+    return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
   } else {
-    return useMutation(() => funcNoWallet())
+    return useMutation((_: CloseFormData) => funcNoWallet())
   }
 }
 
 export const callEdit = async ({
   program,
   userPubKey,
+  setTxState,
   data,
   setRefreshData
 }: CallEditProps) => {
@@ -286,7 +294,9 @@ export const callEdit = async ({
       )
     );
   }
-  await program.provider.sendAndConfirm!(tx);
+
+  // await program.provider.sendAndConfirm!(tx);
+  await sendAndConfirm(program, tx, setTxState)
 
   setRefreshData();
 
@@ -302,19 +312,20 @@ type EditFormData = {
 interface CallEditProps {
   program: InceptClient
   userPubKey: PublicKey | null
+  setTxState: (state: TransactionStateType) => void
   data: EditFormData,
   setRefreshData: () => {}
 }
 export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => {}) {
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
+  const { setTxState } = useTransactionState()
   if (wallet) {
-    return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, data, setRefreshData }))
+    return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, setTxState, data, setRefreshData }))
   } else {
     return useMutation(() => funcNoWallet())
   }
 }
-
 
 export const callComet = async ({
   program,
@@ -330,6 +341,7 @@ export const callComet = async ({
   const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data;
   const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 
+  // @TODO : change sendAndConfirm
   await program.openNewSinglePoolComet(
     collateralAssociatedTokenAccount!,
     new anchor.BN(usdiAmount * 10 ** 8),

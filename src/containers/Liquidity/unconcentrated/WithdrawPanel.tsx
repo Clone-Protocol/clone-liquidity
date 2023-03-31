@@ -8,11 +8,13 @@ import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPositio
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [amount, setAmount] = useState(0.0)
   const [percent, setPercent] = useState(50)
   const unconcentratedIndex = parseInt(assetId)
@@ -47,8 +49,8 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
   }, [data?.maxVal, amount, percent])
 
   const onWithdraw = async () => {
-    setLoading(true)
-    handleClose()
+    setIsSubmitting(true)
+    // setLoading(true)
     await mutateAsync(
       {
         index: unconcentratedIndex,
@@ -59,18 +61,21 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Withdrawal was successful')
+            // enqueueSnackbar('Withdrawal was successful')
 
             refetch()
             //hacky sync
             location.reload()
           }
-          setLoading(false)
+          setIsSubmitting(false)
+          handleClose()
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('A withdrawal error occurred')
-          setLoading(false)
+          setIsSubmitting(false)
+          // enqueueSnackbar('A withdrawal error occurred')
+          // setLoading(false)
         }
       }
     )
@@ -125,7 +130,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
         </StyledBox>
       </Stack>
 
-      <ActionButton onClick={onWithdraw}>Withdraw</ActionButton>
+      <SubmitButton onClick={onWithdraw} disabled={isSubmitting}>Withdraw</SubmitButton>
     </>
   ) : <></>
 }
@@ -146,21 +151,6 @@ const BottomBox = styled(Box)`
   height: 30px;
   text-align: center;
   border-top: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default WithdrawPanel

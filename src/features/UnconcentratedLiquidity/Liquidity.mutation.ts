@@ -7,8 +7,10 @@ import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery'
+import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
+import { sendAndConfirm } from '~/utils/tx_helper';
 
-export const callWithdraw = async ({ program, userPubKey, data }: CallWithdrawProps) => {
+export const callWithdraw = async ({ program, userPubKey, setTxState, data }: CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -87,7 +89,9 @@ export const callWithdraw = async ({ program, userPubKey, data }: CallWithdrawPr
 			index,
 		)
 	);
-	await program.provider.sendAndConfirm!(tx);
+
+	//await program.provider.sendAndConfirm!(tx);
+	await sendAndConfirm(program, tx, setTxState)
 
 	return {
 		result: true
@@ -102,20 +106,23 @@ type WithdrawFormData = {
 interface CallWithdrawProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
 	data: WithdrawFormData
 }
 export function useWithdrawMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: WithdrawFormData) => funcNoWallet())
 	}
 }
 
 
-export const callDeposit = async ({ program, userPubKey, data }: CallDepositProps) => {
+export const callDeposit = async ({ program, userPubKey, setTxState, data }: CallDepositProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -124,9 +131,11 @@ export const callDeposit = async ({ program, userPubKey, data }: CallDepositProp
 	let liquidityPositions = await program.getLiquidityPositions();
 	let liquidityPosition = liquidityPositions[index]!;
 
-	return await callLiquidity({ program, userPubKey, data: {
-		iassetIndex: liquidityPosition.poolIndex, iassetAmount
-	}});
+	return await callLiquidity({
+		program, userPubKey, setTxState, data: {
+			iassetIndex: liquidityPosition.poolIndex, iassetAmount
+		}
+	});
 }
 
 type DepositFormData = {
@@ -136,19 +145,22 @@ type DepositFormData = {
 interface CallDepositProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
 	data: DepositFormData
 }
 export function useDepositMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: DepositFormData) => funcNoWallet())
 	}
 }
 
-export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidityProps) => {
+export const callLiquidity = async ({ program, userPubKey, setTxState, data }: CallLiquidityProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -193,7 +205,8 @@ export const callLiquidity = async ({ program, userPubKey, data }: CallLiquidity
 		)
 	);
 
-	await program.provider.sendAndConfirm!(tx);
+	//await program.provider.sendAndConfirm!(tx);
+	await sendAndConfirm(program, tx, setTxState)
 
 	return {
 		result: true
@@ -207,14 +220,17 @@ type LiquidityFormData = {
 interface CallLiquidityProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
 	data: LiquidityFormData
 }
 export function useLiquidityMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: LiquidityFormData) => funcNoWallet())
 	}
 }

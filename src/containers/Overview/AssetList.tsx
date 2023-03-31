@@ -9,6 +9,8 @@ import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
 import Divider from '@mui/material/Divider';
 import Link from 'next/link'
+import { useRecoilValue } from 'recoil'
+import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.svg'
 import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
@@ -17,13 +19,19 @@ import useDebounce from '~/hooks/useDebounce'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
+import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
+import { useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
 	const [searchTerm, setSearchTerm] = useState('')
 	const debounceSearchTerm = useDebounce(searchTerm, 500)
+
+	const { connected } = useWallet()
 	const router = useRouter()
+	const setOpenConnectWalletGuideDlogState = useSetRecoilState(openConnectWalletGuideDlogState)
 
 	const { data: assets } = useAssetsQuery({
 		filter,
@@ -45,10 +53,21 @@ const AssetList: React.FC = () => {
 		}
 	}, [searchTerm])
 
+	const isAlreadyInitializedAccount = useRecoilValue(isAlreadyInitializedAccountState)
+	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+
 	const handleRowClick: GridEventListener<'rowClick'> = (
 		params
 	) => {
-		router.push(`/assets/${params.row.id}/asset`)
+		if (isAlreadyInitializedAccount) {
+			if (connected) {
+				router.push(`/assets/${params.row.id}/asset`)
+			} else {
+				setOpenConnectWalletGuideDlogState(true)
+			}
+		} else {
+			handleLinkNeedingAccountClick(undefined)
+		}
 	}
 
 	return (
@@ -133,11 +152,10 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
-
+			//@TODO: set market url
 			return (
 				<Link href={`/assets/${params.row.id}/asset?ltab=1`}>
-					<TradeButton onClick={handleLinkNeedingAccountClick}>
+					<TradeButton>
 						<Image src={TradeIcon} />
 					</TradeButton>
 				</Link>
@@ -148,8 +166,6 @@ let columns: GridColDef[] = [
 
 const PanelBox = styled(Box)`
 	padding: 18px 36px;
-  background: rgba(21, 22, 24, 0.75);
-  border-radius: 10px;
   color: #fff;
   & .super-app-theme--header { 
     color: #9d9d9d; 

@@ -14,12 +14,11 @@ const WelcomeMsg = () => {
 
 const StyledPaper = styled(Paper)`
 	margin: 0 auto;
-	max-width: 850px;
+	max-width: 1060px;
 	text-align: center;
 	background: ${(props) => props.theme.boxes.darkBlack};
 	color: #bfbebe;
-	padding-top: 8px;
-	padding-bottom: 8px;
+	padding: 8px 15px;
 `
 
 export default WelcomeMsg

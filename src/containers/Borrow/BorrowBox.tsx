@@ -1,3 +1,4 @@
+// @Deprecated
 import { Box, Button, Paper, Divider, Stack, FormHelperText } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
@@ -133,7 +134,7 @@ const BorrowBox = () => {
   }, [collAmount, collRatio])
 
   const onBorrow = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         collateralIndex: 0,
@@ -145,15 +146,15 @@ const BorrowBox = () => {
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Success to borrow')
-            setLoading(false)
+            // enqueueSnackbar('Success to borrow')
+            // setLoading(false)
             initData()
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to borrow')
-          setLoading(false)
+          // enqueueSnackbar('Failed to borrow')
+          // setLoading(false)
         }
       }
     )
@@ -221,7 +222,6 @@ const BorrowBox = () => {
                 render={({ field }) => (
                   <PairInput
                     tickerIcon={fromPair.tickerIcon}
-                    tickerName={fromPair.tickerName}
                     tickerSymbol={fromPair.tickerSymbol}
                     value={parseFloat(field.value.toFixed(3))}
                     balance={usdiBalance?.balanceVal}
@@ -273,7 +273,6 @@ const BorrowBox = () => {
                   render={({ field }) => (
                     <PairInput
                       tickerIcon={ASSETS[assetIndex].tickerIcon}
-                      tickerName={ASSETS[assetIndex].tickerName}
                       tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                       balanceDisabled
                       value={parseFloat(field.value.toFixed(3))}
