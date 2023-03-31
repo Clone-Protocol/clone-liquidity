@@ -19,6 +19,7 @@ import DepositMoreOffIcon from 'public/images/add-liquidity-icon-off.svg'
 import WithdrawOnIcon from 'public/images/withdraw-liquidity-icon-on.svg'
 import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -248,10 +249,10 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               </Box>
             }
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
               {isNewDeposit ? 'Deposit' :
                 tab === 0 ? 'Deposit more' : 'Withdraw'}
-            </ActionButton>
+            </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
               <DataLoadingIndicator />
@@ -270,21 +271,6 @@ const BoxWrapper = styled(Box)`
 `
 const BoxWithBorder = styled(Box)`
 	border: solid 1px ${(props) => props.theme.boxes.blackShade};
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default EditCollateralDialog

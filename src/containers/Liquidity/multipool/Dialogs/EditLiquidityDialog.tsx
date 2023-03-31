@@ -14,6 +14,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -171,7 +172,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   </Box>
                 </BoxWithBorder>
 
-                <ActionButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>Edit Liquidity Position</ActionButton>
+                <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>Edit Liquidity Position</SubmitButton>
 
                 <Box display='flex' justifyContent='center'>
                   <DataLoadingIndicator />
@@ -197,21 +198,6 @@ const RightBox = styled(Box)`
   min-width: 550px; 
   padding: 8px 18px; 
   color: #fff;
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default EditLiquidityDialog

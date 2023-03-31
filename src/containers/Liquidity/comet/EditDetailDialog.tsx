@@ -21,6 +21,7 @@ import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import WarningMsg from '~/components/Common/WarningMsg'
 import { RISK_SCORE_VAL } from '~/data/riskfactors'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -436,21 +437,6 @@ const EqualBox = styled(Box)`
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const SubmitButton = styled(Button)`
-	width: 100%;
-	background-color: ${(props) => props.theme.palette.primary.main};
-	color: #000;
-  border-radius: 0px;
-  margin-top: 25px;
-	margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default EditDetailDialog

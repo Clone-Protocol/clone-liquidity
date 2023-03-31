@@ -8,6 +8,7 @@ import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: PoolList, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -156,25 +157,9 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
         />
         <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
       </Box>
-      <ActionButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid || isSubmitting}>Deposit</ActionButton>
+      <SubmitButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid || isSubmitting}>Deposit</SubmitButton>
     </>
   ) : <></>
 }
-
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
 
 export default DepositPanel

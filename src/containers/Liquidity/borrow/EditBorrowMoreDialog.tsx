@@ -14,6 +14,7 @@ import { FadeTransition } from '~/components/Common/Dialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -204,9 +205,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
               </WarningStack>
             } */}
 
-            <ActionButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
               <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}{editType === 0 ? 'Edit Borrowed Amount' : 'Withdraw all Collateral & Close Position'}</Typography>
-            </ActionButton>
+            </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
               <DataLoadingIndicator />
@@ -228,45 +229,30 @@ const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
   padding: 15px 18px;
   margin-top: 16px;
-  margin-bottom: 16px;
 `
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
-const WarningStack = styled(Stack)`
-  background: rgba(233, 209, 0, 0.04);
-  border: 1px solid #e9d100;
-  border-radius: 10px;
-  color: #9d9d9d;
-  padding: 8px;
-  margin-top: 10px;
-  margin-bottom: 30px;
-`
-const WarningIconBox = styled(Box)`
-  width: 53px; 
-  margin-left: 20px; 
-  text-align: center;
-`
-const WarningBox = styled(Box)`
-	max-width: 500px;
-  padding-left: 36px;
-  padding-top: 4px;
-	padding-right: 10px;
-	font-size: 11px;
-	font-weight: 500;
-	color: #989898;
-`
+
+// const WarningStack = styled(Stack)`
+//   background: rgba(233, 209, 0, 0.04);
+//   border: 1px solid #e9d100;
+//   border-radius: 10px;
+//   color: #9d9d9d;
+//   padding: 8px;
+//   margin-top: 10px;
+//   margin-bottom: 30px;
+// `
+// const WarningIconBox = styled(Box)`
+//   width: 53px; 
+//   margin-left: 20px; 
+//   text-align: center;
+// `
+// const WarningBox = styled(Box)`
+// 	max-width: 500px;
+//   padding-left: 36px;
+//   padding-top: 4px;
+// 	padding-right: 10px;
+// 	font-size: 11px;
+// 	font-weight: 500;
+// 	color: #989898;
+// `
 
 export default EditBorrowMoreDialog

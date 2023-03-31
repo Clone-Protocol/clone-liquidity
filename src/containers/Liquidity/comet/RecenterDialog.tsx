@@ -18,6 +18,7 @@ import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { getSinglePoolHealthScore, calculateCometRecenterSinglePool } from 'incept-protocol-sdk/sdk/src/healthscore'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 interface CometInfo {
   healthScore: number
@@ -192,9 +193,9 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
               </Stack>
             </BoxWithBorder>
 
-            <ActionButton onClick={() => handleRecenter()} disabled={isLackBalance || !isValidToRecenter()}>
+            <SubmitButton onClick={() => handleRecenter()} disabled={isLackBalance || !isValidToRecenter()}>
               <Typography variant='p_lg'>Recenter Now</Typography>
-            </ActionButton>
+            </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
               <DataLoadingIndicator />
@@ -233,21 +234,6 @@ const BottomBox = styled(Box)`
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 16px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default RecenterDialog

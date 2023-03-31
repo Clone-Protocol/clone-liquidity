@@ -8,6 +8,7 @@ import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPositio
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -129,7 +130,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
         </StyledBox>
       </Stack>
 
-      <ActionButton onClick={onWithdraw} disabled={isSubmitting}>Withdraw</ActionButton>
+      <SubmitButton onClick={onWithdraw} disabled={isSubmitting}>Withdraw</SubmitButton>
     </>
   ) : <></>
 }
@@ -150,21 +151,6 @@ const BottomBox = styled(Box)`
   height: 30px;
   text-align: center;
   border-top: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default WithdrawPanel

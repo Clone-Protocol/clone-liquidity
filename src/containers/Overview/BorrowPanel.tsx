@@ -18,6 +18,7 @@ import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingInd
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const RISK_RATIO_VAL = 170
 
@@ -213,7 +214,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
 
           <StyledDivider />
 
-          <Box>
+          <Box mb='10px'>
             <Box><Typography variant='p_lg'>Borrow Amount</Typography></Box>
             <Box sx={{ marginTop: '20px' }}>
               <Controller
@@ -270,21 +271,6 @@ const SelectPoolBox = styled(Box)`
   background: ${(props) => props.theme.boxes.black};
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const SubmitButton = styled(Button)`
-	width: 100%;
-	background-color: ${(props) => props.theme.palette.primary.main};
-	color: #000;
-  border-radius: 0px;
-  margin-top: 25px;
-	margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default withSuspense(BorrowPanel, <LoadingProgress />)

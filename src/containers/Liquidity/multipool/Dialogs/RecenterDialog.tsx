@@ -11,6 +11,7 @@ import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import Image from 'next/image'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const RecenterDialog = ({
 	positionIndex,
@@ -119,9 +120,9 @@ const RecenterDialog = ({
 							</Stack>
 						</BoxWithBorder>
 
-						<ActionButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>
+						<SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>
 							Recenter Now
-						</ActionButton>
+						</SubmitButton>
 
 						<Box display='flex' justifyContent='center'>
 							<DataLoadingIndicator />
@@ -152,21 +153,6 @@ const BottomBox = styled(Box)`
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
-const ActionButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 16px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default RecenterDialog

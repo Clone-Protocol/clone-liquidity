@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -209,7 +210,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
           </Box>
           <StyledDivider />
 
-          <LiquidityButton onClick={handleSubmit(onFormSubmit)} disabled={disableSubmitButton() || isSubmitting}>Open Unconcentrated Position</LiquidityButton>
+          <SubmitButton onClick={handleSubmit(onFormSubmit)} sx={{ marginTop: '5px' }} disabled={disableSubmitButton() || isSubmitting}>Open Unconcentrated Position</SubmitButton>
         </Box>
       </Box>
     </>
@@ -224,21 +225,6 @@ const WarningStack = styled(Stack)`
   padding-bottom: 5px;
   border: 1px solid ${(props) => props.theme.palette.text.secondary};
   color: ${(props) => props.theme.palette.text.secondary};
-`
-const LiquidityButton = styled(Button)`
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 25px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
 `
 
 export default withSuspense(UnconcentPanel, <LoadingProgress />)

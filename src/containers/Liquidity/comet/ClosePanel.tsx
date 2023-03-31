@@ -14,6 +14,7 @@ import CheckCircleOutlineRoundedIcon from 'public/images/check-mark-icon.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, cometDetail: CometDetail, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -90,12 +91,12 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
           </Stack>
         </Box>
 
-        <ActionButton onClick={() => onClose(0)} disabled={noBorrowedAsset}>
+        <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(0)} disabled={noBorrowedAsset}>
           <Image src={OneIcon} width={17} />
           <Box><Typography variant='p_lg'>Withdraw Liquidity & pay ILD</Typography></Box>
           <Box>{noBorrowedAsset && <Box display='flex' alignItems='center'><Image src={CheckCircleOutlineRoundedIcon} /> <Typography variant='p_lg' color='#4fe5ff' ml='5px'>Complete</Typography> </Box>}</Box>
-        </ActionButton>
-        <ActionButton onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></ActionButton>
+        </SubmitButton>
+        <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></SubmitButton>
 
         <Box display='flex' justifyContent='center'>
           <DataLoadingIndicator />
@@ -104,23 +105,5 @@ const ClosePanel = ({ assetId, cometDetail, onRefetchData }: { assetId: string, 
     </>
   )
 }
-
-const ActionButton = styled(Button)`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
-  border-radius: 0px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  &:hover {
-    background-color: #7A86B6;
-  }
-  &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
-  }
-`
 
 export default ClosePanel
