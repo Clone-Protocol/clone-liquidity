@@ -53,8 +53,8 @@ const LiquidityTable: React.FC = () => {
     enabled: publicKey != null
   })
 
-  //TODO : set no position
-  const hasNoPosition = false
+  const hasNoPosition = !status ||
+    (tab === 1 && status.statusValues.totalCometLiquidity === 0) || (tab === 2 && status.statusValues.totalUnconcentPositionVal === 0) || (tab === 3 && status.statusValues.totalBorrowLiquidity === 0)
 
   const newPositionUrl = tab === 3 ? '/borrow' : `/assets/0/asset?ltab=${tab}`
 

@@ -65,9 +65,9 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 			<Box display='flex'>
 				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 				{showChangeRatio &&
-					<Box display='flex' style={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}}>
+					<Box display='flex' sx={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}}>
 						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { color: '#ed2525', border: '1px solid #ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '14px' }}><Typography variant='p_xlg'>%</Typography></div>
+						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '12px' }}><Typography variant='p_xlg'>%</Typography></div>
 					</Box>
 				}
 				<Box width="100%">
@@ -86,7 +86,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 						valueLabelDisplay={'on'}
 					/>
 					<Box display='flex'>
-						<Box marginLeft='30px'><Stick /><FlagBox style={hasLowerMin ? { color: '#ed2525' } : {}}>min {min}%</FlagBox></Box>
+						<Box marginLeft='30px'><Stick /><FlagBox style={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ed2525' } : {}}>min {min}%</FlagBox></Box>
 						<Box marginLeft='165px'><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
 					</Box>
 				</Box>
@@ -114,10 +114,9 @@ const ValueBox = styled(Box)`
 	color: #fff;
 	padding: 12px 18px 12px 26px;
 `
-
 const InputAmount = styled(`input`)`
 	text-align: center;
-	background-color: ${(props) => props.theme.boxes.black};
+	background-color: ${(props) => props.theme.boxes.darkBlack};
 	width: 108px;
 	height: 48px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
@@ -128,10 +127,9 @@ const InputAmount = styled(`input`)`
 	padding: 12px 18px;
 	cursor: pointer;
 	&:hover {
-    border: solid 1px #809cff;
+    border: solid 1px ${(props) => props.theme.palette.text.secondary};
   }
 `
-
 const FlagBox = styled(Box)`
   width: 90px;
   height: 23px;
@@ -141,7 +139,6 @@ const FlagBox = styled(Box)`
   line-height: 3px;
   margin-top: 0px;
 `
-
 const Stick = styled('div')`
   z-index: 20;
 	border-radius: 0;

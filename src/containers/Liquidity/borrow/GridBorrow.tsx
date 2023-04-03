@@ -1,7 +1,7 @@
 import React from 'react'
 import { Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
+import { CellDigitValue, Grid, CellTicker, GridType } from '~/components/Common/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { FilterType } from '~/data/filter'
@@ -37,6 +37,8 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
 			headers={columns}
 			rows={assets || []}
 			minHeight={380}
+			hasRangeIndicator={true}
+			gridType={GridType.Borrow}
 			customNoRowsOverlay={() => CustomNoRowsOverlay('Your active borrow positions will appear here.')}
 			onRowClick={handleRowClick}
 		/>
@@ -97,8 +99,9 @@ let columns: GridColDef[] = [
 		headerName: 'Collateral Ratio',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
+			const isRisk = params.row.collateralRatio - params.row.minCollateralRatio < 20
 			return params.row.borrowed > 0 ?
-				(<><Typography variant='p'>{params.value?.toLocaleString()}% (min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></>)
+				(<><Typography variant='p' color={isRisk ? '#ed2525' : '#fff'}>{params.value?.toLocaleString()}% (min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></>)
 				: (<></>)
 		},
 	},

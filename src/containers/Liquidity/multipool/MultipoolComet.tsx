@@ -17,7 +17,7 @@ const MultipoolComet = () => {
     refetchOnMount: "always",
     enabled: publicKey != null
   })
-  const [openCloseEntireDlog, setOpenCloseEntireDlog] = useState(false)
+  // const [openCloseEntireDlog, setOpenCloseEntireDlog] = useState(false)
 
   return infos ? (
     <Wrapper>
@@ -64,7 +64,7 @@ const MultipoolComet = () => {
       </Stack>
 
       <BoxGrid container>
-        <Grid item xs={12} md={4} sx={{ borderRight: '1px solid #535353' }}>
+        <Grid item xs={12} md={4} sx={{ borderRight: '1px solid #3f3f3f' }}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <Box marginBottom='12px'>
               <Typography variant='p_lg'>Collateral</Typography>

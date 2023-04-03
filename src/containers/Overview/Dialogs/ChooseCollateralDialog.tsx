@@ -8,7 +8,7 @@ const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }: {
   return (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={560}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '10px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '10px 15px' }}>
           <BoxWrapper>
             <Box><Typography variant='h7'>Available Collateral</Typography></Box>
             <StyledDivider />

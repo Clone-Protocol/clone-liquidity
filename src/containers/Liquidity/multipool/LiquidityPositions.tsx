@@ -83,8 +83,8 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       <Box>
         <PairHeader>
           <Box><Typography variant="p_sm">Pool</Typography></Box>
-          <Box><Typography variant="p_sm">Liquidity Value</Typography></Box>
-          <Box><Typography variant="p_sm">ILD</Typography></Box>
+          <Box ml='70px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
+          <Box ml='-50px'><Typography variant="p_sm">ILD</Typography></Box>
           <Box></Box>
         </PairHeader>
         {positions.map((position, index) =>

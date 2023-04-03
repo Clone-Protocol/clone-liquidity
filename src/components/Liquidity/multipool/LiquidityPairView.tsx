@@ -1,4 +1,4 @@
-import { styled, Stack, Box, Button, Typography } from '@mui/material'
+import { styled, Stack, Box, Typography } from '@mui/material'
 import Image from 'next/image'
 import { RecenterButton } from '~/components/Liquidity/LiquidityButton';
 
@@ -29,8 +29,8 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 						<Typography variant='p'>{tickerSymbol} / USDi</Typography>
 					</TickerWrapper>
 				</Box>
-				<Box><Typography variant='p'>${value?.toFixed(3)}</Typography></Box>
-				<Box><Typography variant='p'>${`${ildValue?.toFixed(3)} ${ildInUsdi ? "USDi" : tickerSymbol}`}</Typography></Box>
+				<Box><Typography variant='p'>${value?.toFixed(3)} USD</Typography></Box>
+				<Box><Typography variant='p'>${`${ildValue?.toFixed(3)}`}</Typography></Box>
 				<Box>
 					<RecenterButton onClick={showRecenterDialog}></RecenterButton>
 				</Box>
@@ -44,7 +44,7 @@ const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
 	height: 63px;
-	padding: 11px 14px 9px 13px;
+	padding: 9px 20px;
 	cursor: pointer;
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	&:hover {

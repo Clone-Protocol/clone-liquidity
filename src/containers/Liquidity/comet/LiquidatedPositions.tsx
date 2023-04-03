@@ -1,3 +1,4 @@
+//@Deprecated
 import { Box, Button, Grid, Divider, styled } from "@mui/material"
 import LiquidatedPositionRow from "~/components/Liquidity/LiquidatedPositionRow"
 import Image from 'next/image'

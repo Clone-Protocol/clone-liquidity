@@ -124,7 +124,7 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 		const poolIndex = Number(position.poolIndex)
 		const info = assetMapping(poolIndex);
 		const pool = tokenData.pools[poolIndex]
-		
+
 		const [ildValue, ildInUsdi] = (() => {
 			const L = toNumber(position.liquidityTokenValue) / toNumber(pool.liquidityTokenSupply)
 			const claimableUSDi = L * toNumber(pool.usdiAmount)
@@ -150,9 +150,6 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 			return [0, true];
 		})();
 
-		// @TODO: set ild value
-		const ildValue = 0
-
 		result.push(
 			{
 				tickerIcon: info.tickerIcon,
@@ -162,7 +159,6 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 				ildValue,
 				positionIndex: i,
 				poolIndex,
-				ildValue,
 				ildInUsdi
 			} as LiquidityPosition
 		)

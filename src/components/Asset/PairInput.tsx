@@ -66,11 +66,11 @@ const FormStack = styled(Stack)`
   }
 `
 const InputAmount = styled(`input`)`
-	width: 65%;
+	width: 63%;
 	text-align: right;
 	border: 0px;
 	background-color: ${(props) => props.theme.boxes.darkBlack};
-	font-size: 17.3px;
+	font-size: 20.7px;
 	font-weight: 500;
 	color: #fff;
 `

@@ -17,7 +17,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<BoxWrapper>
 					<Box><Typography variant='p_lg'>{cometData.lowerLimit.toFixed(5)}</Typography></Box>
-					<Box><Typography variant='p_sm' color='#989898'>USD / {assetData.tickerSymbol}</Typography></Box>
+					<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
 				</BoxWrapper>
 			</Grid>
 			<Grid item xs={4}>
@@ -48,6 +48,6 @@ const BoxWrapper = styled(Box)`
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	padding: 7px 6px;
 	text-align: center;
-	line-height: 11px;
+	line-height: 13px;
 `
 export default withCsrOnly(ConcentrationRangeBox)
