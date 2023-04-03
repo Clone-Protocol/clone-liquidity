@@ -3,15 +3,17 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { Box, Stack, Popover, Typography } from '@mui/material'
 import { formatDollarAmount } from '~/utils/numbers'
+import { HealthScoreType } from '~/containers/Liquidity/comet/GridComet'
 
 interface Props {
   iPrice: number
   centerPrice: number
   lowerLimit: number
   upperLimit: number
+  scoreTypeColor?: string
 }
 
-const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit }) => {
+const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, upperLimit, scoreTypeColor = HealthScoreType.Normal }) => {
   const centerPricePercent = (centerPrice - lowerLimit) * 100 / (upperLimit - lowerLimit)
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -34,9 +36,9 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
         <LeftBox>{formatDollarAmount(lowerLimit, 2, true).slice(1)}</LeftBox>
         <Box sx={{ position: 'relative' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
-            <LeftRangeStick />
-            <RangeBar />
-            <RightRangeStick />
+            <LeftRangeStick sx={{ background: scoreTypeColor }} />
+            <RangeBar sx={{ background: scoreTypeColor }} />
+            <RightRangeStick sx={{ background: scoreTypeColor }} />
           </Box>
 
           <CenterStick sx={{ marginLeft: '50%' }} />
@@ -107,8 +109,8 @@ const CenterStick = styled('div')`
 	border-radius: 0;
 	background: #fff;
 	width: 2px;
-	height: 5px;
-	margin-top: -10px;
+	height: 3px;
+	margin-top: -7px;
   z-index: 20;
 `
 
@@ -117,7 +119,7 @@ const Stick = styled('div')`
 	border-radius: 0;
 	background: #fff;
 	width: 2px;
-	height: 5px;
+	height: 3px;
 	margin-top: 0px;
   z-index: 20;
 `

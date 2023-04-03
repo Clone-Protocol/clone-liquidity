@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Stack, Button, Divider, Typography } from '@mui/material'
+import { Box, Stack, Divider, Typography } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
@@ -45,7 +45,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             <Box marginTop='10px'>
               <Box paddingX='20px'>
                 <Box><Typography variant='p_lg' color='#989898'>Contributed Liquidity</Typography></Box>
-                <Box>
+                <Box mb='10px'>
                   <Typography variant='p_xxlg'>${cometDetail.contributedLiquidity?.toLocaleString()} USD</Typography>
                 </Box>
                 <Stack direction="row" justifyContent="space-between">
@@ -66,11 +66,6 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
             <Box paddingX='20px'>
               <Box mb='35px'><Typography variant='p_lg' color='#989898'>Concentration Range</Typography></Box>
-              {/* <ConcentrationRangeView
-                  centerPrice={assetData?.centerPrice}
-                  lowerLimit={cometData.lowerLimit}
-                  upperLimit={cometData.upperLimit}
-                /> */}
               <ConcentrationRange
                 assetData={assetData}
                 cometData={cometData}
@@ -120,7 +115,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
 const PositionWrapper = styled(Box)`
   color: #fff; 
-  padding: 25px 5px; 
+  padding: 20px 5px; 
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};

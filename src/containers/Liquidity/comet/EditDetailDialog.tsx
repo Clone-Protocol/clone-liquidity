@@ -335,7 +335,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       )}
 
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={1000}>
-        <DialogContent sx={{ backgroundColor: '#16171a', overflow: 'hidden' }}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b', overflow: 'hidden' }}>
           <BoxWrapper>
             <Box padding='15px 10px'>
               <Box>
@@ -401,7 +401,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                       <EditConcentrationRangeBox assetData={assetData} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
                     </Box>
-                    <Box mt='20px'>
+                    <Box mt='20px' mb='10px'>
                       <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
                       <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={430} />
                       {hasRiskScore &&

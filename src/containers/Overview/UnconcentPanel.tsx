@@ -146,7 +146,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
             <Image src={LightBulbIcon} />
             <Typography variant='p' ml='8px'>Unconcentrated positions are capital less efficient compared to any Comet positions</Typography>
           </WarningStack>
-          <Box>
+          <Box mb='15px'>
             <Box>
               <Typography variant='p_lg'>Provide iAsset</Typography>
             </Box>
@@ -166,7 +166,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
                   tickerIcon={assetData.tickerIcon}
                   tickerSymbol={assetData.tickerSymbol}
                   value={isNaN(borrowFrom) ? "" : borrowFrom}
-                  dollarPrice={0}
+                  dollarPrice={borrowFrom * assetData.price}
                   headerTitle="Wallet Balance"
                   headerValue={balances?.iassetVal}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onBorrowFromInputChange(parseFloat(evt.currentTarget.value), field)}
@@ -177,9 +177,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
             <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowFrom?.message}>{errors.borrowFrom?.message}</FormHelperText>
           </Box>
 
-          <StyledDivider />
-
-          <Box>
+          <Box mb='15px'>
             <Box>
               <Typography variant='p_lg'>Provide USDi</Typography>
             </Box>
@@ -196,7 +194,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
                   tickerIcon={'/images/assets/USDi.png'}
                   tickerSymbol="USDi"
                   value={isNaN(borrowTo) ? "" : borrowTo}
-                  dollarPrice={0}
                   headerTitle="Wallet Balance"
                   headerValue={balances?.usdiVal}
                   onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,7 +205,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
             />
             <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
           </Box>
-          <StyledDivider />
 
           <SubmitButton onClick={handleSubmit(onFormSubmit)} sx={{ marginTop: '5px' }} disabled={disableSubmitButton() || isSubmitting}>Open Unconcentrated Position</SubmitButton>
         </Box>
@@ -221,8 +217,8 @@ const WarningStack = styled(Stack)`
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   border: 1px solid ${(props) => props.theme.palette.text.secondary};
   color: ${(props) => props.theme.palette.text.secondary};
 `

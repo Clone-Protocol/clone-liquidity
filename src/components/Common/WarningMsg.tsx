@@ -4,7 +4,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const WarningMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
 	return (
-		<Slide direction="down" in={true} mountOnEnter unmountOnExit>
+		<Slide direction="up" in={true} mountOnEnter unmountOnExit>
 			<WarningStack direction='row'>
 				<WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} />
 				<Box ml='10px'><Typography variant='p'>{children}</Typography></Box>

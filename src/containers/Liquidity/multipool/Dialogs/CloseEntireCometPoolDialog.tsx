@@ -48,7 +48,7 @@ const CloseEntireCometPoolDialog = ({ open, handleClose }: { open: boolean, hand
       )}
 
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={390}>
-        <DialogContent sx={{ backgroundColor: '#16171a', padding: '15px 15px' }}>
+        <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '15px 15px' }}>
           <BoxWrapper>
             <Typography variant='p_xlg'>Close Entire Multipool Comet</Typography>
             <StyledDivider />

@@ -15,8 +15,8 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	padding: '13px 0',
 	marginTop: '13px',
 	'& .MuiSlider-thumb': {
-		height: 20,
-		width: 20,
+		height: 16,
+		width: 16,
 		backgroundColor: '#fff',
 		border: '3px solid #809cff',
 		'&:hover': {

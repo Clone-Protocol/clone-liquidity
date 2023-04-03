@@ -13,31 +13,42 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
   const prevScorePoint = prevScore ? width * prevScore / 100 - 7 : -7
   return (
     <Box>
-      <Box p='6px 20px'>
-        <Box sx={{ marginLeft: `${scorePoint}px` }}>
-          {!hiddenThumbTitle && <Box sx={{ marginLeft: '-2px' }}><Typography variant='p_sm'>New</Typography></Box>}
-          <ScorePointer>
-            <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
-          </ScorePointer>
+      {scorePoint >= 0 ?
+        <Box p='6px 20px'>
+          <Box sx={{ marginLeft: `${scorePoint}px` }}>
+            {!hiddenThumbTitle && <Box sx={{ marginLeft: '-2px' }}><Typography variant='p_sm'>New</Typography></Box>}
+            <ScorePointer>
+              <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
+            </ScorePointer>
+          </Box>
+          <Box width='100%' margin='0 auto'>
+            <ScoreBar />
+            {!hideIndicator && <Box display="flex" justifyContent='space-between'>
+              <Box><Typography variant='p_sm'>0 (Poor)</Typography></Box>
+              <Box><Typography variant='p_sm'>(Excellent) 100</Typography></Box>
+            </Box>}
+            {prevScore &&
+              <PrevBox sx={{ left: `${prevScorePoint}px` }}>
+                <FixValueLabel>{prevScore?.toFixed(0)}</FixValueLabel>
+                <Box ml='-15px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
+              </PrevBox>
+            }
+          </Box>
         </Box>
-        <Box width='100%' margin='0 auto'>
-          <ScoreBar />
-          {!hideIndicator && <Box display="flex" justifyContent='space-between'>
-            <Box><Typography variant='p_sm'>0 (Poor)</Typography></Box>
-            <Box><Typography variant='p_sm'>(Excellent) 100</Typography></Box>
-          </Box>}
-          {prevScore &&
-            <PrevBox sx={{ left: `${prevScorePoint}px` }}>
-              <FixValueLabel>{prevScore?.toFixed(0)}</FixValueLabel>
-              <Box ml='-15px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
-            </PrevBox>
-          }
-        </Box>
-      </Box>
+        :
+        <BoxWithBorder>
+          <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>N/A</Typography></Box>
+        </BoxWithBorder>
+      }
     </Box >
   )
 }
 
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  padding: 15px 18px;
+  margin-top: 16px;
+`
 const ScorePointer = styled(Box)`
   margin-left: -10px;
   margin-right: -10px;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
+import { CellDigitValue, Grid, CellTicker, GridType } from '~/components/Common/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useCometPoolsQuery } from '~/features/MyLiquidity/CometPools.query'
@@ -19,7 +19,7 @@ interface Props {
 	filter: FilterType
 }
 
-const enum HealthScoreType {
+export const enum HealthScoreType {
 	Normal = '#fff',
 	Warning = '#ff8e4f',
 	Poor = '#ed2525'
@@ -57,6 +57,8 @@ const GridComet: React.FC<Props> = ({ filter }) => {
 			headers={columns}
 			rows={cometPools || []}
 			minHeight={380}
+			hasRangeIndicator={true}
+			gridType={GridType.SingleComet}
 			customNoRowsOverlay={() => CustomNoRowsOverlay('Your active Singlepool Comet liquidity positions will appear here.')}
 			onRowClick={handleRowClick}
 		/>
@@ -111,11 +113,16 @@ let columns: GridColDef[] = [
 		headerName: 'Price range',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			const scoreTypeColor = HealthScoreType.Normal;
+			let scoreTypeColor = HealthScoreType.Normal;
+			if (params.row.healthScore < 20) {
+				scoreTypeColor = HealthScoreType.Poor
+			} else if (params.row.healthScore >= 20 && params.row.healthScore < 45) {
+				scoreTypeColor = HealthScoreType.Warning
+			}
 
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
-					<MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.toPriceRange} />
+					<MiniPriceRange iPrice={params.row.iPrice} centerPrice={params.row.cPrice} lowerLimit={params.row.fromPriceRange} upperLimit={params.row.toPriceRange} max={params.row.toPriceRange} scoreTypeColor={scoreTypeColor} />
 				)
 		},
 	},
@@ -126,12 +133,20 @@ let columns: GridColDef[] = [
 		headerName: 'Health Score',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			const scoreTypeColor = HealthScoreType.Normal;
+			let scoreTypeColor = HealthScoreType.Normal;
+			let scoreTypeName = 'Good'
+			if (params.row.healthScore < 20) {
+				scoreTypeColor = HealthScoreType.Poor
+				scoreTypeName = 'Poor'
+			} else if (params.row.healthScore >= 20 && params.row.healthScore < 45) {
+				scoreTypeColor = HealthScoreType.Warning
+				scoreTypeName = 'Fair'
+			}
 
 			return (isNaN(params.row.cPrice)) ? <></> :
 				(
 					<Box sx={{ width: '65px', textAlign: 'center', color: scoreTypeColor }}>
-						<CellDigitValue value={formatHealthScore(Number(params.value))} />
+						<CellDigitValue value={formatHealthScore(Number(params.value))} /> <Typography variant='p' color={scoreTypeColor}>({scoreTypeName})</Typography>
 					</Box>
 				)
 		},

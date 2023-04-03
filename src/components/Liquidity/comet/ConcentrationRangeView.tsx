@@ -1,3 +1,4 @@
+// @DEPRECATED
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'

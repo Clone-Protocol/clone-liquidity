@@ -6,11 +6,19 @@ interface GridProps {
   headers: GridColDef[],
   rows: any,
   customNoRowsOverlay: () => JSX.Element,
+  hasRangeIndicator?: boolean,
+  gridType?: GridType,
   minHeight?: number,
   onRowClick?: GridEventListener<'rowClick'>
 }
 
-export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, minHeight = 260, onRowClick }) => (
+export const enum GridType {
+  Normal = 'normal',
+  SingleComet = 'singleComet',
+  Borrow = 'borrow'
+}
+
+export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, onRowClick }) => (
   <DataGrid
     sx={{
       border: 0,
@@ -76,11 +84,19 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       NoResultsOverlay: customNoRowsOverlay
     }}
     getRowClassName={(params) => {
-      //@TODO: set proper position for the row data
-      if (params.row.id === 1) {
-        return 'border-warning--row'
-      } else if (params.row.id === 2) {
-        return 'border-poor--row'
+      if (hasRangeIndicator) {
+        if (gridType === GridType.SingleComet) {
+          //validate healthscore
+          if (params.row.healthScore < 20) {
+            return 'border-poor--row'
+          } else if (params.row.healthScore >= 20 && params.row.healthScore < 45) {
+            return 'border-warning--row'
+          }
+        } else if (gridType === GridType.Borrow) {
+          if (params.row.collateralRatio - params.row.minCollateralRatio < 20) {
+            return 'border-poor--row'
+          }
+        }
       }
       return 'super-app-theme--row'
     }}
@@ -129,5 +145,5 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
 )
 
 export const CellDigitValue = ({ value, symbol }: { value: string | undefined, symbol?: string }) => (
-  <Box marginLeft='5px'><Typography variant='p'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography></Box>
+  <Typography variant='p'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography>
 )

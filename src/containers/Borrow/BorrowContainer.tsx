@@ -1,4 +1,4 @@
-import { Box, Paper, Stack } from '@mui/material'
+import { Box, Paper, Stack, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
@@ -9,6 +9,9 @@ import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { ASSETS } from '~/data/assets'
+import Image from 'next/image'
+import InfoIcon from 'public/images/info-icon.svg'
+import TipMsg from '~/components/Common/TipMsg'
 
 const BorrowContainer = () => {
   const router = useRouter()
@@ -33,6 +36,7 @@ const BorrowContainer = () => {
     <StyledBox>
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
+          <TipMsg><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography></TipMsg>
           <LeftBoxWrapper>
             <Box paddingY='10px'>
               <BorrowPanel assetIndex={assetIndex} onChooseAssetIndex={handleChooseAssetIndex} />
@@ -68,6 +72,7 @@ const LeftBoxWrapper = styled(Box)`
 	width: 607px; 
 	padding: 8px 25px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  margin-top: 16px;
 	margin-bottom: 25px;
 `
 const RightBoxWrapper = styled(Box)`

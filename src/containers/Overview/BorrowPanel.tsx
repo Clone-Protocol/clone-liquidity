@@ -232,6 +232,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
                     tickerIcon={ASSETS[assetIndex].tickerIcon}
                     tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                     value={field.value}
+                    dollarPrice={field.value * borrowDetail.oPrice}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)
                       field.onChange(borrowAmt)
