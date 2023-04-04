@@ -309,6 +309,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
         <BoxWithBorder padding="20px 24px">
           <Box><Typography variant="p">Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.concentrationRange} /></Box>
 
+          {/* TODO later
           <Box marginTop='45px' marginBottom='5px'>
             <ConcentrationRange
               assetData={assetData}
@@ -317,7 +318,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
               defaultLower={(assetData.price / 2)}
               defaultUpper={((assetData.price * 3) / 2)}
             />
-          </Box>
+          </Box> */}
 
           <ConcentrationRangeBox assetData={assetData} cometData={cometData} />
 

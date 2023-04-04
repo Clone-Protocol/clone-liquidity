@@ -9,15 +9,19 @@ import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 
 interface Props {
   assetData: PositionInfo
+  isOraclePrice?: boolean
   priceTitle: string
 }
 
-const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
+const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTitle }) => {
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: assetData?.pythSymbol,
     refetchOnMount: false,
     enabled: assetData != null
   })
+
+  // @TODO : temporary defined for now : need to indexing later
+  const iAssetChartData = [{ time: new Date(), value: assetData.price }, { time: new Date(), value: assetData.price }]
 
   return (
     priceHistory ?
@@ -30,15 +34,17 @@ const PriceChart: React.FC<Props> = ({ assetData, priceTitle }) => {
         </Box>
         <Box display='flex' alignItems='center'>
           <Typography variant='p_xxxlg'>
-            ${priceHistory.currentPrice?.toLocaleString(undefined, { maximumFractionDigits: 3 })}
+            ${isOraclePrice ? priceHistory.currentPrice?.toLocaleString(undefined, { maximumFractionDigits: 3 }) : assetData.price.toLocaleString()}
           </Typography>
           <Typography variant='p_sm' color='#989898' ml='10px'>
             {priceTitle}
           </Typography>
         </Box>
-        <Typography variant='p' color='#4fe5ff'>{priceHistory.rateOfPrice >= 0 ? '+' : '-'}${Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate.toFixed(2)}%) past 24h</Typography>
+        {isOraclePrice &&
+          <Typography variant='p' color='#4fe5ff'>{priceHistory.rateOfPrice >= 0 ? '+' : '-'}${Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate.toFixed(2)}%) past 24h</Typography>
+        }
         <LineChart
-          data={priceHistory?.chartData}
+          data={isOraclePrice ? priceHistory.chartData : iAssetChartData}
         />
       </>
       : <></>

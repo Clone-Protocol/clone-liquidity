@@ -69,7 +69,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
           </StyledTabs>
           <StyledDivider />
           <TipMsg>
-            <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how managing comet position works.</Typography>
+            <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how {tab === 0 ? 'managing' : 'closing'} comet position works.</Typography>
           </TipMsg>
           <TabPanelForEdit value={tab} index={0}>
             <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetch()} />
