@@ -28,6 +28,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   // const hasRiskRatio = editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
   // const hasLackBalance = editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal
   const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal)
+  const [isFullRepaid, setIsFullRepaid] = useState(false)
   const [hasRiskRatio, setHasRiskRatio] = useState(editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio)
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
 
@@ -86,6 +87,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
     // borrowDetail.borrowedIasset > borrowDetail.iassetVal
     if (editType === 1) {
       setHasLackBalance(borrowAmount > borrowDetail.iassetVal)
+      setIsFullRepaid(Number(borrowDetail.borrowedIasset) === borrowAmount)
     }
     setHasRiskRatio(borrowDetail.minCollateralRatio * 1.1 >= expectedCollRatio)
   }, [borrowAmount, editType])
@@ -145,8 +147,10 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                       if (editType === 0) {
                         return 'The borrow amount cannot exceed the max borrowable amount.'
                       } else {
-                        return 'Repay amount cannot exceed the Current Debt'
+                        return 'Repay amount cannot exceed the Wallet Balance'
                       }
+                    } else if (editType === 1 && value > borrowDetail.borrowedIasset) {
+                      return 'Repay amount cannot exceed the Current Debt'
                     }
                   }
                 }}
@@ -186,8 +190,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             </BoxWithBorder> */}
 
             <BoxWithBorder>
-              {hasLackBalance ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>N/A</Typography></Box> :
-                <Box>
+              {hasLackBalance || isFullRepaid ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>{hasLackBalance ? 'N/A' : 'Position will be paid in full'}</Typography></Box> :
+                < Box >
                   <Typography variant='h8'>Projected Collateral Ratio</Typography>
                   <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
                 </Box>}
@@ -206,7 +210,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             } */}
 
             <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
-              <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}{editType === 0 ? 'Edit Borrowed Amount' : 'Withdraw all Collateral & Close Position'}</Typography>
+              {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
+                : <Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography>}
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>

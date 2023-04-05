@@ -1,3 +1,4 @@
+//@DEPRECATED
 import { FormControl, styled, Stack, Box, Select, MenuItem } from '@mui/material'
 import Image from 'next/image'
 

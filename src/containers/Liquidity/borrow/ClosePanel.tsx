@@ -62,7 +62,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
       )}
 
       <Box padding='15px'>
-        <Box>
+        <Box mb='15px'>
           <Stack direction="row" justifyContent="space-between" mt='5px'>
             <Box><Typography variant='p_lg' color='#989898'>Borrowed Amount</Typography></Box>
             <Box><Typography variant='p_lg' color={canCloseComet ? '#989898' : '#ed2525'}>{borrowDetail.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</Typography></Box>

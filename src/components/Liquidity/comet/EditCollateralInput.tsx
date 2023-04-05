@@ -66,7 +66,7 @@ const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
 	height: 54px;
-	padding: 9px 21px 8px 24px;
+	padding: 8px 15px;
   border-bottom: solid 1px #444444;
 	background-color: #333333;
   &:hover {
@@ -93,7 +93,7 @@ const InputAmount = styled(`input`)`
 	margin-left: 30px;
 	text-align: right;
 	border: 0px;
-	background-color: #333333;
+	background-color: transparent;
 	font-size: 17.3px;
 	font-weight: 500;
 	color: #fff;

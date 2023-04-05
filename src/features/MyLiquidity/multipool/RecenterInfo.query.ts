@@ -6,16 +6,21 @@ import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { getHealthScore, calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
+import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchRecenterInfo = async ({
 	program,
 	userPubKey,
 	index,
+	setStartTimer,
 }: {
 	program: InceptClient
 	userPubKey: PublicKey | null
 	index: number
+	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return
 
@@ -30,6 +35,13 @@ export const fetchRecenterInfo = async ({
 	const position = comet.positions[index]
 	const poolIndex = Number(position.poolIndex)
 	const pool = tokenData.pools[poolIndex]
+
+	const balance = await fetchBalance({
+		program,
+		userPubKey,
+		index: poolIndex,
+		setStartTimer
+	})
 
 	let assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
@@ -58,7 +70,7 @@ export const fetchRecenterInfo = async ({
 	let recenterCollValue = recenterCost * recenterCostDollarPrice
 	let estimatedTotalCollValue = totalCollValue - recenterCollValue
 	let estimatedTotalCollDollarPrice = estimatedTotalCollValue
-	let isValidToRecenter = recenterCost > 0 && Math.abs(initPrice - price) / initPrice >= 0.001
+	let isValidToRecenter = (recenterCost > 0 && Math.abs(initPrice - price) / initPrice >= 0.001) && balance?.iassetVal! >= recenterCost
 
 	return {
 		tickerIcon,
@@ -77,6 +89,7 @@ export const fetchRecenterInfo = async ({
 		estimatedTotalCollValue,
 		estimatedTotalCollDollarPrice,
 		isValidToRecenter,
+		iassetVal: balance?.iassetVal!,
 	}
 }
 
@@ -108,12 +121,16 @@ interface GetProps {
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setStartTimer } = useDataLoading()
+
 	if (wallet) {
 		return useQuery(
 			['recenterInfo', wallet, userPubKey, index],
-			() => fetchRecenterInfo({ program: getInceptApp(wallet), userPubKey, index }),
+			() => fetchRecenterInfo({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }),
 			{
 				refetchOnMount,
+				refetchInterval: REFETCH_CYCLE,
+				refetchIntervalInBackground: true,
 				enabled,
 			}
 		)

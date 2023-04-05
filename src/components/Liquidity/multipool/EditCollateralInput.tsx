@@ -1,3 +1,4 @@
+///@DEPRECATED
 import { FormControl, styled, Stack, Box } from '@mui/material'
 import Image from 'next/image'
 import { StyledTabs, StyledTab } from '~/components/Liquidity/comet/StyledTab'
