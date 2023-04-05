@@ -117,6 +117,7 @@ const BorrowBox = () => {
       const index = ASSETS.findIndex((elem) => elem.tickerSymbol === data.tickerSymbol)
       setAssetIndex(index)
       setBorrowAsset(ASSETS[index])
+      initData()
     }
   }, [assetIndex, borrowAsset])
 

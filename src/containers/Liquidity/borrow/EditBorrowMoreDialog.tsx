@@ -206,7 +206,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             } */}
 
             <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
-              <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}{editType === 0 ? 'Edit Borrowed Amount' : 'Withdraw all Collateral & Close Position'}</Typography>
+              <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '} Edit Borrowed Amount</Typography>
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>

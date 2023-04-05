@@ -47,7 +47,7 @@ const EditBorrowedInput: React.FC<Props> = ({
               :
               <span>
                 <Typography variant='p'>Wallet Balance: </Typography>
-                <Typography variant='p'>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</Typography>
+                <Typography variant='p'>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
               </span>
           }
         </HeaderTitle>
