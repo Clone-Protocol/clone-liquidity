@@ -107,7 +107,6 @@ export interface LiquidityPosition {
 	tickerIcon: string
 	tickerName: string
 	liquidityDollarPrice: number
-	ildValue: number
 	positionIndex: number
 	poolIndex: number
 	ildValue: number,

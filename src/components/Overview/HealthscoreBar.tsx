@@ -10,13 +10,13 @@ interface Props {
 
 const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
   const scorePoint = score ? width * score / 100 - 15 : -15
-  const prevScorePoint = prevScore ? width * prevScore / 100 - 7 : -7
+  const prevScorePoint = prevScore ? width * prevScore / 100 - 9 : -9
   return (
     <Box>
       {scorePoint >= 0 ?
         <Box p='6px 20px'>
           <Box sx={{ marginLeft: `${scorePoint}px` }}>
-            {!hiddenThumbTitle && <Box sx={{ marginLeft: '-2px' }}><Typography variant='p_sm'>New</Typography></Box>}
+            {!hiddenThumbTitle && <Box sx={{ marginLeft: '-5px' }}><Typography variant='p_sm'>New</Typography></Box>}
             <ScorePointer>
               <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
             </ScorePointer>
@@ -30,7 +30,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
             {prevScore &&
               <PrevBox sx={{ left: `${prevScorePoint}px` }}>
                 <FixValueLabel>{prevScore?.toFixed(0)}</FixValueLabel>
-                <Box ml='-15px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
+                <Box ml='-18px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
               </PrevBox>
             }
           </Box>

@@ -91,10 +91,14 @@ const RecenterDialog = ({
 						</BoxWithBorder>
 
 						<Box marginTop='20px' marginBottom='22px'>
+							<Box display='flex' justifyContent='flex-end'>
+								<Typography variant='p' color='#989898'>Wallet Balance: </Typography>
+								<Typography variant='p' ml='5px'>{positionInfo.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+							</Box>
 							<CenterBox>
 								<Stack direction="row" justifyContent="space-between">
 									<Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
-									<Box lineHeight={0.8}>
+									<Box lineHeight={0.95}>
 										<Box><Typography variant='p_xlg'>{displayRecenterCost()} {positionInfo.tickerSymbol}</Typography></Box>
 										<Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.recenterCostDollarPrice.toLocaleString()}</Typography></Box>
 									</Box>
@@ -105,19 +109,19 @@ const RecenterDialog = ({
 							</BottomBox>
 						</Box>
 
-						<BoxWithBorder mt='13px' padding='18px 24px'>
-							<Box mb='15px'>
+						<BoxWithBorder mt='13px' padding='15px'>
+							<Box>
 								<Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} /></Box>
 								<HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={490} />
 							</Box>
 
-							<Stack direction="row" justifyContent="space-between">
+							{/* <Stack direction="row" justifyContent="space-between">
 								<Box maxWidth='130px' lineHeight='14px'><Typography variant='p'>Estimated total collateral after Recentering</Typography></Box>
 								<Box lineHeight='14px' textAlign='right'>
 									<Box><Typography variant='p_lg'>{positionInfo.estimatedTotalCollValue.toLocaleString()} USDi</Typography></Box>
 									<Box><Typography variant='p' color='#989898'>${positionInfo.estimatedTotalCollDollarPrice.toLocaleString()} USD</Typography></Box>
 								</Box>
-							</Stack>
+							</Stack> */}
 						</BoxWithBorder>
 
 						<SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>

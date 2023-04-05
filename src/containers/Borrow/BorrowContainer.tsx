@@ -50,7 +50,7 @@ const BorrowContainer = () => {
 
         <RightBoxWrapper>
           <StickyBox>
-            <PriceChart assetData={borrowAsset} priceTitle='Oracle Price' />
+            <PriceChart assetData={borrowAsset} isOraclePrice={true} priceTitle='Oracle Price' />
             <PositionAnalytics tickerSymbol={borrowAsset.tickerSymbol} />
           </StickyBox>
         </RightBoxWrapper>

@@ -12,6 +12,7 @@ import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import ConcentrationRangeView from './ConcentrationRangeView'
 
 interface Props {
   assetData: PI
@@ -65,13 +66,19 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             <StyledDivider />
 
             <Box paddingX='20px'>
-              <Box mb='35px'><Typography variant='p_lg' color='#989898'>Concentration Range</Typography></Box>
-              <ConcentrationRange
+              <Box mb='15px'><Typography variant='p_lg' color='#989898'>Concentration Range</Typography></Box>
+              {/* <ConcentrationRange
                 assetData={assetData}
                 cometData={cometData}
                 max={assetData.maxRange}
                 defaultLower={(assetData.price / 2)}
                 defaultUpper={((assetData.price * 3) / 2)}
+              /> */}
+              <ConcentrationRangeView
+                centerPrice={assetData.price}
+                lowerLimit={cometData.lowerLimit}
+                upperLimit={cometData.upperLimit}
+                max={assetData.maxRange}
               />
             </Box>
             <ConcentrationRangeBox assetData={assetData} cometData={cometData} />

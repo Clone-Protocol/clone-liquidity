@@ -1,104 +1,88 @@
-// @DEPRECATED
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
-import { Box } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 
 interface Props {
   centerPrice: number
   lowerLimit: number
   upperLimit: number
+  max: number
 }
 
-const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit }) => {
-  const centerPricePercent = (centerPrice - lowerLimit) * 100 / (upperLimit - lowerLimit)
+const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, upperLimit, max }) => {
+  // const centerPricePercent = (centerPrice - lowerLimit) * 100 / (upperLimit - lowerLimit)
+  const maxLimit = max
+  const centerPricePercent = (centerPrice * 100) / maxLimit
 
   return (
     <RangeWrapper>
-      <LeftBox>{lowerLimit.toFixed(2)}</LeftBox>
       <Box position='relative'>
-        <Box display='flex' alignItems='flex-end' height='100%'>
+        <Box sx={{ marginLeft: `calc(${centerPricePercent}% - 22px)` }}>
+          <Stick>
+            <Box display='flex' justifyContent='center' mb='-4px'><Typography variant='p_xsm'>iAsset Price</Typography></Box>
+          </Stick>
+        </Box>
+        <Box display='flex' justifyContent='center' alignItems='flex-end' width='350px' height='3px' sx={{ background: '#333333' }}>
           <LeftRangeStick />
           <RangeBar />
           <RightRangeStick />
         </Box>
 
         <CenterStick sx={{ marginLeft: '50%' }} />
-        <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
       </Box>
-      <RightBox>{upperLimit.toFixed(2)}</RightBox>
-    </RangeWrapper>
+      <Box>
+        <Stack direction='row' justifyContent='space-around'>
+          <Box><Typography variant='p'>{lowerLimit.toFixed(5)}</Typography></Box>
+          <Box><Typography variant='p'>{centerPrice.toFixed(5)}</Typography></Box>
+          <Box><Typography variant='p'>{upperLimit.toFixed(5)}</Typography></Box>
+        </Stack>
+      </Box>
+    </RangeWrapper >
   )
 }
 
 const RangeWrapper = styled(Box)`
-  display: flex;
-  justify-content: center; 
-  margin-top: 30px; 
+  margin-top: 16px; 
   margin-bottom: 16px;
 `
-
 const LeftRangeStick = styled('div')`
   position: relative;
   border-radius: 0;
-  background: #809cff;
-  width: 2px;
-  height: 12px;
-  margin-top: -12px;
-  z-index: 20;
+  background: #fff;
+  width: 3px;
+  height: 8px;
+  margin-bottom: -5px;
 `
-
+const RangeBar = styled('div')`
+  width: 230px;
+  height: 3px;  
+  background: #fff;
+`
 const RightRangeStick = styled('div')`
   position: relative;
   border-radius: 0;
-  background: #0038ff;
-  width: 2px;
-  height: 12px;
-  margin-top: -12px;
-  z-index: 20;
+  background: #fff;
+  width: 3px;
+  height: 8px;
+  margin-bottom: -5px;
 `
-
 const CenterStick = styled('div')`
   position: relative;
 	border-radius: 0;
 	background: #fff;
 	width: 3px;
-	height: 12px;
-	margin-top: -12px;
-  z-index: 20;
+	height: 6px;
 `
-
 const Stick = styled('div')`
   position: relative;
-	border-radius: 0;
-	background: #fff;
-	width: 3px;
-	height: 17px;
-	margin-top: -10px;
-  z-index: 20;
-`
-
-const LeftBox = styled(Box)`
-  height: 28px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 6px;
-  text-align: center;
-  margin-right: -10px;
-`
-
-const RightBox = styled(Box)`
-  height: 28px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 6px;
-  text-align: center;
-  margin-left: -10px;
-`
-
-const RangeBar = styled('div')`
-  width: 173px;
-  height: 5px;  
-  background: linear-gradient(to right, #809cff -1%, #0038ff 109%);
+  width: 49px;
+  height: 30px;
+	color: ${(props) => props.theme.palette.primary.main};
+  &::after {
+    content: '▼';
+    position: relative;
+    margin-left: 15px;
+  }
 `
 
 export default withCsrOnly(ConcentrationRangeView)

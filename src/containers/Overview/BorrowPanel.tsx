@@ -1,4 +1,4 @@
-import { Box, Button, Stack, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
@@ -106,6 +106,8 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
   const handleChooseAsset = (assetId: number) => {
     onChooseAssetIndex(assetId)
     setOpenChooseAsset(false)
+
+    initData()
   }
 
   const handleChangeCollRatio = useCallback((event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => {
@@ -151,7 +153,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
   const isValid = Object.keys(errors).length === 0
   const hasRiskRatio = collRatio < RISK_RATIO_VAL
 
-  return usdiBalance ? (
+  return usdiBalance && borrowDetail ? (
     <>
       {loading && (
         <LoadingWrapper>

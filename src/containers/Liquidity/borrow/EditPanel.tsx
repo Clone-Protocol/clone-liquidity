@@ -11,20 +11,20 @@ const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, 
   const [openBorrowMore, setOpenBorrowMore] = useState(false)
   const borrowIndex = parseInt(assetId)
 
-	return borrowDetail ? (
+  return borrowDetail ? (
     <Wrapper>
-      <PositionInfo 
+      <PositionInfo
         positionInfo={borrowDetail}
         onShowEditForm={() => setOpenEditDetail(true)}
         onShowBorrowMore={() => setOpenBorrowMore(true)}
       />
-      
+
       <EditDetailDialog
         open={openEditDetail}
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenEditDetail(false)}
-        onRefetchData={() => onRefetchData() }
+        onRefetchData={() => onRefetchData()}
       />
 
       <EditBorrowMoreDialog
@@ -32,15 +32,14 @@ const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, 
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenBorrowMore(false)}
-        onRefetchData={() => onRefetchData() }
+        onRefetchData={() => onRefetchData()}
       />
     </Wrapper>
-	) : <></>
+  ) : <></>
 }
 
 const Wrapper = styled(Box)`
   color: #fff;
-  background: rgba(21, 22, 24, 0.75);
   border-radius: 10px;
 `
 

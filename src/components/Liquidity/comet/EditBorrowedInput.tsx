@@ -47,7 +47,7 @@ const EditBorrowedInput: React.FC<Props> = ({
               :
               <span>
                 <Typography variant='p'>Wallet Balance: </Typography>
-                <Typography variant='p'>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</Typography>
+                <Typography variant='p'>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
               </span>
           }
         </HeaderTitle>
@@ -100,7 +100,6 @@ const HeaderTitle = styled(Box)`
   font-size: 12px; 
   font-weight: 500;
   color: ${(props) => props.theme.palette.text.secondary};
-  margin-right: 15px;
 `
 const MaxPointerValue = styled('span')`
   color: #90e4fe; 
@@ -111,7 +110,7 @@ const InputAmount = styled(`input`)`
   margin-left: 30px;
   text-align: right;
   border: 0px;
-  background-color: #333333;
+  background-color: transparent;
   font-size: 17.3px;
   font-weight: 500;
   color: #fff;

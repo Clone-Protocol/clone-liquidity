@@ -97,7 +97,7 @@ const BackLayer = styled('div')`
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(255,255,255,0.1);
+  background: transparent;
 `
 
 const BoxWrapper = styled(Box)`
