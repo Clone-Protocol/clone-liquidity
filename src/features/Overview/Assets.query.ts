@@ -5,7 +5,7 @@ import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getiAssetInfos } from '~/utils/assets';
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
 import { PublicKey, Connection } from "@solana/web3.js";
 
@@ -23,10 +23,11 @@ export const fetchAssets = async ({ setStartTimer }: { setStartTimer: (start: bo
 		{
 			signTransaction: () => Promise.reject(),
 			signAllTransactions: () => Promise.reject(),
-			publicKey: new PublicKey("BSFtCudCd4pR4LSFqWPjbtXPKSNVbGkc35gRNdnqjMCU"), // MEMO: dummy pubkey
+			publicKey: PublicKey.default, // MEMO: dummy pubkey
 		},
 		{}
 	);
+	// @ts-ignore
 	const program = new InceptClient(network.incept, provider)
 
 	await program.loadManager()

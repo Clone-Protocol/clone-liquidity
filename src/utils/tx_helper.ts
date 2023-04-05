@@ -1,23 +1,51 @@
-import { Transaction, Signer } from "@solana/web3.js";
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept";
+import { AnchorProvider, Provider } from "@coral-xyz/anchor";
+import { Transaction, Signer, TransactionInstruction, PublicKey, TransactionMessage, VersionedTransaction, AddressLookupTableAccount } from "@solana/web3.js";
 import { TransactionStateType, TransactionState } from "~/hooks/useTransactionState"
 
-export const sendAndConfirm = async (incept: InceptClient, tx: Transaction, setTxState: (state: TransactionStateType) => void, signers?: Signer[]) => {
-  const { blockhash, lastValidBlockHeight } = await incept.provider.connection.getLatestBlockhash();
-  let updatedTx = new Transaction({ blockhash, lastValidBlockHeight }) as Transaction;
-  tx.instructions.forEach(ix => updatedTx.add(ix));
+export const sendAndConfirm = async (provider: AnchorProvider | Provider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
+  const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash('finalized');
+
+  let tx = await (async () => {
+    if (addressLookupTables !== undefined) {
+      const lookupTableAccountsResult = await Promise.allSettled(addressLookupTables.map((addr) => {
+        return provider.connection
+        .getAddressLookupTable(addr).then((res) => res.value)
+      }));
+
+      const lookupTableAccounts: AddressLookupTableAccount[] = []
+      lookupTableAccountsResult.forEach((r) => {
+        if (r.status === "fulfilled") {
+          lookupTableAccounts.push(r.value!)
+        }
+      })
+
+      const messageV0 = new TransactionMessage({
+        payerKey: provider.publicKey!,
+        recentBlockhash: blockhash,
+        instructions: instructions,
+      }).compileToV0Message(lookupTableAccounts);
+      // create a v0 transaction from the v0 message
+      const transactionV0 = new VersionedTransaction(messageV0);
+      return transactionV0
+    } else {
+      let updatedTx = new Transaction({ blockhash, lastValidBlockHeight }) as Transaction;
+      instructions.forEach(ix => updatedTx.add(ix));
+      return updatedTx;
+    }
+  })()
 
   setTxState({ state: TransactionState.INIT, txHash: '' })
   let txHash = ''
   try {
-    txHash = await incept.provider.sendAndConfirm!(updatedTx, signers, { commitment: 'processed' })
+    txHash = await provider.sendAndConfirm!(tx, signers, { commitment: 'processed' })
     console.log('txHash', txHash)
     setTxState({ state: TransactionState.PENDING, txHash })
 
-    await incept.provider.connection.confirmTransaction({
+    await provider.connection.confirmTransaction({
       blockhash, lastValidBlockHeight, signature: txHash,
     }, 'finalized')
     setTxState({ state: TransactionState.SUCCESS, txHash })
+
   } catch (e: any) {
     setTxState({ state: TransactionState.FAIL, txHash })
     throw new Error(e)

@@ -2,11 +2,11 @@ import { useEffect } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
-import { Transaction } from "@solana/web3.js";
-import * as anchor from "@project-serum/anchor"
+import { TransactionInstruction } from "@solana/web3.js";
+import * as anchor from "@coral-xyz/anchor"
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount } from '~/utils/token_accounts'
-import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
+import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CURRENT_ACCOUNT } from '~/data/localstorage';
 import { CreateAccountDialogStates } from '~/utils/constants'
@@ -32,58 +32,66 @@ export function useCreateAccount() {
 				const program = getInceptApp(wallet, true)
 				await program.loadManager()
 
-				const pubKey = publicKey as anchor.web3.PublicKey
+				let ixnCalls: Promise<TransactionInstruction>[] = []
 
-				let tx = new Transaction();
-				const usdiTokenAccount = await getTokenAccount(program.incept!.usdiMint, pubKey, program.provider.connection);
+				const usdiTokenAccount = await getTokenAccount(program.incept!.usdiMint, publicKey!, program.provider.connection);
+				const {userPubkey} = await program.getUserAddress()
+				const associatedToken = await getAssociatedTokenAddress(
+					program.incept!.usdiMint,
+					publicKey!
+				);
 
 				if (usdiTokenAccount === undefined) {
-					console.log("NO USDI ACCOUNT!")
-					const associatedToken = await getAssociatedTokenAddress(
-						program.incept!.usdiMint,
-						publicKey as anchor.web3.PublicKey
-					);
-
-					tx.add(
-						createAssociatedTokenAccountInstruction(
-							pubKey,
+					ixnCalls.push(
+						(async () => createAssociatedTokenAccountInstruction(
+							publicKey!,
 							associatedToken,
-							pubKey,
+							publicKey!,
 							program.incept!.usdiMint
-						)
-					);
+						))()
+					)
 				}
 
-				tx.add(
-					await program.initializeUserInstruction(pubKey)
-				);
+				ixnCalls.push(program.initializeUserInstruction(publicKey!))
 
 				// TODO: Figure out where to move this since it's a temporary solution.
 				const singlePoolCometsAccount = anchor.web3.Keypair.generate();
-				tx.add(
-					await program.initializeCometInstruction(
-						singlePoolCometsAccount,
-						true,
-						pubKey
-					)
-				);
+				ixnCalls.push(program.program.account.comet.createInstruction(singlePoolCometsAccount))
+				ixnCalls.push(program.program.methods
+					.initializeComet(true)
+					.accounts({
+					  user: publicKey!,
+					  userAccount: userPubkey,
+					  comet: singlePoolCometsAccount.publicKey,
+					  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+					  tokenProgram: TOKEN_PROGRAM_ID,
+					  systemProgram: anchor.web3.SystemProgram.programId,
+					})
+					.instruction()
+				)
 
 				const multiPoolCometsAccount = anchor.web3.Keypair.generate();
-				tx.add(
-					await program.initializeCometInstruction(
-						multiPoolCometsAccount,
-						false,
-						pubKey
-					)
-				);
+				ixnCalls.push(program.program.account.comet.createInstruction(multiPoolCometsAccount))
+				ixnCalls.push(program.program.methods
+					.initializeComet(false)
+					.accounts({
+					  user: publicKey!,
+					  userAccount: userPubkey,
+					  comet: multiPoolCometsAccount.publicKey,
+					  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+					  tokenProgram: TOKEN_PROGRAM_ID,
+					  systemProgram: anchor.web3.SystemProgram.programId,
+					})
+					.instruction()
+				)
 
 				try {
-					// await program.provider.sendAndConfirm!(tx, [singlePoolCometsAccount, multiPoolCometsAccount]);
-					await sendAndConfirm(program, tx, setTxState, [singlePoolCometsAccount, multiPoolCometsAccount])
+					let ixns = await Promise.all(ixnCalls)
+					await sendAndConfirm(program.provider, ixns, setTxState, [singlePoolCometsAccount, multiPoolCometsAccount])
 
 					// store account to localstorage
 					console.log('store account')
-					setLocalAccount(pubKey.toString())
+					setLocalAccount(publicKey!.toString())
 					setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 					//hacky sync
 					location.reload()

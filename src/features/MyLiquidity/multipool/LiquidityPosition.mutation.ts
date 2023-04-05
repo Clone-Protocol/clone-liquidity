@@ -7,6 +7,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
+import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 
 export const callNew = async ({ program, userPubKey, setTxState, data }: CallNewProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -17,11 +18,13 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 
 	await program.loadManager()
 
-	let tx = new Transaction().add(await program.updatePricesInstruction())
-	tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex))
+	let ixnCalls = [
+		program.updatePricesInstruction(),
+		program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex)
+	]
+	const ixns = await Promise.all(ixnCalls)
 
-	// await program.provider.sendAndConfirm!(tx);
-	await sendAndConfirm(program, tx, setTxState)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true
@@ -58,31 +61,37 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	await program.loadManager()
 
-	const [cometResult, tokenDataResult, updatePricesIxResult] = await Promise.allSettled([
+	const [cometResult, tokenDataResult, usdiAtaResult] = await Promise.allSettled([
 		program.getComet(),
 		program.getTokenData(),
-		program.updatePricesInstruction(),
+		getUSDiAccount(program)
 	])
 
 	if (
 		cometResult.status === 'rejected' ||
-		tokenDataResult.status === 'rejected' ||
-		updatePricesIxResult.status === 'rejected'
+		tokenDataResult.status === 'rejected' || 
+		usdiAtaResult.status === 'rejected'
 	) {
 		throw new Error('Failed to fetch data!')
 	}
 
-	const { positionIndex, changeAmount, editType } = data
-	const cometPosition = cometResult.value.positions[positionIndex]
-	const poolIndex = cometPosition.poolIndex
 
-	let tx = new Transaction().add(updatePricesIxResult.value)
+	const { positionIndex, changeAmount, editType } = data
+	const usdiAta = usdiAtaResult.value
+	const comet = cometResult.value
+	const cometPosition = comet.positions[positionIndex]
+	const poolIndex = cometPosition.poolIndex
+	const tokenData = tokenDataResult.value
+	const pool = tokenData.pools[poolIndex]
+
+	const iassetAta = await getTokenAccount(pool.assetInfo.iassetMint, userPubKey, program.provider.connection)
+
+	let ixnCalls = [program.updatePricesInstruction()]
 	/// Deposit
 	if (editType === 0) {
-		tx.add(await program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex))
+		ixnCalls.push(program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex))
 		/// Withdraw
 	} else {
-		const pool = tokenDataResult.value.pools[poolIndex]
 		const totalPoolUsdi = toNumber(pool.usdiAmount)
 		const totalLpTokens = toNumber(pool.liquidityTokenSupply)
 		const positionLpTokens = toNumber(cometPosition.liquidityTokenValue);
@@ -97,16 +106,20 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 			lpTokensToWithdraw = positionLpTokens
 		}
 
-		tx.add(await program.withdrawLiquidityFromCometInstruction(toDevnetScale(lpTokensToWithdraw), positionIndex, false))
+		ixnCalls.push(
+			program.withdrawLiquidityFromCometInstruction(
+			toDevnetScale(lpTokensToWithdraw), 
+			positionIndex, iassetAta!, usdiAta!, false
+		))
 
-		if (lpTokensToWithdraw === positionLpTokens) {
-			const collateralUsdi = toNumber(cometResult.value.collaterals[0].collateralAmount)
-			tx.add(await program.payCometILDInstruction(positionIndex, 0, toDevnetScale(collateralUsdi).toNumber(), false))
-		}
+		// if (lpTokensToWithdraw === positionLpTokens) {
+		// 	const collateralUsdi = toNumber(cometResult.value.collaterals[0].collateralAmount)
+		// 	ixnCalls.push(program.payCometILDInstruction(positionIndex, 0, toDevnetScale(collateralUsdi).toNumber(), false))
+		// }
 	}
 
-	// await program.provider.sendAndConfirm!(tx)
-	await sendAndConfirm(program, tx, setTxState)
+	const ixns = await Promise.all(ixnCalls)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true

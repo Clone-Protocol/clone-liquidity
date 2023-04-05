@@ -18,24 +18,23 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	const { collAmount, collIndex, editType } = data
 
-	let tx = new Transaction()
-	let ix: TransactionInstruction
+	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()];
 	/// Deposit
 	if (editType === 0) {
-		ix = await program.addCollateralToCometInstruction(userUsdiTokenAccount!, toDevnetScale(collAmount), 0)
+		ixnCalls.push(program.addCollateralToCometInstruction(userUsdiTokenAccount!, toDevnetScale(collAmount), 0))
 		/// Withdraw
 	} else {
-		tx.add(await program.updatePricesInstruction())
-		ix = await program.withdrawCollateralFromCometInstruction(
-			userUsdiTokenAccount!,
-			toDevnetScale(collAmount),
-			0,
-		)
+		ixnCalls.push(
+			program.withdrawCollateralFromCometInstruction(
+				userUsdiTokenAccount!,
+				toDevnetScale(collAmount),
+				0,
+		))
 	}
-	tx.add(ix)
 
-	// await program.provider.sendAndConfirm!(tx)
-	await sendAndConfirm(program, tx, setTxState)
+	const ixns = await Promise.all(ixnCalls)
+
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true

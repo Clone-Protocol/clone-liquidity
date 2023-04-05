@@ -38,7 +38,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
 
   useEffect(() => {
     if (open && positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
