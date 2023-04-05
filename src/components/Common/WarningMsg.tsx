@@ -6,7 +6,7 @@ const WarningMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
 	return (
 		<Slide direction="up" in={true} mountOnEnter unmountOnExit>
 			<WarningStack direction='row'>
-				<WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} />
+				<WarningAmberIcon sx={{ color: '#ed2525', width: '15px', marginLeft: '5px' }} />
 				<Box ml='10px'><Typography variant='p'>{children}</Typography></Box>
 			</WarningStack>
 		</Slide>
@@ -18,7 +18,7 @@ const WarningStack = styled(Stack)`
   align-items: center;
   margin-top: 10px;
 	line-height: 0.9;
-	padding: 5px;
+	padding: 10px;
   border: 1px solid ${(props) => props.theme.palette.error.main};
   color: ${(props) => props.theme.palette.text.secondary};
 `

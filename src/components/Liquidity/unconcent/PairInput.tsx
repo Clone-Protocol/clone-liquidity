@@ -87,7 +87,7 @@ const InputAmount = styled(`input`)`
 	margin-left: 30px;
 	text-align: right;
 	border: 0px;
-	background-color: #333333;
+	background-color: transparent;
 	font-size: 17.3px;
 	font-weight: 500;
 	color: #fff;

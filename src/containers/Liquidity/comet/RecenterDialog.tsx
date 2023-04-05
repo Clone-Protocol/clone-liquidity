@@ -158,9 +158,10 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
               <Image src={InfoIcon} /> <Typography variant='p' ml='10px' maxWidth='340px' textAlign='left' lineHeight='13px' sx={{ cursor: 'pointer' }}>Recentering is an important function of Comet. Click here to learn more about how recentering works.</Typography>
             </TipMsg>
             <Box marginTop='20px' marginBottom='22px'>
-              {/* <WalletBalance>
-                Wallet balance: <span style={isLackBalance ? { color: '#e9d100', marginLeft: '4px' } : { marginLeft: '4px' }}>{usdiBalance?.balanceVal.toLocaleString()} USDi</span>
-              </WalletBalance> */}
+              <Box display='flex' justifyContent='flex-end'>
+                <Typography variant='p' color='#989898'>Wallet Balance: </Typography>
+                <Typography variant='p' ml='5px'>{usdiBalance?.balanceVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+              </Box>
               <CenterBox>
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
@@ -179,18 +180,18 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 <EditConcentrationRangeBox assetData={cometDetail} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
               </Box>
-              <Box my='20px'>
+              <Box mt='20px'>
                 <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
                 <HealthscoreBar score={cometData.healthScore} prevScore={cometData.prevHealthScore} hideIndicator={true} width={490} />
               </Box>
 
-              <Stack direction="row" justifyContent="space-between">
+              {/* <Stack direction="row" justifyContent="space-between">
                 <Box maxWidth='130px' lineHeight='14px'><Typography variant='p'>Estimated Collateral After Recentering</Typography></Box>
                 <Box lineHeight='14px' textAlign='right'>
                   <Box><Typography variant='p_lg'>{(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USDi</Typography></Box>
                   <Box><Typography variant='p' color='#989898'>${(cometData.currentCollateral - cometData.usdiCost).toLocaleString()} USD</Typography></Box>
                 </Box>
-              </Stack>
+              </Stack> */}
             </BoxWithBorder>
 
             <SubmitButton onClick={() => handleRecenter()} disabled={isLackBalance || !isValidToRecenter()}>
