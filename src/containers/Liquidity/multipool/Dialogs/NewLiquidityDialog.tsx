@@ -38,7 +38,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
 
   useEffect(() => {
     if (open && positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
@@ -88,7 +88,7 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
 
   const { mutateAsync } = useNewPositionMutation(publicKey)
   const onNewLiquidity = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync({
       poolIndex: assetIndex,
       changeAmount: mintAmount,
@@ -97,16 +97,16 @@ const NewLiquidityDialog = ({ open, assetIndex, onRefetchData, handleClose }: { 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established new liquidity position')
+            // enqueueSnackbar('Successfully established new liquidity position')
             refetch()
             initData()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error establishing new liquidity position')
-          setLoading(false)
+          // enqueueSnackbar('Error establishing new liquidity position')
+          // setLoading(false)
         }
       })
   }

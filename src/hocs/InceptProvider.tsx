@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { AnchorProvider } from '@project-serum/anchor'
+import { AnchorProvider } from '@coral-xyz/anchor'
 import { Connection } from '@solana/web3.js'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { InceptContext } from '~/hooks/useIncept'

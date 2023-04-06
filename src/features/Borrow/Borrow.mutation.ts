@@ -1,16 +1,17 @@
-import { PublicKey, Transaction } from '@solana/web3.js'
+import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
-import * as anchor from "@project-serum/anchor";
+import { getMantissa } from 'incept-protocol-sdk/sdk/src/decimal'
+import * as anchor from "@coral-xyz/anchor";
 import { useIncept } from '~/hooks/useIncept'
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 
-export const callClose = async ({ program, userPubKey, data }: CallCloseProps) => {
+export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -28,14 +29,27 @@ export const callClose = async ({ program, userPubKey, data }: CallCloseProps) =
 		program.provider.connection
 	)
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
+	let mintPosition = (await program.getBorrowPositions()).borrowPositions[
+		borrowIndex
+	  ];
 
-	// @TODO : change sendAndConfirm
-	await program.closeBorrowPosition(
-		iassetAssociatedTokenAccount!,
-		Number(borrowIndex),
-		collateralAssociatedTokenAccount!,
-		[]
-	)
+	let ixnCalls = [
+		program.updatePricesInstruction(),
+		program.subtractIassetFromBorrowInstruction(
+			iassetAssociatedTokenAccount!,
+			new anchor.BN(getMantissa(mintPosition.borrowedIasset)),
+			borrowIndex
+		),
+		program.withdrawCollateralFromBorrowInstruction(
+			program.provider.publicKey!,
+			borrowIndex,
+			collateralAssociatedTokenAccount!,
+			new anchor.BN(getMantissa(mintPosition.collateralAmount))
+		  )
+	]
+
+	const ixns = await Promise.all(ixnCalls)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true,
@@ -48,13 +62,16 @@ type CloseFormData = {
 interface CallCloseProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
 	data: CloseFormData
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
 	if (wallet) {
-		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, data }))
+		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation(() => funcNoWallet())
 	}
@@ -72,64 +89,58 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
 
+	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
+	let result: { result: boolean, msg: string};
+
 	/// Deposit
 	if (editType === 0) {
 		// @TODO : change sendAndConfirm
-		await program.addCollateralToBorrow(
+		ixnCalls.push(program.addCollateralToBorrowInstruction(
 			borrowIndex,
 			collateralAssociatedTokenAccount!,
 			new anchor.BN(collateralAmount * 10 ** 8),
-			[]
-		)
+		))
 
-		return {
+		result = {
 			result: true,
 			msg: 'added collateral to borrow',
 		}
 	} else {
 		/// Withdraw
+		const usdiAssociatedToken = await getAssociatedTokenAddress(
+			program.incept!.usdiMint,
+			program.provider.publicKey!
+		)
 		if (collateralAssociatedTokenAccount === undefined) {
-			let tx = new Transaction()
-			const usdiAssociatedToken = await getAssociatedTokenAddress(
-				program.incept!.usdiMint,
-				program.provider.publicKey!
-			)
-			tx.add(
-				await createAssociatedTokenAccountInstruction(
+			ixnCalls.push(
+				(async () => createAssociatedTokenAccountInstruction(
 					program.provider.publicKey!,
 					usdiAssociatedToken,
 					program.provider.publicKey!,
 					program.incept!.usdiMint
-				)
-			)
-			tx.add(
-				await program.withdrawCollateralFromBorrowInstruction(
-					program.provider.publicKey!,
-					borrowIndex,
-					usdiAssociatedToken,
-					new anchor.BN(collateralAmount * 10 ** 8)
-				)
-			)
-
-			// @TODO : change sendAndConfirm
-			await program.provider.sendAndConfirm!(tx)
-			// await sendAndConfirm(program, tx, setTxState)
-		} else {
-
-			// @TODO : change sendAndConfirm
-			await program.withdrawCollateralFromBorrow(
-				collateralAssociatedTokenAccount!,
-				borrowIndex,
-				new anchor.BN(collateralAmount * 10 ** 8),
-				[]
+				))()
 			)
 		}
+		ixnCalls.push(
+			program.withdrawCollateralFromBorrowInstruction(
+				program.provider.publicKey!,
+				borrowIndex,
+				usdiAssociatedToken,
+				new anchor.BN(collateralAmount * 10 ** 8)
+			)
+		)
 
-		return {
+		result = {
 			result: true,
 			msg: 'withdraw collateral from borrow',
 		}
 	}
+
+	const ixns = await Promise.all(ixnCalls)
+	console.log("n ixns:", ixns.length);
+	await sendAndConfirm(program.provider, ixns, setTxState)
+
+	return result;
 }
 
 export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
@@ -151,62 +162,55 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		program.provider.publicKey!,
 		program.connection
 	)
+	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
+	let result: { result: boolean, msg: string};
+
+	const associatedToken = await getAssociatedTokenAddress(
+		assetInfo.iassetMint,
+		program.provider.publicKey!
+	)
 
 	/// Deposit
 	if (editType === 0) {
-		if (iassetAssociatedTokenAccount !== undefined) {
-			// @TODO : change sendAndConfirm
-			await program.addIassetToBorrow(
-				iassetAssociatedTokenAccount!,
+		ixnCalls.push(
+			program.addIassetToBorrowInstruction(
+				associatedToken,
 				new anchor.BN(borrowAmount * 10 ** 8),
-				borrowIndex,
-				[]
+				borrowIndex
 			)
-		} else {
-			const associatedToken = await getAssociatedTokenAddress(
-				assetInfo.iassetMint,
-				program.provider.publicKey!
-			)
-			const transactions = new Transaction()
-				.add(
-					await createAssociatedTokenAccountInstruction(
-						program.provider.publicKey!,
-						associatedToken,
-						program.provider.publicKey!,
-						assetInfo.iassetMint
-					)
-				)
-				.add(
-					await program.addIassetToBorrowInstruction(
-						associatedToken,
-						new anchor.BN(borrowAmount * 10 ** 8),
-						borrowIndex
-					)
-				)
-			// @TODO : change sendAndConfirm
-			program.provider.sendAndConfirm!(transactions)
-			// await sendAndConfirm(program, transactions, setTxState)
-		}
-
-		return {
+		)
+		result = {
 			result: true,
 			msg: 'added borrow amount to borrow',
 		}
 	} else {
-		/// Withdraw
-		// @TODO : change sendAndConfirm
-		await program.subtractIassetFromBorrow(
+		if (iassetAssociatedTokenAccount === undefined) {
+			ixnCalls.push(
+				(async () => createAssociatedTokenAccountInstruction(
+					program.provider.publicKey!,
+					associatedToken,
+					program.provider.publicKey!,
+					assetInfo.iassetMint
+				))()
+			)
+		}
+		ixnCalls.push(
+			program.subtractIassetFromBorrowInstruction(
 			iassetAssociatedTokenAccount!,
 			new anchor.BN(borrowAmount * 10 ** 8),
 			borrowIndex,
-			[]
-		)
+		))
 
-		return {
+		result = {
 			result: true,
 			msg: 'withdraw borrow amount from borrow',
 		}
 	}
+
+	let ixns = await Promise.all(ixnCalls)
+	await sendAndConfirm(program.provider, ixns, setTxState)
+
+	return result
 }
 
 type EditFormData = {
@@ -255,53 +259,64 @@ const runMintInstructions = async (
 	collateralIndex: number,
 	setTxState: (state: TransactionStateType) => void
 ) => {
-	const tokenData = await incept.getTokenData();
+	const tokenData = await incept.getTokenData();	
+	const {userPubkey, bump} = await incept.getUserAddress()
 	let iassetMint = tokenData.pools[iassetIndex].assetInfo.iassetMint
 
-	const tx = new Transaction()
+	let ixnCalls: Promise<TransactionInstruction>[] = [incept.updatePricesInstruction()]
 
 	const associatedToken = await getAssociatedTokenAddress(iassetMint, incept.provider.publicKey!)
 
 	let userAccount = await incept.getUserAccount()
-	let mintPositionAddress = userAccount.borrowPositions;
+	let borrowPositionAddress = userAccount.borrowPositions;
 	let signers = [];
 	// If mint positions account not created
-	if (mintPositionAddress.equals(PublicKey.default)) {
-		const mintPositionsAccount = anchor.web3.Keypair.generate();
-		signers.push(mintPositionsAccount);
-		mintPositionAddress = mintPositionsAccount.publicKey;
-		tx.add(
-			await incept.program.account.borrowPositions.createInstruction(mintPositionsAccount)
-		);
-		tx.add(await incept.initializeBorrowPositionsAccountInstruction(mintPositionsAccount))
+	if (borrowPositionAddress.equals(PublicKey.default)) {
+		const borrowPositionsAccount = anchor.web3.Keypair.generate();
+		signers.push(borrowPositionsAccount);
+		borrowPositionAddress = borrowPositionsAccount.publicKey;
+		ixnCalls.push(incept.program.account.borrowPositions.createInstruction(borrowPositionsAccount));
+		ixnCalls.push(incept.program.methods
+			.initializeBorrowPositions()
+			.accounts({
+			  user: incept.provider.publicKey!,
+			  userAccount: userPubkey,
+			  borrowPositions: borrowPositionsAccount.publicKey,
+			  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+			  tokenProgram: TOKEN_PROGRAM_ID,
+			  systemProgram: anchor.web3.SystemProgram.programId,
+			})
+			.instruction())
 	}
 
 	// If iAsset token account not created
 	if (iassetAccount === undefined) {
-		tx.add(
-			await createAssociatedTokenAccountInstruction(
+		ixnCalls.push(
+			(async () => createAssociatedTokenAccountInstruction(
 				incept.program.provider.publicKey!,
 				associatedToken,
 				incept.program.provider.publicKey!,
 				iassetMint
-			)
+			))()
 		)
 	}
 
-	tx.add(await incept.updatePricesInstruction()).add(
-		await incept.initializeBorrowPositionInstruction(
+	ixnCalls.push(
+		incept.initializeBorrowPositionInstruction(
 			usdiAccount,
 			associatedToken,
 			mintAmount,
 			collateralAmount,
 			iassetIndex,
 			collateralIndex,
-			mintPositionAddress
+			borrowPositionAddress
 		)
 	)
 
+	let ixns = await Promise.all(ixnCalls)
+
 	// await incept.provider.sendAndConfirm!(tx, signers);
-	await sendAndConfirm(incept, tx, setTxState, signers)
+	await sendAndConfirm(incept.provider, ixns, setTxState, signers)
 }
 
 export const callBorrow = async ({ program, userPubKey, setTxState, data }: CallBorrowProps) => {

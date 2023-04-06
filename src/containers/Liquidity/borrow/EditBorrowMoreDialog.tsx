@@ -93,7 +93,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   }, [borrowAmount, editType])
 
   const onEdit = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         borrowIndex,
@@ -104,17 +104,17 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully modified borrow position')
+            // enqueueSnackbar('Successfully modified borrow position')
             initData()
             onRefetchData()
             onHideEditForm()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error modifying borrow position')
-          setLoading(false)
+          // enqueueSnackbar('Error modifying borrow position')
+          // setLoading(false)
         }
       }
     )

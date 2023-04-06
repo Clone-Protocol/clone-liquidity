@@ -28,7 +28,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
   }
 
   const onClose = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         borrowIndex
@@ -37,15 +37,15 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully closed position')
-            setLoading(false)
+            // enqueueSnackbar('Successfully closed position')
+            // setLoading(false)
             router.push('/liquidity?ltab=3')
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error closing position')
-          setLoading(false)
+          // enqueueSnackbar('Error closing position')
+          // setLoading(false)
         }
       }
     )

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Provider } from '@project-serum/anchor'
+import { Provider } from '@coral-xyz/anchor'
 import { Connection } from '@solana/web3.js'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Incept } from 'incept-protocol-sdk/sdk/src/incept'

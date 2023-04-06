@@ -41,7 +41,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   useEffect(() => {
     if (open && positionInfo !== undefined) {
       const position = positionInfo.comet!.positions[positionIndex]
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.healthScoreCoefficient)
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
       const currentPosition = toNumber(position!.borrowedUsdi)
 
       setAssetHealthCoefficient(healthCoefficient)

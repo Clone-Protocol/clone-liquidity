@@ -49,7 +49,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
   useEffect(() => {
     if (positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.healthScoreCoefficient);
+      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
@@ -172,7 +172,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
             </Box>
             <Box>
               <Box mb='10px'><Typography variant='p' color='#989898'>Current Multipool Healthscore</Typography></Box>
-              <HealthscoreBar score={positionInfo.totalHealthScore} width={490} hiddenThumbTitle={true} />
+              <HealthscoreBar score={positionInfo.totalHealthScore} width={480} hiddenThumbTitle={true} />
             </Box>
           </BoxWithBorder>
 
@@ -243,7 +243,7 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
           <BoxWithBorder padding="15px 24px">
             <Box>
               <Box mb="15px"><Typography variant="p">Projected Multipool Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-              <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={490} hideIndicator={true} />
+              <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={470} hideIndicator={true} />
               {hasRiskScore &&
                 <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
               }

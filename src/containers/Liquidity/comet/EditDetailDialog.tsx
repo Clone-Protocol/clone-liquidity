@@ -77,12 +77,12 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }, [editType])
 
   const initData = () => {
-    setCollAmount(NaN)
+    setCollAmount(0.0)
     setMintAmount(0.0)
   }
 
   const isCollAmountInvalid = (): boolean => {
-    return isNaN(collAmount) || collAmount <= 0
+    return isNaN(collAmount) || collAmount < 0
   }
 
   // Initialize state data.

@@ -5,7 +5,8 @@ import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
-import { getHealthScore, calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
+import { recenterProcedureInstructions } from 'incept-protocol-sdk/sdk/src/utils'
+import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -32,6 +33,8 @@ export const fetchRecenterInfo = async ({
 
 	const tokenData = tokenDataResult.value
 	const comet = cometResult.value
+
+	const recenterInfo = recenterProcedureInstructions(program, comet, tokenData, index, PublicKey.default, PublicKey.default, PublicKey.default, PublicKey.default)
 	const position = comet.positions[index]
 	const poolIndex = Number(position.poolIndex)
 	const pool = tokenData.pools[poolIndex]
@@ -50,22 +53,14 @@ export const fetchRecenterInfo = async ({
 
 	let currentHealthScore = getHealthScore(tokenData, comet)
 
-	let totalCollValue = 0
-	let totalHealthScore = 0
-	let recenterCost = 0
+	let recenterCost = recenterInfo.usdiCost
 	let prevHealthScore = currentHealthScore.healthScore
-	let healthScore = prevHealthScore
+	let healthScore = recenterInfo.healthScore
 
 	// Only USDi for now.
-	totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
-	totalHealthScore = getHealthScore(tokenData, comet).healthScore
-	try {
-		let recenterEstimation = calculateCometRecenterMultiPool(index, tokenData, comet)
-		recenterCost = recenterEstimation.usdiCost
-		healthScore = recenterEstimation.healthScore
-	} catch (e) {
-		console.log(e)
-	}
+	let totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
+	let totalHealthScore = healthScore
+
 	let recenterCostDollarPrice = 1
 	let recenterCollValue = recenterCost * recenterCostDollarPrice
 	let estimatedTotalCollValue = totalCollValue - recenterCollValue

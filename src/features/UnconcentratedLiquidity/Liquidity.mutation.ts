@@ -1,7 +1,7 @@
-import { PublicKey, Transaction } from '@solana/web3.js'
+import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
-import * as anchor from "@project-serum/anchor"
+import { InceptClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/incept"
+import * as anchor from "@coral-xyz/anchor"
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
@@ -31,20 +31,20 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 	let collateralAssociatedTokenAccount = await getUSDiAccount(program);
 	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
 
-	let tx = new Transaction();
+	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
 
 	if (iassetAssociatedTokenAccount === undefined) {
 		const iAssetAssociatedToken: PublicKey = await getAssociatedTokenAddress(
 			iassetMint,
 			program.provider.publicKey!,
 		);
-		tx.add(
-			await createAssociatedTokenAccountInstruction(
+		ixnCalls.push(
+			(async () => createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
 				iAssetAssociatedToken,
 				program.provider.publicKey!,
 				iassetMint
-			)
+			))()
 		);
 		iassetAssociatedTokenAccount = iAssetAssociatedToken;
 	}
@@ -53,13 +53,13 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 			program.incept!.usdiMint,
 			program.provider.publicKey!,
 		);
-		tx.add(
-			await createAssociatedTokenAccountInstruction(
+		ixnCalls.push(
+			(async () => createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
 				usdiAssociatedToken,
 				program.provider.publicKey!,
 				program.incept!.usdiMint
-			)
+			))()
 		);
 		collateralAssociatedTokenAccount = usdiAssociatedToken;
 	}
@@ -69,29 +69,29 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 			liquidityTokenMint,
 			program.provider.publicKey!,
 		);
-		tx.add(
-			await createAssociatedTokenAccountInstruction(
+		ixnCalls.push(
+			(async () => createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
 				liquidityAssociatedToken,
 				program.provider.publicKey!,
-				liquidityTokenMint
-			)
+				program.incept!.usdiMint
+			))()
 		);
 		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
 	}
 
-	tx.add(
-		await program.withdrawUnconcentratedLiquidityInstruction(
+	ixnCalls.push(
+		program.withdrawUnconcentratedLiquidityInstruction(
 			collateralAssociatedTokenAccount!,
 			iassetAssociatedTokenAccount!,
 			liquidityAssociatedTokenAccount!,
-			new anchor.BN(liquidityTokenAmount),
-			index,
+			toDevnetScale(liquidityTokenAmount),
+			liquidityPosition.poolIndex,
 		)
 	);
+	let ixns = await Promise.all(ixnCalls)
 
-	//await program.provider.sendAndConfirm!(tx);
-	await sendAndConfirm(program, tx, setTxState)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true
@@ -177,26 +177,26 @@ export const callLiquidity = async ({ program, userPubKey, setTxState, data }: C
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
 	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
 
-	const tx = new Transaction();
+	let ixnCalls: Promise<TransactionInstruction>[] = []
 
 	if (liquidityAssociatedTokenAccount === undefined) {
 		const liquidityAssociatedToken = await getAssociatedTokenAddress(
 			liquidityTokenMint,
 			program.provider.publicKey!,
 		);
-		tx.add(
-			await createAssociatedTokenAccountInstruction(
+		ixnCalls.push(
+			(async () => createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
 				liquidityAssociatedToken,
 				program.provider.publicKey!,
 				liquidityTokenMint
-			)
+			))()
 		);
 		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
 	}
 
-	tx.add(
-		await program.provideUnconcentratedLiquidityInstruction(
+	ixnCalls.push(
+		program.provideUnconcentratedLiquidityInstruction(
 			collateralAssociatedTokenAccount!,
 			iassetAssociatedTokenAccount!,
 			liquidityAssociatedTokenAccount!,
@@ -204,9 +204,9 @@ export const callLiquidity = async ({ program, userPubKey, setTxState, data }: C
 			iassetIndex,
 		)
 	);
-
-	//await program.provider.sendAndConfirm!(tx);
-	await sendAndConfirm(program, tx, setTxState)
+	
+	const ixns = await Promise.all(ixnCalls)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true

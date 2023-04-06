@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, styled, Button, Dialog, DialogContent, FormHelperText, Stack, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
@@ -84,7 +84,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   }, [collAmount, editType])
 
   const onEdit = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         borrowIndex,
@@ -95,17 +95,17 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully edited borrow details')
+            // enqueueSnackbar('Successfully edited borrow details')
             initData()
             onRefetchData()
             onHideEditForm()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Error editing borrow details')
-          setLoading(false)
+          // enqueueSnackbar('Error editing borrow details')
+          // setLoading(false)
         }
       }
     )

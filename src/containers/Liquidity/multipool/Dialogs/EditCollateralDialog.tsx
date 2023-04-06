@@ -243,7 +243,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                   </Box>
                   <Box mt='10px'>
                     <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
-                    <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={430} /></Box>
+                    <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} /></Box>
                   </Box>
                 </BoxWithBorder>
               </Box>

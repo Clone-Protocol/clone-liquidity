@@ -31,6 +31,8 @@ import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import ReminderNewWalletPopup from './Account/ReminderNewWalletPopup'
 import MobileWarningDialog from './Common/MobileWarningDialog'
 import ConnectWalletGuideDialog from './Common/ConnectWalletGuideDialog'
+import { sendAndConfirm } from '~/utils/tx_helper'
+import { useTransactionState } from '~/hooks/useTransactionState'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -99,6 +101,7 @@ const RightMenu = () => {
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useRecoilState(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
+	const { setTxState } = useTransactionState()
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
@@ -121,21 +124,16 @@ const RightMenu = () => {
 				const program = getInceptApp(wallet)
 				await program.loadManager()
 				const usdiTokenAccount = await getUSDiAccount(program);
+				const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, publicKey);
+				let ixnCalls = []
 				try {
 					if (usdiTokenAccount === undefined) {
-						const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, publicKey);
-						const tx = new Transaction().add(
-							await createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.incept!.usdiMint)
-						).add(
-							await program.hackathonMintUsdiInstruction(ata, 10000000000)
-						);
-
-						// @TODO : change sendAndConfirm
-						await program.provider.sendAndConfirm!(tx);
-					} else {
-						// @TODO : change sendAndConfirm
-						await program.hackathonMintUsdi(usdiTokenAccount!, 10000000000);
+						ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, ata, publicKey, program.incept!.usdiMint))())
 					}
+					ixnCalls.push(program.hackathonMintUsdiInstruction(ata, 10000000000))
+					let ixns = await Promise.all(ixnCalls)
+					await sendAndConfirm(program.provider, ixns, setTxState)
+
 				} finally {
 					setMintUsdi(false)
 				}

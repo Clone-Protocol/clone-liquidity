@@ -138,7 +138,7 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
   }, [maxMintable, cometData])
 
   async function submit() {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsyncComet(
       {
         collateralIndex: COLLATERAL_INDEX, //USDi
@@ -150,16 +150,16 @@ const CometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balanc
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully established comet position')
-            setLoading(false)
+            // enqueueSnackbar('Successfully established comet position')
+            // setLoading(false)
             initData()
             router.push('/liquidity')
           }
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to establish comet position')
-          setLoading(false)
+          // enqueueSnackbar('Failed to establish comet position')
+          // setLoading(false)
         }
       }
     )
