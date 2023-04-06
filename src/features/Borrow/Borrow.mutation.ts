@@ -1,4 +1,4 @@
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
 import { getMantissa } from 'incept-protocol-sdk/sdk/src/decimal'
@@ -31,7 +31,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
 	let mintPosition = (await program.getBorrowPositions()).borrowPositions[
 		borrowIndex
-	  ];
+	];
 
 	let ixnCalls = [
 		program.updatePricesInstruction(),
@@ -45,7 +45,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			borrowIndex,
 			collateralAssociatedTokenAccount!,
 			new anchor.BN(getMantissa(mintPosition.collateralAmount))
-		  )
+		)
 	]
 
 	const ixns = await Promise.all(ixnCalls)
@@ -73,7 +73,7 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
 }
 
@@ -90,11 +90,10 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
 
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
-	let result: { result: boolean, msg: string};
+	let result: { result: boolean, msg: string };
 
 	/// Deposit
 	if (editType === 0) {
-		// @TODO : change sendAndConfirm
 		ixnCalls.push(program.addCollateralToBorrowInstruction(
 			borrowIndex,
 			collateralAssociatedTokenAccount!,
@@ -163,7 +162,7 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		program.connection
 	)
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
-	let result: { result: boolean, msg: string};
+	let result: { result: boolean, msg: string };
 
 	const associatedToken = await getAssociatedTokenAddress(
 		assetInfo.iassetMint,
@@ -196,10 +195,10 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		}
 		ixnCalls.push(
 			program.subtractIassetFromBorrowInstruction(
-			iassetAssociatedTokenAccount!,
-			new anchor.BN(borrowAmount * 10 ** 8),
-			borrowIndex,
-		))
+				iassetAssociatedTokenAccount!,
+				new anchor.BN(borrowAmount * 10 ** 8),
+				borrowIndex,
+			))
 
 		result = {
 			result: true,
@@ -233,7 +232,7 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 
 }
@@ -245,7 +244,7 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 }
 
@@ -259,8 +258,8 @@ const runMintInstructions = async (
 	collateralIndex: number,
 	setTxState: (state: TransactionStateType) => void
 ) => {
-	const tokenData = await incept.getTokenData();	
-	const {userPubkey, bump} = await incept.getUserAddress()
+	const tokenData = await incept.getTokenData();
+	const { userPubkey, bump } = await incept.getUserAddress()
 	let iassetMint = tokenData.pools[iassetIndex].assetInfo.iassetMint
 
 	let ixnCalls: Promise<TransactionInstruction>[] = [incept.updatePricesInstruction()]
@@ -279,12 +278,12 @@ const runMintInstructions = async (
 		ixnCalls.push(incept.program.methods
 			.initializeBorrowPositions()
 			.accounts({
-			  user: incept.provider.publicKey!,
-			  userAccount: userPubkey,
-			  borrowPositions: borrowPositionsAccount.publicKey,
-			  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-			  tokenProgram: TOKEN_PROGRAM_ID,
-			  systemProgram: anchor.web3.SystemProgram.programId,
+				user: incept.provider.publicKey!,
+				userAccount: userPubkey,
+				borrowPositions: borrowPositionsAccount.publicKey,
+				rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+				tokenProgram: TOKEN_PROGRAM_ID,
+				systemProgram: anchor.web3.SystemProgram.programId,
 			})
 			.instruction())
 	}

@@ -104,15 +104,15 @@ const RecenterDialog = ({
 									</Box>
 								</Stack>
 							</CenterBox>
-							<BottomBox>
+							{/* <BottomBox>
 								<Typography variant='p' color='#989898'>Total Collateral Value: </Typography> <Typography variant='p'>${positionInfo.totalCollValue.toLocaleString()}</Typography>
-							</BottomBox>
+							</BottomBox> */}
 						</Box>
 
 						<BoxWithBorder mt='13px' padding='15px'>
 							<Box>
 								<Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} /></Box>
-								<HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={490} />
+								<HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={440} />
 							</Box>
 
 							{/* <Stack direction="row" justifyContent="space-between">

@@ -38,13 +38,13 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 		height: '29px',
 		minHeight: '0px',
 		maxHeight: '29px',
+		paddingLeft: '2px',
 		display: 'flex',
 		gap: '5px'
 	},
 	textTransform: 'none',
 	fontWeight: '500',
 	fontSize: '12px',
-	marginLeft: '6px',
 	color: '#989898',
 	'&.Mui-selected': {
 		color: '#fff',

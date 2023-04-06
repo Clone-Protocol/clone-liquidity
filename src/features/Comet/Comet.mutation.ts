@@ -116,7 +116,7 @@ export function useRecenterMutation(userPubKey: PublicKey | null) {
   if (wallet) {
     return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
   } else {
-    return useMutation(() => funcNoWallet())
+    return useMutation((_: RecenterFormData) => funcNoWallet())
   }
 }
 
@@ -410,7 +410,7 @@ export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: ()
   if (wallet) {
     return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, setTxState, data, setRefreshData }))
   } else {
-    return useMutation(() => funcNoWallet())
+    return useMutation((_: EditFormData) => funcNoWallet())
   }
 }
 
@@ -478,7 +478,7 @@ export function useCometMutation(userPubKey: PublicKey | null) {
   if (wallet) {
     return useMutation((data: CometFormData) => callComet({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
   } else {
-    return useMutation(() => funcNoWallet())
+    return useMutation((_: CometFormData) => funcNoWallet())
   }
 }
 

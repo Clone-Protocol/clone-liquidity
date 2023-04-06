@@ -20,8 +20,7 @@ const BoxWrapper = styled(Box)`
   line-height: 16px;
 	text-align: center;  
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
-	color: #bfbebe;
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-bottom: 8px;
 `
 

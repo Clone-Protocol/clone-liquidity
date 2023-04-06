@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { StyledSection } from 'pages'
 import { Container, Box } from '@mui/material'
-import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import LiquidityTable from '~/containers/Liquidity/LiquidityTable'
 
 const MyLiquidity: NextPage = () => {
@@ -18,7 +17,6 @@ const MyLiquidity: NextPage = () => {
 			<main>
 				<StyledSection>
 					<Container>
-						<WelcomeMsg />
 						<Box marginTop='40px'>
 							<LiquidityTable />
 						</Box>

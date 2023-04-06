@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, styled, Button, Dialog, DialogContent, FormHelperText, Stack, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
+import { useRouter } from 'next/router'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditBorrowMutation } from '~/features/Borrow/Borrow.mutation'
+import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import {
   PairData
 } from '~/features/MyLiquidity/BorrowPosition.query'
@@ -23,6 +25,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   const borrowIndex = borrowId
   const [editType, setEditType] = useState(0) // 0 : borrow more , 1: repay
   const [maxCollVal, setMaxCollVal] = useState(0);
+  const router = useRouter()
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
   // const hasRiskRatio = editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
@@ -49,11 +52,12 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   }
 
   const { mutateAsync } = useEditBorrowMutation(publicKey)
+  const { mutateAsync: mutateAsyncClose } = useCloseMutation(publicKey)
 
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     setValue,
     reset
@@ -115,6 +119,27 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
           console.error(err)
           // enqueueSnackbar('Error modifying borrow position')
           // setLoading(false)
+        }
+      }
+    )
+  }
+
+  const onClose = async () => {
+    await mutateAsyncClose(
+      {
+        borrowIndex,
+      },
+      {
+        onSuccess(data) {
+          if (data) {
+            console.log('data', data)
+            onRefetchData()
+            onHideEditForm()
+            router.push('/liquidity?ltab=3')
+          }
+        },
+        onError(err) {
+          console.error(err)
         }
       }
     )
@@ -209,7 +234,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
               </WarningStack>
             } */}
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+            <SubmitButton onClick={handleSubmit(!isFullRepaid ? onEdit : onClose)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
                 : <Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography>}
             </SubmitButton>

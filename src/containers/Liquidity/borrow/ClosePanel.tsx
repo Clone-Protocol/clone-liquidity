@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Stack, Button, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
-import { styled } from '@mui/system'
 import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import InfoIcon from 'public/images/info-icon-black.svg'

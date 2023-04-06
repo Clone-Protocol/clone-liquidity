@@ -79,7 +79,7 @@ export function useRecenterAllMutation(userPubKey: PublicKey | null) {
 	if (wallet) {
 		return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: RecenterFormData) => funcNoWallet())
 	}
 }
 
@@ -92,26 +92,26 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 	await program.loadManager()
 
 	const [tokenData, comet] = await Promise.all([
-	  program.getTokenData(), program.getComet()
+		program.getTokenData(), program.getComet()
 	]);
 	const iassetMint = tokenData.pools[comet.positions[data.positionIndex].poolIndex].assetInfo.iassetMint
 	let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
-	  getUSDiAccount(program),
-	  getTokenAccount(
-		iassetMint,
-		userPubKey,
-		program.provider.connection
-	  ), 
-	  getTokenAccount(
-		program.incept!.usdiMint,
-		program.incept!.treasuryAddress,
-		program.provider.connection
-	  ),
-	  getTokenAccount(
-		iassetMint,
-		program.incept!.treasuryAddress,
-		program.provider.connection
-	  )
+		getUSDiAccount(program),
+		getTokenAccount(
+			iassetMint,
+			userPubKey,
+			program.provider.connection
+		),
+		getTokenAccount(
+			program.incept!.usdiMint,
+			program.incept!.treasuryAddress,
+			program.provider.connection
+		),
+		getTokenAccount(
+			iassetMint,
+			program.incept!.treasuryAddress,
+			program.provider.connection
+		)
 	])
 
 	let ixnCalls: Promise<TransactionInstruction>[] = [];
@@ -150,11 +150,11 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 	)
 
 	recenterData.ixs.forEach((call) => ixnCalls.push(call))
-  
+
 	let ixns = await Promise.all(ixnCalls)
 
 	const addressLookupTablesPublicKey = new PublicKey(process.env.NEXT_PUBLIC_INCEPT_ADDRESS_LOOKUP_TABLE!)
-  
+
 	await sendAndConfirm(program.provider, ixns, setTxState, [], [addressLookupTablesPublicKey])
 	return {
 		result: true,

@@ -48,7 +48,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     handleSubmit,
     control,
     trigger,
-    formState: { isDirty, errors },
+    formState: { isDirty, errors, isSubmitting },
     watch,
     setValue
   } = useForm({
@@ -175,7 +175,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                 </Box>}
             </BoxWithBorder>
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
               <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Collateral</Typography>
             </SubmitButton>
 

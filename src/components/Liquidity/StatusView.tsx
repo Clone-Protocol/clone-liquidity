@@ -28,7 +28,7 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
       <TabPanel value={tab} index={0}>
         <BalanceValue>
-          <Typography variant='p_xxxlg'>{formatDollarAmount(status.statusValues.totalLiquidityProvided, 0, true)}</Typography>
+          <Typography variant='p_xxxlg'>${status.statusValues.totalLiquidityProvided.toLocaleString()}</Typography>
         </BalanceValue>
       </TabPanel>
 
@@ -47,6 +47,7 @@ export default withCsrOnly(StatusView)
 
 const StyledPaper = styled(Box)`
 	color: #fff;
+  padding-left: 1px;
 	padding-y: 18px;
 	height: 138px;
 `
@@ -72,7 +73,7 @@ const TabPanel = (props: TabPanelProps) => {
       aria-labelledby={`simple-tab-${index}`}
       {...other}>
       {value === index && (
-        <Box sx={{ px: 3, py: 2 }}>
+        <Box sx={{ py: 2 }}>
           <div>{children}</div>
         </Box>
       )}
