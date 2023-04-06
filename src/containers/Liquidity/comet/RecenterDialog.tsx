@@ -107,7 +107,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
   }, [open, wallet, cometDetail])
 
   const handleRecenter = async () => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         cometIndex
@@ -116,7 +116,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            enqueueSnackbar('Successfully recentered position')
+            // enqueueSnackbar('Successfully recentered position')
 
             refetch()
             onRefetchData && onRefetchData()
@@ -124,12 +124,12 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
             //hacky sync
             location.reload()
           }
-          setLoading(false)
+          // setLoading(false)
         },
         onError(err) {
           console.error(err)
-          enqueueSnackbar('Failed to recenter position : No price deviation detected.')
-          setLoading(false)
+          // enqueueSnackbar('Failed to recenter position : No price deviation detected.')
+          // setLoading(false)
         }
       }
     )

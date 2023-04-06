@@ -29,7 +29,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
             </Box>}
             {prevScore &&
               <PrevBox sx={{ left: `${prevScorePoint}px` }}>
-                <FixValueLabel>{prevScore?.toFixed(0)}</FixValueLabel>
+                <FixValueLabel><Typography variant='p' ml='-2px'>{prevScore?.toFixed(0)}</Typography></FixValueLabel>
                 <Box ml='-18px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
               </PrevBox>
             }
@@ -87,7 +87,7 @@ const FixValueLabel = styled(Box)`
   &::after {
     content: '▲';
     position: relative;
-    left: -12px;
+    left: -15px;
     top: -17px;
   }
 `

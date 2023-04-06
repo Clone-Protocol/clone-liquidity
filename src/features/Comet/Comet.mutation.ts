@@ -30,63 +30,63 @@ export const callRecenter = async ({
     program.getTokenData(), program.getSinglePoolComets()
   ]);
   const iassetMint = tokenData.pools[comet.positions[data.cometIndex].poolIndex].assetInfo.iassetMint
-	let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
-	  getUSDiAccount(program),
-	  getTokenAccount(
-		iassetMint,
-		userPubKey,
-		program.provider.connection
-	  ), 
-	  getTokenAccount(
-		program.incept!.usdiMint,
-		program.incept!.treasuryAddress,
-		program.provider.connection
-	  ),
-	  getTokenAccount(
-		iassetMint,
-		program.incept!.treasuryAddress,
-		program.provider.connection
-	  )
-	])
+  let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
+    getUSDiAccount(program),
+    getTokenAccount(
+      iassetMint,
+      userPubKey,
+      program.provider.connection
+    ),
+    getTokenAccount(
+      program.incept!.usdiMint,
+      program.incept!.treasuryAddress,
+      program.provider.connection
+    ),
+    getTokenAccount(
+      iassetMint,
+      program.incept!.treasuryAddress,
+      program.provider.connection
+    )
+  ])
 
-	let ixnCalls: Promise<TransactionInstruction>[] = [];
+  let ixnCalls: Promise<TransactionInstruction>[] = [];
 
-	if (usdiAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, userPubKey);
-		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, program.incept!.usdiMint))()
-		)
-		usdiAddress = ata
-	}
-	if (iassetAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(iassetMint, userPubKey);
-		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, iassetMint))()
-		)
-		iassetAddress = ata
-	}
-	if (usdiTreasuryAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
-		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, program.incept!.usdiMint))()
-		)
-		usdiTreasuryAddress = ata
-	}
-	if (iassetTreasuryAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
-		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, iassetMint))()
-		)
-		iassetTreasuryAddress = ata
-	}
+  if (usdiAddress === undefined) {
+    const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, userPubKey);
+    ixnCalls.push(
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, program.incept!.usdiMint))()
+    )
+    usdiAddress = ata
+  }
+  if (iassetAddress === undefined) {
+    const ata = await getAssociatedTokenAddress(iassetMint, userPubKey);
+    ixnCalls.push(
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, iassetMint))()
+    )
+    iassetAddress = ata
+  }
+  if (usdiTreasuryAddress === undefined) {
+    const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
+    ixnCalls.push(
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, program.incept!.usdiMint))()
+    )
+    usdiTreasuryAddress = ata
+  }
+  if (iassetTreasuryAddress === undefined) {
+    const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
+    ixnCalls.push(
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, iassetMint))()
+    )
+    iassetTreasuryAddress = ata
+  }
 
-	const recenterData = recenterProcedureInstructions(
-		program, comet, tokenData, data.cometIndex, usdiAddress!, iassetAddress!, usdiTreasuryAddress!, iassetTreasuryAddress!
-	)
+  const recenterData = recenterProcedureInstructions(
+    program, comet, tokenData, data.cometIndex, usdiAddress!, iassetAddress!, usdiTreasuryAddress!, iassetTreasuryAddress!
+  )
 
-	recenterData.ixs.forEach((call) => ixnCalls.push(call))
-  
-	let ixns = await Promise.all(ixnCalls)
+  recenterData.ixs.forEach((call) => ixnCalls.push(call))
+
+  let ixns = await Promise.all(ixnCalls)
 
   const addressLookupTablesPublicKey = new PublicKey(process.env.NEXT_PUBLIC_INCEPT_ADDRESS_LOOKUP_TABLE!)
 
@@ -168,24 +168,24 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
   if (ildInfo.usdiILD > 0) {
     ixnsCalls.push(
       program.payCometILDInstruction(
-      data.cometIndex,
-      getMantissa(singlePoolComet.positions[data.cometIndex].borrowedUsdi),
-      true,
-      iAssetAssociatedToken,
-      usdiAssociatedToken,
-      true
-    ))
+        data.cometIndex,
+        getMantissa(singlePoolComet.positions[data.cometIndex].borrowedUsdi),
+        true,
+        iAssetAssociatedToken,
+        usdiAssociatedToken,
+        true
+      ))
   }
   if (ildInfo.iAssetILD > 0) {
     ixnsCalls.push(
       program.payCometILDInstruction(
-      data.cometIndex,
-      getMantissa(singlePoolComet.positions[data.cometIndex].borrowedIasset),
-      false,
-      iAssetAssociatedToken,
-      usdiAssociatedToken,
-      true
-    ))
+        data.cometIndex,
+        getMantissa(singlePoolComet.positions[data.cometIndex].borrowedIasset),
+        false,
+        iAssetAssociatedToken,
+        usdiAssociatedToken,
+        true
+      ))
   }
 
   const ixns = await Promise.all(ixnsCalls)
