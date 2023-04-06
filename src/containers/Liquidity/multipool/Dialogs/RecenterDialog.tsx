@@ -93,13 +93,13 @@ const RecenterDialog = ({
 						<Box marginTop='20px' marginBottom='22px'>
 							<Box display='flex' justifyContent='flex-end'>
 								<Typography variant='p' color='#989898'>Wallet Balance: </Typography>
-								<Typography variant='p' ml='5px'>{positionInfo.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+								<Typography variant='p' ml='5px'>{positionInfo.usdiVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
 							</Box>
 							<CenterBox>
 								<Stack direction="row" justifyContent="space-between">
 									<Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
 									<Box lineHeight={0.95}>
-										<Box><Typography variant='p_xlg'>{displayRecenterCost()} {positionInfo.tickerSymbol}</Typography></Box>
+										<Box><Typography variant='p_xlg'>{displayRecenterCost()} USDi</Typography></Box>
 										<Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.recenterCostDollarPrice.toLocaleString()}</Typography></Box>
 									</Box>
 								</Stack>

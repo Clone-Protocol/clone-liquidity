@@ -65,7 +65,7 @@ export const fetchRecenterInfo = async ({
 	let recenterCollValue = recenterCost * recenterCostDollarPrice
 	let estimatedTotalCollValue = totalCollValue - recenterCollValue
 	let estimatedTotalCollDollarPrice = estimatedTotalCollValue
-	let isValidToRecenter = (recenterCost > 0 && Math.abs(initPrice - price) / initPrice >= 0.001) && balance?.iassetVal! >= recenterCost
+	let isValidToRecenter = (recenterCost > 0 && Math.abs(initPrice - price) / initPrice >= 0.001) && balance?.usdiVal! >= recenterCost
 
 	return {
 		tickerIcon,
@@ -85,6 +85,7 @@ export const fetchRecenterInfo = async ({
 		estimatedTotalCollDollarPrice,
 		isValidToRecenter,
 		iassetVal: balance?.iassetVal!,
+		usdiVal: balance?.usdiVal!,
 	}
 }
 
