@@ -31,7 +31,6 @@ const FormStack = styled(Stack)`
 	width: 100%;
 	height: 70px;
 	padding: 9px 21px 8px 24px;
-  background: rgba(21, 22, 24, 0.75);
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
 const TickerWrapper = styled(Box)`

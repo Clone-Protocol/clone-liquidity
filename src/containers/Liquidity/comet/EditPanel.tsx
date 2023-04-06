@@ -59,7 +59,6 @@ const EditPanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: 
 
 const Wrapper = styled(Box)`
   color: #fff;
-  background: rgba(21, 22, 24, 0.75);
   border-radius: 10px;
 `
 
