@@ -139,7 +139,8 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
     if (cometData.centerPrice === 0 || cometData.poolPrice === 0)
       return false
 
-    return cometData.usdiCost > 0 && Math.abs(cometData.centerPrice - cometData.poolPrice) / cometData.centerPrice >= 0.001
+    return Math.abs(cometData.centerPrice - cometData.poolPrice) / cometData.centerPrice >= 0.001 &&
+      usdiBalance?.balanceVal! >= cometData.usdiCost
   }
 
   return (
