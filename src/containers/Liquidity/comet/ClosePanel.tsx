@@ -86,11 +86,11 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
           <Box>
             <Stack direction="row" justifyContent="space-between">
               <Box><Typography variant='p_lg' color={'#989898'}>ILD Debt</Typography></Box>
-              <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} USDi</Typography></Box>
+              <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between" mt='5px'>
               <Box><Typography variant='p_lg' color={'#989898'}>USDi Wallet Balance</Typography></Box>
-              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#989898'}>{balance.toLocaleString()} USDi</Typography></Box>
+              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#989898'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
 
             {notEnoughBalance && <Box textAlign='right'><Typography variant='p' color='#ed2525'>Your Wallet Balance must be greater than ILD Debt</Typography></Box>}
@@ -105,7 +105,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
 
         <Stack direction="row" justifyContent="space-between" mt="25px">
           <Box><Typography variant='p_lg' color={noBorrowedAsset ? '#fff' : '#989898'}>Withdraw-able Collateral <InfoTooltip title={TooltipTexts.collateralWithdrawCloseComet} /></Typography></Box>
-          <Box><Typography variant='p_lg' color={noBorrowedAsset ? '#fff' : '#989898'}>{(cometDetail.collAmount - Math.abs(cometDetail.ild)).toLocaleString()} USDi</Typography></Box>
+          <Box><Typography variant='p_lg' color={noBorrowedAsset ? '#fff' : '#989898'}>{cometDetail.collAmount} USDi</Typography></Box>
         </Stack>
 
         <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></SubmitButton>

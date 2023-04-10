@@ -1,13 +1,15 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
-import { getSinglePoolHealthScore, calculateEditCometSinglePoolWithUsdiBorrowed } from "incept-protocol-sdk/sdk/src/healthscore"
+import { getAccount } from '@solana/spl-token'
+import { DEVNET_TOKEN_SCALE, InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { getSinglePoolHealthScore, calculateEditCometSinglePoolWithUsdiBorrowed, getSinglePoolILD } from "incept-protocol-sdk/sdk/src/healthscore"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { getTokenAccount } from '~/utils/token_accounts'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
@@ -68,11 +70,13 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   let tickerIcon = ''
   let tickerName = ''
   let tickerSymbol = ''
+  let ildInUsdi = false
   let ild = 0
   let healthScore = 0
   let lowerLimit = 0
   let upperLimit = 0
   let pythSymbol = ''
+  let iassetBalance = 0
 
   if (Number(position.poolIndex) < 255) {
     let pool = tokenData.pools[position.poolIndex];
@@ -88,8 +92,15 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     tickerName = asset.tickerName
     tickerSymbol = asset.tickerSymbol
     const singlePoolHealthScore = getSinglePoolHealthScore(index, tokenData, comet);
-    ild = singlePoolHealthScore.ILD
+    const ILDinfo = getSinglePoolILD(index, tokenData, comet)
+    ildInUsdi = ILDinfo.usdiILD > 0;
+    ild = ildInUsdi ? ILDinfo.usdiILD : ILDinfo.iAssetILD
     healthScore = singlePoolHealthScore.healthScore
+    const iassetAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.publicKey!, program.provider.connection)
+    if (iassetAccountAddress !== undefined) {
+      const iassetTokenAccount = await getAccount(program.provider.connection, iassetAccountAddress)
+      iassetBalance = Number(iassetTokenAccount.amount) * (10**-DEVNET_TOKEN_SCALE)
+    }
 
     const {
       lowerPrice,
@@ -114,6 +125,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     collAmount,
     lowerLimit,
     upperLimit,
+    ildInUsdi,
     ild,
     healthScore,
     tickerIcon: tickerIcon,
@@ -124,7 +136,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     tightRange,
     maxRange,
     centerPrice,
-    contributedLiquidity
+    contributedLiquidity,
+    iassetBalance
   }
 }
 
@@ -164,9 +177,11 @@ export interface CometDetail extends PositionInfo {
   collAmount: number
   lowerLimit: number
   upperLimit: number
+  ildInUsdi: boolean
   ild: number
   healthScore: number
   contributedLiquidity?: number
+  iassetBalance: number
 }
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
