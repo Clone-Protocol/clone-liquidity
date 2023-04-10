@@ -85,7 +85,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         {!noBorrowedAsset &&
           <Box>
             <Stack direction="row" justifyContent="space-between">
-              <Box><Typography variant='p_lg' color={'#989898'}>ILD Dept</Typography></Box>
+              <Box><Typography variant='p_lg' color={'#989898'}>ILD Debt</Typography></Box>
               <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} USDi</Typography></Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between" mt='5px'>
