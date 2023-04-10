@@ -157,7 +157,7 @@ const OverlayEditCometInfo = styled(Box)`
   left: -24px;
   width: 460px;
   height: 460px;
-  padding: 0 28px 27px 0;
+  padding: 0 0 27px 0;
   background-color: rgba(27, 27, 27, 0.9);
   display: flex;
   justify-content: center;

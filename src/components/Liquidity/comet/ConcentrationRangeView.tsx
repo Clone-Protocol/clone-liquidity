@@ -17,7 +17,7 @@ const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, uppe
   return (
     <RangeWrapper>
       <Box position='relative'>
-        <Box sx={{ marginLeft: `calc(${centerPricePercent}% - 22px)` }}>
+        <Box sx={{ marginLeft: `calc(${centerPricePercent}% - 26px)` }}>
           <Stick>
             <Box display='flex' justifyContent='center' mb='-4px'><Typography variant='p_xsm'>iAsset Price</Typography></Box>
           </Stick>
@@ -75,13 +75,13 @@ const CenterStick = styled('div')`
 `
 const Stick = styled('div')`
   position: relative;
-  width: 49px;
+  width: 60px;
   height: 30px;
 	color: ${(props) => props.theme.palette.primary.main};
   &::after {
     content: '▼';
     position: relative;
-    margin-left: 15px;
+    margin-left: 18px;
   }
 `
 

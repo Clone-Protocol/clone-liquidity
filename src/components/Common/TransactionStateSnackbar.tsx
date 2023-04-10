@@ -28,9 +28,9 @@ const getTxnURL = (txHash: string) => {
 
 const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHash: string }) => {
   return (<Box>
-    <Box mt='10px'><Image src={isSuccess ? SuccessIcon : FailureIcon} width='47px' height='47px' /></Box>
+    <Box mt='10px'><Image src={isSuccess ? SuccessIcon : FailureIcon} width={47} height={47} /></Box>
     <Box mt='10px'><Typography variant='h7'>Transaction {isSuccess ? 'complete' : 'failed'}</Typography></Box>
-    <Box my='10px'>
+    <Box my='10px' lineHeight='1'>
       <Typography variant='p' color='#989898'>
         {isSuccess ? 'You can now access all features.' : 'There was an error. Please try again.'}
       </Typography>

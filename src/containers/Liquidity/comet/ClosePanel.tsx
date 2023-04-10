@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Stack, Button, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
@@ -36,7 +36,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
   }, [cometDetail])
 
   const onClose = async (cType: number) => {
-    setLoading(true)
+    // setLoading(true)
     await mutateAsync(
       {
         cometIndex,
@@ -46,7 +46,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            setLoading(false)
+            // setLoading(false)
 
             if (cType === 0) {
               // enqueueSnackbar("Comet partially closed, please proceed to next step")
@@ -63,7 +63,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         onError(err) {
           console.error(err)
           // enqueueSnackbar('Error closing comet position')
-          setLoading(false)
+          // setLoading(false)
         }
       }
     )

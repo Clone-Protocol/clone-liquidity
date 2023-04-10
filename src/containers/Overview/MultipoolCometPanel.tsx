@@ -3,7 +3,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
-import { Box, Stack, Button, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { styled } from '@mui/system'
@@ -153,124 +153,120 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
     <MultipoolBlank title='Liquidity position for this pool already exists for Multipool' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} />
   )
 
-  const MultipoolComet = () => {
-    return positionInfo ? (
-      <>
-        {loading && (
-          <LoadingWrapper>
-            <LoadingIndicator open inline />
-          </LoadingWrapper>
-        )}
-        <Box mb='10px'>
-          <BoxWithBorder p='20px'>
-            <Box>
-              <Typography variant='p_lg'>Current Multipool Stat</Typography>
-            </Box>
-            <Box my='15px'>
-              <Box mb='10px'><Typography variant='p' color='#989898'>Total Multipool Collateral Value</Typography></Box>
-              <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
-            </Box>
-            <Box>
-              <Box mb='10px'><Typography variant='p' color='#989898'>Current Multipool Healthscore</Typography></Box>
-              <HealthscoreBar score={positionInfo.totalHealthScore} width={480} hiddenThumbTitle={true} />
-            </Box>
-          </BoxWithBorder>
-
-          <StyledDivider />
-          <Box mb='13px'>
-            <Box>
-              <Typography variant='p_lg'>Liquidity Amount</Typography>
-            </Box>
-            <Box mt='15px' mb='10px' p='5px'>
-              <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-              <Box display='flex' justifyContent='space-between' marginTop='-10px'>
-                <Box><Typography variant='p_sm'>Min</Typography></Box>
-                <Box><Typography variant='p_sm'>Max</Typography></Box>
-              </Box>
-            </Box>
-            <Stack direction='row' alignItems='flex-end' gap={1}>
-              <Box width='275px'>
-                <Controller
-                  name="mintAmount"
-                  control={control}
-                  rules={{
-                    validate() {
-                      return validateMintAmount()
-                    }
-                  }}
-                  render={({ field }) => (
-                    <PairInput
-                      tickerIcon={'/images/assets/USDi.png'}
-                      tickerSymbol="USDi"
-                      value={parseFloat(field.value.toFixed(3))}
-                      dollarPrice={0}
-                      headerTitle="Max Amount Mintable"
-                      headerValue={maxMintable}
-                      onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
-                        let mintVal = parseFloat(evt.currentTarget.value)
-                        mintVal = isNaN(mintVal) ? 0 : mintVal
-                        field.onChange(mintVal)
-                        maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
-                      }}
-                      onMax={(value: number) => {
-                        field.onChange(value)
-                        maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
-                      }}
-                      onTickerClicked={() => setOpenChooseCollateral(true)}
-                    />
-                  )}
-                />
-              </Box>
-              <Box width='275px'>
-                <PairInputView
-                  tickerIcon={positionInfo.tickerIcon}
-                  tickerSymbol={positionInfo.tickerSymbol}
-                  value={mintAmount / positionInfo.price}
-                  dollarPrice={mintAmount}
-                />
-              </Box>
-            </Stack>
-            <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-          </Box>
-          <BoxWithBorder padding="15px 24px">
-            <Stack direction='row' justifyContent='space-between'>
-              <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
-              <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
-            </Stack>
-          </BoxWithBorder>
-          <StyledDivider />
-
-          <BoxWithBorder padding="15px 24px">
-            <Box>
-              <Box mb="15px"><Typography variant="p">Projected Multipool Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-              <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={460} hideIndicator={true} />
-              {hasRiskScore &&
-                <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
-              }
-            </Box>
-          </BoxWithBorder>
-        </Box>
-
-        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
-          <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
-        </SubmitButton>
-
-        <ChooseCollateralDialog
-          open={openChooseCollateral}
-          handleChooseCollateral={handleChooseCollateral}
-          handleClose={() => setOpenChooseCollateral(false)}
-        />
-      </>
-    ) : <></>
-  }
-
   if (positionInfo?.hasNoCollateral) {
     return <BlankNoCollateral />
   } else if (positionInfo?.hasAlreadyPool) {
     return <BlankAlreadyPool />
-  } else {
-    return <MultipoolComet />
   }
+
+  return positionInfo ? (
+    <>
+      {loading && (
+        <LoadingWrapper>
+          <LoadingIndicator open inline />
+        </LoadingWrapper>
+      )}
+      <Box mb='10px'>
+        <BoxWithBorder p='20px'>
+          <Box>
+            <Typography variant='p_lg'>Current Multipool Stat</Typography>
+          </Box>
+          <Box my='15px'>
+            <Box mb='10px'><Typography variant='p' color='#989898'>Total Multipool Collateral Value</Typography></Box>
+            <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
+          </Box>
+          <Box>
+            <Box mb='10px'><Typography variant='p' color='#989898'>Current Multipool Healthscore</Typography></Box>
+            <HealthscoreBar score={positionInfo.totalHealthScore} width={480} hiddenThumbTitle={true} />
+          </Box>
+        </BoxWithBorder>
+
+        <StyledDivider />
+        <Box mb='13px'>
+          <Box>
+            <Typography variant='p_lg'>Liquidity Amount</Typography>
+          </Box>
+          <Box mt='15px' mb='10px' p='5px'>
+            <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+            <Box display='flex' justifyContent='space-between' marginTop='-10px'>
+              <Box><Typography variant='p_sm'>Min</Typography></Box>
+              <Box><Typography variant='p_sm'>Max</Typography></Box>
+            </Box>
+          </Box>
+          <Stack direction='row' alignItems='flex-end' gap={1}>
+            <Box width='275px'>
+              <Controller
+                name="mintAmount"
+                control={control}
+                rules={{
+                  validate() {
+                    return validateMintAmount()
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    tickerIcon={'/images/assets/USDi.png'}
+                    tickerSymbol="USDi"
+                    value={parseFloat(field.value.toFixed(3))}
+                    dollarPrice={0}
+                    headerTitle="Max Amount Mintable"
+                    headerValue={maxMintable}
+                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
+                      let mintVal = parseFloat(evt.currentTarget.value)
+                      mintVal = isNaN(mintVal) ? 0 : mintVal
+                      field.onChange(mintVal)
+                      maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
+                    }}
+                    onMax={(value: number) => {
+                      field.onChange(value)
+                      maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
+                    }}
+                    onTickerClicked={() => setOpenChooseCollateral(true)}
+                  />
+                )}
+              />
+            </Box>
+            <Box width='275px'>
+              <PairInputView
+                tickerIcon={positionInfo.tickerIcon}
+                tickerSymbol={positionInfo.tickerSymbol}
+                value={mintAmount / positionInfo.price}
+                dollarPrice={mintAmount}
+              />
+            </Box>
+          </Stack>
+          <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+        </Box>
+        <BoxWithBorder padding="15px 24px">
+          <Stack direction='row' justifyContent='space-between'>
+            <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
+            <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
+          </Stack>
+        </BoxWithBorder>
+        <StyledDivider />
+
+        <BoxWithBorder padding="15px 24px">
+          <Box>
+            <Box mb="15px"><Typography variant="p">Projected Multipool Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
+            <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={460} hideIndicator={true} />
+            {hasRiskScore &&
+              <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+            }
+          </Box>
+        </BoxWithBorder>
+      </Box>
+
+      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
+        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Multipool Liquidity Position</Typography>
+      </SubmitButton>
+
+      <ChooseCollateralDialog
+        open={openChooseCollateral}
+        handleChooseCollateral={handleChooseCollateral}
+        handleClose={() => setOpenChooseCollateral(false)}
+      />
+    </>
+  ) : <></>
 }
 
 const BoxWithBorder = styled(Box)`

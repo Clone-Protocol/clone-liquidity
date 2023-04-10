@@ -100,6 +100,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       }
       return 'super-app-theme--row'
     }}
+    autoHeight
     disableColumnFilter
     disableSelectionOnClick
     disableColumnSelector
@@ -137,7 +138,7 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
       <Box sx={{ maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
         <Typography variant='p_lg'>{tickerName}</Typography>
       </Box>
-      <Box sx={{ color: '#989898' }} marginLeft='8px' marginTop='3px'>
+      <Box sx={{ color: '#989898' }} marginLeft='8px'>
         <Typography variant='p'>{tickerSymbol}</Typography>
       </Box>
     </Box>

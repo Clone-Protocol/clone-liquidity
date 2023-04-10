@@ -42,7 +42,7 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
           </Box>
 
           <CenterStick sx={{ marginLeft: '50%' }} />
-          <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} />
+          {/* <Stick sx={{ marginLeft: `calc(${centerPricePercent}%)` }} /> */}
         </Box>
         <RightBox>{formatDollarAmount(upperLimit, 2, true).slice(1)}</RightBox>
       </Box>
@@ -103,17 +103,15 @@ const RightRangeStick = styled('div')`
   margin-top: -12px;
   z-index: 20;
 `
-
 const CenterStick = styled('div')`
   position: relative;
 	border-radius: 0;
 	background: #fff;
 	width: 2px;
-	height: 3px;
+	height: 5px;
 	margin-top: -7px;
   z-index: 20;
 `
-
 const Stick = styled('div')`
   position: relative;
 	border-radius: 0;

@@ -202,8 +202,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                   validate(value) {
                     if (!value || value <= 0) {
                       return ''
-                    } else if ((tab === 0 && value > collData.balance) || (tab === 1 && value >= maxWithdrawable)) {
-                      return 'The borrowing amount cannot exceed the balance.'
+                    } else if ((tab === 0 && value > collData.balance) || (tab === 1 && value > maxWithdrawable)) {
+                      return 'The collateral amount cannot exceed the balance.'
                     }
                   }
                 }}

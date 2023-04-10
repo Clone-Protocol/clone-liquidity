@@ -14,7 +14,6 @@ import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
 import PairInput from '~/components/Asset/PairInput'
 import PairInputView from '~/components/Asset/PairInputView'
-import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import { useCometMutation } from '~/features/Comet/Comet.mutation'
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
@@ -60,6 +59,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
   } = useForm({ mode: 'onChange' })
 
   const calculateMintAmount = (mintable: number, ratio: number): number => mintable * ratio / 100;
+
   useMemo(
     () => setMintAmount(calculateMintAmount(mintableAmount, mintRatio)),
     [mintableAmount, mintRatio]
@@ -256,7 +256,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
           <Box>
             <Typography variant='p_lg'>Liquidity Amount</Typography>
           </Box>
-          <Box marginTop='15px' marginBottom='10px'>
+          <Box mt='15px' mb='10px'>
             <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
             <Box display='flex' justifyContent='space-between' marginTop='-10px'>
               <Box><Typography variant='p_sm'>Min</Typography></Box>

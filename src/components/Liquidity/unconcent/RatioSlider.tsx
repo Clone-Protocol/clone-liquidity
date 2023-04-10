@@ -47,13 +47,13 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 	}
 
 	return (
-		<Box display='flex' alignItems='center'>
+		<Box display='flex' alignItems='center' marginRight='10px'>
 			{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 			<Box width="100%">
 				<StyledSlider
 					value={value}
 					min={min}
-					step={10}
+					step={1}
 					max={max}
 					valueLabelFormat={valueLabelFormat}
 					onChange={onChange}
