@@ -180,6 +180,7 @@ const RightMenu = () => {
 	const handleDisconnect = () => {
 		disconnect()
 		setShowWalletSelectPopup(false)
+		router.replace('/')
 	}
 
 	return (

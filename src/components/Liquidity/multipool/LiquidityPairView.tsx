@@ -1,6 +1,6 @@
 import { styled, Stack, Box, Typography } from '@mui/material'
 import Image from 'next/image'
-import { RecenterButton } from '~/components/Liquidity/LiquidityButton';
+import { CloseButton, RecenterButton } from '~/components/Liquidity/LiquidityButton';
 
 interface Props {
 	poolIndex: number
@@ -11,13 +11,19 @@ interface Props {
 	ildInUsdi: boolean
 	onShowEditDialog: (poolIndex: number) => void
 	onShowRecenterDialog: (poolIndex: number) => void
+	onShowClosePositionDialog: (poolIndex: number) => void
 }
 
-const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, ildValue, ildInUsdi, onShowEditDialog, onShowRecenterDialog }) => {
+const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbol, value, ildValue, ildInUsdi, onShowEditDialog, onShowRecenterDialog, onShowClosePositionDialog }) => {
 
 	const showRecenterDialog = (e: any) => {
 		e.stopPropagation()
 		onShowRecenterDialog(poolIndex)
+	}
+
+	const showClosePositionDialog = (e: any) => {
+		e.stopPropagation()
+		onShowClosePositionDialog(poolIndex)
 	}
 
 	return (
@@ -31,8 +37,9 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 				</Box>
 				<Box><Typography variant='p'>${value?.toFixed(3)} USD</Typography></Box>
 				<Box><Typography variant='p'>${`${ildValue?.toFixed(3)}`}</Typography></Box>
-				<Box>
+				<Box display='flex' gap='10px'>
 					<RecenterButton onClick={showRecenterDialog}></RecenterButton>
+					<CloseButton onClick={showClosePositionDialog}></CloseButton>
 				</Box>
 			</FormStack>
 

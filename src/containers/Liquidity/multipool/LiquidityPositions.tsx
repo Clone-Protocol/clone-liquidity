@@ -10,6 +10,7 @@ import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/multipool/MultipoolInfo.query'
 // import { useRecenterAllMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 import { useRouter } from 'next/router'
+import CloseLiquidityDialog from './Dialogs/CloseLiquidityDialog'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   // const { publicKey } = useWallet()
@@ -20,6 +21,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   // const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openRecenter, setOpenRecenter] = useState(false)
+  const [openClosePosition, setOpenClosePosition] = useState(false)
 
   // const [selectAssetId, setSelectAssetId] = useState(0)
   const [editAssetId, setEditAssetId] = useState(0)
@@ -40,6 +42,12 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenRecenter(true)
+  }
+
+  const handleShowClosePositionDialog = (positionIndex: number) => {
+    setPoolIndex(Number(positions[positionIndex].poolIndex))
+    setEditAssetId(positionIndex)
+    setOpenClosePosition(true)
   }
 
   const redirectAddMultipoolPage = () => {
@@ -83,8 +91,8 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       <Box>
         <PairHeader>
           <Box><Typography variant="p_sm">Pool</Typography></Box>
-          <Box ml='70px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
-          <Box ml='-50px'><Typography variant="p_sm">ILD</Typography></Box>
+          <Box ml='45px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
+          <Box ml='-90px'><Typography variant="p_sm">ILD</Typography></Box>
           <Box></Box>
         </PairHeader>
         {positions.map((position, index) =>
@@ -98,6 +106,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
             ildValue={position.ildValue}
             onShowEditDialog={handleChooseEditPosition}
             onShowRecenterDialog={handleChooseRecenter}
+            onShowClosePositionDialog={handleShowClosePositionDialog}
           />
         )}
       </Box>
@@ -134,6 +143,13 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         poolIndex={poolIndex}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenRecenter(false)}
+      />
+      <CloseLiquidityDialog
+        open={openClosePosition}
+        positionIndex={editAssetId}
+        poolIndex={poolIndex}
+        onRefetchData={onRefetchData}
+        handleClose={() => setOpenClosePosition(false)}
       />
     </>
   )
