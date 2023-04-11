@@ -36,7 +36,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
   }, [cometDetail])
 
   const onClose = async (cType: number) => {
-    // setLoading(true)
+    setLoading(true)
     await mutateAsync(
       {
         cometIndex,
@@ -46,7 +46,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         onSuccess(data) {
           if (data) {
             console.log('data', data)
-            // setLoading(false)
+            setLoading(false)
 
             if (cType === 0) {
               // enqueueSnackbar("Comet partially closed, please proceed to next step")
@@ -63,7 +63,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         onError(err) {
           console.error(err)
           // enqueueSnackbar('Error closing comet position')
-          // setLoading(false)
+          setLoading(false)
         }
       }
     )
@@ -71,11 +71,11 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
 
   return (
     <>
-      {loading && (
+      {/* {loading && (
         <LoadingWrapper>
           <LoadingIndicator open inline />
         </LoadingWrapper>
-      )}
+      )} */}
 
       <Box padding='15px'>
         {/* <Stack direction="row" justifyContent="space-between" mt='5px'>
@@ -85,19 +85,19 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         {!noBorrowedAsset &&
           <Box>
             <Stack direction="row" justifyContent="space-between">
-              <Box><Typography variant='p_lg' color={'#989898'}>ILD Dept</Typography></Box>
-              <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} USDi</Typography></Box>
+              <Box><Typography variant='p_lg' color={'#989898'}>ILD Debt</Typography></Box>
+              <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between" mt='5px'>
               <Box><Typography variant='p_lg' color={'#989898'}>USDi Wallet Balance</Typography></Box>
-              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#989898'}>{balance.toLocaleString()} USDi</Typography></Box>
+              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#989898'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
 
             {notEnoughBalance && <Box textAlign='right'><Typography variant='p' color='#ed2525'>Your Wallet Balance must be greater than ILD Debt</Typography></Box>}
           </Box>
         }
 
-        <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(0)} disabled={noBorrowedAsset || notEnoughBalance}>
+        <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(0)} disabled={noBorrowedAsset || notEnoughBalance || loading}>
           <Image src={OneIcon} width={17} />
           <Box><Typography variant='p_lg'>Withdraw Liquidity & pay ILD</Typography></Box>
           <Box>{noBorrowedAsset && <Box display='flex' alignItems='center'><Image src={CheckCircleOutlineRoundedIcon} /> <Typography variant='p_lg' color='#4fe5ff' ml='5px'>Complete</Typography> </Box>}</Box>
@@ -105,10 +105,10 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
 
         <Stack direction="row" justifyContent="space-between" mt="25px">
           <Box><Typography variant='p_lg' color={noBorrowedAsset ? '#fff' : '#989898'}>Withdraw-able Collateral <InfoTooltip title={TooltipTexts.collateralWithdrawCloseComet} /></Typography></Box>
-          <Box><Typography variant='p_lg' color={noBorrowedAsset ? '#fff' : '#989898'}>{(cometDetail.collAmount - Math.abs(cometDetail.ild)).toLocaleString()} USDi</Typography></Box>
+          <Box><Typography variant='p_lg' color={noBorrowedAsset ? '#fff' : '#989898'}>{cometDetail.collAmount} USDi</Typography></Box>
         </Stack>
 
-        <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(1)} disabled={!noBorrowedAsset}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></SubmitButton>
+        <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(1)} disabled={!noBorrowedAsset || loading}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></SubmitButton>
 
         <Box display='flex' justifyContent='center'>
           <DataLoadingIndicator />

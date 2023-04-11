@@ -212,13 +212,13 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
     )
   }
 
-  let collateralAmount = getMantissa(singlePoolComet.collaterals[data.cometIndex].collateralAmount);
+  const collateralAmount = toNumber(singlePoolComet.collaterals[data.cometIndex].collateralAmount);
   if (collateralAmount > 0) {
     ixnCalls.push(program.updatePricesInstruction());
     ixnCalls.push(
       program.withdrawCollateralFromSinglePoolCometInstruction(
         usdiAssociatedToken,
-        new anchor.BN(collateralAmount),
+        toDevnetScale(collateralAmount),
         data.cometIndex
       )
     );
