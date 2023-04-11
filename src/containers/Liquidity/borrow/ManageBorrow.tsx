@@ -38,6 +38,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
 
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: borrowDetail?.pythSymbol,
+    isOraclePrice: true,
     refetchOnMount: false,
     enabled: borrowDetail != null
   })

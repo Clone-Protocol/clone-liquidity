@@ -4,36 +4,51 @@ import { ChartElem } from './Liquidity.query'
 import { fetchPythPriceHistory } from '~/utils/pyth'
 
 
-export const fetchPriceHistory = async ({ pythSymbol }: { pythSymbol: string | undefined }) => {
+export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { pythSymbol: string | undefined, isOraclePrice: boolean }) => {
   if (!pythSymbol) return null
 
-  const history = await fetchPythPriceHistory(
-    pythSymbol,
-    "devnet",
-    "1M"
-  );
-  
-  const chartData = history.map((data) => {
-    return {time: data.timestamp, value: data.close_price}
-  })
+  let chartData = []
+  let currentPrice
+  let rateOfPrice
+  let percentOfRate
 
-  const lastEntry = chartData[chartData.length-1];
+  // oracle price:
+  if (isOraclePrice) {
+    const history = await fetchPythPriceHistory(
+      pythSymbol,
+      "devnet",
+      "1M"
+    );
 
-  const previous24hrDatetime = moment(lastEntry.time).utc(
-  ).subtract(1, 'days');
+    chartData = history.map((data) => {
+      return { time: data.timestamp, value: data.close_price }
+    })
 
-  let previous24hrPrice = lastEntry.value;
-  for (let {time, value} of chartData) {
-    const entryTime = moment(time).utc()
-    if (entryTime > previous24hrDatetime) {
-      break;
+    const lastEntry = chartData[chartData.length - 1];
+
+    const previous24hrDatetime = moment(lastEntry.time).utc(
+    ).subtract(1, 'days');
+
+    let previous24hrPrice = lastEntry.value;
+    for (let { time, value } of chartData) {
+      const entryTime = moment(time).utc()
+      if (entryTime > previous24hrDatetime) {
+        break;
+      }
+      previous24hrPrice = value;
     }
-    previous24hrPrice = value;
+
+    currentPrice = lastEntry.value;
+    rateOfPrice = currentPrice - previous24hrPrice
+    percentOfRate = 100 * rateOfPrice / previous24hrPrice
+
+  } else {
+    //@TODO : binding to iasset price
+
+    // iAsset Price
+    chartData = [{ time: new Date(), value: 1.08 }, { time: new Date(), value: 1.08 }]
   }
 
-  const currentPrice = lastEntry.value;
-  const rateOfPrice = currentPrice - previous24hrPrice
-  const percentOfRate = 100 * rateOfPrice / previous24hrPrice
 
   return {
     chartData,
@@ -52,13 +67,17 @@ export interface PriceHistory {
 
 interface GetProps {
   pythSymbol: string | undefined
+  isOraclePrice?: boolean
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
-export function usePriceHistoryQuery({ pythSymbol, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['priceHistory', pythSymbol], () => fetchPriceHistory({ pythSymbol }), {
+export function usePriceHistoryQuery({ pythSymbol, isOraclePrice = false, refetchOnMount, enabled = true }: GetProps) {
+  return useQuery(['oraclePriceHistory', pythSymbol], () => fetchOraclePriceHistory({ pythSymbol, isOraclePrice }), {
     refetchOnMount,
     enabled
   })
 }
+
+
+

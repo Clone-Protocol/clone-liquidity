@@ -48,6 +48,7 @@ const BorrowBox = () => {
 
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: borrowAsset?.pythSymbol,
+    isOraclePrice: true,
     refetchOnMount: false,
     enabled: borrowAsset != null
   })
