@@ -69,7 +69,7 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	if (
 		cometResult.status === 'rejected' ||
-		tokenDataResult.status === 'rejected' || 
+		tokenDataResult.status === 'rejected' ||
 		usdiAtaResult.status === 'rejected'
 	) {
 		throw new Error('Failed to fetch data!')
@@ -108,9 +108,9 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-			toDevnetScale(lpTokensToWithdraw), 
-			positionIndex, iassetAta!, usdiAta!, false
-		))
+				toDevnetScale(lpTokensToWithdraw),
+				positionIndex, iassetAta!, usdiAta!, false
+			))
 
 		// if (lpTokensToWithdraw === positionLpTokens) {
 		// 	const collateralUsdi = toNumber(cometResult.value.collaterals[0].collateralAmount)
@@ -148,6 +148,36 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 }
+
+export const callClose = async ({ program, userPubKey, setTxState }: CallCloseProps) => {
+	if (!userPubKey) throw new Error('no user public key')
+
+	await program.loadManager()
+
+	//@TODO
+
+	return {
+		result: true
+	}
+}
+
+interface CallCloseProps {
+	program: InceptClient
+	userPubKey: PublicKey | null
+	setTxState: (state: TransactionStateType) => void
+}
+export function useClosePositionMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	const { setTxState } = useTransactionState()
+
+	if (wallet) {
+		return useMutation(() => callClose({ program: getInceptApp(wallet), userPubKey, setTxState }))
+	} else {
+		return useMutation(() => funcNoWallet())
+	}
+}
+
 
 export const callCloseAll = async ({ program, userPubKey, setTxState }: CallCloseAllProps) => {
 	if (!userPubKey) throw new Error('no user public key')

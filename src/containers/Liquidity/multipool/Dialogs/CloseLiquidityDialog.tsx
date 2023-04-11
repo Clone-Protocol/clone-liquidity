@@ -65,7 +65,7 @@ const CloseLiquidityDialog = ({
     )
   }
 
-  const displayRecenterCost = () => {
+  const displayILDDebt = () => {
     return Math.max(0, positionInfo!.recenterCost).toLocaleString()
   }
 
@@ -80,7 +80,7 @@ const CloseLiquidityDialog = ({
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={480}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
-            <Box mb='16px'><Typography variant='p_xlg'>Recenter Multipool Liquidity Position</Typography></Box>
+            <Box mb='16px'><Typography variant='p_xlg'>Close Multipool Liquidity Position</Typography></Box>
             <BoxWithBorder width='261px' p='9px'>
               <Stack direction='row' gap={1}>
                 <Image src={positionInfo.tickerIcon} width="27px" height="27px" />
@@ -97,16 +97,13 @@ const CloseLiquidityDialog = ({
               </Box>
               <CenterBox>
                 <Stack direction="row" justifyContent="space-between">
-                  <Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
+                  <Box><Typography variant='p'>ILD Debt</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box lineHeight={0.95}>
-                    <Box><Typography variant='p_xlg'>{displayRecenterCost()} USDi</Typography></Box>
+                    <Box><Typography variant='p_xlg'>{displayILDDebt()} {positionInfo.tickerSymbol}</Typography></Box>
                     <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.recenterCostDollarPrice.toLocaleString()}</Typography></Box>
                   </Box>
                 </Stack>
               </CenterBox>
-              {/* <BottomBox>
-								<Typography variant='p' color='#989898'>Total Collateral Value: </Typography> <Typography variant='p'>${positionInfo.totalCollValue.toLocaleString()}</Typography>
-							</BottomBox> */}
             </Box>
 
             <BoxWithBorder mt='13px' padding='15px'>
@@ -114,18 +111,10 @@ const CloseLiquidityDialog = ({
                 <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} /></Box>
                 <HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={440} />
               </Box>
-
-              {/* <Stack direction="row" justifyContent="space-between">
-								<Box maxWidth='130px' lineHeight='14px'><Typography variant='p'>Estimated total collateral after Recentering</Typography></Box>
-								<Box lineHeight='14px' textAlign='right'>
-									<Box><Typography variant='p_lg'>{positionInfo.estimatedTotalCollValue.toLocaleString()} USDi</Typography></Box>
-									<Box><Typography variant='p' color='#989898'>${positionInfo.estimatedTotalCollDollarPrice.toLocaleString()} USD</Typography></Box>
-								</Box>
-							</Stack> */}
             </BoxWithBorder>
 
             <SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>
-              Recenter Now
+              Pay ILD & Close Liquidity Position
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
