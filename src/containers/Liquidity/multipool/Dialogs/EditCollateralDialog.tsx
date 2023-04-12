@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Image from 'next/image'
@@ -73,7 +73,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
       }
     }
     fetch()
-  }, [open, collData])
+  }, [open])
 
   // calculate HealthScore & totalCollValue
   useEffect(() => {
@@ -93,7 +93,12 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
           }
         }
 
-        setTotalCollValue(collAmount * collData.collAmountDollarPrice)
+        if (tab === 0) {
+          setTotalCollValue(collData.totalCollValue + (collAmount * collData.collAmountDollarPrice))
+        } else {
+          setTotalCollValue(collData.totalCollValue - (collAmount * collData.collAmountDollarPrice))
+        }
+
         trigger()
       }
     }
@@ -238,11 +243,11 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                 <Typography variant='h8'>Projected Multipool Stat</Typography>
                 <BoxWithBorder padding='10px 20px'>
                   <Box>
-                    <Box><Typography variant='p' color='#989898'>Projected Multipool Collateral Value <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Typography></Box>
+                    <Box><Typography variant='p' color='#989898'>Projected Multipool Collateral Value <InfoTooltip title={TooltipTexts.projectedMultipoolCollValue} /></Typography></Box>
                     <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
                   </Box>
                   <Box mt='10px'>
-                    <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
+                    <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScore} /></Typography></Box>
                     <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} /></Box>
                   </Box>
                 </BoxWithBorder>
