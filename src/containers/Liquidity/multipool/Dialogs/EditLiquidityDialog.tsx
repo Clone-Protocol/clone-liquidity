@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
+import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -16,7 +16,7 @@ import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
-const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
+const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -151,28 +151,43 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} maxMintable={maxMintable} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
 
-                <BoxWithBorder mt='14px'>
-                  <Stack direction='row' justifyContent='space-between' alignItems="center" padding='15px'>
-                    <Typography variant='p'>New Aggregate Liquidity Value</Typography>
-                    <Typography variant='p_xlg'>${totalLiquidity.toLocaleString()}</Typography>
-                  </Stack>
-                  <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
-                    <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
-                    <Typography variant='p' ml='5px'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography>
+                {mintRatio > 0 ?
+                  <BoxWithBorder mt='14px'>
+                    <Stack direction='row' justifyContent='space-between' alignItems="center" padding='15px'>
+                      <Typography variant='p'>New Aggregate Liquidity Value</Typography>
+                      <Typography variant='p_xlg'>${totalLiquidity.toLocaleString()}</Typography>
+                    </Stack>
+                    <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
+                      <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
+                      <Typography variant='p' ml='5px'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography>
+                    </Box>
+                  </BoxWithBorder>
+                  :
+                  <Box>
+                    <BoxWithBorder padding='15px 18px' maxWidth='420px' lineHeight={1}>
+                      <Typography variant='p'>Liquidity shouldn’t be at 0%. If you would like to close this position, please click on the button below.</Typography>
+                    </BoxWithBorder>
+                    <SubmitButton onClick={onShowCloseLiquidity}>Open Close Liquidity Position Workflow</SubmitButton>
                   </Box>
-                </BoxWithBorder>
+                }
               </Box>
 
               <RightBox>
                 <Typography variant='h8'>Projected Values</Typography>
-                <BoxWithBorder mt='13px' padding='6px 20px'>
-                  <Box>
-                    <Box><Typography variant='p'>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></Typography></Box>
-                    <Box py='10px'><HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} hideIndicator={true} width={430} /></Box>
-                  </Box>
-                </BoxWithBorder>
+                {mintRatio > 0 ?
+                  <BoxWithBorder mt='13px' padding='6px 20px'>
+                    <Box>
+                      <Box><Typography variant='p'>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></Typography></Box>
+                      <Box py='10px'><HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} hideIndicator={true} width={430} /></Box>
+                    </Box>
+                  </BoxWithBorder>
+                  :
+                  <BoxWithBorder mt='10px' minHeight='155px' display='flex' justifyContent='center' alignItems='center'>
+                    <Box width='100%' display='flex' justifyContent='center'><Typography variant='p'>N/A</Typography></Box>
+                  </BoxWithBorder>
+                }
 
-                <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>Edit Liquidity Position</SubmitButton>
+                <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>Edit Liquidity Position</SubmitButton>
 
                 <Box display='flex' justifyContent='center'>
                   <DataLoadingIndicator />

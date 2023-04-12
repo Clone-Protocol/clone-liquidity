@@ -26,12 +26,12 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 			}
 		}
 
-		console.log('wallet', wallet)
+		// console.log('wallet', wallet)
 		const opts = {
 			preflightCommitment: "processed" as Commitment,
 		}
 		const network = getNetworkDetailsFromEnv()
-		console.log('network', network)
+		// console.log('network', network)
 		const new_connection = new Connection(network.endpoint)
 
 		const provider = new AnchorProvider(new_connection, wallet!, opts)

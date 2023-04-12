@@ -44,7 +44,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     height: '28px',
     padding: '4px 8px',
     border: 'solid 1px #fff',
-    backgroundColor: '#000',
+    backgroundColor: 'transparent',
     '&:before': { display: 'none' },
   },
   '& .MuiSlider-rail': {
@@ -89,7 +89,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             }}
             value={ratio}
             min={min}
-            step={5}
+            step={1}
             max={max}
             valueLabelFormat={valueLabelFormat}
             onChange={handleChangeMintRatio}
@@ -103,51 +103,53 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
         <MinMaxVal><Box>100%</Box><Box>(Max)</Box></MinMaxVal>
       </Stack>
 
-      <Box>
-        <Stack direction="row" gap={1} alignItems='flex-end'>
-          <Box>
-            <Stack direction="row" justifyContent="flex-end">
-              <Typography variant='p' color='#989898'>
-                Max Amount Mintable: <MaxValue onClick={() => handleMaxRatio()}>{maxMintable.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>
-              </Typography>
-            </Stack>
+      {ratio > 0 &&
+        <Box>
+          <Stack direction="row" gap={1} alignItems='flex-end'>
+            <Box>
+              <Stack direction="row" justifyContent="flex-end">
+                <Typography variant='p' color='#989898'>
+                  Max Amount Mintable: <MaxValue onClick={() => handleMaxRatio()}>{maxMintable.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>
+                </Typography>
+              </Stack>
+              <StyledBox>
+                <FormBox sx={{ background: '#363636' }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" alignItems='center'>
+                      <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                      <Box marginLeft='8px'>
+                        <Typography variant='p_lg'>USDi</Typography>
+                      </Box>
+                    </Box>
+                    <Box lineHeight='20px'>
+                      <InputAmount id="ip-amount" type="number" min={0} sx={mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
+                      <MintAmount>${mintAmount.toLocaleString()} USD</MintAmount>
+                    </Box>
+                  </Stack>
+                </FormBox>
+                <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{currentMintAmount.toLocaleString()} USDi</Typography></BottomBox>
+              </StyledBox>
+            </Box>
             <StyledBox>
-              <FormBox sx={{ background: '#363636' }}>
+              <FormBox>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box display="flex" alignItems='center'>
-                    <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                  <Box display="flex">
+                    <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
                     <Box marginLeft='8px'>
-                      <Typography variant='p_lg'>USDi</Typography>
+                      <Typography variant='p_lg'>{positionInfo.tickerSymbol}</Typography>
                     </Box>
                   </Box>
-                  <Box lineHeight='20px'>
-                    <InputAmount id="ip-amount" type="number" min={0} sx={mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
-                    <MintAmount>${mintAmount.toLocaleString()} USD</MintAmount>
+                  <Box textAlign='right' lineHeight='20px'>
+                    <Typography variant='p_xlg'>{(mintAmount / positionInfo.price).toLocaleString()}</Typography>
+                    <MintAmount>${mintAmount.toLocaleString()}</MintAmount>
                   </Box>
                 </Stack>
               </FormBox>
-              <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{currentMintAmount.toLocaleString()} USDi</Typography></BottomBox>
+              <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol}</Typography></BottomBox>
             </StyledBox>
-          </Box>
-          <StyledBox>
-            <FormBox>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box display="flex">
-                  <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
-                  <Box marginLeft='8px'>
-                    <Typography variant='p_lg'>{positionInfo.tickerSymbol}</Typography>
-                  </Box>
-                </Box>
-                <Box textAlign='right' lineHeight='20px'>
-                  <Typography variant='p_xlg'>{(mintAmount / positionInfo.price).toLocaleString()}</Typography>
-                  <MintAmount>${mintAmount.toLocaleString()}</MintAmount>
-                </Box>
-              </Stack>
-            </FormBox>
-            <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol}</Typography></BottomBox>
-          </StyledBox>
-        </Stack>
-      </Box>
+          </Stack>
+        </Box>
+      }
     </Box>
   )
 }

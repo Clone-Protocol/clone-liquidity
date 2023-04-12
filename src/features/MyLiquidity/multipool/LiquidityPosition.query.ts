@@ -7,7 +7,9 @@ import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { fetchBalance } from '~/features/Borrow/Balance.query'
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -107,3 +109,107 @@ export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, ena
 		return useQuery(['liquidityPosition'], () => { })
 	}
 }
+
+
+export const fetchCloseLiquidityPosition = async ({
+	program,
+	userPubKey,
+	index,
+	setStartTimer,
+}: {
+	program: InceptClient
+	userPubKey: PublicKey | null
+	index: number
+	setStartTimer: (start: boolean) => void
+}) => {
+	if (!userPubKey) return
+
+	await program.loadManager()
+
+	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
+
+	if (tokenDataResult.status === 'rejected' || cometResult.status === 'rejected') return
+
+	const tokenData = tokenDataResult.value
+	const comet = cometResult.value
+
+	const position = comet.positions[index]
+	const poolIndex = Number(position.poolIndex)
+	const pool = tokenData.pools[poolIndex]
+
+
+	const balance = await fetchBalance({
+		program,
+		userPubKey,
+		index: poolIndex,
+		setStartTimer
+	})
+
+	let assetId = poolIndex
+	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
+	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+
+	let currentHealthScore = getHealthScore(tokenData, comet)
+	let prevHealthScore = currentHealthScore.healthScore
+
+	// @TODO set proper value
+	let ildDebt = 0
+	let ildDebtDollarPrice = 0
+	let healthScore = 0
+	let isValidToClose = false
+
+	return {
+		tickerIcon,
+		tickerName,
+		tickerSymbol,
+		price,
+		tokenData: tokenDataResult.value,
+		comet,
+		healthScore,
+		prevHealthScore,
+		ildDebt,
+		ildDebtDollarPrice,
+		iassetVal: balance?.iassetVal!,
+		usdiVal: balance?.usdiVal!,
+		isValidToClose
+	}
+}
+
+export interface CloseLiquidityPositionInfo {
+	tickerIcon: string
+	tickerName: string
+	tickerSymbol: string
+	price: number
+	tokenData: TokenData
+	comet: Comet | undefined
+	healthScore: number
+	prevHealthScore: number
+	ildDebt: number
+	ildDebtDollarPrice: number
+	iassetVal?: number
+	usdiVal?: number
+	isValidToClose: boolean
+}
+
+export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+	const wallet = useAnchorWallet()
+	const { getInceptApp } = useIncept()
+	const { setStartTimer } = useDataLoading()
+
+	if (wallet) {
+		return useQuery(
+			['closeLiquidityPosition', wallet, userPubKey, index],
+			() => fetchCloseLiquidityPosition({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }),
+			{
+				refetchOnMount,
+				refetchInterval: REFETCH_CYCLE,
+				refetchIntervalInBackground: true,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['closeLiquidityPosition'], () => { })
+	}
+}
+
+
