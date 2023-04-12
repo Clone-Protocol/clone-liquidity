@@ -57,3 +57,32 @@ export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<{vol
 
   return result;
 }
+
+export const fetchLatestPoolPrices = async (poolIndex: number, startingTimestamp: number, intervalSeconds: number = 60) => {
+  const doc = await getGoogleSheetsDoc()
+  
+  const sheet = await doc.sheetsByTitle["Pool Prices"]
+  await sheet.loadCells();
+  const tsColumn = poolIndex * 2;
+  const priceColumn = tsColumn + 1;
+
+  let row = 1;
+  let currentPrice = undefined;
+  let result: {ts: number, price: number}[] = []
+  const MAX_ITERATIONS = 100000; // Safety net.
+  while (row < MAX_ITERATIONS) {
+    let ts = sheet.getCell(row, tsColumn).formattedValue
+    if (ts === null) break;
+
+    if (ts >= startingTimestamp && currentPrice !== undefined) {
+      let intervalTs = ts - ts % intervalSeconds
+      result.push({ts: intervalTs, price: currentPrice})
+    }
+    const price = sheet.getCell(row, priceColumn).formattedValue
+    currentPrice = price;
+
+    row++
+  }
+
+  return result;
+}
