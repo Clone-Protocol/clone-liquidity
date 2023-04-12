@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
+import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { useRecenterInfoQuery } from '~/features/MyLiquidity/multipool/RecenterInfo.query'
-import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
@@ -12,6 +10,8 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import Image from 'next/image'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import { useLiquidityPositionQuery } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
+import { useClosePositionMutation } from '~/features/MyLiquidity/multipool/LiquidityPosition.mutation'
 
 const CloseLiquidityDialog = ({
   positionIndex,
@@ -30,14 +30,14 @@ const CloseLiquidityDialog = ({
   const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
 
-  const { data: positionInfo, refetch } = useRecenterInfoQuery({
+  const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
     index: positionIndex,
     refetchOnMount: true,
     enabled: open && publicKey != null,
   })
 
-  const { mutateAsync } = useRecenterMutation(publicKey)
+  const { mutateAsync } = useClosePositionMutation(publicKey)
   const handleRecenter = async () => {
     // setLoading(true)
     await mutateAsync(
@@ -66,7 +66,7 @@ const CloseLiquidityDialog = ({
   }
 
   const displayILDDebt = () => {
-    return Math.max(0, positionInfo!.recenterCost).toLocaleString()
+    return Math.max(0, positionInfo!.ildDebt).toLocaleString()
   }
 
   return positionInfo ? (
@@ -93,14 +93,14 @@ const CloseLiquidityDialog = ({
             <Box marginTop='20px' marginBottom='22px'>
               <Box display='flex' justifyContent='flex-end'>
                 <Typography variant='p' color='#989898'>Wallet Balance: </Typography>
-                <Typography variant='p' ml='5px'>{positionInfo.usdiVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+                <Typography variant='p' ml='5px'>{positionInfo.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
               </Box>
               <CenterBox>
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p'>ILD Debt</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box lineHeight={0.95}>
                     <Box><Typography variant='p_xlg'>{displayILDDebt()} {positionInfo.tickerSymbol}</Typography></Box>
-                    <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.recenterCostDollarPrice.toLocaleString()}</Typography></Box>
+                    <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.ildDebtDollarPrice.toLocaleString()}</Typography></Box>
                   </Box>
                 </Stack>
               </CenterBox>
@@ -113,7 +113,7 @@ const CloseLiquidityDialog = ({
               </Box>
             </BoxWithBorder>
 
-            <SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToRecenter}>
+            <SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToClose}>
               Pay ILD & Close Liquidity Position
             </SubmitButton>
 
@@ -138,11 +138,6 @@ const BoxWrapper = styled(Box)`
 const CenterBox = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
   padding: 18px 15px;
-`
-const BottomBox = styled(Box)`
-  text-align: center;
-  height: 30px;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};

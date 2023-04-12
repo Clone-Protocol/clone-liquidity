@@ -50,6 +50,11 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     setOpenClosePosition(true)
   }
 
+  const handleShowCloseLiquidityDialog = () => {
+    setOpenEditLiquidity(false)
+    setOpenClosePosition(true)
+  }
+
   const redirectAddMultipoolPage = () => {
     router.push(`/assets/0/asset`)
   }
@@ -134,6 +139,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
         open={openEditLiquidity}
         positionIndex={editAssetId}
         poolIndex={poolIndex}
+        onShowCloseLiquidity={handleShowCloseLiquidityDialog}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenEditLiquidity(false)}
       />

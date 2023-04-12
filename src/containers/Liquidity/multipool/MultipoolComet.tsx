@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Box, Stack, Grid, Typography, Button } from '@mui/material'
+import { Box, Stack, Grid, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useWallet } from '@solana/wallet-adapter-react'
 import withSuspense from '~/hocs/withSuspense'
