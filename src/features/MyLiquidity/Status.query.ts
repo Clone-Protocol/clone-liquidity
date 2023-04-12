@@ -17,14 +17,10 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 
   await program.loadManager()
 
-  let totalCollateralLocked = 0
-  let borrow = 0
-  let unconcentrated = 0
-  let comet = 0
-  let multipoolComet = 0
-  let liquidated = 0
-  let totalCometLiquidity = 0;
-  let totalCometValLocked = 0;
+  let totalMultiPoolCometLiquidity = 0;
+  let totalMultiPoolCometValLocked = 0;
+  let totalSinglePoolCometLiquidity = 0;
+  let totalSinglePoolCometValLocked = 0;
   let totalUnconcentPositionVal = 0;
   let totalBorrowLiquidity = 0;
   let totalBorrowCollateralVal = 0;
@@ -47,8 +43,6 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     for (var i = 0; i < Number(borrowPositions.numPositions); i++) {
       let borrowPosition = borrowPositions.borrowPositions[i]
       let collateralAmount = toNumber(borrowPosition.collateralAmount)
-      totalCollateralLocked += collateralAmount
-      borrow += collateralAmount
       totalBorrowCollateralVal += collateralAmount
       let pool = tokenData.pools[borrowPosition.poolIndex];
       totalBorrowLiquidity += toNumber(borrowPosition.borrowedIasset) * toNumber(pool.assetInfo.price);
@@ -64,8 +58,6 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
       let pool = tokenData.pools[position.poolIndex];
       let liquidityTokenSupply = toNumber(pool.liquidityTokenSupply);
       let amount = ((toNumber(pool.usdiAmount) * liquidityTokenAmount) / liquidityTokenSupply) * 2
-      totalCollateralLocked += amount
-      unconcentrated += amount
       totalUnconcentPositionVal += amount;
     }
   }
@@ -74,13 +66,11 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     const comets = singlePoolCometsResult.value;
     for (let i = 0; i < Number(comets.numCollaterals.toNumber()); i++) {
       let collateralAmount = toNumber(comets.collaterals[i].collateralAmount);
-      totalCollateralLocked += collateralAmount;
-      comet += collateralAmount;
-      totalCometValLocked += collateralAmount;
+      totalSinglePoolCometValLocked += collateralAmount;
     }
 
     comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalCometLiquidity += toNumber(pos.borrowedUsdi) * 2
+      totalSinglePoolCometLiquidity += toNumber(pos.borrowedUsdi) * 2
     });
   }
 
@@ -88,24 +78,22 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     const comets = cometsResult.value
     // Only take usdi value for now.
     let usdiValue = toNumber(comets.collaterals[0].collateralAmount)
-    totalCometValLocked += usdiValue;
-    totalCollateralLocked += usdiValue
-    multipoolComet += usdiValue
+    totalMultiPoolCometValLocked += usdiValue
 
     comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalCometLiquidity += toNumber(pos.borrowedUsdi) * 2
+      totalMultiPoolCometLiquidity += toNumber(pos.borrowedUsdi) * 2
     });
   }
 
-  let borrowPercent = totalCollateralLocked > 0 ? (borrow / totalCollateralLocked) * 100 : 0
-  let unconcentratedPercent = totalCollateralLocked > 0 ? (unconcentrated / totalCollateralLocked) * 100 : 0
-  let cometPercent = totalCollateralLocked > 0 ? (comet / totalCollateralLocked) * 100 : 0
-
-  let totalLiquidityProvided = totalUnconcentPositionVal + totalCometLiquidity;
+  let totalCollateralLocked = totalBorrowCollateralVal + totalUnconcentPositionVal + totalMultiPoolCometValLocked + totalSinglePoolCometValLocked
+  let totalLiquidityProvided = totalBorrowLiquidity + totalUnconcentPositionVal + totalMultiPoolCometLiquidity + totalSinglePoolCometLiquidity
+  let borrowPercent = totalCollateralLocked > 0 ? (totalBorrowCollateralVal / totalCollateralLocked) * 100 : 0
+  let unconcentratedPercent = totalCollateralLocked > 0 ? (totalUnconcentPositionVal / totalCollateralLocked) * 100 : 0
+  let cometPercent = totalCollateralLocked > 0 ? (totalSinglePoolCometValLocked / totalCollateralLocked) * 100 : 0
 
   const statusValues = {
-    totalCometLiquidity,
-    totalCometValLocked,
+    totalSinglePoolCometLiquidity,
+    totalSinglePoolCometValLocked,
     totalUnconcentPositionVal,
     totalBorrowLiquidity,
     totalBorrowCollateralVal,
@@ -115,14 +103,14 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
 
   return {
     totalCollateralLocked,
-    comet,
+    comet: totalSinglePoolCometValLocked,
     cometPercent,
-    unconcentrated,
+    unconcentrated: totalUnconcentPositionVal,
     unconcentratedPercent,
-    borrow,
+    borrow: totalBorrowCollateralVal,
     borrowPercent,
-    multipoolComet,
-    liquidated,
+    multipoolComet: totalMultiPoolCometValLocked,
+    liquidated: 0,
     statusValues
   }
 }
@@ -134,8 +122,8 @@ interface GetProps {
 }
 
 interface StatusValues {
-  totalCometLiquidity: number
-  totalCometValLocked: number
+  totalSinglePoolCometLiquidity: number
+  totalSinglePoolCometValLocked: number
   totalUnconcentPositionVal: number
   totalBorrowLiquidity: number
   totalBorrowCollateralVal: number

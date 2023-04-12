@@ -4,8 +4,8 @@ import { Status } from '~/features/MyLiquidity/Status.query'
 
 const MyStatusValues = ({ tab, status }: { tab: number, status: Status }) => {
   const statusValues = status ? {
-    totalCometLiquidity: status.statusValues.totalCometLiquidity,
-    totalCometValLocked: status.statusValues.totalCometValLocked,
+    totalCometLiquidity: status.statusValues.totalSinglePoolCometLiquidity,
+    totalCometValLocked: status.statusValues.totalSinglePoolCometValLocked,
     totalUnconcentPositionVal: status.statusValues.totalUnconcentPositionVal,
     totalBorrowLiquidity: status.statusValues.totalBorrowLiquidity,
     totalBorrowCollateralVal: status.statusValues.totalBorrowCollateralVal,
