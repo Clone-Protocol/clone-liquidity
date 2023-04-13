@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack'
 import Image from 'next/image'
 import InfoIcon from 'public/images/info-icon-black.svg'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -9,14 +8,11 @@ import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosit
 import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
   const borrowIndex = parseInt(assetId)
 
@@ -27,39 +23,25 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
   }
 
   const onClose = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        borrowIndex
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully closed position')
-            // setLoading(false)
-            router.push('/liquidity?ltab=3')
-          }
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error closing position')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          borrowIndex
         }
+      )
+      if (data) {
+        console.log('data', data)
+        router.push('/liquidity?ltab=3')
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const canCloseComet = borrowDetail.iassetVal >= borrowDetail.borrowedIasset
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Box padding='15px'>
         <Box mb='15px'>
           <Stack direction="row" justifyContent="space-between" mt='5px'>

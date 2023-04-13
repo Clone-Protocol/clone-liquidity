@@ -21,7 +21,6 @@ import MoreMenu from '~/components/Common/MoreMenu';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getUSDiAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
-import { Transaction } from "@solana/web3.js";
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
@@ -36,7 +35,7 @@ import { useTransactionState } from '~/hooks/useTransactionState'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
-	const { pathname, push } = router
+	const { pathname } = router
 	const [path, setPath] = useState<string>('/')
 	const [mobileNavToggle, setMobileNavToggle] = useState(false)
 	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -191,7 +190,6 @@ const RightMenu = () => {
 				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
-				{/* <DataLoadingIndicator /> */}
 				<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
 					<Typography variant='p'>Devnet Faucet</Typography>
 				</HeaderButton>

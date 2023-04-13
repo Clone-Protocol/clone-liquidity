@@ -1,4 +1,4 @@
-import { PublicKey, Transaction } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
 import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
@@ -149,7 +149,7 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	}
 }
 
-export const callClose = async ({ program, userPubKey, setTxState }: CallCloseProps) => {
+export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	await program.loadManager()
@@ -161,10 +161,14 @@ export const callClose = async ({ program, userPubKey, setTxState }: CallClosePr
 	}
 }
 
+type CloseFormData = {
+	positionIndex: number
+}
 interface CallCloseProps {
 	program: InceptClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
+	data: CloseFormData
 }
 export function useClosePositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
@@ -172,9 +176,9 @@ export function useClosePositionMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation(() => callClose({ program: getInceptApp(wallet), userPubKey, setTxState }))
+		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
 	} else {
-		return useMutation(() => funcNoWallet())
+		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
 }
 

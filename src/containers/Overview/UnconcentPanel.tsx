@@ -1,7 +1,6 @@
-import { Box, Stack, Button, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import { styled } from '@mui/system'
-import { useSnackbar } from 'notistack'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
@@ -13,16 +12,12 @@ import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { useRouter } from 'next/router'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
-import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const { mutateAsync: mutateAsyncLiquidity } = useLiquidityMutation(publicKey)
+  const { mutateAsync } = useLiquidityMutation(publicKey)
   const [borrowFrom, setBorrowFrom] = useState(NaN)
   const [borrowTo, setBorrowTo] = useState(NaN)
   const {
@@ -40,29 +35,21 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
   }
 
   const onLiquidity = async () => {
-    // setLoading(true)
-    await mutateAsyncLiquidity(
-      {
-        iassetIndex: assetIndex,
-        iassetAmount: borrowFrom,
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully established unconcentrated liquidity position')
-            // setLoading(false)
-            initData()
-            router.push('/liquidity?ltab=2')
-          }
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error establishing unconcentrated liquidity position')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          iassetIndex: assetIndex,
+          iassetAmount: borrowFrom,
         }
+      )
+      if (data) {
+        console.log('data', data)
+        initData()
+        router.push('/liquidity?ltab=2')
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   useEffect(() => {
@@ -116,7 +103,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
     if ((errors.borrowTo && errors.borrowTo.message !== "") || (errors.borrowFrom && errors.borrowFrom.message !== "")) {
       return true
     }
-
     return false
   }
 
@@ -124,7 +110,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
     if (!isDirty || formHasErrors()) {
       return true
     }
-
     return false
   }
 
@@ -134,12 +119,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Box>
         <Box>
           <WarningStack direction="row">
@@ -150,9 +129,6 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
             <Box>
               <Typography variant='p_lg'>Provide iAsset</Typography>
             </Box>
-            {/* <SubTitleComment>
-              Acquire {assetData.tickerSymbol} by <Link href={`/borrow?lAssetId=${assetIndex}`}><span style={{ color: '#fff', cursor: 'pointer' }}>Borrowing</span></Link>
-            </SubTitleComment> */}
             <Controller
               name="borrowFrom"
               control={control}

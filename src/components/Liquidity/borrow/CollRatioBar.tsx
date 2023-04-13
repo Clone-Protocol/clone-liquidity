@@ -38,7 +38,7 @@ const CollRatioBar: React.FC<Props> = ({ hasRiskRatio = false, minRatio, ratio, 
             </PrevBox>
           }
         </Box>
-        <MinMaxVal><Box>250%</Box><Box>(Safe)</Box></MinMaxVal>
+        <MinMaxVal><Box>250%+</Box><Box>(Safe)</Box></MinMaxVal>
       </Stack>
       {hasRiskRatio && <WarningMsg>This position have high possibility to become subject to liquidation. It is recommended that you provide more collateral or repay some of the borrowed amount.</WarningMsg>}
     </Box>

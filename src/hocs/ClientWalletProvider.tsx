@@ -16,8 +16,7 @@ import {
 import { WalletDialogProvider } from '~/hocs/WalletDialogProvider'
 import { InceptProvider } from '~/hocs/InceptProvider'
 import { clusterApiUrl } from '@solana/web3.js'
-import { useSnackbar } from 'notistack'
-import React, { FC, ReactNode, useCallback, useMemo } from 'react'
+import React, { FC, ReactNode, useMemo } from 'react'
 
 const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const network = WalletAdapterNetwork.Devnet
@@ -42,14 +41,11 @@ const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		[network]
 	)
 
-	const { enqueueSnackbar } = useSnackbar()
-	const onError = useCallback(
-		(error: WalletError) => {
-			enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' })
-			console.log('error', error)
-		},
-		[enqueueSnackbar]
-	)
+	// const { enqueueSnackbar } = useSnackbar()
+	const onError = (error: WalletError) => {
+		// enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' })
+		console.log('walletError', error)
+	}
 
 	return (
 		<ConnectionProvider endpoint={endpoint}>

@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
-import { useSnackbar } from 'notistack'
+import React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
+import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { useRecenterInfoQuery } from '~/features/MyLiquidity/multipool/RecenterInfo.query'
 import { useRecenterMutation } from '~/features/MyLiquidity/multipool/Recenter.mutation'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -27,9 +25,6 @@ const RecenterDialog = ({
 	handleClose: () => void
 }) => {
 	const { publicKey } = useWallet()
-	const { enqueueSnackbar } = useSnackbar()
-	const [loading, setLoading] = useState(false)
-
 	const { data: positionInfo, refetch } = useRecenterInfoQuery({
 		userPubKey: publicKey,
 		index: positionIndex,
@@ -39,30 +34,22 @@ const RecenterDialog = ({
 
 	const { mutateAsync } = useRecenterMutation(publicKey)
 	const handleRecenter = async () => {
-		// setLoading(true)
-		await mutateAsync(
-			{
-				positionIndex
-			},
-			{
-				onSuccess(data) {
-					if (data) {
-						console.log('data', data)
-						// enqueueSnackbar('Successfully recentered the position')
-
-						refetch()
-						onRefetchData()
-						handleClose()
-					}
-					// setLoading(false)
-				},
-				onError(err) {
-					console.error(err)
-					// enqueueSnackbar('Failed to recenter position : No price deviation detected.')
-					// setLoading(false)
+		try {
+			const data = await mutateAsync(
+				{
+					positionIndex
 				}
+			)
+
+			if (data) {
+				console.log('data', data)
+				refetch()
+				onRefetchData()
+				handleClose()
 			}
-		)
+		} catch (err) {
+			console.error(err)
+		}
 	}
 
 	const displayRecenterCost = () => {
@@ -71,12 +58,6 @@ const RecenterDialog = ({
 
 	return positionInfo ? (
 		<>
-			{loading && (
-				<LoadingWrapper>
-					<LoadingIndicator open inline />
-				</LoadingWrapper>
-			)}
-
 			<Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={480}>
 				<DialogContent sx={{ background: '#1b1b1b' }}>
 					<BoxWrapper>
@@ -150,11 +131,11 @@ const CenterBox = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
   padding: 18px 15px;
 `
-const BottomBox = styled(Box)`
-  text-align: center;
-  height: 30px;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
+// const BottomBox = styled(Box)`
+//   text-align: center;
+//   height: 30px;
+//   border: solid 1px ${(props) => props.theme.boxes.greyShade};
+// `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `

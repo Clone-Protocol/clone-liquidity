@@ -20,14 +20,6 @@ const MultipoolComet = () => {
 
   return infos ? (
     <Wrapper>
-      {/* <WarningStack direction="row">
-        <IconWrapper>
-          <Image src={InfoBookIcon} />
-        </IconWrapper>
-        <WarningBox>
-          Multipool comet is an advanced feature that requires thorough understanding of the mechanism. Please be sure to read and learn about it before first engaging with it.
-        </WarningBox>
-      </WarningStack> */}
       <Stack direction='row'>
         <Box marginRight='31px'>
           <Box><Typography variant='p' color='#989898'>Multipool Health Score</Typography></Box>

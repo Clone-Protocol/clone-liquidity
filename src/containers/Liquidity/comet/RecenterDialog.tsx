@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import Image from 'next/image'
-import { Box, styled, Button, Stack, Dialog, DialogContent, Typography } from '@mui/material'
+import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
@@ -35,8 +33,6 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
   const { publicKey } = useWallet()
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
-  const { enqueueSnackbar } = useSnackbar()
-  const [loading, setLoading] = useState(false)
   const { mutateAsync } = useRecenterMutation(publicKey)
   const [isLackBalance, setIsLackBalance] = useState(false)
   const [cometData, setCometData] = useState<CometInfo>({
@@ -107,32 +103,25 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
   }, [open, wallet, cometDetail])
 
   const handleRecenter = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        cometIndex
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully recentered position')
-
-            refetch()
-            onRefetchData && onRefetchData()
-            handleClose()
-            //hacky sync
-            location.reload()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Failed to recenter position : No price deviation detected.')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          cometIndex
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        refetch()
+        onRefetchData && onRefetchData()
+        handleClose()
+        //hacky sync
+        location.reload()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
+
   }
 
   const isValidToRecenter = () => {
@@ -145,12 +134,6 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={480}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
@@ -202,17 +185,6 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
             <Box display='flex' justifyContent='center'>
               <DataLoadingIndicator />
             </Box>
-
-            {/* {isLackBalance &&
-              <WarningStack direction="row">
-                <WarningIconBox>
-                  <Image src={WarningIcon} />
-                </WarningIconBox>
-                <NotEnoughBox>
-                  Not enough wallet balance to pay for the cost.
-                </NotEnoughBox>
-              </WarningStack>
-            } */}
           </BoxWrapper>
         </DialogContent>
       </Dialog>

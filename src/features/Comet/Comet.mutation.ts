@@ -401,9 +401,9 @@ interface CallEditProps {
   userPubKey: PublicKey | null
   setTxState: (state: TransactionStateType) => void
   data: EditFormData,
-  setRefreshData: () => {}
+  setRefreshData: () => void
 }
-export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => {}) {
+export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => void) {
   const wallet = useAnchorWallet()
   const { getInceptApp } = useIncept()
   const { setTxState } = useTransactionState()

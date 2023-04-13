@@ -2,8 +2,6 @@ import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import React, { useState, useEffect, useCallback } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
-import { useSnackbar } from 'notistack'
-// import PairInput from '~/components/Borrow/PairInput'
 import PairInput from '~/components/Asset/PairInput'
 import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -14,7 +12,6 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
@@ -24,9 +21,6 @@ const RISK_RATIO_VAL = 170
 
 const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
-  const [loading, setLoading] = useState(false)
-
   const fromPair: PairData = {
     tickerIcon: '/images/assets/USDi.png',
     tickerName: 'USDi Coin',
@@ -44,7 +38,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
     userPubKey: publicKey,
     refetchOnMount: "always",
     enabled: publicKey != null
-  });
+  })
 
   const {
     handleSubmit,
@@ -124,30 +118,23 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
   }, [collAmount, collRatio])
 
   const onBorrow = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        collateralIndex: 0,
-        iassetIndex: assetIndex,
-        iassetAmount: borrowAmount,
-        collateralAmount: collAmount,
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully established borrow position')
-            // setLoading(false)
-            initData()
-          }
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error establishing borrow position')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          collateralIndex: 0,
+          iassetIndex: assetIndex,
+          iassetAmount: borrowAmount,
+          collateralAmount: collAmount,
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        initData()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const isValid = Object.keys(errors).length === 0
@@ -155,12 +142,6 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
 
   return usdiBalance && borrowDetail ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Box>
         <Box>
           <Box><Typography variant='p_lg'>iAsset to Borrow</Typography></Box>

@@ -1,15 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
-import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
-import {
-  PairData
-} from '~/features/MyLiquidity/BorrowPosition.query'
+import { PairData } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditBorrowedInput from '~/components/Liquidity/comet/EditBorrowedInput'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -20,16 +16,12 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const [loading, setLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar()
   const borrowIndex = borrowId
   const [editType, setEditType] = useState(0) // 0 : borrow more , 1: repay
   const [maxCollVal, setMaxCollVal] = useState(0);
   const router = useRouter()
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
-  // const hasRiskRatio = editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio
-  // const hasLackBalance = editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal
   const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal)
   const [isFullRepaid, setIsFullRepaid] = useState(false)
   const [hasRiskRatio, setHasRiskRatio] = useState(editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio)
@@ -88,7 +80,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
       expectedCollRatio = (borrowDetail.collateralRatio)
     }
     setExpectedCollRatio(expectedCollRatio)
-    // borrowDetail.borrowedIasset > borrowDetail.iassetVal
+
     if (editType === 1) {
       setHasLackBalance(borrowAmount > borrowDetail.iassetVal)
       setIsFullRepaid(Number(borrowDetail.borrowedIasset) === borrowAmount)
@@ -97,64 +89,49 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   }, [borrowAmount, editType])
 
   const onEdit = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        borrowIndex,
-        borrowAmount: borrowAmount,
-        editType
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully modified borrow position')
-            initData()
-            onRefetchData()
-            onHideEditForm()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error modifying borrow position')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          borrowIndex,
+          borrowAmount: borrowAmount,
+          editType
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        initData()
+        onRefetchData()
+        onHideEditForm()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
+
   }
 
   const onClose = async () => {
-    await mutateAsyncClose(
-      {
-        borrowIndex,
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            onRefetchData()
-            onHideEditForm()
-            router.push('/liquidity?ltab=3')
-          }
-        },
-        onError(err) {
-          console.error(err)
+    try {
+      const data = await mutateAsyncClose(
+        {
+          borrowIndex,
         }
+      )
+      if (data) {
+        console.log('data', data)
+        onRefetchData()
+        onHideEditForm()
+        router.push('/liquidity?ltab=3')
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const isValid = Object.keys(errors).length === 0
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
@@ -203,17 +180,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
               <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText>
             </Box>
 
-            {/* <BoxWithBorder>
-              <Stack marginTop='15px' direction="row" justifyContent="space-between">
-                <DetailHeader>Expected Collateral Ratio <InfoTooltip title={TooltipTexts.expectedCollateralRatio} /></DetailHeader>
-                <DetailValue>{editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${expectedCollRatio.toLocaleString()}%` : 'Paid in full'} <span style={{ color: '#949494' }}>(prev. {borrowDetail.borrowedIasset > 0 ? `${borrowDetail.collateralRatio.toLocaleString()}%` : '-'})</span></DetailValue>
-              </Stack>
-              <Stack marginTop='15px' direction="row" justifyContent="space-between">
-                <DetailHeader>Min Collateral Ratio <InfoTooltip title={TooltipTexts.minCollateralRatio} /></DetailHeader>
-                <DetailValue>{editType === 0 || borrowAmount < borrowDetail.borrowedIasset ? `${borrowDetail.minCollateralRatio.toLocaleString()}%` : '-'}</DetailValue>
-              </Stack>
-            </BoxWithBorder> */}
-
             <BoxWithBorder>
               {hasLackBalance || isFullRepaid ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>{hasLackBalance ? 'N/A' : 'Position will be paid in full'}</Typography></Box> :
                 < Box >
@@ -221,18 +187,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                   <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
                 </Box>}
             </BoxWithBorder>
-
-            {/* {isWarning && (editType === 1 && borrowAmount >= borrowDetail.borrowedIasset) &&
-              <WarningStack direction="row">
-                <WarningIconBox>
-                  <Image src={WarningIcon} />
-                </WarningIconBox>
-                <WarningBox>
-                  {isRisk && 'This borrow position has significant risk of liquidation.'}
-                  {isLackBalance && `Not enough wallet balance to pay in full.`}
-                </WarningBox>
-              </WarningStack>
-            } */}
 
             <SubmitButton onClick={handleSubmit(!isFullRepaid ? onEdit : onClose)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
@@ -249,7 +203,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   )
 }
 
-
 const BoxWrapper = styled(Box)`
   width: 500px;
   color: #fff;
@@ -260,29 +213,5 @@ const BoxWithBorder = styled(Box)`
   padding: 15px 18px;
   margin-top: 16px;
 `
-
-// const WarningStack = styled(Stack)`
-//   background: rgba(233, 209, 0, 0.04);
-//   border: 1px solid #e9d100;
-//   border-radius: 10px;
-//   color: #9d9d9d;
-//   padding: 8px;
-//   margin-top: 10px;
-//   margin-bottom: 30px;
-// `
-// const WarningIconBox = styled(Box)`
-//   width: 53px; 
-//   margin-left: 20px; 
-//   text-align: center;
-// `
-// const WarningBox = styled(Box)`
-// 	max-width: 500px;
-//   padding-left: 36px;
-//   padding-top: 4px;
-// 	padding-right: 10px;
-// 	font-size: 11px;
-// 	font-weight: 500;
-// 	color: #989898;
-// `
 
 export default EditBorrowMoreDialog

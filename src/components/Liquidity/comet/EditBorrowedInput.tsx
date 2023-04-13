@@ -13,7 +13,7 @@ interface Props {
   currentCollAmount: number
   dollarPrice?: number
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
-  onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
+  onChangeAmount?: (e: React.ChangeEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
 }
 
@@ -42,7 +42,7 @@ const EditBorrowedInput: React.FC<Props> = ({
             editType === 0 ?
               <span>
                 <Typography variant='p'>Max Borrow-able: </Typography>
-                <MaxPointerValue onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</MaxPointerValue>
+                <MaxPointerValue onClick={() => onMax(maxCollVal)}>{maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxPointerValue>
               </span>
               :
               <span>

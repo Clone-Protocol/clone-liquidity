@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Stack, styled, Button, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
-import { useSnackbar } from 'notistack'
+import { Box, Stack, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
 import { useIncept } from '~/hooks/useIncept'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
@@ -10,7 +9,6 @@ import { useEditMutation } from '~/features/Comet/Comet.mutation'
 import EditRatioSlider from '~/components/Liquidity/comet/EditRatioSlider'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
@@ -27,10 +25,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const wallet = useAnchorWallet()
-  const [loading, setLoading] = useState(false)
   const [collAmount, setCollAmount] = useState(NaN)
   const [mintAmount, setMintAmount] = useState(0.0)
-  const { enqueueSnackbar } = useSnackbar()
   const cometIndex = cometId
   const calculateMintAmount = (mintable: number, ratio: number): number => mintable * ratio / 100;
 
@@ -296,44 +292,31 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }, [mintRatio, mintAmount])
 
   const onEdit = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        cometIndex,
-        collAmount,
-        mintAmountChange: mintAmount - cometDetail.mintAmount,
-        editType
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully modified comet position')
-            initData()
-            onRefetchData()
-            onHideEditForm()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error modifying comet position')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          cometIndex,
+          collAmount,
+          mintAmountChange: mintAmount - cometDetail.mintAmount,
+          editType
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        initData()
+        onRefetchData()
+        onHideEditForm()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={1000}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b', overflow: 'hidden' }}>
           <BoxWrapper>

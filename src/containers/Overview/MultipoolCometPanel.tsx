@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useSnackbar } from 'notistack'
 import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
 import PairInput from '~/components/Asset/PairInput'
@@ -29,8 +27,6 @@ const RISK_SCORE_VAL = 20
 
 const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const [loading, setLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [mintRatio, setMintRatio] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
@@ -113,28 +109,21 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
   const { mutateAsync } = useNewPositionMutation(publicKey)
   const onNewLiquidity = async () => {
-    // setLoading(true)
-    await mutateAsync({
-      poolIndex: assetIndex,
-      changeAmount: mintAmount,
-    },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully established new liquidity position')
-            refetch()
-            initData()
-            router.push('/liquidity')
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error establishing new liquidity position')
-          // setLoading(false)
-        }
+    try {
+      const data = await mutateAsync({
+        poolIndex: assetIndex,
+        changeAmount: mintAmount,
       })
+
+      if (data) {
+        console.log('data', data)
+        refetch()
+        initData()
+        router.push('/liquidity')
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const handleChooseCollateral = (collId: number) => {
@@ -161,11 +150,6 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
   return positionInfo ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
       <Box mb='10px'>
         <BoxWithBorder p='20px'>
           <Box>

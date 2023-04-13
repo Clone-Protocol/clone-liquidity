@@ -1,20 +1,15 @@
-import React, { useState } from 'react'
-import { Box, styled, Button, FormHelperText } from '@mui/material'
+import React from 'react'
+import { Box, FormHelperText } from '@mui/material'
 import PairInput from '~/components/Liquidity/unconcent/PairInput'
-import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useDepositMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
 import { useForm, Controller } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { PoolList } from '~/features/MyLiquidity/UnconcentratedPools.query'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: PoolList, handleClose: () => void }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
-  const [loading, setLoading] = useState(false)
-
   const unconcentratedIndex = parseInt(assetId)
   const { mutateAsync } = useDepositMutation(publicKey)
 
@@ -44,45 +39,30 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
   })
 
   const onDeposit = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        index: unconcentratedIndex,
-        iassetAmount: borrowFrom
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Deposit was successful')
-
-            refetch()
-            //hacky sync
-            location.reload()
-          }
-          // setLoading(false)
-          handleClose()
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('A deposit error occurred')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          index: unconcentratedIndex,
+          iassetAmount: borrowFrom
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        refetch()
+        handleClose()
+        //hacky sync
+        location.reload()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const isValid = Object.keys(errors).length === 0
 
   return unconcentData ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
-
       <Box>
         <Controller
           name="borrowFrom"

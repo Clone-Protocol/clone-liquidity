@@ -1,20 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, Stack, styled, Button, Typography } from '@mui/material'
+import { Box, Stack, styled, Typography } from '@mui/material'
 import RatioSlider from '~/components/Liquidity/unconcent/RatioSlider'
 import Image from 'next/image'
-import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useUnconcentDetailQuery } from '~/features/MyLiquidity/UnconcentPosition.query'
 import { useBalanceQuery } from '~/features/UnconcentratedLiquidity/Balance.query'
 import { useWithdrawMutation } from '~/features/UnconcentratedLiquidity/Liquidity.mutation'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose: () => void }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
   const [loading, setLoading] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [amount, setAmount] = useState(0.0)
   const [percent, setPercent] = useState(50)
   const unconcentratedIndex = parseInt(assetId)
@@ -49,47 +45,32 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
   }, [data?.maxVal, amount, percent])
 
   const onWithdraw = async () => {
-    setIsSubmitting(true)
-    // setLoading(true)
-    await mutateAsync(
-      {
-        index: unconcentratedIndex,
-        amount,
-        percent
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Withdrawal was successful')
-
-            refetch()
-            //hacky sync
-            location.reload()
-          }
-          setIsSubmitting(false)
-          handleClose()
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          setIsSubmitting(false)
-          // enqueueSnackbar('A withdrawal error occurred')
-          // setLoading(false)
+    try {
+      setLoading(true)
+      const data = await mutateAsync(
+        {
+          index: unconcentratedIndex,
+          amount,
+          percent
         }
+      )
+
+      if (data) {
+        setLoading(false)
+        console.log('data', data)
+        refetch()
+        handleClose()
+        //hacky sync
+        location.reload()
       }
-    )
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
   }
 
   return unconcentData ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
-
       <RatioSlider
         min={0}
         max={100}
@@ -130,7 +111,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
         </StyledBox>
       </Stack>
 
-      <SubmitButton onClick={onWithdraw} disabled={isSubmitting}>Withdraw</SubmitButton>
+      <SubmitButton onClick={onWithdraw} disabled={loading}>Withdraw</SubmitButton>
     </>
   ) : <></>
 }

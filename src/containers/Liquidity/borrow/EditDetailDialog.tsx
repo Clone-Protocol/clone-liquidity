@@ -1,11 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
-import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
 import { PairData } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import EditCollateralInput from '~/components/Liquidity/comet/EditCollateralInput'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -17,8 +15,6 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const [loading, setLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar()
   const borrowIndex = borrowId
 
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
@@ -84,43 +80,30 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   }, [collAmount, editType])
 
   const onEdit = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        borrowIndex,
-        collateralAmount: collAmount,
-        editType
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully edited borrow details')
-            initData()
-            onRefetchData()
-            onHideEditForm()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error editing borrow details')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          borrowIndex,
+          collateralAmount: collAmount,
+          editType
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        initData()
+        onRefetchData()
+        onHideEditForm()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const isValid = Object.keys(errors).length === 0
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>

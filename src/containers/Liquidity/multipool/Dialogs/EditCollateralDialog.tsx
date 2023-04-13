@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
-import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Image from 'next/image'
 import { useEditCollateralQuery } from '~/features/MyLiquidity/multipool/EditCollateral.query'
 import { useCollateralMutation } from '~/features/MyLiquidity/multipool/Collateral.mutation'
 import { useForm, Controller } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -23,9 +21,6 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
-  const [loading, setLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar()
-
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
@@ -107,43 +102,29 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 
   const { mutateAsync } = useCollateralMutation(publicKey)
   const onEdit = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        collIndex,
-        collAmount,
-        editType: tab
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully modified collateral')
-            refetch()
-            initData()
-            onRefetchData()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error modifying collateral')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          collIndex,
+          collAmount,
+          editType: tab
         }
+      )
+      if (data) {
+        console.log('data', data)
+        refetch()
+        initData()
+        onRefetchData()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const isValid = Object.keys(errors).length === 0
 
   return collData ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={500}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
@@ -159,45 +140,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               </StyledTabs>
             }
             <StyledDivider />
-
-            {/* <Box>
-              <Controller
-                name="collAmount"
-                control={control}
-                rules={{
-                  validate(value) {
-                    if (!value || value <= 0) {
-                      return ''
-                    }
-                    else if ((editType === 0 && value > collData.balance) || (editType === 1 && value >= maxWithdrawable)) {
-                      return 'The collateral amount cannot exceed the balance.'
-                    }
-                  }
-                }}
-                render={({ field }) => (
-                  <EditCollateralInput
-                    editType={editType}
-                    tickerIcon={collData.tickerIcon}
-                    tickerSymbol={collData.tickerSymbol}
-                    collAmount={field.value}
-                    collAmountDollarValue={field.value}
-                    maxCollVal={editType === 0 ? collData.balance : maxWithdrawable}
-                    currentCollAmount={collData.collAmount}
-                    dollarPrice={collData.collAmountDollarPrice}
-                    onChangeType={handleChangeType}
-                    onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const collAmt = parseFloat(event.currentTarget.value)
-                      field.onChange(collAmt)
-                    }}
-                    onMax={(value: number) => {
-                      field.onChange(value)
-                    }}
-                    onHandleChoose={handleChooseColl}
-                  />
-                )}
-              />
-              <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
-            </Box> */}
 
             <Box mb='15px'>
               <Controller

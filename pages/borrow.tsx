@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { StyledSection } from 'pages'
 import { Container, Box, Typography } from '@mui/material'
-// import BorrowBox from '~/containers/Borrow/BorrowBox'
 import BorrowContainer from '~/containers/Borrow/BorrowContainer'
 
 const Borrow: NextPage = () => {

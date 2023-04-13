@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
-import { useSnackbar } from 'notistack'
+import React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
@@ -27,8 +25,6 @@ const CloseLiquidityDialog = ({
   handleClose: () => void
 }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
-  const [loading, setLoading] = useState(false)
 
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
@@ -39,30 +35,22 @@ const CloseLiquidityDialog = ({
 
   const { mutateAsync } = useClosePositionMutation(publicKey)
   const handleRecenter = async () => {
-    // setLoading(true)
-    await mutateAsync(
-      {
-        positionIndex
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully recentered the position')
-
-            refetch()
-            onRefetchData()
-            handleClose()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Failed to recenter position : No price deviation detected.')
-          // setLoading(false)
+    try {
+      const data = await mutateAsync(
+        {
+          positionIndex
         }
+      )
+
+      if (data) {
+        console.log('data', data)
+        refetch()
+        onRefetchData()
+        handleClose()
       }
-    )
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const displayILDDebt = () => {
@@ -71,12 +59,6 @@ const CloseLiquidityDialog = ({
 
   return positionInfo ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={480}>
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>

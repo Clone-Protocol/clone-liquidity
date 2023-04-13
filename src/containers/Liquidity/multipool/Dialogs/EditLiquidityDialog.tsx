@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
-import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
@@ -18,9 +17,6 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
-  const [loading, setLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar()
-
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
   const [mintRatio, setMintRatio] = useState(50)
@@ -99,41 +95,28 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 
   const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
-    // setLoading(true)
-    await mutateAsync({
-      positionIndex: positionIndex,
-      changeAmount: Math.abs(mintAmount - defaultMintAmount),
-      editType: mintAmount > defaultMintAmount ? 0 : 1
-    },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully modified liquidity position')
-            refetch()
-            initData()
-            handleClose()
-          }
-          // setLoading(false)
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error modifying liquidity position')
-          // setLoading(false)
-        }
+    try {
+      const data = await mutateAsync({
+        positionIndex: positionIndex,
+        changeAmount: Math.abs(mintAmount - defaultMintAmount),
+        editType: mintAmount > defaultMintAmount ? 0 : 1
       })
+
+      if (data) {
+        console.log('data', data)
+        refetch()
+        initData()
+        handleClose()
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const isValid = Object.keys(errors).length === 0
 
   return positionInfo ? (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
-
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={960}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>

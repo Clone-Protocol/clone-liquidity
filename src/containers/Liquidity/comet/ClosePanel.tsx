@@ -2,12 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { styled } from '@mui/system'
-import { useSnackbar } from 'notistack'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCloseMutation } from '~/features/Comet/Comet.mutation'
 import { CometDetail } from '~/features/MyLiquidity/CometPosition.query'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import OneIcon from 'public/images/one-icon.svg'
 import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from 'public/images/check-mark-icon.svg'
@@ -18,7 +15,6 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [noBorrowedAsset, setNoBorrowedAsset] = useState(false)
@@ -36,52 +32,37 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
   }, [cometDetail])
 
   const onClose = async (cType: number) => {
-    setLoading(true)
-    await mutateAsync(
-      {
-        cometIndex,
-        cType
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            setLoading(false)
+    try {
+      setLoading(true)
+      const data = await mutateAsync(
+        {
+          cometIndex,
+          cType
+        })
 
-            if (cType === 0) {
-              // enqueueSnackbar("Comet partially closed, please proceed to next step")
-              onRefetchData()
-              setNoBorrowedAsset(true)
-            } else {
-              // enqueueSnackbar("Comet successfully closed")
-              router.replace("/liquidity").then(() => {
-                router.reload()
-              })
-            }
-          }
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Error closing comet position')
-          setLoading(false)
+      if (data) {
+        console.log('data', data)
+        setLoading(false)
+
+        if (cType === 0) {
+          onRefetchData()
+          setNoBorrowedAsset(true)
+        } else {
+          router.replace("/liquidity").then(() => {
+            router.reload()
+          })
         }
       }
-    )
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
+
   }
 
   return (
     <>
-      {/* {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )} */}
-
       <Box padding='15px'>
-        {/* <Stack direction="row" justifyContent="space-between" mt='5px'>
-          <Box><Typography variant='p_lg' color='#989898'>Current Collateral</Typography></Box>
-          <Box><Typography variant='p_lg' color='#989898'>{cometDetail.collAmount.toLocaleString()}  USDi</Typography></Box>
-        </Stack> */}
         {!noBorrowedAsset &&
           <Box>
             <Stack direction="row" justifyContent="space-between">

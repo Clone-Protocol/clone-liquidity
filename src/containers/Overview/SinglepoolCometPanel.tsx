@@ -3,13 +3,11 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useIncept } from '~/hooks/useIncept'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
-import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { Balance } from '~/features/Borrow/Balance.query'
 import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import { CometInfo, PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { useForm, Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
 import PairInput from '~/components/Asset/PairInput'
@@ -26,15 +24,11 @@ import { RISK_SCORE_VAL } from '~/data/riskfactors'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
-const COLLATERAL_INDEX = 0 // USDi
-
 const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const { getInceptApp } = useIncept()
   const wallet = useAnchorWallet()
-  const { enqueueSnackbar } = useSnackbar()
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
 
   const [mintRatio, setMintRatio] = useState(50)
   const [cometData, setCometData] = useState<CometInfo>({
@@ -139,31 +133,23 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
   }, [maxMintable, cometData])
 
   async function submit() {
-    // setLoading(true)
-    await mutateAsyncComet(
-      {
-        collateralIndex: COLLATERAL_INDEX, //USDi
-        iassetIndex: assetIndex,
-        usdiAmount: mintAmount,
-        collateralAmount: collAmount,
-      },
-      {
-        onSuccess(data) {
-          if (data) {
-            console.log('data', data)
-            // enqueueSnackbar('Successfully established comet position')
-            // setLoading(false)
-            initData()
-            router.push('/liquidity')
-          }
-        },
-        onError(err) {
-          console.error(err)
-          // enqueueSnackbar('Failed to establish comet position')
-          // setLoading(false)
-        }
+    try {
+      const data = await mutateAsyncComet(
+        {
+          collateralIndex: 0, //USDi
+          iassetIndex: assetIndex,
+          usdiAmount: mintAmount,
+          collateralAmount: collAmount,
+        })
+
+      if (data) {
+        console.log('data', data)
+        initData()
+        router.push('/liquidity')
       }
-    )
+    } catch (err) {
+      console.error('err: ', err)
+    }
   }
   const onFormSubmit = async () => {
     await submit()
@@ -220,11 +206,6 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
 
   return (
     <>
-      {loading && (
-        <LoadingWrapper>
-          <LoadingIndicator open inline />
-        </LoadingWrapper>
-      )}
       <Box>
         <Box>
           <Box><Typography variant='p_lg'>Collateral Amount</Typography></Box>
