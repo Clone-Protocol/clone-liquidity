@@ -2,6 +2,8 @@ import moment from 'moment'
 import { Query, useQuery } from 'react-query'
 import { ChartElem } from './Liquidity.query'
 import { fetchPythPriceHistory } from '~/utils/pyth'
+import { fetchLatestPoolPrices } from '~/utils/assets'
+import { ASSETS } from 'src/data/assets'
 
 
 export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { pythSymbol: string | undefined, isOraclePrice: boolean }) => {
@@ -43,10 +45,30 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
     percentOfRate = 100 * rateOfPrice / previous24hrPrice
 
   } else {
-    //@TODO : binding to iasset price
+    // Get pool index from pythSymbol
+    let poolIndex = (() => {
+      for (let i=0; i<ASSETS.length; i++) {
+        if (ASSETS[i].pythSymbol === pythSymbol) {
+          return i;
+        }
+      }
+      throw new Error(`Couldn't find pool index for ${pythSymbol}`)
+    })()
 
-    // iAsset Price
-    chartData = [{ time: new Date(), value: 1.08 }, { time: new Date(), value: 1.08 }]
+    const previous30dDatetime = moment().utc(
+      ).subtract(30, 'days');
+
+    const history = await fetchLatestPoolPrices(
+      poolIndex,
+      previous30dDatetime.seconds(),
+      3600
+    )
+
+    chartData = history.map((val) => {
+      return {
+        time: moment(val.ts * 1e3).utc().format(), value: Number(val.price)
+      }
+    });
   }
 
 
