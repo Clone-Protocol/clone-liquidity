@@ -163,7 +163,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
+              <DataLoadingIndicator onRefresh={() => onRefetchData()} />
             </Box>
           </BoxWrapper>
         </DialogContent>

@@ -194,7 +194,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
+              <DataLoadingIndicator onRefresh={() => onRefetchData()} />
             </Box>
           </BoxWrapper>
         </DialogContent>

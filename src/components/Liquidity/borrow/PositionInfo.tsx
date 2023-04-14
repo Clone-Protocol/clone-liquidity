@@ -5,7 +5,6 @@ import { PositionInfo as PI } from '~/features/MyLiquidity/BorrowPosition.query'
 import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
 import CollRatioBar from './CollRatioBar'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { useState } from 'react'
 
 interface Props {
@@ -59,11 +58,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
           </Box>
         </Stack>
       </EditRowBox>
-
-      <Box display='flex' justifyContent='center'>
-        <DataLoadingIndicator />
-      </Box>
-    </Box >
+    </Box>
   ) : (
     <></>
   )

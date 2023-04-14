@@ -396,7 +396,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Edit Comet Position</Typography>
                   </SubmitButton>
                   <Box display='flex' justifyContent='center'>
-                    <DataLoadingIndicator />
+                    <DataLoadingIndicator onRefresh={() => onRefetchData()} />
                   </Box>
                 </EqualBox>
               </Stack>

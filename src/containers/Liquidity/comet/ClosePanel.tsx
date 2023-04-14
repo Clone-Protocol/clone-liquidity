@@ -10,7 +10,6 @@ import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from 'public/images/check-mark-icon.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: () => void }) => {
@@ -90,10 +89,6 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         </Stack>
 
         <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(1)} disabled={!noBorrowedAsset || loading}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></SubmitButton>
-
-        <Box display='flex' justifyContent='center'>
-          <DataLoadingIndicator />
-        </Box>
       </Box >
     </>
   )

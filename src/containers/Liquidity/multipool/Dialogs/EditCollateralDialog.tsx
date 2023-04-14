@@ -202,7 +202,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
+              <DataLoadingIndicator onRefresh={() => refetch()} />
             </Box>
           </BoxWrapper>
         </DialogContent>

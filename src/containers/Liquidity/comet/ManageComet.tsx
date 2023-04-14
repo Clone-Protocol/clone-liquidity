@@ -22,6 +22,7 @@ import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import DisabledCloseCometWarningMsg from '~/components/Liquidity/comet/DisabledCloseCometWarningMsg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { GoBackButton } from '~/components/Common/CommonButtons'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 
 const ManageComet = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -42,11 +43,16 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
     enabled: publicKey != null
   })
 
-  const { data: usdiBalance } = useBalanceQuery({
+  const { data: usdiBalance, refetch: refetchBalance } = useBalanceQuery({
     userPubKey: publicKey,
     refetchOnMount: true,
     enabled: publicKey != null
   });
+
+  const refetchData = () => {
+    refetch()
+    refetchBalance()
+  }
 
   useEffect(() => {
     console.log('cometDetail', cometDetail)
@@ -72,11 +78,15 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
             <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how {tab === 0 ? 'managing' : 'closing'} comet position works.</Typography>
           </TipMsg>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetch()} />
+            <EditPanel assetId={assetId} cometDetail={cometDetail} balance={usdiBalance.balanceVal} onRefetchData={() => refetchData()} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
-            <ClosePanel assetId={assetId} cometDetail={cometDetail} balance={cometDetail.ildInUsdi ? usdiBalance.balanceVal : cometDetail.iassetBalance} onRefetchData={() => refetch()} />
+            <ClosePanel assetId={assetId} cometDetail={cometDetail} balance={cometDetail.ildInUsdi ? usdiBalance.balanceVal : cometDetail.iassetBalance} onRefetchData={() => refetchData()} />
           </TabPanelForEdit>
+
+          <Box display='flex' justifyContent='center'>
+            <DataLoadingIndicator onRefresh={() => refetch()} />
+          </Box>
         </LeftBoxWrapper>
       </Box>
       <RightBoxWrapper>

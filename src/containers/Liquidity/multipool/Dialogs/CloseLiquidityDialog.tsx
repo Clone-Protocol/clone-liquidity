@@ -100,7 +100,7 @@ const CloseLiquidityDialog = ({
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
+              <DataLoadingIndicator onRefresh={() => refetch()} />
             </Box>
           </BoxWrapper>
         </DialogContent>

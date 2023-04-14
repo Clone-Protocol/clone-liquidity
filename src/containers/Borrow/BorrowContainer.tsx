@@ -7,7 +7,6 @@ import withSuspense from '~/hocs/withSuspense'
 import BorrowPanel from '../Overview/BorrowPanel'
 import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { ASSETS } from '~/data/assets'
 import Image from 'next/image'
 import InfoIcon from 'public/images/info-icon.svg'
@@ -40,10 +39,6 @@ const BorrowContainer = () => {
           <LeftBoxWrapper>
             <Box paddingY='10px'>
               <BorrowPanel assetIndex={assetIndex} onChooseAssetIndex={handleChooseAssetIndex} />
-            </Box>
-
-            <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
             </Box>
           </LeftBoxWrapper>
         </Box>

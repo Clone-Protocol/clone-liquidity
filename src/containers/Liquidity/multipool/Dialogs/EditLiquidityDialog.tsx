@@ -173,7 +173,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                 <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>Edit Liquidity Position</SubmitButton>
 
                 <Box display='flex' justifyContent='center'>
-                  <DataLoadingIndicator />
+                  <DataLoadingIndicator onRefresh={() => refetch()} />
                 </Box>
               </RightBox>
             </Stack>

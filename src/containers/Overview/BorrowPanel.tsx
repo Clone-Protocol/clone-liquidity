@@ -16,6 +16,7 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 
 const RISK_RATIO_VAL = 170
 
@@ -232,6 +233,10 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
             <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow</Typography>
           </SubmitButton>
         </Box>
+      </Box>
+
+      <Box display='flex' justifyContent='center'>
+        <DataLoadingIndicator onRefresh={() => refetch()} />
       </Box>
 
       <ChooseAssetDialog

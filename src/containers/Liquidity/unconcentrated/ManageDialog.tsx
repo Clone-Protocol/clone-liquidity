@@ -13,7 +13,7 @@ import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
 import DepositPanel from './DepositPanel'
 import WithdrawPanel from './WithdrawPanel'
 
-const ManageDialog = ({ assetId, pool, open, handleClose }: { assetId: string, pool: PoolList, open: boolean, handleClose: () => void }) => {
+const ManageDialog = ({ assetId, pool, open, handleClose, onRefetchData }: { assetId: string, pool: PoolList, open: boolean, handleClose: () => void, onRefetchData: () => void }) => {
   const [tab, setTab] = useState(0)
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
@@ -51,7 +51,7 @@ const ManageDialog = ({ assetId, pool, open, handleClose }: { assetId: string, p
             </Box>
 
             <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
+              <DataLoadingIndicator onRefresh={() => onRefetchData()} />
             </Box>
           </BoxWrapper>
         </DialogContent>
