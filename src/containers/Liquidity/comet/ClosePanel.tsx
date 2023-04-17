@@ -65,12 +65,12 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         {!noBorrowedAsset &&
           <Box>
             <Stack direction="row" justifyContent="space-between">
-              <Box><Typography variant='p_lg' color={'#989898'}>ILD Debt</Typography></Box>
-              <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
+              <Box><Typography variant='p_lg'>ILD Debt</Typography></Box>
+              <Box><Typography variant='p_lg'>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between" mt='5px'>
-              <Box><Typography variant='p_lg' color={'#989898'}>USDi Wallet Balance</Typography></Box>
-              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#989898'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
+              <Box><Typography variant='p_lg'>USDi Wallet Balance</Typography></Box>
+              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#fff'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
 
             {notEnoughBalance && <Box textAlign='right'><Typography variant='p' color='#ed2525'>Your Wallet Balance must be greater than ILD Debt</Typography></Box>}

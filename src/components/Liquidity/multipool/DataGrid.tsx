@@ -28,8 +28,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         marginRight: '4px',
       },
       '& .MuiDataGrid-columnHeaderTitle': {
-        color: '#9d9d9d',
-        fontSize: '10px'
+        color: '#989898',
+        fontSize: '12px'
       },
       '& .last--header': {
         '& .MuiDataGrid-columnHeaderTitleContainer': {

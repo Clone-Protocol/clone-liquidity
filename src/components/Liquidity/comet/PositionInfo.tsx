@@ -116,7 +116,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
 const PositionWrapper = styled(Box)`
   color: #fff; 
-  padding: 20px 5px; 
+  padding: 20px 5px 0px 5px; 
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};

@@ -7,6 +7,8 @@ export const REFETCH_CYCLE = 30000
 const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
   const { startTimer } = useDataLoading()
   const [progress, setProgress] = useState(0);
+  const [isEnabled, setIsEnabled] = useState(true);
+
   let timer: any = null
 
   useEffect(() => {
@@ -26,10 +28,17 @@ const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
   }, [startTimer]);
 
   const handleRefresh = () => {
-    setProgress(0)
-    clearInterval(timer)
+    if (isEnabled) {
+      setProgress(0)
+      clearInterval(timer)
 
-    onRefresh && onRefresh()
+      onRefresh && onRefresh()
+
+      setIsEnabled(false)
+      setTimeout(() => {
+        setIsEnabled(true)
+      }, 4500)
+    }
   }
 
   return (

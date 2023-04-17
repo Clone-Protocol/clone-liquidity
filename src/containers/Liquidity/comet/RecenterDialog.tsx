@@ -164,7 +164,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
               </BottomBox>
             </Box>
 
-            <BoxWithBorder mt='13px' padding='21px 24px'>
+            <BoxWithBorder mt='13px' padding='13px 24px'>
               <Box>
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 <EditConcentrationRangeBox assetData={cometDetail} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />

@@ -260,6 +260,9 @@ const SelectPoolBox = styled(Box)`
   background: ${(props) => props.theme.boxes.black};
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  &:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
+  }
 `
 
 export default withSuspense(BorrowPanel, <LoadingProgress />)

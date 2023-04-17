@@ -53,7 +53,7 @@ const PairInput: React.FC<Props> = ({
           </Box>
           <Box>
             <InputAmount id="ip-amount" type="number" placeholder="0.00" value={value} onChange={onChange} min={0} max={!balanceDisabled ? balance : 1000} />
-            <DollarAmount>{(valueDollarPrice && valueDollarPrice > 0) ? ('$' + valueDollarPrice?.toLocaleString()) : ''}</DollarAmount>
+            <DollarAmount>{(valueDollarPrice && valueDollarPrice > 0) ? ('$' + valueDollarPrice?.toLocaleString()) + ' USD' : ''}</DollarAmount>
           </Box>
         </FormStack>
       </CenterBox>
