@@ -10,7 +10,6 @@ import TwoIcon from 'public/images/two-icon.svg'
 import CheckCircleOutlineRoundedIcon from 'public/images/check-mark-icon.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId: string, cometDetail: CometDetail, balance: number, onRefetchData: () => void }) => {
@@ -66,12 +65,12 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         {!noBorrowedAsset &&
           <Box>
             <Stack direction="row" justifyContent="space-between">
-              <Box><Typography variant='p_lg' color={'#989898'}>ILD Debt</Typography></Box>
-              <Box><Typography variant='p_lg' color={'#989898'}>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
+              <Box><Typography variant='p_lg'>ILD Debt</Typography></Box>
+              <Box><Typography variant='p_lg'>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between" mt='5px'>
-              <Box><Typography variant='p_lg' color={'#989898'}>USDi Wallet Balance</Typography></Box>
-              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#989898'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
+              <Box><Typography variant='p_lg'>USDi Wallet Balance</Typography></Box>
+              <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#fff'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
 
             {notEnoughBalance && <Box textAlign='right'><Typography variant='p' color='#ed2525'>Your Wallet Balance must be greater than ILD Debt</Typography></Box>}
@@ -90,10 +89,6 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
         </Stack>
 
         <SubmitButton sx={{ display: 'flex', justifyContent: 'space-between' }} onClick={() => onClose(1)} disabled={!noBorrowedAsset || loading}><Image src={TwoIcon} width={17} /> <Typography variant='p_lg'>Close Comet & Withdraw Collateral</Typography> <div></div></SubmitButton>
-
-        <Box display='flex' justifyContent='center'>
-          <DataLoadingIndicator />
-        </Box>
       </Box >
     </>
   )

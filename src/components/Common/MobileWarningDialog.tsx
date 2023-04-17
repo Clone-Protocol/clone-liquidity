@@ -46,7 +46,7 @@ const BoxWrapper = styled(Box)`
   text-align: center;
 `
 const MarketButton = styled(Button)`
-  width: 175px;
+  width: 195px;
   height: 37px;
   color: #fff;
   margin-top: 15px;

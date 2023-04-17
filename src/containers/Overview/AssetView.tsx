@@ -118,7 +118,7 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 						</Box>
 
 						<Box display='flex' justifyContent='center'>
-							<DataLoadingIndicator />
+							<DataLoadingIndicator onRefresh={() => refetch()} />
 						</Box>
 					</LeftBoxWrapper>
 				</Box>

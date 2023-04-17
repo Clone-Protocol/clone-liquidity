@@ -3,12 +3,10 @@ import { Box, Stack, Divider, Typography } from '@mui/material'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { styled } from '@mui/system'
 import { PositionInfo as PI, CometDetail } from '~/features/MyLiquidity/CometPosition.query'
-import ConcentrationRange from '~/components/Liquidity/comet/ConcentrationRange'
 import ConcentrationRangeBox from '~/components/Liquidity/comet/ConcentrationRangeBox'
 import HealthscoreView from '~/components/Liquidity/multipool/HealthscoreView'
 import InfoTooltip from '~/components/Common/InfoTooltip';
 import { TooltipTexts } from '~/data/tooltipTexts'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
@@ -110,10 +108,6 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
       <StyledDivider />
 
       <SubmitButton onClick={onRecenter} disabled={cometDetail.collAmount == 0}><Typography variant='p_lg'>Recenter</Typography></SubmitButton>
-
-      <Box display='flex' justifyContent='center'>
-        <DataLoadingIndicator />
-      </Box>
     </PositionWrapper>
   ) : (
     <></>
@@ -122,7 +116,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
 
 const PositionWrapper = styled(Box)`
   color: #fff; 
-  padding: 20px 5px; 
+  padding: 20px 5px 0px 5px; 
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};

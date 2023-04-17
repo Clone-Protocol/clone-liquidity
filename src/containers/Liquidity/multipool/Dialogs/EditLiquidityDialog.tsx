@@ -158,7 +158,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
               <RightBox>
                 <Typography variant='h8'>Projected Values</Typography>
                 {mintRatio > 0 ?
-                  <BoxWithBorder mt='13px' padding='6px 20px'>
+                  <BoxWithBorder mt='7px' padding='6px 20px 0px 20px'>
                     <Box>
                       <Box><Typography variant='p'>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedMultipoolEditHealthScore} /></Typography></Box>
                       <Box py='10px'><HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} hideIndicator={true} width={430} /></Box>
@@ -173,7 +173,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                 <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>Edit Liquidity Position</SubmitButton>
 
                 <Box display='flex' justifyContent='center'>
-                  <DataLoadingIndicator />
+                  <DataLoadingIndicator onRefresh={() => refetch()} />
                 </Box>
               </RightBox>
             </Stack>

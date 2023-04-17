@@ -4,12 +4,14 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 
 export const REFETCH_CYCLE = 30000
 
-const DataLoadingIndicator = () => {
+const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
   const { startTimer } = useDataLoading()
   const [progress, setProgress] = useState(0);
+  const [isEnabled, setIsEnabled] = useState(true);
+
+  let timer: any = null
 
   useEffect(() => {
-    let timer: any = null
     if (startTimer) {
       console.log('start Timer')
       timer = setInterval(() => {
@@ -25,8 +27,22 @@ const DataLoadingIndicator = () => {
     };
   }, [startTimer]);
 
+  const handleRefresh = () => {
+    if (isEnabled) {
+      setProgress(0)
+      clearInterval(timer)
+
+      onRefresh && onRefresh()
+
+      setIsEnabled(false)
+      setTimeout(() => {
+        setIsEnabled(true)
+      }, 4500)
+    }
+  }
+
   return (
-    <Wrapper>
+    <Wrapper onClick={handleRefresh}>
       <div style={{ marginRight: '8px', marginTop: '-5px' }}>Rate refreshes in</div>
       <Box sx={{ position: 'relative' }}>
         <CircularProgress
@@ -57,4 +73,5 @@ const Wrapper = styled(Box)`
   font-size: 10px;
   font-weight: 500;
   color: #868686;
+  cursor: pointer;
 `

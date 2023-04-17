@@ -69,7 +69,7 @@ const ValueBox = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
 	width: 62px;
 	height: 35px;
-	padding-top: 5px;
+	padding-top: 3px;
 `
 
 export default RatioSlider

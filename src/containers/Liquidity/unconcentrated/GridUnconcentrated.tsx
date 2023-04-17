@@ -19,7 +19,7 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 	const [showManageDialog, setShowManageDialog] = useState(false)
 	const [selectRow, setSelectRow] = useState<any>(null)
 
-	const { data: pools } = useUnconcentPoolsQuery({
+	const { data: pools, refetch } = useUnconcentPoolsQuery({
 		userPubKey: publicKey,
 		filter,
 		refetchOnMount: "always",
@@ -48,6 +48,7 @@ const GridUnconcentrated: React.FC<Props> = ({ filter }) => {
 					assetId={selectRow.id}
 					pool={selectRow}
 					handleClose={() => setShowManageDialog(false)}
+					onRefetchData={() => refetch()}
 				/>
 			}
 		</>

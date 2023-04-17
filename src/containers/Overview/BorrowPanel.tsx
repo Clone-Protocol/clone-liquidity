@@ -16,6 +16,7 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 
 const RISK_RATIO_VAL = 170
 
@@ -234,6 +235,10 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
         </Box>
       </Box>
 
+      <Box display='flex' justifyContent='center'>
+        <DataLoadingIndicator onRefresh={() => refetch()} />
+      </Box>
+
       <ChooseAssetDialog
         open={openChooseAsset}
         handleChooseAsset={handleChooseAsset}
@@ -255,6 +260,9 @@ const SelectPoolBox = styled(Box)`
   background: ${(props) => props.theme.boxes.black};
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  &:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
+  }
 `
 
 export default withSuspense(BorrowPanel, <LoadingProgress />)

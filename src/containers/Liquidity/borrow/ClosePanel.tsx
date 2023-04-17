@@ -8,7 +8,6 @@ import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosit
 import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
@@ -63,10 +62,6 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
           <SubmitButton onClick={redirectToMarket}><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to go to Incept Markets to acquire this iAsset</Typography></SubmitButton>
         }
         <SubmitButton onClick={onClose} disabled={!canCloseComet} sx={{ marginTop: '2px' }}><Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography></SubmitButton>
-
-        <Box display='flex' justifyContent='center'>
-          <DataLoadingIndicator />
-        </Box>
       </Box>
     </>
   )

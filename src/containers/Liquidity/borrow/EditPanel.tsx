@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Box } from '@mui/material'
-import { styled } from '@mui/system'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditDetailDialog from './EditDetailDialog'
@@ -12,7 +11,7 @@ const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, 
   const borrowIndex = parseInt(assetId)
 
   return borrowDetail ? (
-    <Wrapper>
+    <Box>
       <PositionInfo
         positionInfo={borrowDetail}
         onShowEditForm={() => setOpenEditDetail(true)}
@@ -34,13 +33,8 @@ const EditPanel = ({ assetId, borrowDetail, onRefetchData }: { assetId: string, 
         onHideEditForm={() => setOpenBorrowMore(false)}
         onRefetchData={() => onRefetchData()}
       />
-    </Wrapper>
+    </Box>
   ) : <></>
 }
-
-const Wrapper = styled(Box)`
-  color: #fff;
-  border-radius: 10px;
-`
 
 export default EditPanel

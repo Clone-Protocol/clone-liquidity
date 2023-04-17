@@ -48,18 +48,23 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
 
   const cometIndex = parseInt(assetId)
 
-  const { data: cometDetail } = useCometDetailQuery({
+  const { data: cometDetail, refetch } = useCometDetailQuery({
     userPubKey: publicKey,
     index: cometIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   })
 
-  const { data: usdiBalance, refetch } = useBalanceQuery({
+  const { data: usdiBalance, refetch: refetchBalance } = useBalanceQuery({
     userPubKey: publicKey,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: open && publicKey != null
   });
+
+  const refetchData = () => {
+    refetch()
+    refetchBalance()
+  }
 
   useEffect(() => {
     if (usdiBalance && cometData) {
@@ -112,7 +117,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
 
       if (data) {
         console.log('data', data)
-        refetch()
+        refetchData()
         onRefetchData && onRefetchData()
         handleClose()
         //hacky sync
@@ -159,7 +164,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
               </BottomBox>
             </Box>
 
-            <BoxWithBorder mt='13px' padding='21px 24px'>
+            <BoxWithBorder mt='13px' padding='13px 24px'>
               <Box>
                 <Box><Typography variant='p'>Projected Liquidity Concentration Range</Typography> <InfoTooltip title={TooltipTexts.projectedLiquidityConcRange} /></Box>
                 <EditConcentrationRangeBox assetData={cometDetail} cometData={cometData} currentLowerLimit={cometData.lowerLimit} currentUpperLimit={cometData.upperLimit} />
@@ -183,7 +188,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
             </SubmitButton>
 
             <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator />
+              <DataLoadingIndicator onRefresh={() => refetchData()} />
             </Box>
           </BoxWrapper>
         </DialogContent>

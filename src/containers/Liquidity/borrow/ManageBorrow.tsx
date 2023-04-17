@@ -19,6 +19,7 @@ import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
 import { StyledDivider } from '~/components/Common/StyledDivider'
+import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
@@ -65,6 +66,10 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
           <TabPanelForEdit value={tab} index={1}>
             <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
           </TabPanelForEdit>
+
+          <Box display='flex' justifyContent='center'>
+            <DataLoadingIndicator onRefresh={() => refetch()} />
+          </Box>
         </LeftBoxWrapper>
       </Box>
       <RightBoxWrapper>
