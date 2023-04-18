@@ -70,19 +70,19 @@ export const ASSETS = [
 		tickerName: 'iTesla',
 		tickerSymbol: 'iTLSA',
 		tickerIcon: '/images/assets/tesla.png',
-		pythSymbol: 'Crypto.TSLA/USD'
+		pythSymbol: 'Equity.US.TSLA/USD'
 	},
 	{
 		tickerName: 'iApple',
 		tickerSymbol: 'iAAPL',
 		tickerIcon: '/images/assets/apple.png',
-		pythSymbol: 'Crypto.AAPL/USD'
+		pythSymbol: 'Equity.US.AAPL/USD'
 	},
 	{
 		tickerName: 'iAmazon',
 		tickerSymbol: 'iAMZN',
 		tickerIcon: '/images/assets/amazon.png',
-		pythSymbol: 'Crypto.AMZN/USD'
+		pythSymbol: 'Equity.US.AMZN/USD'
 	},
 ]
 
