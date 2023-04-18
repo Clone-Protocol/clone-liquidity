@@ -72,7 +72,7 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
               if (!value || value <= 0) {
                 return ''
               } else if (value > unconcentData?.iassetVal) {
-                return 'The borrowing amount cannot exceed the balance.'
+                return 'The deposit amount cannot exceed the balance.'
               }
             }
           }}
@@ -137,7 +137,7 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
         />
         <FormHelperText error={!!errors.borrowTo?.message}>{errors.borrowTo?.message}</FormHelperText>
       </Box>
-      <SubmitButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid || isSubmitting}>Deposit</SubmitButton>
+      <SubmitButton onClick={handleSubmit(onDeposit)} disabled={!isDirty || !isValid || isSubmitting || unconcentData?.iassetVal === 0}>Deposit</SubmitButton>
     </>
   ) : <></>
 }

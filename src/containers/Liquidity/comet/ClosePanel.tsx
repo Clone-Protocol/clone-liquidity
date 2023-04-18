@@ -69,7 +69,7 @@ const ClosePanel = ({ assetId, cometDetail, balance, onRefetchData }: { assetId:
               <Box><Typography variant='p_lg'>{Math.abs(cometDetail.ild).toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
             <Stack direction="row" justifyContent="space-between" mt='5px'>
-              <Box><Typography variant='p_lg'>USDi Wallet Balance</Typography></Box>
+              <Box><Typography variant='p_lg'>{cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol} Wallet Balance</Typography></Box>
               <Box><Typography variant='p_lg' color={notEnoughBalance ? '#ed2525' : '#fff'}>{balance.toLocaleString()} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography></Box>
             </Stack>
 
