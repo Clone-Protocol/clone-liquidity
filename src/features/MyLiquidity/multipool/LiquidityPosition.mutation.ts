@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
 import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
@@ -8,6 +8,7 @@ import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
+import { getAssociatedTokenAddress } from "@solana/spl-token"
 
 export const callNew = async ({ program, userPubKey, setTxState, data }: CallNewProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -154,7 +155,66 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 	await program.loadManager()
 
-	//@TODO
+	const [iAssetAssociatedToken, usdiAssociatedToken, userAccount] = await Promise.all([
+		getAssociatedTokenAddress(
+			data.iassetMint,
+			program.provider.publicKey!,
+		),
+		getAssociatedTokenAddress(
+			program.incept!.usdiMint,
+			program.provider.publicKey!,
+		),
+		program.getUserAccount()
+	])
+
+	const [userAccountAddress, bump] = PublicKey.findProgramAddressSync(
+		[Buffer.from("user"), userPubKey.toBuffer()],
+		program.programId
+	  )
+
+	// Pay ILD && withdraw all liquidity
+	let ixnCalls: Promise<TransactionInstruction>[] = [
+		program.updatePricesInstruction(),
+	]
+
+	if (data.positionLpTokens > 0) {
+		program.withdrawLiquidityFromCometInstruction(
+			toDevnetScale(data.positionLpTokens),
+			data.positionIndex,
+			iAssetAssociatedToken,
+			usdiAssociatedToken,
+			false
+		)
+	}
+
+	if (data.ildDebt > 0) {
+		ixnCalls.push(
+			program.payCometILDInstruction(
+				data.positionIndex,
+				toDevnetScale(data.balance),
+				data.ildInUsdi,
+				iAssetAssociatedToken,
+				usdiAssociatedToken,
+				false
+			)
+		)
+	}
+
+	ixnCalls.push(
+		program.program.methods
+			.removeCometPosition(data.positionIndex)
+			.accounts({
+				user: userPubKey,
+				userAccount: userAccountAddress,
+				incept: program.inceptAddress[0],
+				tokenData: program.incept!.tokenData,
+				comet: userAccount.comet,
+			})
+			.instruction()
+	)
+
+	const ixns = await Promise.all(ixnCalls)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true
@@ -163,6 +223,11 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 type CloseFormData = {
 	positionIndex: number
+	ildInUsdi: boolean
+	ildDebt: number
+	balance: number
+	iassetMint: PublicKey
+	positionLpTokens: number
 }
 interface CallCloseProps {
 	program: InceptClient

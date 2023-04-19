@@ -38,7 +38,12 @@ const CloseLiquidityDialog = ({
     try {
       const data = await mutateAsync(
         {
-          positionIndex
+          positionIndex,
+          ildInUsdi: positionInfo!.ildInUsdi!,
+          ildDebt: positionInfo!.ildDebt,
+          balance: positionInfo?.ildInUsdi! ? positionInfo?.usdiVal! : positionInfo?.iassetVal!,
+          iassetMint: positionInfo?.iassetMint!,
+          positionLpTokens: positionInfo?.positionLpTokens!
         }
       )
 
@@ -54,7 +59,13 @@ const CloseLiquidityDialog = ({
   }
 
   const displayILDDebt = () => {
-    return Math.max(0, positionInfo!.ildDebt).toLocaleString()
+    const currency = positionInfo!.ildInUsdi ? 'USDi' : positionInfo!.tickerSymbol 
+    return `${Math.max(0, positionInfo!.ildDebt).toLocaleString()} ${currency}`
+  }
+
+  const displayWalletBalance = () => {
+    const val = positionInfo?.ildInUsdi ? positionInfo?.usdiVal : positionInfo?.iassetVal
+    return val!.toLocaleString(undefined, { maximumFractionDigits: 5 })
   }
 
   return positionInfo ? (
@@ -75,13 +86,13 @@ const CloseLiquidityDialog = ({
             <Box marginTop='20px' marginBottom='22px'>
               <Box display='flex' justifyContent='flex-end'>
                 <Typography variant='p' color='#989898'>Wallet Balance: </Typography>
-                <Typography variant='p' ml='5px'>{positionInfo.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+                <Typography variant='p' ml='5px'>{displayWalletBalance()}</Typography>
               </Box>
               <CenterBox>
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p'>ILD Debt</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box lineHeight={0.95}>
-                    <Box><Typography variant='p_xlg'>{displayILDDebt()} {positionInfo.tickerSymbol}</Typography></Box>
+                    <Box><Typography variant='p_xlg'>{displayILDDebt()}</Typography></Box>
                     <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.ildDebtDollarPrice.toLocaleString()}</Typography></Box>
                   </Box>
                 </Stack>
