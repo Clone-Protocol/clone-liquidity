@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -25,6 +25,7 @@ const CloseLiquidityDialog = ({
   handleClose: () => void
 }) => {
   const { publicKey } = useWallet()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
@@ -34,8 +35,9 @@ const CloseLiquidityDialog = ({
   })
 
   const { mutateAsync } = useClosePositionMutation(publicKey)
-  const handleRecenter = async () => {
+  const handleClosePosition = async () => {
     try {
+      setIsSubmitting(true)
       const data = await mutateAsync(
         {
           positionIndex,
@@ -55,12 +57,14 @@ const CloseLiquidityDialog = ({
       }
     } catch (err) {
       console.error(err)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   const displayILDDebt = () => {
-    const currency = positionInfo!.ildInUsdi ? 'USDi' : positionInfo!.tickerSymbol 
-    return `${Math.max(0, positionInfo!.ildDebt).toLocaleString()} ${currency}`
+    const currency = positionInfo!.ildInUsdi ? 'USDi' : positionInfo!.tickerSymbol
+    return `${Math.max(0, positionInfo!.ildDebt).toLocaleString(undefined, { maximumFractionDigits: 5 })} ${currency}`
   }
 
   const displayWalletBalance = () => {
@@ -106,7 +110,7 @@ const CloseLiquidityDialog = ({
               </Box>
             </BoxWithBorder>
 
-            <SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToClose}>
+            <SubmitButton onClick={() => handleClosePosition()} disabled={!positionInfo.isValidToClose || isSubmitting}>
               Pay ILD & Close Liquidity Position
             </SubmitButton>
 
