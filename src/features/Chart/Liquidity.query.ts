@@ -6,8 +6,8 @@ export interface ChartElem {
   value: number
 }
 
-export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTime}) => {
-	const chartData = [
+export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
+  const chartData = [
     {
       time: '2022-03-01',
       value: 15
@@ -35,37 +35,9 @@ export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTim
   }
 }
 
-export const fetchTotalUsers = async ({ timeframe } : { timeframe: FilterTime}) => {
-	const chartData = [
-    {
-      time: '2022-03-01',
-      value: 35
-    },
-    {
-      time: '2022-03-02',
-      value: 55
-    },
-    {
-      time: '2022-03-03',
-      value: 90
-    },
-    {
-      time: '2022-03-04',
-      value: 185
-    },
-    {
-      time: '2022-03-05',
-      value: 235
-    },
-  ]
 
-  return {
-    chartData,
-  }
-}
-
-export const fetchTotalVolume = async ({ timeframe } : { timeframe: FilterTime}) => {
-	const chartData = [
+export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
+  const chartData = [
     {
       time: '2022-03-01',
       value: 15
@@ -93,34 +65,6 @@ export const fetchTotalVolume = async ({ timeframe } : { timeframe: FilterTime})
   }
 }
 
-export const fetchTotalLiquidation = async ({ timeframe } : { timeframe: FilterTime}) => {
-	const chartData = [
-    {
-      time: '2022-03-01',
-      value: 65
-    },
-    {
-      time: '2022-03-02',
-      value: 45
-    },
-    {
-      time: '2022-03-03',
-      value: 180
-    },
-    {
-      time: '2022-03-04',
-      value: 65
-    },
-    {
-      time: '2022-03-05',
-      value: 95
-    },
-  ]
-
-  return {
-    chartData,
-  }
-}
 
 interface GetProps {
   timeframe: FilterTime
@@ -135,22 +79,8 @@ export function useTotalLiquidityQuery({ timeframe, refetchOnMount, enabled = tr
   })
 }
 
-export function useTotalUsersQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['totalUsers', timeframe], () => fetchTotalUsers({ timeframe }), {
-    refetchOnMount,
-    enabled
-  })
-}
-
 export function useTotalVolumeQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
   return useQuery(['totalVolume', timeframe], () => fetchTotalVolume({ timeframe }), {
-    refetchOnMount,
-    enabled
-  })
-}
-
-export function useTotalLiquidationQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['totalLiquidation', timeframe], () => fetchTotalLiquidation({ timeframe }), {
     refetchOnMount,
     enabled
   })

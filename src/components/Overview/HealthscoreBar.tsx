@@ -10,10 +10,10 @@ interface Props {
 
 const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
   const scorePoint = score ? width * score / 100 - 15 : -15
-  const prevScorePoint = prevScore ? width * prevScore / 100 - 9 : -9
+  const prevScorePoint = prevScore ? width * prevScore / 100 - 10 : -10
   return (
     <Box>
-      {scorePoint >= 0 ?
+      {score && score >= 0 ?
         <Box p='6px 20px'>
           <Box sx={{ marginLeft: `${scorePoint}px` }}>
             {!hiddenThumbTitle && <Box sx={{ marginLeft: '-5px' }}><Typography variant='p_sm'>New</Typography></Box>}
@@ -61,7 +61,7 @@ const ScorePointer = styled(Box)`
     content: '▼';
     position: relative;
     left: 3px;
-    top: -5px;
+    top: -4px;
   }
 `
 const ScoreBar = styled(Box)`
@@ -78,17 +78,17 @@ const FixValueLabel = styled(Box)`
   height: 28px;
   padding: 4px 8px;
   margin-top: 8px;
-  margin-left: -16px;
+  margin-left: -15px;
   border: solid 1px ${(props) => props.theme.palette.text.secondary};
   text-align: center;
   font-size: 12px;
   font-weight: 500;
   color: ${(props) => props.theme.palette.text.secondary};
-  &::after {
+  &::before {
     content: '▲';
-    position: relative;
-    left: -13px;
-    top: -17px;
+    position: absolute;
+    left: -3px;
+    top: -13px;
   }
 `
 
