@@ -93,7 +93,7 @@ const CloseLiquidityDialog = ({
                   <Box><Typography variant='p'>ILD Debt</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box lineHeight={0.95}>
                     <Box><Typography variant='p_xlg'>{displayILDDebt()}</Typography></Box>
-                    <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.ildDebtDollarPrice.toLocaleString()}</Typography></Box>
+                    <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.ildDebtNotionalValue.toLocaleString()}</Typography></Box>
                   </Box>
                 </Stack>
               </CenterBox>

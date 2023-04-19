@@ -162,7 +162,8 @@ export const fetchCloseLiquidityPosition = async ({
 	let ildInUsdi = usdiILD > 0
 	let ildDebt = ildInUsdi ? usdiILD : iAssetILD
 	let ildDebtDollarPrice = ildInUsdi ? 1 : oraclePrice
-	let healthScore = prevHealthScore + toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebt * ildDebtDollarPrice / totalCollateralAmount
+	let ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
+	let healthScore = prevHealthScore + toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue / totalCollateralAmount
 	let isValidToClose = ildInUsdi ? balance?.usdiVal! >= usdiILD : balance?.iassetVal! >= iAssetILD
 
 	return {
@@ -175,7 +176,7 @@ export const fetchCloseLiquidityPosition = async ({
 		healthScore,
 		prevHealthScore,
 		ildDebt,
-		ildDebtDollarPrice,
+		ildDebtNotionalValue,
 		iassetVal: balance?.iassetVal!,
 		usdiVal: balance?.usdiVal!,
 		isValidToClose,
@@ -195,7 +196,7 @@ export interface CloseLiquidityPositionInfo {
 	healthScore: number
 	prevHealthScore: number
 	ildDebt: number
-	ildDebtDollarPrice: number
+	ildDebtNotionalValue: number
 	iassetVal?: number
 	usdiVal?: number
 	isValidToClose: boolean
