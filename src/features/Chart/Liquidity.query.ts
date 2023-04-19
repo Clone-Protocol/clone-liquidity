@@ -80,8 +80,10 @@ export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTim
       temp.push({time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE)})
   }
 
+  const chartData = fillInTimeGaps(temp, moment().utc().unix())
+
   return {
-    chartData: fillInTimeGaps(temp, moment().utc().unix())
+    chartData
   }
 }
 
@@ -160,8 +162,10 @@ export const fetchTotalVolume = async ({ timeframe } : { timeframe: FilterTime})
       temp.push({time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE)})
   }
 
+  const chartData = fillInTimeGaps(temp, moment().utc().unix())
+
   return {
-    chartData: fillInTimeGaps(temp, moment().utc().unix())
+    chartData
   }
 }
 
