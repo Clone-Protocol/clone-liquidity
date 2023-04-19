@@ -9,7 +9,7 @@ import LineChartAlt from '~/components/Charts/LineChartAlt'
 // import { unixToDate } from '~/utils/date'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
 import { TimeTabs, TimeTab, FilterTimeMap, FilterTime } from '~/components/Charts/TimeTabs'
-import { useTotalLiquidityQuery, useTotalUsersQuery } from '~/features/Chart/Liquidity.query'
+import { useTotalLiquidityQuery, useTotalVolumeQuery } from '~/features/Chart/Liquidity.query'
 
 const LineChart: React.FC = () => {
   // const LineChart = dynamic(() => import('~/components/Charts/LineChart'), { loading: () => <p>Loading ...</p>, ssr: false });
@@ -30,7 +30,7 @@ const LineChart: React.FC = () => {
     refetchOnMount: false,
     enabled: tab === 0
   })
-  const { data: totalUsers } = useTotalUsersQuery({
+  const { data: totalVolume } = useTotalVolumeQuery({
     timeframe: filterTime,
     refetchOnMount: false,
     enabled: tab === 1
@@ -41,10 +41,10 @@ const LineChart: React.FC = () => {
       if (tab === 0) {
         setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length - 1].value)
       } else {
-        setChartHover(totalUsers?.chartData[totalUsers?.chartData.length - 1].value)
+        setChartHover(totalVolume?.chartData[totalVolume?.chartData.length - 1].value)
       }
     }
-  }, [chartHover, totalLiquidity, totalUsers, tab])
+  }, [chartHover, totalLiquidity, totalVolume, tab])
 
   // const formattedData = useMemo(() => {
   //   if (chartData) {
@@ -61,7 +61,7 @@ const LineChart: React.FC = () => {
 
   return (
     <LineChartAlt
-      data={tab === 0 ? totalLiquidity?.chartData : totalUsers?.chartData}
+      data={tab === 0 ? totalLiquidity?.chartData : totalVolume?.chartData}
       value={chartHover}
       setValue={setChartHover}
       topLeft={
