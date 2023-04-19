@@ -13,7 +13,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
   const prevScorePoint = prevScore ? width * prevScore / 100 - 10 : -10
   return (
     <Box>
-      {scorePoint >= 0 ?
+      {score && score >= 0 ?
         <Box p='6px 20px'>
           <Box sx={{ marginLeft: `${scorePoint}px` }}>
             {!hiddenThumbTitle && <Box sx={{ marginLeft: '-5px' }}><Typography variant='p_sm'>New</Typography></Box>}
@@ -29,7 +29,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
             </Box>}
             {prevScore &&
               <PrevBox sx={{ left: `${prevScorePoint}px` }}>
-                <FixValueLabel><Typography variant='p' ml='-13px'>{prevScore?.toFixed(0)}</Typography></FixValueLabel>
+                <FixValueLabel><Typography variant='p'>{prevScore?.toFixed(0)}</Typography></FixValueLabel>
                 <Box ml='-18px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
               </PrevBox>
             }
@@ -86,9 +86,9 @@ const FixValueLabel = styled(Box)`
   color: ${(props) => props.theme.palette.text.secondary};
   &::before {
     content: '▲';
-    position: relative;
-    left: 2px;
-    top: -17px;
+    position: absolute;
+    left: -3px;
+    top: -13px;
   }
 `
 
