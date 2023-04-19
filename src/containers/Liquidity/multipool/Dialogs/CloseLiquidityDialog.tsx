@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -25,6 +25,7 @@ const CloseLiquidityDialog = ({
   handleClose: () => void
 }) => {
   const { publicKey } = useWallet()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
@@ -34,11 +35,17 @@ const CloseLiquidityDialog = ({
   })
 
   const { mutateAsync } = useClosePositionMutation(publicKey)
-  const handleRecenter = async () => {
+  const handleClosePosition = async () => {
     try {
+      setIsSubmitting(true)
       const data = await mutateAsync(
         {
-          positionIndex
+          positionIndex,
+          ildInUsdi: positionInfo!.ildInUsdi!,
+          ildDebt: positionInfo!.ildDebt,
+          balance: positionInfo?.ildInUsdi! ? positionInfo?.usdiVal! : positionInfo?.iassetVal!,
+          iassetMint: positionInfo?.iassetMint!,
+          positionLpTokens: positionInfo?.positionLpTokens!
         }
       )
 
@@ -50,11 +57,19 @@ const CloseLiquidityDialog = ({
       }
     } catch (err) {
       console.error(err)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   const displayILDDebt = () => {
-    return Math.max(0, positionInfo!.ildDebt).toLocaleString()
+    const currency = positionInfo!.ildInUsdi ? 'USDi' : positionInfo!.tickerSymbol
+    return `${Math.max(0, positionInfo!.ildDebt).toLocaleString(undefined, { maximumFractionDigits: 5 })} ${currency}`
+  }
+
+  const displayWalletBalance = () => {
+    const val = positionInfo?.ildInUsdi ? positionInfo?.usdiVal : positionInfo?.iassetVal
+    return val!.toLocaleString(undefined, { maximumFractionDigits: 5 })
   }
 
   return positionInfo ? (
@@ -75,13 +90,13 @@ const CloseLiquidityDialog = ({
             <Box marginTop='20px' marginBottom='22px'>
               <Box display='flex' justifyContent='flex-end'>
                 <Typography variant='p' color='#989898'>Wallet Balance: </Typography>
-                <Typography variant='p' ml='5px'>{positionInfo.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+                <Typography variant='p' ml='5px'>{displayWalletBalance()}</Typography>
               </Box>
               <CenterBox>
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p'>ILD Debt</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box lineHeight={0.95}>
-                    <Box><Typography variant='p_xlg'>{displayILDDebt()} {positionInfo.tickerSymbol}</Typography></Box>
+                    <Box><Typography variant='p_xlg'>{displayILDDebt()}</Typography></Box>
                     <Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.ildDebtDollarPrice.toLocaleString()}</Typography></Box>
                   </Box>
                 </Stack>
@@ -95,7 +110,7 @@ const CloseLiquidityDialog = ({
               </Box>
             </BoxWithBorder>
 
-            <SubmitButton onClick={() => handleRecenter()} disabled={!positionInfo.isValidToClose}>
+            <SubmitButton onClick={() => handleClosePosition()} disabled={!positionInfo.isValidToClose || isSubmitting}>
               Pay ILD & Close Liquidity Position
             </SubmitButton>
 

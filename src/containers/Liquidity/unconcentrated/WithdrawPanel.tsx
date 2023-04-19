@@ -103,7 +103,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
               </Box>
               <Box lineHeight={1} textAlign='right'>
                 <Box><Typography variant='p_xlg'>{(amount / unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
-                <Box><Typography variant='p' color='#989898'>${(amount * unconcentData.price).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD</Typography></Box>
+                <Box><Typography variant='p' color='#989898'>${(amount).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD</Typography></Box>
               </Box>
             </Stack>
           </FormBox>

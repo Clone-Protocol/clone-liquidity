@@ -386,7 +386,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                     </Box>
                     <Box mt='20px' mb='10px'>
                       <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Box>
-                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={430} />
+                      <HealthscoreBar score={healthScore} prevScore={defaultValues.healthScore} hideIndicator={true} width={365} />
                       {hasRiskScore &&
                         <WarningMsg> This position will have high possibility to become subject to liquidation. </WarningMsg>
                       }

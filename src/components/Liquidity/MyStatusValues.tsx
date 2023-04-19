@@ -67,7 +67,7 @@ const MyStatusValues = ({ tab, status }: { tab: number, status: Status }) => {
       {tab === 3 &&
         <Stack direction='row'>
           <Box marginRight='66px'>
-            <Box><Typography variant='p' color='#989898'>Total Liquidity Value</Typography></Box>
+            <Box><Typography variant='p' color='#989898'>Total Debt Value</Typography></Box>
             <Box>
               <Typography variant='p_xlg'>
                 {

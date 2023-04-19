@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import EditConcentrationRangeBox from '~/components/Liquidity/comet/EditConcentrationRangeBox'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
-import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { useRecenterMutation } from '~/features/Comet/Comet.mutation'
@@ -134,7 +133,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
       return false
 
     return Math.abs(cometData.centerPrice - cometData.poolPrice) / cometData.centerPrice >= 0.001 &&
-      usdiBalance?.balanceVal! >= cometData.usdiCost
+      usdiBalance?.balanceVal! >= cometData.usdiCost && cometData.usdiCost > 0
   }
 
   return (
@@ -143,9 +142,9 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
         <DialogContent sx={{ background: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='16px'><Typography variant='p_xlg'>Recenter Comet Position</Typography></Box>
-            <TipMsg>
+            <StyledTipMsg>
               <Image src={InfoIcon} /> <Typography variant='p' ml='10px' maxWidth='340px' textAlign='left' lineHeight='13px' sx={{ cursor: 'pointer' }}>Recentering is an important function of Comet. Click here to learn more about how recentering works.</Typography>
-            </TipMsg>
+            </StyledTipMsg>
             <Box marginTop='20px' marginBottom='22px'>
               <Box display='flex' justifyContent='flex-end'>
                 <Typography variant='p' color='#989898'>Wallet Balance: </Typography>
@@ -155,7 +154,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box>
-                    <Typography variant='p_xlg'>{Math.max(0, cometData.usdiCost).toLocaleString()} USDi</Typography>
+                    <Typography variant='p_xlg'>{Math.max(0, cometData.usdiCost).toLocaleString(undefined, { maximumFractionDigits: 5 })} USDi</Typography>
                   </Box>
                 </Stack>
               </CenterBox>
@@ -213,6 +212,17 @@ const BottomBox = styled(Box)`
 `
 const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.boxes.greyShade};
+`
+const StyledTipMsg = styled(Box)`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 12px;
+	font-weight: 500;
+	text-align: center;
+	background-color: ${(props) => props.theme.boxes.black};
+	color: ${(props) => props.theme.palette.text.secondary};
+	height: 38px;
 `
 
 export default RecenterDialog

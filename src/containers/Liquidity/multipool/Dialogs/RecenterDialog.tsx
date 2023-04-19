@@ -81,7 +81,7 @@ const RecenterDialog = ({
 									<Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
 									<Box lineHeight={0.95}>
 										<Box><Typography variant='p_xlg'>{displayRecenterCost()} USDi</Typography></Box>
-										<Box textAlign='right'><Typography variant='p' color='#989898'>${positionInfo.recenterCostDollarPrice.toLocaleString()}</Typography></Box>
+										<Box textAlign='right'><Typography variant='p' color='#989898'>${displayRecenterCost()}</Typography></Box>
 									</Box>
 								</Stack>
 							</CenterBox>

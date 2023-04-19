@@ -66,7 +66,7 @@ const LineChart: React.FC = () => {
       setValue={setChartHover}
       topLeft={
         <Box>
-          <Box>
+          <Box ml='20px'>
             <StyledTabs value={tab} onChange={handleChangeTab}>
               <StyledTab value={0} label="Total Liquidity"></StyledTab>
               <StyledTab value={1} label="Total Volume"></StyledTab>

@@ -208,22 +208,8 @@ export function useTotalLiquidityQuery({ timeframe, refetchOnMount, enabled = tr
   })
 }
 
-export function useTotalUsersQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['totalUsers', timeframe], () => fetchTotalUsers({ timeframe }), {
-    refetchOnMount,
-    enabled
-  })
-}
-
 export function useTotalVolumeQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
   return useQuery(['totalVolume', timeframe], () => fetchTotalVolume({ timeframe }), {
-    refetchOnMount,
-    enabled
-  })
-}
-
-export function useTotalLiquidationQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['totalLiquidation', timeframe], () => fetchTotalLiquidation({ timeframe }), {
     refetchOnMount,
     enabled
   })

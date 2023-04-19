@@ -95,7 +95,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
             }}
             value={ratio}
             min={min}
-            step={5}
+            step={1}
             max={max}
             valueLabelFormat={valueLabelFormat}
             onChange={handleChangeMintRatio}
