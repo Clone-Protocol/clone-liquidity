@@ -5,7 +5,7 @@ import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
-import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { getHealthScore, getILD, getEffectiveUSDCollateralValue } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -136,7 +136,8 @@ export const fetchCloseLiquidityPosition = async ({
 	const position = comet.positions[index]
 	const poolIndex = Number(position.poolIndex)
 	const pool = tokenData.pools[poolIndex]
-
+	const iassetMint = pool.assetInfo.iassetMint
+	const positionLpTokens = toNumber(position.liquidityTokenValue)
 
 	const balance = await fetchBalance({
 		program,
@@ -145,18 +146,24 @@ export const fetchCloseLiquidityPosition = async ({
 		setStartTimer
 	})
 
+	const {iAssetILD, usdiILD, oraclePrice } = getILD(tokenData, comet, poolIndex)[0];
+
 	let assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
 
 	let currentHealthScore = getHealthScore(tokenData, comet)
 	let prevHealthScore = currentHealthScore.healthScore
+	const totalCollateralAmount = getEffectiveUSDCollateralValue(
+		tokenData,
+		comet
+	);
 
-	// @TODO set proper value
-	let ildDebt = 0
-	let ildDebtDollarPrice = 0
-	let healthScore = 0
-	let isValidToClose = false
+	let ildInUsdi = usdiILD > 0
+	let ildDebt = ildInUsdi ? usdiILD : iAssetILD
+	let ildDebtDollarPrice = ildInUsdi ? 1 : oraclePrice
+	let healthScore = prevHealthScore + toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebt * ildDebtDollarPrice / totalCollateralAmount
+	let isValidToClose = ildInUsdi ? balance?.usdiVal! >= usdiILD : balance?.iassetVal! >= iAssetILD
 
 	return {
 		tickerIcon,
@@ -171,7 +178,10 @@ export const fetchCloseLiquidityPosition = async ({
 		ildDebtDollarPrice,
 		iassetVal: balance?.iassetVal!,
 		usdiVal: balance?.usdiVal!,
-		isValidToClose
+		isValidToClose,
+		ildInUsdi,
+		iassetMint,
+		positionLpTokens
 	}
 }
 
