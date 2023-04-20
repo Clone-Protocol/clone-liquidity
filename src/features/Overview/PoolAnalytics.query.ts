@@ -1,6 +1,5 @@
 import { Query, useQuery } from 'react-query'
 import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
-import { toNumber } from "incept-protocol-sdk/sdk/src/decimal"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -62,7 +61,7 @@ export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = 
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['poolAnalytics'], () => fetchPoolAnalytics({ tickerSymbol, program: getInceptApp(wallet), setStartTimer }), {
+    return useQuery(['poolAnalytics', tickerSymbol], () => fetchPoolAnalytics({ tickerSymbol, program: getInceptApp(wallet), setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

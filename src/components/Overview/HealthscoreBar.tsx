@@ -9,13 +9,15 @@ interface Props {
 }
 
 const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
-  const scorePoint = score ? width * score / 100 - 15 : -15
+  // score = 100
+  // prevScore = 100
+  const scorePoint = score ? width * score / 100 - 10 : -10
   const prevScorePoint = prevScore ? width * prevScore / 100 - 10 : -10
   return (
-    <Box>
+    <Box sx={{ width, margin: '0 auto' }}>
       {score && score >= 0 ?
-        <Box p='6px 20px'>
-          <Box sx={{ marginLeft: `${scorePoint}px` }}>
+        <Box py='6px'>
+          <Box sx={{ paddingLeft: `${scorePoint}px` }}>
             {!hiddenThumbTitle && <Box sx={{ marginLeft: '-5px' }}><Typography variant='p_sm'>New</Typography></Box>}
             <ScorePointer>
               <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
@@ -27,13 +29,14 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
               <Box><Typography variant='p_sm'>0 (Poor)</Typography></Box>
               <Box><Typography variant='p_sm'>(Excellent) 100</Typography></Box>
             </Box>}
-            {prevScore &&
-              <PrevBox sx={{ left: `${prevScorePoint}px` }}>
-                <FixValueLabel><Typography variant='p'>{prevScore?.toFixed(0)}</Typography></FixValueLabel>
-                <Box ml='-18px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
-              </PrevBox>
-            }
           </Box>
+          {prevScore &&
+            <PrevBox sx={{ paddingLeft: `${prevScorePoint}px` }}>
+              <IndicatorBox>▲</IndicatorBox>
+              <FixValueLabel><Typography variant='p'>{prevScore?.toFixed(0)}</Typography></FixValueLabel>
+              <Box ml='-12px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
+            </PrevBox>
+          }
         </Box>
         :
         <BoxWithBorder>
@@ -50,18 +53,20 @@ const BoxWithBorder = styled(Box)`
   margin-top: 16px;
 `
 const ScorePointer = styled(Box)`
-  margin-left: -10px;
-  margin-right: -10px;
+  margin-left: -9px;
+  margin-right: -9px;
   width: 34px;
   height: 28px;
   padding: 3px 6px;
   border: solid 1px #fff;
   margin-bottom: 13px;
+  font-size: 12px;
+  font-weight: 500;
   &::after {
     content: '▼';
     position: relative;
-    left: 3px;
-    top: -4px;
+    left: 4px;
+    top: -2px;
   }
 `
 const ScoreBar = styled(Box)`
@@ -69,27 +74,28 @@ const ScoreBar = styled(Box)`
   height: 4px;
   background-image: ${(props) => props.theme.gradients.healthscore};
 `
+const IndicatorBox = styled(Box)`
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 2px;
+  margin-bottom: -5px;
+  color: ${(props) => props.theme.palette.text.secondary};
+`
 const PrevBox = styled(Box)`
-  position: relative; 
   z-index: 20;
 `
 const FixValueLabel = styled(Box)`
   width: 34px;
   height: 28px;
+  display: flex;
+  justify-content: center;
   padding: 4px 8px;
-  margin-top: 8px;
-  margin-left: -15px;
+  margin-left: -10px;
   border: solid 1px ${(props) => props.theme.palette.text.secondary};
   text-align: center;
   font-size: 12px;
   font-weight: 500;
   color: ${(props) => props.theme.palette.text.secondary};
-  &::before {
-    content: '▲';
-    position: absolute;
-    left: -3px;
-    top: -13px;
-  }
 `
 
 export default HealthscoreBar

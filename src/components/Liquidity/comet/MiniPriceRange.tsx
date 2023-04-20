@@ -112,16 +112,15 @@ const CenterStick = styled('div')`
 	margin-top: -7px;
   z-index: 20;
 `
-const Stick = styled('div')`
-  position: relative;
-	border-radius: 0;
-	background: #fff;
-	width: 2px;
-	height: 3px;
-	margin-top: 0px;
-  z-index: 20;
-`
-
+// const Stick = styled('div')`
+//   position: relative;
+// 	border-radius: 0;
+// 	background: #fff;
+// 	width: 2px;
+// 	height: 3px;
+// 	margin-top: 0px;
+//   z-index: 20;
+// `
 const LeftBox = styled(Box)`
   width: 15px;
   height: 28px;
@@ -149,7 +148,7 @@ const RangeBar = styled('div')`
 `
 
 const HoverBox = styled(Box)`
-  width: 172px;
+  width: 192px;
   height: 45px;
   padding: 6px 17px;
   background-color: ${(props) => props.theme.boxes.greyShade};

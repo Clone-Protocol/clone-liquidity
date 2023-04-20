@@ -92,7 +92,7 @@ const FixValueLabel = styled(Box)`
   &::before {
     content: '▲';
     position: relative;
-    left: 26px;
+    left: 25px;
     top: -18px;
   }
 `
