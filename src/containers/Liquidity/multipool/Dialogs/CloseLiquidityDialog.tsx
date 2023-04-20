@@ -54,6 +54,9 @@ const CloseLiquidityDialog = ({
         refetch()
         onRefetchData()
         handleClose()
+
+        // hacky sync
+        location.reload()
       }
     } catch (err) {
       console.error(err)
