@@ -178,12 +178,14 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	]
 
 	if (data.positionLpTokens > 0) {
-		program.withdrawLiquidityFromCometInstruction(
-			toDevnetScale(data.positionLpTokens),
-			data.positionIndex,
-			iAssetAssociatedToken,
-			usdiAssociatedToken,
-			false
+		ixnCalls.push(
+			program.withdrawLiquidityFromCometInstruction(
+				toDevnetScale(data.positionLpTokens),
+				data.positionIndex,
+				iAssetAssociatedToken,
+				usdiAssociatedToken,
+				false
+			)
 		)
 	}
 
