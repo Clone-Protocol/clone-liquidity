@@ -43,7 +43,7 @@ export const ASSETS = [
 		pythSymbol: 'Crypto.SOL/USD'
 	},
 	{
-		tickerName: 'iEthereum',
+		tickerName: 'iEther',
 		tickerSymbol: 'iETH',
 		tickerIcon: '/images/assets/ethereum.png',
 		pythSymbol: 'Crypto.ETH/USD'
@@ -115,7 +115,7 @@ export const assetMapping = (index: number) => {
 			pythSymbol = 'Crypto.SOL/USD'
 			break
 		case Asset.Ethereum:
-			tickerName = 'iEthereum'
+			tickerName = 'iEther'
 			tickerSymbol = 'iETH'
 			tickerIcon = '/images/assets/ethereum.png'
 			assetType = AssetType.Crypto
@@ -172,20 +172,20 @@ export const assetMapping = (index: number) => {
 }
 
 export const collateralMapping = (index: number) => {
-  let collateralName = ''
-  let collateralType: number
-  switch (index) {
-    case Collateral.USDi:
-      collateralName = 'USDi'
-      collateralType = Collateral.USDi
-      break
-    case Collateral.mockUSDC:
-      collateralName = 'USDC'
-      collateralType = Collateral.mockUSDC
-      break
-    default:
-      throw new Error('Not supported')
-  }
+	let collateralName = ''
+	let collateralType: number
+	switch (index) {
+		case Collateral.USDi:
+			collateralName = 'USDi'
+			collateralType = Collateral.USDi
+			break
+		case Collateral.mockUSDC:
+			collateralName = 'USDC'
+			collateralType = Collateral.mockUSDC
+			break
+		default:
+			throw new Error('Not supported')
+	}
 
-  return { collateralName, collateralType }
+	return { collateralName, collateralType }
 }

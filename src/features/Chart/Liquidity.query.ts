@@ -9,7 +9,7 @@ export interface ChartElem {
   value: number
 }
 
-type TimeSeriesValue = {time: string, value: number}
+type TimeSeriesValue = { time: string, value: number }
 const MAX_ITERATIONS = 100000;
 
 const getMomentFromTimeframe = (timeframe: FilterTime) => {
@@ -28,15 +28,15 @@ const getMomentFromTimeframe = (timeframe: FilterTime) => {
     }
   })()
   return moment().utc(
-    ).subtract(daysLookback, 'days')
+  ).subtract(daysLookback, 'days')
 }
 
-const fillInTimeGaps = (arr: {time: number, value: number}[], endTimestamp: number): TimeSeriesValue[] =>  {
+const fillInTimeGaps = (arr: { time: number, value: number }[], endTimestamp: number): TimeSeriesValue[] => {
 
   let chartData: TimeSeriesValue[] = []
 
   if (arr.length === 0)
-    return [{time: moment(endTimestamp * 1e3).utc().format(), value: 0}]
+    return [{ time: moment(endTimestamp * 1e3).utc().format(), value: 0 }]
 
   let index = 0
   let startingTime = arr[0].time
@@ -44,26 +44,24 @@ const fillInTimeGaps = (arr: {time: number, value: number}[], endTimestamp: numb
 
   let N = Math.floor((endTimestamp - startingTime) / 3600)
 
-  for (let i = 0; i<N; i++) {
+  for (let i = 0; i < N; i++) {
     let currentTime = startingTime + 3600 * i
-    let {time, value} = arr[index]
+    let { time, value } = arr[index]
     if (currentTime >= time) {
       currentValue = value
       index = Math.min(index + 1, arr.length - 1)
     }
-    chartData.push({time: moment(currentTime * 1e3).utc().format(), value: currentValue})
+    chartData.push({ time: moment(currentTime * 1e3).utc().format(), value: currentValue })
   }
 
   return chartData
 
 }
 
-export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTime}) => {
-
+export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
   let temp = [];
-
   const doc = await getGoogleSheetsDoc()
-  
+
   const sheet = await doc.sheetsByTitle["HourlyLiquidityDelta"]
   await sheet.loadCells();
 
@@ -72,23 +70,27 @@ export const fetchTotalLiquidity = async ({ timeframe } : { timeframe: FilterTim
   for (let row = 2; row < MAX_ITERATIONS; row++) {
     let blockTime = sheet.getCell(row, 0).formattedValue
     const usdiDelta = sheet.getCell(row, 2).formattedValue
-    if (blockTime === null || usdiDelta === null) 
+    if (blockTime === null || usdiDelta === null)
       break;
     blockTime = Number(blockTime)
 
     if (blockTime >= startingTimestamp)
-      temp.push({time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE)})
+      temp.push({ time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE) })
   }
 
-  const chartData = fillInTimeGaps(temp, moment().utc().unix())
+  let chartData = fillInTimeGaps(temp, moment().utc().unix())
+
+  if (chartData.length < 2) {
+    chartData.push({ time: moment(new Date()).utc().format(), value: 0 })
+  }
 
   return {
     chartData
   }
 }
 
-export const fetchTotalUsers = async ({ timeframe } : { timeframe: FilterTime}) => {
-	const chartData = [
+export const fetchTotalUsers = async ({ timeframe }: { timeframe: FilterTime }) => {
+  const chartData = [
     {
       time: '2022-03-01',
       value: 35
@@ -116,7 +118,7 @@ export const fetchTotalUsers = async ({ timeframe } : { timeframe: FilterTime}) 
   // let temp = [];
 
   // const doc = await getGoogleSheetsDoc()
-  
+
   // const sheet = await doc.sheetsByTitle["HourlyUserCount"]
   // await sheet.loadCells();
 
@@ -139,12 +141,10 @@ export const fetchTotalUsers = async ({ timeframe } : { timeframe: FilterTime}) 
   // }
 }
 
-export const fetchTotalVolume = async ({ timeframe } : { timeframe: FilterTime}) => {
-
+export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
   let temp = []
-
   const doc = await getGoogleSheetsDoc()
-  
+
   const sheet = await doc.sheetsByTitle["HourlyTradingVolume"]
   await sheet.loadCells();
 
@@ -153,25 +153,29 @@ export const fetchTotalVolume = async ({ timeframe } : { timeframe: FilterTime})
   for (let row = 2; row < MAX_ITERATIONS; row++) {
     let blockTime = sheet.getCell(row, 0).formattedValue
     const usdiDelta = sheet.getCell(row, 2).formattedValue
-    if (blockTime === null || usdiDelta === null) 
+    if (blockTime === null || usdiDelta === null)
       break;
-  
+
     blockTime = Number(blockTime)
 
     if (blockTime >= startingTimestamp)
-      temp.push({time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE)})
+      temp.push({ time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE) })
   }
 
-  const chartData = fillInTimeGaps(temp, moment().utc().unix())
+  let chartData = fillInTimeGaps(temp, moment().utc().unix())
+
+  if (chartData.length < 2) {
+    chartData.push({ time: moment(new Date()).utc().format(), value: 0 })
+  }
 
   return {
     chartData
   }
 }
 
-export const fetchTotalLiquidation = async ({ timeframe } : { timeframe: FilterTime}) => {
+export const fetchTotalLiquidation = async ({ timeframe }: { timeframe: FilterTime }) => {
   // @TODO: When we setup the liquidation bot.
-	const chartData = [
+  const chartData = [
     {
       time: '2022-03-01',
       value: 65

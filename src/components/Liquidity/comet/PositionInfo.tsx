@@ -147,10 +147,10 @@ const ColumnDivider = styled('div')`
 `
 const OverlayEditCometInfo = styled(Box)`
   position: absolute;
-  top: -18px;
-  left: -24px;
-  width: 460px;
-  height: 460px;
+  top: -15px;
+  left: -23px;
+  width: 455px;
+  height: 472px;
   padding: 0 0 27px 0;
   background-color: rgba(27, 27, 27, 0.9);
   display: flex;

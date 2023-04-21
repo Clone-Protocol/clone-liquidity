@@ -1,6 +1,5 @@
 import { Box, Slider, Stack, styled, Typography } from '@mui/material'
 import Image from 'next/image'
-import chroma from 'chroma-js'
 import { PositionInfo } from '~/features/MyLiquidity/multipool/LiquidityPosition.query'
 
 interface Props {
@@ -40,7 +39,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
     fontWeight: '600',
-    width: '47px',
+    width: '60px',
     height: '28px',
     padding: '4px 8px',
     border: 'solid 1px #fff',
@@ -56,7 +55,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, positionInfo, maxMintable, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
   const valueLabelFormat = (value: number) => {
-    return `${value.toFixed(0)}%`
+    return `${value.toLocaleString(undefined, { maximumFractionDigits: 3 })}%`
   }
 
   const handleMaxRatio = () => {
@@ -97,7 +96,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
           />
           <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 8px)` }}>
             <FixThumb />
-            <FixValueLabel>{currentRatio.toFixed(0)}%</FixValueLabel>
+            <FixValueLabel>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 3 })}%</FixValueLabel>
           </PrevBox>
         </Box>
         <MinMaxVal><Box>100%</Box><Box>(Max)</Box></MinMaxVal>
@@ -186,11 +185,11 @@ const PrevBox = styled(Box)`
   z-index: 20;
 `
 const FixValueLabel = styled(Box)`
-  width: 47px;
+  width: 60px;
   height: 28px;
   padding: 4px 3px;
   margin-top: 8px;
-  margin-left: -16px;
+  margin-left: -23px;
   border: solid 1px ${(props) => props.theme.palette.text.secondary};
   text-align: center;
   font-size: 12px;

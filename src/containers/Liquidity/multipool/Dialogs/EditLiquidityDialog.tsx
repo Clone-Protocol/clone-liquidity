@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import LoadingIndicator, { LoadingWrapper } from '~/components/Common/LoadingIndicator'
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -86,8 +85,11 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     // console.log('newRatio', newRatio)
-    setValue('mintAmount', maxMintable * newRatio / 100)
-    setMintRatio(newRatio)
+    // MEMO: if newRatio is near from default ratio, then set newRatio to default ratio
+    const convertNewRatio = parseInt(newRatio.toString()) === parseInt(defaultMintRatio) ? defaultMintRatio : newRatio
+    console.log('convertNewRatio', convertNewRatio)
+    setValue('mintAmount', maxMintable * convertNewRatio / 100)
+    setMintRatio(convertNewRatio)
   }, [mintRatio, mintAmount])
 
   const handleChangeMintAmount = useCallback((mintAmount: number) => {
