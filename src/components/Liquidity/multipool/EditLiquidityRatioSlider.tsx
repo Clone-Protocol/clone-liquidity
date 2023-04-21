@@ -56,7 +56,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, positionInfo, maxMintable, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
   const valueLabelFormat = (value: number) => {
-    return `${value.toFixed(1)}%`
+    return `${value.toFixed(0)}%`
   }
 
   const handleMaxRatio = () => {
@@ -97,7 +97,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
           />
           <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 8px)` }}>
             <FixThumb />
-            <FixValueLabel>{currentRatio.toFixed(1)}%</FixValueLabel>
+            <FixValueLabel>{currentRatio.toFixed(0)}%</FixValueLabel>
           </PrevBox>
         </Box>
         <MinMaxVal><Box>100%</Box><Box>(Max)</Box></MinMaxVal>

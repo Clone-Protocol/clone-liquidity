@@ -76,6 +76,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   useEffect(() => {
     if (positionInfo !== undefined) {
       const mintAmount = maxMintable * mintRatio / 100
+      // console.log('mintRatio', mintRatio)
       setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.totalCollValue)
       setTotalLiquidity(mintAmount * 2);
@@ -84,6 +85,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   }, [mintRatio])
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
+    // console.log('newRatio', newRatio)
     setValue('mintAmount', maxMintable * newRatio / 100)
     setMintRatio(newRatio)
   }, [mintRatio, mintAmount])
