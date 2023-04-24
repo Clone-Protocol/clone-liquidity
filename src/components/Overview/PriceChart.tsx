@@ -6,6 +6,8 @@ import LineChart from '~/components/Charts/LineChart'
 import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
 import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 // import { unixToDate } from '~/utils/date'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
 
 interface Props {
   assetData: PositionInfo
@@ -52,4 +54,4 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
 
 
 
-export default PriceChart
+export default withSuspense(PriceChart, <LoadingProgress />)

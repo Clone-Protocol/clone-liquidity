@@ -27,8 +27,9 @@ import { StyledDivider } from '~/components/Common/StyledDivider'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
+import { ASSETS, AssetTickers } from '~/data/assets'
 
-const AssetView = ({ assetId }: { assetId: string }) => {
+const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const { publicKey } = useWallet()
 	const router = useRouter()
 	const { ltab } = router.query
@@ -44,11 +45,16 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	}, [ltab])
 
 	useEffect(() => {
-		if (assetId) {
-			// console.log('aa', parseInt(assetId))
-			setAssetIndex(parseInt(assetId))
+		if (assetTicker) {
+			console.log('assetId', AssetTickers[assetTicker as keyof typeof AssetTickers])
+
+			if (AssetTickers[assetTicker as keyof typeof AssetTickers]) {
+				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
+			} else {
+				setAssetIndex(AssetTickers.euro)
+			}
 		}
-	}, [assetId])
+	}, [assetTicker])
 
 	const { data: balances, refetch } = useBalanceQuery({
 		userPubKey: publicKey,
@@ -75,6 +81,8 @@ const AssetView = ({ assetId }: { assetId: string }) => {
 	const handleChoosePool = (assetId: number) => {
 		setAssetIndex(assetId)
 		setOpenChooseLiquidity(false)
+
+		router.replace(`/assets/${ASSETS[assetId].ticker}/asset`)
 	}
 
 	return assetData ? (

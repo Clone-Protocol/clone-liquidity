@@ -5,7 +5,7 @@ import Head from 'next/head'
 import { StyledSection } from 'pages'
 import Container from '@mui/material/Container'
 import AssetView from '~/containers/Overview/AssetView'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 
 const AssetPage: NextPage = () => {
 	const router = useRouter()
@@ -20,7 +20,7 @@ const AssetPage: NextPage = () => {
 				<StyledSection>
 					<Container>
 						<Box display='flex' justifyContent='center' mt="15px">
-							<AssetView assetId={assetId} />
+							<AssetView assetTicker={assetId} />
 						</Box>
 					</Container>
 				</StyledSection>

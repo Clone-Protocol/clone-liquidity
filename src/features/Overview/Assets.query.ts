@@ -37,12 +37,13 @@ export const fetchAssets = async ({ setStartTimer }: { setStartTimer: (start: bo
 	const result: AssetList[] = []
 
 	for (const info of iassetInfos) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info.poolIndex)
+		let { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
 		result.push({
 			id: info.poolIndex,
 			tickerName: tickerName,
 			tickerSymbol: tickerSymbol,
 			tickerIcon: tickerIcon,
+			ticker: ticker,
 			price: info.poolPrice,
 			assetType: assetType,
 			liquidity: parseInt(info.liquidity.toString()),
@@ -65,6 +66,7 @@ export interface AssetList {
 	tickerName: string
 	tickerSymbol: string
 	tickerIcon: string
+	ticker: string
 	price: number
 	assetType: number
 	liquidity: number

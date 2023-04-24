@@ -305,7 +305,7 @@ const ConnectButton = styled(Button)`
 	width: 140px;
 	height: 36px;
   &:hover {
-    background-color: ${(props) => props.theme.boxes.black};
+    background-color: ${(props) => props.theme.boxes.darkBlack};
   }
 `
 

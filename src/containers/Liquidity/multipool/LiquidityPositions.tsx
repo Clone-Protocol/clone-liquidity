@@ -42,7 +42,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   }
 
   const redirectAddMultipoolPage = () => {
-    router.push(`/assets/0/asset`)
+    router.push(`/assets/euro/asset`)
   }
 
   // const { mutateAsync } = useRecenterAllMutation(publicKey)

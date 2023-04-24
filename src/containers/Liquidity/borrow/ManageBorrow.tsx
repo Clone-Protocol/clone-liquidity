@@ -47,7 +47,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   return (borrowDetail && priceHistory) ? (
     <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
-        <Box mb='25px'><Typography variant='p_xxlg'>New Borrow Position</Typography></Box>
+        <Box mb='25px'><Typography variant='p_xxlg'>Manage Borrow Position</Typography></Box>
         <TipMsg>
           <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography>
         </TipMsg>

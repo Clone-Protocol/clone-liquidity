@@ -61,7 +61,7 @@ const AssetList: React.FC = () => {
 	) => {
 		if (isAlreadyInitializedAccount) {
 			if (connected) {
-				router.push(`/assets/${params.row.id}/asset`)
+				router.push(`/assets/${params.row.ticker}/asset`)
 			} else {
 				setOpenConnectWalletGuideDlogState(true)
 			}
@@ -154,7 +154,7 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			//@TODO: set market url
 			return (
-				<Link href={`/assets/${params.row.id}/asset?ltab=1`}>
+				<Link href={`#`}>
 					<TradeButton>
 						<Image src={TradeIcon} />
 					</TradeButton>

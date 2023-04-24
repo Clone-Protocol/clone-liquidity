@@ -16,7 +16,7 @@ const LineChart: React.FC = () => {
   // const SimpleBarChart = dynamic(() => import('~/components/Charts/SimpleBarChart'), { loading: () => <p>Loading ...</p>, ssr: false });
 
   const [tab, setTab] = useState(0)
-  const [filterTime, setFilterTime] = useState<FilterTime>('24h')
+  const [filterTime, setFilterTime] = useState<FilterTime>('7d')
   const [chartHover, setChartHover] = useState<number | undefined>()
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
@@ -37,14 +37,12 @@ const LineChart: React.FC = () => {
   })
 
   useEffect(() => {
-    if (chartHover === undefined && totalLiquidity) {
-      if (tab === 0) {
-        setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length - 1].value)
-      } else {
-        setChartHover(totalVolume?.chartData[totalVolume?.chartData.length - 1].value)
-      }
+    if (tab === 0) {
+      setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length - 1].value)
+    } else {
+      setChartHover(totalVolume?.chartData[totalVolume?.chartData.length - 1].value)
     }
-  }, [chartHover, totalLiquidity, totalVolume, tab])
+  }, [totalLiquidity, totalVolume, tab])
 
   // const formattedData = useMemo(() => {
   //   if (chartData) {
