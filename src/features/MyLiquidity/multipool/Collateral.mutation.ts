@@ -1,4 +1,4 @@
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
 import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
@@ -29,7 +29,7 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 				userUsdiTokenAccount!,
 				toDevnetScale(collAmount),
 				0,
-		))
+			))
 	}
 
 	const ixns = await Promise.all(ixnCalls)

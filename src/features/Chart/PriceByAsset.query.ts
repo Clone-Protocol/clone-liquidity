@@ -5,7 +5,6 @@ import { fetchPythPriceHistory } from '~/utils/pyth'
 import { fetchLatestPoolPrices } from '~/utils/assets'
 import { ASSETS } from 'src/data/assets'
 
-
 export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { pythSymbol: string | undefined, isOraclePrice: boolean }) => {
   if (!pythSymbol) return null
 
@@ -47,7 +46,7 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
   } else {
     // Get pool index from pythSymbol
     let poolIndex = (() => {
-      for (let i=0; i<ASSETS.length; i++) {
+      for (let i = 0; i < ASSETS.length; i++) {
         if (ASSETS[i].pythSymbol === pythSymbol) {
           return i;
         }
@@ -56,7 +55,7 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
     })()
 
     const previous30dDatetime = moment().utc(
-      ).subtract(30, 'days');
+    ).subtract(30, 'days');
 
     const history = await fetchLatestPoolPrices(
       poolIndex,

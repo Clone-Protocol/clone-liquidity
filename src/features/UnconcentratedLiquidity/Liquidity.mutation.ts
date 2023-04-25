@@ -1,4 +1,4 @@
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { InceptClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/incept"
 import * as anchor from "@coral-xyz/anchor"
@@ -204,7 +204,7 @@ export const callLiquidity = async ({ program, userPubKey, setTxState, data }: C
 			iassetIndex,
 		)
 	);
-	
+
 	const ixns = await Promise.all(ixnCalls)
 	await sendAndConfirm(program.provider, ixns, setTxState)
 

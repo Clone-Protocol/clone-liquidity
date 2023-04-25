@@ -8,6 +8,7 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserLiquidityInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+
 export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return []
 

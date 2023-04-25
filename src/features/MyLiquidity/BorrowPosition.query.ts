@@ -10,7 +10,6 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
 

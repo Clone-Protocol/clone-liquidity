@@ -7,24 +7,23 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
-
 const fetchIassetBalances = async (program: InceptClient, tokenData: TokenData): Promise<number[]> => {
 
 	let balancesQueries = await Promise.allSettled(
 		tokenData.pools.slice(0, tokenData.numPools.toNumber()).map(async (pool) => {
-		  let ata = await getAssociatedTokenAddress(
-			pool.assetInfo.iassetMint,
-			program.provider.publicKey!
-		  );
-		  let balance = await program.provider.connection.getTokenAccountBalance(
-			ata
-		  );
-		  return balance.value.uiAmount !== null ? balance.value.uiAmount: 0;
+			let ata = await getAssociatedTokenAddress(
+				pool.assetInfo.iassetMint,
+				program.provider.publicKey!
+			);
+			let balance = await program.provider.connection.getTokenAccountBalance(
+				ata
+			);
+			return balance.value.uiAmount !== null ? balance.value.uiAmount : 0;
 		})
-	  );
-	
+	);
+
 	return balancesQueries.map((query) => {
-		if (query.status === "rejected") 
+		if (query.status === "rejected")
 			return 0;
 
 		return query.value!
