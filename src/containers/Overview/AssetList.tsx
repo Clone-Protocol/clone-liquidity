@@ -136,13 +136,13 @@ let columns: GridColDef[] = [
 		},
 	},
 	{
-		field: 'baselineAPY',
+		field: 'feeRevenue24h',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: '24h Fee Revenue',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.row.baselineAPY} symbol="USDi" />
+			return <CellDigitValue value={params.row.feeRevenue24h} symbol="USDi" />
 		},
 	},
 	{
