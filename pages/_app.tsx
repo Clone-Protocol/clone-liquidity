@@ -50,6 +50,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
+                        overscrollBehaviorY: 'contain'
                       }}>
                       {getLayout(<Component {...pageProps} />)}
                     </Box>

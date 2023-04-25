@@ -52,6 +52,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
 				setAssetIndex(AssetTickers.euro)
+				router.replace('/assets/euro/asset')
 			}
 		}
 	}, [assetTicker])

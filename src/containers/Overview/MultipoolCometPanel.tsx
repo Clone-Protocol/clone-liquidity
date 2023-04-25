@@ -18,7 +18,9 @@ import { useRouter } from 'next/router'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import MultipoolBlank from '~/components/Overview/MultipoolBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
+import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
+import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
 import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
@@ -135,11 +137,11 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
 
   const BlankNoCollateral = () => (
     <MultipoolBlank title='Deposit collaterals to multipool to get started' subtitle='Multipool Liquidity Positions are designed to enable advanced users to 
-    fully leverage the CLS' icon={DataPlusIcon} />
+    fully leverage the CLS' icon={DataPlusIcon} hoverIcon={DataPlusHoverIcon} />
   )
 
   const BlankAlreadyPool = () => (
-    <MultipoolBlank title='Liquidity position for this pool already exists for Multipool' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} />
+    <MultipoolBlank title='Liquidity position for this pool already exists for Multipool' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} hoverIcon={AirballoonHoverIcon} />
   )
 
   if (positionInfo?.hasNoCollateral) {
