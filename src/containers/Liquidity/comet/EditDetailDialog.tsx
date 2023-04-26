@@ -274,7 +274,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   }
 
   const disableSubmitButton = (): boolean => {
-    if (!isDirty || formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
+    if (formHasErrors() || healthScore <= 0 || isCollAmountInvalid()) {
       return true
     }
     return false
