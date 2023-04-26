@@ -17,8 +17,10 @@ import DepositMoreOffIcon from 'public/images/add-liquidity-icon-off.svg'
 import WithdrawOnIcon from 'public/images/withdraw-liquidity-icon-on.svg'
 import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
+import WarningMsg from '~/components/Common/WarningMsg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
+const RISK_SCORE_VAL = 10
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
@@ -121,7 +123,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     }
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && healthScore > 0.5
+  const hasRiskScore = healthScore < RISK_SCORE_VAL
 
   return collData ? (
     <>
@@ -190,7 +193,12 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                   </Box>
                   <Box mt='10px'>
                     <Box><Typography variant='p' color='#989898'>Projected Multipool Healthscore <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScore} /></Typography></Box>
-                    <Box p='10px'><HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} /></Box>
+                    <Box p='10px'>
+                      <HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} />
+                      {hasRiskScore &&
+                        <WarningMsg>This change will put all your remaining multipool comet collateral at risk of liquidation.</WarningMsg>
+                      }
+                    </Box>
                   </Box>
                 </BoxWithBorder>
               </Box>
