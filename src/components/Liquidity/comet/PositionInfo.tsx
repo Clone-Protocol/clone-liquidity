@@ -100,7 +100,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
           <Box ml='35px' mb='10px'>
             <Box><Typography variant='p' color='#989898'>ILD Debt <InfoTooltip title={TooltipTexts.ildCol} /></Typography></Box>
             <Box height='82px' display='flex' alignItems='center'>
-              <Typography variant='p_xlg'>{Math.abs(cometDetail.ild).toFixed(2)} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography>
+              <Typography variant='p_xlg'>{Math.abs(cometDetail.ild).toFixed(3)} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography>
             </Box>
           </Box>
         </Box>

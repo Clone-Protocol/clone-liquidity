@@ -20,7 +20,7 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
     return 100 * (current - prev) / prev
   }
 
-  console.log("STATS:", poolStats)
+  // console.log("STATS:", poolStats)
 
   for (let poolIndex = 0; poolIndex < tokenData.numPools.toNumber(); poolIndex++) {
     const info = assetMapping(poolIndex)

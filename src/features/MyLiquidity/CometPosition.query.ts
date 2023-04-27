@@ -40,7 +40,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
-  console.log('fetchCometDetail', index)
+  // console.log('fetchCometDetail', index)
   // start timer in data-loading-indicator
   setStartTimer(false);
   setStartTimer(true);
@@ -56,8 +56,8 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   const tokenData = tokenDataResult.value;
   const position = comet.positions[index];
 
-  console.log('comet', comet)
-  console.log('comet-poolIndex', Number(position.poolIndex))
+  // console.log('comet', comet)
+  // console.log('comet-poolIndex', Number(position.poolIndex))
 
   const mintAmount = toNumber(position.borrowedUsdi)
   const mintIassetAmount = toNumber(position.borrowedIasset)
@@ -99,7 +99,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
     const iassetAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.publicKey!, program.provider.connection)
     if (iassetAccountAddress !== undefined) {
       const iassetTokenAccount = await getAccount(program.provider.connection, iassetAccountAddress)
-      iassetBalance = Number(iassetTokenAccount.amount) * (10**-DEVNET_TOKEN_SCALE)
+      iassetBalance = Number(iassetTokenAccount.amount) * (10 ** -DEVNET_TOKEN_SCALE)
     }
 
     const {
@@ -112,7 +112,6 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
       0,
       0
     )
-    console.log('fdd', upperPrice);
     lowerLimit = lowerPrice
     upperLimit = upperPrice
   }

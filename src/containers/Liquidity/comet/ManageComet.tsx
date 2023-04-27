@@ -55,7 +55,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
   }
 
   useEffect(() => {
-    console.log('cometDetail', cometDetail)
+    // console.log('cometDetail', cometDetail)
     // if step1 is finished, goes to close comet as fix
     if (cometDetail && cometDetail.centerPrice === 0) {
       setTab(1)

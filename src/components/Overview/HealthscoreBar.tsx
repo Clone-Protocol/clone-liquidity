@@ -9,8 +9,7 @@ interface Props {
 }
 
 const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
-  // score = 100
-  // prevScore = 100
+  if (score && score > 100) score = 100
   const scorePoint = score ? width * score / 100 - 10 : -10
   const prevScorePoint = prevScore ? width * prevScore / 100 - 10 : -10
   return (

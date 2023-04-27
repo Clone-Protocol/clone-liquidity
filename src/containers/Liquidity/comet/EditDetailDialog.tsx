@@ -211,7 +211,7 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
       if (!wallet) return
 
       if (open && tokenDataState && singlePoolCometState) {
-        console.log('calculateRange', collAmount, mintAmount, cometDetail.mintAmount)
+        // console.log('calculateRange', collAmount, mintAmount, cometDetail.mintAmount)
 
         const collateralChange = editType === 0 ? collAmount : -1 * collAmount
 

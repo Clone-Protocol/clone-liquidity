@@ -91,7 +91,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
         return
       }
 
-      console.log('calculateRange', collAmount + "/" + mintAmount)
+      // console.log('calculateRange', collAmount + "/" + mintAmount)
 
       const {
         maxUsdiPosition,
