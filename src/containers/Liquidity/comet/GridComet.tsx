@@ -92,7 +92,7 @@ const GridComet: React.FC<Props> = ({ filter }) => {
 			headerName: 'ILD',
 			flex: 1,
 			renderCell(params: GridRenderCellParams<string>) {
-				return <CellDigitValue value={params.value} symbol="USDi" />
+				return <CellDigitValue value={params.value} symbol={params.row.ildIsIasset ? params.row.tickerSymbol : "USDi"}/>
 			},
 		},
 		{
