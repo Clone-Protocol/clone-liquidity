@@ -4,7 +4,7 @@ import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
 import { useIncept } from "~/hooks/useIncept"
 import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
-import { getiAssetInfos } from "~/utils/assets"
+import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { assetMapping } from "~/data/assets"
 import { useAnchorWallet } from "@solana/wallet-adapter-react"
 
@@ -38,6 +38,7 @@ export const fetchPools = async ({
   const tokenData = tokenDataResult.value
   const comet = cometResult.value
   const assetInfos = getiAssetInfos(tokenData)
+  const poolStats = await getAggregatedPoolStats(tokenData)
 
   let currentPoolSet = new Set()
 
@@ -53,13 +54,14 @@ export const fetchPools = async ({
       continue
     }
     let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
+    const stats = poolStats[asset.poolIndex]
     result.push({
       id: asset.poolIndex,
       tickerName,
       tickerSymbol,
       tickerIcon,
       totalLiquidity: asset.liquidity,
-      volume24H: 0,
+      volume24H: stats.volumeUSD,
       averageAPY: 0,
       isEnabled: true,
     })
