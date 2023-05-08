@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
-import { AppBar, Box, Button, Stack, Toolbar, Container, Typography } from '@mui/material'
+import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
 import { useSnackbar } from 'notistack'
-import { IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { GNB_ROUTES } from '~/routes'
 import CancelIcon from './Icons/CancelIcon'
@@ -245,7 +244,6 @@ const RightMenu = () => {
 }
 
 const StyledAppBar = styled(AppBar)`
-	z-index: 200;
 	background-color: #000;
 	height: 60px;
 	position: fixed;
@@ -274,7 +272,6 @@ const StyledAppBar = styled(AppBar)`
 		height: 100%;
 	}
 `
-
 const NavPlaceholder = styled('div')`
 	${(props) => props.theme.breakpoints.up('md')} {
 		height: 80px;
@@ -283,7 +280,6 @@ const NavPlaceholder = styled('div')`
 		height: 65px;
 	}
 `
-
 const HeaderButton = styled(Button)`
 	padding: 12px;
   margin-left: 16px;
@@ -296,7 +292,6 @@ const HeaderButton = styled(Button)`
 		background-color: ${(props) => props.theme.boxes.darkBlack};
 	}
 `
-
 const ConnectButton = styled(Button)`
   background-color: ${(props) => props.theme.boxes.black};
 	padding: 12px;
@@ -308,7 +303,6 @@ const ConnectButton = styled(Button)`
     background-color: ${(props) => props.theme.boxes.darkBlack};
   }
 `
-
 const WalletSelectBox = styled(Box)`
   position: absolute;
   top: 60px;
