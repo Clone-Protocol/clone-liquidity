@@ -1,6 +1,56 @@
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces";
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
-import { getGoogleSheetsDoc } from "~/utils/google_sheets"
+import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/incept"
+import axios from "axios";
+
+export type Interval = 'day' | 'hour';
+
+export type ResponseValue = {
+  datetime: string;
+  pool_index: string;
+  total_liquidity: string;
+  trading_volume: string;
+  total_trading_fees: string;
+  total_treasury_fees: string;
+};
+
+export const generateDates = (start: Date, interval: Interval): Date[] => {
+  let currentDate = new Date(start.getTime()); // Create a new date object to avoid mutating the original
+  let dates = [new Date(currentDate)]; // Include the start date in the array
+  let now = new Date(); // Get current timestamp
+
+  while (currentDate < now) {
+    if (interval === 'hour') {
+      currentDate.setHours(currentDate.getHours() + 1);
+    } else if (interval === 'day') {
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Only add the date if it's before the current time
+    if (currentDate < now) {
+      dates.push(new Date(currentDate)); // Create a new date object to avoid references to the same object
+    }
+  }
+
+  return dates;
+}
+
+export const fetchStatsData = async (interval: Interval, poolIndex?: number): Promise<ResponseValue[]> => {
+
+  const baseUrl = process.env.NEXT_PUBLIC_INCEPT_INDEX_ENDPOINT!
+  let url = `${baseUrl}/stats?interval=${interval}`
+  if (poolIndex !== undefined) {
+    url = `${url}&pool=${poolIndex}`
+  }
+  const authorization = process.env.NEXT_PUBLIC_INCEPT_API_KEY!
+  const headers = {
+    'Authorization': authorization,
+  }
+
+  let response = await axios.get(url, { headers })
+
+  return response.data?.body
+}
 
 export const getiAssetInfos = (tokenData: TokenData): {poolIndex: number, poolPrice: number, liquidity: number}[] => {
     const iassetInfo = [];
@@ -14,75 +64,107 @@ export const getiAssetInfos = (tokenData: TokenData): {poolIndex: number, poolPr
     return iassetInfo;
   }
 
-export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<{volumeUSD: number, fees: number, previousVolumeUSD: number, previousFees: number, liquidityUSD: number, previousLiquidity: number}[]> => {
+type AggregatedStats = { 
+  volumeUSD: number,
+  fees: number,
+  previousVolumeUSD: number,
+  previousFees: number,
+  liquidityUSD: number,
+  previousLiquidity: number 
+}
 
-  let result = [];
+const convertToNumber = (val: string) => {
+  return Number(val) * Math.pow(10, -DEVNET_TOKEN_SCALE)
+}
+
+export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<AggregatedStats[]> => {
+
+  let result: AggregatedStats[] = [];
   for (let i=0; i< tokenData.numPools.toNumber(); i++) {
     result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: 0, previousLiquidity: 0 })
   }
 
-  const doc = await getGoogleSheetsDoc();
-  const analyticsSheet = await doc.sheetsByTitle["Pool Analytics"]
-  await analyticsSheet.loadCells();
 
-  for (let row = 1; row < 1 + tokenData.numPools.toNumber(); row++) {
-      const poolIndexVolume = analyticsSheet.getCell(row, 0).formattedValue
-      if (poolIndexVolume !== null) {
-        const volumeUSD = Number(analyticsSheet.getCell(row, 2).formattedValue)
-        const fees = Number(analyticsSheet.getCell(row, 1).formattedValue)
-        const index = Number(poolIndexVolume)
-        result[index] = {...result[index], volumeUSD, fees };
-      }
 
-      const poolIndexPrevVolume = analyticsSheet.getCell(row, 3).formattedValue
-      if (poolIndexPrevVolume !== null) {
-        const previousVolumeUSD = Number(analyticsSheet.getCell(row, 5).formattedValue)
-        const previousFees = Number(analyticsSheet.getCell(row, 4).formattedValue)
-        const index = Number(poolIndexPrevVolume)
-        result[index] = {...result[index], previousVolumeUSD, previousFees };
-      }
+  const statsData = await fetchStatsData('hour')
+  const now = (new Date()).getTime(); // Get current timestamp
 
-      const poolIndexLiquidity = analyticsSheet.getCell(row, 7).formattedValue
-      if (poolIndexLiquidity !== null) {
-        const liquidity = Number(analyticsSheet.getCell(row, 8).formattedValue)
-        result[Number(poolIndexLiquidity)].liquidityUSD = liquidity;
-      }
-
-      const poolIndexPrevLiquidity = analyticsSheet.getCell(row, 10).formattedValue
-      if (poolIndexPrevLiquidity !== null) {
-        const previousLiquidity = Number(analyticsSheet.getCell(row, 11).formattedValue)
-        result[Number(poolIndexPrevLiquidity)].previousLiquidity = previousLiquidity;
-      }
-  }
-
-  return result;
+  statsData.forEach((item) => {
+    const dt = new Date(item.datetime)
+    const hoursDifference = (now - dt.getTime()) / 3600000
+    const poolIndex = Number(item.pool_index)
+    const tradingVolume = convertToNumber(item.trading_volume)
+    const tradingFees = convertToNumber(item.total_trading_fees)
+    const liquidity = convertToNumber(item.total_liquidity)
+    if (hoursDifference <= 24) {
+      result[poolIndex].volumeUSD += tradingVolume
+      result[poolIndex].liquidityUSD = liquidity
+      result[poolIndex].fees += tradingFees
+    } else if (hoursDifference <= 48 && hoursDifference > 24) {
+      result[poolIndex].previousVolumeUSD += tradingVolume
+      result[poolIndex].previousLiquidity = liquidity
+      result[poolIndex].previousFees += tradingFees
+    } else {
+      result[poolIndex].liquidityUSD = liquidity
+      result[poolIndex].previousLiquidity = liquidity
+    }
+  })
+  return result
 }
 
-export const fetchLatestPoolPrices = async (poolIndex: number, startingTimestamp: number, intervalSeconds: number = 60) => {
-  const doc = await getGoogleSheetsDoc()
-  
-  const sheet = await doc.sheetsByTitle["Pool Prices"]
-  await sheet.loadCells();
-  const tsColumn = poolIndex * 2;
-  const priceColumn = tsColumn + 1;
+type OHLCVResponse = {
+  time_interval: string,
+  open: string,
+  high: string,
+  low: string,
+  close: string,
+  volume: string,
+  trading_fees: string
+}
 
-  let row = 1;
-  let currentPrice = undefined;
-  let result: {ts: number, price: number}[] = []
-  const MAX_ITERATIONS = 100000; // Safety net.
-  while (row < MAX_ITERATIONS) {
-    let ts = sheet.getCell(row, tsColumn).formattedValue
-    if (ts === null) break;
+const fetch30DayOHLCV = async (poolIndex: number, interval: 'hour' | 'day') => {
+  const url = `${process.env.NEXT_PUBLIC_INCEPT_INDEX_ENDPOINT}/ohlcv?interval=${interval}&pool=${poolIndex}&filter=month`
+  const authorization = process.env.NEXT_PUBLIC_INCEPT_API_KEY!
 
-    if (ts >= startingTimestamp && currentPrice !== undefined) {
-      let intervalTs = ts - ts % intervalSeconds
-      result.push({ts: intervalTs, price: currentPrice})
-    }
-    const price = sheet.getCell(row, priceColumn).formattedValue
-    currentPrice = price;
+  let response = await axios.get(url, {
+    data: { interval },
+    headers: {'Authorization': authorization }
+  })
 
-    row++
+  let result: OHLCVResponse[] = response.data?.body
+  return result
+}
+
+export const getDailyPoolPrices30Day = async (poolIndex: number) => {
+  const requestResult = await fetch30DayOHLCV(poolIndex, 'hour')
+  console.log("RESULT:", requestResult)
+  const now = new Date()
+  const lookback30Day = new Date(now.getTime() - 30 * 86400 * 1000)
+
+  const dates = generateDates(lookback30Day, 'hour')
+  let prices = []
+
+  let resultIndex = 0
+  let datesIndex = 0;
+
+  while (datesIndex < dates.length) {
+    const result = requestResult[resultIndex]
+    const date = dates[datesIndex]
+
+    const resultDate = new Date(result.time_interval)
+
+    const price = (() => {
+      if (date < resultDate) {
+        //Use open
+        return Number(result.open)
+      } else {
+        resultIndex = Math.min(requestResult.length - 1, resultIndex + 1)
+        return Number(result.close)
+      }
+    })()
+    prices.push({time: date.toUTCString(), value: price})
+    datesIndex++
   }
 
-  return result;
+  return prices
 }
