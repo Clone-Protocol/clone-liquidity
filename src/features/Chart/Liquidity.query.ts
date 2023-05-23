@@ -1,8 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
-import { getGoogleSheetsDoc } from "~/utils/google_sheets"
-import moment from 'moment'
 import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/incept'
+import { fetchStatsData, Interval, ResponseValue, generateDates } from 'src/utils/assets'
 
 export interface ChartElem {
   time: string
@@ -10,82 +9,127 @@ export interface ChartElem {
 }
 
 type TimeSeriesValue = { time: string, value: number }
-const MAX_ITERATIONS = 100000;
 
-const getMomentFromTimeframe = (timeframe: FilterTime) => {
-  let daysLookback = (() => {
+const filterHistoricalData = (data: TimeSeriesValue[], numDays: number): TimeSeriesValue[] => {
+  const today = new Date(); // get the current date
+  const numMilliseconds = numDays * 86400 * 1000; // calculate the number of milliseconds in the specified number of days
+  const historicalDate = new Date(today.getTime() - numMilliseconds); // calculate the historical date
+
+  const filteredData = data.filter(({ time }) => {
+    const currentDatetime = new Date(time);
+    return currentDatetime >= historicalDate; // include values within the historical range
+  });
+
+  return filteredData;
+};
+
+
+type AggregatedData = {
+  datetime: string;
+  total_liquidity: number;
+  trading_volume: number;
+  total_trading_fees: number;
+  total_treasury_fees: number;
+}
+
+const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): AggregatedData[] => {
+  const groupedByDtAndPool: Record<string, Record<string, ResponseValue>> = {};
+
+  const setDatetime = (dt: Date) => {
+    if (interval === 'hour') {
+      dt.setMinutes(0, 0, 0);
+    } else {
+      dt.setHours(0, 0, 0, 0);
+    } 
+  }
+  const getDTKeys = (dt: Date) => {
+    setDatetime(dt)
+    return dt.toISOString();
+  }
+  const convertToNumber = (val: string) => {
+    return Number(val) * Math.pow(10, -DEVNET_TOKEN_SCALE)
+  }
+
+  const poolIndices: Set<string> = new Set()
+  poolDataArray.forEach(d => poolIndices.add(d.pool_index))
+
+  for (const data of poolDataArray) {
+    poolIndices.add(data.pool_index)
+    const dt = new Date(data.datetime)
+    const datetimeKey = getDTKeys(dt)
+    if (!groupedByDtAndPool[datetimeKey]) {
+      groupedByDtAndPool[datetimeKey] = {}
+    }
+    groupedByDtAndPool[datetimeKey][data.pool_index] = data
+  }
+
+  const recentLiquidityByPool: Record<string, number> = {}
+  poolIndices.forEach((index) => {
+    recentLiquidityByPool[index] = 0
+  })
+
+  // Create the first entry of the result
+  let result: AggregatedData[] = []
+
+  let startingDate = new Date(poolDataArray.at(0)!.datetime);
+  setDatetime(startingDate)
+  const dates = generateDates(startingDate, interval)
+
+  for (let i = 0; i < dates.length; i++) {
+ 
+    const currentDate = getDTKeys(dates[i])
+    let record: AggregatedData = {
+      datetime: currentDate, total_liquidity: 0, trading_volume: 0, total_trading_fees: 0, total_treasury_fees: 0
+    }
+  
+    const currentGBData = groupedByDtAndPool[currentDate]
+    if (!currentGBData) {
+      poolIndices.forEach((index) => {
+        record.total_liquidity += recentLiquidityByPool[index]
+      })
+    } else {
+      poolIndices.forEach((index) => {
+        let data = currentGBData[index]
+        if (data) {
+          record.total_liquidity += convertToNumber(data.total_liquidity)
+          record.trading_volume += convertToNumber(data.trading_volume)
+          record.total_trading_fees += convertToNumber(data.total_trading_fees)
+          record.total_treasury_fees += convertToNumber(data.total_treasury_fees)
+          recentLiquidityByPool[index] = convertToNumber(data.total_liquidity)
+        } else {
+          record.total_liquidity += recentLiquidityByPool[index]
+        }
+      })
+    }
+    result.push(record)
+  }
+
+  return result;
+}
+
+export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
+
+  const [daysLookback, interval] = (() => {
     switch (timeframe) {
       case '1y':
-        return 365
+        return [365, 'day' as Interval]
       case '30d':
-        return 30
+        return [30, 'day' as Interval]
       case '7d':
-        return 7
+        return [7, 'hour' as Interval]
       case '24h':
-        return 1
+        return [1, 'hour' as Interval]
       default:
         throw new Error(`Unexpected timeframe: ${timeframe}`)
     }
   })()
-  return moment().utc(
-  ).subtract(daysLookback, 'days')
-}
 
-const fillInTimeGaps = (arr: { time: number, value: number }[], endTimestamp: number): TimeSeriesValue[] => {
-
-  let chartData: TimeSeriesValue[] = []
-
-  if (arr.length === 0)
-    return [{ time: moment(endTimestamp * 1e3).utc().format(), value: 0 }]
-
-  let index = 0
-  let startingTime = arr[0].time
-  let currentValue = arr[0].value
-
-  let N = Math.floor((endTimestamp - startingTime) / 3600)
-
-  for (let i = 0; i < N; i++) {
-    let currentTime = startingTime + 3600 * i
-    let { time, value } = arr[index]
-    if (currentTime >= time) {
-      currentValue = value
-      index = Math.min(index + 1, arr.length - 1)
-    }
-    chartData.push({ time: moment(currentTime * 1e3).utc().format(), value: currentValue })
-  }
-
-  return chartData
-
-}
-
-export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
-  let temp = [];
-  const doc = await getGoogleSheetsDoc()
-
-  const sheet = await doc.sheetsByTitle["HourlyLiquidityDelta"]
-  await sheet.loadCells();
-
-  const startingTimestamp = getMomentFromTimeframe(timeframe).unix()
-
-  for (let row = 2; row < MAX_ITERATIONS; row++) {
-    let blockTime = sheet.getCell(row, 0).formattedValue
-    const usdiDelta = sheet.getCell(row, 2).formattedValue
-    if (blockTime === null || usdiDelta === null)
-      break;
-    blockTime = Number(blockTime)
-
-    if (blockTime >= startingTimestamp)
-      temp.push({ time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE) })
-  }
-
-  let chartData = fillInTimeGaps(temp, moment().utc().unix())
-
-  if (chartData.length < 2) {
-    chartData.push({ time: moment(new Date()).utc().format(), value: 0 })
-  }
+  const rawData = await fetchStatsData(interval)
+  const aggregatedData = aggregatePoolData(rawData, interval)
+  const chartData = aggregatedData.map(data => {return {time: data.datetime, value: data.total_liquidity}})
 
   return {
-    chartData
+    chartData: filterHistoricalData(chartData, daysLookback)
   }
 }
 
@@ -113,63 +157,30 @@ export const fetchTotalUsers = async ({ timeframe }: { timeframe: FilterTime }) 
     },
   ]
   return { chartData }
-
-  // @TODO Fix later
-  // let temp = [];
-
-  // const doc = await getGoogleSheetsDoc()
-
-  // const sheet = await doc.sheetsByTitle["HourlyUserCount"]
-  // await sheet.loadCells();
-
-  // const startingTimestamp = getMomentFromTimeframe(timeframe).unix()
-
-  // for (let row = 1; row < MAX_ITERATIONS; row++) {
-  //   let blockTime = sheet.getCell(row, 0).formattedValue
-  //   const cumulativeUsers = sheet.getCell(row, 2).formattedValue
-  //   console.log(blockTime, cumulativeUsers)
-  //   if (blockTime === null || cumulativeUsers === null) 
-  //     break;
-  //   blockTime = Number(blockTime)
-
-  //   if (blockTime >= startingTimestamp)
-  //     temp.push({time: blockTime, value: Number(cumulativeUsers)})
-  // }
-
-  // return {
-  //   chartData: fillInTimeGaps(temp, moment().utc().unix())
-  // }
 }
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
-  let temp = []
-  const doc = await getGoogleSheetsDoc()
+  const [daysLookback, interval] = (() => {
+    switch (timeframe) {
+      case '1y':
+        return [365, 'day' as Interval]
+      case '30d':
+        return [30, 'day' as Interval]
+      case '7d':
+        return [7, 'hour' as Interval]
+      case '24h':
+        return [1, 'hour' as Interval]
+      default:
+        throw new Error(`Unexpected timeframe: ${timeframe}`)
+    }
+  })()
 
-  const sheet = await doc.sheetsByTitle["HourlyTradingVolume"]
-  await sheet.loadCells();
-
-  const startingTimestamp = getMomentFromTimeframe(timeframe).unix()
-
-  for (let row = 2; row < MAX_ITERATIONS; row++) {
-    let blockTime = sheet.getCell(row, 0).formattedValue
-    const usdiDelta = sheet.getCell(row, 2).formattedValue
-    if (blockTime === null || usdiDelta === null)
-      break;
-
-    blockTime = Number(blockTime)
-
-    if (blockTime >= startingTimestamp)
-      temp.push({ time: blockTime, value: usdiDelta * Math.pow(10, -DEVNET_TOKEN_SCALE) })
-  }
-
-  let chartData = fillInTimeGaps(temp, moment().utc().unix())
-
-  if (chartData.length < 2) {
-    chartData.push({ time: moment(new Date()).utc().format(), value: 0 })
-  }
+  const rawData = await fetchStatsData(interval)
+  const aggregatedData = aggregatePoolData(rawData, interval)
+  const chartData = aggregatedData.map(data => {return {time: data.datetime, value: data.trading_volume}})
 
   return {
-    chartData
+    chartData: filterHistoricalData(chartData, daysLookback)
   }
 }
 
