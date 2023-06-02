@@ -57,7 +57,7 @@ export const fetchRecenterInfo = async ({
 	let prevHealthScore = currentHealthScore.healthScore
 	let healthScore = recenterInfo.healthScore
 
-	// Only USDi for now.
+	// Only onUSD for now.
 	let totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 	let totalHealthScore = healthScore
 

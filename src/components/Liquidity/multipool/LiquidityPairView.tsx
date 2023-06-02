@@ -32,7 +32,7 @@ const LiquidityPairView: React.FC<Props> = ({ poolIndex, tickerIcon, tickerSymbo
 				<Box display="flex">
 					<Image src={tickerIcon} width="28px" height="28px" />
 					<TickerWrapper>
-						<Typography variant='p'>{tickerSymbol} / USDi</Typography>
+						<Typography variant='p'>{tickerSymbol} / onUSD</Typography>
 					</TickerWrapper>
 				</Box>
 				<Box><Typography variant='p'>${value?.toFixed(3)} USD</Typography></Box>

@@ -66,7 +66,7 @@ const CloseLiquidityDialog = ({
   }
 
   const displayILDDebt = () => {
-    const currency = positionInfo!.ildInUsdi ? 'USDi' : positionInfo!.tickerSymbol
+    const currency = positionInfo!.ildInUsdi ? 'onUSD' : positionInfo!.tickerSymbol
     return `${Math.max(0, positionInfo!.ildDebt).toLocaleString(undefined, { maximumFractionDigits: 5 })} ${currency}`
   }
 
@@ -85,7 +85,7 @@ const CloseLiquidityDialog = ({
               <Stack direction='row' gap={1}>
                 <Image src={positionInfo.tickerIcon} width="27px" height="27px" />
                 <Box>
-                  <Typography variant='p_xlg'>{positionInfo.tickerSymbol} {'<>'} USDi</Typography>
+                  <Typography variant='p_xlg'>{positionInfo.tickerSymbol} {'<>'} onUSD</Typography>
                 </Box>
               </Stack>
             </BoxWithBorder>

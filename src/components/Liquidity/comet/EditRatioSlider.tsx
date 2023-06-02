@@ -114,9 +114,9 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
             <FormBox sx={{ background: '#363636' }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box display="flex" alignItems='center'>
-                  <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
+                  <Image src={'/images/assets/on-usd.png'} width="28px" height="28px" />
                   <Box marginLeft='8px'>
-                    <Typography variant='p_lg'>USDi</Typography>
+                    <Typography variant='p_lg'>onUSD</Typography>
                   </Box>
                 </Box>
                 <Box lineHeight='20px'>
@@ -125,7 +125,7 @@ const EditRatioSlider: React.FC<Props> = ({ min = 0, max = 200, ratio, currentRa
                 </Box>
               </Stack>
             </FormBox>
-            <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{currentMintAmount.toLocaleString()} USDi</Typography></BottomBox>
+            <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{currentMintAmount.toLocaleString()} onUSD</Typography></BottomBox>
           </StyledBox>
           <StyledBox>
             <FormBox>

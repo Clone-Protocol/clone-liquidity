@@ -51,7 +51,7 @@ let columns: GridColDef[] = [
 					<Image src={params.row.tickerIcon} width="28px" height="28px" layout="fixed" />
 					<Box marginLeft='8px' marginTop='3px'>
 						<Typography variant='p_lg'>{params.row.tickerName}</Typography>
-						<Typography variant='p_lg' color='#989898' ml='10px'>{params.row.tickerSymbol} / USDi</Typography>
+						<Typography variant='p_lg' color='#989898' ml='10px'>{params.row.tickerSymbol} / onUSD</Typography>
 					</Box>
 				</Box>
 			)

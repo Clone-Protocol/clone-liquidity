@@ -101,7 +101,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
 						<Stack direction='row' gap={1}>
 							<Image src={assetData.tickerIcon} width="27px" height="27px" />
-							<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} USDi</Typography>
+							<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} onUSD</Typography>
 						</Stack>
 						<Image src={SelectArrowIcon} />
 					</SelectPoolBox>

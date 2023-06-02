@@ -9,6 +9,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
 export const fetchInfos = async ({
 	program,
@@ -83,15 +84,16 @@ export interface Collateral {
 
 const extractCollateralInfo = (comet: Comet): Collateral[] => {
 	let result: Collateral[] = [];
+	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
 
 	for (let i = 0; i < Number(comet.numCollaterals); i++) {
-		// For now only handle USDi
+		// For now only handle onUSD
 		if (Number(comet.collaterals[i].collateralIndex) === 0) {
 			result.push(
 				{
-					tickerIcon: '/images/assets/USDi.png',
-					tickerSymbol: 'USDi',
-					tickerName: 'USDi',
+					tickerIcon: onUSDInfo.collateralIcon,
+					tickerSymbol: onUSDInfo.collateralSymbol,
+					tickerName: onUSDInfo.collateralName,
 					collAmount: toNumber(comet.collaterals[i].collateralAmount),
 					collAmountDollarPrice: 1
 				} as Collateral
@@ -118,7 +120,7 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 	let result: LiquidityPosition[] = [];
 
 	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
-		// For now only handle USDi
+		// For now only handle onUSD
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
 		const info = assetMapping(poolIndex);

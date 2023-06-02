@@ -66,7 +66,7 @@ const RecenterDialog = ({
 							<Stack direction='row' gap={1}>
 								<Image src={positionInfo.tickerIcon} width="27px" height="27px" />
 								<Box>
-									<Typography variant='p_xlg'>{positionInfo.tickerSymbol} {'<>'} USDi</Typography>
+									<Typography variant='p_xlg'>{positionInfo.tickerSymbol} {'<>'} onUSD</Typography>
 								</Box>
 							</Stack>
 						</BoxWithBorder>
@@ -80,7 +80,7 @@ const RecenterDialog = ({
 								<Stack direction="row" justifyContent="space-between">
 									<Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
 									<Box lineHeight={0.95}>
-										<Box><Typography variant='p_xlg'>{displayRecenterCost()} USDi</Typography></Box>
+										<Box><Typography variant='p_xlg'>{displayRecenterCost()} onUSD</Typography></Box>
 										<Box textAlign='right'><Typography variant='p' color='#989898'>${displayRecenterCost()}</Typography></Box>
 									</Box>
 								</Stack>
@@ -99,7 +99,7 @@ const RecenterDialog = ({
 							{/* <Stack direction="row" justifyContent="space-between">
 								<Box maxWidth='130px' lineHeight='14px'><Typography variant='p'>Estimated total collateral after Recentering</Typography></Box>
 								<Box lineHeight='14px' textAlign='right'>
-									<Box><Typography variant='p_lg'>{positionInfo.estimatedTotalCollValue.toLocaleString()} USDi</Typography></Box>
+									<Box><Typography variant='p_lg'>{positionInfo.estimatedTotalCollValue.toLocaleString()} onUSD</Typography></Box>
 									<Box><Typography variant='p' color='#989898'>${positionInfo.estimatedTotalCollDollarPrice.toLocaleString()} USD</Typography></Box>
 								</Box>
 							</Stack> */}

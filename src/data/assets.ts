@@ -1,5 +1,5 @@
 export enum Collateral {
-	USDi,
+	onUSD,
 	mockUSDC,
 }
 
@@ -38,72 +38,72 @@ export enum AssetType {
 
 export const ASSETS = [
 	{
-		tickerName: 'iEuro',
-		tickerSymbol: 'iEUR',
-		tickerIcon: '/images/assets/euro.png',
+		tickerName: 'Clone Euro',
+		tickerSymbol: 'onEUR',
+		tickerIcon: '/images/assets/on-euro.svg',
 		ticker: 'euro',
 		pythSymbol: 'FX.EUR/USD'
 	},
 	{
-		tickerName: 'iXAU (GOLD INDEX)',
-		tickerSymbol: 'iXAU',
-		tickerIcon: '/images/assets/gold.png',
+		tickerName: 'Clone Gold',
+		tickerSymbol: 'onGold',
+		tickerIcon: '/images/assets/on-gold.svg',
 		ticker: 'gold',
 		pythSymbol: 'Metal.XAU/USD'
 	},
 	{
-		tickerName: 'iSolana',
-		tickerSymbol: 'iSOL',
-		tickerIcon: '/images/assets/solana.png',
+		tickerName: 'Clone Solana',
+		tickerSymbol: 'onSOL',
+		tickerIcon: '/images/assets/on-sol.svg',
 		ticker: 'solana',
 		pythSymbol: 'Crypto.SOL/USD'
 	},
 	{
-		tickerName: 'iEther',
-		tickerSymbol: 'iETH',
-		tickerIcon: '/images/assets/ethereum.png',
+		tickerName: 'Clone Ethereum',
+		tickerSymbol: 'onETH',
+		tickerIcon: '/images/assets/on-eth.svg',
 		ticker: 'ethereum',
 		pythSymbol: 'Crypto.ETH/USD'
 	},
 	{
-		tickerName: 'iBitcoin',
-		tickerSymbol: 'iBTC',
-		tickerIcon: '/images/assets/bitcoin.png',
+		tickerName: 'Clone Bitcoin',
+		tickerSymbol: 'onBTC',
+		tickerIcon: '/images/assets/on-btc.svg',
 		ticker: 'bitcoin',
 		pythSymbol: 'Crypto.BTC/USD'
 	},
 	{
-		tickerName: 'iBNB',
-		tickerSymbol: 'iBNB',
-		tickerIcon: '/images/assets/bnb.png',
+		tickerName: 'Clone BNB',
+		tickerSymbol: 'onBNB',
+		tickerIcon: '/images/assets/on-bnb.svg',
 		ticker: 'bnb',
 		pythSymbol: 'Crypto.BNB/USD'
 	},
 	{
-		tickerName: 'iAvalanche',
-		tickerSymbol: 'iAVAX',
-		tickerIcon: '/images/assets/avalanche.png',
+		tickerName: 'Clone Avalanche',
+		tickerSymbol: 'onAVAX',
+		tickerIcon: '/images/assets/on-avax.svg',
 		ticker: 'avalanche',
 		pythSymbol: 'Crypto.AVAX/USD'
 	},
 	{
-		tickerName: 'iTesla',
-		tickerSymbol: 'iTLSA',
-		tickerIcon: '/images/assets/tesla.png',
+		tickerName: 'Clone Tesla',
+		tickerSymbol: 'onTLSA',
+		tickerIcon: '/images/assets/on-tsla.svg',
 		ticker: 'tesla',
 		pythSymbol: 'Equity.US.TSLA/USD'
 	},
 	{
-		tickerName: 'iApple',
-		tickerSymbol: 'iAAPL',
-		tickerIcon: '/images/assets/apple.png',
+		tickerName: 'Clone Apple',
+		tickerSymbol: 'onAAPL',
+		tickerIcon: '/images/assets/on-aapl.svg',
 		ticker: 'apple',
 		pythSymbol: 'Equity.US.AAPL/USD'
 	},
 	{
-		tickerName: 'iAmazon',
-		tickerSymbol: 'iAMZN',
-		tickerIcon: '/images/assets/amazon.png',
+		tickerName: 'Clone Amazon',
+		tickerSymbol: 'onAMZN',
+		tickerIcon: '/images/assets/on-amzn.svg',
 		ticker: 'amazon',
 		pythSymbol: 'Equity.US.AMZN/USD'
 	},
@@ -118,82 +118,82 @@ export const assetMapping = (index: number) => {
 	let pythSymbol = ''
 	switch (index) {
 		case Asset.Euro:
-			tickerName = 'iEuro'
-			tickerSymbol = 'iEUR'
-			tickerIcon = '/images/assets/euro.png'
+			tickerName = 'Clone Euro'
+			tickerSymbol = 'onEUR'
+			tickerIcon = '/images/assets/on-euro.svg'
 			ticker = 'euro'
 			assetType = AssetType.Fx
 			pythSymbol = 'FX.EUR/USD'
 			break
 		case Asset.Gold:
-			tickerName = 'iXAU (GOLD INDEX)'
-			tickerSymbol = 'iXAU'
-			tickerIcon = '/images/assets/gold.png'
+			tickerName = 'Clone Gold'
+			tickerSymbol = 'onGold'
+			tickerIcon = '/images/assets/on-gold.svg'
 			ticker = 'gold'
 			assetType = AssetType.Commodities
 			pythSymbol = 'Metal.XAU/USD'
 			break
 		case Asset.Solana:
-			tickerName = 'iSolana'
-			tickerSymbol = 'iSOL'
-			tickerIcon = '/images/assets/solana.png'
+			tickerName = 'Clone Solana'
+			tickerSymbol = 'onSOL'
+			tickerIcon = '/images/assets/on-sol.svg'
 			ticker = 'solana'
 			assetType = AssetType.Crypto
 			pythSymbol = 'Crypto.SOL/USD'
 			break
 		case Asset.Ethereum:
-			tickerName = 'iEther'
-			tickerSymbol = 'iETH'
-			tickerIcon = '/images/assets/ethereum.png'
+			tickerName = 'Clone Ethereum'
+			tickerSymbol = 'onETH'
+			tickerIcon = '/images/assets/on-eth.svg'
 			ticker = 'ethereum'
 			assetType = AssetType.Crypto
 			pythSymbol = 'Crypto.ETH/USD'
 			break
 		case Asset.Bitcoin:
-			tickerName = 'iBitcoin'
-			tickerSymbol = 'iBTC'
-			tickerIcon = '/images/assets/bitcoin.png'
+			tickerName = 'Clone Bitcoin'
+			tickerSymbol = 'onBTC'
+			tickerIcon = '/images/assets/on-btc.svg'
 			ticker = 'bitcoin'
 			assetType = AssetType.Crypto
 			pythSymbol = 'Crypto.BTC/USD'
 			break
 		case Asset.BNB:
-			tickerName = 'iBNB'
-			tickerSymbol = 'iBNB'
-			tickerIcon = '/images/assets/bnb.png'
+			tickerName = 'Clone BNB'
+			tickerSymbol = 'onBNB'
+			tickerIcon = '/images/assets/on-bnb.svg'
 			ticker = 'bnb'
 			assetType = AssetType.Crypto
 			pythSymbol = 'Crypto.BNB/USD'
 			break
 		case Asset.Avalanche:
-			tickerName = 'iAvalanche'
-			tickerSymbol = 'iAVAX'
-			tickerIcon = '/images/assets/avalanche.png'
+			tickerName = 'Clone Avalanche'
+			tickerSymbol = 'onAVAX'
+			tickerIcon = '/images/assets/on-avax.svg'
 			ticker = 'avalanche'
 			assetType = AssetType.Crypto
 			pythSymbol = 'Crypto.AVAX/USD'
 			break
 		case Asset.Tesla:
-			tickerName = 'iTesla'
-			tickerSymbol = 'iTLSA'
-			tickerIcon = '/images/assets/tesla.png'
+			tickerName = 'Clone Tesla'
+			tickerSymbol = 'onTLSA'
+			tickerIcon = '/images/assets/on-tsla.svg'
 			ticker = 'tesla'
 			assetType = AssetType.Stocks
 			pythSymbol = 'Equity.US.TSLA/USD'
 			break
 		case Asset.Apple:
-			tickerName = 'iApple'
-			tickerSymbol = 'iAAPL'
-			tickerIcon = '/images/assets/apple.png'
+			tickerName = 'Clone Apple'
+			tickerSymbol = 'onAAPL'
+			tickerIcon = '/images/assets/on-aapl.svg'
 			ticker = 'apple'
 			assetType = AssetType.Stocks
 			pythSymbol = 'Equity.US.AAPL/USD'
 
 			break
 		case Asset.Amazon:
-			tickerName = 'iAmazon'
-			tickerSymbol = 'iAMZN'
-			tickerIcon = '/images/assets/amazon.png'
+			tickerName = 'Clone Amazon'
+			tickerSymbol = 'onAMZN'
+			tickerIcon = '/images/assets/on-amzn.svg'
 			ticker = 'amazon'
 			assetType = AssetType.Stocks
 			pythSymbol = 'Equity.US.AMZN/USD'
@@ -207,19 +207,25 @@ export const assetMapping = (index: number) => {
 
 export const collateralMapping = (index: number) => {
 	let collateralName = ''
+	let collateralSymbol = ''
+	let collateralIcon = ''
 	let collateralType: number
 	switch (index) {
-		case Collateral.USDi:
-			collateralName = 'USDi'
-			collateralType = Collateral.USDi
+		case Collateral.onUSD:
+			collateralName = 'Clone USD'
+			collateralType = Collateral.onUSD
+			collateralSymbol = 'onUSD'
+			collateralIcon = '/images/assets/on-usd.svg'
 			break
 		case Collateral.mockUSDC:
 			collateralName = 'USDC'
 			collateralType = Collateral.mockUSDC
+			collateralSymbol = 'USDC'
+			collateralIcon = '/images/assets/on-usd.svg'
 			break
 		default:
 			throw new Error('Not supported')
 	}
 
-	return { collateralName, collateralType }
+	return { collateralName, collateralSymbol, collateralIcon, collateralType }
 }

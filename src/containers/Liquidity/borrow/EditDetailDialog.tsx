@@ -12,6 +12,7 @@ import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -32,10 +33,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal : borrowDetail.maxWithdrawableColl)
   }, [editType, open])
 
+  const onUSDInfo = collateralMapping(StableCollateral.onUSD)
   const fromPair: PairData = {
-    tickerIcon: '/images/assets/USDi.png',
-    tickerName: 'USDi Coin',
-    tickerSymbol: 'USDi',
+    tickerIcon: onUSDInfo.collateralIcon,
+    tickerName: onUSDInfo.collateralName,
+    tickerSymbol: onUSDInfo.collateralSymbol,
   }
 
   const { mutateAsync } = useEditCollateralMutation(publicKey)

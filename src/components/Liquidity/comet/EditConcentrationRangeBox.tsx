@@ -20,11 +20,11 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 				<BoxWithBorder>
 					<LimitBox>
 						<Box><Typography variant='p_lg'>{parseFloat(cometData.lowerLimit.toFixed(4))}</Typography></Box>
-						<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+						<Box><Typography variant='p_sm' color='#989898'>onUSD / {assetData.tickerSymbol}</Typography></Box>
 					</LimitBox>
 					<CurrentBox>
 						<Box><Typography variant='p_sm'>Current</Typography></Box>
-						<Box><Typography variant='p'>{currentLowerLimit.toLocaleString()} USDi</Typography></Box>
+						<Box><Typography variant='p'>{currentLowerLimit.toLocaleString()} onUSD</Typography></Box>
 					</CurrentBox>
 				</BoxWithBorder>
 			</Grid>
@@ -35,11 +35,11 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 				<BoxWithBorder>
 					<LimitBox>
 						<Box><Typography variant='p_lg'>{assetData.price.toLocaleString()}</Typography></Box>
-						<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+						<Box><Typography variant='p_sm' color='#989898'>onUSD / {assetData.tickerSymbol}</Typography></Box>
 					</LimitBox>
 					<CurrentBox>
 						<Box><Typography variant='p_sm'>Current</Typography></Box>
-						<Box><Typography variant='p'>{assetData.price.toLocaleString()} USDi</Typography></Box>
+						<Box><Typography variant='p'>{assetData.price.toLocaleString()} onUSD</Typography></Box>
 					</CurrentBox>
 				</BoxWithBorder>
 			</Grid>
@@ -50,11 +50,11 @@ const EditConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData, curr
 				<BoxWithBorder>
 					<LimitBox>
 						<Box><Typography variant='p_lg'>{parseFloat(cometData.upperLimit.toFixed(4))}</Typography></Box>
-						<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+						<Box><Typography variant='p_sm' color='#989898'>onUSD / {assetData.tickerSymbol}</Typography></Box>
 					</LimitBox>
 					<CurrentBox>
 						<Box><Typography variant='p_sm'>Current</Typography></Box>
-						<Box><Typography variant='p'>{currentUpperLimit.toLocaleString()} USDi</Typography></Box>
+						<Box><Typography variant='p'>{currentUpperLimit.toLocaleString()} onUSD</Typography></Box>
 					</CurrentBox>
 				</BoxWithBorder>
 			</Grid>

@@ -115,12 +115,12 @@ const DepositPanel = ({ assetId, pool, handleClose }: { assetId: string, pool: P
           }}
           render={({ field }) => (
             <PairInput
-              tickerIcon={'/images/assets/USDi.png'}
-              tickerSymbol="USDi"
+              tickerIcon={'/images/assets/on-usd.png'}
+              tickerSymbol="onUSD"
               rightHeaderTitle='Wallet Balance'
               value={parseFloat(field.value.toFixed(3))}
               valueDollarPrice={field.value}
-              inputTitle='Provide more USDi'
+              inputTitle='Provide more onUSD'
               balance={unconcentData?.usdiVal}
               currentAmount={pool.liquidityUSD}
               dollarPrice={pool.liquidityUSD}

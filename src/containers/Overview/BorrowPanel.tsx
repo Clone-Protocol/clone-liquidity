@@ -17,15 +17,17 @@ import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
 const RISK_RATIO_VAL = 170
 
 const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
+  const onUSDInfo = collateralMapping(StableCollateral.onUSD)
   const fromPair: PairData = {
-    tickerIcon: '/images/assets/USDi.png',
-    tickerName: 'USDi Coin',
-    tickerSymbol: 'USDi',
+    tickerIcon: onUSDInfo.collateralIcon,
+    tickerName: onUSDInfo.collateralName,
+    tickerSymbol: onUSDInfo.collateralSymbol,
   }
 
   const { data: borrowDetail } = useBorrowDetailQuery({

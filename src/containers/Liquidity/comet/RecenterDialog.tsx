@@ -154,7 +154,7 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
                 <Stack direction="row" justifyContent="space-between">
                   <Box><Typography variant='p'>Recentering Cost</Typography> <InfoTooltip title={TooltipTexts.recenteringCost} /></Box>
                   <Box>
-                    <Typography variant='p_xlg'>{Math.max(0, cometData.usdiCost).toLocaleString(undefined, { maximumFractionDigits: 5 })} USDi</Typography>
+                    <Typography variant='p_xlg'>{Math.max(0, cometData.usdiCost).toLocaleString(undefined, { maximumFractionDigits: 5 })} onUSD</Typography>
                   </Box>
                 </Stack>
               </CenterBox>

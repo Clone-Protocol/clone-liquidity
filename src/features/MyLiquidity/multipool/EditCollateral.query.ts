@@ -6,6 +6,7 @@ import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { getUSDiAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
 export const fetchDefaultCollateral = async ({
 	program,
@@ -43,9 +44,10 @@ export const fetchDefaultCollateral = async ({
 	let collAmountDollarPrice = 1 // Since its USDi.
 	let totalCollValue = collAmount * collAmountDollarPrice
 
-	const tickerIcon = '/images/assets/USDi.png'
-	const tickerSymbol = 'USDi'
-	const tickerName = 'USDi'
+	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
+	const tickerIcon = onUSDInfo.collateralIcon
+	const tickerSymbol = onUSDInfo.collateralSymbol
+	const tickerName = onUSDInfo.collateralSymbol
 
 	return {
 		tickerIcon,

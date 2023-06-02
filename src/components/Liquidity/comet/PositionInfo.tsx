@@ -37,7 +37,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
             <Box paddingX='20px'>
               <Box><Typography variant='p_lg' color='#989898'>Collateral</Typography></Box>
               <Box>
-                <Typography variant='p_xxlg'>{cometDetail.collAmount.toLocaleString()} USDi</Typography>
+                <Typography variant='p_xxlg'>{cometDetail.collAmount.toLocaleString()} onUSD</Typography>
               </Box>
             </Box>
             <StyledDivider />
@@ -48,13 +48,13 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
                   <Typography variant='p_xxlg'>${cometDetail.contributedLiquidity?.toLocaleString()} USD</Typography>
                 </Box>
                 <Stack direction="row" justifyContent="space-between">
-                  <Box><Typography variant='p' color='#989898'>Contributed USDi</Typography></Box>
+                  <Box><Typography variant='p' color='#989898'>Contributed onUSD</Typography></Box>
                   <Box>
-                    <Typography variant='p'>{cometDetail.mintAmount.toLocaleString()} USDi</Typography>
+                    <Typography variant='p'>{cometDetail.mintAmount.toLocaleString()} onUSD</Typography>
                   </Box>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <Box><Typography variant='p' color='#989898'>Contributed iAsset</Typography></Box>
+                  <Box><Typography variant='p' color='#989898'>Contributed onAsset</Typography></Box>
                   <Box>
                     <Typography variant='p'>{cometDetail.mintIassetAmount!.toLocaleString(undefined, { maximumFractionDigits: 5 })} {assetData.tickerSymbol}</Typography>
                   </Box>
@@ -100,7 +100,7 @@ const PositionInfo: React.FC<Props> = ({ assetData, cometDetail, onShowEditForm,
           <Box ml='35px' mb='10px'>
             <Box><Typography variant='p' color='#989898'>ILD Debt <InfoTooltip title={TooltipTexts.ildCol} /></Typography></Box>
             <Box height='82px' display='flex' alignItems='center'>
-              <Typography variant='p_xlg'>{Math.abs(cometDetail.ild).toFixed(3)} {cometDetail.ildInUsdi ? 'USDi' : cometDetail.tickerSymbol}</Typography>
+              <Typography variant='p_xlg'>{Math.abs(cometDetail.ild).toFixed(3)} {cometDetail.ildInUsdi ? 'onUSD' : cometDetail.tickerSymbol}</Typography>
             </Box>
           </Box>
         </Box>

@@ -136,7 +136,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
     try {
       const data = await mutateAsyncComet(
         {
-          collateralIndex: 0, //USDi
+          collateralIndex: 0, //onUSD
           iassetIndex: assetIndex,
           usdiAmount: mintAmount,
           collateralAmount: collAmount,
@@ -219,8 +219,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
             }}
             render={({ field }) => (
               <PairInput
-                tickerIcon={'/images/assets/USDi.png'}
-                tickerSymbol="USDi"
+                tickerIcon={'/images/assets/on-usd.png'}
+                tickerSymbol="onUSD"
                 value={isNaN(collAmount) ? "" : collAmount}
                 dollarPrice={0}
                 headerTitle="Balance"
@@ -256,8 +256,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                 }}
                 render={({ field }) => (
                   <PairInput
-                    tickerIcon={'/images/assets/USDi.png'}
-                    tickerSymbol="USDi"
+                    tickerIcon={'/images/assets/on-usd.png'}
+                    tickerSymbol="onUSD"
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     dollarPrice={0}
                     headerTitle="Max amount mintable"

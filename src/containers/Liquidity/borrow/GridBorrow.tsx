@@ -89,7 +89,7 @@ let columns: GridColDef[] = [
 		headerName: 'Collateral',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USDi" />
+			return <CellDigitValue value={params.value} symbol="onUSD" />
 		},
 	},
 	{

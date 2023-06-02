@@ -191,8 +191,8 @@ const MultipoolCometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number
                 }}
                 render={({ field }) => (
                   <PairInput
-                    tickerIcon={'/images/assets/USDi.png'}
-                    tickerSymbol="USDi"
+                    tickerIcon={'/images/assets/on-usd.png'}
+                    tickerSymbol="onUSD"
                     value={parseFloat(field.value.toFixed(3))}
                     dollarPrice={0}
                     headerTitle="Max Amount Mintable"

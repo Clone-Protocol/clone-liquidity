@@ -10,7 +10,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return null
 
-  console.log('fetchBalance - USDi')
+  console.log('fetchBalance - onUSD')
   // start timer in data-loading-indicator
   setStartTimer(false);
   setStartTimer(true);

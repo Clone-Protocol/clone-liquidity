@@ -16,7 +16,7 @@ const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
         <PairBox>
           <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
           <Box sx={{ marginLeft: '9px' }}>
-            <span style={{ fontSize: '18px' }}>{positionInfo.tickerSymbol}</span> / USDi
+            <span style={{ fontSize: '18px' }}>{positionInfo.tickerSymbol}</span> / onUSD
           </Box>
         </PairBox>
       </Box>

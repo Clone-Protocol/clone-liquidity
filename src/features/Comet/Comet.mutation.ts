@@ -357,7 +357,7 @@ export const callEdit = async ({
     }
   }
 
-  // adjust USDI & iAsset in liquidity
+  // adjust onUSD & iAsset in liquidity
   if (mintAmountChange > 0) {
     ixnsCalls.push(
       program.addLiquidityToSinglePoolCometInstruction(

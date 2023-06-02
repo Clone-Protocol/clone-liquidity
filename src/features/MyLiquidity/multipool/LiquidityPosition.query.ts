@@ -44,7 +44,7 @@ export const fetchLiquidityDetail = async ({
 	let hasNoCollateral = false
 	let hasAlreadyPool = false
 	if (cometResult.status === 'fulfilled') {
-		// Only USDi for now.
+		// Only onUSD for now.
 		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 		comet = cometResult.value
 		totalHealthScore = getHealthScore(tokenData, comet).healthScore
@@ -146,7 +146,7 @@ export const fetchCloseLiquidityPosition = async ({
 		setStartTimer
 	})
 
-	const {iAssetILD, usdiILD, oraclePrice } = getILD(tokenData, comet, poolIndex)[0];
+	const { iAssetILD, usdiILD, oraclePrice } = getILD(tokenData, comet, poolIndex)[0];
 
 	let assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)

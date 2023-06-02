@@ -6,6 +6,7 @@ import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUSDiAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
 export const fetchCollaterals = async ({
 	program,
@@ -32,12 +33,13 @@ export const fetchCollaterals = async ({
 		usdiBalance = usdiTokenBalance.value.uiAmount!
 	}
 
+	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
 	const result: CollateralList[] = [
 		{
 			id: 0,
-			tickerName: 'Incept USD',
-			tickerSymbol: 'USDi',
-			tickerIcon: '/images/assets/USDi.png',
+			tickerName: onUSDInfo.collateralName,
+			tickerSymbol: onUSDInfo.collateralSymbol,
+			tickerIcon: onUSDInfo.collateralIcon,
 			balance: usdiBalance,
 			isEnabled: true,
 		},

@@ -26,7 +26,7 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
 
   return (
     <Box>
-      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/USDi Pool Analytics</Typography></Box>
+      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/onUSD Pool Analytics</Typography></Box>
       <DataBox>
         <Box><Typography variant="p_sm">Total Liquidity</Typography></Box>
         <Box><Typography variant="p_lg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate val={resultData!.liquidityGain} rate={resultData!.liquidityGainPct} /></Box>

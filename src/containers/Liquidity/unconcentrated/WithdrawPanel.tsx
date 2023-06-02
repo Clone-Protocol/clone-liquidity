@@ -83,8 +83,8 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
           <FormBox>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box display="flex" alignItems="center">
-                <Image src={'/images/assets/USDi.png'} width="28px" height="28px" />
-                <Typography variant='p_lg' ml='4px'>USDi</Typography>
+                <Image src={'/images/assets/on-usd.png'} width="28px" height="28px" />
+                <Typography variant='p_lg' ml='4px'>onUSD</Typography>
               </Box>
               <Box lineHeight={1} textAlign='right'>
                 <Box><Typography variant='p_xlg'>{amount.toLocaleString()}</Typography></Box>
@@ -92,7 +92,7 @@ const WithdrawPanel = ({ assetId, handleClose }: { assetId: string, handleClose:
               </Box>
             </Stack>
           </FormBox>
-          <BottomBox><Typography variant='p' color='#949494'>Withdrawable: </Typography> <Typography variant='p'>{data?.maxVal.toLocaleString()} USDi</Typography></BottomBox>
+          <BottomBox><Typography variant='p' color='#949494'>Withdrawable: </Typography> <Typography variant='p'>{data?.maxVal.toLocaleString()} onUSD</Typography></BottomBox>
         </StyledBox>
         <StyledBox>
           <FormBox>

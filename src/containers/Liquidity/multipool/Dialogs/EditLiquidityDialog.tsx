@@ -133,7 +133,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
               <Box>
                 {/* <SelectedPoolBox positionInfo={positionInfo} /> */}
 
-                <Typography variant='h8'>Adjust Liquidity to mint into USDi/{positionInfo.tickerSymbol} Pool</Typography>
+                <Typography variant='h8'>Adjust Liquidity to mint into onUSD/{positionInfo.tickerSymbol} Pool</Typography>
                 <Box mt='25px'>
                   <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} maxMintable={maxMintable} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>

@@ -17,7 +17,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<BoxWrapper>
 					<Box><Typography variant='p_lg'>{cometData.lowerLimit.toFixed(5)}</Typography></Box>
-					<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+					<Box><Typography variant='p_sm' color='#989898'>onUSD / {assetData.tickerSymbol}</Typography></Box>
 				</BoxWrapper>
 			</Grid>
 			<Grid item xs={4}>
@@ -26,7 +26,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<BoxWrapper>
 					<Box><Typography variant='p_lg'>{assetData.price.toFixed(5)}</Typography></Box>
-					<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+					<Box><Typography variant='p_sm' color='#989898'>onUSD / {assetData.tickerSymbol}</Typography></Box>
 				</BoxWrapper>
 			</Grid>
 			<Grid item xs={4}>
@@ -35,7 +35,7 @@ const ConcentrationRangeBox: React.FC<Props> = ({ assetData, cometData }) => {
 				</Box>
 				<BoxWrapper>
 					<Box><Typography variant='p_lg'>{cometData.upperLimit.toFixed(5)}</Typography></Box>
-					<Box><Typography variant='p_sm' color='#989898'>USDi / {assetData.tickerSymbol}</Typography></Box>
+					<Box><Typography variant='p_sm' color='#989898'>onUSD / {assetData.tickerSymbol}</Typography></Box>
 				</BoxWrapper>
 			</Grid>
 		</Grid>

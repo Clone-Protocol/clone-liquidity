@@ -112,7 +112,7 @@ let columns: GridColDef[] = [
 		headerName: 'Price',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USDi" />
+			return <CellDigitValue value={params.value} symbol="onUSD" />
 		},
 	},
 	{
@@ -122,7 +122,7 @@ let columns: GridColDef[] = [
 		headerName: 'Liquidity',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="USDi" />
+			return <CellDigitValue value={params.value} symbol="onUSD" />
 		},
 	},
 	{
@@ -132,7 +132,7 @@ let columns: GridColDef[] = [
 		headerName: '24h Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.row.volume24h} symbol="USDi" />
+			return <CellDigitValue value={params.row.volume24h} symbol="onUSD" />
 		},
 	},
 	{
@@ -142,7 +142,7 @@ let columns: GridColDef[] = [
 		headerName: '24h Fee Revenue',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.row.feeRevenue24h} symbol="USDi" />
+			return <CellDigitValue value={params.row.feeRevenue24h} symbol="onUSD" />
 		},
 	},
 	{

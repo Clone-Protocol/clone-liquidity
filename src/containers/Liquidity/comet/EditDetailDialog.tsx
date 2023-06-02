@@ -340,8 +340,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
                       render={({ field }) => (
                         <EditCollateralInput
                           editType={editType}
-                          tickerIcon={'/images/assets/USDi.png'}
-                          tickerSymbol="USDi"
+                          tickerIcon={'/images/assets/on-usd.png'}
+                          tickerSymbol="onUSD"
                           collAmount={isNaN(collAmount) ? 0 : collAmount}
                           collAmountDollarPrice={collAmount}
                           maxCollVal={editType === 0 ? balance : maxWithdrawable}

@@ -54,7 +54,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
           {!canCloseComet && <Box textAlign='right'><Typography variant='p' color='#ed2525'>iAsset Wallet Balance must be greater than Borrowed Amount</Typography></Box>}
           <Stack direction="row" justifyContent="space-between" mt='15px'>
             <Box><Typography variant='p_lg'>Withdraw-able Collateral</Typography></Box>
-            <Box><Typography variant='p_lg'>{borrowDetail.collateralAmount.toLocaleString()} USDi</Typography></Box>
+            <Box><Typography variant='p_lg'>{borrowDetail.collateralAmount.toLocaleString()} onUSD</Typography></Box>
           </Stack>
         </Box>
 

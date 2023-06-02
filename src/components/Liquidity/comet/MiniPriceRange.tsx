@@ -72,11 +72,11 @@ const MiniPriceRange: React.FC<Props> = ({ iPrice, centerPrice, lowerLimit, uppe
         <HoverBox>
           <Stack direction="row" justifyContent="space-between">
             <Typography variant='p_sm'>iAsset Price:</Typography>
-            <Typography variant='p_sm'>${iPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })} USDi</Typography>
+            <Typography variant='p_sm'>${iPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })} onUSD</Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '5px' }}>
             <Typography variant='p_sm'>Center Price:</Typography>
-            <Typography variant='p_sm'>${centerPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })} USDi</Typography>
+            <Typography variant='p_sm'>${centerPrice.toLocaleString(undefined, { maximumFractionDigits: 3 })} onUSD</Typography>
           </Stack>
         </HoverBox>
       </Popover>
