@@ -1,13 +1,13 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 import { useMutation } from 'react-query'
-import { InceptClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/clone"
 import { recenterProcedureInstructions } from "incept-protocol-sdk/sdk/src/utils"
 import { Comet, TokenData } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { toNumber, getMantissa } from "incept-protocol-sdk/sdk/src/decimal";
 import * as anchor from '@coral-xyz/anchor'
 import { useIncept } from '~/hooks/useIncept'
-import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
+import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts';
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { funcNoWallet } from '../baseQuery'
@@ -24,14 +24,14 @@ export const callRecenter = async ({
 
   console.log('recenter data', data)
 
-  await program.loadManager()
+  await program.loadClone()
 
   const [tokenData, comet] = await Promise.all([
     program.getTokenData(), program.getSinglePoolComets()
   ]);
   const iassetMint = tokenData.pools[comet.positions[data.cometIndex].poolIndex].assetInfo.iassetMint
   let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
-    getUSDiAccount(program),
+    getOnUSDAccount(program),
     getTokenAccount(
       iassetMint,
       userPubKey,
@@ -103,7 +103,7 @@ type RecenterFormData = {
 }
 
 interface CallRecenterProps {
-  program: InceptClient
+  program: CloneClient
   userPubKey: PublicKey | null
   setTxState: (state: TransactionStateType) => void
   data: RecenterFormData
@@ -112,9 +112,9 @@ interface CallRecenterProps {
 export function useRecenterMutation(userPubKey: PublicKey | null) {
   const wallet = useAnchorWallet()
   const { setTxState } = useTransactionState()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   if (wallet) {
-    return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+    return useMutation((data: RecenterFormData) => callRecenter({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
   } else {
     return useMutation((_: RecenterFormData) => funcNoWallet())
   }
@@ -242,13 +242,13 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
   console.log('close input data', data)
 
-  await program.loadManager()
+  await program.loadClone()
   const tokenData = await program.getTokenData();
 
   let singlePoolComet = await program.getSinglePoolComets();
   let assetInfo = tokenData.pools[singlePoolComet.positions[data.cometIndex].poolIndex].assetInfo;
 
-  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const collateralAssociatedTokenAccount = await getOnUSDAccount(program);
   const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, userPubKey, program.connection);
 
   if (data.cType === 0) {
@@ -274,18 +274,18 @@ type CloseFormData = {
   cType: number, // 0 : withdraw liquidity , 1 : close comet
 }
 interface CallCloseProps {
-  program: InceptClient
+  program: CloneClient
   userPubKey: PublicKey | null
   setTxState: (state: TransactionStateType) => void
   data: CloseFormData
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setTxState } = useTransactionState()
 
   if (wallet) {
-    return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+    return useMutation((data: CloseFormData) => callClose({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
   } else {
     return useMutation((_: CloseFormData) => funcNoWallet())
   }
@@ -302,11 +302,11 @@ export const callEdit = async ({
 
   console.log('edit input data', data)
 
-  await program.loadManager()
+  await program.loadClone()
   const tokenData = await program.getTokenData();
 
   const { collAmount, mintAmountChange, cometIndex, editType } = data
-  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const collateralAssociatedTokenAccount = await getOnUSDAccount(program);
 
   const singlePoolComet = await program.getSinglePoolComets();
   const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
@@ -397,7 +397,7 @@ type EditFormData = {
   editType: number
 }
 interface CallEditProps {
-  program: InceptClient
+  program: CloneClient
   userPubKey: PublicKey | null
   setTxState: (state: TransactionStateType) => void
   data: EditFormData,
@@ -405,10 +405,10 @@ interface CallEditProps {
 }
 export function useEditMutation(userPubKey: PublicKey | null, setRefreshData: () => void) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setTxState } = useTransactionState()
   if (wallet) {
-    return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, setTxState, data, setRefreshData }))
+    return useMutation((data: EditFormData) => callEdit({ program: getCloneApp(wallet), userPubKey, setTxState, data, setRefreshData }))
   } else {
     return useMutation((_: EditFormData) => funcNoWallet())
   }
@@ -424,10 +424,10 @@ export const callComet = async ({
 
   console.log('comet input data', data)
 
-  await program.loadManager()
+  await program.loadClone()
 
   const { collateralAmount, usdiAmount, iassetIndex, collateralIndex } = data;
-  const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+  const collateralAssociatedTokenAccount = await getOnUSDAccount(program);
   const singlePoolComets = await program.getSinglePoolComets();
   const newIndex = singlePoolComets.numPositions.toNumber();
   const ixnCalls = [
@@ -465,7 +465,7 @@ type CometFormData = {
 }
 
 interface CallCometProps {
-  program: InceptClient
+  program: CloneClient
   userPubKey: PublicKey | null
   setTxState: (state: TransactionStateType) => void
   data: CometFormData
@@ -474,9 +474,9 @@ interface CallCometProps {
 export function useCometMutation(userPubKey: PublicKey | null) {
   const wallet = useAnchorWallet()
   const { setTxState } = useTransactionState()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   if (wallet) {
-    return useMutation((data: CometFormData) => callComet({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+    return useMutation((data: CometFormData) => callComet({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
   } else {
     return useMutation((_: CometFormData) => funcNoWallet())
   }

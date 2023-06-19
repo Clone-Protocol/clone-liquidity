@@ -26,7 +26,7 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }: { balances: Balance, assetData: PositionInfo, assetIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const wallet = useAnchorWallet()
   const router = useRouter()
 
@@ -70,8 +70,8 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
   useEffect(() => {
     async function fetch() {
       if (wallet) {
-        const program = getInceptApp(wallet)
-        await program.loadManager()
+        const program = getCloneApp(wallet)
+        await program.loadClone()
         const tData = await program.getTokenData();
         setTokenData(tData);
       }

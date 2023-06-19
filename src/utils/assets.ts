@@ -1,6 +1,6 @@
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces";
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
-import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/incept"
+import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/clone"
 import axios from "axios";
 
 export type Interval = 'day' | 'hour';

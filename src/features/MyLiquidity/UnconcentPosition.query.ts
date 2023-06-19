@@ -1,16 +1,16 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { getTokenAccount } from '~/utils/token_accounts'
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
+export const fetchUnconcentDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
-	await program.loadManager()
+	await program.loadClone()
 	const tokenData = await program.getTokenData()
 
 	const liquidity = (await program.getLiquidityPositions())[index]
@@ -58,9 +58,9 @@ export interface UnconcentratedData {
 
 export function useUnconcentDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	if (wallet) {
-		return useQuery(['unconcentDetail', wallet, userPubKey, index], () => fetchUnconcentDetail({ program: getInceptApp(wallet), userPubKey, index }), {
+		return useQuery(['unconcentDetail', wallet, userPubKey, index], () => fetchUnconcentDetail({ program: getCloneApp(wallet), userPubKey, index }), {
 			refetchOnMount,
 			enabled
 		})

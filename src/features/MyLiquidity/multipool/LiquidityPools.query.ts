@@ -1,6 +1,6 @@
 import { Query, useQuery } from "react-query"
 import { PublicKey } from "@solana/web3.js"
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from "~/hooks/useIncept"
 import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
@@ -14,14 +14,14 @@ export const fetchPools = async ({
   setStartTimer,
   noFilter,
 }: {
-  program: InceptClient
+  program: CloneClient
   userPubKey: PublicKey | null
   setStartTimer: (start: boolean) => void
   noFilter: boolean
 }) => {
   if (!userPubKey) return []
 
-  await program.loadManager()
+  await program.loadClone()
 
   console.log("fetchPools :: LiquidityPools.query")
   // start timer in data-loading-indicator
@@ -94,13 +94,13 @@ export function useLiquidityPoolsQuery({
   noFilter = true,
 }: GetPoolsProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
     return useQuery(
       ["liquidityPools", wallet, userPubKey],
-      () => fetchPools({ program: getInceptApp(wallet), userPubKey, setStartTimer, noFilter }),
+      () => fetchPools({ program: getCloneApp(wallet), userPubKey, setStartTimer, noFilter }),
       {
         refetchOnMount,
         refetchInterval: REFETCH_CYCLE,

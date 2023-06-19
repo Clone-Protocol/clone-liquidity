@@ -1,8 +1,8 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useIncept } from '~/hooks/useIncept'
 import { useMutation } from 'react-query'
-import { InceptClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/incept'
-import { getUSDiAccount } from '~/utils/token_accounts'
+import { CloneClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/clone'
+import { getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -13,8 +13,8 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	console.log('edit input data', data)
 
-	await program.loadManager()
-	const userUsdiTokenAccount = await getUSDiAccount(program)
+	await program.loadClone()
+	const userUsdiTokenAccount = await getOnUSDAccount(program)
 
 	const { collAmount, collIndex, editType } = data
 
@@ -47,18 +47,18 @@ type EditFormData = {
 	editType: number
 }
 interface CallEditProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
 }
 export function useCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEdit({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: EditFormData) => callEdit({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}

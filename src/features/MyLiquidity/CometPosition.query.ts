@@ -1,7 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { getAccount } from '@solana/spl-token'
-import { DEVNET_TOKEN_SCALE, InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { DEVNET_TOKEN_SCALE, CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { getSinglePoolHealthScore, calculateEditCometSinglePoolWithUsdiBorrowed, getSinglePoolILD } from "incept-protocol-sdk/sdk/src/healthscore"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -11,10 +11,10 @@ import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getTokenAccount } from '~/utils/token_accounts'
 
-export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
+export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
 
-  await program.loadManager()
+  await program.loadClone()
 
   const tokenData = await program.getTokenData();
   const pool = tokenData.pools[index];
@@ -37,7 +37,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
   }
 }
 
-export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchCometDetail = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
   // console.log('fetchCometDetail', index)
@@ -45,7 +45,7 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadManager()
+  await program.loadClone()
 
   const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
     program.getTokenData(), program.getSinglePoolComets()
@@ -185,9 +185,9 @@ export interface CometDetail extends PositionInfo {
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   if (wallet) {
-    return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getInceptApp(wallet), userPubKey, index }), {
+    return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       enabled
     })
@@ -198,11 +198,11 @@ export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, ena
 
 export function useCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['cometDetail', wallet, userPubKey, index], () => fetchCometDetail({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+    return useQuery(['cometDetail', wallet, userPubKey, index], () => fetchCometDetail({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

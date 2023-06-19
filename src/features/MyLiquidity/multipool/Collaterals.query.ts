@@ -1,10 +1,10 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getUSDiAccount } from '~/utils/token_accounts'
+import { getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
@@ -13,7 +13,7 @@ export const fetchCollaterals = async ({
 	userPubKey,
 	setStartTimer,
 }: {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setStartTimer: (start: boolean) => void
 }) => {
@@ -25,8 +25,8 @@ export const fetchCollaterals = async ({
 	setStartTimer(true)
 
 	let usdiBalance = 0
-	await program.loadManager()
-	let usdiTokenAccount = await getUSDiAccount(program)
+	await program.loadClone()
+	let usdiTokenAccount = await getOnUSDAccount(program)
 
 	if (usdiTokenAccount !== undefined) {
 		let usdiTokenBalance = await program.connection.getTokenAccountBalance(usdiTokenAccount!)
@@ -64,13 +64,13 @@ export interface CollateralList {
 
 export function useCollateralsQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['collaterals', wallet, userPubKey],
-			() => fetchCollaterals({ program: getInceptApp(wallet), userPubKey, setStartTimer }),
+			() => fetchCollaterals({ program: getCloneApp(wallet), userPubKey, setStartTimer }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

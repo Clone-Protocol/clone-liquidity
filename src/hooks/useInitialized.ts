@@ -10,7 +10,7 @@ import { CURRENT_ACCOUNT } from '~/data/localstorage'
 
 /// @TODO: need to rewrite whole logic
 export default function useInitialized(connected: boolean, publicKey: PublicKey | null, wallet: AnchorWallet | undefined) {
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const [localAccount, _] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 	const setIsAlreadyInitializedAccountState = useSetRecoilState(isAlreadyInitializedAccountState)
@@ -29,8 +29,8 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 
 				try {
 					console.log('getUserAccount')
-					const program = getInceptApp(wallet)
-					await program.loadManager()
+					const program = getCloneApp(wallet)
+					await program.loadClone()
 					await program.getUserAccount()
 
 					setIsAlreadyInitializedAccountState(true);

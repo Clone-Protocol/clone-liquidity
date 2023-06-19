@@ -1,11 +1,11 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
-import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { getMantissa } from 'incept-protocol-sdk/sdk/src/decimal'
 import * as anchor from "@coral-xyz/anchor";
 import { useIncept } from '~/hooks/useIncept'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
+import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -14,7 +14,7 @@ import { sendAndConfirm } from '~/utils/tx_helper';
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadManager()
+	await program.loadClone()
 	const { borrowIndex } = data
 
 	console.log('close input data', data)
@@ -28,7 +28,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		program.provider.publicKey!,
 		program.provider.connection
 	)
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
+	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
 	let mintPosition = (await program.getBorrowPositions()).borrowPositions[
 		borrowIndex
 	];
@@ -60,18 +60,18 @@ type CloseFormData = {
 	borrowIndex: number
 }
 interface CallCloseProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: CloseFormData
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: CloseFormData) => callClose({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: CloseFormData) => callClose({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
@@ -80,14 +80,14 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 export const callEditCollateral = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadManager()
+	await program.loadClone()
 	const { borrowIndex, collateralAmount, editType } = data
 
 	if (!collateralAmount) throw new Error('no collateral amount')
 
 	console.log('edit input data', data)
 
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
+	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
 
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
 	let result: { result: boolean, msg: string };
@@ -145,7 +145,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadManager()
+	await program.loadClone()
 	const { borrowIndex, borrowAmount, editType } = data
 
 	if (!borrowAmount) throw new Error('no borrow more amount')
@@ -219,18 +219,18 @@ type EditFormData = {
 	editType: number
 }
 interface CallEditProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEditCollateral({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: EditFormData) => callEditCollateral({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -238,18 +238,18 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 }
 export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEditBorrow({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: EditFormData) => callEditBorrow({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 }
 
 const runMintInstructions = async (
-	incept: InceptClient,
+	incept: CloneClient,
 	mintAmount: anchor.BN,
 	collateralAmount: anchor.BN,
 	iassetAccount: PublicKey | undefined,
@@ -323,14 +323,14 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 
 	console.log('borrow input data', data)
 
-	await program.loadManager()
+	await program.loadClone()
 
 	const { collateralIndex, iassetIndex, iassetAmount, collateralAmount } = data
 
 	const tokenData = await program.getTokenData();
 	let iassetMint = tokenData.pools[iassetIndex].assetInfo.iassetMint
 
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program)
+	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
 	const iassetAssociatedTokenAccount = await getTokenAccount(
 		iassetMint,
 		program.provider.publicKey!,
@@ -361,18 +361,18 @@ type BorrowFormData = {
 	iassetAmount: number
 }
 interface CallBorrowProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: BorrowFormData
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: BorrowFormData) => callBorrow({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: BorrowFormData) => callBorrow({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: BorrowFormData) => funcNoWallet())
 	}

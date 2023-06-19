@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient, DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/incept'
+import { CloneClient, DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
 import { Comet, TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
@@ -16,13 +16,13 @@ export const fetchInfos = async ({
 	userPubKey,
 	setStartTimer,
 }: {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return
 
-	await program.loadManager()
+	await program.loadClone()
 
 	console.log('fetchInfos :: MultipoolInfo.query')
 	// start timer in data-loading-indicator
@@ -170,12 +170,12 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 
 export function useMultipoolInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
 	let queryFunc
 	try {
-		const program = getInceptApp(wallet)
+		const program = getCloneApp(wallet)
 		queryFunc = () => fetchInfos({ program, userPubKey, setStartTimer })
 	} catch (e) {
 		console.error(e)

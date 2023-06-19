@@ -23,7 +23,7 @@ import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHideEditForm, onRefetchData }: { cometId: number, balance: number, assetData: PI, cometDetail: CometDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const wallet = useAnchorWallet()
   const [collAmount, setCollAmount] = useState(NaN)
   const [mintAmount, setMintAmount] = useState(0.0)
@@ -85,8 +85,8 @@ const EditDetailDialog = ({ cometId, balance, assetData, cometDetail, open, onHi
   useEffect(() => {
     async function fetch() {
       if (wallet) {
-        const program = getInceptApp(wallet)
-        await program.loadManager()
+        const program = getCloneApp(wallet)
+        await program.loadClone()
 
         const [tokenDataResult, cometResult] = await Promise.allSettled([
           program.getTokenData(), program.getSinglePoolComets()

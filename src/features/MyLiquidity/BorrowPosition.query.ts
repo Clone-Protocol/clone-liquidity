@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -10,12 +10,12 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: InceptClient, userPubKey: PublicKey | null, index: number }) => {
+export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
 
   console.log('fetchBorrowDetail', index)
 
-  await program.loadManager()
+  await program.loadClone()
   const tokenData = await program.getTokenData()
 
   let oPrice = 1
@@ -39,12 +39,12 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   }
 }
 
-const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
   console.log('fetchBorrowPosition')
 
-  await program.loadManager()
+  await program.loadClone()
 
   const [tokenDataResult, borrowPositionResult] = await Promise.allSettled([
     program.getTokenData(), program.getBorrowPositions()
@@ -122,9 +122,9 @@ export interface PairData {
 
 export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   if (wallet) {
-    return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getInceptApp(wallet), userPubKey, index }), {
+    return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       enabled
     })
@@ -135,11 +135,11 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
 
 export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+    return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

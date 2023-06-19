@@ -1,9 +1,9 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token'
-import { InceptClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/clone"
 import { recenterProcedureInstructions } from "incept-protocol-sdk/sdk/src/utils"
 import { Comet, TokenData } from 'incept-protocol-sdk/sdk/src/interfaces'
-import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts';
+import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts';
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { calculateCometRecenterMultiPool } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useMutation } from 'react-query'
@@ -21,7 +21,7 @@ export const callRecenterAll = async ({ program, userPubKey, setTxState, data }:
 
 	// console.log('recenterAll data', data)
 
-	// await program.loadManager()
+	// await program.loadClone()
 
 	// const [cometResult, tokenDataResult] = await Promise.allSettled([program.getComet(), program.getTokenData()])
 
@@ -73,11 +73,11 @@ export const callRecenterAll = async ({ program, userPubKey, setTxState, data }:
 
 export function useRecenterAllMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: RecenterFormData) => callRecenterAll({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: RecenterFormData) => callRecenterAll({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: RecenterFormData) => funcNoWallet())
 	}
@@ -89,14 +89,14 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 	console.log('recenter data', data)
 
 
-	await program.loadManager()
+	await program.loadClone()
 
 	const [tokenData, comet] = await Promise.all([
 		program.getTokenData(), program.getComet()
 	]);
 	const iassetMint = tokenData.pools[comet.positions[data.positionIndex].poolIndex].assetInfo.iassetMint
 	let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
-		getUSDiAccount(program),
+		getOnUSDAccount(program),
 		getTokenAccount(
 			iassetMint,
 			userPubKey,
@@ -166,7 +166,7 @@ type RecenterFormData = {
 }
 
 interface CallRecenterProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: RecenterFormData
@@ -174,11 +174,11 @@ interface CallRecenterProps {
 
 export function useRecenterMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: RecenterFormData) => callRecenter({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: RecenterFormData) => callRecenter({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: RecenterFormData) => funcNoWallet())
 	}

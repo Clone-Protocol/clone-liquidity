@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
 import { assetMapping, AssetType } from '~/data/assets'
@@ -9,7 +9,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserLiquidityInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchPools = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: UnconcentratedPools.query')
@@ -17,7 +17,7 @@ export const fetchPools = async ({ program, userPubKey, setStartTimer }: { progr
 	setStartTimer(false);
 	setStartTimer(true);
 
-	await program.loadManager()
+	await program.loadClone()
 	const result: PoolList[] = []
 
 	const [tokenDataResult, liquidityPositionsResult] = await Promise.allSettled([
@@ -69,10 +69,10 @@ export interface PoolList {
 
 export function useUnconcentPoolsQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 	if (wallet) {
-		return useQuery(['unconcentPools', wallet, userPubKey, filter], () => fetchPools({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+		return useQuery(['unconcentPools', wallet, userPubKey, filter], () => fetchPools({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,

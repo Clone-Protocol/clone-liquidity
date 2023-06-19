@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
@@ -16,13 +16,13 @@ export const fetchLiquidityDetail = async ({
 	userPubKey,
 	index,
 }: {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	index: number
 }) => {
 	if (!userPubKey) return
 
-	await program.loadManager()
+	await program.loadClone()
 
 	const [tokenDataResult, cometResult] = await Promise.allSettled([
 		program.getTokenData(), program.getComet()
@@ -95,11 +95,11 @@ interface GetProps {
 
 export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	if (wallet) {
 		return useQuery(
 			['liquidityPosition', wallet, userPubKey, index],
-			() => fetchLiquidityDetail({ program: getInceptApp(wallet), userPubKey, index }),
+			() => fetchLiquidityDetail({ program: getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
 				enabled,
@@ -117,14 +117,14 @@ export const fetchCloseLiquidityPosition = async ({
 	index,
 	setStartTimer,
 }: {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	index: number
 	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return
 
-	await program.loadManager()
+	await program.loadClone()
 
 	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
 
@@ -204,13 +204,13 @@ export interface CloseLiquidityPositionInfo {
 
 export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['closeLiquidityPosition', wallet, userPubKey, index],
-			() => fetchCloseLiquidityPosition({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }),
+			() => fetchCloseLiquidityPosition({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

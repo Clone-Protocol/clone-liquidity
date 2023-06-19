@@ -31,7 +31,7 @@ interface CometInfo {
 const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId: string, open: boolean, onRefetchData?: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { mutateAsync } = useRecenterMutation(publicKey)
   const [isLackBalance, setIsLackBalance] = useState(false)
   const [cometData, setCometData] = useState<CometInfo>({
@@ -74,8 +74,8 @@ const RecenterDialog = ({ assetId, open, onRefetchData, handleClose }: { assetId
   useEffect(() => {
     async function fetch() {
       if (open && wallet && cometDetail) {
-        const program = getInceptApp(wallet)
-        await program.loadManager()
+        const program = getCloneApp(wallet)
+        await program.loadClone()
         const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
           program.getTokenData(), program.getSinglePoolComets()
         ]);

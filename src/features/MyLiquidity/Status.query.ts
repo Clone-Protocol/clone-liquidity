@@ -1,13 +1,13 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return null
 
   console.log('fetchStatus')
@@ -15,7 +15,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadManager()
+  await program.loadClone()
 
   let totalMultiPoolCometLiquidity = 0;
   let totalMultiPoolCometValLocked = 0;
@@ -145,11 +145,11 @@ export interface Status {
 
 export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['statusData', wallet, userPubKey], () => fetchStatus({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+    return useQuery(['statusData', wallet, userPubKey], () => fetchStatus({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

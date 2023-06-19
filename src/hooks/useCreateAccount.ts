@@ -17,7 +17,7 @@ import { sendAndConfirm } from '~/utils/tx_helper';
 /// @TODO: need to refactor.
 export function useCreateAccount() {
 	const [isCreatingAccount, setIsCreatingAccount] = useRecoilState(isCreatingAccountState)
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
@@ -29,8 +29,8 @@ export function useCreateAccount() {
 	useEffect(() => {
 		async function createAccount() {
 			if (wallet) {
-				const program = getInceptApp(wallet, true)
-				await program.loadManager()
+				const program = getCloneApp(wallet, true)
+				await program.loadClone()
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 

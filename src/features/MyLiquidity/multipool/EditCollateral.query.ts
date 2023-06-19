@@ -1,9 +1,9 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { useIncept } from '~/hooks/useIncept'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
-import { getUSDiAccount } from '~/utils/token_accounts'
+import { getOnUSDAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
@@ -13,17 +13,17 @@ export const fetchDefaultCollateral = async ({
 	userPubKey,
 	index,
 }: {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	index: number
 }) => {
 	if (!userPubKey) return
-	await program.loadManager()
+	await program.loadClone()
 
 	let [cometResult, tokenDataResult, usdiAccountResult] = await Promise.allSettled([
 		program.getComet(),
 		program.getTokenData(),
-		getUSDiAccount(program),
+		getOnUSDAccount(program),
 	])
 
 	let balance = 0
@@ -70,11 +70,11 @@ interface GetProps {
 
 export function useEditCollateralQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	if (wallet) {
 		return useQuery(
 			['editCollateral', wallet, userPubKey, index],
-			() => fetchDefaultCollateral({ program: getInceptApp(wallet), userPubKey, index }),
+			() => fetchDefaultCollateral({ program: getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
 				enabled,

@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from 'incept-protocol-sdk/sdk/src/incept'
+import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
@@ -18,14 +18,14 @@ export const fetchRecenterInfo = async ({
 	index,
 	setStartTimer,
 }: {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	index: number
 	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return
 
-	await program.loadManager()
+	await program.loadClone()
 
 	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
 
@@ -116,13 +116,13 @@ interface GetProps {
 
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['recenterInfo', wallet, userPubKey, index],
-			() => fetchRecenterInfo({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }),
+			() => fetchRecenterInfo({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

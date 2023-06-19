@@ -1,13 +1,13 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getUSDiAccount } from '~/utils/token_accounts'
+import { getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return null
 
   console.log('fetchBalance - onUSD')
@@ -15,12 +15,12 @@ export const fetchBalance = async ({ program, userPubKey, setStartTimer }: { pro
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadManager()
+  await program.loadClone()
 
   let balanceVal = 0.0
 
   try {
-    const associatedTokenAccount = await getUSDiAccount(program);
+    const associatedTokenAccount = await getOnUSDAccount(program);
     const balance = await program.connection.getTokenAccountBalance(associatedTokenAccount!, "processed");
     balanceVal = Number(balance.value.amount) / 100000000;
   } catch { }
@@ -42,11 +42,11 @@ export interface Balance {
 
 export function useBalanceQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['cometBalance', wallet, userPubKey], () => fetchBalance({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+    return useQuery(['cometBalance', wallet, userPubKey], () => fetchBalance({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,
