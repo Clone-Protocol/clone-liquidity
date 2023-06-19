@@ -8,7 +8,7 @@ import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
-import { getAssociatedTokenAddress } from "@solana/spl-token"
+import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 
 export const callNew = async ({ program, userPubKey, setTxState, data }: CallNewProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -78,14 +78,9 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 
 	const { positionIndex, changeAmount, editType } = data
-	const usdiAta = usdiAtaResult.value
 	const comet = cometResult.value
 	const cometPosition = comet.positions[positionIndex]
 	const poolIndex = cometPosition.poolIndex
-	const tokenData = tokenDataResult.value
-	const pool = tokenData.pools[poolIndex]
-
-	const iassetAta = await getTokenAccount(pool.assetInfo.iassetMint, userPubKey, program.provider.connection)
 
 	let ixnCalls = [program.updatePricesInstruction()]
 	/// Deposit
@@ -93,30 +88,11 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 		ixnCalls.push(program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex))
 		/// Withdraw
 	} else {
-		const totalPoolUsdi = toNumber(pool.usdiAmount)
-		const totalLpTokens = toNumber(pool.liquidityTokenSupply)
-		const positionLpTokens = toNumber(cometPosition.liquidityTokenValue);
-		const positionUsdi = toNumber(cometPosition.borrowedUsdi)
-
-		let lpTokensToWithdraw = Math.min(
-			(totalLpTokens * changeAmount) / totalPoolUsdi,
-			positionLpTokens
-		)
-		// Catch the edge case if we want to withdraw everything.
-		if (changeAmount === positionUsdi) {
-			lpTokensToWithdraw = positionLpTokens
-		}
-
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-				toDevnetScale(lpTokensToWithdraw),
-				positionIndex, iassetAta!, usdiAta!, false
+				toDevnetScale(changeAmount),
+				positionIndex
 			))
-
-		// if (lpTokensToWithdraw === positionLpTokens) {
-		// 	const collateralUsdi = toNumber(cometResult.value.collaterals[0].collateralAmount)
-		// 	ixnCalls.push(program.payCometILDInstruction(positionIndex, 0, toDevnetScale(collateralUsdi).toNumber(), false))
-		// }
 	}
 
 	const ixns = await Promise.all(ixnCalls)
@@ -155,13 +131,14 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 	await program.loadClone()
 
-	const [iAssetAssociatedToken, usdiAssociatedToken, userAccount] = await Promise.all([
-		getAssociatedTokenAddress(
-			data.iassetMint,
+	let [onassetAssociatedToken, onusdAssociatedTokenAddress, userAccount] = await Promise.all([
+		getTokenAccount(
+			data.onassetMint,
 			program.provider.publicKey!,
+			program.connection
 		),
 		getAssociatedTokenAddress(
-			program.incept!.usdiMint,
+			program.clone!.onusdMint,
 			program.provider.publicKey!,
 		),
 		program.getUserAccount()
@@ -177,14 +154,27 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		program.updatePricesInstruction(),
 	]
 
-	if (data.positionLpTokens > 0) {
+	if (!onassetAssociatedToken) {
+		const ata = await getAssociatedTokenAddress(
+			data.onassetMint,
+			program.provider.publicKey!
+		)
+		onassetAssociatedToken = ata
+		ixnCalls.push(
+			(async () => createAssociatedTokenAccountInstruction(
+				program.provider.publicKey!,
+				ata,
+				program.provider.publicKey!,
+				data.onassetMint,
+			))()
+		)
+	}
+
+	if (data.committedOnusdLiquidity > 0) {
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-				toDevnetScale(data.positionLpTokens),
+				toDevnetScale(data.committedOnusdLiquidity),
 				data.positionIndex,
-				iAssetAssociatedToken,
-				usdiAssociatedToken,
-				false
 			)
 		)
 	}
@@ -194,13 +184,30 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			program.payCometILDInstruction(
 				data.positionIndex,
 				toDevnetScale(data.balance),
-				data.ildInUsdi,
-				iAssetAssociatedToken,
-				usdiAssociatedToken,
-				false
+				data.ildInOnusd,
+				onassetAssociatedToken,
+				onusdAssociatedTokenAddress,
 			)
 		)
 	}
+
+	ixnCalls.push(
+		program.program.methods
+		.collectLpRewards(data.positionIndex)
+		.accounts({
+		  user: program.provider.publicKey!,
+		  userAccount: userAccountAddress,
+		  clone: program.cloneAddress[0],
+		  tokenData: program.clone!.tokenData,
+		  comet: userAccount.comet,
+		  onusdMint: program.clone!.onusdMint,
+		  onassetMint: data.onassetMint,
+		  userOnusdTokenAccount: onusdAssociatedTokenAddress,
+		  userOnassetTokenAccount: onassetAssociatedToken,
+		  tokenProgram: TOKEN_PROGRAM_ID,
+		})
+		.instruction()
+	)
 
 	ixnCalls.push(
 		program.program.methods
@@ -208,8 +215,8 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			.accounts({
 				user: userPubKey,
 				userAccount: userAccountAddress,
-				incept: program.inceptAddress[0],
-				tokenData: program.incept!.tokenData,
+				clone: program.cloneAddress[0],
+				tokenData: program.clone!.tokenData,
 				comet: userAccount.comet,
 			})
 			.instruction()
@@ -225,11 +232,11 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 type CloseFormData = {
 	positionIndex: number
-	ildInUsdi: boolean
+	ildInOnusd: boolean
 	ildDebt: number
 	balance: number
-	iassetMint: PublicKey
-	positionLpTokens: number
+	onassetMint: PublicKey
+	committedOnusdLiquidity: number
 }
 interface CallCloseProps {
 	program: CloneClient

@@ -2,7 +2,7 @@ import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { getAccount } from '@solana/spl-token'
 import { DEVNET_TOKEN_SCALE, CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { getSinglePoolHealthScore, calculateEditCometSinglePoolWithUsdiBorrowed, getSinglePoolILD } from "incept-protocol-sdk/sdk/src/healthscore"
+import { getILD, getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
 import { assetMapping } from 'src/data/assets'
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -10,6 +10,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getMantissa, toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getTokenAccount } from '~/utils/token_accounts'
+import { calculatePoolAmounts } from 'incept-protocol-sdk/sdk/src/utils'
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
@@ -18,8 +19,10 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 
   const tokenData = await program.getTokenData();
   const pool = tokenData.pools[index];
-  //const balances = await program.getPoolBalances(index)
-  let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+  const {poolOnasset, poolOnusd} = calculatePoolAmounts(
+    toNumber(pool.onusdIld), toNumber(pool.onassetIld), toNumber(pool.committedOnusdLiquidity), toNumber(pool.assetInfo.price)
+  )
+  let price = poolOnusd / poolOnasset
   let tightRange = price * 0.1
   let maxRange = 2 * price
   let centerPrice = price
@@ -47,21 +50,20 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
   await program.loadClone()
 
-  const [tokenDataResult, singlePoolCometResult] = await Promise.allSettled([
-    program.getTokenData(), program.getSinglePoolComets()
-  ]);
-
-  if (tokenDataResult.status !== "fulfilled" || singlePoolCometResult.status !== "fulfilled") return null;
-  const comet = singlePoolCometResult.value;
-  const tokenData = tokenDataResult.value;
+  const tokenData = await program.getTokenData()
+  const comet = await program.getComet()
   const position = comet.positions[index];
+  const pool = tokenData.pools[position.poolIndex]
 
   // console.log('comet', comet)
   // console.log('comet-poolIndex', Number(position.poolIndex))
-
-  const mintAmount = toNumber(position.borrowedUsdi)
-  const mintIassetAmount = toNumber(position.borrowedIasset)
+  const oraclePrice = toNumber(pool.assetInfo.price)
+  const mintAmount = toNumber(position.committedOnusdLiquidity)
+  const mintIassetAmount = mintAmount / oraclePrice
   const collAmount = toNumber(comet.collaterals[index].collateralAmount)
+  const {poolOnasset, poolOnusd} = calculatePoolAmounts(
+    toNumber(pool.onusdIld), toNumber(pool.onassetIld), toNumber(pool.committedOnusdLiquidity), oraclePrice
+  )
 
   let price = 0
   let tightRange = 0
@@ -80,43 +82,29 @@ export const fetchCometDetail = async ({ program, userPubKey, index, setStartTim
 
   if (Number(position.poolIndex) < 255) {
     let pool = tokenData.pools[position.poolIndex];
-    const balances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
-    price = balances[1] / balances[0]
+    price = poolOnusd / poolOnasset
     tightRange = price * 0.1
     maxRange = 2 * price
-    centerPrice = getMantissa(position.borrowedIasset) === 0 ? 0 : getMantissa(position.borrowedUsdi) / getMantissa(position.borrowedIasset)
+    centerPrice = price
 
     const asset = assetMapping(Number(position.poolIndex))
     pythSymbol = asset.pythSymbol
     tickerIcon = asset.tickerIcon
     tickerName = asset.tickerName
     tickerSymbol = asset.tickerSymbol
-    const singlePoolHealthScore = getSinglePoolHealthScore(index, tokenData, comet);
-    const ILDinfo = getSinglePoolILD(index, tokenData, comet)
-    ildInUsdi = ILDinfo.usdiILD > 0;
-    ild = ildInUsdi ? ILDinfo.usdiILD : ILDinfo.iAssetILD
+    const singlePoolHealthScore = getHealthScore(tokenData, comet);
+    const ILDinfo = getILD(tokenData, comet)[index]
+    ildInUsdi = ILDinfo.onusdILD > 0;
+    ild = ildInUsdi ? ILDinfo.onusdILD : ILDinfo.onAssetILD
     healthScore = singlePoolHealthScore.healthScore
-    const iassetAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, program.provider.publicKey!, program.provider.connection)
+    const iassetAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, program.provider.publicKey!, program.provider.connection)
     if (iassetAccountAddress !== undefined) {
       const iassetTokenAccount = await getAccount(program.provider.connection, iassetAccountAddress)
       iassetBalance = Number(iassetTokenAccount.amount) * (10 ** -DEVNET_TOKEN_SCALE)
     }
-
-    const {
-      lowerPrice,
-      upperPrice
-    } = calculateEditCometSinglePoolWithUsdiBorrowed(
-      tokenData,
-      comet,
-      index,
-      0,
-      0
-    )
-    lowerLimit = lowerPrice
-    upperLimit = upperPrice
   }
 
-  const contributedLiquidity = toNumber(position.borrowedUsdi) * 2
+  const contributedLiquidity = toNumber(position.committedOnusdLiquidity) * 2
 
   return {
     mintAmount,

@@ -23,8 +23,8 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	const tokenData = await program.getTokenData();
 	const borrowPosition = borrows.borrowPositions[borrowIndex];
 	const assetInfo = tokenData.pools[borrowPosition.poolIndex].assetInfo
-	const iassetAssociatedTokenAccount = await getTokenAccount(
-		assetInfo.iassetMint,
+	const onassetAssociatedTokenAccount = await getTokenAccount(
+		assetInfo.onassetMint,
 		program.provider.publicKey!,
 		program.provider.connection
 	)
@@ -35,9 +35,9 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 	let ixnCalls = [
 		program.updatePricesInstruction(),
-		program.subtractIassetFromBorrowInstruction(
-			iassetAssociatedTokenAccount!,
-			new anchor.BN(getMantissa(mintPosition.borrowedIasset)),
+		program.payBorrowDebtInstruction(
+			onassetAssociatedTokenAccount!,
+			new anchor.BN(getMantissa(mintPosition.borrowedOnasset)),
 			borrowIndex
 		),
 		program.withdrawCollateralFromBorrowInstruction(
@@ -107,7 +107,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	} else {
 		/// Withdraw
 		const usdiAssociatedToken = await getAssociatedTokenAddress(
-			program.incept!.usdiMint,
+			program.clone!.onusdMint,
 			program.provider.publicKey!
 		)
 		if (collateralAssociatedTokenAccount === undefined) {
@@ -116,7 +116,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 					program.provider.publicKey!,
 					usdiAssociatedToken,
 					program.provider.publicKey!,
-					program.incept!.usdiMint
+					program.clone!.onusdMint
 				))()
 			)
 		}
@@ -156,8 +156,8 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 	const borrowPosition = borrows.borrowPositions[borrowIndex];
 	const assetInfo = tokenData.pools[borrowPosition.poolIndex].assetInfo
 
-	const iassetAssociatedTokenAccount = await getTokenAccount(
-		assetInfo.iassetMint,
+	const onassetAssociatedTokenAccount = await getTokenAccount(
+		assetInfo.onassetMint,
 		program.provider.publicKey!,
 		program.connection
 	)
@@ -165,14 +165,14 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 	let result: { result: boolean, msg: string };
 
 	const associatedToken = await getAssociatedTokenAddress(
-		assetInfo.iassetMint,
+		assetInfo.onassetMint,
 		program.provider.publicKey!
 	)
 
 	/// Deposit
 	if (editType === 0) {
 		ixnCalls.push(
-			program.addIassetToBorrowInstruction(
+			program.payBorrowDebtInstruction(
 				associatedToken,
 				new anchor.BN(borrowAmount * 10 ** 8),
 				borrowIndex
@@ -183,19 +183,19 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 			msg: 'added borrow amount to borrow',
 		}
 	} else {
-		if (iassetAssociatedTokenAccount === undefined) {
+		if (onassetAssociatedTokenAccount === undefined) {
 			ixnCalls.push(
 				(async () => createAssociatedTokenAccountInstruction(
 					program.provider.publicKey!,
 					associatedToken,
 					program.provider.publicKey!,
-					assetInfo.iassetMint
+					assetInfo.onassetMint
 				))()
 			)
 		}
 		ixnCalls.push(
-			program.subtractIassetFromBorrowInstruction(
-				iassetAssociatedTokenAccount!,
+			program.borrowMoreInstruction(
+				onassetAssociatedTokenAccount!,
 				new anchor.BN(borrowAmount * 10 ** 8),
 				borrowIndex,
 			))
@@ -249,7 +249,7 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 }
 
 const runMintInstructions = async (
-	incept: CloneClient,
+	clone: CloneClient,
 	mintAmount: anchor.BN,
 	collateralAmount: anchor.BN,
 	iassetAccount: PublicKey | undefined,
@@ -258,15 +258,15 @@ const runMintInstructions = async (
 	collateralIndex: number,
 	setTxState: (state: TransactionStateType) => void
 ) => {
-	const tokenData = await incept.getTokenData();
-	const { userPubkey, bump } = await incept.getUserAddress()
-	let iassetMint = tokenData.pools[iassetIndex].assetInfo.iassetMint
+	const tokenData = await clone.getTokenData();
+	const { userPubkey, bump } = await clone.getUserAddress()
+	let iassetMint = tokenData.pools[iassetIndex].assetInfo.onassetMint
 
-	let ixnCalls: Promise<TransactionInstruction>[] = [incept.updatePricesInstruction()]
+	let ixnCalls: Promise<TransactionInstruction>[] = [clone.updatePricesInstruction()]
 
-	const associatedToken = await getAssociatedTokenAddress(iassetMint, incept.provider.publicKey!)
+	const associatedToken = await getAssociatedTokenAddress(iassetMint, clone.provider.publicKey!)
 
-	let userAccount = await incept.getUserAccount()
+	let userAccount = await clone.getUserAccount()
 	let borrowPositionAddress = userAccount.borrowPositions;
 	let signers = [];
 	// If mint positions account not created
@@ -274,11 +274,11 @@ const runMintInstructions = async (
 		const borrowPositionsAccount = anchor.web3.Keypair.generate();
 		signers.push(borrowPositionsAccount);
 		borrowPositionAddress = borrowPositionsAccount.publicKey;
-		ixnCalls.push(incept.program.account.borrowPositions.createInstruction(borrowPositionsAccount));
-		ixnCalls.push(incept.program.methods
+		ixnCalls.push(clone.program.account.borrowPositions.createInstruction(borrowPositionsAccount));
+		ixnCalls.push(clone.program.methods
 			.initializeBorrowPositions()
 			.accounts({
-				user: incept.provider.publicKey!,
+				user: clone.provider.publicKey!,
 				userAccount: userPubkey,
 				borrowPositions: borrowPositionsAccount.publicKey,
 				rent: anchor.web3.SYSVAR_RENT_PUBKEY,
@@ -292,16 +292,16 @@ const runMintInstructions = async (
 	if (iassetAccount === undefined) {
 		ixnCalls.push(
 			(async () => createAssociatedTokenAccountInstruction(
-				incept.program.provider.publicKey!,
+				clone.program.provider.publicKey!,
 				associatedToken,
-				incept.program.provider.publicKey!,
+				clone.program.provider.publicKey!,
 				iassetMint
 			))()
 		)
 	}
 
 	ixnCalls.push(
-		incept.initializeBorrowPositionInstruction(
+		clone.initializeBorrowPositionInstruction(
 			usdiAccount,
 			associatedToken,
 			mintAmount,
@@ -314,8 +314,8 @@ const runMintInstructions = async (
 
 	let ixns = await Promise.all(ixnCalls)
 
-	// await incept.provider.sendAndConfirm!(tx, signers);
-	await sendAndConfirm(incept.provider, ixns, setTxState, signers)
+	// await clone.provider.sendAndConfirm!(tx, signers);
+	await sendAndConfirm(clone.provider, ixns, setTxState, signers)
 }
 
 export const callBorrow = async ({ program, userPubKey, setTxState, data }: CallBorrowProps) => {
@@ -328,10 +328,10 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 	const { collateralIndex, iassetIndex, iassetAmount, collateralAmount } = data
 
 	const tokenData = await program.getTokenData();
-	let iassetMint = tokenData.pools[iassetIndex].assetInfo.iassetMint
+	let iassetMint = tokenData.pools[iassetIndex].assetInfo.onassetMint
 
 	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
-	const iassetAssociatedTokenAccount = await getTokenAccount(
+	const onassetAssociatedTokenAccount = await getTokenAccount(
 		iassetMint,
 		program.provider.publicKey!,
 		program.provider.connection
@@ -341,7 +341,7 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 		program,
 		new anchor.BN(iassetAmount * 10 ** 8),
 		new anchor.BN(collateralAmount * 10 ** 8),
-		iassetAssociatedTokenAccount,
+		onassetAssociatedTokenAccount,
 		collateralAssociatedTokenAccount!,
 		iassetIndex,
 		collateralIndex,

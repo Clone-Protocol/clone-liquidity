@@ -9,7 +9,7 @@ import { useState } from "react"
 const LiquidatedPositions = ({ ltype }: { ltype: number }) => {
   const [showArea, setShowArea] = useState(true)
   const positionInfo = {
-    tickerIcon: '/images/assets/on-usd.png',
+    tickerIcon: '/images/assets/on-usd.svg',
     tickerName: 'USD Coin',
     tickerSymbol: 'USDC',
     claimableAmount: 110

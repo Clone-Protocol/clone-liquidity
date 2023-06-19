@@ -94,7 +94,7 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 	const [tokenData, comet] = await Promise.all([
 		program.getTokenData(), program.getComet()
 	]);
-	const iassetMint = tokenData.pools[comet.positions[data.positionIndex].poolIndex].assetInfo.iassetMint
+	const iassetMint = tokenData.pools[comet.positions[data.positionIndex].poolIndex].assetInfo.onassetMint
 	let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
 		getOnUSDAccount(program),
 		getTokenAccount(
@@ -103,13 +103,13 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 			program.provider.connection
 		),
 		getTokenAccount(
-			program.incept!.usdiMint,
-			program.incept!.treasuryAddress,
+			program.clone!.onusdMint,
+			program.clone!.treasuryAddress,
 			program.provider.connection
 		),
 		getTokenAccount(
 			iassetMint,
-			program.incept!.treasuryAddress,
+			program.clone!.treasuryAddress,
 			program.provider.connection
 		)
 	])
@@ -117,9 +117,9 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 	let ixnCalls: Promise<TransactionInstruction>[] = [];
 
 	if (usdiAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, userPubKey);
+		const ata = await getAssociatedTokenAddress(program.clone!.onusdMint, userPubKey);
 		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, program.incept!.usdiMint))()
+			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, program.clone!.onusdMint))()
 		)
 		usdiAddress = ata
 	}
@@ -131,16 +131,16 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 		iassetAddress = ata
 	}
 	if (usdiTreasuryAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
+		const ata = await getAssociatedTokenAddress(program.clone!.onusdMint, program.clone!.treasuryAddress);
 		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, program.incept!.usdiMint))()
+			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.clone!.treasuryAddress, program.clone!.onusdMint))()
 		)
 		usdiTreasuryAddress = ata
 	}
 	if (iassetTreasuryAddress === undefined) {
-		const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
+		const ata = await getAssociatedTokenAddress(program.clone!.onusdMint, program.clone!.treasuryAddress);
 		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, iassetMint))()
+			(async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.clone!.treasuryAddress, iassetMint))()
 		)
 		iassetTreasuryAddress = ata
 	}
@@ -153,7 +153,7 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 
 	let ixns = await Promise.all(ixnCalls)
 
-	const addressLookupTablesPublicKey = new PublicKey(process.env.NEXT_PUBLIC_INCEPT_ADDRESS_LOOKUP_TABLE!)
+	const addressLookupTablesPublicKey = new PublicKey(process.env.NEXT_PUBLIC_CLONE_ADDRESS_LOOKUP_TABLE!)
 
 	await sendAndConfirm(program.provider, ixns, setTxState, [], [addressLookupTablesPublicKey])
 	return {

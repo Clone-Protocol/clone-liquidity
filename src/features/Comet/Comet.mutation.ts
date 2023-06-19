@@ -29,7 +29,7 @@ export const callRecenter = async ({
   const [tokenData, comet] = await Promise.all([
     program.getTokenData(), program.getSinglePoolComets()
   ]);
-  const iassetMint = tokenData.pools[comet.positions[data.cometIndex].poolIndex].assetInfo.iassetMint
+  const iassetMint = tokenData.pools[comet.positions[data.cometIndex].poolIndex].assetInfo.onassetMint
   let [usdiAddress, iassetAddress, usdiTreasuryAddress, iassetTreasuryAddress] = await Promise.all([
     getOnUSDAccount(program),
     getTokenAccount(
@@ -38,13 +38,13 @@ export const callRecenter = async ({
       program.provider.connection
     ),
     getTokenAccount(
-      program.incept!.usdiMint,
-      program.incept!.treasuryAddress,
+      program.clone!.onusdMint,
+      program.clone!.treasuryAddress,
       program.provider.connection
     ),
     getTokenAccount(
       iassetMint,
-      program.incept!.treasuryAddress,
+      program.clone!.treasuryAddress,
       program.provider.connection
     )
   ])
@@ -52,9 +52,9 @@ export const callRecenter = async ({
   let ixnCalls: Promise<TransactionInstruction>[] = [];
 
   if (usdiAddress === undefined) {
-    const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, userPubKey);
+    const ata = await getAssociatedTokenAddress(program.clone!.onusdMint, userPubKey);
     ixnCalls.push(
-      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, program.incept!.usdiMint))()
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, userPubKey, program.clone!.onusdMint))()
     )
     usdiAddress = ata
   }
@@ -66,16 +66,16 @@ export const callRecenter = async ({
     iassetAddress = ata
   }
   if (usdiTreasuryAddress === undefined) {
-    const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
+    const ata = await getAssociatedTokenAddress(program.clone!.onusdMint, program.clone!.treasuryAddress);
     ixnCalls.push(
-      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, program.incept!.usdiMint))()
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.clone!.treasuryAddress, program.clone!.onusdMint))()
     )
     usdiTreasuryAddress = ata
   }
   if (iassetTreasuryAddress === undefined) {
-    const ata = await getAssociatedTokenAddress(program.incept!.usdiMint, program.incept!.treasuryAddress);
+    const ata = await getAssociatedTokenAddress(program.clone!.onusdMint, program.clone!.treasuryAddress);
     ixnCalls.push(
-      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.incept!.treasuryAddress, iassetMint))()
+      (async () => createAssociatedTokenAccountInstruction(userPubKey, ata, program.clone!.treasuryAddress, iassetMint))()
     )
     iassetTreasuryAddress = ata
   }
@@ -88,7 +88,7 @@ export const callRecenter = async ({
 
   let ixns = await Promise.all(ixnCalls)
 
-  const addressLookupTablesPublicKey = new PublicKey(process.env.NEXT_PUBLIC_INCEPT_ADDRESS_LOOKUP_TABLE!)
+  const addressLookupTablesPublicKey = new PublicKey(process.env.NEXT_PUBLIC_CLONE_ADDRESS_LOOKUP_TABLE!)
 
   await sendAndConfirm(program.provider, ixns, setTxState, [], [addressLookupTablesPublicKey])
 
@@ -138,7 +138,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
     );
   }
   const usdiAssociatedToken = await getAssociatedTokenAddress(
-    program.incept!.usdiMint,
+    program.clone!.onusdMint,
     program.provider.publicKey!,
   );
 
@@ -148,7 +148,7 @@ const withdrawLiquidityAndPaySinglePoolCometILD = async ({ program, userPubKey, 
         program.provider.publicKey!,
         usdiAssociatedToken,
         program.provider.publicKey!,
-        program.incept!.usdiMint
+        program.clone!.onusdMint
       ))()
     );
   }
@@ -197,7 +197,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
   let ixnCalls: Promise<TransactionInstruction>[] = [];
 
   const usdiAssociatedToken = await getAssociatedTokenAddress(
-    program.incept!.usdiMint,
+    program.clone!.onusdMint,
     userPubKey!,
   );
 
@@ -207,7 +207,7 @@ const withdrawCollateralAndCloseSinglePoolComet = async ({ program, userPubKey, 
         userPubKey!,
         usdiAssociatedToken,
         userPubKey!,
-        program.incept!.usdiMint
+        program.clone!.onusdMint
       ))()
     )
   }
@@ -249,12 +249,12 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
   let assetInfo = tokenData.pools[singlePoolComet.positions[data.cometIndex].poolIndex].assetInfo;
 
   const collateralAssociatedTokenAccount = await getOnUSDAccount(program);
-  const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.iassetMint, userPubKey, program.connection);
+  const iassetAssociatedTokenAccount = await getTokenAccount(assetInfo.onassetMint, userPubKey, program.connection);
 
   if (data.cType === 0) {
     if (Number(singlePoolComet.numPositions) !== 0) {
       await withdrawLiquidityAndPaySinglePoolCometILD(
-        { program, userPubKey, setTxState, data }, singlePoolComet, tokenData, assetInfo.iassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
+        { program, userPubKey, setTxState, data }, singlePoolComet, tokenData, assetInfo.onassetMint, iassetAssociatedTokenAccount, collateralAssociatedTokenAccount
       )
     }
 
@@ -311,7 +311,7 @@ export const callEdit = async ({
   const singlePoolComet = await program.getSinglePoolComets();
   const poolIndex = Number(singlePoolComet.positions[cometIndex].poolIndex);
   const pool = tokenData.pools[poolIndex];
-  const userIassetAta = await getAssociatedTokenAddress(pool.assetInfo.iassetMint, userPubKey)
+  const userIassetAta = await getAssociatedTokenAddress(pool.assetInfo.onassetMint, userPubKey)
 
 
   let ixnsCalls = [program.updatePricesInstruction()]
@@ -319,7 +319,7 @@ export const callEdit = async ({
   let result = {
     result: false,
     msg: '',
-    iassetMint: pool.assetInfo.iassetMint
+    iassetMint: pool.assetInfo.onassetMint
   };
 
   if (collAmount != 0) {
@@ -337,7 +337,7 @@ export const callEdit = async ({
       result = {
         result: true,
         msg: 'added collateral to comet',
-        iassetMint: pool.assetInfo.iassetMint
+        iassetMint: pool.assetInfo.onassetMint
       };
     } else {
       /// Withdraw
@@ -352,7 +352,7 @@ export const callEdit = async ({
       result = {
         result: true,
         msg: 'withdraw collateral from comet',
-        iassetMint: pool.assetInfo.iassetMint
+        iassetMint: pool.assetInfo.onassetMint
       }
     }
   }

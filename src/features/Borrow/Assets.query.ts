@@ -12,7 +12,7 @@ const fetchIassetBalances = async (program: CloneClient, tokenData: TokenData): 
 	let balancesQueries = await Promise.allSettled(
 		tokenData.pools.slice(0, tokenData.numPools.toNumber()).map(async (pool) => {
 			let ata = await getAssociatedTokenAddress(
-				pool.assetInfo.iassetMint,
+				pool.assetInfo.onassetMint,
 				program.provider.publicKey!
 			);
 			let balance = await program.provider.connection.getTokenAccountBalance(

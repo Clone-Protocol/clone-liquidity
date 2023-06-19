@@ -2,7 +2,7 @@ import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
 import { Comet, TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
-import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { getHealthScore, getILD } from "incept-protocol-sdk/sdk/src/healthscore"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -118,37 +118,24 @@ export interface LiquidityPosition {
 
 const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): LiquidityPosition[] => {
 	let result: LiquidityPosition[] = [];
+	
+	const ildInfo = getILD(tokenData, comet)
 
 	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
 		// For now only handle onUSD
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
 		const info = assetMapping(poolIndex);
-		const pool = tokenData.pools[poolIndex]
 
 		const [ildValue, ildInUsdi] = (() => {
-			const L = toNumber(position.liquidityTokenValue) / toNumber(pool.liquidityTokenSupply)
-			const claimableUSDi = L * toNumber(pool.usdiAmount)
-			const borrowedUsdi = toNumber(position.borrowedUsdi)
-			const claimableIasset = L * toNumber(pool.iassetAmount)
-			const borrowedIasset = toNumber(position.borrowedIasset)
-
-			const devnetScaleDifference = (x: number, y: number): number => {
-				const base = Math.floor((x - y) * Math.pow(10, DEVNET_TOKEN_SCALE))
-				return base * Math.pow(10, -DEVNET_TOKEN_SCALE);
+			const info = ildInfo[i];
+			if (info.onAssetILD > 0) {
+				return [info.onAssetILD, false]
 			}
-
-			const usdiILD = devnetScaleDifference(borrowedUsdi, claimableUSDi)
-			if (usdiILD > 0) {
-				return [usdiILD, true];
+			if (info.onusdILD > 0) {
+				return [info.onusdILD, true]
 			}
-
-			const iassetILD = devnetScaleDifference(borrowedIasset, claimableIasset)
-			if (iassetILD > 0) {
-				return [iassetILD, false];
-			}
-
-			return [0, true];
+			return [0, true]
 		})();
 
 		result.push(
@@ -156,7 +143,7 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 				tickerIcon: info.tickerIcon,
 				tickerSymbol: info.tickerSymbol,
 				tickerName: info.tickerName,
-				liquidityDollarPrice: toNumber(position.borrowedUsdi) * 2,
+				liquidityDollarPrice: toNumber(position.committedOnusdLiquidity) * 2,
 				ildValue,
 				positionIndex: i,
 				poolIndex,

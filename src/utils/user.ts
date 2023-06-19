@@ -159,25 +159,25 @@ export const getUserMintInfos = (tokenData: TokenData, borrowPositions: BorrowPo
       let collateral = tokenData.collaterals[collateralIndex];
       let collateralAmount = toNumber(borrowPosition.collateralAmount);
       let price = toNumber(assetInfo.price);
-      let borrowedIasset = toNumber(borrowPosition.borrowedIasset);
+      let borrowedOnasset = toNumber(borrowPosition.borrowedOnasset);
       let collateralRatio: Number;
       let minCollateralRatio: Number;
       if (collateral.stable) {
-        collateralRatio = collateralAmount / (price * borrowedIasset);
+        collateralRatio = collateralAmount / (price * borrowedOnasset);
         minCollateralRatio = toNumber(assetInfo.stableCollateralRatio);
       } else {
         let collateralAssetInfo = tokenData.pools[collateral.poolIndex.toNumber()].assetInfo;
         let collateralPrice = toNumber(collateralAssetInfo.price);
         let collateralAmount = toNumber(borrowPosition.collateralAmount);
         collateralRatio =
-          (collateralPrice * collateralAmount) / (price * borrowedIasset);
+          (collateralPrice * collateralAmount) / (price * borrowedOnasset);
         minCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio);
       }
       mintInfos.push([
         poolIndex,
         collateralIndex,
         price,
-        borrowedIasset,
+        borrowedOnasset,
         collateralAmount,
         collateralRatio,
         minCollateralRatio,

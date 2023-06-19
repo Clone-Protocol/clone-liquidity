@@ -41,11 +41,11 @@ const CloseLiquidityDialog = ({
       const data = await mutateAsync(
         {
           positionIndex,
-          ildInUsdi: positionInfo!.ildInUsdi!,
+          ildInOnusd: positionInfo!.ildInOnusd!,
           ildDebt: positionInfo!.ildDebt,
-          balance: positionInfo?.ildInUsdi! ? positionInfo?.usdiVal! : positionInfo?.iassetVal!,
-          iassetMint: positionInfo?.iassetMint!,
-          positionLpTokens: positionInfo?.positionLpTokens!
+          balance: positionInfo?.ildInOnusd! ? positionInfo?.onusdVal : positionInfo?.onassetVal!,
+          onassetMint: positionInfo?.onassetMint!,
+          committedOnusdLiquidity: positionInfo?.committedOnusdLiquidity!
         }
       )
 
@@ -66,12 +66,12 @@ const CloseLiquidityDialog = ({
   }
 
   const displayILDDebt = () => {
-    const currency = positionInfo!.ildInUsdi ? 'onUSD' : positionInfo!.tickerSymbol
+    const currency = positionInfo!.ildInOnusd ? 'onUSD' : positionInfo!.tickerSymbol
     return `${Math.max(0, positionInfo!.ildDebt).toLocaleString(undefined, { maximumFractionDigits: 5 })} ${currency}`
   }
 
   const displayWalletBalance = () => {
-    const val = positionInfo?.ildInUsdi ? positionInfo?.usdiVal : positionInfo?.iassetVal
+    const val = positionInfo?.ildInOnusd ? positionInfo?.onusdVal : positionInfo?.onassetVal
     return val!.toLocaleString(undefined, { maximumFractionDigits: 5 })
   }
 

@@ -17,27 +17,27 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
 
   await program.loadClone()
 
-  let usdiVal = 0.0
-  let iassetVal = 0.0
+  let onusdVal = 0.0
+  let onassetVal = 0.0
 
-  const usdiTokenAccountAddress = await getTokenAccount(program.incept!.usdiMint, userPubKey, program.connection);
+  const onusdTokenAccountAddress = await getTokenAccount(program.clone!.onusdMint, userPubKey, program.connection);
 
-  if (usdiTokenAccountAddress !== undefined) {
-    const usdiBalance = await program.connection.getTokenAccountBalance(usdiTokenAccountAddress, "processed");
-    usdiVal = Number(usdiBalance.value.amount) / 100000000;
+  if (onusdTokenAccountAddress !== undefined) {
+    const onusdBalance = await program.connection.getTokenAccountBalance(onusdTokenAccountAddress, "processed");
+    onusdVal = Number(onusdBalance.value.amount) / 100000000;
   }
   const tokenData = await program.getTokenData();
 
   const pool = tokenData.pools[index];
-  const iassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.iassetMint, userPubKey, program.connection);
-  if (iassetTokenAccountAddress !== undefined) {
-    const iassetBalance = await program.connection.getTokenAccountBalance(iassetTokenAccountAddress, "processed");
-    iassetVal = Number(iassetBalance.value.amount) / 100000000;
+  const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.connection);
+  if (onassetTokenAccountAddress !== undefined) {
+    const onassetBalance = await program.connection.getTokenAccountBalance(onassetTokenAccountAddress, "processed");
+    onassetVal = Number(onassetBalance.value.amount) / 100000000;
   }
 
   return {
-    usdiVal,
-    iassetVal
+    onusdVal,
+    onassetVal
   }
 }
 
@@ -49,8 +49,8 @@ interface GetProps {
 }
 
 export interface Balance {
-  usdiVal: number
-  iassetVal: number
+  onusdVal: number
+  onassetVal: number
 }
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
@@ -66,6 +66,6 @@ export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = t
       enabled
     })
   } else {
-    return useQuery(['borrowBalance'], () => ({ usdiVal: 0, iassetVal: 0 }))
+    return useQuery(['borrowBalance'], () => ({ onusdVal: 0, onassetVal: 0 }))
   }
 }

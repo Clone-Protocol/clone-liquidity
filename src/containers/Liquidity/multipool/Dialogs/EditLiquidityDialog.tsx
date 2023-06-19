@@ -37,7 +37,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
     if (open && positionInfo !== undefined) {
       const position = positionInfo.comet!.positions[positionIndex]
       const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
-      const currentPosition = toNumber(position!.borrowedUsdi)
+      const currentPosition = toNumber(position!.committedOnusdLiquidity)
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
@@ -86,7 +86,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     // console.log('newRatio', newRatio)
     // MEMO: if newRatio is near from default ratio, then set newRatio to default ratio
-    const convertNewRatio = parseInt(newRatio.toString()) === parseInt(defaultMintRatio) ? defaultMintRatio : newRatio
+    const convertNewRatio = parseInt(newRatio.toString()) === defaultMintRatio ? defaultMintRatio : newRatio
     console.log('convertNewRatio', convertNewRatio)
     setValue('mintAmount', maxMintable * convertNewRatio / 100)
     setMintRatio(convertNewRatio)

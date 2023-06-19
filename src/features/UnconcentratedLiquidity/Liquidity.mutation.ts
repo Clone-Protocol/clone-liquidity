@@ -24,7 +24,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 
 	let liquidityTokenAmount = liquidityPosition.liquidityTokens * fractionClaimable;
 
-	let iassetMint = tokenData.pools[liquidityPosition.poolIndex].assetInfo.iassetMint
+	let iassetMint = tokenData.pools[liquidityPosition.poolIndex].assetInfo.onassetMint
 	let liquidityTokenMint = tokenData.pools[liquidityPosition.poolIndex].liquidityTokenMint
 
 	let iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
@@ -50,7 +50,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 	}
 	if (collateralAssociatedTokenAccount === undefined) {
 		const usdiAssociatedToken = await getAssociatedTokenAddress(
-			program.incept!.usdiMint,
+			program.clone!.onusdMint,
 			program.provider.publicKey!,
 		);
 		ixnCalls.push(
@@ -58,7 +58,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 				program.provider.publicKey!,
 				usdiAssociatedToken,
 				program.provider.publicKey!,
-				program.incept!.usdiMint
+				program.clone!.onusdMint
 			))()
 		);
 		collateralAssociatedTokenAccount = usdiAssociatedToken;
@@ -74,7 +74,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 				program.provider.publicKey!,
 				liquidityAssociatedToken,
 				program.provider.publicKey!,
-				program.incept!.usdiMint
+				program.clone!.onusdMint
 			))()
 		);
 		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
@@ -170,7 +170,7 @@ export const callLiquidity = async ({ program, userPubKey, setTxState, data }: C
 
 	const pool = tokenData.pools[iassetIndex];
 
-	let iassetMint = pool.assetInfo.iassetMint;
+	let iassetMint = pool.assetInfo.onassetMint;
 	let liquidityTokenMint = pool.liquidityTokenMint;
 
 	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);

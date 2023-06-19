@@ -219,7 +219,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
             }}
             render={({ field }) => (
               <PairInput
-                tickerIcon={'/images/assets/on-usd.png'}
+                tickerIcon={'/images/assets/on-usd.svg'}
                 tickerSymbol="onUSD"
                 value={isNaN(collAmount) ? "" : collAmount}
                 dollarPrice={0}
@@ -256,7 +256,7 @@ const SinglepoolCometPanel = ({ balances, assetData, assetIndex, onRefetchData }
                 }}
                 render={({ field }) => (
                   <PairInput
-                    tickerIcon={'/images/assets/on-usd.png'}
+                    tickerIcon={'/images/assets/on-usd.svg'}
                     tickerSymbol="onUSD"
                     value={isNaN(mintAmount) ? "" : mintAmount}
                     dollarPrice={0}

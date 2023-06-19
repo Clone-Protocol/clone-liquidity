@@ -33,11 +33,11 @@ export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connect
     return account.address;
 }
 
-export const getOnUSDAccount = async (incept: CloneClient): Promise<PublicKey | undefined> => {
+export const getOnUSDAccount = async (clone: CloneClient): Promise<PublicKey | undefined> => {
   const usdiTokenAccount = await getTokenAccount(
-    incept.incept!.usdiMint,
-    incept.provider.publicKey!,
-    incept.connection
+    clone.clone!.onusdMint,
+    clone.provider.publicKey!,
+    clone.connection
   );
   return usdiTokenAccount!;
 }

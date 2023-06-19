@@ -25,11 +25,11 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
   let totalBorrowLiquidity = 0;
   let totalBorrowCollateralVal = 0;
 
-  const [tokenDataResult, borrowPositionsResult, singlePoolCometsResult, liquidityPositionsResult, cometsResult] = await Promise.allSettled([
+  const [tokenDataResult, borrowPositionsResult, cometsResult] = await Promise.allSettled([
     program.getTokenData(),
     program.getBorrowPositions(),
-    program.getSinglePoolComets(),
-    program.getLiquidityPositions(),
+    // program.getSinglePoolComets(),
+    // program.getLiquidityPositions(),
     program.getComet()
   ]);
   
@@ -45,34 +45,34 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
       let collateralAmount = toNumber(borrowPosition.collateralAmount)
       totalBorrowCollateralVal += collateralAmount
       let pool = tokenData.pools[borrowPosition.poolIndex];
-      totalBorrowLiquidity += toNumber(borrowPosition.borrowedIasset) * toNumber(pool.assetInfo.price);
+      totalBorrowLiquidity += toNumber(borrowPosition.borrowedOnasset) * toNumber(pool.assetInfo.price);
     }
   }
 
-  if (liquidityPositionsResult.status === "fulfilled") {
-    const liquidityPositions = liquidityPositionsResult.value;
-    const tokenData = await program.getTokenData();
-    for (var i = 0; i < liquidityPositions.length; i++) {
-      let position = liquidityPositions[i];
-      let liquidityTokenAmount = position.liquidityTokens;
-      let pool = tokenData.pools[position.poolIndex];
-      let liquidityTokenSupply = toNumber(pool.liquidityTokenSupply);
-      let amount = ((toNumber(pool.usdiAmount) * liquidityTokenAmount) / liquidityTokenSupply) * 2
-      totalUnconcentPositionVal += amount;
-    }
-  }
+  // if (liquidityPositionsResult.status === "fulfilled") {
+  //   const liquidityPositions = liquidityPositionsResult.value;
+  //   const tokenData = await program.getTokenData();
+  //   for (var i = 0; i < liquidityPositions.length; i++) {
+  //     let position = liquidityPositions[i];
+  //     let liquidityTokenAmount = position.liquidityTokens;
+  //     let pool = tokenData.pools[position.poolIndex];
+  //     let liquidityTokenSupply = toNumber(pool.liquidityTokenSupply);
+  //     let amount = ((toNumber(pool.usdiAmount) * liquidityTokenAmount) / liquidityTokenSupply) * 2
+  //     totalUnconcentPositionVal += amount;
+  //   }
+  // }
 
-  if (singlePoolCometsResult.status === "fulfilled") {
-    const comets = singlePoolCometsResult.value;
-    for (let i = 0; i < Number(comets.numCollaterals.toNumber()); i++) {
-      let collateralAmount = toNumber(comets.collaterals[i].collateralAmount);
-      totalSinglePoolCometValLocked += collateralAmount;
-    }
+  // if (singlePoolCometsResult.status === "fulfilled") {
+  //   const comets = singlePoolCometsResult.value;
+  //   for (let i = 0; i < Number(comets.numCollaterals.toNumber()); i++) {
+  //     let collateralAmount = toNumber(comets.collaterals[i].collateralAmount);
+  //     totalSinglePoolCometValLocked += collateralAmount;
+  //   }
 
-    comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalSinglePoolCometLiquidity += toNumber(pos.borrowedUsdi) * 2
-    });
-  }
+  //   comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
+  //     totalSinglePoolCometLiquidity += toNumber(pos.borrowedUsdi) * 2
+  //   });
+  // }
 
   if (cometsResult.status === "fulfilled") {
     const comets = cometsResult.value
@@ -81,7 +81,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     totalMultiPoolCometValLocked += usdiValue
 
     comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalMultiPoolCometLiquidity += toNumber(pos.borrowedUsdi) * 2
+      totalMultiPoolCometLiquidity += toNumber(pos.committedOnusdLiquidity) * 2
     });
   }
 

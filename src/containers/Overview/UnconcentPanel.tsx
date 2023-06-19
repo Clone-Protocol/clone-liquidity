@@ -167,7 +167,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
               }}
               render={({ field }) => (
                 <PairInput
-                  tickerIcon={'/images/assets/on-usd.png'}
+                  tickerIcon={'/images/assets/on-usd.svg'}
                   tickerSymbol="onUSD"
                   value={isNaN(borrowTo) ? "" : borrowTo}
                   headerTitle="Wallet Balance"

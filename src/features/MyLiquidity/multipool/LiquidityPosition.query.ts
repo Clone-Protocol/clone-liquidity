@@ -10,6 +10,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
+import { calculatePoolAmounts } from 'incept-protocol-sdk/sdk/src/utils'
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -36,7 +37,13 @@ export const fetchLiquidityDetail = async ({
 
 	let assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+	let {poolOnusd, poolOnasset} = calculatePoolAmounts(
+        toNumber(pool.onusdIld),
+        toNumber(pool.onassetIld),
+        toNumber(pool.committedOnusdLiquidity),
+        toNumber(pool.assetInfo.price)
+      )
+	const price = poolOnusd / poolOnasset
 
 	let totalCollValue = 0
 	let totalHealthScore = 0
@@ -136,8 +143,7 @@ export const fetchCloseLiquidityPosition = async ({
 	const position = comet.positions[index]
 	const poolIndex = Number(position.poolIndex)
 	const pool = tokenData.pools[poolIndex]
-	const iassetMint = pool.assetInfo.iassetMint
-	const positionLpTokens = toNumber(position.liquidityTokenValue)
+	const onassetMint = pool.assetInfo.onassetMint
 
 	const balance = await fetchBalance({
 		program,
@@ -146,11 +152,18 @@ export const fetchCloseLiquidityPosition = async ({
 		setStartTimer
 	})
 
-	const { iAssetILD, usdiILD, oraclePrice } = getILD(tokenData, comet, poolIndex)[0];
+	const { onAssetILD, onusdILD, oraclePrice } = getILD(tokenData, comet)[index];
 
 	let assetId = poolIndex
+	const committedOnusdLiquidity = toNumber(pool.committedOnusdLiquidity)
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let price = toNumber(pool.usdiAmount) / toNumber(pool.iassetAmount)
+	let {poolOnusd, poolOnasset} = calculatePoolAmounts(
+        toNumber(pool.onusdIld),
+        toNumber(pool.onassetIld),
+        committedOnusdLiquidity,
+        oraclePrice
+      )
+	let price = poolOnusd / poolOnasset
 
 	let currentHealthScore = getHealthScore(tokenData, comet)
 	let prevHealthScore = currentHealthScore.healthScore
@@ -159,12 +172,12 @@ export const fetchCloseLiquidityPosition = async ({
 		comet
 	);
 
-	let ildInUsdi = usdiILD > 0
-	let ildDebt = ildInUsdi ? usdiILD : iAssetILD
-	let ildDebtDollarPrice = ildInUsdi ? 1 : oraclePrice
+	let ildInOnusd = onusdILD > 0
+	let ildDebt = ildInOnusd ? onusdILD : onAssetILD
+	let ildDebtDollarPrice = ildInOnusd ? 1 : oraclePrice
 	let ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
 	let healthScore = prevHealthScore + toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue / totalCollateralAmount
-	let isValidToClose = ildInUsdi ? balance?.usdiVal! >= usdiILD : balance?.iassetVal! >= iAssetILD
+	let isValidToClose = ildInOnusd ? balance?.onusdVal! >= onusdILD : balance?.onassetVal! >= onAssetILD
 
 	return {
 		tickerIcon,
@@ -177,12 +190,12 @@ export const fetchCloseLiquidityPosition = async ({
 		prevHealthScore,
 		ildDebt,
 		ildDebtNotionalValue,
-		iassetVal: balance?.iassetVal!,
-		usdiVal: balance?.usdiVal!,
+		onassetVal: balance?.onassetVal!,
+		onusdVal: balance?.onusdVal!,
 		isValidToClose,
-		ildInUsdi,
-		iassetMint,
-		positionLpTokens
+		ildInOnusd,
+		onassetMint,
+		committedOnusdLiquidity
 	}
 }
 
@@ -197,9 +210,11 @@ export interface CloseLiquidityPositionInfo {
 	prevHealthScore: number
 	ildDebt: number
 	ildDebtNotionalValue: number
-	iassetVal?: number
-	usdiVal?: number
+	onassetVal: number
+	onusdVal: number
 	isValidToClose: boolean
+	onassetMint: PublicKey
+	committedOnusdLiquidity: number
 }
 
 export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {

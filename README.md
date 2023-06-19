@@ -27,7 +27,7 @@ The setup above is most fitting for local development, but is not suited for dep
 
 In the `.env.local` file you can set the `NEXT_PUBLIC_USE_NETWORK` variable to either `LOCAL_NET` or `DEV_NET` (will default to `LOCAL_NET`). This will switch the network endpoint and program IDs to the default values defined in `sdk/src/network.ts`.
 
-You may also override these values by setting the `NEXT_PUBLIC_INCEPT_PROGRAM_ID` and `NEXT_PUBLIC_NETWORK_ENDPOINT` variables.
+You may also override these values by setting the `NEXT_PUBLIC_CLONE_PROGRAM_ID` and `NEXT_PUBLIC_NETWORK_ENDPOINT` variables.
 
 Keep in mind the variables are loaded at startup and will not change until you restart the application.
 
