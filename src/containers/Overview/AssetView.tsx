@@ -4,26 +4,17 @@ import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useBalanceQuery } from '~/features/Borrow/Balance.query'
-import CometIconOn from 'public/images/comet-icon-on.svg'
-import UlIconOn from 'public/images/ul-icon-on.svg'
-import CometIconOff from 'public/images/comet-icon-off.svg'
-import UlIconOff from 'public/images/ul-icon-off.svg'
-import { useInitCometDetailQuery } from '~/features/MyLiquidity/CometPosition.query'
+import { useBalanceQuery } from '~/features/Overview/Balance.query'
+import { useInitCometDetailQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/components/Common/StyledTab'
-import MultipoolCometPanel from './MultipoolCometPanel'
-import SinglepoolCometPanel from './SinglepoolCometPanel'
-import UnconcentPanel from './UnconcentPanel'
+import { TabPanel } from '~/components/Common/StyledTab'
+import CometPanel from './CometPanel'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
-import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
-import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
-import { StyledDivider } from '~/components/Common/StyledDivider'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
@@ -107,22 +98,9 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					</SelectPoolBox>
 
 					<LeftBoxWrapper>
-						<StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
-							<MultipoolTab value={0} label='Multipool Comet' icon={tab === 0 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} />
-							<SinglepoolTab value={1} label='Singlepool Comet' icon={tab === 1 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
-							<StyledTab value={2} label='Unconcentrated' icon={tab === 2 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
-						</StyledTabs>
-						<StyledDivider />
-
 						<Box paddingY='5px'>
 							<TabPanel value={tab} index={0}>
-								<MultipoolCometPanel assetIndex={assetIndex} onRefetchData={() => refetch()} />
-							</TabPanel>
-							<TabPanel value={tab} index={1}>
-								<SinglepoolCometPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
-							</TabPanel>
-							<TabPanel value={tab} index={2}>
-								<UnconcentPanel balances={balances} assetData={assetData} assetIndex={assetIndex} onRefetchData={() => refetch()} />
+								<CometPanel assetIndex={assetIndex} onRefetchData={() => refetch()} />
 							</TabPanel>
 						</Box>
 

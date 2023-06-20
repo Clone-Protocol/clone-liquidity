@@ -1,34 +1,36 @@
+/// @deprecated 
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, Typography } from '@mui/material'
+import { Box, styled } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
 import { Grid } from '~/components/Liquidity/comet/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { useAssetsQuery } from '~/features/Borrow/Assets.query'
+import { useCollateralsQuery } from '~/features/MyLiquidity/comet/Collaterals.query'
 
 interface Props {
 	onChoose: (id: number) => void
 }
 
-const GridAssets: React.FC<Props> = ({ onChoose }) => {
+const GridCollateral: React.FC<Props> = ({ onChoose }) => {
 	const { publicKey } = useWallet()
-
-	const { data: assets } = useAssetsQuery({
+	const { data: collaterals } = useCollateralsQuery({
 		userPubKey: publicKey,
 		refetchOnMount: "always",
 		enabled: publicKey != null
 	})
 
 	const handleChoose = (params: GridRowParams) => {
-		const id = params.row.id
-		onChoose && onChoose(id)
+		if (params.row.isEnabled) {
+			const id = params.row.id
+			onChoose && onChoose(id)
+		}
 	}
 
 	return (
 		<Grid
 			headers={columns}
-			rows={assets || []}
+			rows={collaterals || []}
 			onRowClick={handleChoose}
 			minHeight={380}
 		/>
@@ -40,15 +42,14 @@ let columns: GridColDef[] = [
 		field: 'asset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Token',
+		headerName: 'Asset',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
-					<Image src={params.row.tickerIcon} width="28px" height="28px" layout="fixed" />
-					<Box marginLeft='8px' marginTop='3px'>
-						<Typography variant='p_lg'>{params.row.tickerName}</Typography>
-						<Typography variant='p_lg' color='#989898' ml='10px'>{params.row.tickerSymbol}</Typography>
+					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
+					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
+						{params.row.tickerSymbol}
 					</Box>
 				</Box>
 			)
@@ -61,11 +62,17 @@ let columns: GridColDef[] = [
 		headerName: 'Wallet Balance',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box mr='5px'><Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography></Box>
+			return <CellValue>{params.value?.toLocaleString()}</CellValue>
 		},
 	},
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-export default withSuspense(GridAssets, <LoadingProgress />)
+const CellValue = styled(Box)`
+	font-size: 14px;
+	text-align: right;
+  color: #fff;
+`
+
+export default withSuspense(GridCollateral, <LoadingProgress />)
