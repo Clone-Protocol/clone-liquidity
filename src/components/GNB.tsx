@@ -64,7 +64,7 @@ const GNB: React.FC = () => {
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
 					<Toolbar disableGutters>
-						<Image src={logoIcon} height={42} alt="clone" />
+						<Image src={logoIcon} width={186} height={42} alt="clone" />
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />

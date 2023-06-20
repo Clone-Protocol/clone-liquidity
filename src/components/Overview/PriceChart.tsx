@@ -46,6 +46,8 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
         }
         <LineChart
           data={priceHistory.chartData}
+          maxY={priceHistory.maxValue}
+          minY={priceHistory.minValue}
         />
       </>
       : <></>

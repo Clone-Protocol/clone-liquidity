@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, ReactNode } from 'react';
 import { styled } from '@mui/system'
 import { Card, Box } from '@mui/material'
-import { ResponsiveContainer, XAxis, Tooltip, AreaChart, Area } from 'recharts'
+import { ResponsiveContainer, YAxis, Tooltip, AreaChart, Area } from 'recharts'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -16,12 +16,15 @@ export type LineChartProps = {
   minHeight?: number
   setValue?: Dispatch<SetStateAction<number | undefined>> // used for value on hover
   setLabel?: Dispatch<SetStateAction<string | undefined>> // used for label of valye
+  defaultValue?: number
   value?: number
   label?: string
   topLeft?: ReactNode | undefined
   topRight?: ReactNode | undefined
   bottomLeft?: ReactNode | undefined
   bottomRight?: ReactNode | undefined
+  maxY: number
+  minY: number
 } & React.HTMLAttributes<HTMLDivElement>
 
 
@@ -32,14 +35,35 @@ const LineChartAlt: React.FC<LineChartProps> = ({
   label,
   setValue,
   setLabel,
+  defaultValue,
   topLeft,
   topRight,
   bottomLeft,
   bottomRight,
   minHeight = 307,
+  maxY,
+  minY,
   ...rest
 }) => {
   const parsedValue = value
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      if (setValue && parsedValue !== payload[0].value) {
+        setValue(payload[0].value)
+      }
+
+      const formattedTime = dayjs(payload[0].payload.time).format('MMM D, h:mm A')
+      // if (setLabel && label !== formattedTime) setLabel(formattedTime)
+      return (
+        <Box sx={{ fontSize: '12px', color: '#8988a3' }}>
+          <p className="label">{`${formattedTime}`}</p>
+        </Box>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <Wrapper>
@@ -60,7 +84,9 @@ const LineChartAlt: React.FC<LineChartProps> = ({
           }}
           onMouseLeave={() => {
             setLabel && setLabel(undefined)
-            // setValue && setValue(undefined)
+            if (defaultValue && defaultValue > 0) {
+              setValue && setValue(defaultValue)
+            }
           }}
         >
           <defs>
@@ -69,7 +95,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis
+          {/* <XAxis
             dataKey="time"
             axisLine={false}
             tickLine={false}
@@ -77,17 +103,26 @@ const LineChartAlt: React.FC<LineChartProps> = ({
             fontSize="8px"
             tickFormatter={(time) => dayjs(time).format('DD')}
             minTickGap={10}
+          /> */}
+          <YAxis
+            type="number"
+            fontSize="10px"
+            color="#9e9e9e"
+            axisLine={false}
+            domain={[minY, maxY]}
+            hide
           />
           <Tooltip
-            cursor={{ stroke: '#2C2F36' }}
-            contentStyle={{ display: 'none' }}
-            formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {
-              if (setValue && parsedValue !== props.payload.value) {
-                setValue(props.payload.value)
-              }
-              const formattedTime = dayjs(props.payload.time).format('MMM D, YYYY')
-              if (setLabel && label !== formattedTime) setLabel(formattedTime)
-            }}
+            cursor={{ stroke: '#8988a3', strokeDasharray: '4 4' }}
+            content={CustomTooltip}
+            contentStyle={{ display: 'block', background: 'transparent' }}
+          // formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {
+          //   if (setValue && parsedValue !== props.payload.value) {
+          //     setValue(props.payload.value)
+          //   }
+          //   const formattedTime = dayjs(props.payload.time).format('MMM D, YYYY')
+          //   if (setLabel && label !== formattedTime) setLabel(formattedTime)
+          // }}
           />
           <Area dataKey="value" type="monotone" stroke="#4fe5ff" fill="url(#gradient)" strokeWidth={2} />
         </AreaChart>

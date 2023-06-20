@@ -56,7 +56,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
           <Image src={DocIcon} alt="docs" />
           <Box width='144px' ml='12px'>
             <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
-            <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Learn about Clone Liquidity App</Typography></Box>
+            <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Learn about Clone Liquidity</Typography></Box>
           </Box>
         </HoverStack>
       </StyledMenuItem>
