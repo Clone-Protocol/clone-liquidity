@@ -71,9 +71,8 @@ const CloseLiquidityDialog = ({
   }
 
   const displayWalletBalance = () => {
-    // const val = positionInfo?.ildInOnusd ? positionInfo?.onusdVal : positionInfo?.onassetVal
-    // return val!.toLocaleString(undefined, { maximumFractionDigits: 5 })
-    return ""
+    const val = positionInfo ? (positionInfo?.ildInOnusd ? positionInfo?.onusdVal : positionInfo?.onassetVal) : 0
+    return val!.toLocaleString(undefined, { maximumFractionDigits: 5 })
   }
 
   return positionInfo ? (
