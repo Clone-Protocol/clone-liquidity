@@ -169,20 +169,8 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		program.provider.publicKey!
 	)
 
-	/// Deposit
+	/// Borrow more
 	if (editType === 0) {
-		ixnCalls.push(
-			program.payBorrowDebtInstruction(
-				associatedToken,
-				new anchor.BN(borrowAmount * 10 ** 8),
-				borrowIndex
-			)
-		)
-		result = {
-			result: true,
-			msg: 'added borrow amount to borrow',
-		}
-	} else {
 		if (onassetAssociatedTokenAccount === undefined) {
 			ixnCalls.push(
 				(async () => createAssociatedTokenAccountInstruction(
@@ -203,6 +191,18 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		result = {
 			result: true,
 			msg: 'withdraw borrow amount from borrow',
+		}
+	} else {
+		ixnCalls.push(
+			program.payBorrowDebtInstruction(
+				associatedToken,
+				new anchor.BN(borrowAmount * 10 ** 8),
+				borrowIndex
+			)
+		)
+		result = {
+			result: true,
+			msg: 'added borrow amount to borrow',
 		}
 	}
 
