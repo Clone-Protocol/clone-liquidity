@@ -147,7 +147,7 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
     <>
       <Box>
         <Box>
-          <Box><Typography variant='p_lg'>iAsset to Borrow</Typography></Box>
+          <Box><Typography variant='p_lg'>onAsset to Borrow</Typography></Box>
           <SelectPoolBox onClick={() => setOpenChooseAsset(true)}>
             <Stack direction='row' gap={1}>
               <Image src={ASSETS[assetIndex].tickerIcon} width="27px" height="27px" />

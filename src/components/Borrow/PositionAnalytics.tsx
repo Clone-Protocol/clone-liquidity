@@ -24,10 +24,6 @@ const PositionAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
         <Box><Typography variant="p_sm">TVL</Typography></Box>
         <Box><Typography variant="p_lg">$15,430,459.49 USD</Typography> <TxtPriceRate val={245345.55} rate={1.58} /></Box>
       </DataBox>
-      <DataBox>
-        <Box><Typography variant="p_sm">Global Weighted Average Collateral Ratio</Typography></Box>
-        <Box><Typography variant="p_lg">220% (min 180%)</Typography> <TxtPriceRate val={-513551.55} rate={-8.58} /></Box>
-      </DataBox>
     </Box>
   )
 }

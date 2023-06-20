@@ -64,7 +64,7 @@ const GNB: React.FC = () => {
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
 					<Toolbar disableGutters>
-						<Image src={logoIcon} height={42} alt="incept" />
+						<Image src={logoIcon} height={42} alt="clone" />
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
@@ -224,7 +224,6 @@ const RightMenu = () => {
 								<PopupButton><Typography variant='p_sm' onClick={handleDisconnect}>Disconnect</Typography></PopupButton>
 							</Stack>
 						</Stack>
-						<NetworkInfo><Typography variant='p_xsm'>Polaris Devnet - V1</Typography></NetworkInfo>
 					</WalletSelectBox>}
 					<ReminderNewWalletPopup />
 				</Box>
@@ -308,7 +307,7 @@ const WalletSelectBox = styled(Box)`
   top: 60px;
   right: 0px;
   width: 282px;
-  height: 86px;
+  height: 56px;
   padding: 13px 16px;
   background-color: ${(props) => props.theme.boxes.darkBlack};
   z-index: 99;

@@ -127,7 +127,7 @@ const UnconcentPanel = ({ balances, assetData, assetIndex, onRefetchData }: { ba
           </WarningStack>
           <Box mb='15px'>
             <Box>
-              <Typography variant='p_lg'>Provide iAsset</Typography>
+              <Typography variant='p_lg'>Provide onAsset</Typography>
             </Box>
             <Controller
               name="borrowFrom"

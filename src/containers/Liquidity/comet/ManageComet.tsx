@@ -93,7 +93,7 @@ const ManageComet = ({ assetId }: { assetId: string }) => {
         <StickyBox>
           {(tab === 0 || (tab === 1 && (cometDetail.mintIassetAmount !== 0 && cometDetail.mintAmount !== 0))) &&
             <Box>
-              <PriceChart assetData={cometDetail} priceTitle='iAsset Price' />
+              <PriceChart assetData={cometDetail} priceTitle='onAsset Price' />
               <PoolAnalytics tickerSymbol={cometDetail.tickerSymbol} />
             </Box>
           }

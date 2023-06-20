@@ -8,6 +8,7 @@ import HomeIcon from 'public/images/mobile/home.svg'
 import TwitterIcon from 'public/images/mobile/twitter.svg'
 import DiscordIcon from 'public/images/mobile/discord.svg'
 import { Stack } from '@mui/system'
+import { MARKETS_APP, DISCORD_URL, OFFICIAL_WEB, TWITTER_URL } from '~/data/social'
 
 const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   return (
@@ -17,19 +18,21 @@ const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose
           <BoxWrapper>
             <Image src={OctagonIcon} width="55px" height="55px" />
 
-            <Box maxWidth='280px' lineHeight={1} margin='0 auto' mt='15px'><Typography variant='p_lg'>Unleash the power of Incept Liquidity App from larger screen</Typography></Box>
+            <Box maxWidth='280px' lineHeight={1} margin='0 auto' mt='15px'><Typography variant='p_lg'>Unleash the power of Clone Liquidity App from larger screen</Typography></Box>
             <Box width='288px' lineHeight={1} margin='0 auto' mt='15px'>
               <Typography variant='p' color='#989898'>
-                Incept Liquidity App is packed with advanced features that are not optimal for mobile and tablet environments with smaller screens. Please access the app from your Desktop or Laptop with larger screens for the best experience.
+                Clone Liquidity App is packed with advanced features that are not optimal for mobile and tablet environments with smaller screens. Please access the app from your Desktop or Laptop with larger screens for the best experience.
               </Typography>
             </Box>
             <StyledDivider />
             <Box><Typography variant='p_sm' color='#989898'>Mobile and Tablet compatible:</Typography></Box>
-            <MarketButton><Typography variant='p'>Incept Markets App</Typography></MarketButton>
+            <a href={MARKETS_APP} target="_blank" rel="noreferrer">
+              <MarketButton><Typography variant='p'>Clone Markets App</Typography></MarketButton>
+            </a>
             <Stack direction='row' justifyContent='center' gap={2} >
-              <Image src={HomeIcon} />
-              <Image src={TwitterIcon} />
-              <Image src={DiscordIcon} />
+              <a href={OFFICIAL_WEB} target="_blank" rel="noreferrer"><Image src={HomeIcon} /></a>
+              <a href={TWITTER_URL} target="_blank" rel="noreferrer"><Image src={TwitterIcon} /></a>
+              <a href={DISCORD_URL} target="_blank" rel="noreferrer"><Image src={DiscordIcon} /></a>
             </Stack>
           </BoxWrapper>
         </DialogContent>

@@ -17,7 +17,7 @@ const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
         <TextHead>Before you enter...</TextHead>
         <Box my='16px' lineHeight={0.9}>
           <Typography variant='p_lg'>
-            Welcome to Incept Liquidity (Beta) on Solana Devnet. As the word “Beta” in the name suggests, you may find minor bugs in the interface. If you do, please report the issue to us on Discord or write an email to us at beta@incept.so and we will address them ASAP. Thank you and congrats for being an early bird in Incept Ecosystem!
+            Welcome to Clone Liquidity (Beta) on Solana Devnet. As the word “Beta” in the name suggests, you may find minor bugs in the interface. If you do, please report the issue to us on Discord or write an email to us at team@clone.so and we will address them ASAP. Thank you and congrats for being an early bird in Clone Ecosystem!
           </Typography>
         </Box>
         <EnterButton onClick={() => close()}><Typography variant='p'>Enter</Typography></EnterButton>

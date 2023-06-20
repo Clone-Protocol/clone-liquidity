@@ -50,7 +50,7 @@ let columns: GridColDef[] = [
 		field: 'asset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'iAsset',
+		headerName: 'onAsset',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (

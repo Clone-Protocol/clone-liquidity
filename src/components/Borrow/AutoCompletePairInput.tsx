@@ -31,7 +31,7 @@ const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
         options={assets}
         clearIcon={null}
         PopperComponent={(props) => CustomPopper(props)}
-        renderInput={(params) => <StyledTextField {...params} placeholder="Search for an iAsset" />}
+        renderInput={(params) => <StyledTextField {...params} placeholder="Search for an onAsset" />}
         renderOption={(props: any, option: any) => (
           <SelectBox key={option.tickerSymbol} {...props}>
             <Image src={option.tickerIcon} width="24px" height="24px" />

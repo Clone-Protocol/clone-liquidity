@@ -19,7 +19,7 @@ const ConcentrationRangeView: React.FC<Props> = ({ centerPrice, lowerLimit, uppe
       <Box position='relative'>
         <Box sx={{ marginLeft: `calc(${centerPricePercent}% - 24px)` }}>
           <Stick>
-            <Box display='flex' justifyContent='center' mb='-4px'><Typography variant='p_xsm'>iAsset Price</Typography></Box>
+            <Box display='flex' justifyContent='center' mb='-4px'><Typography variant='p_xsm'>onAsset Price</Typography></Box>
           </Stick>
         </Box>
         <Box display='flex' justifyContent='center' alignItems='flex-end' width='350px' height='3px' sx={{ background: '#333333' }}>

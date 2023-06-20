@@ -97,7 +97,7 @@ let columns: GridColDef[] = [
 		field: 'iAsset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'iAsset',
+		headerName: 'onAsset',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (

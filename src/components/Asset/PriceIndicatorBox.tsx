@@ -19,7 +19,7 @@ const PriceIndicatorBox: React.FC<Props> = ({ tickerIcon, tickerName, tickerSymb
 				<TickerWrapper>{tickerName} ({tickerSymbol})</TickerWrapper>
 			</Box>
 			<PriceWrapper>
-				<PriceHeader>iAsset Price <InfoTooltip title={TooltipTexts.priceIndicator} /></PriceHeader>
+				<PriceHeader>onAsset Price <InfoTooltip title={TooltipTexts.priceIndicator} /></PriceHeader>
 				<PriceValue>
 					{value?.toFixed(2)} <span style={{ fontSize: '14px' }}>USD</span>
 				</PriceValue>
