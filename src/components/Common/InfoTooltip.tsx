@@ -2,7 +2,7 @@ import React from 'react'
 import { styled } from '@mui/material/styles';
 import { IconButton } from '@mui/material'
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
-import { HelpOutlineRounded } from '@mui/icons-material'
+import HelpOutlineRounded from '@mui/icons-material/HelpOutlineRounded'
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -15,7 +15,7 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-const InfoTooltip = ({ title, color = 'inherit' }: {title: string, color?: string}) => (
+const InfoTooltip = ({ title, color = 'inherit' }: { title: string, color?: string }) => (
   <LightTooltip title={title} placement="top" arrow>
     <IconButton component="span" sx={{ color: color }}>
       <HelpOutlineRounded sx={{ width: '13px', height: '13px' }} />
