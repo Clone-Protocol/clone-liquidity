@@ -188,6 +188,8 @@ export const fetchCloseLiquidityPosition = async ({
 		comet,
 		healthScore,
 		prevHealthScore,
+		onusdILD,
+		onassetILD: onAssetILD,
 		ildDebt,
 		ildDebtNotionalValue,
 		onassetVal: balance?.onassetVal!,
@@ -208,6 +210,8 @@ export interface CloseLiquidityPositionInfo {
 	comet: Comet | undefined
 	healthScore: number
 	prevHealthScore: number
+	onusdILD: number
+	onassetILD: number
 	ildDebt: number
 	ildDebtNotionalValue: number
 	onassetVal: number

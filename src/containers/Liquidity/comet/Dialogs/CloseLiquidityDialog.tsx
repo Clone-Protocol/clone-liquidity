@@ -40,9 +40,10 @@ const CloseLiquidityDialog = ({
       setIsSubmitting(true)
       const data = await mutateAsync({
         positionIndex,
-        ildInOnusd: positionInfo!.ildInOnusd!,
-        ildDebt: positionInfo!.ildDebt,
-        balance: positionInfo?.ildInOnusd! ? positionInfo?.onusdVal : positionInfo?.onassetVal!,
+        onusdBalance: positionInfo?.onusdVal!,
+        onusdILD: positionInfo?.onusdILD!,
+        onassetBalance: positionInfo?.onassetVal!,
+        onassetILD: positionInfo?.onassetILD!,
         onassetMint: positionInfo?.onassetMint!,
         committedOnusdLiquidity: positionInfo?.committedOnusdLiquidity!,
       })
@@ -64,15 +65,84 @@ const CloseLiquidityDialog = ({
   }
 
   const displayILDDebt = () => {
-    const currency = positionInfo!.ildInOnusd ? "onUSD" : positionInfo!.tickerSymbol
-    return `${Math.max(0, positionInfo!.ildDebt).toLocaleString(undefined, {
-      maximumFractionDigits: 5,
-    })} ${currency}`
+    let components = []
+    if (positionInfo!.onusdILD > 0) {
+      components.push(
+        `${Math.max(0, positionInfo!.onusdILD).toLocaleString(undefined, {
+          maximumFractionDigits: 5,
+        })} onUSD`
+      )
+    }
+    if (positionInfo!.onassetILD > 0) {
+      components.push(
+        `${Math.max(0, positionInfo!.onassetILD).toLocaleString(undefined, {
+          maximumFractionDigits: 5,
+        })} ${positionInfo!.tickerSymbol}`
+      )
+    }
+
+    if (components.length === 0)
+      return "0 onUSD"
+    
+    return components.join(' + ')
+  }
+
+  const displayILDNotional = () => {
+    let reward = 0
+    if (positionInfo!.onusdILD > 0)
+      reward += positionInfo!.onusdILD
+    if (positionInfo!.onassetILD > 0)
+      reward += positionInfo!.onassetILD * positionInfo!.price
+
+    return `${Math.max(0, reward).toLocaleString(undefined, {maximumFractionDigits: 5})} USD`
+  }
+
+  const displayReward = () => {
+    let components = []
+    if (positionInfo!.onusdILD < 0) {
+      components.push(
+        `${Math.max(0, -positionInfo!.onusdILD).toLocaleString(undefined, {
+          maximumFractionDigits: 5,
+        })} onUSD`
+      )
+    }
+    if (positionInfo!.onassetILD < 0) {
+      components.push(
+        `${Math.max(0, -positionInfo!.onassetILD).toLocaleString(undefined, {
+          maximumFractionDigits: 5,
+        })} ${positionInfo!.tickerSymbol}`
+      )
+    }
+    if (components.length === 0)
+      return "0 onUSD"
+    
+    return components.join(' + ')
+  }
+
+  const displayRewardNotional = () => {
+    let reward = 0
+    if (positionInfo!.onusdILD < 0)
+      reward += (-positionInfo!.onusdILD)
+    if (positionInfo!.onassetILD < 0)
+      reward += (-positionInfo!.onassetILD * positionInfo!.price)
+
+    return `${Math.max(0, reward).toLocaleString(undefined, {maximumFractionDigits: 5})} USD`
   }
 
   const displayWalletBalance = () => {
-    const val = positionInfo ? (positionInfo?.ildInOnusd ? positionInfo?.onusdVal : positionInfo?.onassetVal) : 0
-    return val!.toLocaleString(undefined, { maximumFractionDigits: 5 })
+    let components = []
+    components.push(
+      `${Math.max(0, positionInfo!.onusdVal).toLocaleString(undefined, {
+        maximumFractionDigits: 5,
+      })} onUSD`
+    )  
+    components.push(
+      `${Math.max(0, positionInfo!.onassetVal).toLocaleString(undefined, {
+        maximumFractionDigits: 5,
+      })} ${positionInfo!.tickerSymbol}`
+    )
+
+    return components.join(' + ')
   }
 
   return positionInfo ? (
@@ -103,11 +173,11 @@ const CloseLiquidityDialog = ({
                   {displayWalletBalance()}
                 </Typography>
               </Box>
-              <CenterBox>
+              <CenterBox justifyContent="space-evenly">
                 <Stack direction="row" justifyContent="space-between">
                   <Box>
                     <Typography variant="p">ILD Debt</Typography>{" "}
-                    <InfoTooltip title={TooltipTexts.recenteringCost} />
+                    <InfoTooltip title={TooltipTexts.ildDebt} />
                   </Box>
                   <Box lineHeight={0.95}>
                     <Box>
@@ -115,7 +185,25 @@ const CloseLiquidityDialog = ({
                     </Box>
                     <Box textAlign="right">
                       <Typography variant="p" color="#989898">
-                        ${positionInfo.ildDebtNotionalValue.toLocaleString()}
+                        ${displayILDNotional()}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Stack>
+              </CenterBox>
+              <CenterBox justifyContent="space-evenly">
+                <Stack direction="row" justifyContent="space-between">
+                  <Box>
+                    <Typography variant="p">Claimable Rewards</Typography>{" "}
+                    <InfoTooltip title={TooltipTexts.rewards} />
+                  </Box>
+                  <Box lineHeight={0.95}>
+                    <Box>
+                      <Typography variant="p_xlg">{displayReward()}</Typography>
+                    </Box>
+                    <Box textAlign="right">
+                      <Typography variant="p" color="#989898">
+                        ${displayRewardNotional()}
                       </Typography>
                     </Box>
                   </Box>
@@ -126,7 +214,7 @@ const CloseLiquidityDialog = ({
             <SubmitButton
               onClick={() => handleClosePosition()}
               disabled={!positionInfo.isValidToClose || isSubmitting}>
-              Pay ILD & Close Liquidity Position
+              Claim Rewards, Pay ILD & Close Liquidity Position
             </SubmitButton>
 
             <Box display="flex" justifyContent="center">

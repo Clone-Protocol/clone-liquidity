@@ -141,7 +141,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			program.clone!.onusdMint,
 			program.provider.publicKey!,
 		),
-		program.getUserAccount()
+		program.getUserAccount(),
 	])
 
 	const [userAccountAddress, bump] = PublicKey.findProgramAddressSync(
@@ -179,12 +179,23 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	if (data.ildDebt > 0) {
+	if (data.onassetILD > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				data.positionIndex,
-				toDevnetScale(data.balance),
-				data.ildInOnusd,
+				toDevnetScale(data.onassetBalance),
+				false,
+				onassetAssociatedToken,
+				onusdAssociatedTokenAddress,
+			)
+		)
+	}
+	if (data.onusdILD > 0) {
+		ixnCalls.push(
+			program.payCometILDInstruction(
+				data.positionIndex,
+				toDevnetScale(data.onusdBalance),
+				true,
 				onassetAssociatedToken,
 				onusdAssociatedTokenAddress,
 			)
@@ -232,9 +243,10 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 type CloseFormData = {
 	positionIndex: number
-	ildInOnusd: boolean
-	ildDebt: number
-	balance: number
+	onassetILD: number
+	onusdILD: number
+	onusdBalance: number
+	onassetBalance: number
 	onassetMint: PublicKey
 	committedOnusdLiquidity: number
 }
