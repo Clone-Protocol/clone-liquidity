@@ -41,7 +41,6 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			borrowIndex
 		),
 		program.withdrawCollateralFromBorrowInstruction(
-			program.provider.publicKey!,
 			borrowIndex,
 			collateralAssociatedTokenAccount!,
 			new anchor.BN(getMantissa(mintPosition.collateralAmount))
@@ -122,7 +121,6 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 		}
 		ixnCalls.push(
 			program.withdrawCollateralFromBorrowInstruction(
-				program.provider.publicKey!,
 				borrowIndex,
 				usdiAssociatedToken,
 				new anchor.BN(collateralAmount * 10 ** 8)
