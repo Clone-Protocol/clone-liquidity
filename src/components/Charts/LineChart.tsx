@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { styled } from '@mui/system'
 import { Card } from '@mui/material'
-import { ResponsiveContainer, LineChart as ReLineChart, Line } from 'recharts'
+import { ResponsiveContainer, LineChart as ReLineChart, Line, YAxis } from 'recharts'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -17,6 +17,8 @@ export type LineChartProps = {
   setLabel?: Dispatch<SetStateAction<string | undefined>> // used for label of valye
   value?: number
   label?: string
+  maxY: number
+  minY: number
 } & React.HTMLAttributes<HTMLDivElement>
 
 
@@ -28,6 +30,8 @@ const LineChart: React.FC<LineChartProps> = ({
   setValue,
   setLabel,
   minHeight = 109,
+  maxY,
+  minY,
   ...rest
 }) => {
   return data ? (
@@ -44,6 +48,14 @@ const LineChart: React.FC<LineChartProps> = ({
             bottom: 5,
           }}
         >
+          <YAxis
+            type="number"
+            fontSize="10px"
+            color="#9e9e9e"
+            axisLine={false}
+            domain={[minY, maxY]}
+            hide
+          />
           <Line dataKey="value" type="monotone" dot={false} stroke={color} strokeWidth={1} />
         </ReLineChart>
       </ResponsiveContainer>

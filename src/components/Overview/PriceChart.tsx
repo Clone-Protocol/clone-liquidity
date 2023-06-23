@@ -57,7 +57,7 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
       {isOraclePrice && priceHistory.rateOfPrice && (
         <Typography variant="p" color="#4fe5ff">
           {priceHistory.rateOfPrice >= 0 ? "+" : "-"}$
-          {Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate.toFixed(2)}%)
+          {Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate?.toFixed(2)}%)
           past 24h
         </Typography>
       )}

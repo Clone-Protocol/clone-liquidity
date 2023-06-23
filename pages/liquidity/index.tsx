@@ -9,8 +9,8 @@ const MyLiquidity: NextPage = () => {
 	return (
 		<div>
 			<Head>
-				<title>My Liquidity - Incept Liquidity Protocol</title>
-				<meta name="description" content="My Liquidity - Incept Liquidity Protocol" />
+				<title>My Liquidity - Clone Liquidity Protocol</title>
+				<meta name="description" content="My Liquidity - Clone Liquidity Protocol" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 

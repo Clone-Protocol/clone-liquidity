@@ -112,7 +112,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 				<RightBoxWrapper>
 					<StickyBox>
-						<PriceChart assetData={assetData} priceTitle='iAsset Price' />
+						<PriceChart assetData={assetData} priceTitle='onAsset Price' />
 						<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
 					</StickyBox>
 				</RightBoxWrapper>

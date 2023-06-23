@@ -4,8 +4,8 @@ import { CellTicker } from '~/components/Common/DataGrid'
 
 export interface PositionInfo {
   tickerIcon: string
-	tickerName: string
-	tickerSymbol: string
+  tickerName: string
+  tickerSymbol: string
   claimableAmount: number
 }
 
@@ -22,12 +22,12 @@ const LiquidatedPositionRow: React.FC<Props> = ({ positionInfo, ltype, hasHeader
       {hasHeader &&
         <Box>
           <Grid container spacing={2}>
-            <Grid item xs={5}><TxtHeader>{ ltype === 0 ? 'Token' : 'Borrowed iAsset' }</TxtHeader></Grid>
-            <Grid item xs={4}><TxtHeader>{ ltype === 0 ? 'Claimable amount' : 'Claimable collateral' }</TxtHeader></Grid>
+            <Grid item xs={5}><TxtHeader>{ltype === 0 ? 'Token' : 'Borrowed onAsset'}</TxtHeader></Grid>
+            <Grid item xs={4}><TxtHeader>{ltype === 0 ? 'Claimable amount' : 'Claimable collateral'}</TxtHeader></Grid>
             <Grid item xs={3}></Grid>
           </Grid>
         </Box>
-        }
+      }
       <Grid container spacing={2} sx={{ marginTop: '5px', borderRadius: '10px', backgroundColor: '#1d1d1d', height: '52px' }}>
         <Grid item xs={5} sx={{ color: '#fff', marginTop: '-3px' }}><CellTicker tickerIcon={positionInfo.tickerIcon} tickerName={positionInfo.tickerName} tickerSymbol={positionInfo.tickerSymbol} /></Grid>
         <Grid item xs={4}><div style={{ fontSize: '11px', fontWeight: '500', color: '#fff', marginTop: '2px' }}>{positionInfo.claimableAmount} {positionInfo.tickerSymbol}</div></Grid>

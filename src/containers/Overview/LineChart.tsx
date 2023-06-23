@@ -62,6 +62,9 @@ const LineChart: React.FC = () => {
       data={tab === 0 ? totalLiquidity?.chartData : totalVolume?.chartData}
       value={chartHover}
       setValue={setChartHover}
+      maxY={totalLiquidity?.maxValue}
+      minY={totalLiquidity?.minValue}
+      defaultValue={tab === 0 ? 0 : totalVolume?.sumAllValue}
       topLeft={
         <Box>
           <Box ml='20px'>

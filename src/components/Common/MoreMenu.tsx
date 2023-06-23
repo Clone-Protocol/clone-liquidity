@@ -11,6 +11,7 @@ import HomeIcon from 'public/images/more/home.svg'
 import TwitterIcon from 'public/images/more/twitter.svg'
 import DiscordIcon from 'public/images/more/discord.svg'
 import { Stack } from '@mui/system';
+import { CAREER_URL, DISCORD_URL, DOCS_URL, MARKETS_APP, OFFICIAL_WEB, TWITTER_URL } from '~/data/social';
 
 interface Props {
   anchorEl: null | HTMLElement
@@ -49,25 +50,29 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
       </HoverStack>
     </StyledMenuItem>
     <StyledDivider />
-    <StyledMenuItem>
-      <HoverStack direction='row' alignItems='center'>
-        <Image src={DocIcon} alt="docs" />
-        <Box width='144px' ml='12px'>
-          <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
-          <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Learn about Incept Liquidity</Typography></Box>
-        </Box>
-      </HoverStack>
-    </StyledMenuItem>
-    <StyledMenuItem>
-      <HoverStack direction='row' alignItems='center'>
-        <Image src={MarketsIcon} alt="markets" />
-        <Box width='144px' ml='12px'>
-          <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Markets</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
-          <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Trade all kinds of iAssets</Typography></Box>
-        </Box>
-      </HoverStack>
-    </StyledMenuItem>
-    <a href={`https://join-incept.super.site/`} target='_blank' rel="noreferrer">
+    <a href={DOCS_URL} target='_blank' rel="noreferrer">
+      <StyledMenuItem>
+        <HoverStack direction='row' alignItems='center'>
+          <Image src={DocIcon} alt="docs" />
+          <Box width='144px' ml='12px'>
+            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+            <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Learn about Clone Liquidity</Typography></Box>
+          </Box>
+        </HoverStack>
+      </StyledMenuItem>
+    </a>
+    <a href={MARKETS_APP} target='_blank' rel="noreferrer">
+      <StyledMenuItem>
+        <HoverStack direction='row' alignItems='center'>
+          <Image src={MarketsIcon} alt="markets" />
+          <Box width='144px' ml='12px'>
+            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Markets</Typography> <IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></Stack>
+            <Box mt='-8px'><Typography variant='p_sm' color='#989898'>Trade all kinds of onAssets</Typography></Box>
+          </Box>
+        </HoverStack>
+      </StyledMenuItem>
+    </a>
+    <a href={CAREER_URL} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
           <Image src={OpportunityIcon} alt="opportunities" />
@@ -79,9 +84,9 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
       </StyledMenuItem>
     </a>
     <Stack direction='row' gap={2} justifyContent='center' my='10px'>
-      <Image src={HomeIcon} alt="home" />
-      <Image src={TwitterIcon} alt="twitter" />
-      <Image src={DiscordIcon} alt="discord" />
+      <a href={OFFICIAL_WEB} target="_blank" rel="noreferrer"><Image src={HomeIcon} alt="home" /></a>
+      <a href={TWITTER_URL} target="_blank" rel="noreferrer"><Image src={TwitterIcon} alt="twitter" /></a>
+      <a href={DISCORD_URL} target="_blank" rel="noreferrer"><Image src={DiscordIcon} alt="discord" /></a>
     </Stack>
   </Menu >
 }

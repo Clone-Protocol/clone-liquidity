@@ -15,7 +15,6 @@ import ManageCloseIconOn from 'public/images/close-circle-multiple-outline-on.sv
 import EditPanel from '~/containers/Liquidity/borrow/EditPanel'
 import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
 import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
-import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
 import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
 import { StyledDivider } from '~/components/Common/StyledDivider'
@@ -37,14 +36,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
     enabled: publicKey != null
   });
 
-  const { data: priceHistory } = usePriceHistoryQuery({
-    pythSymbol: borrowDetail?.pythSymbol,
-    isOraclePrice: true,
-    refetchOnMount: false,
-    enabled: borrowDetail != null
-  })
-
-  return (borrowDetail && priceHistory) ? (
+  return borrowDetail ? (
     <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
         <Box mb='25px'><Typography variant='p_xxlg'>Manage Borrow Position</Typography></Box>

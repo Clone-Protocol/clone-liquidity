@@ -12,8 +12,8 @@ const Manage: NextPage = () => {
 	return (
 		<div>
 			<Head>
-				<title>Manage - Incept Liquidity Protocol</title>
-				<meta name="description" content="Incept Liquidity Protocol" />
+				<title>Manage - Clone Liquidity Protocol</title>
+				<meta name="description" content="Clone Liquidity Protocol" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 

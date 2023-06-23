@@ -40,7 +40,7 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
       dt.setMinutes(0, 0, 0);
     } else {
       dt.setHours(0, 0, 0, 0);
-    } 
+    }
   }
   const getDTKeys = (dt: Date) => {
     setDatetime(dt)
@@ -76,12 +76,12 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
   const dates = generateDates(startingDate, interval)
 
   for (let i = 0; i < dates.length; i++) {
- 
+
     const currentDate = getDTKeys(dates[i])
     let record: AggregatedData = {
       datetime: currentDate, total_liquidity: 0, trading_volume: 0, total_trading_fees: 0, total_treasury_fees: 0
     }
-  
+
     const currentGBData = groupedByDtAndPool[currentDate]
     if (!currentGBData) {
       poolIndices.forEach((index) => {
@@ -126,10 +126,17 @@ export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime
 
   const rawData = await fetchStatsData(interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
-  const chartData = aggregatedData.map(data => {return {time: data.datetime, value: data.total_liquidity}})
+  let chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.total_liquidity } })
+  chartData = filterHistoricalData(chartData, daysLookback)
+
+  const allValues = chartData.map(elem => elem.value!)
+  const maxValue = Math.floor(Math.max(...allValues))
+  const minValue = Math.floor(Math.min(...allValues))
 
   return {
-    chartData: filterHistoricalData(chartData, daysLookback)
+    chartData,
+    maxValue,
+    minValue
   }
 }
 
@@ -177,10 +184,12 @@ export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime })
 
   const rawData = await fetchStatsData(interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
-  const chartData = aggregatedData.map(data => {return {time: data.datetime, value: data.trading_volume}})
+  const chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.trading_volume } })
+  const sumAllValue = chartData.reduce((a, b) => a + b.value, 0)
 
   return {
-    chartData: filterHistoricalData(chartData, daysLookback)
+    chartData: filterHistoricalData(chartData, daysLookback),
+    sumAllValue
   }
 }
 

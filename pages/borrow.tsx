@@ -8,8 +8,8 @@ const Borrow: NextPage = () => {
 	return (
 		<div>
 			<Head>
-				<title>Borrow - Incept Liquidity Protocol</title>
-				<meta name="description" content="Incept Liquidity Protocol" />
+				<title>Borrow - Clone Liquidity Protocol</title>
+				<meta name="description" content="Clone Liquidity Protocol" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 

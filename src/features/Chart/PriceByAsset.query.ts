@@ -61,11 +61,17 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
     )
   }
 
+  const allValues = chartData.map(elem => elem.value!)
+  const maxValue = Math.floor(Math.max(...allValues))
+  const minValue = Math.floor(Math.min(...allValues))
+
   return {
     chartData,
     currentPrice,
     rateOfPrice,
-    percentOfRate
+    percentOfRate,
+    maxValue,
+    minValue
   }
 }
 

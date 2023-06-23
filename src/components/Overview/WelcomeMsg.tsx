@@ -6,7 +6,7 @@ const WelcomeMsg = () => {
 	return (
 		<Slide direction="down" in={true} mountOnEnter unmountOnExit>
 			<StyledPaper variant="outlined">
-				<Typography variant="p">Welcome to Incept Liquidity Beta on Solana Devnet! This is the perfect place to try out the Liquidity Provider (LP) experience on Incept Protocol at zero cost.</Typography>
+				<Typography variant="p">Welcome to Clone Liquidity Beta App on Solana Devnet! This is the perfect place to try out the LP experience on Clone.</Typography>
 			</StyledPaper>
 		</Slide>
 	)

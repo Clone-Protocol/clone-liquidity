@@ -11,8 +11,8 @@ const Overview: NextPage = () => {
 	return (
 		<div>
 			<Head>
-				<title>Incept Liquidity Protocol</title>
-				<meta name="description" content="Incept Liquidity Protocol" />
+				<title>Clone Liquidity Protocol</title>
+				<meta name="description" content="Clone Liquidity Protocol" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
