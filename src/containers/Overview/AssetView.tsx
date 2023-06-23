@@ -58,7 +58,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const { data: assetData } = useInitCometDetailQuery({
 		userPubKey: publicKey,
 		index: assetIndex,
-		refetchOnMount: true,
+		refetchOnMount: "always",
 		enabled: publicKey != null
 	})
 

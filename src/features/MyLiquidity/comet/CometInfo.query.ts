@@ -119,7 +119,7 @@ export interface LiquidityPosition {
 
 const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): LiquidityPosition[] => {
 	let result: LiquidityPosition[] = [];
-	
+
 	const ildInfo = getILD(tokenData, comet)
 
 	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
@@ -157,68 +157,65 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 }
 
 export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
+	if (!userPubKey) return null
+
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
-	let queryFunc
-	try {
-		const program = getCloneApp(wallet)
-		queryFunc = () => fetchInfos({ program, userPubKey, setStartTimer })
-	} catch (e) {
-		console.error(e)
-		queryFunc = () => { }
+	if (wallet) {
+		return useQuery(
+			['cometInfos', wallet, userPubKey],
+			() => fetchInfos({ program: getCloneApp(wallet), userPubKey, setStartTimer }),
+			{
+				refetchOnMount,
+				refetchInterval: REFETCH_CYCLE,
+				refetchIntervalInBackground: true,
+				enabled,
+			}
+		)
+	} else {
+		return useQuery(['cometInfos'], () => { })
 	}
-
-	return useQuery(
-		['cometInfos', wallet, userPubKey],
-		queryFunc,
-		{
-			refetchOnMount,
-			refetchInterval: REFETCH_CYCLE,
-			refetchIntervalInBackground: true,
-			enabled,
-		}
-	)
 }
 
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
-  
+
 	await program.loadClone()
-  
+
 	const tokenData = await program.getTokenData();
 	const pool = tokenData.pools[index];
-	const {poolOnasset, poolOnusd} = calculatePoolAmounts(
-	  toNumber(pool.onusdIld), toNumber(pool.onassetIld), toNumber(pool.committedOnusdLiquidity), toNumber(pool.assetInfo.price)
+	const { poolOnasset, poolOnusd } = calculatePoolAmounts(
+		toNumber(pool.onusdIld), toNumber(pool.onassetIld), toNumber(pool.committedOnusdLiquidity), toNumber(pool.assetInfo.price)
 	)
 	let price = poolOnusd / poolOnasset
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = price
-  
+
 	const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
 	return {
-	  tickerIcon: tickerIcon,
-	  tickerName: tickerName,
-	  tickerSymbol: tickerSymbol,
-	  pythSymbol,
-	  price,
-	  tightRange,
-	  maxRange,
-	  centerPrice,
+		tickerIcon: tickerIcon,
+		tickerName: tickerName,
+		tickerSymbol: tickerSymbol,
+		pythSymbol,
+		price,
+		tightRange,
+		maxRange,
+		centerPrice,
 	}
-  }
+}
 
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useIncept()
 	if (wallet) {
-	  return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getCloneApp(wallet), userPubKey, index }), {
-		refetchOnMount,
-		enabled
-	  })
+		return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getCloneApp(wallet), userPubKey, index }), {
+			refetchOnMount,
+			enabled
+		})
 	} else {
-	  return useQuery(['initComet'], () => { })
+		return useQuery(['initComet'], () => { })
 	}
-  }
+}
