@@ -4,15 +4,9 @@ import { Status } from '~/features/MyLiquidity/Status.query'
 
 const MyStatusValues = ({ tab, status }: { tab: number, status: Status }) => {
   const statusValues = status ? {
-    totalCometLiquidity: status.statusValues.totalSinglePoolCometLiquidity,
-    totalCometValLocked: status.statusValues.totalSinglePoolCometValLocked,
-    totalUnconcentPositionVal: status.statusValues.totalUnconcentPositionVal,
     totalBorrowLiquidity: status.statusValues.totalBorrowLiquidity,
     totalBorrowCollateralVal: status.statusValues.totalBorrowCollateralVal,
   } : {
-    totalCometLiquidity: 0,
-    totalCometValLocked: 0,
-    totalUnconcentPositionVal: 0,
     totalBorrowLiquidity: 0,
     totalBorrowCollateralVal: 0,
   }
@@ -20,51 +14,6 @@ const MyStatusValues = ({ tab, status }: { tab: number, status: Status }) => {
   return (
     <>
       {tab === 1 &&
-        <Stack direction='row'>
-          <Box marginRight='66px'>
-            <Box><Typography variant='p' color='#989898'>Total Singlepool Comet Liquidity</Typography></Box>
-            <Box>
-              <Typography variant='p_xlg'>
-                {
-                  statusValues.totalCometLiquidity > 0 ?
-                    `$${statusValues.totalCometLiquidity.toLocaleString()}`
-                    : ''
-                }
-              </Typography>
-            </Box>
-          </Box>
-          <Box display='flex'>
-            <ColumnDivider />
-            <Box marginLeft='81px'>
-              <Box><Typography variant='p' color='#989898'>Total Value Locked in Singlepool Comet</Typography></Box>
-              <Box>
-                <Typography variant='p_xlg'>
-                  {
-                    statusValues.totalCometValLocked > 0 ?
-                      `$${statusValues.totalCometValLocked.toLocaleString()}`
-                      : ''
-                  }
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-        </Stack>
-      }
-      {tab === 2 &&
-        <Box>
-          <Box><Typography variant='p' color='#989898'>Total Position Value</Typography></Box>
-          <Box>
-            <Typography variant='p_xlg'>
-              {
-                statusValues.totalUnconcentPositionVal > 0 ?
-                  `$${statusValues.totalUnconcentPositionVal.toLocaleString()}`
-                  : ''
-              }
-            </Typography>
-          </Box>
-        </Box>
-      }
-      {tab === 3 &&
         <Stack direction='row'>
           <Box marginRight='66px'>
             <Box><Typography variant='p' color='#989898'>Total Debt Value</Typography></Box>

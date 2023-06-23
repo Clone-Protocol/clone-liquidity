@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { FilterType } from '~/data/filter'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
@@ -9,7 +9,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: Borrow.query')
@@ -17,7 +17,7 @@ export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { prog
 	setStartTimer(false);
 	setStartTimer(true);
 
-	await program.loadManager()
+	await program.loadClone()
 	const result: AssetList[] = []
 
 	const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
@@ -76,10 +76,10 @@ export interface AssetList {
 
 export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 	if (wallet) {
-		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getInceptApp(wallet), userPubKey, setStartTimer }), {
+		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,

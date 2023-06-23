@@ -12,6 +12,8 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
   let currentPrice
   let rateOfPrice
   let percentOfRate
+  // MEMO: Always use oracle until we fix the indexing.
+  isOraclePrice = true
 
   // oracle price:
   if (isOraclePrice) {

@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
-import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/incept'
+import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
 import { fetchStatsData, Interval, ResponseValue, generateDates } from 'src/utils/assets'
 
 export interface ChartElem {

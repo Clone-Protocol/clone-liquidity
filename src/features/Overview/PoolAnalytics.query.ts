@@ -1,5 +1,5 @@
 import { Query, useQuery } from 'react-query'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -7,13 +7,13 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getAggregatedPoolStats } from '~/utils/assets'
 
-export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: InceptClient, setStartTimer: (start: boolean) => void }) => {
+export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: CloneClient, setStartTimer: (start: boolean) => void }) => {
   console.log('fetchPoolAnalytics')
   // start timer in data-loading-indicator
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadManager();
+  await program.loadClone();
   const tokenData = await program.getTokenData();
   const poolStats = await getAggregatedPoolStats(tokenData);
   const calcPctGain = (current: number, prev: number) => {
@@ -57,11 +57,11 @@ export interface AnalyticsInfo {
 
 export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = true }: GetAssetsProps) {
   const wallet = useAnchorWallet()
-  const { getInceptApp } = useIncept()
+  const { getCloneApp } = useIncept()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['poolAnalytics', tickerSymbol], () => fetchPoolAnalytics({ tickerSymbol, program: getInceptApp(wallet), setStartTimer }), {
+    return useQuery(['poolAnalytics', tickerSymbol], () => fetchPoolAnalytics({ tickerSymbol, program: getCloneApp(wallet), setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

@@ -1,13 +1,13 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { program: InceptClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
 	if (!userPubKey) return null
 
 	console.log('fetchBalance')
@@ -15,7 +15,7 @@ export const fetchMax = async ({ program, userPubKey, index, setStartTimer }: { 
 	setStartTimer(false);
 	setStartTimer(true);
 
-	await program.loadManager()
+	await program.loadClone()
 
 	const tokenData = await program.getTokenData();
 	let liquidityPositions = await program.getLiquidityPositions();
@@ -45,11 +45,11 @@ interface GetProps {
 
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
-		return useQuery(['unconcentBalance', wallet, userPubKey, index], () => fetchMax({ program: getInceptApp(wallet), userPubKey, index, setStartTimer }), {
+		return useQuery(['unconcentBalance', wallet, userPubKey, index], () => fetchMax({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,

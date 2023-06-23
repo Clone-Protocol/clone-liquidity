@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { AnchorWallet } from '@solana/wallet-adapter-react'
 
 export interface InceptContextState {
-	getInceptApp: (wallet: AnchorWallet | undefined, force?: boolean) => InceptClient
+	getCloneApp: (wallet: AnchorWallet | undefined, force?: boolean) => CloneClient
 }
 
 export const InceptContext = createContext<InceptContextState>({} as InceptContextState)

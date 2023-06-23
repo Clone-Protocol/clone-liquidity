@@ -3,25 +3,19 @@ import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import GridComet from '~/containers/Liquidity/comet/GridComet'
-import GridUnconcentrated from '~/containers/Liquidity/unconcentrated/GridUnconcentrated'
+import Comet from '~/containers/Liquidity/comet/comet'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
-import MultipoolComet from '~/containers/Liquidity/multipool/MultipoolComet'
-import { TabPanel, StyledTabs, MultipoolTab, SinglepoolTab, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanel, StyledTabs, CometTab, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
-import CometIconOff from 'public/images/comet-icon-off.svg'
-import UlIconOff from 'public/images/ul-icon-off.svg'
 import BorrowIconOff from 'public/images/borrow-position-icon-off.svg'
-import CometIconOn from 'public/images/comet-icon-on.svg'
-import UlIconOn from 'public/images/ul-icon-on.svg'
 import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
-import MultipoolIconOff from 'public/images/multipool-icon-off.svg'
-import MultipoolIconOn from 'public/images/multipool-icon-on.svg'
+import CometIconOff from 'public/images/multipool-icon-off.svg'
+import CometIconOn from 'public/images/multipool-icon-on.svg'
 import MyStatusValues from '~/components/Liquidity/MyStatusValues'
 import MyStatus from '~/containers/Liquidity/MyStatus'
 
@@ -54,9 +48,9 @@ const LiquidityTable: React.FC = () => {
   })
 
   const hasNoPosition = !status ||
-    (tab === 1 && status.statusValues.totalSinglePoolCometLiquidity === 0) || (tab === 2 && status.statusValues.totalUnconcentPositionVal === 0) || (tab === 3 && status.statusValues.totalBorrowLiquidity === 0)
+    (tab === 1 && status.statusValues.totalBorrowLiquidity === 0)
 
-  const newPositionUrl = tab === 3 ? '/borrow' : `/assets/euro/asset?ltab=${tab}`
+  const newPositionUrl = tab === 1 ? '/borrow' : `/assets/euro/asset?ltab=${tab}`
 
   return (
     <div>
@@ -65,10 +59,8 @@ const LiquidityTable: React.FC = () => {
         <Divider sx={{ backgroundColor: '#3f3f3f' }} />
 
         <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
-          <MultipoolTab value={0} label='Multipool Comet' icon={tab === 0 ? <Image src={MultipoolIconOn} /> : <Image src={MultipoolIconOff} />} />
-          <SinglepoolTab value={1} label='Singlepool Comet' icon={tab === 1 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />
-          <StyledTab value={2} label='Unconcentrated' icon={tab === 2 ? <Image src={UlIconOn} /> : <Image src={UlIconOff} />} />
-          <StyledTab value={3} label='Borrow' icon={tab === 3 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
+          <CometTab value={0} label='Comet' icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />\
+          <StyledTab value={1} label='Borrow' icon={tab === 3 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
         </StyledTabs>
 
         <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
@@ -96,15 +88,9 @@ const LiquidityTable: React.FC = () => {
         }
 
         <TabPanel value={tab} index={0}>
-          <MultipoolComet />
+          <Comet />
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          <GridComet filter={filter} />
-        </TabPanel>
-        <TabPanel value={tab} index={2}>
-          <GridUnconcentrated filter={filter} />
-        </TabPanel>
-        <TabPanel value={tab} index={3}>
           <GridBorrow filter={filter} />
         </TabPanel>
       </PanelBox>

@@ -1,18 +1,18 @@
 import { useQuery, Query } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { InceptClient } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useIncept } from '~/hooks/useIncept'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
-const fetchIassetBalances = async (program: InceptClient, tokenData: TokenData): Promise<number[]> => {
+const fetchIassetBalances = async (program: CloneClient, tokenData: TokenData): Promise<number[]> => {
 
 	let balancesQueries = await Promise.allSettled(
 		tokenData.pools.slice(0, tokenData.numPools.toNumber()).map(async (pool) => {
 			let ata = await getAssociatedTokenAddress(
-				pool.assetInfo.iassetMint,
+				pool.assetInfo.onassetMint,
 				program.provider.publicKey!
 			);
 			let balance = await program.provider.connection.getTokenAccountBalance(
@@ -30,11 +30,11 @@ const fetchIassetBalances = async (program: InceptClient, tokenData: TokenData):
 	})
 }
 
-export const fetchAssets = async ({ program, userPubKey }: { program: InceptClient, userPubKey: PublicKey | null }) => {
+export const fetchAssets = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return null
 	console.log('fetchAssets')
 
-	await program.loadManager()
+	await program.loadClone()
 	const tokenData = await program.getTokenData();
 	const balances = await fetchIassetBalances(program, tokenData);
 
@@ -71,10 +71,10 @@ export interface AssetList {
 
 export function useAssetsQuery({ userPubKey, enabled = true, refetchOnMount }: GetAssetsProps) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 
 	if (wallet) {
-		return useQuery(['assets', wallet, userPubKey], () => fetchAssets({ program: getInceptApp(wallet), userPubKey }), {
+		return useQuery(['assets', wallet, userPubKey], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
 			enabled
 		})

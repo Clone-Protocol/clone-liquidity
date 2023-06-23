@@ -17,7 +17,7 @@ import { sendAndConfirm } from '~/utils/tx_helper';
 /// @TODO: need to refactor.
 export function useCreateAccount() {
 	const [isCreatingAccount, setIsCreatingAccount] = useRecoilState(isCreatingAccountState)
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
@@ -29,15 +29,15 @@ export function useCreateAccount() {
 	useEffect(() => {
 		async function createAccount() {
 			if (wallet) {
-				const program = getInceptApp(wallet, true)
-				await program.loadManager()
+				const program = getCloneApp(wallet, true)
+				await program.loadClone()
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 
-				const usdiTokenAccount = await getTokenAccount(program.incept!.usdiMint, publicKey!, program.provider.connection);
+				const usdiTokenAccount = await getTokenAccount(program.clone!.onusdMint, publicKey!, program.provider.connection);
 				const {userPubkey} = await program.getUserAddress()
 				const associatedToken = await getAssociatedTokenAddress(
-					program.incept!.usdiMint,
+					program.clone!.onusdMint,
 					publicKey!
 				);
 
@@ -47,37 +47,22 @@ export function useCreateAccount() {
 							publicKey!,
 							associatedToken,
 							publicKey!,
-							program.incept!.usdiMint
+							program.clone!.onusdMint
 						))()
 					)
 				}
 
 				ixnCalls.push(program.initializeUserInstruction(publicKey!))
 
-				// TODO: Figure out where to move this since it's a temporary solution.
-				const singlePoolCometsAccount = anchor.web3.Keypair.generate();
-				ixnCalls.push(program.program.account.comet.createInstruction(singlePoolCometsAccount))
-				ixnCalls.push(program.program.methods
-					.initializeComet(true)
-					.accounts({
-					  user: publicKey!,
-					  userAccount: userPubkey,
-					  comet: singlePoolCometsAccount.publicKey,
-					  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-					  tokenProgram: TOKEN_PROGRAM_ID,
-					  systemProgram: anchor.web3.SystemProgram.programId,
-					})
-					.instruction()
-				)
 
-				const multiPoolCometsAccount = anchor.web3.Keypair.generate();
-				ixnCalls.push(program.program.account.comet.createInstruction(multiPoolCometsAccount))
+				const cometsAccount = anchor.web3.Keypair.generate();
+				ixnCalls.push(program.program.account.comet.createInstruction(cometsAccount))
 				ixnCalls.push(program.program.methods
-					.initializeComet(false)
+					.initializeComet()
 					.accounts({
 					  user: publicKey!,
 					  userAccount: userPubkey,
-					  comet: multiPoolCometsAccount.publicKey,
+					  comet: cometsAccount.publicKey,
 					  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
 					  tokenProgram: TOKEN_PROGRAM_ID,
 					  systemProgram: anchor.web3.SystemProgram.programId,
@@ -87,7 +72,7 @@ export function useCreateAccount() {
 
 				try {
 					let ixns = await Promise.all(ixnCalls)
-					await sendAndConfirm(program.provider, ixns, setTxState, [singlePoolCometsAccount, multiPoolCometsAccount])
+					await sendAndConfirm(program.provider, ixns, setTxState, [cometsAccount])
 
 					// store account to localstorage
 					console.log('store account')

@@ -1,9 +1,9 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
-import { InceptClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/incept"
+import { CloneClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/clone"
 import * as anchor from "@coral-xyz/anchor"
 import { useIncept } from '~/hooks/useIncept'
-import { getTokenAccount, getUSDiAccount } from '~/utils/token_accounts'
+import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery'
@@ -13,7 +13,7 @@ import { sendAndConfirm } from '~/utils/tx_helper';
 export const callWithdraw = async ({ program, userPubKey, setTxState, data }: CallWithdrawProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadManager()
+	await program.loadClone()
 	const { index, percent } = data
 	const tokenData = await program.getTokenData();
 
@@ -24,11 +24,11 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 
 	let liquidityTokenAmount = liquidityPosition.liquidityTokens * fractionClaimable;
 
-	let iassetMint = tokenData.pools[liquidityPosition.poolIndex].assetInfo.iassetMint
+	let iassetMint = tokenData.pools[liquidityPosition.poolIndex].assetInfo.onassetMint
 	let liquidityTokenMint = tokenData.pools[liquidityPosition.poolIndex].liquidityTokenMint
 
 	let iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
-	let collateralAssociatedTokenAccount = await getUSDiAccount(program);
+	let collateralAssociatedTokenAccount = await getOnUSDAccount(program);
 	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
 
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
@@ -50,7 +50,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 	}
 	if (collateralAssociatedTokenAccount === undefined) {
 		const usdiAssociatedToken = await getAssociatedTokenAddress(
-			program.incept!.usdiMint,
+			program.clone!.onusdMint,
 			program.provider.publicKey!,
 		);
 		ixnCalls.push(
@@ -58,7 +58,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 				program.provider.publicKey!,
 				usdiAssociatedToken,
 				program.provider.publicKey!,
-				program.incept!.usdiMint
+				program.clone!.onusdMint
 			))()
 		);
 		collateralAssociatedTokenAccount = usdiAssociatedToken;
@@ -74,7 +74,7 @@ export const callWithdraw = async ({ program, userPubKey, setTxState, data }: Ca
 				program.provider.publicKey!,
 				liquidityAssociatedToken,
 				program.provider.publicKey!,
-				program.incept!.usdiMint
+				program.clone!.onusdMint
 			))()
 		);
 		liquidityAssociatedTokenAccount = liquidityAssociatedToken;
@@ -104,18 +104,18 @@ type WithdrawFormData = {
 	percent: number
 }
 interface CallWithdrawProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: WithdrawFormData
 }
 export function useWithdrawMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: WithdrawFormData) => callWithdraw({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: WithdrawFormData) => callWithdraw({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: WithdrawFormData) => funcNoWallet())
 	}
@@ -125,7 +125,7 @@ export function useWithdrawMutation(userPubKey: PublicKey | null) {
 export const callDeposit = async ({ program, userPubKey, setTxState, data }: CallDepositProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadManager()
+	await program.loadClone()
 	const { index, iassetAmount } = data
 
 	let liquidityPositions = await program.getLiquidityPositions();
@@ -143,18 +143,18 @@ type DepositFormData = {
 	iassetAmount: number
 }
 interface CallDepositProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: DepositFormData
 }
 export function useDepositMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: DepositFormData) => callDeposit({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: DepositFormData) => callDeposit({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: DepositFormData) => funcNoWallet())
 	}
@@ -163,18 +163,18 @@ export function useDepositMutation(userPubKey: PublicKey | null) {
 export const callLiquidity = async ({ program, userPubKey, setTxState, data }: CallLiquidityProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadManager()
+	await program.loadClone()
 	const { iassetIndex, iassetAmount } = data
 
 	const tokenData = await program.getTokenData();
 
 	const pool = tokenData.pools[iassetIndex];
 
-	let iassetMint = pool.assetInfo.iassetMint;
+	let iassetMint = pool.assetInfo.onassetMint;
 	let liquidityTokenMint = pool.liquidityTokenMint;
 
 	const iassetAssociatedTokenAccount = await getTokenAccount(iassetMint, program.provider.publicKey!, program.provider.connection);
-	const collateralAssociatedTokenAccount = await getUSDiAccount(program);
+	const collateralAssociatedTokenAccount = await getOnUSDAccount(program);
 	let liquidityAssociatedTokenAccount = await getTokenAccount(liquidityTokenMint, program.provider.publicKey!, program.provider.connection)
 
 	let ixnCalls: Promise<TransactionInstruction>[] = []
@@ -218,18 +218,18 @@ type LiquidityFormData = {
 	iassetAmount: number
 }
 interface CallLiquidityProps {
-	program: InceptClient
+	program: CloneClient
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: LiquidityFormData
 }
 export function useLiquidityMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getInceptApp } = useIncept()
+	const { getCloneApp } = useIncept()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: LiquidityFormData) => callLiquidity({ program: getInceptApp(wallet), userPubKey, setTxState, data }))
+		return useMutation((data: LiquidityFormData) => callLiquidity({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: LiquidityFormData) => funcNoWallet())
 	}

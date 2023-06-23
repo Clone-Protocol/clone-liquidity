@@ -1,11 +1,11 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams, MuiEvent, GridCallbackDetails } from '@mui/x-data-grid'
-import { Grid } from '~/components/Liquidity/multipool/DataGrid'
+import { Grid } from '~/components/Liquidity/comet/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { useLiquidityPoolsQuery } from '~/features/MyLiquidity/multipool/LiquidityPools.query'
+import { useLiquidityPoolsQuery } from '~/features/MyLiquidity/comet/LiquidityPools.query'
 
 interface Props {
 	onChoose: (id: number) => void

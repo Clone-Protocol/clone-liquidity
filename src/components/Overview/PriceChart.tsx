@@ -1,13 +1,12 @@
-import React from 'react'
-import { Box, Typography } from '@mui/material'
-import Image from 'next/image'
+import React from "react"
+import { Box, Typography } from "@mui/material"
+import Image from "next/image"
 // import dynamic from 'next/dynamic'
-import LineChart from '~/components/Charts/LineChart'
-import { PositionInfo } from '~/features/MyLiquidity/CometPosition.query'
-import { usePriceHistoryQuery } from '~/features/Chart/PriceByAsset.query'
+import LineChart from "~/components/Charts/LineChart"
+import { usePriceHistoryQuery } from "~/features/Chart/PriceByAsset.query"
 // import { unixToDate } from '~/utils/date'
-import withSuspense from '~/hocs/withSuspense'
-import { LoadingProgress } from '~/components/Common/Loading'
+import withSuspense from "~/hocs/withSuspense"
+import { LoadingProgress } from "~/components/Common/Loading"
 
 interface Props {
   assetData: PositionInfo
@@ -15,45 +14,58 @@ interface Props {
   priceTitle: string
 }
 
+interface PositionInfo {
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string | null
+  pythSymbol: string
+  price: number
+  tightRange?: number
+  maxRange?: number
+  centerPrice?: number
+}
+
 const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTitle }) => {
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: assetData?.pythSymbol,
     isOraclePrice: isOraclePrice,
     refetchOnMount: "always",
-    enabled: assetData != null
+    enabled: assetData != null,
   })
 
-
-  return (
-    priceHistory ?
-      <>
-        <Box display="flex">
-          <Box mr='10px'>
-            <Image src={assetData.tickerIcon} width={30} height={30} />
-          </Box>
-          <Typography variant='p_xxlg'>{assetData.tickerName} ({assetData.tickerSymbol})</Typography>
+  return priceHistory ? (
+    <>
+      <Box display="flex">
+        <Box mr="10px">
+          <Image src={assetData.tickerIcon} width={30} height={30} />
         </Box>
-        <Box display='flex' alignItems='center'>
-          <Typography variant='p_xxxlg'>
-            ${isOraclePrice ? priceHistory.currentPrice?.toLocaleString(undefined, { maximumFractionDigits: 3 }) : assetData.price.toLocaleString()}
-          </Typography>
-          <Typography variant='p_sm' color='#989898' ml='10px'>
-            {priceTitle}
-          </Typography>
-        </Box>
-        {isOraclePrice && priceHistory.rateOfPrice &&
-          <Typography variant='p' color='#4fe5ff'>{priceHistory.rateOfPrice >= 0 ? '+' : '-'}${Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate.toFixed(2)}%) past 24h</Typography>
-        }
-        <LineChart
-          data={priceHistory.chartData}
-          maxY={priceHistory.maxValue}
-          minY={priceHistory.minValue}
-        />
-      </>
-      : <></>
+        <Typography variant="p_xxlg">
+          {assetData.tickerName} ({assetData.tickerSymbol})
+        </Typography>
+      </Box>
+      <Box display="flex" alignItems="center">
+        <Typography variant="p_xxxlg">
+          $
+          {isOraclePrice
+            ? priceHistory.currentPrice?.toLocaleString(undefined, { maximumFractionDigits: 3 })
+            : assetData.price.toLocaleString()}
+        </Typography>
+        <Typography variant="p_sm" color="#989898" ml="10px">
+          {priceTitle}
+        </Typography>
+      </Box>
+      {isOraclePrice && priceHistory.rateOfPrice && (
+        <Typography variant="p" color="#4fe5ff">
+          {priceHistory.rateOfPrice >= 0 ? "+" : "-"}$
+          {Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate?.toFixed(2)}%)
+          past 24h
+        </Typography>
+      )}
+      <LineChart data={priceHistory.chartData} />
+    </>
+  ) : (
+    <></>
   )
 }
-
-
 
 export default withSuspense(PriceChart, <LoadingProgress />)

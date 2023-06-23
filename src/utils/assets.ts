@@ -1,6 +1,7 @@
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces";
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
-import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/incept"
+import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/clone"
+import { calculatePoolAmounts } from "incept-protocol-sdk/sdk/src/utils";
 import axios from "axios";
 
 export type Interval = 'day' | 'hour';
@@ -37,12 +38,12 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
 
 export const fetchStatsData = async (interval: Interval, poolIndex?: number): Promise<ResponseValue[]> => {
 
-  const baseUrl = process.env.NEXT_PUBLIC_INCEPT_INDEX_ENDPOINT!
+  const baseUrl = process.env.NEXT_PUBLIC_CLONE_INDEX_ENDPOINT!
   let url = `${baseUrl}/stats?interval=${interval}`
   if (poolIndex !== undefined) {
     url = `${url}&pool=${poolIndex}`
   }
-  const authorization = process.env.NEXT_PUBLIC_INCEPT_API_KEY!
+  const authorization = process.env.NEXT_PUBLIC_CLONE_API_KEY!
   const headers = {
     'Authorization': authorization,
   }
@@ -56,9 +57,14 @@ export const getiAssetInfos = (tokenData: TokenData): {poolIndex: number, poolPr
     const iassetInfo = [];
     for (let poolIndex = 0; poolIndex < Number(tokenData.numPools); poolIndex++) {
       let pool = tokenData.pools[poolIndex];
-      let poolBalances = [toNumber(pool.iassetAmount), toNumber(pool.usdiAmount)];
-      let poolPrice = poolBalances[1] / poolBalances[0];
-      let liquidity = poolBalances[1] * 2;
+      let {poolOnusd, poolOnasset} = calculatePoolAmounts(
+        toNumber(pool.onusdIld),
+        toNumber(pool.onassetIld),
+        toNumber(pool.committedOnusdLiquidity),
+        toNumber(pool.assetInfo.price)
+      )
+      let poolPrice = poolOnusd / poolOnasset
+      let liquidity = poolOnusd * 2;
       iassetInfo.push({poolIndex, poolPrice, liquidity});
     }
     return iassetInfo;
@@ -123,8 +129,8 @@ type OHLCVResponse = {
 }
 
 const fetch30DayOHLCV = async (poolIndex: number, interval: 'hour' | 'day') => {
-  const url = `${process.env.NEXT_PUBLIC_INCEPT_INDEX_ENDPOINT}/ohlcv?interval=${interval}&pool=${poolIndex}&filter=month`
-  const authorization = process.env.NEXT_PUBLIC_INCEPT_API_KEY!
+  const url = `${process.env.NEXT_PUBLIC_CLONE_INDEX_ENDPOINT}/ohlcv?interval=${interval}&pool=${poolIndex}&filter=month`
+  const authorization = process.env.NEXT_PUBLIC_CLONE_API_KEY!
 
   let response = await axios.get(url, {
     data: { interval },
@@ -137,7 +143,6 @@ const fetch30DayOHLCV = async (poolIndex: number, interval: 'hour' | 'day') => {
 
 export const getDailyPoolPrices30Day = async (poolIndex: number) => {
   const requestResult = await fetch30DayOHLCV(poolIndex, 'hour')
-  console.log("RESULT:", requestResult)
   const now = new Date()
   const lookback30Day = new Date(now.getTime() - 30 * 86400 * 1000)
 

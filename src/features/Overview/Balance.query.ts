@@ -1,0 +1,71 @@
+import { Query, useQuery } from 'react-query'
+import { PublicKey } from '@solana/web3.js'
+import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
+import { useIncept } from '~/hooks/useIncept'
+import { useDataLoading } from '~/hooks/useDataLoading'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { getTokenAccount } from '~/utils/token_accounts'
+import { useAnchorWallet } from '@solana/wallet-adapter-react'
+
+export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+  if (!userPubKey) return null
+
+  console.log('fetchBalance')
+  // start timer in data-loading-indicator
+  setStartTimer(false);
+  setStartTimer(true);
+
+  await program.loadClone()
+
+  let onusdVal = 0.0
+  let onassetVal = 0.0
+
+  const onusdTokenAccountAddress = await getTokenAccount(program.clone!.onusdMint, userPubKey, program.connection);
+
+  if (onusdTokenAccountAddress !== undefined) {
+    const onusdBalance = await program.connection.getTokenAccountBalance(onusdTokenAccountAddress, "processed");
+    onusdVal = Number(onusdBalance.value.amount) / 100000000;
+  }
+  const tokenData = await program.getTokenData();
+
+  const pool = tokenData.pools[index];
+  const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.connection);
+  if (onassetTokenAccountAddress !== undefined) {
+    const onassetBalance = await program.connection.getTokenAccountBalance(onassetTokenAccountAddress, "processed");
+    onassetVal = Number(onassetBalance.value.amount) / 100000000;
+  }
+
+  return {
+    onusdVal,
+    onassetVal
+  }
+}
+
+interface GetProps {
+  userPubKey: PublicKey | null
+  index: number
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  enabled?: boolean
+}
+
+export interface Balance {
+  onusdVal: number
+  onassetVal: number
+}
+
+export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+  const wallet = useAnchorWallet()
+  const { getCloneApp } = useIncept()
+  const { setStartTimer } = useDataLoading()
+
+  if (wallet) {
+    return useQuery(['borrowBalance', wallet, userPubKey, index], () => fetchBalance({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled
+    })
+  } else {
+    return useQuery(['borrowBalance'], () => ({ onusdVal: 0, onassetVal: 0 }))
+  }
+}
