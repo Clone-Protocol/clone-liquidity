@@ -5,14 +5,14 @@ import { calculatePoolAmounts } from "incept-protocol-sdk/sdk/src/utils";
 import axios from "axios";
 
 export type Interval = 'day' | 'hour';
+export type Filter = 'day' | 'week' | 'month' | 'year';
 
 export type ResponseValue = {
-  datetime: string;
-  pool_index: string;
-  total_liquidity: string;
-  trading_volume: string;
-  total_trading_fees: string;
-  total_treasury_fees: string;
+  time_interval: string;
+  pool_index: number;
+  total_committed_onusd_liquidity: number;
+  volume: number;
+  trading_fees: number;
 };
 
 export const generateDates = (start: Date, interval: Interval): Date[] => {
@@ -36,18 +36,14 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
   return dates;
 }
 
-export const fetchStatsData = async (interval: Interval, poolIndex?: number): Promise<ResponseValue[]> => {
+export const fetchStatsData = async (filter: Filter, interval: Interval): Promise<ResponseValue[]> => {
 
   const baseUrl = process.env.NEXT_PUBLIC_CLONE_INDEX_ENDPOINT!
-  let url = `${baseUrl}/stats?interval=${interval}`
-  if (poolIndex !== undefined) {
-    url = `${url}&pool=${poolIndex}`
-  }
+  let url = `${baseUrl}/stats?interval=${interval}&filter=${filter}`
   const authorization = process.env.NEXT_PUBLIC_CLONE_API_KEY!
   const headers = {
     'Authorization': authorization,
   }
-
   let response = await axios.get(url, { headers })
 
   return response.data?.body
@@ -79,7 +75,7 @@ type AggregatedStats = {
   previousLiquidity: number 
 }
 
-const convertToNumber = (val: string) => {
+const convertToNumber = (val: string | number) => {
   return Number(val) * Math.pow(10, -DEVNET_TOKEN_SCALE)
 }
 
@@ -87,24 +83,23 @@ export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<Aggr
 
   let result: AggregatedStats[] = [];
   for (let i=0; i< tokenData.numPools.toNumber(); i++) {
-    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: 0, previousLiquidity: 0 })
+    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: toNumber(tokenData.pools[i].committedOnusdLiquidity) * 2, previousLiquidity: 0 })
   }
 
-
-
-  const statsData = await fetchStatsData('hour')
+  const statsData = await fetchStatsData('week', 'hour')
+  console.log(statsData)
   const now = (new Date()).getTime(); // Get current timestamp
 
   statsData.forEach((item) => {
-    const dt = new Date(item.datetime)
+    const dt = new Date(item.time_interval)
     const hoursDifference = (now - dt.getTime()) / 3600000
     const poolIndex = Number(item.pool_index)
-    const tradingVolume = convertToNumber(item.trading_volume)
-    const tradingFees = convertToNumber(item.total_trading_fees)
-    const liquidity = convertToNumber(item.total_liquidity)
+    const tradingVolume = convertToNumber(item.volume)
+    const tradingFees = convertToNumber(item.trading_fees)
+    const liquidity = convertToNumber(item.total_committed_onusd_liquidity)
     if (hoursDifference <= 24) {
       result[poolIndex].volumeUSD += tradingVolume
-      result[poolIndex].liquidityUSD = liquidity
+      // result[poolIndex].liquidityUSD = liquidity
       result[poolIndex].fees += tradingFees
     } else if (hoursDifference <= 48 && hoursDifference > 24) {
       result[poolIndex].previousVolumeUSD += tradingVolume

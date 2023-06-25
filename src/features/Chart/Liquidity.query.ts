@@ -1,7 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
-import { fetchStatsData, Interval, ResponseValue, generateDates } from 'src/utils/assets'
+import { fetchStatsData, Interval, ResponseValue, generateDates, Filter } from 'src/utils/assets'
 
 export interface ChartElem {
   time: string
@@ -28,8 +28,7 @@ type AggregatedData = {
   datetime: string;
   total_liquidity: number;
   trading_volume: number;
-  total_trading_fees: number;
-  total_treasury_fees: number;
+  trading_fees: number;
 }
 
 const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): AggregatedData[] => {
@@ -46,16 +45,16 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
     setDatetime(dt)
     return dt.toISOString();
   }
-  const convertToNumber = (val: string) => {
+  const convertToNumber = (val: string | number) => {
     return Number(val) * Math.pow(10, -DEVNET_TOKEN_SCALE)
   }
 
-  const poolIndices: Set<string> = new Set()
+  const poolIndices: Set<number> = new Set()
   poolDataArray.forEach(d => poolIndices.add(d.pool_index))
 
   for (const data of poolDataArray) {
     poolIndices.add(data.pool_index)
-    const dt = new Date(data.datetime)
+    const dt = new Date(data.time_interval)
     const datetimeKey = getDTKeys(dt)
     if (!groupedByDtAndPool[datetimeKey]) {
       groupedByDtAndPool[datetimeKey] = {}
@@ -71,7 +70,7 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
   // Create the first entry of the result
   let result: AggregatedData[] = []
 
-  let startingDate = new Date(poolDataArray.at(0)!.datetime);
+  let startingDate = new Date(poolDataArray.at(0)!.time_interval);
   setDatetime(startingDate)
   const dates = generateDates(startingDate, interval)
 
@@ -79,7 +78,7 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
 
     const currentDate = getDTKeys(dates[i])
     let record: AggregatedData = {
-      datetime: currentDate, total_liquidity: 0, trading_volume: 0, total_trading_fees: 0, total_treasury_fees: 0
+      datetime: currentDate, total_liquidity: 0, trading_volume: 0, trading_fees: 0
     }
 
     const currentGBData = groupedByDtAndPool[currentDate]
@@ -91,11 +90,10 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
       poolIndices.forEach((index) => {
         let data = currentGBData[index]
         if (data) {
-          record.total_liquidity += convertToNumber(data.total_liquidity)
-          record.trading_volume += convertToNumber(data.trading_volume)
-          record.total_trading_fees += convertToNumber(data.total_trading_fees)
-          record.total_treasury_fees += convertToNumber(data.total_treasury_fees)
-          recentLiquidityByPool[index] = convertToNumber(data.total_liquidity)
+          record.total_liquidity += convertToNumber(data.total_committed_onusd_liquidity)
+          record.trading_volume += convertToNumber(data.volume)
+          record.trading_fees += convertToNumber(data.trading_fees)
+          recentLiquidityByPool[index] = convertToNumber(data.total_committed_onusd_liquidity)
         } else {
           record.total_liquidity += recentLiquidityByPool[index]
         }
@@ -109,22 +107,22 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
 
 export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
 
-  const [daysLookback, interval] = (() => {
+  const [daysLookback, filter, interval] = (() => {
     switch (timeframe) {
       case '1y':
-        return [365, 'day' as Interval]
+        return [365, "year", 'day' as Interval]
       case '30d':
-        return [30, 'day' as Interval]
+        return [30, "month", 'day' as Interval]
       case '7d':
-        return [7, 'hour' as Interval]
+        return [7, "week", 'hour' as Interval]
       case '24h':
-        return [1, 'hour' as Interval]
+        return [1, "week", 'hour' as Interval]
       default:
         throw new Error(`Unexpected timeframe: ${timeframe}`)
     }
   })()
 
-  const rawData = await fetchStatsData(interval)
+  const rawData = await fetchStatsData(filter as Filter, interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
   let chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.total_liquidity } })
   chartData = filterHistoricalData(chartData, daysLookback)
@@ -167,22 +165,22 @@ export const fetchTotalUsers = async ({ timeframe }: { timeframe: FilterTime }) 
 }
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
-  const [daysLookback, interval] = (() => {
+  const [daysLookback, filter, interval] = (() => {
     switch (timeframe) {
       case '1y':
-        return [365, 'day' as Interval]
+        return [365, "year", 'day' as Interval]
       case '30d':
-        return [30, 'day' as Interval]
+        return [30, "month", 'day' as Interval]
       case '7d':
-        return [7, 'hour' as Interval]
+        return [7, "week", 'hour' as Interval]
       case '24h':
-        return [1, 'hour' as Interval]
+        return [1, "week", 'hour' as Interval]
       default:
         throw new Error(`Unexpected timeframe: ${timeframe}`)
     }
   })()
 
-  const rawData = await fetchStatsData(interval)
+  const rawData = await fetchStatsData(filter as Filter, interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
   const chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.trading_volume } })
   const sumAllValue = chartData.reduce((a, b) => a + b.value, 0)
