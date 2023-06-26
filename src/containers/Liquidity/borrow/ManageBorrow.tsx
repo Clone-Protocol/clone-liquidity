@@ -67,7 +67,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
       <RightBoxWrapper>
         <StickyBox>
           <PriceChart assetData={borrowDetail} isOraclePrice={true} priceTitle='Oracle Price' />
-          <PositionAnalytics tickerSymbol={borrowDetail.tickerSymbol} />
+          <PositionAnalytics price={borrowDetail.price} tickerSymbol={borrowDetail.tickerSymbol} />
         </StickyBox>
       </RightBoxWrapper>
     </Stack>

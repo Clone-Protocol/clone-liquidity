@@ -7,7 +7,7 @@ import RatioSlider from '~/components/Borrow/RatioSlider'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { ASSETS } from '~/data/assets'
-import { useBorrowDetailQuery, PairData } from '~/features/MyLiquidity/BorrowPosition.query'
+import { useBorrowDetailQuery, PairData, PositionInfo, DetailInfo } from '~/features/MyLiquidity/BorrowPosition.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
@@ -21,7 +21,7 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 
 const RISK_RATIO_VAL = 170
 
-const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, onChooseAssetIndex: (index: number) => void }) => {
+const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIndex: number, borrowDetail: DetailInfo, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
   const onUSDInfo = collateralMapping(StableCollateral.onUSD)
   const fromPair: PairData = {
@@ -30,12 +30,12 @@ const BorrowPanel = ({ assetIndex, onChooseAssetIndex }: { assetIndex: number, o
     tickerSymbol: onUSDInfo.collateralSymbol,
   }
 
-  const { data: borrowDetail } = useBorrowDetailQuery({
-    userPubKey: publicKey,
-    index: assetIndex,
-    refetchOnMount: "always",
-    enabled: publicKey != null
-  })
+  // const { data: borrowDetail } = useBorrowDetailQuery({
+  //   userPubKey: publicKey,
+  //   index: assetIndex,
+  //   refetchOnMount: "always",
+  //   enabled: publicKey != null
+  // })
 
   const { data: usdiBalance, refetch } = useBalanceQuery({
     userPubKey: publicKey,

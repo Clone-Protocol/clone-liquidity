@@ -11,9 +11,12 @@ import { ASSETS } from '~/data/assets'
 import Image from 'next/image'
 import InfoIcon from 'public/images/info-icon.svg'
 import TipMsg from '~/components/Common/TipMsg'
+import { useBorrowDetailQuery } from '~/features/MyLiquidity/BorrowPosition.query'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const BorrowContainer = () => {
   const router = useRouter()
+  const { publicKey } = useWallet()
   const { lAssetId } = router.query
   const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
@@ -26,19 +29,26 @@ const BorrowContainer = () => {
     }
   }, [lAssetId])
 
+  const { data: borrowDetail } = useBorrowDetailQuery({
+    userPubKey: publicKey,
+    index: assetIndex,
+    refetchOnMount: "always",
+    enabled: publicKey != null
+  })
+
   const handleChooseAssetIndex = (index: number) => {
     setAssetIndex(index)
     setBorrowAsset(ASSETS[index])
   }
 
-  return borrowAsset ? (
+  return borrowAsset && borrowDetail ? (
     <StyledBox>
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
           <TipMsg><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography></TipMsg>
           <LeftBoxWrapper>
             <Box paddingY='10px'>
-              <BorrowPanel assetIndex={assetIndex} onChooseAssetIndex={handleChooseAssetIndex} />
+              <BorrowPanel assetIndex={assetIndex} borrowDetail={borrowDetail} onChooseAssetIndex={handleChooseAssetIndex} />
             </Box>
           </LeftBoxWrapper>
         </Box>
@@ -46,7 +56,7 @@ const BorrowContainer = () => {
         <RightBoxWrapper>
           <StickyBox>
             <PriceChart assetData={borrowAsset} isOraclePrice={true} priceTitle='Oracle Price' />
-            <PositionAnalytics tickerSymbol={borrowAsset.tickerSymbol} />
+            <PositionAnalytics price={borrowDetail.oPrice} tickerSymbol={borrowAsset.tickerSymbol} />
           </StickyBox>
         </RightBoxWrapper>
       </Stack>

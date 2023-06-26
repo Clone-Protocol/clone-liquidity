@@ -39,6 +39,16 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   }
 }
 
+export interface DetailInfo {
+  tickerIcon: string
+  tickerName: string
+  tickerSymbol: string
+  pythSymbol: string
+  oPrice: number
+  stableCollateralRatio: number
+  cryptoCollateralRatio: number
+}
+
 const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
   if (!userPubKey) return
 
@@ -102,6 +112,7 @@ export interface PositionInfo {
   tickerIcon: string
   tickerName: string
   tickerSymbol: string
+  pythSymbol?: string
   price: number
   stableCollateralRatio: number
   cryptoCollateralRatio: number
