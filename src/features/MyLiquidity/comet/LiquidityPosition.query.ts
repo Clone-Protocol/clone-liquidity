@@ -176,7 +176,11 @@ export const fetchCloseLiquidityPosition = async ({
 	let ildDebt = ildInOnusd ? onusdILD : onAssetILD
 	let ildDebtDollarPrice = ildInOnusd ? 1 : oraclePrice
 	let ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
-	let healthScore = prevHealthScore + toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue / totalCollateralAmount
+	let healthScoreIncrease = (
+		toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue +
+		 committedOnusdLiquidity * toNumber(pool.assetInfo.positionHealthScoreCoefficient)
+		) / totalCollateralAmount
+	let healthScore = prevHealthScore + healthScoreIncrease
 	let isValidToClose = ildInOnusd ? balance?.onusdVal! >= onusdILD : balance?.onassetVal! >= onAssetILD
 
 	return {
