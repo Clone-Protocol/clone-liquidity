@@ -106,7 +106,6 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
 }
 
 export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
-
   const [daysLookback, filter, interval] = (() => {
     switch (timeframe) {
       case '1y':
@@ -138,32 +137,6 @@ export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime
   }
 }
 
-export const fetchTotalUsers = async ({ timeframe }: { timeframe: FilterTime }) => {
-  const chartData = [
-    {
-      time: '2022-03-01',
-      value: 35
-    },
-    {
-      time: '2022-03-02',
-      value: 55
-    },
-    {
-      time: '2022-03-03',
-      value: 90
-    },
-    {
-      time: '2022-03-04',
-      value: 185
-    },
-    {
-      time: '2022-03-05',
-      value: 235
-    },
-  ]
-  return { chartData }
-}
-
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
   const [daysLookback, filter, interval] = (() => {
     switch (timeframe) {
@@ -182,42 +155,19 @@ export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime })
 
   const rawData = await fetchStatsData(filter as Filter, interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
-  const chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.trading_volume } })
+  let chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.trading_volume } })
+  chartData = filterHistoricalData(chartData, daysLookback)
+
   const sumAllValue = chartData.reduce((a, b) => a + b.value, 0)
-
-  return {
-    chartData: filterHistoricalData(chartData, daysLookback),
-    sumAllValue
-  }
-}
-
-export const fetchTotalLiquidation = async ({ timeframe }: { timeframe: FilterTime }) => {
-  // @TODO: When we setup the liquidation bot.
-  const chartData = [
-    {
-      time: '2022-03-01',
-      value: 65
-    },
-    {
-      time: '2022-03-02',
-      value: 45
-    },
-    {
-      time: '2022-03-03',
-      value: 180
-    },
-    {
-      time: '2022-03-04',
-      value: 65
-    },
-    {
-      time: '2022-03-05',
-      value: 95
-    },
-  ]
+  const allValues = chartData.map(elem => elem.value!)
+  const maxValue = Math.floor(Math.max(...allValues))
+  const minValue = Math.floor(Math.min(...allValues))
 
   return {
     chartData,
+    maxValue,
+    minValue,
+    sumAllValue
   }
 }
 

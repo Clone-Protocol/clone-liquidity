@@ -129,22 +129,6 @@ const CloseLiquidityDialog = ({
     return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD`
   }
 
-  const displayWalletBalance = () => {
-    let components = []
-    components.push(
-      `${Math.max(0, positionInfo!.onusdVal).toLocaleString(undefined, {
-        maximumFractionDigits: 5,
-      })} onUSD`
-    )
-    components.push(
-      `${Math.max(0, positionInfo!.onassetVal).toLocaleString(undefined, {
-        maximumFractionDigits: 5,
-      })} ${positionInfo!.tickerSymbol}`
-    )
-
-    return components.join(' + ')
-  }
-
   return positionInfo ? (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={480}>
@@ -164,13 +148,15 @@ const CloseLiquidityDialog = ({
               </Stack>
             </BoxWithBorder>
 
-            <Box marginTop="20px" marginBottom="22px">
-              <Box display="flex" justifyContent="flex-end">
+            <Box mt="20px" mb="22px">
+              <Box display="flex" justifyContent="flex-end" mb='5px'>
                 <Typography variant="p" color="#989898">
                   Wallet Balance:{" "}
                 </Typography>
-                <Typography variant="p" ml="5px">
-                  {displayWalletBalance()}
+                <Typography variant="p" ml="5px" color={!positionInfo.isValidToClose ? { color: '#ed2525' } : {}}>
+                  {`${Math.max(0, positionInfo!.onassetVal).toLocaleString(undefined, {
+                    maximumFractionDigits: 5,
+                  })} ${positionInfo!.tickerSymbol}`}
                 </Typography>
               </Box>
               <CenterBox justifyContent="space-evenly">
@@ -191,6 +177,22 @@ const CloseLiquidityDialog = ({
                   </Box>
                 </Stack>
               </CenterBox>
+              {!positionInfo.isValidToClose &&
+                <Box display='flex' justifyContent='flex-end' mt='5px'>
+                  <Typography variant="p" color='#ed2525'>{positionInfo!.tickerSymbol} balance not enough to pay the ILD Debt</Typography>
+                </Box>
+              }
+
+              <Box display="flex" justifyContent="flex-end" mt='20px' mb='5px'>
+                <Typography variant="p" color="#989898">
+                  Wallet Balance:{" "}
+                </Typography>
+                <Typography variant="p" ml="5px">
+                  {`${Math.max(0, positionInfo!.onusdVal).toLocaleString(undefined, {
+                    maximumFractionDigits: 5,
+                  })} onUSD`}
+                </Typography>
+              </Box>
               <CenterBox justifyContent="space-evenly">
                 <Stack direction="row" justifyContent="space-between">
                   <Box>
@@ -212,16 +214,20 @@ const CloseLiquidityDialog = ({
             </Box>
 
             <BoxWithBorder mt='13px' padding='15px'>
-              <Box>
-                <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} /></Box>
-                <HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={440} />
-              </Box>
+              {positionInfo.isValidToClose ?
+                <Box>
+                  <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} /></Box>
+                  <HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={440} />
+                </Box>
+                :
+                <Box display='flex' justifyContent='center' my='10px'><Typography variant="p">Projected healthscore not available</Typography></Box>
+              }
             </BoxWithBorder>
 
             <SubmitButton
               onClick={() => handleClosePosition()}
               disabled={!positionInfo.isValidToClose || isSubmitting}>
-              Claim Rewards, Pay ILD & Close Liquidity Position
+              Pay ILD, claim Rewards, and close liquidity position
             </SubmitButton>
 
             <Box display="flex" justifyContent="center">
@@ -229,7 +235,7 @@ const CloseLiquidityDialog = ({
             </Box>
           </BoxWrapper>
         </DialogContent>
-      </Dialog>
+      </Dialog >
     </>
   ) : (
     <></>

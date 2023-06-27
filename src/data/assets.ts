@@ -31,7 +31,6 @@ export enum Asset {
 
 export enum AssetType {
     Crypto,
-    Stocks,
     Fx,
     Commodities,
 }

@@ -37,10 +37,10 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 			<Dialog open={shouldDialogOpen()} onClose={handleClose} maxWidth={810}>
 				<ContentContainer style={{ backgroundImage: `url(${BgDialog.src})` }}>
 					<LeftBox>
-						<Image src={logoIcon} width={187} alt="clone" />
+						<Image src={logoIcon} width={148} height={36} alt="clone" />
 						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
 						<DescBox>
-							<Typography variant='p'>This is your first time connecting this wallet to Devnet Clone Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='h8' color='#fff'>~0.63 Devnet SOL</Typography> <Typography variant='p'>for most optimal experience using Devnet Clone Liquidity.</Typography>
+							<Typography variant='p'>This is your first time connecting this wallet to Devnet Clone Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='h8' color='#fff'>~0.26 Devnet SOL</Typography> <Typography variant='p'>for most optimal experience using Devnet Clone Liquidity.</Typography>
 						</DescBox>
 						<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
 							<Typography variant='p_lg'>Open Devnet Account</Typography>

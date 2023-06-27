@@ -69,7 +69,7 @@ const GNB: React.FC = () => {
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
 					<Toolbar disableGutters>
-						<Image src={logoIcon} width={186} height={42} alt="clone" />
+						<Image src={logoIcon} width={148} height={36} alt="clone" />
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
@@ -122,62 +122,62 @@ const RightMenu = () => {
 	}
 	useEffect(() => {
 
-	async function userMintOnusd() {
-		const onusdToMint = 100;
-		if (connected && publicKey && mintUsdi && wallet) {
-			const program = getCloneApp(wallet)
-			await program.loadClone()
-			const usdiTokenAccount = await getOnUSDAccount(program);
-			const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
+		async function userMintOnusd() {
+			const onusdToMint = 100;
+			if (connected && publicKey && mintUsdi && wallet) {
+				const program = getCloneApp(wallet)
+				await program.loadClone()
+				const usdiTokenAccount = await getOnUSDAccount(program);
+				const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
 
-			let [jupiterAddress, nonce] = PublicKey.findProgramAddressSync(
-				[Buffer.from("jupiter")],
-				new PublicKey(JUPITER_PROGRAM_ADDRESS)
-			  );
-			let jupiterAccount = await Jupiter.fromAccountAddress(program.connection, jupiterAddress)
-			const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.connection);
-			const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
+				let [jupiterAddress, nonce] = PublicKey.findProgramAddressSync(
+					[Buffer.from("jupiter")],
+					new PublicKey(JUPITER_PROGRAM_ADDRESS)
+				);
+				let jupiterAccount = await Jupiter.fromAccountAddress(program.connection, jupiterAddress)
+				const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.connection);
+				const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
 
-			let ixnCalls = []
-			try {
-				if (usdcTokenAccount === undefined) {
-					ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, usdcAta, publicKey, jupiterAccount.usdcMint))())
-				}
-				if (usdiTokenAccount === undefined) {
-					ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, onusdAta, publicKey, program.clone!.onusdMint))())
-				}
+				let ixnCalls = []
+				try {
+					if (usdcTokenAccount === undefined) {
+						ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, usdcAta, publicKey, jupiterAccount.usdcMint))())
+					}
+					if (usdiTokenAccount === undefined) {
+						ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, onusdAta, publicKey, program.clone!.onusdMint))())
+					}
 
-				ixnCalls.push(
-					createMintUsdcInstruction(
-						{
-							usdcMint: jupiterAccount.usdcMint,
-							usdcTokenAccount: usdcAta,
-							jupiterAccount: jupiterAddress,
-							tokenProgram: TOKEN_PROGRAM_ID
-						}, {
+					ixnCalls.push(
+						createMintUsdcInstruction(
+							{
+								usdcMint: jupiterAccount.usdcMint,
+								usdcTokenAccount: usdcAta,
+								jupiterAccount: jupiterAddress,
+								tokenProgram: TOKEN_PROGRAM_ID
+							}, {
 							nonce,
 							amount: new BN(onusdToMint * Math.pow(10, 7))
 						}
+						)
 					)
-				)
 
-				ixnCalls.push(
-					await program.mintOnusdInstruction(
-						new BN(onusdToMint * Math.pow(10, DEVNET_TOKEN_SCALE)),
-						onusdAta,
-						usdcAta
+					ixnCalls.push(
+						await program.mintOnusdInstruction(
+							new BN(onusdToMint * Math.pow(10, DEVNET_TOKEN_SCALE)),
+							onusdAta,
+							usdcAta
+						)
 					)
-				)
 
-				let ixns = await Promise.all(ixnCalls)
-				await sendAndConfirm(program.provider, ixns, setTxState)
+					let ixns = await Promise.all(ixnCalls)
+					await sendAndConfirm(program.provider, ixns, setTxState)
 
-			} finally {
-				setMintUsdi(false)
+				} finally {
+					setMintUsdi(false)
+				}
 			}
 		}
-	}
-	userMintOnusd()
+		userMintOnusd()
 	}, [mintUsdi, connected, publicKey])
 
 	const handleGetUsdiClick = () => {

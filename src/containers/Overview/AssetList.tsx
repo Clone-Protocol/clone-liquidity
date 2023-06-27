@@ -23,6 +23,7 @@ import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import { useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { MARKETS_APP } from '~/data/social'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -152,13 +153,16 @@ let columns: GridColDef[] = [
 		headerName: '',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			//@TODO: set market url
+			const goToTrading = (e: any) => {
+				e.stopPropagation()
+				const url = `${MARKETS_APP}/trade/${params.row.ticker}`
+				window.open(url)
+			}
+
 			return (
-				<Link href={`#`}>
-					<TradeButton>
-						<Image src={TradeIcon} />
-					</TradeButton>
-				</Link>
+				<TradeButton onClick={goToTrading}>
+					<Image src={TradeIcon} />
+				</TradeButton>
 			)
 		},
 	},

@@ -92,8 +92,6 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 						return asset.assetType === AssetType.Fx
 					} else if (filter === 'commodities') {
 						return asset.assetType === AssetType.Commodities
-					} else if (filter === 'stocks') {
-						return asset.assetType === AssetType.Stocks
 					}
 					return true;
 				})

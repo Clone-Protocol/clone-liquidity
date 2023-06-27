@@ -29,7 +29,9 @@ const PositionAnalytics = ({ price, tickerSymbol }: { price: number, tickerSymbo
       <Box mb="12px"><Typography variant="p_lg">{tickerSymbol} Borrow Position Analytics</Typography></Box>
       <DataBox>
         <Box><Typography variant="p_sm">Total Borrowed</Typography></Box>
-        <Box><Typography variant="p_lg">{(resultData?.currentAmountBorrowed).toLocaleString()} {tickerSymbol}</Typography> <Typography variant='p' color='#989898'>(${(price * resultData?.currentAmountBorrowed).toLocaleString()} USD)</Typography> <TxtPriceRate val={resultData!.currentAmountBorrowed * resultData!.amountBorrowedRate} rate={resultData!.amountBorrowedRate} /></Box>
+        <Box><Typography variant="p_lg" mr='5px'>{(resultData?.currentAmountBorrowed).toLocaleString()} {tickerSymbol}</Typography>
+          {/* <Typography variant='p' color='#989898'>(${(price * resultData?.currentAmountBorrowed).toLocaleString()} USD)</Typography>  */}
+          <TxtPriceRate val={resultData!.currentAmountBorrowed * resultData!.amountBorrowedRate} rate={resultData!.amountBorrowedRate} /></Box>
       </DataBox>
       <DataBox>
         <Box><Typography variant="p_sm">TVL</Typography></Box>
