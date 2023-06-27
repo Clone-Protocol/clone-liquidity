@@ -83,7 +83,7 @@ const CloseLiquidityDialog = ({
 
     if (components.length === 0)
       return "0 onUSD"
-    
+
     return components.join(' + ')
   }
 
@@ -94,7 +94,7 @@ const CloseLiquidityDialog = ({
     if (positionInfo!.onassetILD > 0)
       reward += positionInfo!.onassetILD * positionInfo!.price
 
-    return `${Math.max(0, reward).toLocaleString(undefined, {maximumFractionDigits: 5})} USD`
+    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD`
   }
 
   const displayReward = () => {
@@ -115,7 +115,7 @@ const CloseLiquidityDialog = ({
     }
     if (components.length === 0)
       return "0 onUSD"
-    
+
     return components.join(' + ')
   }
 
@@ -126,7 +126,7 @@ const CloseLiquidityDialog = ({
     if (positionInfo!.onassetILD < 0)
       reward += (-positionInfo!.onassetILD * positionInfo!.price)
 
-    return `${Math.max(0, reward).toLocaleString(undefined, {maximumFractionDigits: 5})} USD`
+    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD`
   }
 
   const displayWalletBalance = () => {
@@ -135,7 +135,7 @@ const CloseLiquidityDialog = ({
       `${Math.max(0, positionInfo!.onusdVal).toLocaleString(undefined, {
         maximumFractionDigits: 5,
       })} onUSD`
-    )  
+    )
     components.push(
       `${Math.max(0, positionInfo!.onassetVal).toLocaleString(undefined, {
         maximumFractionDigits: 5,
@@ -210,6 +210,13 @@ const CloseLiquidityDialog = ({
                 </Stack>
               </CenterBox>
             </Box>
+
+            <BoxWithBorder mt='13px' padding='15px'>
+              <Box>
+                <Box><Typography variant='p'>Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.projectedMultipoolHealthScoreRecentering} /></Box>
+                <HealthscoreBar score={positionInfo.healthScore} prevScore={positionInfo.prevHealthScore} hideIndicator={true} width={440} />
+              </Box>
+            </BoxWithBorder>
 
             <SubmitButton
               onClick={() => handleClosePosition()}

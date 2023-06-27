@@ -39,6 +39,7 @@ export const TooltipTexts = {
     totalLiquidity: `The total amount of liquidity in USD being provided to Incept pools by your comet.`,
     contributedLiquidityPositions: `This is where you can add liquidity to any of Incept's pools using your comet.`,
     projectedEditHealthScore: `The approximate health score of the comet after altering the total collateral value.`,
+    projectedMultipoolHealthScoreRecentering: `The approximate health score of the multipool comet after recentering.`,
     totalCollateralValueLong: `The total collateral value in USD of the position after depositing/withdrawing <- depending on which action is selected.`,
     projectedHealthScoreEstablished: `The approximate health score of the comet after establishing the new liquidity position.`,
     onAssetCol: `The price of the onAsset on Incept Markets, this value is calculated using the ratio of onUSD to onAsset in the pool.`,

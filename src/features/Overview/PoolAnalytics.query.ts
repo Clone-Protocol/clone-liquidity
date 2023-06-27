@@ -5,7 +5,7 @@ import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { getAggregatedPoolStats } from '~/utils/assets'
+import { getAggregatedPoolStats, fetchBorrowData } from '~/utils/assets'
 
 export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: CloneClient, setStartTimer: (start: boolean) => void }) => {
   console.log('fetchPoolAnalytics')
@@ -20,12 +20,13 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
     return 100 * (current - prev) / prev
   }
 
-  // console.log("STATS:", poolStats)
+  const borrowData = await fetchBorrowData(Number(tokenData.numPools))
 
   for (let poolIndex = 0; poolIndex < tokenData.numPools.toNumber(); poolIndex++) {
     const info = assetMapping(poolIndex)
     if (tickerSymbol === info.tickerSymbol) {
       const stats = poolStats[poolIndex]
+      const borrowedStats = borrowData[poolIndex]
 
       return {
         totalLiquidity: stats.liquidityUSD,
@@ -37,6 +38,10 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer 
         feeRevenue24hr: stats.fees,
         feeRevenueGain: stats.fees - stats.previousFees,
         feeRevenueGainPct: calcPctGain(stats.fees, stats.previousFees),
+        currentAmountBorrowed: borrowedStats.currentAmount,
+        currentTVL: borrowedStats.currentTVL,
+        amountBorrowedRate: calcPctGain(borrowedStats.currentAmount, borrowedStats.previousAmount),
+        tvlRate: calcPctGain(borrowedStats.currentTVL, borrowedStats.previousTVL)
       }
     }
   }

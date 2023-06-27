@@ -29,11 +29,11 @@ const PositionAnalytics = ({ price, tickerSymbol }: { price: number, tickerSymbo
       <Box mb="12px"><Typography variant="p_lg">{tickerSymbol} Borrow Position Analytics</Typography></Box>
       <DataBox>
         <Box><Typography variant="p_sm">Total Borrowed</Typography></Box>
-        <Box><Typography variant="p_lg">{(resultData?.totalLiquidity / price).toLocaleString()} {tickerSymbol}</Typography> <Typography variant='p' color='#989898'>(${resultData?.totalLiquidity.toLocaleString()} USD)</Typography> <TxtPriceRate val={resultData!.liquidityGain} rate={resultData!.liquidityGainPct} /></Box>
+        <Box><Typography variant="p_lg">{(resultData?.currentAmountBorrowed).toLocaleString()} {tickerSymbol}</Typography> <Typography variant='p' color='#989898'>(${(price * resultData?.currentAmountBorrowed).toLocaleString()} USD)</Typography> <TxtPriceRate val={resultData!.currentAmountBorrowed * resultData!.amountBorrowedRate} rate={resultData!.amountBorrowedRate} /></Box>
       </DataBox>
       <DataBox>
         <Box><Typography variant="p_sm">TVL</Typography></Box>
-        <Box><Typography variant="p_lg">${resultData?.tradingVol24h.toLocaleString()} USD</Typography> <TxtPriceRate val={resultData!.tradingVolGain} rate={resultData!.tradingVolGainPct} /></Box>
+        <Box><Typography variant="p_lg">${resultData?.currentTVL.toLocaleString()} USD</Typography> <TxtPriceRate val={resultData!.currentTVL * resultData!.tvlRate} rate={resultData!.tvlRate} /></Box>
       </DataBox>
     </Box>
   ) : <></>
