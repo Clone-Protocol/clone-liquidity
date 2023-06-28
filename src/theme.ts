@@ -95,7 +95,7 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 				root: {
 					'& .MuiDialog-paper': {
 						background: 'none',
-						boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
+						boxShadow: 'none',
 						borderRadius: '10px'
 					},
 					'& .MuiBackdrop-root': {

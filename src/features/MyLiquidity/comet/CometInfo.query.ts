@@ -157,8 +157,6 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 }
 
 export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
-	if (!userPubKey) return null
-
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useIncept()
 	const { setStartTimer } = useDataLoading()

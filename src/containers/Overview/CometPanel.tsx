@@ -41,7 +41,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: publicKey != null
   })
 
@@ -53,7 +53,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
       initData()
     }
-  }, [open, positionInfo])
+  }, [positionInfo])
 
   const initData = () => {
     setMintRatio(0)

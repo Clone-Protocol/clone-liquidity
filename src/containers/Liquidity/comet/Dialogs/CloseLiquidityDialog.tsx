@@ -30,7 +30,7 @@ const CloseLiquidityDialog = ({
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
     index: positionIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: open && publicKey != null,
   })
 

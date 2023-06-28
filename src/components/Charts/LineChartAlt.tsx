@@ -57,7 +57,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
       // if (setLabel && label !== formattedTime) setLabel(formattedTime)
       return (
         <Box sx={{ fontSize: '12px', color: '#8988a3' }}>
-          <p className="label">{`${formattedTime}`}</p>
+          <p>{`${formattedTime}`}</p>
         </Box>
       );
     }
@@ -115,6 +115,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
           <Tooltip
             cursor={{ stroke: '#8988a3', strokeDasharray: '4 4' }}
             content={CustomTooltip}
+            wrapperStyle={{ outline: "none" }}
             contentStyle={{ display: 'block', background: 'transparent' }}
           // formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {
           //   if (setValue && parsedValue !== props.payload.value) {
