@@ -66,7 +66,7 @@ const FormStack = styled(Stack)`
   }
 `
 const InputAmount = styled(`input`)`
-	width: 90px;
+	width: 140px;
 	padding: 0;
 	text-align: right;
 	border: 0px;
