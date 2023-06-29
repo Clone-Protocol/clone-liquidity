@@ -265,7 +265,7 @@ const RightMenu = () => {
 							</Stack>
 						</Stack>
 					</WalletSelectBox>}
-					<ReminderNewWalletPopup />
+					{publicKey && <ReminderNewWalletPopup />}
 				</Box>
 			</Box>
 

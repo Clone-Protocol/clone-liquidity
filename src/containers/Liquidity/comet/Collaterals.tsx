@@ -21,8 +21,7 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
   }
 
   const BlankNoCollateral = () => (
-    <MultipoolBlank title='Deposit collaterals to multipool to get started' subtitle='Multipool Liquidity Positions are designed to enable advanced users to 
-    fully leverage the CLS' />
+    <MultipoolBlank title='Deposit collateral to your comet to get started' subtitle='Comets are designed to allow users to leverage the full capabilities of the CLS' />
   )
 
   return (
