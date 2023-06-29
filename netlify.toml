@@ -1,3 +1,5 @@
+[functions]
+    directory = "functions/"
+
 [build]
-    functions = "functions"
-    publish = "src"
+    publish = ".next"
