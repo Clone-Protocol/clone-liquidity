@@ -106,48 +106,34 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
 }
 
 export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
-  const [daysLookback, filter, interval] = (() => {
-    switch (timeframe) {
-      case '1y':
-        return [365, "year", 'day' as Interval]
-      case '30d':
-        return [30, "month", 'day' as Interval]
-      case '7d':
-        return [7, "week", 'hour' as Interval]
-      case '24h':
-        return [1, "week", 'hour' as Interval]
-      default:
-        throw new Error(`Unexpected timeframe: ${timeframe}`)
+  return await fetchTotalValues(timeframe,
+    (data: AggregatedData) => {
+      return { time: data.datetime, value: data.total_liquidity }
     }
-  })()
-
-  const rawData = await fetchStatsData(filter as Filter, interval)
-  const aggregatedData = aggregatePoolData(rawData, interval)
-  let chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.total_liquidity } })
-  chartData = filterHistoricalData(chartData, daysLookback)
-
-  const allValues = chartData.map(elem => elem.value!)
-  const maxValue = Math.floor(Math.max(...allValues))
-  const minValue = Math.floor(Math.min(...allValues))
-
-  return {
-    chartData,
-    maxValue,
-    minValue
-  }
+  )
 }
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
-  const [daysLookback, filter, interval] = (() => {
+  
+  return await fetchTotalValues(timeframe,
+    (data: AggregatedData) => {
+      return { time: data.datetime, value: data.trading_volume }
+    }
+  )
+}
+
+export const fetchTotalValues = async (timeframe: FilterTime, mapFunction: (tsVal: AggregatedData) => TimeSeriesValue) => {
+
+  const [daysLookback, filter, interval, intervalMs] = (() => {
     switch (timeframe) {
       case '1y':
-        return [365, "year", 'day' as Interval]
+        return [365, "year", 'day' as Interval, 86400000]
       case '30d':
-        return [30, "month", 'day' as Interval]
+        return [30, "month", 'day' as Interval, 86400000]
       case '7d':
-        return [7, "week", 'hour' as Interval]
+        return [7, "week", 'hour' as Interval, 3600000]
       case '24h':
-        return [1, "week", 'hour' as Interval]
+        return [1, "week", 'hour' as Interval, 3600000]
       default:
         throw new Error(`Unexpected timeframe: ${timeframe}`)
     }
@@ -155,8 +141,29 @@ export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime })
 
   const rawData = await fetchStatsData(filter as Filter, interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
-  let chartData = aggregatedData.map(data => { return { time: data.datetime, value: data.trading_volume } })
+  const tsData: TimeSeriesValue[] = aggregatedData.map(mapFunction)
+
+  const now = new Date()
+  const currentIntervalDt = new Date(now.getTime() - now.getTime() % intervalMs)
+  const startDate = new Date(currentIntervalDt.getTime()  - daysLookback * 86400000)
+  const endDate = tsData.length > 0 ? new Date(tsData[0].time) : currentIntervalDt
+
+  let chartData: TimeSeriesValue[] = [];
+  if (startDate < endDate) {
+    chartData = backfillWithZeroValue(startDate, endDate, intervalMs)
+    chartData.push(...tsData)
+  } else {
+    chartData = tsData;
+  }
+
   chartData = filterHistoricalData(chartData, daysLookback)
+  const shiftByInterval = (item: TimeSeriesValue) => {
+    const dt = new Date(item.time)
+    return {time: new Date(dt.getTime() + intervalMs).toISOString(), value: item.value}
+  }
+  chartData = chartData.map(shiftByInterval).filter((item) => {
+    return (new Date(item.time)) < currentIntervalDt
+  })
 
   const sumAllValue = chartData.reduce((a, b) => a + b.value, 0)
   const allValues = chartData.map(elem => elem.value!)
@@ -169,6 +176,21 @@ export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime })
     minValue,
     sumAllValue
   }
+}
+
+
+const backfillWithZeroValue = (start: Date, end: Date, intervalMs: number): TimeSeriesValue[] => {
+  const value = 0
+  let result = [
+    {time: start.toISOString(), value}
+  ]
+  let currentDate = start;
+  while (currentDate.getTime() < end.getTime()) {
+    currentDate = new Date(currentDate.getTime() + intervalMs)
+    result.push({time: currentDate.toISOString(), value})
+  }
+
+  return result;
 }
 
 interface GetProps {
