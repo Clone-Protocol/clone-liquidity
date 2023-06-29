@@ -2,7 +2,7 @@ import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces";
 import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
 import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/clone"
 import { calculatePoolAmounts } from "incept-protocol-sdk/sdk/src/utils";
-import axios from "axios";
+import { fetchFromCloneIndex } from "./indexing";
 
 export type Interval = 'day' | 'hour';
 export type Filter = 'day' | 'week' | 'month' | 'year';
@@ -36,17 +36,11 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
   return dates;
 }
 
+
 export const fetchStatsData = async (filter: Filter, interval: Interval): Promise<ResponseValue[]> => {
 
-  const baseUrl = process.env.NEXT_PUBLIC_CLONE_INDEX_ENDPOINT!
-  let url = `${baseUrl}/stats?interval=${interval}&filter=${filter}`
-  const authorization = process.env.NEXT_PUBLIC_CLONE_API_KEY!
-  const headers = {
-    'Authorization': authorization,
-  }
-  let response = await axios.get(url, { headers })
-
-  return response.data?.body
+  let response = await fetchFromCloneIndex('stats', {interval, filter})
+  return response.data as ResponseValue[]
 }
 
 export const getiAssetInfos = (tokenData: TokenData): { poolIndex: number, poolPrice: number, liquidity: number }[] => {
@@ -124,15 +118,9 @@ type OHLCVResponse = {
 }
 
 const fetch30DayOHLCV = async (poolIndex: number, interval: 'hour' | 'day') => {
-  const url = `${process.env.NEXT_PUBLIC_CLONE_INDEX_ENDPOINT}/ohlcv?interval=${interval}&pool=${poolIndex}&filter=month`
-  const authorization = process.env.NEXT_PUBLIC_CLONE_API_KEY!
 
-  let response = await axios.get(url, {
-    data: { interval },
-    headers: { 'Authorization': authorization }
-  })
-
-  let result: OHLCVResponse[] = response.data?.body
+  let response = await fetchFromCloneIndex('ohlcv', {interval, pool: poolIndex, filter: 'month'})
+  let result: OHLCVResponse[] = response.data
   return result
 }
 
@@ -180,14 +168,9 @@ type BorrowResult = { currentAmount: number, previousAmount: number, currentTVL:
 
 
 export const fetchBorrowData = async (numPools: number): Promise<BorrowResult[]> => {
-  const url = `${process.env.NEXT_PUBLIC_CLONE_INDEX_ENDPOINT}/borrow_stats?interval=hour&filter=month`
-  const authorization = process.env.NEXT_PUBLIC_CLONE_API_KEY!
 
-  let response = await axios.get(url, {
-    headers: { 'Authorization': authorization }
-  })
-
-  let rawData: BorrowInfo[] = response.data?.body
+  let response = await fetchFromCloneIndex('borrow_stats', {interval: 'hour', filter: 'month'})
+  let rawData: BorrowInfo[] = response.data
 
   let result: BorrowResult[] = []
   for (let i = 0; i < numPools; i++) {
