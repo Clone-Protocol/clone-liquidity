@@ -136,8 +136,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
   const BlankNoCollateral = () => (
-    <CometBlank title='Deposit collaterals to Comet to get started' subtitle='Comet Liquidity Positions are designed to enable advanced users to 
-    fully leverage the CLS' icon={DataPlusIcon} hoverIcon={DataPlusHoverIcon} />
+    <CometBlank title='Deposit collateral to your comet to get started' subtitle='Comets are designed to allow users to leverage the full capabilities of the CLS' icon={DataPlusIcon} hoverIcon={DataPlusHoverIcon} />
   )
 
   const BlankAlreadyPool = () => (

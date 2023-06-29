@@ -9,7 +9,7 @@ export const sendAndConfirm = async (provider: AnchorProvider | Provider, instru
     if (addressLookupTables !== undefined) {
       const lookupTableAccountsResult = await Promise.allSettled(addressLookupTables.map((addr) => {
         return provider.connection
-        .getAddressLookupTable(addr).then((res) => res.value)
+          .getAddressLookupTable(addr).then((res) => res.value)
       }));
 
       const lookupTableAccounts: AddressLookupTableAccount[] = []
@@ -48,6 +48,6 @@ export const sendAndConfirm = async (provider: AnchorProvider | Provider, instru
 
   } catch (e: any) {
     setTxState({ state: TransactionState.FAIL, txHash })
-    throw new Error(e)
+    // throw new Error(e)
   }
 }
