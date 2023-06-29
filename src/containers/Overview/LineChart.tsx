@@ -36,11 +36,22 @@ const LineChart: React.FC = () => {
     enabled: tab === 1
   })
 
+  const { data: totalLiquidityDay } = useTotalLiquidityQuery({
+    timeframe: '24h',
+    refetchOnMount: false,
+    enabled: tab === 0
+  })
+  const { data: totalVolumeDay } = useTotalVolumeQuery({
+    timeframe: '24h',
+    refetchOnMount: false,
+    enabled: tab === 1
+  })
+
   useEffect(() => {
     if (tab === 0) {
-      setChartHover(totalLiquidity?.chartData[totalLiquidity?.chartData.length - 1].value)
+      setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
     } else {
-      setChartHover(totalVolume?.sumAllValue)
+      setChartHover(totalVolumeDay?.sumAllValue)
     }
   }, [totalLiquidity, totalVolume, tab])
 
