@@ -81,22 +81,21 @@ export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<Aggr
   }
 
   const statsData = await fetchStatsData('week', 'hour')
-  console.log(statsData)
   const now = (new Date()).getTime(); // Get current timestamp
+  const hoursDiff = (dt: Date) => {
+    return (now - dt.getTime()) / 3600000
+  }
 
   statsData.forEach((item) => {
     const dt = new Date(item.time_interval)
-    const hoursDifference = (now - dt.getTime()) / 3600000
+    const hoursDifference = hoursDiff(dt)
     const poolIndex = Number(item.pool_index)
     const tradingVolume = convertToNumber(item.volume)
     const tradingFees = convertToNumber(item.trading_fees)
     const liquidity = convertToNumber(item.total_committed_onusd_liquidity)
     if (hoursDifference <= 24) {
-      result[poolIndex].volumeUSD += tradingVolume
-      // result[poolIndex].liquidityUSD = liquidity
       result[poolIndex].fees += tradingFees
     } else if (hoursDifference <= 48 && hoursDifference > 24) {
-      result[poolIndex].previousVolumeUSD += tradingVolume
       result[poolIndex].previousLiquidity = liquidity
       result[poolIndex].previousFees += tradingFees
     } else {
@@ -104,11 +103,31 @@ export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<Aggr
       result[poolIndex].previousLiquidity = liquidity
     }
   })
+
+  let response = await fetchFromCloneIndex('ohlcv', {interval: 'hour', filter: 'week'})
+  let data: OHLCVResponse[] = response.data
+
+  data.forEach((item) => {
+    const dt = new Date(item.time_interval)
+    const hoursDifference = hoursDiff(dt)
+    const poolIndex = Number(item.pool_index)
+    const tradingVolume = convertToNumber(item.volume)
+    const tradingFees = convertToNumber(item.trading_fees)
+    if (hoursDifference <= 24) {
+      result[poolIndex].volumeUSD += tradingVolume
+      result[poolIndex].fees += tradingFees
+    } else if (hoursDifference <= 48 && hoursDifference > 24) {
+      result[poolIndex].previousVolumeUSD += tradingVolume
+      result[poolIndex].previousFees += tradingFees
+    }
+  })
+
   return result
 }
 
 type OHLCVResponse = {
   time_interval: string,
+  pool_index: number,
   open: string,
   high: string,
   low: string,
