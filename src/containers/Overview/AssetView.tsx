@@ -85,9 +85,11 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					<Box mb='15px'>
 						<Typography variant='p_xxlg'>New Liquidity Position</Typography>
 					</Box>
-					<TipMsg>
-						<Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
-					</TipMsg>
+					<a href="https://docs.clone.so/system-architecture/comet-liquidity-system" target="_blank" rel="noreferrer">
+						<TipMsg>
+							<Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
+						</TipMsg>
+					</a>
 					<Box mt='15px'><Typography variant='p_lg'>Select Pool</Typography></Box>
 					<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
 						<Stack direction='row' gap={1}>

@@ -120,6 +120,7 @@ const RightMenu = () => {
 		setDeclinedAccountCreation(true)
 		router.replace('/')
 	}
+
 	useEffect(() => {
 
 		async function userMintOnusd() {

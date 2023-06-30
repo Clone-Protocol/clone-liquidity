@@ -1,4 +1,3 @@
-import { MouseEvent } from 'react'
 import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'

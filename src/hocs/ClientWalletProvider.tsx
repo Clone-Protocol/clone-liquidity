@@ -1,16 +1,8 @@
 import { WalletAdapterNetwork, WalletError } from '@solana/wallet-adapter-base'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import {
-	CloverWalletAdapter,
-	GlowWalletAdapter,
-	LedgerWalletAdapter,
-	MathWalletAdapter,
 	PhantomWalletAdapter,
-	SlopeWalletAdapter,
 	SolflareWalletAdapter,
-	SolletExtensionWalletAdapter,
-	SolletWalletAdapter,
-	SolongWalletAdapter,
 	TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets'
 import { WalletDialogProvider } from '~/hocs/WalletDialogProvider'
