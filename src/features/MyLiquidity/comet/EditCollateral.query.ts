@@ -29,6 +29,7 @@ export const fetchDefaultCollateral = async ({
 	let balance = 0
 	let collAmount = 0
 	let prevHealthScore = 0
+	let hasCometPositions = false
 
 	if (usdiAccountResult.status === 'fulfilled' && usdiAccountResult.value !== undefined) {
 		const tokenBalance = await program.connection.getTokenAccountBalance(usdiAccountResult.value!)
@@ -37,6 +38,7 @@ export const fetchDefaultCollateral = async ({
 
 	if (cometResult.status === 'fulfilled') {
 		collAmount = toNumber(cometResult.value.collaterals[index].collateralAmount)
+		hasCometPositions = cometResult.value.numPositions.toNumber() > 0
 		if (tokenDataResult.status === 'fulfilled') {
 			prevHealthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
 		}
@@ -58,6 +60,7 @@ export const fetchDefaultCollateral = async ({
 		collAmount,
 		collAmountDollarPrice,
 		totalCollValue,
+		hasCometPositions
 	}
 }
 

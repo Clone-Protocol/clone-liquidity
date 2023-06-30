@@ -123,7 +123,14 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     }
   }
 
-  const isValid = Object.keys(errors).length === 0 && healthScore > 0.5
+  let isValid = (() => {
+    let valid = Object.keys(errors).length === 0
+    if (collData?.hasCometPositions) {
+      valid = valid && healthScore > 0.5
+    }
+    return valid
+  })()
+
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
   return collData ? (
@@ -152,8 +159,12 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                   validate(value) {
                     if (!value || value <= 0) {
                       return ''
-                    } else if ((tab === 0 && value > collData.balance) || (tab === 1 && value > maxWithdrawable)) {
+                    } else if (tab === 0 && value > collData.balance) {
                       return 'The collateral amount cannot exceed the balance.'
+                    } else if (tab === 1 && collData.hasCometPositions && value >= maxWithdrawable) {
+                      return 'Cannot withdraw the maximum amount.'
+                    } else if (tab === 1 && !collData.hasCometPositions && value > maxWithdrawable) {
+                      return 'Cannot withdraw more than maximum amount.'
                     }
                   }
                 }}
@@ -174,6 +185,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                       field.onChange(collAmt)
                     }}
                     onMax={(value: number) => {
+                      if (tab === 1 && collData.hasCometPositions)
+                        return;
                       field.onChange(value)
                     }}
                   />
