@@ -9,7 +9,7 @@ export const PayIldButton = ({ onClick }: { onClick: MouseEventHandler<HTMLImage
 	const [isHovering, setIsHovering] = useState(false)
 
 	return (
-		<Tooltip placement="bottom" title="Pay debt or close liquidity position" arrow>
+		<Tooltip placement="bottom" title="Close the liquidity position" arrow>
 			<ButtonBase>
 				<Image src={isHovering ? PayIldIconOn : PayIldOff} onClick={onClick} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} />
 			</ButtonBase>

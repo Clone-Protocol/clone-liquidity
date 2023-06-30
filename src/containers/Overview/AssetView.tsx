@@ -30,7 +30,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 	// sub routing for tab
 	useEffect(() => {
-		if (ltab && parseInt(ltab.toString()) <= 2) {
+		if (ltab && parseInt(ltab.toString()) <= 1) {
 			setTab(parseInt(ltab.toString()))
 		}
 	}, [ltab])

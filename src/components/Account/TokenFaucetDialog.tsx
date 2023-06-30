@@ -28,7 +28,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
               <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                 <Stack direction='row' spacing={2} alignItems='center'>
                   <Image src={'/images/assets/on-usd.svg'} width="27px" height="27px" />
-                  <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet onUSD</Typography>
+                  <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet onUSD ($100)</Typography>
                 </Stack>
                 <Box>
                   {

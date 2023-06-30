@@ -22,7 +22,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   const router = useRouter()
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
-  const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && borrowDetail.borrowedIasset > borrowDetail.iassetVal)
+  const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && Number(borrowDetail.borrowedIasset) > Number(borrowDetail.iassetVal))
   const [isFullRepaid, setIsFullRepaid] = useState(false)
   const [hasRiskRatio, setHasRiskRatio] = useState(editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio)
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
@@ -56,7 +56,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      borrowAmount: 0.0,
+      borrowAmount: NaN,
     }
   })
   const [borrowAmount] = watch([
@@ -64,7 +64,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   ])
 
   const initData = () => {
-    setValue('borrowAmount', 0.0)
+    setValue('borrowAmount', NaN)
     reset()
   }
 
@@ -121,7 +121,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         console.log('data', data)
         onRefetchData()
         onHideEditForm()
-        router.push('/liquidity?ltab=3')
+        router.push('/liquidity?ltab=1')
       }
     } catch (err) {
       console.error(err)
@@ -151,7 +151,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                       } else {
                         return 'Repay amount cannot exceed the Wallet Balance'
                       }
-                    } else if (editType === 1 && value > borrowDetail.borrowedIasset) {
+                    } else if (editType === 1 && value > Number(borrowDetail.borrowedIasset)) {
                       return 'Repay amount cannot exceed the Current Debt'
                     }
                   }
@@ -168,8 +168,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     dollarPrice={Number(borrowDetail.borrowedIasset) * borrowDetail.price}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const borrowAmt = parseFloat(event.currentTarget.value)
-                      field.onChange(borrowAmt)
+                      // const borrowAmt = parseFloat(event.currentTarget.value)
+                      field.onChange(event.currentTarget.value)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)

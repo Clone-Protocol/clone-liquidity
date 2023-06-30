@@ -11,6 +11,7 @@ interface Props {
   inputTitle?: string
   currentAmount?: number
   dollarPrice?: number
+  maxDisabled?: boolean
   balanceDisabled?: boolean
   hideBottomBox?: boolean
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void
@@ -27,6 +28,7 @@ const PairInput: React.FC<Props> = ({
   inputTitle,
   currentAmount,
   dollarPrice,
+  maxDisabled = false,
   balanceDisabled = false,
   hideBottomBox = false,
   onChange,
@@ -43,11 +45,14 @@ const PairInput: React.FC<Props> = ({
             <Typography variant="p" color="#989898">
               {rightHeaderTitle}:{" "}
             </Typography>
-            <MaxPointerValue onClick={() => onMax && onMax(balance!)}>
-              <Typography variant="p">
-                {balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })}
-              </Typography>
-            </MaxPointerValue>
+            {!maxDisabled ?
+              <MaxPointerValue onClick={() => onMax && onMax(balance!)}>
+                <Typography variant="p">
+                  {balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })}
+                </Typography>
+              </MaxPointerValue>
+              : <Typography variant="p">{balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+            }
           </Box>
         ) : (
           <></>

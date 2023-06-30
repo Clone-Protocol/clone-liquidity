@@ -48,6 +48,6 @@ export const sendAndConfirm = async (provider: AnchorProvider | Provider, instru
 
   } catch (e: any) {
     setTxState({ state: TransactionState.FAIL, txHash })
-    // throw new Error(e)
+    throw new Error(e)
   }
 }

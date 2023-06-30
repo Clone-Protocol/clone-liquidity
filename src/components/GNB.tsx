@@ -125,52 +125,56 @@ const RightMenu = () => {
 		async function userMintOnusd() {
 			const onusdToMint = 100;
 			if (connected && publicKey && mintUsdi && wallet) {
-				const program = getCloneApp(wallet)
-				await program.loadClone()
-				const usdiTokenAccount = await getOnUSDAccount(program);
-				const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
-
-				let [jupiterAddress, nonce] = PublicKey.findProgramAddressSync(
-					[Buffer.from("jupiter")],
-					new PublicKey(JUPITER_PROGRAM_ADDRESS)
-				);
-				let jupiterAccount = await Jupiter.fromAccountAddress(program.connection, jupiterAddress)
-				const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.connection);
-				const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
-
-				let ixnCalls = []
 				try {
-					if (usdcTokenAccount === undefined) {
-						ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, usdcAta, publicKey, jupiterAccount.usdcMint))())
-					}
-					if (usdiTokenAccount === undefined) {
-						ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, onusdAta, publicKey, program.clone!.onusdMint))())
-					}
+					const program = getCloneApp(wallet)
+					await program.loadClone()
+					const usdiTokenAccount = await getOnUSDAccount(program);
+					const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
 
-					ixnCalls.push(
-						createMintUsdcInstruction(
-							{
-								usdcMint: jupiterAccount.usdcMint,
-								usdcTokenAccount: usdcAta,
-								jupiterAccount: jupiterAddress,
-								tokenProgram: TOKEN_PROGRAM_ID
-							}, {
-							nonce,
-							amount: new BN(onusdToMint * Math.pow(10, 7))
+					let [jupiterAddress, nonce] = PublicKey.findProgramAddressSync(
+						[Buffer.from("jupiter")],
+						new PublicKey(JUPITER_PROGRAM_ADDRESS)
+					);
+					let jupiterAccount = await Jupiter.fromAccountAddress(program.connection, jupiterAddress)
+					const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.connection);
+					const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
+
+					let ixnCalls = []
+					try {
+						if (usdcTokenAccount === undefined) {
+							ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, usdcAta, publicKey, jupiterAccount.usdcMint))())
 						}
-						)
-					)
+						if (usdiTokenAccount === undefined) {
+							ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, onusdAta, publicKey, program.clone!.onusdMint))())
+						}
 
-					ixnCalls.push(
-						await program.mintOnusdInstruction(
-							new BN(onusdToMint * Math.pow(10, DEVNET_TOKEN_SCALE)),
-							onusdAta,
-							usdcAta
+						ixnCalls.push(
+							createMintUsdcInstruction(
+								{
+									usdcMint: jupiterAccount.usdcMint,
+									usdcTokenAccount: usdcAta,
+									jupiterAccount: jupiterAddress,
+									tokenProgram: TOKEN_PROGRAM_ID
+								}, {
+								nonce,
+								amount: new BN(onusdToMint * Math.pow(10, 7))
+							}
+							)
 						)
-					)
 
-					let ixns = await Promise.all(ixnCalls)
-					await sendAndConfirm(program.provider, ixns, setTxState)
+						ixnCalls.push(
+							await program.mintOnusdInstruction(
+								new BN(onusdToMint * Math.pow(10, DEVNET_TOKEN_SCALE)),
+								onusdAta,
+								usdcAta
+							)
+						)
+
+						let ixns = await Promise.all(ixnCalls)
+						await sendAndConfirm(program.provider, ixns, setTxState)
+					} catch (e) {
+						console.error(e)
+					}
 
 				} finally {
 					setMintUsdi(false)

@@ -66,8 +66,8 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 				{showChangeRatio &&
 					<Box display='flex' sx={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}}>
-						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { color: '#ed2525', border: '1px solid #ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} placeholder="0.00" value={Number(value).toString()} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '12px' }}><Typography variant='p_xlg'>%</Typography></div>
+						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { color: '#ed2525', border: '1px solid #ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} placeholder="0.00" value={Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '11px' }}><Typography variant='p_xlg'>%</Typography></div>
 					</Box>
 				}
 				<Box width="100%">

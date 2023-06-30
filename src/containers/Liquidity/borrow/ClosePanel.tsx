@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
@@ -9,20 +9,24 @@ import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import { MARKETS_APP } from '~/data/social'
 
 const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: BorrowDetail }) => {
   const { publicKey } = useWallet()
   const router = useRouter()
   const borrowIndex = parseInt(assetId)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { mutateAsync } = useCloseMutation(publicKey)
 
   const redirectToMarket = () => {
-    //TODO: set market url for route
+    const url = `${MARKETS_APP}`
+    window.open(url)
   }
 
   const onClose = async () => {
     try {
+      setIsSubmitting(true)
       const data = await mutateAsync(
         {
           borrowIndex
@@ -30,14 +34,19 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
       )
       if (data) {
         console.log('data', data)
-        router.push('/liquidity?ltab=3')
+        router.push('/liquidity?ltab=1').then(() => {
+          //hacky sync
+          location.reload()
+        })
       }
     } catch (err) {
       console.error(err)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
-  const canCloseComet = borrowDetail.iassetVal >= borrowDetail.borrowedIasset
+  const canCloseComet = Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedIasset)
 
   return (
     <>
@@ -61,7 +70,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         {!canCloseComet &&
           <SubmitButton onClick={redirectToMarket}><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to go to Clone Markets to acquire this onAsset</Typography></SubmitButton>
         }
-        <SubmitButton onClick={onClose} disabled={!canCloseComet} sx={{ marginTop: '2px' }}><Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography></SubmitButton>
+        <SubmitButton onClick={onClose} disabled={isSubmitting || !canCloseComet} sx={{ marginTop: '2px' }}><Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography></SubmitButton>
       </Box>
     </>
   )

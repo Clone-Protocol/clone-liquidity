@@ -69,14 +69,14 @@ const CloseLiquidityDialog = ({
     if (positionInfo!.onusdILD > 0) {
       components.push(
         `${Math.max(0, positionInfo!.onusdILD).toLocaleString(undefined, {
-          maximumFractionDigits: 5,
+          maximumFractionDigits: 8,
         })} onUSD`
       )
     }
     if (positionInfo!.onassetILD > 0) {
       components.push(
         `${Math.max(0, positionInfo!.onassetILD).toLocaleString(undefined, {
-          maximumFractionDigits: 5,
+          maximumFractionDigits: 8,
         })} ${positionInfo!.tickerSymbol}`
       )
     }
@@ -94,7 +94,7 @@ const CloseLiquidityDialog = ({
     if (positionInfo!.onassetILD > 0)
       reward += positionInfo!.onassetILD * positionInfo!.price
 
-    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD`
+    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 8 })} USD`
   }
 
   const displayReward = () => {
@@ -102,14 +102,14 @@ const CloseLiquidityDialog = ({
     if (positionInfo!.onusdILD < 0) {
       components.push(
         `${Math.max(0, -positionInfo!.onusdILD).toLocaleString(undefined, {
-          maximumFractionDigits: 5,
+          maximumFractionDigits: 8,
         })} onUSD`
       )
     }
     if (positionInfo!.onassetILD < 0) {
       components.push(
         `${Math.max(0, -positionInfo!.onassetILD).toLocaleString(undefined, {
-          maximumFractionDigits: 5,
+          maximumFractionDigits: 8,
         })} ${positionInfo!.tickerSymbol}`
       )
     }
@@ -126,7 +126,7 @@ const CloseLiquidityDialog = ({
     if (positionInfo!.onassetILD < 0)
       reward += (-positionInfo!.onassetILD * positionInfo!.price)
 
-    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD`
+    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 8 })} USD`
   }
 
   return positionInfo ? (

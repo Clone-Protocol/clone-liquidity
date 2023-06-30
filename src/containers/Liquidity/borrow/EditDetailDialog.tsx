@@ -30,6 +30,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
     setEditType(newValue)
+    initData()
     setMaxCollVal(newValue === 0 ? borrowDetail.usdiVal : borrowDetail.maxWithdrawableColl)
   }, [editType, open])
 
@@ -48,11 +49,12 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     trigger,
     formState: { isDirty, errors, isSubmitting },
     watch,
-    setValue
+    setValue,
+    reset
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
+      collAmount: NaN,
     }
   })
   const [collAmount] = watch([
@@ -60,17 +62,17 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   ])
 
   const initData = () => {
-    setEditType(0)
-    setValue('collAmount', 0.0)
+    setValue('collAmount', NaN)
+    reset()
   }
 
   useEffect(() => {
     let expectedCollRatio
     if (collAmount) {
       if (editType === 0) { // deposit
-        expectedCollRatio = (borrowDetail.collateralAmount + collAmount) * 100 / (borrowDetail.price * borrowDetail.borrowedIasset)
+        expectedCollRatio = (Number(borrowDetail.collateralAmount) + collAmount) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedIasset))
       } else { // withdraw
-        expectedCollRatio = ((borrowDetail.collateralAmount - collAmount) * 100 / (borrowDetail.price * borrowDetail.borrowedIasset))
+        expectedCollRatio = ((Number(borrowDetail.collateralAmount) - collAmount) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedIasset)))
       }
     } else {
       expectedCollRatio = borrowDetail.collateralRatio
@@ -94,6 +96,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
       if (data) {
         console.log('data', data)
         initData()
+        setEditType(0)
         onRefetchData()
         onHideEditForm()
       }
@@ -136,12 +139,12 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     collAmount={field.value}
                     collAmountDollarPrice={field.value}
                     maxCollVal={maxCollVal}
-                    currentCollAmount={borrowDetail.collateralAmount}
-                    dollarPrice={borrowDetail.collateralAmount}
+                    currentCollAmount={Number(borrowDetail.collateralAmount)}
+                    dollarPrice={Number(borrowDetail.collateralAmount)}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      const collAmt = parseFloat(event.currentTarget.value)
-                      field.onChange(collAmt)
+                      // const collAmt = parseFloat(event.currentTarget.value)
+                      field.onChange(event.currentTarget.value)
                     }}
                     onMax={(value: number) => {
                       field.onChange(value)

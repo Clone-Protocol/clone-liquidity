@@ -71,7 +71,7 @@ const EditBorrowedInput: React.FC<Props> = ({
               max={maxCollVal}
               sx={collAmount && collAmount > 0 ? { color: "#fff" } : { color: "#adadad" }}
               placeholder="0.00"
-              value={collAmount ? Number(collAmount).toString() : 0}
+              value={collAmount}
               onChange={onChangeAmount}
             />
             <DollarAmount>

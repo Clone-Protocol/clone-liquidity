@@ -65,8 +65,8 @@ const LineChart: React.FC<LineChartProps> = ({
 
 const Wrapper = styled(Card)`
   background: #000;
-  width: 462px;
-  max-width: 462px;
+  width: 410px;
+  max-width: 410px;
   height: 288px;
   display: flex;
   flex-direction: column;

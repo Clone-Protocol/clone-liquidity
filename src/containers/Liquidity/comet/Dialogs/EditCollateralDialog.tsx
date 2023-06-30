@@ -179,14 +179,13 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                     balance={tab === 0 ? collData.balance : maxWithdrawable}
                     currentAmount={collData.collAmount}
                     dollarPrice={collData.totalCollValue}
+                    maxDisabled={tab === 1 && collData.hasCometPositions}
                     hideBottomBox={isNewDeposit}
                     onChange={(event: React.FormEvent<HTMLInputElement>) => {
                       const collAmt = parseFloat(event.currentTarget.value)
                       field.onChange(collAmt)
                     }}
                     onMax={(value: number) => {
-                      if (tab === 1 && collData.hasCometPositions)
-                        return;
                       field.onChange(value)
                     }}
                   />

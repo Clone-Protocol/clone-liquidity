@@ -27,7 +27,7 @@ const LiquidityTable: React.FC = () => {
 
   // sub routing for tab
   useEffect(() => {
-    if (ltab && parseInt(ltab.toString()) <= 3) {
+    if (ltab && parseInt(ltab.toString()) <= 1) {
       setTab(parseInt(ltab.toString()))
     }
   }, [ltab])
