@@ -20,7 +20,7 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
     const history = await fetchPythPriceHistory(
       pythSymbol,
       "devnet",
-      "1M"
+      "1D"
     );
 
     chartData = history.map((data) => {
@@ -28,18 +28,8 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
     })
 
     const lastEntry = chartData[chartData.length - 1];
-
-    const previous24hrDatetime = moment(lastEntry.time).utc(
-    ).subtract(1, 'days');
-
-    let previous24hrPrice = lastEntry.value;
-    for (let { time, value } of chartData) {
-      const entryTime = moment(time).utc()
-      if (entryTime > previous24hrDatetime) {
-        break;
-      }
-      previous24hrPrice = value;
-    }
+    const firstEntry = chartData[0]
+    const previous24hrPrice = firstEntry.value
 
     currentPrice = lastEntry.value;
     rateOfPrice = currentPrice - previous24hrPrice
