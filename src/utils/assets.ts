@@ -90,17 +90,16 @@ export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<Aggr
     const dt = new Date(item.time_interval)
     const hoursDifference = hoursDiff(dt)
     const poolIndex = Number(item.pool_index)
-    const tradingVolume = convertToNumber(item.volume)
     const tradingFees = convertToNumber(item.trading_fees)
     const liquidity = convertToNumber(item.total_committed_onusd_liquidity)
     if (hoursDifference <= 24) {
       result[poolIndex].fees += tradingFees
-    } else if (hoursDifference <= 48 && hoursDifference > 24) {
+    } else if (hoursDifference > 24) {
       result[poolIndex].previousLiquidity = liquidity
-      result[poolIndex].previousFees += tradingFees
-    } else {
-      result[poolIndex].liquidityUSD = liquidity
-      result[poolIndex].previousLiquidity = liquidity
+
+      if (hoursDifference <= 48)
+        result[poolIndex].previousFees += tradingFees
+
     }
   })
 
