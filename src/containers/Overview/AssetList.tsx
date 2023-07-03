@@ -62,7 +62,7 @@ const AssetList: React.FC = () => {
 	) => {
 		if (isAlreadyInitializedAccount) {
 			if (connected) {
-				router.push(`/assets/${params.row.ticker}/asset`)
+				router.push(`/assets/${params.row.ticker}`)
 			} else {
 				setOpenConnectWalletGuideDlogState(true)
 			}

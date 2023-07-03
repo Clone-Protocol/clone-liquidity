@@ -223,7 +223,10 @@ const RightMenu = () => {
 	const handleDisconnect = () => {
 		disconnect()
 		setShowWalletSelectPopup(false)
-		router.replace('/')
+		// refresh page by force
+		setTimeout(() => {
+			location.reload()
+		}, 1000)
 	}
 
 	return (

@@ -43,7 +43,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
 				setAssetIndex(AssetTickers.euro)
-				router.replace('/assets/euro/asset')
+				router.replace('/assets/euro')
 			}
 		}
 	}, [assetTicker])
@@ -66,15 +66,11 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		setOpenChooseLiquidity(true)
 	}
 
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
-	}
-
 	const handleChoosePool = (assetId: number) => {
 		setAssetIndex(assetId)
 		setOpenChooseLiquidity(false)
 
-		router.replace(`/assets/${ASSETS[assetId].ticker}/asset`)
+		router.replace(`/assets/${ASSETS[assetId].ticker}`)
 	}
 
 	return assetData ? (

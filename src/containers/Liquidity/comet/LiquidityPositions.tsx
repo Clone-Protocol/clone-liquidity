@@ -33,7 +33,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   }
 
   const redirectAddCometPage = () => {
-    router.push(`/assets/euro/asset`)
+    router.push(`/assets/euro`)
   }
 
   // const { mutateAsync } = useRecenterAllMutation(publicKey)

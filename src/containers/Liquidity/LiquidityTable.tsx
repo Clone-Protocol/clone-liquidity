@@ -50,7 +50,7 @@ const LiquidityTable: React.FC = () => {
   const hasNoPosition = !status ||
     (tab === 1 && status.statusValues.totalBorrowLiquidity === 0)
 
-  const newPositionUrl = tab === 1 ? '/borrow' : `/assets/euro/asset?ltab=${tab}`
+  const newPositionUrl = tab === 1 ? '/borrow' : `/assets/euro?ltab=${tab}`
 
   return (
     <div>
