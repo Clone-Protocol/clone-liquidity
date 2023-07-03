@@ -155,7 +155,7 @@ export const fetchCloseLiquidityPosition = async ({
 	const { onAssetILD, onusdILD, oraclePrice } = getILD(tokenData, comet)[index];
 
 	let assetId = poolIndex
-	const committedOnusdLiquidity = toNumber(pool.committedOnusdLiquidity)
+	const committedOnusdLiquidity = toNumber(position.committedOnusdLiquidity)
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let {poolOnusd, poolOnasset} = calculatePoolAmounts(
         toNumber(pool.onusdIld),
