@@ -170,16 +170,18 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	if (data.committedOnusdLiquidity > 0) {
+	const positionOnUsdLiquidity = toDevnetScale(data.committedOnusdLiquidity)
+
+	if (positionOnUsdLiquidity > 0) {
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-				toDevnetScale(data.committedOnusdLiquidity),
+				positionOnUsdLiquidity.muln(2), // Over withdraw to ensure its all paid.
 				data.positionIndex,
 			)
 		)
 	}
 
-	if (data.onassetILD > 0) {
+	if (toDevnetScale(data.onassetILD) > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				data.positionIndex,
@@ -190,7 +192,8 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			)
 		)
 	}
-	if (data.onusdILD > 0) {
+
+	if (toDevnetScale(data.onusdILD) > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				data.positionIndex,
