@@ -4,7 +4,6 @@ import { styled } from '@mui/system'
 import { Container, Box } from '@mui/material'
 import WelcomeMsg from '~/components/Overview/WelcomeMsg'
 import LineChart from '~/containers/Overview/LineChart'
-// import BarChart from '~/containers/Overview/BarChart'
 import AssetList from '~/containers/Overview/AssetList'
 
 const Overview: NextPage = () => {
@@ -23,7 +22,6 @@ const Overview: NextPage = () => {
 						<Box marginTop='40px'>
 							<Box marginBottom='19px'>
 								<LineChart />
-								{/* <BarChart /> */}
 							</Box>
 							<AssetList />
 						</Box>

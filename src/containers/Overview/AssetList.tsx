@@ -8,7 +8,6 @@ import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
 import Divider from '@mui/material/Divider';
-import Link from 'next/link'
 import { useRecoilValue } from 'recoil'
 import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'

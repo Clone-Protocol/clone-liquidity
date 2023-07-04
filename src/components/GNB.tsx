@@ -371,18 +371,6 @@ const PopupButton = styled(Box)`
 	color: ${(props) => props.theme.palette.text.secondary};
 	cursor: pointer;
 `
-const NetworkInfo = styled(Box)`
-	text-align: center;
-	line-height: 19px;
-	width: 104px;
-	border-style: solid;
-	border-width: 0.5px;
-	border-image-source: ${(props) => props.theme.gradients.metallic};
-	border-image-slice: 1;
-	color: #fff;
-	margin: 0 auto;
-	margin-top: 12px;
-`
 
 const useStyles = makeStyles(({ palette }: Theme) => ({
 	indicator: {

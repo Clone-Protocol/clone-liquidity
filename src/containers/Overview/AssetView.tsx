@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useBalanceQuery } from '~/features/Overview/Balance.query'
 import { useInitCometDetailQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
@@ -48,14 +47,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		}
 	}, [assetTicker])
 
-	const { data: balances, refetch } = useBalanceQuery({
-		userPubKey: publicKey,
-		index: assetIndex,
-		refetchOnMount: "always",
-		enabled: publicKey != null
-	})
-
-	const { data: assetData } = useInitCometDetailQuery({
+	const { data: assetData, refetch } = useInitCometDetailQuery({
 		userPubKey: publicKey,
 		index: assetIndex,
 		refetchOnMount: "always",

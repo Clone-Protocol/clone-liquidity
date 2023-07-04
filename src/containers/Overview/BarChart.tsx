@@ -1,3 +1,4 @@
+//@Deprecated
 import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
@@ -17,12 +18,12 @@ const BarChart: React.FC = () => {
   const [tab, setTab] = useState(0)
   const [filterTime, setFilterTime] = useState<FilterTime>('24h')
   const [chartHover, setChartHover] = useState<number | undefined>()
-	const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-		setTab(newValue)
-	}
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue)
+  }
   const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterTime) => {
-		setFilterTime(newValue)
-	}
+    setFilterTime(newValue)
+  }
 
   const { data: totalVolume } = useTotalVolumeQuery({
     timeframe: filterTime,
@@ -38,9 +39,9 @@ const BarChart: React.FC = () => {
   useEffect(() => {
     if (chartHover === undefined && totalVolume) {
       if (tab === 0) {
-        setChartHover(totalVolume?.chartData[totalVolume?.chartData.length-1].value)
+        setChartHover(totalVolume?.chartData[totalVolume?.chartData.length - 1].value)
       } else {
-        setChartHover(totalLiquidation?.chartData[totalLiquidation?.chartData.length-1].value)
+        setChartHover(totalLiquidation?.chartData[totalLiquidation?.chartData.length - 1].value)
       }
     }
   }, [chartHover, totalVolume, totalLiquidation, tab])

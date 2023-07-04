@@ -1,3 +1,4 @@
+// @DEPRECATED
 import React, { Dispatch, SetStateAction } from 'react';
 import { styled } from '@mui/system'
 import { Card } from '@mui/material'
@@ -31,8 +32,6 @@ const MiniLineChartAlt: React.FC<LineChartProps> = ({
   minHeight = 109,
   ...rest
 }) => {
-  const parsedValue = value
-
   return data ? (
     <Wrapper>
       <ResponsiveContainer width="100%" height="100%">

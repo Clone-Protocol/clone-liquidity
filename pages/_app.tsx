@@ -18,6 +18,7 @@ import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 import InitEnterScreen from '~/components/Common/InitEnterScreen'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
 import useLocalStorage from '~/hooks/useLocalStorage'
+import TempWarningMsg from '~/components/Common/TempWarningMsg'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
@@ -55,6 +56,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                       {getLayout(<Component {...pageProps} />)}
                     </Box>
                     {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
+
+                    <TempWarningMsg>currently unavailable due to RPC issues. We are fixing at the moment</TempWarningMsg>
                   </Box>
                 </DataLoadingIndicatorProvider>
               </TransactionStateProvider>

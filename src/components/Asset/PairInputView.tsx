@@ -33,10 +33,5 @@ const FormStack = styled(Stack)`
 	padding: 9px 21px 8px 24px;
 	border: solid 1px ${(props) => props.theme.boxes.greyShade};
 `
-const TickerWrapper = styled(Box)`
-	width: 100px; 
-	margin-left: 8px; 
-	text-align: left;
-`
 
 export default PairInputView

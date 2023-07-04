@@ -1,5 +1,6 @@
+//@Deprecated
 import React, { Dispatch, SetStateAction, ReactNode } from 'react'
-import { BarChart, ResponsiveContainer, XAxis, Tooltip, Bar} from 'recharts';
+import { BarChart, ResponsiveContainer, XAxis, Tooltip, Bar } from 'recharts';
 import { Card, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import dayjs from 'dayjs'
@@ -105,7 +106,7 @@ const BarChartAlt: React.FC<LineChartProps> = ({
             tickFormatter={(time) => dayjs(time).format(activeWindow === VolumeWindow.monthly ? 'MMM' : 'DD')}
             minTickGap={10}
           />
-          <Tooltip 
+          <Tooltip
             cursor={{ fill: '#2C2F36' }}
             contentStyle={{ display: 'none' }}
             formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {

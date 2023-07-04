@@ -20,13 +20,13 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
   const [isEditBorrowHover, setIsEditBorrowHover] = useState(false)
   const hasRiskRatio = positionInfo.collateralRatio - positionInfo.minCollateralRatio <= RISK_RATIO_VAL
 
-  const borrowedDollarPrice = positionInfo.borrowedIasset * positionInfo.price
+  const borrowedDollarPrice = Number(positionInfo.borrowedIasset) * positionInfo.price
 
   return positionInfo ? (
     <Box mt='21px'>
       <BoxWithBorder mb='15px'>
         <Box><Typography variant='p_lg' color='#989898'>Collateral Ratio</Typography></Box>
-        {positionInfo.borrowedIasset > 0 ?
+        {Number(positionInfo.borrowedIasset) > 0 ?
           <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={positionInfo.minCollateralRatio} ratio={positionInfo.collateralRatio} />
           :
           <Box>-</Box>

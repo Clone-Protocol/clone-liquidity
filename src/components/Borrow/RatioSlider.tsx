@@ -148,15 +148,5 @@ const Stick = styled('div')`
 	margin-top: -22px;
 	margin-left: 34px;
 `
-const WarningStack = styled(Stack)`
-	max-width: 500px;
-  justify-content: center;
-  align-items: center;
-	margin: 0 auto;
-  margin-top: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border: 1px solid ${(props) => props.theme.palette.error.main};
-  color: ${(props) => props.theme.palette.text.secondary};
-`
+
 export default RatioSlider
