@@ -1,5 +1,5 @@
 import Slide from '@mui/material/Slide';
-import { styled, Typography, Stack, Box, Alert } from '@mui/material'
+import { styled, Typography, Box, Alert } from '@mui/material'
 
 const TempWarningMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
   return (
