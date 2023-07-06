@@ -18,12 +18,13 @@ import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 import InitEnterScreen from '~/components/Common/InitEnterScreen'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
 import useLocalStorage from '~/hooks/useLocalStorage'
-// import TempWarningMsg from '~/components/Common/TempWarningMsg'
+import dynamic from 'next/dynamic'
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
   const [isCompleteInit, _] = useLocalStorage(IS_COMPLETE_INIT, false)
   const [isOpenInit, setIsOpenInit] = useState(false)
+  const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
 
   // setTimeout(() => setIsOpenInit(!isCompleteInit), 1200)
   useEffect(() => {
@@ -56,8 +57,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                       {getLayout(<Component {...pageProps} />)}
                     </Box>
                     {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
-
-                    {/* <TempWarningMsg>currently unavailable due to RPC issues. We are fixing at the moment</TempWarningMsg> */}
+                    <TempWarningMsg />
                   </Box>
                 </DataLoadingIndicatorProvider>
               </TransactionStateProvider>
