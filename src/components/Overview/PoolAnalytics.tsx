@@ -20,7 +20,7 @@ const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
 const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
   const { data: resultData } = usePoolAnalyticsQuery({
     tickerSymbol,
-    refetchOnMount: "always",
+    refetchOnMount: true,
     enabled: tickerSymbol != null
   })
 

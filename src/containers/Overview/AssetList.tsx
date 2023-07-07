@@ -36,7 +36,7 @@ const AssetList: React.FC = () => {
 	const { data: assets } = useAssetsQuery({
 		filter,
 		searchTerm: debounceSearchTerm ? debounceSearchTerm : '',
-		refetchOnMount: "always",
+		refetchOnMount: true,
 		enabled: true
 	})
 

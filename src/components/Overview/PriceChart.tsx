@@ -29,7 +29,7 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: assetData?.pythSymbol,
     isOraclePrice: isOraclePrice,
-    refetchOnMount: "always",
+    refetchOnMount: true,
     enabled: assetData != null,
   })
 
