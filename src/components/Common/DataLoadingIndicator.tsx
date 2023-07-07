@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { CircularProgress, styled, Box } from '@mui/material'
 import { useDataLoading } from '~/hooks/useDataLoading'
 
-export const REFETCH_CYCLE = 30000
+export const REFETCH_CYCLE = 60000
 
 const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
   const { startTimer } = useDataLoading()
@@ -16,7 +16,7 @@ const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
       console.log('start Timer')
       timer = setInterval(() => {
         setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
-      }, 3000);
+      }, 6000);
     } else {
       setProgress(0)
       clearInterval(timer)
