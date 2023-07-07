@@ -77,18 +77,15 @@ const TempWarningMsg: React.FC = () => {
 }
 
 const StackWrapper = styled(Stack)`
-  position: fixed;
-  top: 10px;
-  left: calc(50% - 200px);
-  z-index: 9999999;
+  width: 100%;
 `
 const InfoStack = styled(Alert)`
-  width: 360px;
+  width: 100%;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
-  line-height: 1.15;
-  padding: 4px 10px;
+  margin-top: 4px;
+  line-height: 1;
+  padding: 0px 10px;
   padding-right: 20px;
   background-color: ${(props) => props.theme.boxes.darkBlack};
   color: ${(props) => props.theme.palette.text.secondary};

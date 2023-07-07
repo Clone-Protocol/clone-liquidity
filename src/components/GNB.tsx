@@ -35,7 +35,7 @@ import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, 
 import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from "@coral-xyz/anchor"
-
+import dynamic from 'next/dynamic'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -43,6 +43,8 @@ const GNB: React.FC = () => {
 	const [path, setPath] = useState<string>('/')
 	const [mobileNavToggle, setMobileNavToggle] = useState(false)
 	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+
+	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
 
 	const { scrolled } = useScroll()
 
@@ -68,6 +70,7 @@ const GNB: React.FC = () => {
 			<NavPlaceholder />
 			<StyledAppBar className={navClassName} position="static">
 				<Container maxWidth={false}>
+					<TempWarningMsg />
 					<Toolbar disableGutters>
 						<Image src={logoIcon} width={148} height={36} alt="clone" />
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
@@ -292,9 +295,9 @@ const RightMenu = () => {
 
 const StyledAppBar = styled(AppBar)`
 	background-color: #000;
-	height: 60px;
+	// height: 60px;
 	position: fixed;
-	z-index: 300;
+	z-index: 1300;
 	top: 0px;
 	left: 0px;
 	.MuiContainer-root,
@@ -315,9 +318,9 @@ const StyledAppBar = styled(AppBar)`
 		backdrop-filter: blur(20px);
 		border-radius: 20px;
 	}
-	.MuiToolbar-root {
-		height: 100%;
-	}
+	// .MuiToolbar-root {
+	// 	height: 100%;
+	// }
 `
 const NavPlaceholder = styled('div')`
 	${(props) => props.theme.breakpoints.up('md')} {
