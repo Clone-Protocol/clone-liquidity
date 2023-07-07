@@ -17,10 +17,14 @@ export interface PythData {
 }
 
 export const fetchPythPriceHistory = async (pythSymbol: string, network: Network, range: Range): Promise<PythData[]> => {
-
+    let result: PythData[] = []
     const url = `https://web-api.pyth.network/history?symbol=${pythSymbol}&range=${range}&cluster=${network}`
-    const result = await axios.get(
-        url
-    );
-    return result.data;
+
+    try {
+        let response = await axios.get(url, { timeout: 5000 })
+        result = response.data
+    } catch (err) {
+        console.log(err)
+    }
+    return result;
 }
