@@ -2,10 +2,9 @@ import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
 import LiquidityPairView from '~/components/Liquidity/comet/LiquidityPairView'
-import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/router'
-import CloseLiquidityDialog from './Dialogs/CloseLiquidityDialog'
+import dynamic from 'next/dynamic'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -14,6 +13,8 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   const [openClosePosition, setOpenClosePosition] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
+  const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
+  const CloseLiquidityDialog = dynamic(() => import('./Dialogs/CloseLiquidityDialog'))
 
   const handleChooseEditPosition = (positionIndex: number) => {
     setPoolIndex(Number(positions[positionIndex].poolIndex))

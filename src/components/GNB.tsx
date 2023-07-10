@@ -16,7 +16,6 @@ import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { useIncept } from '~/hooks/useIncept'
-import MoreMenu from '~/components/Common/MoreMenu';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getOnUSDAccount, getTokenAccount } from "~/utils/token_accounts";
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -24,11 +23,6 @@ import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
-import CreateAccountSetupDialog from '~/components/Account/CreateAccountSetupDialog'
-import TokenFaucetDialog from './Account/TokenFaucetDialog'
-import ReminderNewWalletPopup from './Account/ReminderNewWalletPopup'
-import MobileWarningDialog from './Common/MobileWarningDialog'
-import ConnectWalletGuideDialog from './Common/ConnectWalletGuideDialog'
 import { sendAndConfirm } from '~/utils/tx_helper'
 import { useTransactionState } from '~/hooks/useTransactionState'
 import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'incept-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
@@ -44,6 +38,7 @@ const GNB: React.FC = () => {
 	const [mobileNavToggle, setMobileNavToggle] = useState(false)
 	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
+	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
 
 	const { scrolled } = useScroll()
@@ -108,6 +103,12 @@ const RightMenu = () => {
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useRecoilState(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
 	const { setTxState } = useTransactionState()
+
+	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
+	const MoreMenu = dynamic(() => import('./Common/MoreMenu'))
+	const ReminderNewWalletPopup = dynamic(() => import('./Account/ReminderNewWalletPopup'))
+	const TokenFaucetDialog = dynamic(() => import('./Account/TokenFaucetDialog'))
+	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)

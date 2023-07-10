@@ -13,11 +13,11 @@ import withSuspense from '~/hocs/withSuspense'
 import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
-import ChooseAssetDialog from '../Borrow/Dialogs/ChooseAssetDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
+import dynamic from 'next/dynamic'
 
 const RISK_RATIO_VAL = 170
 
@@ -29,6 +29,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
     tickerName: onUSDInfo.collateralName,
     tickerSymbol: onUSDInfo.collateralSymbol,
   }
+  const ChooseAssetDialog = dynamic(() => import('~/containers/Borrow/Dialogs/ChooseAssetDialog'))
 
   // const { data: borrowDetail } = useBorrowDetailQuery({
   //   userPubKey: publicKey,

@@ -12,12 +12,13 @@ import CometPanel from './CometPanel'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
-import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
+// import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
 import { ASSETS, AssetTickers } from '~/data/assets'
+import dynamic from 'next/dynamic'
 
 const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const { publicKey } = useWallet()
@@ -26,6 +27,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const [tab, setTab] = useState(0)
 	const [assetIndex, setAssetIndex] = useState(0)
 	const [openChooseLiquidity, setOpenChooseLiquidity] = useState(false)
+	const ChooseLiquidityPoolsDialog = dynamic(() => import('./Dialogs/ChooseLiquidityPoolsDialog'))
 
 	// sub routing for tab
 	useEffect(() => {
