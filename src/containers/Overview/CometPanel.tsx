@@ -21,9 +21,9 @@ import DataPlusIcon from 'public/images/database-plus.svg'
 import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
-import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import dynamic from 'next/dynamic'
 
 const RISK_SCORE_VAL = 20
 
@@ -37,6 +37,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [validMintValue, setValidMintValue] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
+  const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,

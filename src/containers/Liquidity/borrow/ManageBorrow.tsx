@@ -41,7 +41,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
       <Box>
         <Box mb='25px'><Typography variant='p_xxlg'>Manage Borrow Position</Typography></Box>
         <TipMsg>
-          <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography>
+          <Image src={InfoIcon} alt="info" /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography>
         </TipMsg>
         <LeftBoxWrapper mt='21px'>
           <StyledTabs value={tab} onChange={handleChangeTab}>
@@ -50,7 +50,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
           </StyledTabs>
           <StyledDivider />
           <TipMsg>
-            <Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how managing borrow position works.</Typography>
+            <Image src={InfoIcon} alt="info" /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how managing borrow position works.</Typography>
           </TipMsg>
           <TabPanelForEdit value={tab} index={0}>
             <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()} />

@@ -2,15 +2,16 @@ import { Box, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
 import CollateralPairView from '~/components/Liquidity/comet/CollateralPairView'
-import EditCollateralDialog from './Dialogs/EditCollateralDialog'
-import ChooseCollateralDialog from './Dialogs/ChooseCollateralDialog'
 import { Collateral } from '~/features/MyLiquidity/comet/CometInfo.query'
 import MultipoolBlank from '~/components/Overview/CometBlank'
+import dynamic from 'next/dynamic'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
   const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
+  const EditCollateralDialog = dynamic(() => import('./Dialogs/EditCollateralDialog'))
+  const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   const openEdit = () => {
     setOpenEditCollateral(true)
