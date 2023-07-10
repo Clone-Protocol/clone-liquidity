@@ -1,14 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
-import { Typography, Box, Alert, Stack, IconButton } from '@mui/material'
+import { Typography, Box, Stack, IconButton } from '@mui/material'
 import { styled } from '@mui/system'
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CloseIcon from 'public/images/close.svg'
+import { Info, Warning } from '@mui/icons-material';
 
 const TempWarningMsg: React.FC = () => {
   const [isShowGeneralMsg, setIsShowGeneralMsg] = useState(false)
   const [isShowWarnMsg, setIsShowWarnMsg] = useState(false)
-  const [message, setMessage] = useState('')
+  const [generalMsg, setGeneralMsg] = useState('')
+  const [warnMsg, setWarnMsg] = useState('')
 
   useEffect(() => {
     const getNoticeMsg = async () => {
@@ -26,10 +28,11 @@ const TempWarningMsg: React.FC = () => {
         data?.forEach((item) => {
           if (item.is_general) {
             setIsShowGeneralMsg(true)
+            setGeneralMsg(item.message)
           } else {
             setIsShowWarnMsg(true)
+            setWarnMsg(item.message)
           }
-          setMessage(item.message)
         })
       } catch (e) {
         console.error(e)
@@ -38,38 +41,45 @@ const TempWarningMsg: React.FC = () => {
     getNoticeMsg()
   }, [])
 
+  const CloseButton = ({ onClick }: { onClick: () => void }) => {
+    return (
+      <IconButton
+        aria-label="close"
+        color="inherit"
+        size="small"
+        onClick={onClick}
+      >
+        <Image src={CloseIcon} />
+      </IconButton>
+    )
+  }
+
   return (
     <StackWrapper direction='column'>
       {isShowGeneralMsg &&
-        <InfoStack severity="info" action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            size="small"
-            onClick={() => {
-              setIsShowGeneralMsg(false);
-            }}
-          >
-            <Image src={CloseIcon} />
-          </IconButton>
-        }>
-          <Box ml='10px'><Typography variant='p'>{message}</Typography></Box>
+        <InfoStack>
+          <Box></Box>
+          <Stack direction='row' alignItems='center'>
+            <Info />
+            <Box ml='10px'><Typography variant='p' dangerouslySetInnerHTML={{ __html: generalMsg }} /></Box>
+          </Stack>
+
+          <CloseButton onClick={() => {
+            setIsShowGeneralMsg(false);
+          }} />
         </InfoStack>
       }
       {isShowWarnMsg &&
-        <WarningStack severity='warning' action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            size="small"
-            onClick={() => {
-              setIsShowWarnMsg(false);
-            }}
-          >
-            <Image src={CloseIcon} />
-          </IconButton>
-        }>
-          <Box ml='10px'><Typography variant='p'>{message}</Typography></Box>
+        <WarningStack>
+          <Box></Box>
+          <Stack direction='row' alignItems='center'>
+            <Warning />
+            <Box ml='10px'><Typography variant='p' dangerouslySetInnerHTML={{ __html: warnMsg }} /></Box>
+          </Stack>
+
+          <CloseButton onClick={() => {
+            setIsShowWarnMsg(false);
+          }} />
         </WarningStack>
       }
     </StackWrapper>
@@ -79,20 +89,23 @@ const TempWarningMsg: React.FC = () => {
 const StackWrapper = styled(Stack)`
   width: 100%;
 `
-const InfoStack = styled(Alert)`
+const InfoStack = styled(Box)`
   width: 100%;
-  justify-content: center;
+  height: 32px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
   line-height: 1;
-  padding: 0px 10px;
   padding-right: 20px;
-  background-color: ${(props) => props.theme.boxes.darkBlack};
-  color: ${(props) => props.theme.palette.text.secondary};
-  border: 1px solid ${(props) => props.theme.palette.info.main};
+  font-size: 14px;
+  background-color: #3ddef4;
+  color: #000000;
+  & .MuiAlert-icon {
+    color: #000000;
+  }
 `
 const WarningStack = styled(InfoStack)`
-  border: 1px solid ${(props) => props.theme.palette.warning.main};
+background-color: ${(props) => props.theme.palette.warning.main};
 `
 
 export default TempWarningMsg
