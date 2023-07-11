@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useSetRecoilState } from 'recoil'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
@@ -10,7 +10,7 @@ import { CURRENT_ACCOUNT } from '~/data/localstorage'
 
 /// @TODO: need to rewrite whole logic
 export default function useInitialized(connected: boolean, publicKey: PublicKey | null, wallet: AnchorWallet | undefined) {
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const [localAccount, _] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
 	const setIsAlreadyInitializedAccountState = useSetRecoilState(isAlreadyInitializedAccountState)

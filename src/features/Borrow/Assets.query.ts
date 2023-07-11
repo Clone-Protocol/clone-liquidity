@@ -1,7 +1,7 @@
 import { useQuery, Query } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
@@ -71,7 +71,7 @@ export interface AssetList {
 
 export function useAssetsQuery({ userPubKey, enabled = true, refetchOnMount }: GetAssetsProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 
 	if (wallet) {
 		return useQuery(['assets', wallet, userPubKey], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {

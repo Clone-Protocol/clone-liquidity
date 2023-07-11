@@ -2,7 +2,7 @@ import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 import { CloneClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/clone"
 import * as anchor from "@coral-xyz/anchor"
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -111,7 +111,7 @@ interface CallWithdrawProps {
 }
 export function useWithdrawMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -150,7 +150,7 @@ interface CallDepositProps {
 }
 export function useDepositMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -225,7 +225,7 @@ interface CallLiquidityProps {
 }
 export function useLiquidityMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {

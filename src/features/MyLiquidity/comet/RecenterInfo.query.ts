@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
 import { assetMapping } from 'src/data/assets'
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
 import { recenterProcedureInstructions } from 'incept-protocol-sdk/sdk/src/utils'
 import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
@@ -116,7 +116,7 @@ interface GetProps {
 
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {

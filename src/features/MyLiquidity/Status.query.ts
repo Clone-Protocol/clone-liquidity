@@ -1,7 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
@@ -27,7 +27,7 @@ export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { prog
     program.getBorrowPositions(),
     program.getComet()
   ]);
-  
+
   if (tokenDataResult.status === "rejected") {
     throw new Error("couldn't fetch token data!")
   }
@@ -99,7 +99,7 @@ export interface Status {
 
 export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getCloneApp } = useIncept()
+  const { getCloneApp } = useClone()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {

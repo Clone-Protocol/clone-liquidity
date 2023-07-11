@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { Connection } from '@solana/web3.js'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
-import { InceptContext } from '~/hooks/useIncept'
+import { CloneContext } from '~/hooks/useClone'
 import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
 import { useRecoilValue } from 'recoil'
 import { CreateAccountDialogStates } from '~/utils/constants'
@@ -40,11 +40,11 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 	}
 
 	return (
-		<InceptContext.Provider
+		<CloneContext.Provider
 			value={{
 				getCloneApp,
 			}}>
 			{children}
-		</InceptContext.Provider>
+		</CloneContext.Provider>
 	)
 }

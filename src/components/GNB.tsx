@@ -15,21 +15,13 @@ import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
-import { useIncept } from '~/hooks/useIncept'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { getOnUSDAccount, getTokenAccount } from "~/utils/token_accounts";
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
-import { sendAndConfirm } from '~/utils/tx_helper'
-import { useTransactionState } from '~/hooks/useTransactionState'
-import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'incept-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
-import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
-import { PublicKey } from '@solana/web3.js'
-import { BN } from "@coral-xyz/anchor"
 import dynamic from 'next/dynamic'
+import useFaucet from '~/hooks/useFaucet'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -93,16 +85,13 @@ const RightMenu = () => {
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
-	const { getCloneApp } = useIncept()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
-	const [mintUsdi, setMintUsdi] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useRecoilState(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
-	const { setTxState } = useTransactionState()
 
 	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
 	const MoreMenu = dynamic(() => import('./Common/MoreMenu'))
@@ -113,6 +102,7 @@ const RightMenu = () => {
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
+	const { setMintUsdi } = useFaucet()
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
@@ -124,70 +114,6 @@ const RightMenu = () => {
 		setDeclinedAccountCreation(true)
 		router.replace('/')
 	}
-
-	useEffect(() => {
-
-		async function userMintOnusd() {
-			const onusdToMint = 100;
-			if (connected && publicKey && mintUsdi && wallet) {
-				try {
-					const program = getCloneApp(wallet)
-					await program.loadClone()
-					const usdiTokenAccount = await getOnUSDAccount(program);
-					const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
-
-					let [jupiterAddress, nonce] = PublicKey.findProgramAddressSync(
-						[Buffer.from("jupiter")],
-						new PublicKey(JUPITER_PROGRAM_ADDRESS)
-					);
-					let jupiterAccount = await Jupiter.fromAccountAddress(program.connection, jupiterAddress)
-					const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.connection);
-					const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
-
-					let ixnCalls = []
-					try {
-						if (usdcTokenAccount === undefined) {
-							ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, usdcAta, publicKey, jupiterAccount.usdcMint))())
-						}
-						if (usdiTokenAccount === undefined) {
-							ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, onusdAta, publicKey, program.clone!.onusdMint))())
-						}
-
-						ixnCalls.push(
-							createMintUsdcInstruction(
-								{
-									usdcMint: jupiterAccount.usdcMint,
-									usdcTokenAccount: usdcAta,
-									jupiterAccount: jupiterAddress,
-									tokenProgram: TOKEN_PROGRAM_ID
-								}, {
-								nonce,
-								amount: new BN(onusdToMint * Math.pow(10, 7))
-							}
-							)
-						)
-
-						ixnCalls.push(
-							await program.mintOnusdInstruction(
-								new BN(onusdToMint * Math.pow(10, DEVNET_TOKEN_SCALE)),
-								onusdAta,
-								usdcAta
-							)
-						)
-
-						let ixns = await Promise.all(ixnCalls)
-						await sendAndConfirm(program.provider, ixns, setTxState)
-					} catch (e) {
-						console.error(e)
-					}
-
-				} finally {
-					setMintUsdi(false)
-				}
-			}
-		}
-		userMintOnusd()
-	}, [mintUsdi, connected, publicKey])
 
 	const handleGetUsdiClick = () => {
 		if (declinedAccountCreation) {

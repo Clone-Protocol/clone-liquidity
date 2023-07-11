@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -62,7 +62,7 @@ export interface AnalyticsInfo {
 
 export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = true }: GetAssetsProps) {
   const wallet = useAnchorWallet()
-  const { getCloneApp } = useIncept()
+  const { getCloneApp } = useClone()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {

@@ -1,9 +1,9 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient, DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
+import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { Comet, TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
 import { getHealthScore, getILD } from "incept-protocol-sdk/sdk/src/healthscore"
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
@@ -72,6 +72,7 @@ export const fetchInfos = async ({
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	index?: number
 	enabled?: boolean
 }
 
@@ -158,7 +159,7 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 
 export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
@@ -205,9 +206,9 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	}
 }
 
-export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	if (wallet) {
 		return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getCloneApp(wallet), userPubKey, index }), {
 			refetchOnMount,

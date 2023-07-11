@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { useMutation } from 'react-query'
 import { CloneClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/clone'
 import { getOnUSDAccount } from '~/utils/token_accounts'
@@ -54,7 +54,7 @@ interface CallEditProps {
 }
 export function useCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {

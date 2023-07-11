@@ -3,7 +3,7 @@ import { useMutation } from 'react-query'
 import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
 import { getMantissa } from 'incept-protocol-sdk/sdk/src/decimal'
 import * as anchor from "@coral-xyz/anchor";
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -66,7 +66,7 @@ interface CallCloseProps {
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -224,7 +224,7 @@ interface CallEditProps {
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -236,7 +236,7 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 }
 export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -366,7 +366,7 @@ interface CallBorrowProps {
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
