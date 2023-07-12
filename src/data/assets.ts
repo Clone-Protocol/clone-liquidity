@@ -115,6 +115,7 @@ export const assetMapping = (index: number) => {
     let ticker = ''
     let assetType: number
     let pythSymbol = ''
+    let supabaseSymbol = ''
     switch (index) {
         case Asset.Euro:
             tickerName = 'Clone Euro'
@@ -123,6 +124,7 @@ export const assetMapping = (index: number) => {
             ticker = 'euro'
             assetType = AssetType.Fx
             pythSymbol = 'FX.EUR/USD'
+            supabaseSymbol = 'EURUSD'
             break
         case Asset.Gold:
             tickerName = 'Clone Gold'
@@ -131,6 +133,7 @@ export const assetMapping = (index: number) => {
             ticker = 'gold'
             assetType = AssetType.Commodities
             pythSymbol = 'Metal.XAU/USD'
+            supabaseSymbol = pythSymbol
             break
         case Asset.Solana:
             tickerName = 'Clone Solana'
@@ -139,6 +142,7 @@ export const assetMapping = (index: number) => {
             ticker = 'solana'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.SOL/USD'
+            supabaseSymbol = 'SOLUSD'
             break
         case Asset.Ethereum:
             tickerName = 'Clone Ethereum'
@@ -147,6 +151,7 @@ export const assetMapping = (index: number) => {
             ticker = 'ethereum'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.ETH/USD'
+            supabaseSymbol = 'ETHUSD'
             break
         case Asset.Bitcoin:
             tickerName = 'Clone Bitcoin'
@@ -155,6 +160,7 @@ export const assetMapping = (index: number) => {
             ticker = 'bitcoin'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.BTC/USD'
+            supabaseSymbol = 'BTCUSD'
             break
         case Asset.Cosmos:
             tickerName = 'Clone Cosmos'
@@ -163,6 +169,7 @@ export const assetMapping = (index: number) => {
             ticker = 'cosmos'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.ATOM/USD'
+            supabaseSymbol = 'ATOMUSD'
             break
         case Asset.Avalanche:
             tickerName = 'Clone Avalanche'
@@ -171,6 +178,7 @@ export const assetMapping = (index: number) => {
             ticker = 'avalanche'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.AVAX/USD'
+            supabaseSymbol = 'AVAXUSD'
             break
         case Asset.Sui:
             tickerName = 'Clone Sui'
@@ -179,6 +187,7 @@ export const assetMapping = (index: number) => {
             ticker = 'sui'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.SUI/USD'
+            supabaseSymbol = 'SUIUSD'
             break
         case Asset.Aptos:
             tickerName = 'Clone Aptos'
@@ -187,7 +196,7 @@ export const assetMapping = (index: number) => {
             ticker = 'aptos'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.APT/USD'
-
+            supabaseSymbol = 'APTUSD'
             break
         case Asset.Cardano:
             tickerName = 'Clone Cardano'
@@ -196,12 +205,13 @@ export const assetMapping = (index: number) => {
             ticker = 'cardano'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.ADA/USD'
+            supabaseSymbol = 'ADAUSD'
             break
         default:
             throw new Error('Not supported')
     }
 
-    return { tickerName, tickerSymbol, tickerIcon, ticker, assetType, pythSymbol }
+    return { tickerName, tickerSymbol, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol }
 }
 
 export const collateralMapping = (index: number) => {

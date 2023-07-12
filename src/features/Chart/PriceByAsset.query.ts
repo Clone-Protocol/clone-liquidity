@@ -18,12 +18,11 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
   if (isOraclePrice) {
     const history = await fetchPythPriceHistory(
       pythSymbol,
-      "devnet",
       "1D"
     );
 
     chartData = history.map((data) => {
-      return { time: data.timestamp, value: data.close_price }
+      return { time: data.timestamp, value: data.price }
     })
 
     const lastEntry = chartData[chartData.length - 1];
