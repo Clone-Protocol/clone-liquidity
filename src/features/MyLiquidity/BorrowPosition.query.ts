@@ -1,9 +1,9 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { toNumber } from "clone-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -133,7 +133,7 @@ export interface PairData {
 
 export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getCloneApp } = useIncept()
+  const { getCloneApp } = useClone()
   if (wallet) {
     return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
@@ -146,7 +146,7 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
 
 export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
-  const { getCloneApp } = useIncept()
+  const { getCloneApp } = useClone()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {

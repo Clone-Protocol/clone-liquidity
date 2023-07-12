@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { TransactionInstruction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor"
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { getTokenAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import useLocalStorage from '~/hooks/useLocalStorage'
@@ -14,10 +14,9 @@ import { createAccountDialogState, declinedAccountCreationState, isCreatingAccou
 import { useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 
-/// @TODO: need to refactor.
 export function useCreateAccount() {
 	const [isCreatingAccount, setIsCreatingAccount] = useRecoilState(isCreatingAccountState)
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
@@ -35,7 +34,7 @@ export function useCreateAccount() {
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 
 				const usdiTokenAccount = await getTokenAccount(program.clone!.onusdMint, publicKey!, program.provider.connection);
-				const {userPubkey} = await program.getUserAddress()
+				const { userPubkey } = await program.getUserAddress()
 				const associatedToken = await getAssociatedTokenAddress(
 					program.clone!.onusdMint,
 					publicKey!
@@ -60,12 +59,12 @@ export function useCreateAccount() {
 				ixnCalls.push(program.program.methods
 					.initializeComet()
 					.accounts({
-					  user: publicKey!,
-					  userAccount: userPubkey,
-					  comet: cometsAccount.publicKey,
-					  rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-					  tokenProgram: TOKEN_PROGRAM_ID,
-					  systemProgram: anchor.web3.SystemProgram.programId,
+						user: publicKey!,
+						userAccount: userPubkey,
+						comet: cometsAccount.publicKey,
+						rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+						tokenProgram: TOKEN_PROGRAM_ID,
+						systemProgram: anchor.web3.SystemProgram.programId,
 					})
 					.instruction()
 				)

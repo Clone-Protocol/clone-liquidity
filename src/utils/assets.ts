@@ -1,7 +1,7 @@
-import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces";
-import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
-import { DEVNET_TOKEN_SCALE } from "incept-protocol-sdk/sdk/src/clone"
-import { calculatePoolAmounts } from "incept-protocol-sdk/sdk/src/utils";
+import { TokenData } from "clone-protocol-sdk/sdk/src/interfaces";
+import { toNumber } from "clone-protocol-sdk/sdk/src/decimal";
+import { DEVNET_TOKEN_SCALE } from "clone-protocol-sdk/sdk/src/clone"
+import { calculatePoolAmounts } from "clone-protocol-sdk/sdk/src/utils";
 import { fetchFromCloneIndex } from "./indexing";
 
 export type Interval = 'day' | 'hour';
@@ -39,7 +39,7 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
 
 export const fetchStatsData = async (filter: Filter, interval: Interval): Promise<ResponseValue[]> => {
 
-  let response = await fetchFromCloneIndex('stats', {interval, filter})
+  let response = await fetchFromCloneIndex('stats', { interval, filter })
   return response.data as ResponseValue[]
 }
 
@@ -103,7 +103,7 @@ export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<Aggr
     }
   })
 
-  let response = await fetchFromCloneIndex('ohlcv', {interval: 'hour', filter: 'week'})
+  let response = await fetchFromCloneIndex('ohlcv', { interval: 'hour', filter: 'week' })
   let data: OHLCVResponse[] = response.data
 
   data.forEach((item) => {
@@ -137,7 +137,7 @@ type OHLCVResponse = {
 
 const fetch30DayOHLCV = async (poolIndex: number, interval: 'hour' | 'day') => {
 
-  let response = await fetchFromCloneIndex('ohlcv', {interval, pool: poolIndex, filter: 'month'})
+  let response = await fetchFromCloneIndex('ohlcv', { interval, pool: poolIndex, filter: 'month' })
   let result: OHLCVResponse[] = response.data
   return result
 }
@@ -187,7 +187,7 @@ type BorrowResult = { currentAmount: number, previousAmount: number, currentTVL:
 
 export const fetchBorrowData = async (numPools: number): Promise<BorrowResult[]> => {
 
-  let response = await fetchFromCloneIndex('borrow_stats', {interval: 'hour', filter: 'month'})
+  let response = await fetchFromCloneIndex('borrow_stats', { interval: 'hour', filter: 'month' })
   let rawData: BorrowInfo[] = response.data
 
   let result: BorrowResult[] = []
@@ -224,6 +224,6 @@ const parseBorrowData = (data: BorrowInfo[]): BorrowResult => {
     let latestEntry = data.at(-1)!
     const currentAmount = Number(latestEntry.cumulative_borrowed_delta) * conversionFactor
     const currentTVL = Number(latestEntry.cumulative_collateral_delta) * conversionFactor
-    return {currentAmount, previousAmount, currentTVL, previousTVL}
+    return { currentAmount, previousAmount, currentTVL, previousTVL }
   }
 }

@@ -1,7 +1,7 @@
 import { Query, useQuery } from "react-query"
 import { PublicKey } from "@solana/web3.js"
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { useIncept } from "~/hooks/useIncept"
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { useClone } from "~/hooks/useClone"
 import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
@@ -94,7 +94,7 @@ export function useLiquidityPoolsQuery({
   noFilter = true,
 }: GetPoolsProps) {
   const wallet = useAnchorWallet()
-  const { getCloneApp } = useIncept()
+  const { getCloneApp } = useClone()
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {

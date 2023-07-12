@@ -1,8 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useIncept } from '~/hooks/useIncept'
+import { useClone } from '~/hooks/useClone'
 import { useMutation } from 'react-query'
-import { CloneClient, toDevnetScale } from 'incept-protocol-sdk/sdk/src/clone'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { CloneClient, toDevnetScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -44,7 +43,7 @@ interface CallNewProps {
 }
 export function useNewPositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -116,7 +115,7 @@ interface CallEditProps {
 }
 export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -147,7 +146,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	const [userAccountAddress, bump] = PublicKey.findProgramAddressSync(
 		[Buffer.from("user"), userPubKey.toBuffer()],
 		program.programId
-	  )
+	)
 
 	// Pay ILD && withdraw all liquidity
 	let ixnCalls: Promise<TransactionInstruction>[] = [
@@ -207,20 +206,20 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 	ixnCalls.push(
 		program.program.methods
-		.collectLpRewards(data.positionIndex)
-		.accounts({
-		  user: program.provider.publicKey!,
-		  userAccount: userAccountAddress,
-		  clone: program.cloneAddress[0],
-		  tokenData: program.clone!.tokenData,
-		  comet: userAccount.comet,
-		  onusdMint: program.clone!.onusdMint,
-		  onassetMint: data.onassetMint,
-		  userOnusdTokenAccount: onusdAssociatedTokenAddress,
-		  userOnassetTokenAccount: onassetAssociatedToken,
-		  tokenProgram: TOKEN_PROGRAM_ID,
-		})
-		.instruction()
+			.collectLpRewards(data.positionIndex)
+			.accounts({
+				user: program.provider.publicKey!,
+				userAccount: userAccountAddress,
+				clone: program.cloneAddress[0],
+				tokenData: program.clone!.tokenData,
+				comet: userAccount.comet,
+				onusdMint: program.clone!.onusdMint,
+				onassetMint: data.onassetMint,
+				userOnusdTokenAccount: onusdAssociatedTokenAddress,
+				userOnassetTokenAccount: onassetAssociatedToken,
+				tokenProgram: TOKEN_PROGRAM_ID,
+			})
+			.instruction()
 	)
 
 	ixnCalls.push(
@@ -261,7 +260,7 @@ interface CallCloseProps {
 }
 export function useClosePositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
@@ -291,7 +290,7 @@ interface CallCloseAllProps {
 }
 export function useCloseAllPositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {

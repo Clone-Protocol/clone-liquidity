@@ -6,7 +6,7 @@ import {
 	TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets'
 import { WalletDialogProvider } from '~/hocs/WalletDialogProvider'
-import { InceptProvider } from '~/hocs/InceptProvider'
+import { CloneProvider } from '~/hocs/CloneProvider'
 import { clusterApiUrl } from '@solana/web3.js'
 import React, { FC, ReactNode, useMemo } from 'react'
 
@@ -42,9 +42,9 @@ const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	return (
 		<ConnectionProvider endpoint={endpoint}>
 			<WalletProvider wallets={wallets} onError={onError} autoConnect>
-				<InceptProvider>
+				<CloneProvider>
 					<WalletDialogProvider>{children}</WalletDialogProvider>
-				</InceptProvider>
+				</CloneProvider>
 			</WalletProvider>
 		</ConnectionProvider>
 	)

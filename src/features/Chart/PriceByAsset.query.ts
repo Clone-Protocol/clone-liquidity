@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { Query, useQuery } from 'react-query'
 import { ChartElem } from './Liquidity.query'
 import { fetchPythPriceHistory } from '~/utils/pyth'

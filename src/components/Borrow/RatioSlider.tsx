@@ -1,4 +1,4 @@
-import { Box, Slider, styled, Typography, Stack } from '@mui/material'
+import { Box, Slider, styled, Typography } from '@mui/material'
 import WarningMsg from '../Common/WarningMsg';
 
 interface Props {

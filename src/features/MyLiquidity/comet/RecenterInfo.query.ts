@@ -1,12 +1,13 @@
+// @Deprecated
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
-import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
+import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
+import { TokenData, Comet } from 'clone-protocol-sdk/sdk/src/interfaces'
 import { assetMapping } from 'src/data/assets'
-import { useIncept } from '~/hooks/useIncept'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
-import { recenterProcedureInstructions } from 'incept-protocol-sdk/sdk/src/utils'
-import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useClone } from '~/hooks/useClone'
+import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
+import { recenterProcedureInstructions } from 'clone-protocol-sdk/sdk/src/utils'
+import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
@@ -116,7 +117,7 @@ interface GetProps {
 
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {

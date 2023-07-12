@@ -1,16 +1,16 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
+import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { assetMapping } from 'src/data/assets'
-import { useIncept } from '~/hooks/useIncept'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
-import { TokenData, Comet } from 'incept-protocol-sdk/sdk/src/interfaces'
-import { getHealthScore, getILD, getEffectiveUSDCollateralValue } from "incept-protocol-sdk/sdk/src/healthscore"
+import { useClone } from '~/hooks/useClone'
+import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
+import { TokenData, Comet } from 'clone-protocol-sdk/sdk/src/interfaces'
+import { getHealthScore, getILD, getEffectiveUSDCollateralValue } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
-import { calculatePoolAmounts } from 'incept-protocol-sdk/sdk/src/utils'
+import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -37,12 +37,12 @@ export const fetchLiquidityDetail = async ({
 
 	let assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let {poolOnusd, poolOnasset} = calculatePoolAmounts(
-        toNumber(pool.onusdIld),
-        toNumber(pool.onassetIld),
-        toNumber(pool.committedOnusdLiquidity),
-        toNumber(pool.assetInfo.price)
-      )
+	let { poolOnusd, poolOnasset } = calculatePoolAmounts(
+		toNumber(pool.onusdIld),
+		toNumber(pool.onassetIld),
+		toNumber(pool.committedOnusdLiquidity),
+		toNumber(pool.assetInfo.price)
+	)
 	const price = poolOnusd / poolOnasset
 
 	let totalCollValue = 0
@@ -102,7 +102,7 @@ interface GetProps {
 
 export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	if (wallet) {
 		return useQuery(
 			['liquidityPosition', wallet, userPubKey, index],
@@ -157,12 +157,12 @@ export const fetchCloseLiquidityPosition = async ({
 	let assetId = poolIndex
 	const committedOnusdLiquidity = toNumber(position.committedOnusdLiquidity)
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let {poolOnusd, poolOnasset} = calculatePoolAmounts(
-        toNumber(pool.onusdIld),
-        toNumber(pool.onassetIld),
-        committedOnusdLiquidity,
-        oraclePrice
-      )
+	let { poolOnusd, poolOnasset } = calculatePoolAmounts(
+		toNumber(pool.onusdIld),
+		toNumber(pool.onassetIld),
+		committedOnusdLiquidity,
+		oraclePrice
+	)
 	let price = poolOnusd / poolOnasset
 
 	let currentHealthScore = getHealthScore(tokenData, comet)
@@ -178,8 +178,8 @@ export const fetchCloseLiquidityPosition = async ({
 	let ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
 	let healthScoreIncrease = (
 		toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue +
-		 committedOnusdLiquidity * toNumber(pool.assetInfo.positionHealthScoreCoefficient)
-		) / totalCollateralAmount
+		committedOnusdLiquidity * toNumber(pool.assetInfo.positionHealthScoreCoefficient)
+	) / totalCollateralAmount
 	let healthScore = prevHealthScore + healthScoreIncrease
 	let isValidToClose = ildInOnusd ? balance?.onusdVal! >= onusdILD : balance?.onassetVal! >= onAssetILD
 
@@ -227,7 +227,7 @@ export interface CloseLiquidityPositionInfo {
 
 export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
-	const { getCloneApp } = useIncept()
+	const { getCloneApp } = useClone()
 	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
