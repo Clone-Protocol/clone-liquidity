@@ -1,6 +1,6 @@
 import { Query, useQuery } from 'react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
-import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
+import { DEVNET_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
 import { fetchStatsData, Interval, ResponseValue, generateDates, Filter } from 'src/utils/assets'
 
 export interface ChartElem {
@@ -114,7 +114,7 @@ export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime
 }
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
-  
+
   return await fetchTotalValues(timeframe,
     (data: AggregatedData) => {
       return { time: data.datetime, value: data.trading_volume }
@@ -145,7 +145,7 @@ export const fetchTotalValues = async (timeframe: FilterTime, mapFunction: (tsVa
 
   const now = new Date()
   const currentIntervalDt = new Date(now.getTime() - now.getTime() % intervalMs)
-  const startDate = new Date(currentIntervalDt.getTime()  - daysLookback * 86400000)
+  const startDate = new Date(currentIntervalDt.getTime() - daysLookback * 86400000)
   const endDate = tsData.length > 0 ? new Date(tsData[0].time) : currentIntervalDt
 
   let chartData: TimeSeriesValue[] = [];
@@ -159,7 +159,7 @@ export const fetchTotalValues = async (timeframe: FilterTime, mapFunction: (tsVa
   chartData = filterHistoricalData(chartData, daysLookback)
   const shiftByInterval = (item: TimeSeriesValue) => {
     const dt = new Date(item.time)
-    return {time: new Date(dt.getTime() + intervalMs).toISOString(), value: item.value}
+    return { time: new Date(dt.getTime() + intervalMs).toISOString(), value: item.value }
   }
   chartData = chartData.map(shiftByInterval).filter((item) => {
     return (new Date(item.time)) < currentIntervalDt
@@ -182,12 +182,12 @@ export const fetchTotalValues = async (timeframe: FilterTime, mapFunction: (tsVa
 const backfillWithZeroValue = (start: Date, end: Date, intervalMs: number): TimeSeriesValue[] => {
   const value = 0
   let result = [
-    {time: start.toISOString(), value}
+    { time: start.toISOString(), value }
   ]
   let currentDate = start;
   while (currentDate.getTime() < end.getTime()) {
     currentDate = new Date(currentDate.getTime() + intervalMs)
-    result.push({time: currentDate.toISOString(), value})
+    result.push({ time: currentDate.toISOString(), value })
   }
 
   return result;

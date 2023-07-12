@@ -1,7 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
-import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
-import { getMantissa } from 'incept-protocol-sdk/sdk/src/decimal'
+import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
+import { getMantissa } from 'clone-protocol-sdk/sdk/src/decimal'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'

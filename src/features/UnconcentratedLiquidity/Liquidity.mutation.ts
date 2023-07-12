@@ -1,6 +1,7 @@
+//@Deprecated
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from 'react-query'
-import { CloneClient, toDevnetScale } from "incept-protocol-sdk/sdk/src/clone"
+import { CloneClient, toDevnetScale } from "clone-protocol-sdk/sdk/src/clone"
 import * as anchor from "@coral-xyz/anchor"
 import { useClone } from '~/hooks/useClone'
 import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'

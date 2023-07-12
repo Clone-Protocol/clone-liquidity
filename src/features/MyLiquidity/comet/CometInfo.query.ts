@@ -1,16 +1,16 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
-import { Comet, TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
-import { getHealthScore, getILD } from "incept-protocol-sdk/sdk/src/healthscore"
+import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
+import { Comet, TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
+import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
-import { calculatePoolAmounts } from 'incept-protocol-sdk/sdk/src/utils'
+import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 
 export const fetchInfos = async ({
 	program,

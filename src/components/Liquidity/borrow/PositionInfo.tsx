@@ -6,14 +6,13 @@ import Image from 'next/image'
 import EditIcon from 'public/images/edit-icon.svg'
 import CollRatioBar from './CollRatioBar'
 import { useState } from 'react'
+import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 interface Props {
   positionInfo: PI
   onShowEditForm: () => void
   onShowBorrowMore: () => void
 }
-
-const RISK_RATIO_VAL = 25
 
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {
   const [isEditCollHover, setIsEditCollHover] = useState(false)

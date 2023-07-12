@@ -1,7 +1,8 @@
+// @Deprecated
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token'
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { recenterProcedureInstructions } from "incept-protocol-sdk/sdk/src/utils"
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { recenterProcedureInstructions } from "clone-protocol-sdk/sdk/src/utils"
 import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts';
 import { useMutation } from 'react-query'
 import { useClone } from '~/hooks/useClone'

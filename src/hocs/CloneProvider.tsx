@@ -3,18 +3,18 @@ import { AnchorProvider } from '@coral-xyz/anchor'
 import { Connection } from '@solana/web3.js'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { CloneContext } from '~/hooks/useClone'
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useRecoilValue } from 'recoil'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState } from '~/features/globalAtom'
-import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
+import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
 import { Commitment } from '@solana/web3.js'
 
-export interface InceptProviderProps {
+export interface CloneProviderProps {
 	children: ReactNode
 }
 
-export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) => {
+export const CloneProvider: FC<CloneProviderProps> = ({ children, ...props }) => {
 	const createAccountStatus = useRecoilValue(createAccountDialogState)
 	const getCloneApp = (wallet: AnchorWallet | undefined, force?: boolean): CloneClient => {
 		if (!force) {
@@ -35,8 +35,8 @@ export const InceptProvider: FC<InceptProviderProps> = ({ children, ...props }) 
 		const new_connection = new Connection(network.endpoint)
 
 		const provider = new AnchorProvider(new_connection, wallet!, opts)
-		const incept = new CloneClient(network.clone, provider)
-		return incept
+		const clone = new CloneClient(network.clone, provider)
+		return clone
 	}
 
 	return (

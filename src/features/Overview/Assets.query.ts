@@ -1,12 +1,12 @@
 import { Query, useQuery } from 'react-query'
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { AnchorProvider } from "@coral-xyz/anchor";
-import { getNetworkDetailsFromEnv } from 'incept-protocol-sdk/sdk/src/network'
+import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
 import { PublicKey, Connection } from "@solana/web3.js";
 
 export const fetchAssets = async ({ setStartTimer }: { setStartTimer: (start: boolean) => void }) => {

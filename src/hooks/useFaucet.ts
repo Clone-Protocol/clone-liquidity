@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { getOnUSDAccount, getTokenAccount } from '~/utils/token_accounts'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'incept-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
-import { DEVNET_TOKEN_SCALE } from 'incept-protocol-sdk/sdk/src/clone'
+import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'clone-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
+import { DEVNET_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
 import { BN } from "@coral-xyz/anchor"
 import { sendAndConfirm } from '~/utils/tx_helper'
 import { useTransactionState } from './useTransactionState';

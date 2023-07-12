@@ -15,7 +15,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useRouter } from 'next/router'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import CometBlank from '~/components/Overview/CometBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
 import DataPlusHoverIcon from 'public/images/database-plus-on.svg'

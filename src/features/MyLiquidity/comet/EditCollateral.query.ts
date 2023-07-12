@@ -1,10 +1,10 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'incept-protocol-sdk/sdk/src/clone'
+import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { getOnUSDAccount } from '~/utils/token_accounts'
-import { getHealthScore } from "incept-protocol-sdk/sdk/src/healthscore"
+import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 

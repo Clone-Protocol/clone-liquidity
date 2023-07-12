@@ -22,6 +22,7 @@ import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
+import TokenFaucetDialog from './Account/TokenFaucetDialog'
 
 const GNB: React.FC = () => {
 	const router = useRouter()
@@ -96,7 +97,6 @@ const RightMenu = () => {
 	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
 	const MoreMenu = dynamic(() => import('./Common/MoreMenu'))
 	const ReminderNewWalletPopup = dynamic(() => import('./Account/ReminderNewWalletPopup'))
-	const TokenFaucetDialog = dynamic(() => import('./Account/TokenFaucetDialog'))
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
 
 	// on initialize, set to open account creation

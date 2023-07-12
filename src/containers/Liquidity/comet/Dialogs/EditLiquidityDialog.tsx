@@ -7,7 +7,7 @@ import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityP
 import { useEditPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useForm } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/comet/EditLiquidityRatioSlider'
-import { toNumber } from 'incept-protocol-sdk/sdk/src/decimal'
+import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'

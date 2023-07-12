@@ -14,7 +14,6 @@ import { createAccountDialogState, declinedAccountCreationState, isCreatingAccou
 import { useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 
-/// @TODO: need to refactor.
 export function useCreateAccount() {
 	const [isCreatingAccount, setIsCreatingAccount] = useRecoilState(isCreatingAccountState)
 	const { getCloneApp } = useClone()

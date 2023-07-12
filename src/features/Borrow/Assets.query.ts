@@ -1,10 +1,10 @@
 import { useQuery, Query } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { TokenData } from "incept-protocol-sdk/sdk/src/interfaces"
+import { TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
 const fetchIassetBalances = async (program: CloneClient, tokenData: TokenData): Promise<number[]> => {

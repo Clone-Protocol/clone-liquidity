@@ -1,7 +1,7 @@
 import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "incept-protocol-sdk/sdk/src/clone"
-import { toNumber } from "incept-protocol-sdk/sdk/src/decimal";
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { toNumber } from "clone-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
