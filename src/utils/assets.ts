@@ -2,7 +2,7 @@ import { TokenData } from "clone-protocol-sdk/sdk/src/interfaces";
 import { toNumber } from "clone-protocol-sdk/sdk/src/decimal";
 import { DEVNET_TOKEN_SCALE } from "clone-protocol-sdk/sdk/src/clone"
 import { calculatePoolAmounts } from "clone-protocol-sdk/sdk/src/utils";
-import { fetchFromCloneIndex } from "./indexing";
+import { fetchFromCloneIndex } from "./fetch_netlify";
 
 export type Interval = 'day' | 'hour';
 export type Filter = 'day' | 'week' | 'month' | 'year';

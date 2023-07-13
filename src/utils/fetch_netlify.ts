@@ -7,3 +7,7 @@ export const fetchFromCloneIndex = async (method: string, params: Object) => {
     }
     return await axios.get(`/.netlify/functions/clone-index-fetch?${queryString}`)
 }
+
+export const fetchFromSupabaseNotice = async () => {
+    return await axios.get(`/.netlify/functions/supabase-notice-fetch`)
+}

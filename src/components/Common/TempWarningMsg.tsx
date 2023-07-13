@@ -1,11 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
 import { Typography, Box, Stack, IconButton } from '@mui/material'
 import { styled } from '@mui/system'
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CloseIcon from 'public/images/close.svg'
 import { Info, Warning } from '@mui/icons-material';
+import { fetchFromSupabaseNotice } from '~/utils/fetch_netlify';
 
+interface NoticeItem {
+  is_general: boolean
+  message: string
+}
 const TempWarningMsg: React.FC = () => {
   const [isShowGeneralMsg, setIsShowGeneralMsg] = useState(false)
   const [isShowWarnMsg, setIsShowWarnMsg] = useState(false)
@@ -14,29 +18,18 @@ const TempWarningMsg: React.FC = () => {
 
   useEffect(() => {
     const getNoticeMsg = async () => {
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+      const response = await fetchFromSupabaseNotice()
+      const data = response.data
 
-      try {
-        const { data, error } = await supabase
-          .from('notices')
-          .select()
-          .eq('channel', 'liquidity')
-          .eq('show', true)
-
-        console.log('data', data)
-
-        data?.forEach((item) => {
-          if (item.is_general) {
-            setIsShowGeneralMsg(true)
-            setGeneralMsg(item.message)
-          } else {
-            setIsShowWarnMsg(true)
-            setWarnMsg(item.message)
-          }
-        })
-      } catch (e) {
-        console.error(e)
-      }
+      data?.forEach((item: NoticeItem) => {
+        if (item.is_general) {
+          setIsShowGeneralMsg(true)
+          setGeneralMsg(item.message)
+        } else {
+          setIsShowWarnMsg(true)
+          setWarnMsg(item.message)
+        }
+      })
     }
     getNoticeMsg()
   }, [])
