@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useSetRecoilState } from 'recoil'
+import { useSetAtom } from 'jotai'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { useClone } from '~/hooks/useClone'
 import useLocalStorage from '~/hooks/useLocalStorage'
@@ -11,8 +11,8 @@ import { CURRENT_ACCOUNT } from '~/data/localstorage'
 export default function useInitialized(connected: boolean, publicKey: PublicKey | null, wallet: AnchorWallet | undefined) {
 	const { getCloneApp } = useClone()
 	const [localAccount, _] = useLocalStorage(CURRENT_ACCOUNT, '')
-	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
-	const setIsAlreadyInitializedAccountState = useSetRecoilState(isAlreadyInitializedAccountState)
+	const setCreateAccountDialogState = useSetAtom(createAccountDialogState)
+	const setIsAlreadyInitializedAccountState = useSetAtom(isAlreadyInitializedAccountState)
 
 	useEffect(() => {
 		async function getAccount() {

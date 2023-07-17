@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useAtom, useSetAtom } from 'jotai'
 import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { TransactionInstruction } from "@solana/web3.js";
@@ -15,13 +15,13 @@ import { useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 
 export function useCreateAccount() {
-	const [isCreatingAccount, setIsCreatingAccount] = useRecoilState(isCreatingAccountState)
+	const [isCreatingAccount, setIsCreatingAccount] = useAtom(isCreatingAccountState)
 	const { getCloneApp } = useClone()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
-	const setCreateAccountDialogStatus = useSetRecoilState(createAccountDialogState)
-	const setDeclinedAccountCreation = useSetRecoilState(declinedAccountCreationState)
+	const setCreateAccountDialogStatus = useSetAtom(createAccountDialogState)
+	const setDeclinedAccountCreation = useSetAtom(declinedAccountCreationState)
 	const { enqueueSnackbar } = useSnackbar()
 	const { setTxState } = useTransactionState()
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { createAccountDialogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import {
   Box,
@@ -10,8 +10,8 @@ import { CreateAccountDialogStates } from '~/utils/constants'
 
 
 const ReminderNewWalletPopup = () => {
-  const setCreateAccountDialogStatus = useSetRecoilState(createAccountDialogState)
-  const isAlreadyInitializedAccount = useRecoilValue(isAlreadyInitializedAccountState)
+  const setCreateAccountDialogStatus = useSetAtom(createAccountDialogState)
+  const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
   const shouldPopupOpen = !isAlreadyInitializedAccount
 
   return shouldPopupOpen ? (
