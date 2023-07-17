@@ -8,7 +8,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
 import Divider from '@mui/material/Divider';
-import { useRecoilValue } from 'recoil'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import TradeIcon from 'public/images/trade-icon.svg'
@@ -19,7 +19,6 @@ import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountCli
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
-import { useSetRecoilState } from 'recoil'
 import { useRouter } from 'next/router'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MARKETS_APP } from '~/data/social'
@@ -31,7 +30,7 @@ const AssetList: React.FC = () => {
 
 	const { connected } = useWallet()
 	const router = useRouter()
-	const setOpenConnectWalletGuideDlogState = useSetRecoilState(openConnectWalletGuideDlogState)
+	const setOpenConnectWalletGuideDlogState = useSetAtom(openConnectWalletGuideDlogState)
 
 	const { data: assets } = useAssetsQuery({
 		filter,
@@ -53,7 +52,7 @@ const AssetList: React.FC = () => {
 		}
 	}, [searchTerm])
 
-	const isAlreadyInitializedAccount = useRecoilValue(isAlreadyInitializedAccountState)
+	const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
 	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
 	const handleRowClick: GridEventListener<'rowClick'> = (

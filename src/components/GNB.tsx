@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useAtom, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
@@ -89,10 +89,10 @@ const RightMenu = () => {
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
-	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useRecoilState(createAccountDialogState)
-	const [declinedAccountCreation, setDeclinedAccountCreation] = useRecoilState(declinedAccountCreationState)
-	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useRecoilState(openConnectWalletGuideDlogState)
-	const setIsCreatingAccount = useSetRecoilState(isCreatingAccountState)
+	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useAtom(createAccountDialogState)
+	const [declinedAccountCreation, setDeclinedAccountCreation] = useAtom(declinedAccountCreationState)
+	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useAtom(openConnectWalletGuideDlogState)
+	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
 
 	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
 	const MoreMenu = dynamic(() => import('./Common/MoreMenu'))

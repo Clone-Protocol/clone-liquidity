@@ -1,11 +1,11 @@
-import { useSetRecoilState, useRecoilValue } from 'recoil'
+import { useSetAtom, useAtomValue } from 'jotai'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState } from '~/features/globalAtom'
 
 
 export const useOnLinkNeedingAccountClick = () => {
-	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
-	const declinedAccountCreation = useRecoilValue(declinedAccountCreationState)
+	const setCreateAccountDialogState = useSetAtom(createAccountDialogState)
+	const declinedAccountCreation = useAtomValue(declinedAccountCreationState)
 
 	return (evt: React.MouseEvent | undefined) => {
 		if (declinedAccountCreation) {

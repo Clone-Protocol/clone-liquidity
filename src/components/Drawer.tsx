@@ -5,13 +5,13 @@ import { useRouter } from 'next/router'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
-import { useSetRecoilState } from 'recoil'
+import { useSetAtom } from 'jotai'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 const Drawer: React.FC = () => {
 	const router = useRouter()
 	const { connected } = useWallet()
-	const setOpenConnectWalletGuideDlogState = useSetRecoilState(openConnectWalletGuideDlogState)
+	const setOpenConnectWalletGuideDlogState = useSetAtom(openConnectWalletGuideDlogState)
 	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
 	const handleClickNavWhenUnconnected = (evt: React.MouseEvent) => {

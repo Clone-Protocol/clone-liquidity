@@ -13,7 +13,7 @@ import { NextPage } from 'next'
 import ClientWalletProvider from '~/hocs/ClientWalletProvider'
 import { DataLoadingIndicatorProvider } from '~/hocs/DataLoadingIndicatorProvider'
 import './styles.css'
-import { RecoilRoot } from 'recoil'
+import { Provider as JotaiProvider } from 'jotai'
 import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
 import useLocalStorage from '~/hooks/useLocalStorage'
@@ -25,7 +25,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [isOpenInit, setIsOpenInit] = useState(false)
   const InitEnterScreen = dynamic(() => import('~/components/Common/InitEnterScreen'), { ssr: false })
 
-  // setTimeout(() => setIsOpenInit(!isCompleteInit), 1200)
   useEffect(() => {
     if (!isCompleteInit) {
       setIsOpenInit(true)
@@ -34,7 +33,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <QueryProvider>
-      <RecoilRoot>
+      <JotaiProvider>
         <ThemeProvider theme={theme}>
           <SnackbarProvider maxSnack={3}>
             <ClientWalletProvider>
@@ -62,7 +61,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             </ClientWalletProvider>
           </SnackbarProvider>
         </ThemeProvider>
-      </RecoilRoot>
+      </JotaiProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryProvider>
   )

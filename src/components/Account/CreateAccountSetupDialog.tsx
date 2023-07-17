@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { createAccountDialogState } from '~/features/globalAtom'
 import {
 	Button,
@@ -25,8 +25,8 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 	handleCreateAccount,
 	handleClose
 }) => {
-	const isCreatingAccount = useRecoilValue(isCreatingAccountState)
-	const setCreateAccountDialogState = useSetRecoilState(createAccountDialogState)
+	const isCreatingAccount = useAtomValue(isCreatingAccountState)
+	const setCreateAccountDialogState = useSetAtom(createAccountDialogState)
 
 	const shouldDialogOpen = (): boolean => {
 		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder

@@ -4,7 +4,7 @@ import { Connection } from '@solana/web3.js'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { CloneContext } from '~/hooks/useClone'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState } from '~/features/globalAtom'
 import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
@@ -15,7 +15,7 @@ export interface CloneProviderProps {
 }
 
 export const CloneProvider: FC<CloneProviderProps> = ({ children, ...props }) => {
-	const createAccountStatus = useRecoilValue(createAccountDialogState)
+	const createAccountStatus = useAtomValue(createAccountDialogState)
 	const getCloneApp = (wallet: AnchorWallet | undefined, force?: boolean): CloneClient => {
 		if (!force) {
 			if (!wallet) {
