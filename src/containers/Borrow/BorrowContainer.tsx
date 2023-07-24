@@ -1,6 +1,5 @@
 import { Box, Paper, Stack, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
@@ -15,19 +14,9 @@ import { useBorrowDetailQuery } from '~/features/MyLiquidity/BorrowPosition.quer
 import { useWallet } from '@solana/wallet-adapter-react'
 
 const BorrowContainer = () => {
-  const router = useRouter()
   const { publicKey } = useWallet()
-  const { lAssetId } = router.query
   const [assetIndex, setAssetIndex] = useState(0)
   const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
-
-  // sub routing for asset id
-  useEffect(() => {
-    if (lAssetId) {
-      setAssetIndex(parseInt(lAssetId.toString()))
-      setBorrowAsset(ASSETS[parseInt(lAssetId.toString())])
-    }
-  }, [lAssetId])
 
   const { data: borrowDetail } = useBorrowDetailQuery({
     userPubKey: publicKey,
@@ -46,7 +35,7 @@ const BorrowContainer = () => {
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
           <a href="https://docs.clone.so/devnet-guide/clone-liquidity-or-for-lps/borrowing" target="_blank" rel="noreferrer">
-            <TipMsg><Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography></TipMsg>
+            <TipMsg><Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography></TipMsg>
           </a>
           <LeftBoxWrapper>
             <Box paddingY='10px'>

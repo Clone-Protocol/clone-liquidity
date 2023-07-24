@@ -2,7 +2,6 @@ import { Box, Stack, Divider, Typography, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import Comet from '~/containers/Liquidity/comet/Comet'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import { TabPanel, StyledTabs, CometTab, StyledTab } from '~/components/Common/StyledTab'
@@ -19,10 +18,11 @@ import CometIconOn from 'public/images/multipool-icon-on.svg'
 import MyStatusValues from '~/components/Liquidity/MyStatusValues'
 import MyStatus from '~/containers/Liquidity/MyStatus'
 
-const LiquidityTable: React.FC = () => {
-  const router = useRouter()
-  const { ltab } = router.query
-  const [tab, setTab] = useState(0)
+export const TAB_COMET = 0
+export const TAB_BORROW = 1
+
+const LiquidityTable = ({ ltab }: { ltab: string }) => {
+  const [tab, setTab] = useState(TAB_COMET)
   const [filter, setFilter] = useState<FilterType>('all')
 
   // sub routing for tab
@@ -48,9 +48,9 @@ const LiquidityTable: React.FC = () => {
   })
 
   const hasNoPosition = !status ||
-    (tab === 1 && status.statusValues.totalBorrowLiquidity === 0)
+    (tab === TAB_BORROW && status.statusValues.totalBorrowLiquidity === 0)
 
-  const newPositionUrl = tab === 1 ? '/borrow' : `/assets/euro?ltab=${tab}`
+  const newPositionUrl = tab === TAB_BORROW ? '/borrow' : `/assets/euro`
 
   return (
     <div>
@@ -59,14 +59,14 @@ const LiquidityTable: React.FC = () => {
         <Divider sx={{ backgroundColor: '#3f3f3f' }} />
 
         <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
-          <CometTab value={0} label='Comet' icon={tab === 0 ? <Image src={CometIconOn} /> : <Image src={CometIconOff} />} />\
-          <StyledTab value={1} label='Borrow' icon={tab === 3 ? <Image src={BorrowIconOn} /> : <Image src={BorrowIconOff} />} />
+          <CometTab value={TAB_COMET} label='Comet' icon={tab === TAB_COMET ? <Image src={CometIconOn} alt='comet' /> : <Image src={CometIconOff} alt='comet' />} />\
+          <StyledTab value={TAB_BORROW} label='Borrow' icon={tab === TAB_BORROW ? <Image src={BorrowIconOn} alt='borrow' /> : <Image src={BorrowIconOff} alt='borrow' />} />
         </StyledTabs>
 
         <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
 
-        {tab > 0 &&
-          <Stack direction='row' justifyContent='space-between' alignItems='flex-end' paddingTop='22px'>
+        {tab === TAB_BORROW &&
+          <Stack direction='row' justifyContent='space-between' alignItems='flex-end' pt='22px'>
             <MyStatusValues tab={tab} status={status} />
 
             <Link href={newPositionUrl}><NewPositionButton sx={hasNoPosition ? { borderColor: '#258ded' } : {}}><Typography variant='p_sm'>+ New Position</Typography></NewPositionButton></Link>
@@ -83,14 +83,14 @@ const LiquidityTable: React.FC = () => {
           </PageTabs>
         </Stack> */}
 
-        {tab > 0 &&
+        {tab === TAB_BORROW &&
           <StyledDivider />
         }
 
-        <TabPanel value={tab} index={0}>
+        <TabPanel value={tab} index={TAB_COMET}>
           <Comet />
         </TabPanel>
-        <TabPanel value={tab} index={1}>
+        <TabPanel value={tab} index={TAB_BORROW}>
           <GridBorrow filter={filter} />
         </TabPanel>
       </PanelBox>

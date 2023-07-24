@@ -34,7 +34,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 
       <EditRowBox sx={isEditCollHover ? { background: '#1b1b1b' } : {}}>
         <EditBox onClick={onShowEditForm} onMouseOver={() => setIsEditCollHover(true)} onMouseLeave={() => setIsEditCollHover(false)}>
-          <Image src={EditIcon} />
+          <Image src={EditIcon} alt='edit' />
         </EditBox>
         <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='27px'>
           <Typography variant='p_lg' color='#989898'>Collateral</Typography>
@@ -47,7 +47,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
 
       <EditRowBox sx={isEditBorrowHover ? { background: '#1b1b1b' } : {}}>
         <EditBox onClick={onShowBorrowMore} onMouseOver={() => setIsEditBorrowHover(true)} onMouseLeave={() => setIsEditBorrowHover(false)}>
-          <Image src={EditIcon} />
+          <Image src={EditIcon} alt='edit' />
         </EditBox>
         <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='27px'>
           <Typography variant='p_lg' color='#989898'>Borrowed</Typography>

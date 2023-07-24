@@ -45,8 +45,8 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
         </TipMsg>
         <LeftBoxWrapper mt='21px'>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label="Manage Borrow Position" icon={tab === 0 ? <Image src={ManageCometIconOn} /> : <Image src={ManageCometIconOff} />}></StyledTab>
-            <StyledTab value={1} label="Close Borrow Position" icon={tab === 1 ? <Image src={ManageCloseIconOn} /> : <Image src={ManageCloseIconOff} />}></StyledTab>
+            <StyledTab value={0} label="Manage Borrow Position" icon={tab === 0 ? <Image src={ManageCometIconOn} alt='comet' /> : <Image src={ManageCometIconOff} alt='comet' />}></StyledTab>
+            <StyledTab value={1} label="Close Borrow Position" icon={tab === 1 ? <Image src={ManageCloseIconOn} alt='close' /> : <Image src={ManageCloseIconOff} alt='close' />}></StyledTab>
           </StyledTabs>
           <StyledDivider />
           <TipMsg>

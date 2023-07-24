@@ -115,7 +115,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
                 <FormBox sx={{ background: '#363636' }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems='center'>
-                      <Image src={'/images/assets/on-usd.svg'} width="28px" height="28px" />
+                      <Image src={'/images/assets/on-usd.svg'} width={28} height={28} alt='onUSD' />
                       <Box marginLeft='8px'>
                         <Typography variant='p_lg'>onUSD</Typography>
                       </Box>
@@ -133,7 +133,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
               <FormBox>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Box display="flex">
-                    <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
+                    <Image src={positionInfo.tickerIcon} width={28} height={28} alt={positionInfo.tickerSymbol} />
                     <Box marginLeft='8px'>
                       <Typography variant='p_lg'>{positionInfo.tickerSymbol}</Typography>
                     </Box>

@@ -37,7 +37,7 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
     <>
       <Box display="flex">
         <Box mr="10px">
-          <Image src={assetData.tickerIcon} width={30} height={30} />
+          <Image src={assetData.tickerIcon} width={30} height={30} alt={assetData.tickerSymbol!} />
         </Box>
         <Typography variant="p_xxlg">
           {assetData.tickerName} ({assetData.tickerSymbol})

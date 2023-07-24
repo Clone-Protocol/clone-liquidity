@@ -36,7 +36,7 @@ const LiquidityPairView: React.FC<Props> = ({
         alignItems="center"
         onClick={() => onShowEditDialog(poolIndex)}>
         <Box display="flex">
-          <Image src={tickerIcon} width="28px" height="28px" />
+          <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
           <TickerWrapper>
             <Typography variant="p">{tickerSymbol} / onUSD</Typography>
           </TickerWrapper>

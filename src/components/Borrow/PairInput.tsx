@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerSymbol: string | null
+	tickerSymbol: string
 	value?: number
 	balance?: number
 	balanceDisabled?: boolean
@@ -29,7 +29,7 @@ const PairInput: React.FC<Props> = ({
 			</Stack>
 			<InputStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex">
-					<Image src={tickerIcon} width="28px" height="28px" />
+					<Image src={tickerIcon} width={28} height={28} alt={tickerSymbol} />
 					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
 					</TickerWrapper>

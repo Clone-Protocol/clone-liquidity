@@ -3,7 +3,7 @@ import { styled } from '@mui/system'
 import { useState } from 'react'
 import LiquidityPairView from '~/components/Liquidity/comet/LiquidityPairView'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {

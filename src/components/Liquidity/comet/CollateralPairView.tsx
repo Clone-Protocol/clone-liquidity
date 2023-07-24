@@ -14,7 +14,7 @@ const CollateralPairView: React.FC<Props> = ({ tickerIcon, tickerSymbol, value, 
 		<Box display="flex">
 			<FormStack direction="row" justifyContent="space-between" alignItems="center" onClick={() => handleOpenEdit(0)}>
 				<Box display="flex">
-					<Image src={tickerIcon} width="28px" height="28px" />
+					<Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
 					<TickerWrapper>
 						<TickerSymbol>{tickerSymbol}</TickerSymbol>
 					</TickerWrapper>

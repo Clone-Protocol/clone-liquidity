@@ -1,7 +1,7 @@
 import MuiDrawer from '@mui/material/Drawer'
 import { styled, List, ListItemButton, Fade, Typography } from '@mui/material'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
@@ -9,7 +9,7 @@ import { useSetAtom } from 'jotai'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 const Drawer: React.FC = () => {
-	const router = useRouter()
+	const pathname = usePathname()
 	const { connected } = useWallet()
 	const setOpenConnectWalletGuideDlogState = useSetAtom(openConnectWalletGuideDlogState)
 	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
@@ -24,17 +24,17 @@ const Drawer: React.FC = () => {
 			<Fade in timeout={1500}>
 				<List component="nav">
 					<Link href="/">
-						<StyledListItemButton className={router.asPath === '/' || router.asPath.startsWith('/assets') ? 'selected' : ''}>
+						<StyledListItemButton className={pathname === '/' || pathname?.startsWith('/assets') ? 'selected' : ''}>
 							<Typography variant="p">Overview</Typography>
 						</StyledListItemButton>
 					</Link>
 					<Link href="/liquidity">
-						<StyledListItemButton className={router.asPath.startsWith('/liquidity') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
+						<StyledListItemButton className={pathname?.startsWith('/liquidity') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
 							<Typography variant="p">My Liquidity</Typography>
 						</StyledListItemButton>
 					</Link>
 					<Link href="/borrow">
-						<StyledListItemButton className={router.asPath.startsWith('/borrow') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
+						<StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
 							<Typography variant="p">Borrow</Typography>
 						</StyledListItemButton>
 					</Link>

@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 interface Props {
 	tickerIcon: string
-	tickerSymbol: string | null
+	tickerSymbol: string
 	value?: number | string
 	dollarPrice?: number | undefined
 	headerTitle?: string
@@ -37,7 +37,7 @@ const PairInput: React.FC<Props> = ({
 			)}
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display="flex" alignItems='center' width='122px' onClick={onTickerClicked} style={onTickerClicked ? { cursor: 'pointer' } : {}}>
-					<Image src={tickerIcon} width="28px" height="28px" />
+					<Image src={tickerIcon} width={28} height={28} alt={tickerSymbol} />
 					<Box ml='10px'>
 						<Typography variant='p_lg'>{tickerSymbol}</Typography>
 					</Box>

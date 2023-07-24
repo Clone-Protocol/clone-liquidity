@@ -42,7 +42,7 @@ const TempWarningMsg: React.FC = () => {
         size="small"
         onClick={onClick}
       >
-        <Image src={CloseIcon} />
+        <Image src={CloseIcon} alt='close' />
       </IconButton>
     )
   }
