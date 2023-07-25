@@ -1,5 +1,5 @@
 import { Box, Paper, Stack, Typography } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { styled } from '@mui/system'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'

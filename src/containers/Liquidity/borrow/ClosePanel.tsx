@@ -35,10 +35,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
       )
       if (data) {
         console.log('data', data)
-        router.push(`/liquidity/${TAB_BORROW}`).then(() => {
-          //hacky sync
-          location.reload()
-        })
+        router.replace(`/liquidity/${TAB_BORROW}`)
       }
     } catch (err) {
       console.error(err)

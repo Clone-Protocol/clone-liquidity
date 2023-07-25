@@ -9,15 +9,13 @@ const AssetPage = ({ params }: { params: { assetTicker: string } }) => {
   const assetTicker = params.assetTicker || AssetTickers.euro
 
   return (
-    <div>
-      <StyledSection>
-        <Container>
-          <Box display='flex' justifyContent='center' mt="15px">
-            <AssetView assetTicker={assetTicker} />
-          </Box>
-        </Container>
-      </StyledSection>
-    </div>
+    <StyledSection>
+      <Container>
+        <Box display='flex' justifyContent='center' mt="15px">
+          <AssetView assetTicker={assetTicker} />
+        </Box>
+      </Container>
+    </StyledSection>
   )
 }
 
