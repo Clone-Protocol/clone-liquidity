@@ -29,7 +29,7 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
 	const handleRowClick: GridEventListener<'rowClick'> = (
 		params,
 	) => {
-		router.push(`/liquidity/borrow/${params.row.id}`)
+		router.push(`/myliquidity/borrow/${params.row.id}`)
 	}
 
 	return (

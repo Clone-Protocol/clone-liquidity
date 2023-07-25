@@ -10,7 +10,7 @@ const CometBlank = ({ title, subtitle, icon, hoverIcon }: { title: string, subti
     <BoxWrapper>
       <Box><Typography variant="p">{title}</Typography></Box>
       <Box maxWidth='414px' mx='5px'><Typography variant="p" color="#989898">{subtitle}</Typography></Box>
-      {icon && hoverIcon && <Link href='/liquidity'><IndicatorBox my="20px" onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}><Image src={isBtnHover ? hoverIcon : icon} alt={'icon'} /></IndicatorBox></Link>}
+      {icon && hoverIcon && <Link href='/myliquidity'><IndicatorBox my="20px" onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}><Image src={isBtnHover ? hoverIcon : icon} alt={'icon'} /></IndicatorBox></Link>}
     </BoxWrapper>
   )
 }

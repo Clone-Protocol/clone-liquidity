@@ -122,7 +122,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         console.log('data', data)
         onRefetchData()
         onHideEditForm()
-        router.push(`/liquidity/${TAB_BORROW}`)
+        router.push(`/myliquidity/${TAB_BORROW}`)
       }
     } catch (err) {
       console.error(err)

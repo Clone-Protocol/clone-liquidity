@@ -122,7 +122,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
         console.log('data', data)
         refetch()
         initData()
-        router.push('/liquidity')
+        router.push('/myliquidity')
       }
     } catch (err) {
       console.error(err)
