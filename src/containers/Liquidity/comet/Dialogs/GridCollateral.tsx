@@ -47,7 +47,7 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
-					<Image src={params.row.tickerIcon} width="27px" height="27px" layout="fixed" />
+					<Image src={params.row.tickerIcon} width={27} height={27} alt={params.row.tickerSymbol} layout="fixed" />
 					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
 						{params.row.tickerSymbol}
 					</Box>

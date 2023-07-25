@@ -11,7 +11,7 @@ export const PayIldButton = ({ onClick }: { onClick: MouseEventHandler<HTMLImage
 	return (
 		<Tooltip placement="bottom" title="Close the liquidity position" arrow>
 			<ButtonBase>
-				<Image src={isHovering ? PayIldIconOn : PayIldOff} onClick={onClick} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} />
+				<Image src={isHovering ? PayIldIconOn : PayIldOff} onClick={onClick} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} alt='ild' />
 			</ButtonBase>
 		</Tooltip>
 	)
@@ -21,7 +21,7 @@ export const CloseButton = ({ onClick }: { onClick: MouseEventHandler<HTMLImageE
 	return (
 		<Tooltip placement="bottom" title="Close this Liquidity Position" arrow>
 			<ButtonBase>
-				<Image src={CloseIcon} onClick={onClick} />
+				<Image src={CloseIcon} onClick={onClick} alt='close' />
 			</ButtonBase>
 		</Tooltip>
 	)

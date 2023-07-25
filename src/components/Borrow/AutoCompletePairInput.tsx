@@ -34,13 +34,13 @@ const SelectPairInput: React.FC<Props> = ({ assets, onChangeAsset }) => {
         renderInput={(params) => <StyledTextField {...params} placeholder="Search for an onAsset" />}
         renderOption={(props: any, option: any) => (
           <SelectBox key={option.tickerSymbol} {...props}>
-            <Image src={option.tickerIcon} width="24px" height="24px" />
+            <Image src={option.tickerIcon} width={24} height={24} alt={option.tickerSymbol} />
             <TickerName>{option.tickerName} ({option.tickerSymbol})</TickerName>
           </SelectBox>
         )}
       />
 
-      <SearchIconWrapper><Image src={SearchIcon} /></SearchIconWrapper>
+      <SearchIconWrapper><Image src={SearchIcon} alt='search' /></SearchIconWrapper>
     </Box>
   )
 }

@@ -1,6 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -9,6 +8,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { TabPanel } from '~/components/Common/StyledTab'
 import CometPanel from './CometPanel'
+import { useRouter } from 'next/navigation'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
@@ -23,18 +23,17 @@ import dynamic from 'next/dynamic'
 const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const { publicKey } = useWallet()
 	const router = useRouter()
-	const { ltab } = router.query
-	const [tab, setTab] = useState(0)
+	const tab = 0
 	const [assetIndex, setAssetIndex] = useState(0)
 	const [openChooseLiquidity, setOpenChooseLiquidity] = useState(false)
 	const ChooseLiquidityPoolsDialog = dynamic(() => import('./Dialogs/ChooseLiquidityPoolsDialog'))
 
 	// sub routing for tab
-	useEffect(() => {
-		if (ltab && parseInt(ltab.toString()) <= 1) {
-			setTab(parseInt(ltab.toString()))
-		}
-	}, [ltab])
+	// useEffect(() => {
+	// 	if (ltab && parseInt(ltab.toString()) <= 1) {
+	// 		setTab(parseInt(ltab.toString()))
+	// 	}
+	// }, [ltab])
 
 	useEffect(() => {
 		if (assetTicker) {
@@ -77,16 +76,16 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					</Box>
 					<a href="https://docs.clone.so/system-architecture/comet-liquidity-system" target="_blank" rel="noreferrer">
 						<TipMsg>
-							<Image src={InfoIcon} /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
+							<Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
 						</TipMsg>
 					</a>
 					<Box mt='15px'><Typography variant='p_lg'>Select Pool</Typography></Box>
 					<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
 						<Stack direction='row' gap={1}>
-							<Image src={assetData.tickerIcon} width="27px" height="27px" />
+							<Image src={assetData.tickerIcon} width={27} height={27} alt={assetData.tickerSymbol} />
 							<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} onUSD</Typography>
 						</Stack>
-						<Image src={SelectArrowIcon} />
+						<Image src={SelectArrowIcon} alt='select' />
 					</SelectPoolBox>
 
 					<LeftBoxWrapper>

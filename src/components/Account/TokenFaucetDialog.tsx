@@ -17,7 +17,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
               <LinkBox>
                 <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                   <Stack direction='row' spacing={2} alignItems='center'>
-                    <Image src={'/images/assets/solana.png'} width="27px" height="27px" />
+                    <Image src={'/images/assets/solana.png'} width={27} height={27} alt='solana' />
                     <Typography variant='p'>Devnet SOL</Typography>
                   </Stack>
                   <ArrowOutwardIcon sx={{ width: '13px' }} />
@@ -27,7 +27,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
             <LinkBox mt="11px" mb="17px" onClick={onGetUsdiClick}>
               <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                 <Stack direction='row' spacing={2} alignItems='center'>
-                  <Image src={'/images/assets/on-usd.svg'} width="27px" height="27px" />
+                  <Image src={'/images/assets/on-usd.svg'} width={27} height={27} alt='onUSD' />
                   <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet onUSD ($100)</Typography>
                 </Stack>
                 <Box>

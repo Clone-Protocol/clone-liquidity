@@ -139,7 +139,7 @@ const CloseLiquidityDialog = ({
             </Box>
             <BoxWithBorder width="261px" p="9px">
               <Stack direction="row" gap={1}>
-                <Image src={positionInfo.tickerIcon} width="27px" height="27px" />
+                <Image src={positionInfo.tickerIcon} width={27} height={27} alt={positionInfo.tickerSymbol} />
                 <Box>
                   <Typography variant="p_xlg">
                     {positionInfo.tickerSymbol} {"<>"} onUSD

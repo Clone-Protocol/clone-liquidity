@@ -145,8 +145,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
             </Box>
             {!isNewDeposit &&
               <StyledTabs value={tab} onChange={handleChangeTab}>
-                <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} /> : <Image src={DepositMoreOffIcon} />}></StyledTab>
-                <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} /> : <Image src={WithdrawOffIcon} />}></StyledTab>
+                <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} alt='deposit' /> : <Image src={DepositMoreOffIcon} alt='deposit' />}></StyledTab>
+                <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} alt='withdraw' /> : <Image src={WithdrawOffIcon} alt='withdraw' />}></StyledTab>
               </StyledTabs>
             }
             <StyledDivider />

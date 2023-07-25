@@ -19,7 +19,7 @@ import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountCli
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MARKETS_APP } from '~/data/social'
 
@@ -159,7 +159,7 @@ let columns: GridColDef[] = [
 
 			return (
 				<TradeButton onClick={goToTrading}>
-					<Image src={TradeIcon} />
+					<Image src={TradeIcon} alt='trade' />
 				</TradeButton>
 			)
 		},

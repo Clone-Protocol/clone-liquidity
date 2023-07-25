@@ -14,7 +14,7 @@ const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
       <Box>
         <SubTitle>Selected liquidity pool:</SubTitle>
         <PairBox>
-          <Image src={positionInfo.tickerIcon} width="28px" height="28px" />
+          <Image src={positionInfo.tickerIcon} width={28} height={28} alt={positionInfo.tickerSymbol} />
           <Box sx={{ marginLeft: '9px' }}>
             <span style={{ fontSize: '18px' }}>{positionInfo.tickerSymbol}</span> / onUSD
           </Box>

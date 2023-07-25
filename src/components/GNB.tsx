@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
 import { useSnackbar } from 'notistack'
 import { makeStyles } from '@mui/styles'
-import { GNB_ROUTES } from '~/routes'
 import CancelIcon from './Icons/CancelIcon'
 import MenuIcon from './Icons/MenuIcon'
 import { useScroll } from '~/hooks/useScroll'
@@ -25,9 +24,6 @@ import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 
 const GNB: React.FC = () => {
-	const router = useRouter()
-	const { pathname } = router
-	const [path, setPath] = useState<string>('/')
 	const [mobileNavToggle, setMobileNavToggle] = useState(false)
 	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
@@ -36,16 +32,7 @@ const GNB: React.FC = () => {
 
 	const { scrolled } = useScroll()
 
-	const firstPathname = useMemo(() => {
-		return pathname.split('/').slice(0, 2).join('/')
-	}, [pathname])
-
 	const handleMobileNavBtn = () => setMobileNavToggle((prev) => !prev)
-
-	useEffect(() => {
-		const path = GNB_ROUTES.find((route) => firstPathname === route.path)?.path
-		if (path) setPath(path)
-	}, [firstPathname])
 
 	const navClassName = useMemo(() => {
 		let className = mobileNavToggle ? 'mobile-on' : ''

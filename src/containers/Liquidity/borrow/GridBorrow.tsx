@@ -9,7 +9,7 @@ import { useBorrowQuery } from '~/features/MyLiquidity/Borrow.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 interface Props {
 	filter: FilterType
@@ -29,7 +29,7 @@ const GridBorrow: React.FC<Props> = ({ filter }) => {
 	const handleRowClick: GridEventListener<'rowClick'> = (
 		params,
 	) => {
-		router.push(`/liquidity/borrow/${params.row.id}/manage`)
+		router.push(`/liquidity/borrow/${params.row.id}`)
 	}
 
 	return (
