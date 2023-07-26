@@ -115,6 +115,7 @@ export interface LiquidityPosition {
 	poolIndex: number
 	ildValue: number,
 	ildInUsdi: boolean
+	rewards: number
 }
 
 
@@ -149,7 +150,8 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 				ildValue,
 				positionIndex: i,
 				poolIndex,
-				ildInUsdi
+				ildInUsdi,
+				rewards: 0
 			} as LiquidityPosition
 		)
 	}

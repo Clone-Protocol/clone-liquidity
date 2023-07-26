@@ -8,7 +8,6 @@ import dynamic from 'next/dynamic'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
-  // const [openNewLiquidity, setOpenNewLiquidity] = useState(false)
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openClosePosition, setOpenClosePosition] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
@@ -37,29 +36,14 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     router.push(`/assets/euro`)
   }
 
-  // const { mutateAsync } = useRecenterAllMutation(publicKey)
-  // const handleRecenterAll = async () => {
-  //   try {
-  //     const data = await mutateAsync(
-  //       {
-  //         poolIndex
-  //       }
-  //     )
-  //     if (data.result) {
-  //       onRefetchData()
-  //     }
-  //   } catch (err) {
-  //     console.error('err', err)
-  //   }
-  // }
-
   return (
     <>
       <Box>
         <PairHeader>
           <Box><Typography variant="p_sm">Pool</Typography></Box>
-          <Box ml='45px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
-          <Box ml='-90px'><Typography variant="p_sm">ILD</Typography></Box>
+          <Box ml='120px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
+          <Box ml='15px'><Typography variant="p_sm">ILD</Typography></Box>
+          <Box ml='-5px'><Typography variant="p_sm">Rewards</Typography></Box>
           <Box></Box>
         </PairHeader>
         {positions.map((position, index) =>
@@ -71,6 +55,7 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
             value={position.liquidityDollarPrice}
             ildInUsdi={position.ildInUsdi}
             ildValue={position.ildValue}
+            rewards={position.rewards}
             onShowEditDialog={handleChooseEditPosition}
             onShowClosePositionDialog={handleShowClosePositionDialog}
           />
@@ -82,15 +67,8 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
           :
           <AddButtonNoPosition onClick={redirectAddCometPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
         }
-        {/* <RecenterAllButton onClick={() => handleRecenterAll()}>Recenter all</RecenterAllButton> */}
       </Stack>
 
-      {/* <NewLiquidityDialog
-        open={openNewLiquidity}
-        assetIndex={selectAssetId}
-        onRefetchData={onRefetchData}
-        handleClose={() => setOpenNewLiquidity(false)}
-      /> */}
       <EditLiquidityDialog
         open={openEditLiquidity}
         positionIndex={editAssetId}

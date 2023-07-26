@@ -9,6 +9,7 @@ interface Props {
   value?: number
   ildValue?: number
   ildInUsdi: boolean
+  rewards?: number
   onShowEditDialog: (poolIndex: number) => void
   onShowClosePositionDialog: (poolIndex: number) => void
 }
@@ -20,6 +21,7 @@ const LiquidityPairView: React.FC<Props> = ({
   value,
   ildValue,
   ildInUsdi,
+  rewards,
   onShowEditDialog,
   onShowClosePositionDialog,
 }) => {
@@ -38,14 +40,17 @@ const LiquidityPairView: React.FC<Props> = ({
         <Box display="flex">
           <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
           <TickerWrapper>
-            <Typography variant="p">{tickerSymbol} / onUSD</Typography>
+            <Typography variant="p" whiteSpace='nowrap'>{tickerSymbol} / onUSD</Typography>
           </TickerWrapper>
         </Box>
-        <Box>
-          <Typography variant="p">${value?.toFixed(3)} USD</Typography>
+        <Box width='100px' textAlign='right'>
+          <Typography variant="p" whiteSpace='nowrap'>${value?.toFixed(3)} USD</Typography>
         </Box>
-        <Box>
-          <Typography variant="p">${`${ildValue?.toFixed(3)}`}</Typography>
+        <Box width='80px' textAlign='right'>
+          <Typography variant="p" whiteSpace='nowrap'>${`${ildValue?.toFixed(3)}`}</Typography>
+        </Box>
+        <Box width='80px' textAlign='right'>
+          <Typography variant="p" whiteSpace='nowrap'>${rewards?.toFixed(3)}</Typography>
         </Box>
         <Box display="flex" gap="10px">
           <PayIldButton onClick={showClosePositionDialog}></PayIldButton>
