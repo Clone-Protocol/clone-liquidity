@@ -2,16 +2,17 @@
 import { StyledSection } from '~/app/page'
 import { Container, Box } from '@mui/material'
 import LiquidityTable from '~/containers/Liquidity/LiquidityTable'
+import { useSearchParams } from 'next/navigation'
 
-// const MyLiquidity = ({ params }: { params: { lTab: string } }) => {
 const MyLiquidity = () => {
+  const searchParams = useSearchParams()
+  const lTab = searchParams.get('ltab') || '0'
 
   return (
     <StyledSection>
       <Container>
         <Box marginTop='40px'>
-          {/* <LiquidityTable ltab={params.lTab} /> */}
-          <LiquidityTable ltab={'0'} />
+          <LiquidityTable ltab={lTab} />
         </Box>
       </Container>
     </StyledSection>
