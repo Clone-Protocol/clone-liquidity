@@ -2,16 +2,12 @@ import { Query, useQuery } from 'react-query'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getAggregatedPoolStats, fetchBorrowData } from '~/utils/assets'
 
-export const fetchPoolAnalytics = async ({ tickerSymbol, program, setStartTimer }: { tickerSymbol: string, program: CloneClient, setStartTimer: (start: boolean) => void }) => {
+export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymbol: string, program: CloneClient }) => {
   console.log('fetchPoolAnalytics')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
 
   await program.loadClone();
   const tokenData = await program.getTokenData();
@@ -63,10 +59,9 @@ export interface AnalyticsInfo {
 export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = true }: GetAssetsProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['poolAnalytics', tickerSymbol], () => fetchPoolAnalytics({ tickerSymbol, program: getCloneApp(wallet), setStartTimer }), {
+    return useQuery(['poolAnalytics', tickerSymbol], () => fetchPoolAnalytics({ tickerSymbol, program: getCloneApp(wallet) }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

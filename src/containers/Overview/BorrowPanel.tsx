@@ -31,13 +31,6 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
   }
   const ChooseAssetDialog = dynamic(() => import('~/containers/Borrow/Dialogs/ChooseAssetDialog'))
 
-  // const { data: borrowDetail } = useBorrowDetailQuery({
-  //   userPubKey: publicKey,
-  //   index: assetIndex,
-  //   refetchOnMount: "always",
-  //   enabled: publicKey != null
-  // })
-
   const { data: usdiBalance, refetch } = useBalanceQuery({
     userPubKey: publicKey,
     refetchOnMount: "always",

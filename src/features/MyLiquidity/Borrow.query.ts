@@ -4,18 +4,14 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { FilterType } from '~/data/filter'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchAssets = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchAssets = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: Borrow.query')
-	// start timer in data-loading-indicator
-	setStartTimer(false);
-	setStartTimer(true);
 
 	await program.loadClone()
 	const result: AssetList[] = []
@@ -77,9 +73,8 @@ export interface AssetList {
 export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
-	const { setStartTimer } = useDataLoading()
 	if (wallet) {
-		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
+		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,

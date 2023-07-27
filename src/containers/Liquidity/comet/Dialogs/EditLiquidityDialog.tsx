@@ -139,13 +139,13 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                 </Box>
 
                 {mintRatio > 0 ?
-                  <BoxWithBorder mt='14px'>
+                  <BoxWithBorder>
                     <Stack direction='row' justifyContent='space-between' alignItems="center" padding='15px'>
-                      <Typography variant='p'>New Aggregate Liquidity Value</Typography>
+                      <Typography variant='p'>Your New Liquidity Value</Typography>
                       <Typography variant='p_xlg'>${totalLiquidity.toLocaleString()}</Typography>
                     </Stack>
                     <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
-                      <Typography variant='p' color='#989898'>Current Aggregate Liquidity Value: </Typography>
+                      <Typography variant='p' color='#989898'>Your Current Liquidity Value: </Typography>
                       <Typography variant='p' ml='5px'>${(defaultMintAmount * 2).toLocaleString()} USD</Typography>
                     </Box>
                   </BoxWithBorder>

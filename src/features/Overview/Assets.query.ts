@@ -2,18 +2,14 @@ import { Query, useQuery } from 'react-query'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
 import { PublicKey, Connection } from "@solana/web3.js";
 
-export const fetchAssets = async ({ setStartTimer }: { setStartTimer: (start: boolean) => void }) => {
+export const fetchAssets = async () => {
 	console.log('fetchAssets')
-	// start timer in data-loading-indicator
-	setStartTimer(false);
-	setStartTimer(true);
 
 	// MEMO: to support provider without wallet adapter
 	const network = getNetworkDetailsFromEnv()
@@ -77,11 +73,9 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
-	const { setStartTimer } = useDataLoading()
-
 	let queryFunc
 	try {
-		queryFunc = () => fetchAssets({ setStartTimer })
+		queryFunc = () => fetchAssets()
 	} catch (e) {
 		console.error(e)
 		queryFunc = () => []

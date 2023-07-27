@@ -2,7 +2,6 @@ import { Query, useQuery } from "react-query"
 import { PublicKey } from "@solana/web3.js"
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from "~/hooks/useClone"
-import { useDataLoading } from "~/hooks/useDataLoading"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { assetMapping } from "~/data/assets"
@@ -11,22 +10,16 @@ import { useAnchorWallet } from "@solana/wallet-adapter-react"
 export const fetchPools = async ({
   program,
   userPubKey,
-  setStartTimer,
   noFilter,
 }: {
   program: CloneClient
   userPubKey: PublicKey | null
-  setStartTimer: (start: boolean) => void
   noFilter: boolean
 }) => {
   if (!userPubKey) return []
+  console.log("fetchPools :: LiquidityPools.query")
 
   await program.loadClone()
-
-  console.log("fetchPools :: LiquidityPools.query")
-  // start timer in data-loading-indicator
-  setStartTimer(false)
-  setStartTimer(true)
 
   const [tokenDataResult, cometResult] = await Promise.allSettled([
     program.getTokenData(),
@@ -95,12 +88,11 @@ export function useLiquidityPoolsQuery({
 }: GetPoolsProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const { setStartTimer } = useDataLoading()
 
   if (wallet) {
     return useQuery(
       ["liquidityPools", wallet, userPubKey],
-      () => fetchPools({ program: getCloneApp(wallet), userPubKey, setStartTimer, noFilter }),
+      () => fetchPools({ program: getCloneApp(wallet), userPubKey, noFilter }),
       {
         refetchOnMount,
         refetchInterval: REFETCH_CYCLE,

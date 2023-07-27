@@ -3,11 +3,9 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, Stack, FormHelperText, Typography } from '@mui/material'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
-import PairInput from '~/components/Asset/PairInput'
-import PairInputView from '~/components/Asset/PairInputView'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
@@ -23,7 +21,6 @@ import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import dynamic from 'next/dynamic'
 
 const RISK_SCORE_VAL = 20
 
@@ -36,8 +33,8 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [validMintValue, setValidMintValue] = useState(false)
-  const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
-  const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
+  // const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
+  // const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
@@ -86,18 +83,18 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
     }
   }
 
-  const validateMintAmount = () => {
-    if (!isDirty) {
-      clearErrors('mintAmount')
-      return
-    }
+  // const validateMintAmount = () => {
+  //   if (!isDirty) {
+  //     clearErrors('mintAmount')
+  //     return
+  //   }
 
-    if (!mintAmount || mintAmount <= 0) {
-      return 'Mint amount should be above zero'
-    } else if (mintAmount >= maxMintable) {
-      return 'Mint amount cannot exceed the max mintable amount'
-    }
-  }
+  //   if (!mintAmount || mintAmount <= 0) {
+  //     return 'Mint amount should be above zero'
+  //   } else if (mintAmount >= maxMintable) {
+  //     return 'Mint amount cannot exceed the max mintable amount'
+  //   }
+  // }
 
   useEffect(() => {
     if (positionInfo !== undefined) {
@@ -129,9 +126,9 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
     }
   }
 
-  const handleChooseCollateral = (collId: number) => {
-    setOpenChooseCollateral(false)
-  }
+  // const handleChooseCollateral = (collId: number) => {
+  //   setOpenChooseCollateral(false)
+  // }
 
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
@@ -179,7 +176,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
               <Box><Typography variant='p_sm'>Max</Typography></Box>
             </Box>
           </Box>
-          <Stack direction='row' alignItems='flex-end' gap={1}>
+          {/* <Stack direction='row' alignItems='flex-end' gap={1}>
             <Box width='275px'>
               <Controller
                 name="mintAmount"
@@ -220,12 +217,12 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
                 dollarPrice={mintAmount}
               />
             </Box>
-          </Stack>
+          </Stack> */}
           <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
         </Box>
         <BoxWithBorder padding="15px 24px">
           <Stack direction='row' justifyContent='space-between'>
-            <Box><Typography variant="p">Aggregate Liquidity Value</Typography></Box>
+            <Box><Typography variant="p">Your Liquidity Value</Typography></Box>
             <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
           </Stack>
         </BoxWithBorder>
@@ -246,11 +243,11 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
         <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Comet Liquidity Position</Typography>
       </SubmitButton>
 
-      <ChooseCollateralDialog
+      {/* <ChooseCollateralDialog
         open={openChooseCollateral}
         handleChooseCollateral={handleChooseCollateral}
         handleClose={() => setOpenChooseCollateral(false)}
-      />
+      /> */}
     </>
   ) : <></>
 }

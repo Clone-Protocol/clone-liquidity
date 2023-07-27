@@ -1,4 +1,3 @@
-/// @deprecated
 import React from 'react'
 import { Box, styled, Dialog, DialogContent } from '@mui/material'
 import { FadeTransition } from '~/components/Common/Dialog'

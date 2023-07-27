@@ -2,19 +2,14 @@ import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchStatus = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchStatus = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
   if (!userPubKey) return null
 
   console.log('fetchStatus')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
-
   await program.loadClone()
 
   let totalCometLiquidity = 0;
@@ -100,10 +95,9 @@ export interface Status {
 export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['statusData', wallet, userPubKey], () => fetchStatus({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
+    return useQuery(['statusData', wallet, userPubKey], () => fetchStatus({ program: getCloneApp(wallet), userPubKey }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

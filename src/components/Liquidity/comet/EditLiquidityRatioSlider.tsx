@@ -1,5 +1,5 @@
 import { Box, Slider, Stack, styled, Typography } from '@mui/material'
-import Image from 'next/image'
+// import Image from 'next/image'
 import { PositionInfo } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 
 interface Props {
@@ -58,9 +58,9 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
     return `${value.toLocaleString(undefined, { maximumFractionDigits: 3 })}%`
   }
 
-  const handleMaxRatio = () => {
-    onChangeRatio && onChangeRatio(100)
-  }
+  // const handleMaxRatio = () => {
+  //   onChangeRatio && onChangeRatio(100)
+  // }
 
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
@@ -68,12 +68,12 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
     }
   }
 
-  const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value) {
-      const amount = parseFloat(e.currentTarget.value)
-      onChangeAmount && onChangeAmount(amount)
-    }
-  }
+  // const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.currentTarget.value) {
+  //     const amount = parseFloat(e.currentTarget.value)
+  //     onChangeAmount && onChangeAmount(amount)
+  //   }
+  // }
 
   return (
     <Box>
@@ -102,7 +102,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
         <MinMaxVal><Box>100%</Box><Box>(Max)</Box></MinMaxVal>
       </Stack>
 
-      {ratio > 0 &&
+      {/* {ratio > 0 &&
         <Box>
           <Stack direction="row" gap={1} alignItems='flex-end'>
             <Box>
@@ -148,15 +148,15 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             </StyledBox>
           </Stack>
         </Box>
-      }
+      } */}
     </Box>
   )
 }
 
-const StyledBox = styled(Box)`
-  border: solid 1px ${(props) => props.theme.boxes.blackShade};
-  width: 215px;
-`
+// const StyledBox = styled(Box)`
+//   border: solid 1px ${(props) => props.theme.boxes.blackShade};
+//   width: 215px;
+// `
 const FixThumb = styled('div')`
   width: 20px;
   height: 20px;
@@ -164,10 +164,10 @@ const FixThumb = styled('div')`
   border-radius: 99999px;
   border: 3px solid #686868;
 `
-const MaxValue = styled('span')`
-	color: #90e4fe; 
-	cursor: pointer;
-`
+// const MaxValue = styled('span')`
+// 	color: #90e4fe; 
+// 	cursor: pointer;
+// `
 const MinMaxVal = styled(Box)`
   font-size: 11px;
   font-weight: 500;
@@ -196,28 +196,28 @@ const FixValueLabel = styled(Box)`
   font-weight: 500;
   color: ${(props) => props.theme.palette.text.secondary};
 `
-const FormBox = styled(Box)`
-  height: 63px; 
-  padding: 12px;
-`
-const BottomBox = styled(Box)`
-  height: 30px;
-  text-align: center;
-  border-top: 1px solid ${(props) => props.theme.boxes.blackShade};
-`
-const InputAmount = styled(`input`)`
-  max-width: 100px;
-  margin-left: 10px;
-  text-align: right;
-  border: 0px;
-  background-color: ${(props) => props.theme.boxes.blackShade};
-  font-size: 17.3px;
-  font-weight: 500;
-`
-const MintAmount = styled('div')`
-  font-size: 12px; 
-  font-weight: 500;
-  text-align: right; 
-  color: ${(props) => props.theme.palette.text.secondary}; 
-`
+// const FormBox = styled(Box)`
+//   height: 63px; 
+//   padding: 12px;
+// `
+// const BottomBox = styled(Box)`
+//   height: 30px;
+//   text-align: center;
+//   border-top: 1px solid ${(props) => props.theme.boxes.blackShade};
+// `
+// const InputAmount = styled(`input`)`
+//   max-width: 100px;
+//   margin-left: 10px;
+//   text-align: right;
+//   border: 0px;
+//   background-color: ${(props) => props.theme.boxes.blackShade};
+//   font-size: 17.3px;
+//   font-weight: 500;
+// `
+// const MintAmount = styled('div')`
+//   font-size: 12px; 
+//   font-weight: 500;
+//   text-align: right; 
+//   color: ${(props) => props.theme.palette.text.secondary}; 
+// `
 export default EditLiquidityRatioSlider

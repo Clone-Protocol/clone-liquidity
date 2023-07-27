@@ -7,7 +7,6 @@ import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
-// import CloseEntireCometPoolDialog from './Dialogs/CloseEntireCometPoolDialog'
 
 const Comet = () => {
   const { publicKey } = useWallet()
@@ -16,7 +15,6 @@ const Comet = () => {
     refetchOnMount: "always",
     enabled: publicKey != null
   })
-  // const [openCloseEntireDlog, setOpenCloseEntireDlog] = useState(false)
 
   return infos ? (
     <Wrapper>
@@ -55,7 +53,7 @@ const Comet = () => {
       </Stack>
 
       <BoxGrid container>
-        <Grid item xs={12} md={4} sx={{ borderRight: '1px solid #3f3f3f' }}>
+        <Grid item xs={12} md={3} sx={{ borderRight: '1px solid #3f3f3f' }}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <Box marginBottom='12px'>
               <Typography variant='p_lg'>Collateral</Typography>
@@ -63,7 +61,7 @@ const Comet = () => {
             <Collaterals hasNoCollateral={infos.hasNoCollateral} collaterals={infos.collaterals} onRefetchData={() => refetch()} />
           </CardWrapper>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={9}>
           <CardWrapper sx={{ paddingLeft: '20px', paddingRight: '20px' }}>
             <Box marginBottom='12px'>
               <Typography variant='p_lg'>Liquidity</Typography>
