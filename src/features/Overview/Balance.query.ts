@@ -2,18 +2,14 @@ import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getTokenAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
-export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchBalance = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return null
 
   console.log('fetchBalance')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
 
   await program.loadClone()
 
@@ -56,10 +52,9 @@ export interface Balance {
 export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['borrowBalance', wallet, userPubKey, index], () => fetchBalance({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
+    return useQuery(['borrowBalance', wallet, userPubKey, index], () => fetchBalance({ program: getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

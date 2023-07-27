@@ -10,19 +10,16 @@ import { recenterProcedureInstructions } from 'clone-protocol-sdk/sdk/src/utils'
 import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchRecenterInfo = async ({
 	program,
 	userPubKey,
-	index,
-	setStartTimer,
+	index
 }: {
 	program: CloneClient
 	userPubKey: PublicKey | null
 	index: number
-	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return
 
@@ -118,12 +115,11 @@ interface GetProps {
 export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
-	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['recenterInfo', wallet, userPubKey, index],
-			() => fetchRecenterInfo({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }),
+			() => fetchRecenterInfo({ program: getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

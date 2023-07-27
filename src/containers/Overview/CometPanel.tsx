@@ -21,7 +21,6 @@ import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import dynamic from 'next/dynamic'
 
 const RISK_SCORE_VAL = 20
 
@@ -34,8 +33,8 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [validMintValue, setValidMintValue] = useState(false)
-  const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
-  const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
+  // const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
+  // const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
@@ -127,9 +126,9 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
     }
   }
 
-  const handleChooseCollateral = (collId: number) => {
-    setOpenChooseCollateral(false)
-  }
+  // const handleChooseCollateral = (collId: number) => {
+  //   setOpenChooseCollateral(false)
+  // }
 
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
@@ -244,11 +243,11 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
         <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Comet Liquidity Position</Typography>
       </SubmitButton>
 
-      <ChooseCollateralDialog
+      {/* <ChooseCollateralDialog
         open={openChooseCollateral}
         handleChooseCollateral={handleChooseCollateral}
         handleClose={() => setOpenChooseCollateral(false)}
-      />
+      /> */}
     </>
   ) : <></>
 }

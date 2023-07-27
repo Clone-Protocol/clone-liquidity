@@ -21,7 +21,7 @@ import WarningMsg from '~/components/Common/WarningMsg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const RISK_SCORE_VAL = 10
-const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl: () => void, handleClose: () => void }) => {
+const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl?: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {

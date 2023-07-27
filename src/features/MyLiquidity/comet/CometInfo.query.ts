@@ -4,7 +4,6 @@ import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { Comet, TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
@@ -12,24 +11,11 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 
-export const fetchInfos = async ({
-	program,
-	userPubKey,
-	setStartTimer,
-}: {
-	program: CloneClient
-	userPubKey: PublicKey | null
-	setStartTimer: (start: boolean) => void
-}) => {
+export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return
+	console.log('fetchInfos :: CometInfo.query')
 
 	await program.loadClone()
-
-	console.log('fetchInfos :: CometInfo.query')
-	// start timer in data-loading-indicator
-	setStartTimer(false)
-	setStartTimer(true)
-
 
 	let healthScore = 0
 	let totalCollValue = 0
@@ -41,7 +27,6 @@ export const fetchInfos = async ({
 	const [cometResult, tokenDataResult] = await Promise.allSettled([
 		program.getComet(), program.getTokenData()
 	]);
-
 
 	if (cometResult.status === "fulfilled" && tokenDataResult.status === "fulfilled") {
 		collaterals = extractCollateralInfo(cometResult.value)
@@ -162,12 +147,11 @@ const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): Liqu
 export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
-	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['cometInfos', wallet, userPubKey],
-			() => fetchInfos({ program: getCloneApp(wallet), userPubKey, setStartTimer }),
+			() => fetchInfos({ program: getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

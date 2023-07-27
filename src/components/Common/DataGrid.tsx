@@ -133,7 +133,7 @@ export interface TickerType {
 
 export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, tickerSymbol }) => (
   <Box display="flex" justifyContent="flex-start" marginLeft='4px'>
-    {tickerIcon && <Image src={tickerIcon} width={27} height={27} layout="fixed" alt={tickerSymbol} />}
+    {tickerIcon && <Image src={tickerIcon} width={27} height={27} alt={tickerSymbol} />}
     <Box display='flex' alignItems='center' marginLeft='16px'>
       <Box sx={{ maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
         <Typography variant='p_lg'>{tickerName}</Typography>

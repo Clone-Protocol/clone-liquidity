@@ -2,7 +2,6 @@ import { Query, useQuery } from 'react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
@@ -11,18 +10,13 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 export const fetchCollaterals = async ({
 	program,
 	userPubKey,
-	setStartTimer,
 }: {
 	program: CloneClient
 	userPubKey: PublicKey | null
-	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return []
 
 	console.log('fetchPools :: Collaterals.query')
-	// start timer in data-loading-indicator
-	setStartTimer(false)
-	setStartTimer(true)
 
 	let usdiBalance = 0
 	await program.loadClone()
@@ -65,12 +59,11 @@ export interface CollateralList {
 export function useCollateralsQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
-	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['collaterals', wallet, userPubKey],
-			() => fetchCollaterals({ program: getCloneApp(wallet), userPubKey, setStartTimer }),
+			() => fetchCollaterals({ program: getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

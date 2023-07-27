@@ -7,7 +7,6 @@ import LiquidityPositions from './LiquidityPositions';
 import Collaterals from './Collaterals';
 import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
-// import CloseEntireCometPoolDialog from './Dialogs/CloseEntireCometPoolDialog'
 
 const Comet = () => {
   const { publicKey } = useWallet()
@@ -16,7 +15,6 @@ const Comet = () => {
     refetchOnMount: "always",
     enabled: publicKey != null
   })
-  // const [openCloseEntireDlog, setOpenCloseEntireDlog] = useState(false)
 
   return infos ? (
     <Wrapper>

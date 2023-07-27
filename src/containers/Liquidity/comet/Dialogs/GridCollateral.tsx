@@ -1,4 +1,3 @@
-/// @deprecated 
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, styled } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
@@ -47,7 +46,7 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
-					<Image src={params.row.tickerIcon} width={27} height={27} alt={params.row.tickerSymbol} layout="fixed" />
+					<Image src={params.row.tickerIcon} width={27} height={27} alt={params.row.tickerSymbol} />
 					<Box sx={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', marginTop: '3px' }}>
 						{params.row.tickerSymbol}
 					</Box>
