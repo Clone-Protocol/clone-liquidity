@@ -1,4 +1,4 @@
-import { useQuery, Query } from 'react-query'
+import { useQuery, Query } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'

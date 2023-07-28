@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { getMantissa } from 'clone-protocol-sdk/sdk/src/decimal'
 import * as anchor from "@coral-xyz/anchor";

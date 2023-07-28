@@ -1,4 +1,4 @@
-import { Query, useQuery } from 'react-query'
+import { Query, useQuery } from '@tanstack/react-query'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'

@@ -34,6 +34,8 @@
     "@solana/wallet-adapter-wallets": "^0.15.5",
     "@solana/web3.js": "^1.36.0",
     "@supabase/supabase-js": "^2.26.0",
+    "@tanstack/react-query": "^4.32.0",
+    "@tanstack/react-query-devtools": "^4.32.0",
     "@types/react-copy-to-clipboard": "^5.0.2",
     "animate.css": "^4.1.1",
     "axios": "^1.3.4",
@@ -48,7 +50,6 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.31.1",
-    "react-query": "^3.34.14",
     "recharts": "^2.4.2"
   },
   "devDependencies": {
