@@ -4,7 +4,7 @@ import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } fr
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { recenterProcedureInstructions } from "clone-protocol-sdk/sdk/src/utils"
 import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts';
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useClone } from '~/hooks/useClone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'

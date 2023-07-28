@@ -1,4 +1,4 @@
-import { Query, useQuery } from 'react-query'
+import { Query, useQuery } from '@tanstack/react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 import { DEVNET_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
 import { fetchStatsData, Interval, ResponseValue, generateDates, Filter } from 'src/utils/assets'

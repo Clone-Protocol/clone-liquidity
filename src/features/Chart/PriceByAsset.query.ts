@@ -1,4 +1,4 @@
-import { Query, useQuery } from 'react-query'
+import { Query, useQuery } from '@tanstack/react-query'
 import { ChartElem } from './Liquidity.query'
 import { fetchPythPriceHistory } from '~/utils/pyth'
 import { getDailyPoolPrices30Day } from '~/utils/assets'

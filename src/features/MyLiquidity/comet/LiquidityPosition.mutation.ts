@@ -1,6 +1,6 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { CloneClient, toDevnetScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'

@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import QueryProvider from '~/hocs/QueryClient'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
