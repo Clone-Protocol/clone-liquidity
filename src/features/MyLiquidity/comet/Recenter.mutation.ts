@@ -16,9 +16,6 @@ export const callRecenter = async ({ program, userPubKey, setTxState, data }: Ca
 
 	console.log('recenter data', data)
 
-
-	await program.loadClone()
-
 	const [tokenData, comet] = await Promise.all([
 		program.getTokenData(), program.getComet()
 	]);

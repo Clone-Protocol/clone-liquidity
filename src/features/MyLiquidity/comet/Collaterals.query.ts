@@ -19,11 +19,10 @@ export const fetchCollaterals = async ({
 	console.log('fetchPools :: Collaterals.query')
 
 	let usdiBalance = 0
-	await program.loadClone()
 	let usdiTokenAccount = await getOnUSDAccount(program)
 
 	if (usdiTokenAccount !== undefined) {
-		let usdiTokenBalance = await program.connection.getTokenAccountBalance(usdiTokenAccount!)
+		let usdiTokenBalance = await program.provider.connection.getTokenAccountBalance(usdiTokenAccount!)
 		usdiBalance = usdiTokenBalance.value.uiAmount!
 	}
 

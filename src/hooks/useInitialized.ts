@@ -29,7 +29,6 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 				try {
 					console.log('getUserAccount')
 					const program = getCloneApp(wallet)
-					await program.loadClone()
 					await program.getUserAccount()
 
 					setIsAlreadyInitializedAccountState(true);

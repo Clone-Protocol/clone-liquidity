@@ -10,7 +10,6 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
   if (!userPubKey) return null
 
   console.log('fetchStatus')
-  await program.loadClone()
 
   let totalCometLiquidity = 0;
   let totalCometValLocked = 0;

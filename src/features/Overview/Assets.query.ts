@@ -25,8 +25,6 @@ export const fetchAssets = async () => {
 	);
 	// @ts-ignore
 	const program = new CloneClient(network.clone, provider)
-
-	await program.loadClone()
 	const tokenData = await program.getTokenData();
 	const iassetInfos = getiAssetInfos(tokenData);
 	const poolStats = await getAggregatedPoolStats(tokenData)

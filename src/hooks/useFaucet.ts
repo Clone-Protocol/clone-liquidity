@@ -4,7 +4,7 @@ import { getOnUSDAccount, getTokenAccount } from '~/utils/token_accounts'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'clone-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
-import { DEVNET_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
+import { CLONE_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
 import { BN } from "@coral-xyz/anchor"
 import { sendAndConfirm } from '~/utils/tx_helper'
 import { useTransactionState } from './useTransactionState';
@@ -23,7 +23,6 @@ export default function useFaucet() {
       if (connected && publicKey && mintUsdi && wallet) {
         try {
           const program = getCloneApp(wallet)
-          await program.loadClone()
           const usdiTokenAccount = await getOnUSDAccount(program);
           const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
 
@@ -31,8 +30,8 @@ export default function useFaucet() {
             [Buffer.from("jupiter")],
             new PublicKey(JUPITER_PROGRAM_ADDRESS)
           );
-          let jupiterAccount = await Jupiter.fromAccountAddress(program.connection, jupiterAddress)
-          const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.connection);
+          let jupiterAccount = await Jupiter.fromAccountAddress(program.provider.connection, jupiterAddress)
+          const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.provider.connection);
           const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
 
           let ixnCalls = []
@@ -60,7 +59,7 @@ export default function useFaucet() {
 
             ixnCalls.push(
               await program.mintOnusdInstruction(
-                new BN(onusdToMint * Math.pow(10, DEVNET_TOKEN_SCALE)),
+                new BN(onusdToMint * Math.pow(10, CLONE_TOKEN_SCALE)),
                 onusdAta,
                 usdcAta
               )

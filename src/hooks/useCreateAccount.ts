@@ -29,7 +29,6 @@ export function useCreateAccount() {
 		async function createAccount() {
 			if (wallet) {
 				const program = getCloneApp(wallet, true)
-				await program.loadClone()
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 

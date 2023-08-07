@@ -14,7 +14,6 @@ import { sendAndConfirm } from '~/utils/tx_helper';
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadClone()
 	const { borrowIndex } = data
 
 	console.log('close input data', data)
@@ -79,7 +78,6 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 export const callEditCollateral = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadClone()
 	const { borrowIndex, collateralAmount, editType } = data
 
 	if (!collateralAmount) throw new Error('no collateral amount')
@@ -143,7 +141,6 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadClone()
 	const { borrowIndex, borrowAmount, editType } = data
 
 	if (!borrowAmount) throw new Error('no borrow more amount')
@@ -157,7 +154,7 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 	const onassetAssociatedTokenAccount = await getTokenAccount(
 		assetInfo.onassetMint,
 		program.provider.publicKey!,
-		program.connection
+		program.provider.connection
 	)
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
 	let result: { result: boolean, msg: string };
@@ -320,8 +317,6 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('borrow input data', data)
-
-	await program.loadClone()
 
 	const { collateralIndex, iassetIndex, iassetAmount, collateralAmount } = data
 

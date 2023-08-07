@@ -1,12 +1,11 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
-import { Comet, TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
+import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { Comet, TokenData } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
@@ -14,8 +13,6 @@ import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return
 	console.log('fetchInfos :: CometInfo.query')
-
-	await program.loadClone()
 
 	let healthScore = 0
 	let totalCollValue = 0
@@ -167,12 +164,11 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
-	await program.loadClone()
-
 	const tokenData = await program.getTokenData();
 	const pool = tokenData.pools[index];
+	const oracle = tokenData.oracles[Number(pool.assetInfo.oracleInfoIndex)];
 	const { poolOnasset, poolOnusd } = calculatePoolAmounts(
-		toNumber(pool.onusdIld), toNumber(pool.onassetIld), toNumber(pool.committedOnusdLiquidity), toNumber(pool.assetInfo.price)
+		fromCloneScale(pool.onusdIld), fromCloneScale(pool.onassetIld), fromCloneScale(pool.committedOnusdLiquidity), fromScale(oracle.price, oracle.expo)
 	)
 	let price = poolOnusd / poolOnasset
 	let tightRange = price * 0.1

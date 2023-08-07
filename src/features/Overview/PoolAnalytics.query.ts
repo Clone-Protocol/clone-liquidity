@@ -9,7 +9,6 @@ import { getAggregatedPoolStats, fetchBorrowData } from '~/utils/assets'
 export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymbol: string, program: CloneClient }) => {
   console.log('fetchPoolAnalytics')
 
-  await program.loadClone();
   const tokenData = await program.getTokenData();
   const poolStats = await getAggregatedPoolStats(tokenData);
   const calcPctGain = (current: number, prev: number) => {

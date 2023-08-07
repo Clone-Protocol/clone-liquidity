@@ -23,8 +23,6 @@ export const fetchRecenterInfo = async ({
 }) => {
 	if (!userPubKey) return
 
-	await program.loadClone()
-
 	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
 
 	if (tokenDataResult.status === 'rejected' || cometResult.status === 'rejected') return

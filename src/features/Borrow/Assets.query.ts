@@ -4,7 +4,7 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
+import { TokenData } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
 const fetchIassetBalances = async (program: CloneClient, tokenData: TokenData): Promise<number[]> => {
@@ -34,7 +34,6 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	if (!userPubKey) return null
 	console.log('fetchAssets')
 
-	await program.loadClone()
 	const tokenData = await program.getTokenData();
 	const balances = await fetchIassetBalances(program, tokenData);
 

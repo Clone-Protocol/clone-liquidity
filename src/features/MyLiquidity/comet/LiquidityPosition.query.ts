@@ -23,8 +23,6 @@ export const fetchLiquidityDetail = async ({
 }) => {
 	if (!userPubKey) return
 
-	await program.loadClone()
-
 	const [tokenDataResult, cometResult] = await Promise.allSettled([
 		program.getTokenData(), program.getComet()
 	]);
@@ -134,8 +132,6 @@ export const fetchCloseLiquidityPosition = async ({
 	// start timer in data-loading-indicator
 	setStartTimer(false);
 	setStartTimer(true);
-
-	await program.loadClone()
 
 	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
 

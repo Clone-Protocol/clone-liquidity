@@ -7,12 +7,12 @@ import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityP
 import { useEditPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useForm } from 'react-hook-form'
 import EditLiquidityRatioSlider from '~/components/Liquidity/comet/EditLiquidityRatioSlider'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import { fromCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -36,8 +36,8 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   useEffect(() => {
     if (open && positionInfo !== undefined) {
       const position = positionInfo.comet!.positions[positionIndex]
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
-      const currentPosition = toNumber(position!.committedOnusdLiquidity)
+      const healthCoefficient = fromCloneScale(positionInfo.tokenData.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
+      const currentPosition = fromCloneScale(position!.committedOnusdLiquidity)
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)

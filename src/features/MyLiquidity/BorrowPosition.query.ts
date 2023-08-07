@@ -1,7 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
-import { toNumber } from "clone-protocol-sdk/sdk/src/decimal";
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
@@ -15,7 +14,6 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 
   console.log('fetchBorrowDetail', index)
 
-  await program.loadClone()
   const tokenData = await program.getTokenData()
 
   let oPrice = 1
@@ -53,8 +51,6 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   if (!userPubKey) return
 
   console.log('fetchBorrowPosition')
-
-  await program.loadClone()
 
   const [tokenDataResult, borrowPositionResult] = await Promise.allSettled([
     program.getTokenData(), program.getBorrowPositions()

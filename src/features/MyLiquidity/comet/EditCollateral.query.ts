@@ -18,7 +18,6 @@ export const fetchDefaultCollateral = async ({
 	index: number
 }) => {
 	if (!userPubKey) return
-	await program.loadClone()
 
 	let [cometResult, tokenDataResult, usdiAccountResult] = await Promise.allSettled([
 		program.getComet(),
@@ -32,7 +31,7 @@ export const fetchDefaultCollateral = async ({
 	let hasCometPositions = false
 
 	if (usdiAccountResult.status === 'fulfilled' && usdiAccountResult.value !== undefined) {
-		const tokenBalance = await program.connection.getTokenAccountBalance(usdiAccountResult.value!)
+		const tokenBalance = await program.provider.connection.getTokenAccountBalance(usdiAccountResult.value!)
 		balance = tokenBalance.value.uiAmount!
 	}
 

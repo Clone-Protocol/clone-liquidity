@@ -16,8 +16,6 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 
 	const { changeAmount, poolIndex } = data
 
-	await program.loadClone()
-
 	let ixnCalls = [
 		program.updatePricesInstruction(),
 		program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex)
@@ -58,8 +56,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('edit input data', data)
-
-	await program.loadClone()
 
 	const [cometResult, tokenDataResult, usdiAtaResult] = await Promise.allSettled([
 		program.getComet(),
@@ -128,13 +124,11 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	await program.loadClone()
-
 	let [onassetAssociatedToken, onusdAssociatedTokenAddress, userAccount] = await Promise.all([
 		getTokenAccount(
 			data.onassetMint,
 			program.provider.publicKey!,
-			program.connection
+			program.provider.connection
 		),
 		getAssociatedTokenAddress(
 			program.clone!.onusdMint,
@@ -273,8 +267,6 @@ export function useClosePositionMutation(userPubKey: PublicKey | null) {
 
 export const callCloseAll = async ({ program, userPubKey, setTxState }: CallCloseAllProps) => {
 	if (!userPubKey) throw new Error('no user public key')
-
-	await program.loadClone()
 
 	//@TODO
 

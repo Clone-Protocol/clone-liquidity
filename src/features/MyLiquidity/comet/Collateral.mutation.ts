@@ -13,7 +13,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	console.log('edit input data', data)
 
-	await program.loadClone()
 	const userUsdiTokenAccount = await getOnUSDAccount(program)
 
 	const { collAmount, collIndex, editType } = data

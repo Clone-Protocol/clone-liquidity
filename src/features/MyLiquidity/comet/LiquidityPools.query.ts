@@ -19,8 +19,6 @@ export const fetchPools = async ({
   if (!userPubKey) return []
   console.log("fetchPools :: LiquidityPools.query")
 
-  await program.loadClone()
-
   const [tokenDataResult, cometResult] = await Promise.allSettled([
     program.getTokenData(),
     program.getComet(),

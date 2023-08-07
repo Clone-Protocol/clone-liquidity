@@ -13,7 +13,6 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useRouter } from 'next/navigation'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import CometBlank from '~/components/Overview/CometBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
 import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
@@ -21,6 +20,7 @@ import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import { fromCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const RISK_SCORE_VAL = 20
 
@@ -45,7 +45,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
 
   useEffect(() => {
     if (positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
+      const healthCoefficient = fromCloneScale(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)

@@ -13,7 +13,6 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 
 	console.log('fetchPools :: Borrow.query')
 
-	await program.loadClone()
 	const result: AssetList[] = []
 
 	const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
