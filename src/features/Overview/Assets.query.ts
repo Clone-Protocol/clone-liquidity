@@ -7,6 +7,7 @@ import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
 import { PublicKey, Connection } from "@solana/web3.js";
+import { Clone as CloneAccount } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchAssets = async () => {
 	console.log('fetchAssets')
@@ -23,8 +24,15 @@ export const fetchAssets = async () => {
 		},
 		{}
 	);
-	// @ts-ignore
-	const program = new CloneClient(network.clone, provider)
+	const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
+		[Buffer.from("clone")],
+		network.clone
+	);
+	const account = await CloneAccount.fromAccountAddress(
+		provider.connection,
+		cloneAccountAddress
+	);
+	const program = new CloneClient(provider, account, network.clone)
 	const tokenData = await program.getTokenData();
 	const iassetInfos = getiAssetInfos(tokenData);
 	const poolStats = await getAggregatedPoolStats(tokenData)

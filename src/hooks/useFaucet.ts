@@ -22,7 +22,8 @@ export default function useFaucet() {
       const onusdToMint = 100;
       if (connected && publicKey && mintUsdi && wallet) {
         try {
-          const program = getCloneApp(wallet)
+          const program = await getCloneApp(wallet)
+          const tokenData = await program.getTokenData();
           const usdiTokenAccount = await getOnUSDAccount(program);
           const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
 
@@ -51,7 +52,6 @@ export default function useFaucet() {
                   jupiterAccount: jupiterAddress,
                   tokenProgram: TOKEN_PROGRAM_ID
                 }, {
-                nonce,
                 amount: new BN(onusdToMint * Math.pow(10, 7))
               }
               )
@@ -59,6 +59,7 @@ export default function useFaucet() {
 
             ixnCalls.push(
               await program.mintOnusdInstruction(
+                tokenData,
                 new BN(onusdToMint * Math.pow(10, CLONE_TOKEN_SCALE)),
                 onusdAta,
                 usdcAta

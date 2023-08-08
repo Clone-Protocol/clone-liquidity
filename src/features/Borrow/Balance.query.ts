@@ -77,7 +77,7 @@ export function useBalanceQuery({ userPubKey, refetchOnMount, enabled = true }: 
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['cometBalance', wallet, userPubKey], () => fetchBalances({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
+    return useQuery(['cometBalance', wallet, userPubKey], async () => fetchBalances({ program: await getCloneApp(wallet), userPubKey, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

@@ -19,7 +19,7 @@ export const getTokenAccount = async (mint: PublicKey, owner: PublicKey, connect
     account = await getAccount(
       connection,
       associatedToken,
-      "processed",
+      "recent",
       TOKEN_PROGRAM_ID
     );
   } catch (error: unknown) {
@@ -37,7 +37,7 @@ export const getOnUSDAccount = async (clone: CloneClient): Promise<PublicKey | u
   const usdiTokenAccount = await getTokenAccount(
     clone.clone!.onusdMint,
     clone.provider.publicKey!,
-    clone.connection
+    clone.provider.connection
   );
   return usdiTokenAccount!;
 }

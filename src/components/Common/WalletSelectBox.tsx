@@ -6,11 +6,14 @@ import { useSnackbar } from 'notistack';
 import { shortenAddress } from '~/utils/address'
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletDialog } from '~/hooks/useWalletDialog';
+import { useSetAtom } from 'jotai'
+import { cloneClient } from '~/features/globalAtom'
 
 const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
   const { publicKey, disconnect } = useWallet()
   const { setOpen } = useWalletDialog()
+  const setCloneClient = useSetAtom(cloneClient)
 
   const handleChangeWallet = () => {
     disconnect()
@@ -19,6 +22,7 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
   }
 
   const handleDisconnect = () => {
+    setCloneClient(null)
     disconnect()
     onHide && onHide()
     // refresh page by force

@@ -76,7 +76,7 @@ export function useEditCollateralQuery({ userPubKey, index, refetchOnMount, enab
 	if (wallet) {
 		return useQuery(
 			['editCollateral', wallet, userPubKey, index],
-			() => fetchDefaultCollateral({ program: getCloneApp(wallet), userPubKey, index }),
+			async () => fetchDefaultCollateral({ program: await getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
 				enabled,

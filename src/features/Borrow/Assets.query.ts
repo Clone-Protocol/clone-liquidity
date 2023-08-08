@@ -73,7 +73,7 @@ export function useAssetsQuery({ userPubKey, enabled = true, refetchOnMount }: G
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(['assets', wallet, userPubKey], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {
+		return useQuery(['assets', wallet, userPubKey], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
 			enabled
 		})

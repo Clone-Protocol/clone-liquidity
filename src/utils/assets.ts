@@ -1,4 +1,4 @@
-import { TokenData } from "clone-protocol-sdk/sdk/generated/clone";
+import { TokenDataArgs } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { calculatePoolAmounts } from "clone-protocol-sdk/sdk/src/utils";
 import { fetchFromCloneIndex } from "./fetch_netlify";
@@ -41,7 +41,7 @@ export const fetchStatsData = async (filter: Filter, interval: Interval): Promis
   return response.data as ResponseValue[]
 }
 
-export const getiAssetInfos = (tokenData: TokenData): { poolIndex: number, poolPrice: number, liquidity: number }[] => {
+export const getiAssetInfos = (tokenData: TokenDataArgs): { poolIndex: number, poolPrice: number, liquidity: number }[] => {
   const iassetInfo = [];
   for (let poolIndex = 0; poolIndex < Number(tokenData.numPools); poolIndex++) {
     const pool = tokenData.pools[poolIndex];
@@ -72,10 +72,10 @@ const convertToNumber = (val: string | number) => {
   return Number(val) * Math.pow(10, -CLONE_TOKEN_SCALE)
 }
 
-export const getAggregatedPoolStats = async (tokenData: TokenData): Promise<AggregatedStats[]> => {
+export const getAggregatedPoolStats = async (tokenData: TokenDataArgs): Promise<AggregatedStats[]> => {
   let result: AggregatedStats[] = [];
   for (let i = 0; i < tokenData.numPools.toNumber(); i++) {
-    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: toNumber(tokenData.pools[i].committedOnusdLiquidity) * 2, previousLiquidity: 0 })
+    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromCloneScale(tokenData.pools[i].committedOnusdLiquidity) * 2, previousLiquidity: 0 })
   }
 
   const statsData = await fetchStatsData('week', 'hour')

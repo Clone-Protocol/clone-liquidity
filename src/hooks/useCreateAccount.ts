@@ -28,7 +28,7 @@ export function useCreateAccount() {
 	useEffect(() => {
 		async function createAccount() {
 			if (wallet) {
-				const program = getCloneApp(wallet, true)
+				const program = await getCloneApp(wallet, true)
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 

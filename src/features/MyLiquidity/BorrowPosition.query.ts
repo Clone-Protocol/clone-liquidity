@@ -1,6 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
@@ -20,9 +20,10 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   let stableCollateralRatio = 0
   let cryptoCollateralRatio = 0
   let assetInfo = tokenData.pools[index].assetInfo
-  oPrice = toNumber(assetInfo.price);
-  stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
-  cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
+  const oracle = tokenData.oracles[Number(tokenData.pools[index].assetInfo.oracleInfoIndex)];
+  oPrice = fromScale(oracle.price, oracle.expo)
+  stableCollateralRatio = fromScale(assetInfo.stableCollateralRatio, 2) * 100;
+  cryptoCollateralRatio = fromScale(assetInfo.cryptoCollateralRatio, 2) * 100;
 
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
 
@@ -62,8 +63,10 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const poolIndex = Number(mint.poolIndex)
 
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
-  const assetInfo = tokenDataResult.value.pools[poolIndex].assetInfo;
-  const oraclePrice = toNumber(assetInfo.price);
+  const pool = tokenDataResult.value.pools[poolIndex]
+  const assetInfo = pool.assetInfo;
+  const oracle = tokenDataResult.value.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+  const oraclePrice = fromScale(oracle.price, oracle.expo)
   const positionsData = getUserMintInfos(tokenDataResult.value, borrowPositionResult.value);
   const positionData = positionsData[index];
 
@@ -131,7 +134,7 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
   if (wallet) {
-    return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getCloneApp(wallet), userPubKey, index }), {
+    return useQuery(['borrowDetail', userPubKey, index], async () => fetchBorrowDetail({ program: await getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       enabled
     })
@@ -146,7 +149,7 @@ export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enab
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
+    return useQuery(['borrowPosition', userPubKey, index], async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

@@ -1,7 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toDevnetScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { getOnUSDAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
@@ -20,13 +20,13 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()];
 	/// Deposit
 	if (editType === 0) {
-		ixnCalls.push(program.addCollateralToCometInstruction(userUsdiTokenAccount!, toDevnetScale(collAmount), 0))
+		ixnCalls.push(program.addCollateralToCometInstruction(userUsdiTokenAccount!, toCloneScale(collAmount), 0))
 		/// Withdraw
 	} else {
 		ixnCalls.push(
 			program.withdrawCollateralFromCometInstruction(
 				userUsdiTokenAccount!,
-				toDevnetScale(collAmount),
+				toCloneScale(collAmount),
 				0,
 			))
 	}
@@ -57,7 +57,7 @@ export function useCollateralMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEdit({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}

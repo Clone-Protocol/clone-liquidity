@@ -104,7 +104,7 @@ export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, ena
 	if (wallet) {
 		return useQuery(
 			['liquidityPosition', wallet, userPubKey, index],
-			() => fetchLiquidityDetail({ program: getCloneApp(wallet), userPubKey, index }),
+			async () => fetchLiquidityDetail({ program: await getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
 				enabled,
@@ -233,7 +233,7 @@ export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, e
 	if (wallet) {
 		return useQuery(
 			['closeLiquidityPosition', wallet, userPubKey, index],
-			() => fetchCloseLiquidityPosition({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }),
+			async () => fetchCloseLiquidityPosition({ program: await getCloneApp(wallet), userPubKey, index, setStartTimer }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

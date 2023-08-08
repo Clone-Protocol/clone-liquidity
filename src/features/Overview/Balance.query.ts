@@ -52,7 +52,7 @@ export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = t
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['borrowBalance', wallet, userPubKey, index], () => fetchBalance({ program: getCloneApp(wallet), userPubKey, index }), {
+    return useQuery(['borrowBalance', wallet, userPubKey, index], async () => fetchBalance({ program: await getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

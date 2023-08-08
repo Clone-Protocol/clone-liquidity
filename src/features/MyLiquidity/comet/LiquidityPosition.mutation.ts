@@ -1,7 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toDevnetScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -18,7 +18,7 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 
 	let ixnCalls = [
 		program.updatePricesInstruction(),
-		program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex)
+		program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex)
 	]
 	const ixns = await Promise.all(ixnCalls)
 
@@ -45,7 +45,7 @@ export function useNewPositionMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: NewFormData) => callNew({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: NewFormData) => funcNoWallet())
 	}
@@ -80,12 +80,12 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	let ixnCalls = [program.updatePricesInstruction()]
 	/// Deposit
 	if (editType === 0) {
-		ixnCalls.push(program.addLiquidityToCometInstruction(toDevnetScale(changeAmount), poolIndex))
+		ixnCalls.push(program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex))
 		/// Withdraw
 	} else {
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-				toDevnetScale(changeAmount),
+				toCloneScale(changeAmount),
 				positionIndex
 			))
 	}
@@ -115,7 +115,7 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEdit({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -163,7 +163,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	const positionOnUsdLiquidity = toDevnetScale(data.committedOnusdLiquidity)
+	const positionOnUsdLiquidity = toCloneScale(data.committedOnusdLiquidity)
 
 	if (positionOnUsdLiquidity > 0) {
 		ixnCalls.push(
@@ -174,11 +174,11 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	if (toDevnetScale(data.onassetILD) > 0) {
+	if (toCloneScale(data.onassetILD) > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				data.positionIndex,
-				toDevnetScale(data.onassetBalance),
+				toCloneScale(data.onassetBalance),
 				false,
 				onassetAssociatedToken,
 				onusdAssociatedTokenAddress,
@@ -186,11 +186,11 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	if (toDevnetScale(data.onusdILD) > 0) {
+	if (toCloneScale(data.onusdILD) > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				data.positionIndex,
-				toDevnetScale(data.onusdBalance),
+				toCloneScale(data.onusdBalance),
 				true,
 				onassetAssociatedToken,
 				onusdAssociatedTokenAddress,
@@ -199,7 +199,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	}
 
 	ixnCalls.push(
-		program.program.methods
+		program.methods
 			.collectLpRewards(data.positionIndex)
 			.accounts({
 				user: program.provider.publicKey!,
@@ -258,7 +258,7 @@ export function useClosePositionMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: CloseFormData) => callClose({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
@@ -286,7 +286,7 @@ export function useCloseAllPositionMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation(() => callCloseAll({ program: getCloneApp(wallet), userPubKey, setTxState }))
+		return useMutation(async () => callCloseAll({ program: await getCloneApp(wallet), userPubKey, setTxState }))
 	} else {
 		return useMutation(() => funcNoWallet())
 	}

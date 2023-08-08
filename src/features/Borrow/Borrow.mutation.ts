@@ -1,7 +1,6 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from '@tanstack/react-query'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
-import { getMantissa } from 'clone-protocol-sdk/sdk/src/decimal'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -36,13 +35,13 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		program.updatePricesInstruction(),
 		program.payBorrowDebtInstruction(
 			onassetAssociatedTokenAccount!,
-			new anchor.BN(getMantissa(mintPosition.borrowedOnasset)),
+			new BN(mintPosition.borrowedOnasset),
 			borrowIndex
 		),
 		program.withdrawCollateralFromBorrowInstruction(
 			borrowIndex,
 			collateralAssociatedTokenAccount!,
-			new anchor.BN(getMantissa(mintPosition.collateralAmount))
+			new BN(mintPosition.collateralAmount)
 		)
 	]
 
@@ -69,7 +68,7 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: CloseFormData) => callClose({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
@@ -225,7 +224,7 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEditCollateral({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -237,7 +236,7 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEditBorrow({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -365,7 +364,7 @@ export function useBorrowMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: BorrowFormData) => callBorrow({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: BorrowFormData) => callBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: BorrowFormData) => funcNoWallet())
 	}

@@ -37,28 +37,28 @@ export const CloneProvider: FC<CloneProviderProps> = ({ children, ...props }) =>
 
 		// console.log('wallet', wallet)
 		let clone
-		if (!mainCloneClient || isChangePubKey) {
-			const opts = {
-				preflightCommitment: "processed" as Commitment,
-			}
-			const network = getNetworkDetailsFromEnv()
-			// console.log('network', network)
-			const new_connection = new Connection(network.endpoint)
-			const provider = new AnchorProvider(new_connection, wallet!, opts)
-
-			const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
-				[Buffer.from("clone")],
-				network.clone
-			);
-			const cAccount = await CloneAccount.fromAccountAddress(
-				provider.connection,
-				cloneAccountAddress
-			);
-			clone = new CloneClient(provider, cAccount, network.clone)
-			setMainCloneClient(clone)
-		} else {
-			clone = mainCloneClient
+		// if (!mainCloneClient || isChangePubKey) {
+		const opts = {
+			preflightCommitment: "processed" as Commitment,
 		}
+		const network = getNetworkDetailsFromEnv()
+		// console.log('network', network)
+		const new_connection = new Connection(network.endpoint)
+		const provider = new AnchorProvider(new_connection, wallet!, opts)
+
+		const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
+			[Buffer.from("clone")],
+			network.clone
+		);
+		const cAccount = await CloneAccount.fromAccountAddress(
+			provider.connection,
+			cloneAccountAddress
+		);
+		clone = new CloneClient(provider, cAccount, network.clone)
+		// 	setMainCloneClient(clone)
+		// } else {
+		// 	clone = mainCloneClient
+		// }
 
 		return clone
 	}

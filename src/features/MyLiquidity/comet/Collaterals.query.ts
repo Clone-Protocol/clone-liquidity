@@ -62,7 +62,7 @@ export function useCollateralsQuery({ userPubKey, refetchOnMount, enabled = true
 	if (wallet) {
 		return useQuery(
 			['collaterals', wallet, userPubKey],
-			() => fetchCollaterals({ program: getCloneApp(wallet), userPubKey }),
+			async () => fetchCollaterals({ program: await getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

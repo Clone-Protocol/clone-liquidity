@@ -1,9 +1,9 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { CloneClient, fromCloneScale } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchStatus = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
@@ -31,10 +31,11 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
     const borrowPositions = borrowPositionsResult.value;
     for (var i = 0; i < Number(borrowPositions.numPositions); i++) {
       let borrowPosition = borrowPositions.borrowPositions[i]
-      let collateralAmount = toNumber(borrowPosition.collateralAmount)
+      let collateral = tokenData.collaterals[Number(borrowPosition.collateralIndex)];
+      let collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale)
       totalBorrowCollateralVal += collateralAmount
       let pool = tokenData.pools[borrowPosition.poolIndex];
-      totalBorrowLiquidity += toNumber(borrowPosition.borrowedOnasset) * toNumber(pool.assetInfo.price);
+      totalBorrowLiquidity += fromCloneScale(borrowPosition.borrowedOnasset) * toNumber(pool.assetInfo.price);
     }
   }
 
@@ -45,7 +46,7 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
     totalCometValLocked += usdiValue
 
     comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalCometLiquidity += toNumber(pos.committedOnusdLiquidity) * 2
+      totalCometLiquidity += fromCloneScale(pos.committedOnusdLiquidity) * 2
     });
   }
 
@@ -96,7 +97,7 @@ export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: G
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['statusData', wallet, userPubKey], () => fetchStatus({ program: getCloneApp(wallet), userPubKey }), {
+    return useQuery(['statusData', wallet, userPubKey], async () => fetchStatus({ program: await getCloneApp(wallet), userPubKey }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

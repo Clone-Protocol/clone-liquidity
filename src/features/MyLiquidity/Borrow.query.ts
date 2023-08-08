@@ -73,7 +73,7 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {
+		return useQuery(['borrowAssets', wallet, userPubKey, filter], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,

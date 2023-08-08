@@ -148,7 +148,7 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 	if (wallet) {
 		return useQuery(
 			['cometInfos', wallet, userPubKey],
-			() => fetchInfos({ program: getCloneApp(wallet), userPubKey }),
+			async () => fetchInfos({ program: await getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,
@@ -192,7 +192,7 @@ export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, ena
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getCloneApp(wallet), userPubKey, index }), {
+		return useQuery(['initComet', wallet, userPubKey, index], async () => fetchInitializeCometDetail({ program: await getCloneApp(wallet), userPubKey, index }), {
 			refetchOnMount,
 			enabled
 		})

@@ -17,6 +17,7 @@ import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import dynamic from 'next/dynamic'
+import ErrorBoundary from '~/components/Common/ErrorBoundary'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isCompleteInit, _] = useLocalStorage(IS_COMPLETE_INIT, false)
@@ -41,29 +42,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <JotaiProvider>
             <ThemeProvider theme={theme}>
               <SnackbarProvider maxSnack={3}>
-                <ClientWalletProvider>
-                  <TransactionStateProvider>
-                    <DataLoadingIndicatorProvider>
-                      <Box display='flex' sx={{ backgroundColor: '#000' }}>
-                        <CssBaseline />
-                        <GNB />
-                        <Drawer />
+                <ErrorBoundary>
+                  <ClientWalletProvider>
+                    <TransactionStateProvider>
+                      <DataLoadingIndicatorProvider>
+                        <Box display='flex' sx={{ backgroundColor: '#000' }}>
+                          <CssBaseline />
+                          <GNB />
+                          <Drawer />
 
-                        <Box
-                          component="main"
-                          sx={{
-                            flexGrow: 1,
-                            height: '100vh',
-                            overflow: 'auto',
-                            overscrollBehaviorY: 'contain'
-                          }}>
-                          {children}
+                          <Box
+                            component="main"
+                            sx={{
+                              flexGrow: 1,
+                              height: '100vh',
+                              overflow: 'auto',
+                              overscrollBehaviorY: 'contain'
+                            }}>
+                            {children}
+                          </Box>
+                          {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
                         </Box>
-                        {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
-                      </Box>
-                    </DataLoadingIndicatorProvider>
-                  </TransactionStateProvider>
-                </ClientWalletProvider>
+                      </DataLoadingIndicatorProvider>
+                    </TransactionStateProvider>
+                  </ClientWalletProvider>
+                </ErrorBoundary>
               </SnackbarProvider>
             </ThemeProvider>
           </JotaiProvider>

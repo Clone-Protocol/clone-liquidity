@@ -60,7 +60,7 @@ export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = 
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['poolAnalytics', tickerSymbol], () => fetchPoolAnalytics({ tickerSymbol, program: getCloneApp(wallet) }), {
+    return useQuery(['poolAnalytics', tickerSymbol], async () => fetchPoolAnalytics({ tickerSymbol, program: await getCloneApp(wallet) }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

@@ -90,7 +90,7 @@ export function useLiquidityPoolsQuery({
   if (wallet) {
     return useQuery(
       ["liquidityPools", wallet, userPubKey],
-      () => fetchPools({ program: getCloneApp(wallet), userPubKey, noFilter }),
+      async () => fetchPools({ program: await getCloneApp(wallet), userPubKey, noFilter }),
       {
         refetchOnMount,
         refetchInterval: REFETCH_CYCLE,
