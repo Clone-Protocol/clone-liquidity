@@ -6,6 +6,7 @@ const nextConfig = {
   },
   experimental: {
     externalDir: true,
+    appDir: true
   },
   typescript: {
     // !! WARN !!
