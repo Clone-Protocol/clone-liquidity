@@ -93,11 +93,11 @@ const RightMenu = () => {
 	const { setMintUsdi } = useFaucet()
 
 	// go route home unless wallet is connected
-	useEffect(() => {
-		if (!wallet && !connected && pathname !== '/') {
-			return router.replace('/')
-		}
-	}, [connected, pathname])
+	// useEffect(() => {
+	// 	if (!wallet && !connected && pathname !== '/') {
+	// 		return router.replace('/')
+	// 	}
+	// }, [connected, pathname])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
