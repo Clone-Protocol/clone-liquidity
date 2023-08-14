@@ -30,7 +30,7 @@ const BorrowContainer = () => {
     setBorrowAsset(ASSETS[index])
   }
 
-  return borrowAsset && borrowDetail ? (
+  return borrowAsset ? (
     <StyledBox>
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
@@ -47,7 +47,7 @@ const BorrowContainer = () => {
         <RightBoxWrapper>
           <StickyBox>
             <PriceChart assetData={borrowAsset} isOraclePrice={true} priceTitle='Oracle Price' />
-            <PositionAnalytics price={borrowDetail.oPrice} tickerSymbol={borrowAsset.tickerSymbol} />
+            {borrowDetail && <PositionAnalytics price={borrowDetail.oPrice} tickerSymbol={borrowAsset.tickerSymbol} />}
           </StickyBox>
         </RightBoxWrapper>
       </Stack>

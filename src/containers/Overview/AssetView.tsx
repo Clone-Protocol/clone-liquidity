@@ -116,7 +116,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				noFilter={tab !== 0}
 			/>
 		</Box>
-	) : <></>
+	) : <><Typography variant='p_lg'>Please Connect Wallet</Typography></>
 }
 
 const LeftBoxWrapper = styled(Box)`

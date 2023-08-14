@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -18,7 +18,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
@@ -71,7 +71,6 @@ const RightMenu = () => {
 	const router = useRouter()
 	const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
-	const pathname = usePathname()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
@@ -91,17 +90,6 @@ const RightMenu = () => {
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
-
-	// go route home unless wallet is connected
-	useEffect(() => {
-		console.log('pathname', pathname)
-		console.log('wallet', wallet)
-		console.log('connected', connected)
-		if (!wallet && !connected && pathname !== '/') {
-			console.log('redirect')
-			// return router.replace('/')
-		}
-	}, [connected, pathname])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
