@@ -96,7 +96,7 @@ const RightMenu = () => {
 	useEffect(() => {
 		console.log('pathname', pathname)
 		if (!wallet && !connected && pathname !== '/') {
-			// return router.replace('/')
+			return router.replace('/')
 		}
 	}, [connected, pathname])
 
