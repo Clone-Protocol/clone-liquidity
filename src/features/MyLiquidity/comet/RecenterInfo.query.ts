@@ -128,6 +128,6 @@ export function useRecenterInfoQuery({ userPubKey, index, refetchOnMount, enable
 			}
 		)
 	} else {
-		return useQuery(['recenterInfo'], () => { })
+		return useQuery(['recenterInfo'], () => { return null })
 	}
 }

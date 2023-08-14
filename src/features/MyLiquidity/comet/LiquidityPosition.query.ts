@@ -113,7 +113,7 @@ export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, ena
 			}
 		)
 	} else {
-		return useQuery(['liquidityPosition'], () => { })
+		return useQuery(['liquidityPosition'], () => { return null })
 	}
 }
 
@@ -246,7 +246,7 @@ export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, e
 			}
 		)
 	} else {
-		return useQuery(['closeLiquidityPosition'], () => { })
+		return useQuery(['closeLiquidityPosition'], () => { return null })
 	}
 }
 

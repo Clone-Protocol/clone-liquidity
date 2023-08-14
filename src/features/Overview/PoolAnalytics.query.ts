@@ -68,6 +68,6 @@ export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = 
       enabled
     })
   } else {
-    return useQuery(['poolAnalytics'], () => { })
+    return useQuery(['poolAnalytics'], () => { return null })
   }
 }

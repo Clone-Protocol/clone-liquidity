@@ -160,7 +160,7 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 			}
 		)
 	} else {
-		return useQuery(['cometInfos'], () => { })
+		return useQuery(['cometInfos'], () => { return null })
 	}
 }
 
@@ -201,6 +201,6 @@ export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, ena
 			enabled
 		})
 	} else {
-		return useQuery(['initComet'], () => { })
+		return useQuery(['initComet'], () => { return null })
 	}
 }

@@ -104,6 +104,6 @@ export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: G
       enabled
     })
   } else {
-    return useQuery(['statusData'], () => { })
+    return useQuery(['statusData'], () => { return null })
   }
 }

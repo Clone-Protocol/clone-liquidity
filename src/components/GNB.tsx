@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -71,6 +71,7 @@ const RightMenu = () => {
 	const router = useRouter()
 	const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const pathname = usePathname()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
@@ -90,6 +91,13 @@ const RightMenu = () => {
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
+
+	// go route home unless wallet is connected
+	useEffect(() => {
+		if (!wallet && !connected && pathname !== '/') {
+			return router.replace('/')
+		}
+	}, [connected, pathname])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {

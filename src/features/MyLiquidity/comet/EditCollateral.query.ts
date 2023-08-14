@@ -84,6 +84,6 @@ export function useEditCollateralQuery({ userPubKey, index, refetchOnMount, enab
 			}
 		)
 	} else {
-		return useQuery(['editCollateral'], () => { })
+		return useQuery(['editCollateral'], () => { return null })
 	}
 }
