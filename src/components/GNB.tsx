@@ -95,8 +95,11 @@ const RightMenu = () => {
 	// go route home unless wallet is connected
 	useEffect(() => {
 		console.log('pathname', pathname)
+		console.log('wallet', wallet)
+		console.log('connected', connected)
 		if (!wallet && !connected && pathname !== '/') {
-			return router.replace('/')
+			console.log('redirect')
+			// return router.replace('/')
 		}
 	}, [connected, pathname])
 
