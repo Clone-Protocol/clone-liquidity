@@ -241,7 +241,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
         handleClose={() => setOpenChooseAsset(false)}
       />
     </>
-  ) : <></>
+  ) : <><Typography variant='p_lg'>Please Connect Wallet</Typography></>
 }
 
 

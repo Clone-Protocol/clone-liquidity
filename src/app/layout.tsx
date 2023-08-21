@@ -17,7 +17,8 @@ import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import dynamic from 'next/dynamic'
-import ErrorBoundary from '~/components/Common/ErrorBoundary'
+import GlobalError from './global-error'
+import ErrorBoundary from '~/components/ErrorBoundary'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isCompleteInit, _] = useLocalStorage(IS_COMPLETE_INIT, false)
@@ -42,10 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <JotaiProvider>
             <ThemeProvider theme={theme}>
               <SnackbarProvider maxSnack={3}>
-                <ErrorBoundary>
-                  <ClientWalletProvider>
-                    <TransactionStateProvider>
-                      <DataLoadingIndicatorProvider>
+                <ClientWalletProvider>
+                  <TransactionStateProvider>
+                    <DataLoadingIndicatorProvider>
+                      <ErrorBoundary fallback={<GlobalError />}>
                         <Box display='flex' sx={{ backgroundColor: '#000' }}>
                           <CssBaseline />
                           <GNB />
@@ -63,16 +64,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                           </Box>
                           {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
                         </Box>
-                      </DataLoadingIndicatorProvider>
-                    </TransactionStateProvider>
-                  </ClientWalletProvider>
-                </ErrorBoundary>
+                      </ErrorBoundary>
+                    </DataLoadingIndicatorProvider>
+                  </TransactionStateProvider>
+                </ClientWalletProvider>
               </SnackbarProvider>
             </ThemeProvider>
           </JotaiProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryProvider>
-      </body>
-    </html>
+      </body >
+    </html >
   )
 }

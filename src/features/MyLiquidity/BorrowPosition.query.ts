@@ -139,7 +139,7 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
       enabled
     })
   } else {
-    return useQuery(['borrowDetail'], () => { })
+    return useQuery(['borrowDetail'], () => { return null })
   }
 }
 
@@ -156,6 +156,6 @@ export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enab
       enabled
     })
   } else {
-    return useQuery(['borrowPosition'], () => { })
+    return useQuery(['borrowPosition'], () => { return null })
   }
 }

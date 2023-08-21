@@ -79,7 +79,7 @@ const Comet = () => {
         handleClose={() => setOpenCloseEntireDlog(false)}
       /> */}
     </Wrapper>
-  ) : <></>
+  ) : <><Typography variant='p_lg'>Please Connect Wallet</Typography></>
 }
 
 const Wrapper = styled(Box)`
