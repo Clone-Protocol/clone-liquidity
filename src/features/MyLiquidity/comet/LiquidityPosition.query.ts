@@ -4,13 +4,13 @@ import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
-import { TokenData, Comet } from 'clone-protocol-sdk/sdk/src/interfaces'
 import { getHealthScore, getILD, getEffectiveUSDCollateralValue } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
+import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -23,15 +23,15 @@ export const fetchLiquidityDetail = async ({
 }) => {
 	if (!userPubKey) return
 
-	const [tokenDataResult, cometResult] = await Promise.allSettled([
-		program.getTokenData(), program.getComet()
+	const [poolsData, cometResult] = await Promise.allSettled([
+		program.getPools(), program.getComet()
 	]);
 
-	if (tokenDataResult.status === 'rejected')
+	if (poolsData.status === 'rejected')
 		return;
 
-	const tokenData = tokenDataResult.value
-	const pool = tokenData.pools[index]
+	const pools = poolsData.value
+	const pool = pools.pools[index]
 
 	let assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
@@ -52,7 +52,7 @@ export const fetchLiquidityDetail = async ({
 		// Only onUSD for now.
 		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
 		comet = cometResult.value
-		totalHealthScore = getHealthScore(tokenData, comet).healthScore
+		totalHealthScore = getHealthScore(pools, comet).healthScore
 		hasNoCollateral = Number(comet.numCollaterals) === 0 || totalCollValue === 0
 
 		for (let i = 0; i < Number(comet.numPositions); i++) {
@@ -71,7 +71,7 @@ export const fetchLiquidityDetail = async ({
 		price,
 		totalCollValue,
 		totalHealthScore,
-		tokenData: tokenDataResult.value,
+		pools: poolsData.value,
 		comet,
 		hasNoCollateral,
 		hasAlreadyPool
@@ -85,7 +85,7 @@ export interface PositionInfo {
 	price: number
 	totalCollValue: number
 	totalHealthScore: number
-	tokenData: TokenData,
+	pools: Pools,
 	comet: Comet | undefined
 	hasNoCollateral: boolean
 	hasAlreadyPool: boolean
@@ -133,16 +133,16 @@ export const fetchCloseLiquidityPosition = async ({
 	setStartTimer(false);
 	setStartTimer(true);
 
-	const [tokenDataResult, cometResult] = await Promise.allSettled([program.getTokenData(), program.getComet()])
+	const [poolsData, cometResult] = await Promise.allSettled([program.getPools(), program.getComet()])
 
-	if (tokenDataResult.status === 'rejected' || cometResult.status === 'rejected') return
+	if (poolsData.status === 'rejected' || cometResult.status === 'rejected') return
 
-	const tokenData = tokenDataResult.value
+	const pools = poolsData.value
 	const comet = cometResult.value
 
 	const position = comet.positions[index]
 	const poolIndex = Number(position.poolIndex)
-	const pool = tokenData.pools[poolIndex]
+	const pool = pools.pools[poolIndex]
 	const onassetMint = pool.assetInfo.onassetMint
 
 	const balance = await fetchBalance({
@@ -152,7 +152,7 @@ export const fetchCloseLiquidityPosition = async ({
 		setStartTimer
 	})
 
-	const { onAssetILD, onusdILD, oraclePrice } = getILD(tokenData, comet)[index];
+	const { onAssetILD, onusdILD, oraclePrice } = getILD(pools, comet)[index];
 
 	let assetId = poolIndex
 	const committedOnusdLiquidity = toNumber(position.committedOnusdLiquidity)
@@ -165,10 +165,10 @@ export const fetchCloseLiquidityPosition = async ({
 	)
 	let price = poolOnusd / poolOnasset
 
-	let currentHealthScore = getHealthScore(tokenData, comet)
+	let currentHealthScore = getHealthScore(pools, comet)
 	let prevHealthScore = currentHealthScore.healthScore
 	const totalCollateralAmount = getEffectiveUSDCollateralValue(
-		tokenData,
+		pools,
 		comet
 	);
 
@@ -188,7 +188,7 @@ export const fetchCloseLiquidityPosition = async ({
 		tickerName,
 		tickerSymbol,
 		price,
-		tokenData: tokenDataResult.value,
+		pools,
 		comet,
 		healthScore,
 		prevHealthScore,
@@ -210,7 +210,7 @@ export interface CloseLiquidityPositionInfo {
 	tickerName: string
 	tickerSymbol: string
 	price: number
-	tokenData: TokenData
+	pools: Pools
 	comet: Comet | undefined
 	healthScore: number
 	prevHealthScore: number

@@ -16,26 +16,28 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
   let totalBorrowLiquidity = 0;
   let totalBorrowCollateralVal = 0;
 
-  const [tokenDataResult, borrowPositionsResult, cometsResult] = await Promise.allSettled([
-    program.getTokenData(),
+  const [poolsData, oraclesData, borrowPositionsResult, cometsResult] = await Promise.allSettled([
+    program.getPools(),
+    program.getOracles(),
     program.getBorrowPositions(),
     program.getComet()
   ]);
 
-  if (tokenDataResult.status === "rejected") {
+  if (poolsData.status === "rejected" || oraclesData.status === "rejected") {
     throw new Error("couldn't fetch token data!")
   }
-  let tokenData = tokenDataResult.value!;
+  let pools = poolsData.value!;
 
   if (borrowPositionsResult.status === "fulfilled") {
     const borrowPositions = borrowPositionsResult.value;
     for (var i = 0; i < Number(borrowPositions.numPositions); i++) {
       let borrowPosition = borrowPositions.borrowPositions[i]
-      let collateral = tokenData.collaterals[Number(borrowPosition.collateralIndex)];
+      let collateral = pools.collaterals[Number(borrowPosition.collateralIndex)];
       let collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale)
       totalBorrowCollateralVal += collateralAmount
-      let pool = tokenData.pools[borrowPosition.poolIndex];
-      totalBorrowLiquidity += fromCloneScale(borrowPosition.borrowedOnasset) * toNumber(pool.assetInfo.price);
+      let pool = pools.pools[borrowPosition.poolIndex];
+      const oracle = oraclesData.value.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+      totalBorrowLiquidity += fromCloneScale(borrowPosition.borrowedOnasset) * fromScale(oracle.price, oracle.expo);
     }
   }
 

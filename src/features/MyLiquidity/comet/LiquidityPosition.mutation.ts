@@ -6,7 +6,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
-import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
+import { getTokenAccount, getCollateralAccount } from '~/utils/token_accounts'
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 
 export const callNew = async ({ program, userPubKey, setTxState, data }: CallNewProps) => {
@@ -16,8 +16,10 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 
 	const { changeAmount, poolIndex } = data
 
+	const oracles = await program.getOracles();
+
 	let ixnCalls = [
-		program.updatePricesInstruction(),
+		program.updatePricesInstruction(oracles),
 		program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex)
 	]
 	const ixns = await Promise.all(ixnCalls)
@@ -57,16 +59,16 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	console.log('edit input data', data)
 
-	const [cometResult, tokenDataResult, usdiAtaResult] = await Promise.allSettled([
+	const [cometResult, poolsData, collateralAccountResult] = await Promise.allSettled([
 		program.getComet(),
-		program.getTokenData(),
-		getOnUSDAccount(program)
+		program.getPools(),
+		getCollateralAccount(program)
 	])
 
 	if (
 		cometResult.status === 'rejected' ||
-		tokenDataResult.status === 'rejected' ||
-		usdiAtaResult.status === 'rejected'
+		poolsData.status === 'rejected' ||
+		collateralAccountResult.status === 'rejected'
 	) {
 		throw new Error('Failed to fetch data!')
 	}
@@ -131,7 +133,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			program.provider.connection
 		),
 		getAssociatedTokenAddress(
-			program.clone!.onusdMint,
+			program.clone.collateral.mint,
 			program.provider.publicKey!,
 		),
 		program.getUserAccount(),
@@ -142,9 +144,11 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		program.programId
 	)
 
+	const oracles = await program.getOracles();
+
 	// Pay ILD && withdraw all liquidity
 	let ixnCalls: Promise<TransactionInstruction>[] = [
-		program.updatePricesInstruction(),
+		(async () => program.updatePricesInstruction(oracles))(),
 	]
 
 	if (!onassetAssociatedToken) {
@@ -207,7 +211,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 				clone: program.cloneAddress[0],
 				tokenData: program.clone!.tokenData,
 				comet: userAccount.comet,
-				onusdMint: program.clone!.onusdMint,
+				onusdMint: program.clone.collateral.mint,
 				onassetMint: data.onassetMint,
 				userOnusdTokenAccount: onusdAssociatedTokenAddress,
 				userOnassetTokenAccount: onassetAssociatedToken,

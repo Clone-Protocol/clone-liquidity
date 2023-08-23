@@ -19,17 +19,19 @@ export const fetchPools = async ({
   if (!userPubKey) return []
   console.log("fetchPools :: LiquidityPools.query")
 
-  const [tokenDataResult, cometResult] = await Promise.allSettled([
-    program.getTokenData(),
+  const [poolsData, oraclesData, cometResult] = await Promise.allSettled([
+    program.getPools(),
+    program.getOracles(),
     program.getComet(),
   ])
-  if (tokenDataResult.status === "rejected" || cometResult.status === "rejected") {
+  if (poolsData.status === "rejected" || oraclesData.status === "rejected" || cometResult.status === "rejected") {
     throw new Error("Couldn't fetch data!")
   }
-  const tokenData = tokenDataResult.value
+  const pools = poolsData.value
+  const oracles = oraclesData.value
   const comet = cometResult.value
-  const assetInfos = getiAssetInfos(tokenData)
-  const poolStats = await getAggregatedPoolStats(tokenData)
+  const assetInfos = getiAssetInfos(pools, oracles)
+  const poolStats = await getAggregatedPoolStats(pools)
 
   let currentPoolSet = new Set()
 

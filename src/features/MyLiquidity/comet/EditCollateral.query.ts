@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
-import { getOnUSDAccount } from '~/utils/token_accounts'
+import { getCollateralAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
@@ -19,10 +19,10 @@ export const fetchDefaultCollateral = async ({
 }) => {
 	if (!userPubKey) return
 
-	let [cometResult, tokenDataResult, usdiAccountResult] = await Promise.allSettled([
+	let [cometResult, poolsData, collateralAccountResult] = await Promise.allSettled([
 		program.getComet(),
-		program.getTokenData(),
-		getOnUSDAccount(program),
+		program.getPools(),
+		getCollateralAccount(program),
 	])
 
 	let balance = 0
@@ -30,16 +30,16 @@ export const fetchDefaultCollateral = async ({
 	let prevHealthScore = 0
 	let hasCometPositions = false
 
-	if (usdiAccountResult.status === 'fulfilled' && usdiAccountResult.value !== undefined) {
-		const tokenBalance = await program.provider.connection.getTokenAccountBalance(usdiAccountResult.value!)
+	if (collateralAccountResult.status === 'fulfilled' && collateralAccountResult.value !== undefined) {
+		const tokenBalance = await program.provider.connection.getTokenAccountBalance(collateralAccountResult.value.address)
 		balance = tokenBalance.value.uiAmount!
 	}
 
 	if (cometResult.status === 'fulfilled') {
 		collAmount = toNumber(cometResult.value.collaterals[index].collateralAmount)
 		hasCometPositions = cometResult.value.numPositions.toNumber() > 0
-		if (tokenDataResult.status === 'fulfilled') {
-			prevHealthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+		if (poolsData.status === 'fulfilled') {
+			prevHealthScore = getHealthScore(poolsData.value, cometResult.value).healthScore
 		}
 	}
 	let collAmountDollarPrice = 1 // Since its USDi.

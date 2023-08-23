@@ -9,15 +9,15 @@ import { getAggregatedPoolStats, fetchBorrowData } from '~/utils/assets'
 export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymbol: string, program: CloneClient }) => {
   console.log('fetchPoolAnalytics')
 
-  const tokenData = await program.getTokenData();
-  const poolStats = await getAggregatedPoolStats(tokenData);
+  const pools = await program.getPools()
+  const poolStats = await getAggregatedPoolStats(pools);
   const calcPctGain = (current: number, prev: number) => {
     return 100 * (current - prev) / prev
   }
 
-  const borrowData = await fetchBorrowData(Number(tokenData.numPools))
+  const borrowData = await fetchBorrowData(Number(pools.pools.length))
 
-  for (let poolIndex = 0; poolIndex < tokenData.numPools.toNumber(); poolIndex++) {
+  for (let poolIndex = 0; poolIndex < pools.pools.length; poolIndex++) {
     const info = assetMapping(poolIndex)
     if (tickerSymbol === info.tickerSymbol) {
       const stats = poolStats[poolIndex]

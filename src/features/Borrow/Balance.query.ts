@@ -4,7 +4,7 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getOnUSDAccount } from '~/utils/token_accounts'
+import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getTokenAccount } from '~/utils/token_accounts'
 
@@ -19,18 +19,18 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
   let onusdVal = 0.0
   let onassetVal = 0.0
 
-  const onusdTokenAccountAddress = await getTokenAccount(program.clone!.onusdMint, userPubKey, program.provider.connection);
+  const collateralTokenAccountAddress = await getTokenAccount(program.clone.collateral.mint, userPubKey, program.provider.connection);
 
-  if (onusdTokenAccountAddress !== undefined) {
-    const onusdBalance = await program.provider.connection.getTokenAccountBalance(onusdTokenAccountAddress, "processed");
+  if (collateralTokenAccountAddress.isInitialized) {
+    const onusdBalance = await program.provider.connection.getTokenAccountBalance(collateralTokenAccountAddress.address, "processed");
     onusdVal = Number(onusdBalance.value.amount) / 100000000;
   }
-  const tokenData = await program.getTokenData();
 
-  const pool = tokenData.pools[index];
+  const pools = await program.getPools()
+  const pool = pools.pools[index];
   const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.provider.connection);
-  if (onassetTokenAccountAddress !== undefined) {
-    const onassetBalance = await program.provider.connection.getTokenAccountBalance(onassetTokenAccountAddress, "processed");
+  if (onassetTokenAccountAddress.isInitialized) {
+    const onassetBalance = await program.provider.connection.getTokenAccountBalance(onassetTokenAccountAddress.address, "processed");
     onassetVal = Number(onassetBalance.value.amount) / 100000000;
   }
 
@@ -49,15 +49,19 @@ export const fetchBalances = async ({ program, userPubKey, setStartTimer }: { pr
   setStartTimer(true);
 
   let balanceVal = 0.0
-
   try {
-    const associatedTokenAccount = await getOnUSDAccount(program);
-    const balance = await program.provider.connection.getTokenAccountBalance(associatedTokenAccount!, "processed");
-    balanceVal = Number(balance.value.amount) / 100000000;
-  } catch { }
+    const devnetConversionFactor = Math.pow(10, -program.clone.collateral.scale)
+    const collateralAssociatedTokenAccountInfo = await getCollateralAccount(program);
+    if (collateralAssociatedTokenAccountInfo.isInitialized) {
+      const balance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccountInfo.address, "processed");
+      balanceVal = Number(balance.value.amount) * devnetConversionFactor;
+    }
+  } catch (e) {
+    console.error(e)
+  }
 
   return {
-    balanceVal: balanceVal,
+    balanceVal,
   }
 }
 

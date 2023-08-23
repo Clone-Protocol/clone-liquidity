@@ -1,14 +1,12 @@
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useState } from 'react'
-import { getOnUSDAccount, getTokenAccount } from '~/utils/token_accounts'
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'clone-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
-import { CLONE_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
-import { BN } from "@coral-xyz/anchor"
+import { toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { sendAndConfirm } from '~/utils/tx_helper'
 import { useTransactionState } from './useTransactionState';
 import { useClone } from './useClone';
+import { getOrCreateAssociatedTokenAccount } from 'clone-protocol-sdk/sdk/src/utils';
+import { createMintAssetInstruction } from 'clone-protocol-sdk/sdk/generated/mock-asset-faucet'
 
 export default function useFaucet() {
   const { connected, publicKey } = useWallet()
@@ -16,6 +14,7 @@ export default function useFaucet() {
   const { getCloneApp } = useClone()
   const [mintUsdi, setMintUsdi] = useState(false)
   const { setTxState } = useTransactionState()
+  const MOCK_FAUCET_PROGRAM_ID = process.env.NEXT_PUBLIC_MOCK_FAUCET_PROGRAM_ID!
 
   useEffect(() => {
     async function userMintOnusd() {
@@ -23,47 +22,26 @@ export default function useFaucet() {
       if (connected && publicKey && mintUsdi && wallet) {
         try {
           const program = await getCloneApp(wallet)
-          const tokenData = await program.getTokenData();
-          const usdiTokenAccount = await getOnUSDAccount(program);
-          const onusdAta = await getAssociatedTokenAddress(program.clone!.onusdMint, publicKey);
 
-          let [jupiterAddress, nonce] = PublicKey.findProgramAddressSync(
-            [Buffer.from("jupiter")],
-            new PublicKey(JUPITER_PROGRAM_ADDRESS)
+          const [faucetAddress] = PublicKey.findProgramAddressSync(
+            [Buffer.from("faucet")],
+            new PublicKey(MOCK_FAUCET_PROGRAM_ID)
           );
-          let jupiterAccount = await Jupiter.fromAccountAddress(program.provider.connection, jupiterAddress)
-          const usdcTokenAccount = await getTokenAccount(jupiterAccount.usdcMint, publicKey, program.provider.connection);
-          const usdcAta = await getAssociatedTokenAddress(jupiterAccount.usdcMint, publicKey);
+
+          const usdcAssociatedTokenAccount = await getOrCreateAssociatedTokenAccount(
+            program.provider,
+            program.clone.collateral.mint
+          );
 
           let ixnCalls = []
           try {
-            if (usdcTokenAccount === undefined) {
-              ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, usdcAta, publicKey, jupiterAccount.usdcMint))())
-            }
-            if (usdiTokenAccount === undefined) {
-              ixnCalls.push((async () => createAssociatedTokenAccountInstruction(publicKey, onusdAta, publicKey, program.clone!.onusdMint))())
-            }
-
             ixnCalls.push(
-              createMintUsdcInstruction(
-                {
-                  usdcMint: jupiterAccount.usdcMint,
-                  usdcTokenAccount: usdcAta,
-                  jupiterAccount: jupiterAddress,
-                  tokenProgram: TOKEN_PROGRAM_ID
-                }, {
-                amount: new BN(onusdToMint * Math.pow(10, 7))
-              }
-              )
-            )
-
-            ixnCalls.push(
-              await program.mintOnusdInstruction(
-                tokenData,
-                new BN(onusdToMint * Math.pow(10, CLONE_TOKEN_SCALE)),
-                onusdAta,
-                usdcAta
-              )
+              await createMintAssetInstruction({
+                minter: publicKey,
+                faucet: faucetAddress,
+                mint: program.clone.collateral.mint,
+                tokenAccount: usdcAssociatedTokenAccount.address,
+              }, { amount: toScale(onusdToMint, program.clone.collateral.scale) })
             )
 
             let ixns = await Promise.all(ixnCalls)

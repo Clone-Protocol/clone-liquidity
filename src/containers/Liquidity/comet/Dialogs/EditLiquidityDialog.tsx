@@ -34,9 +34,9 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 
   // initialized state
   useEffect(() => {
-    if (open && positionInfo !== undefined) {
+    if (open && positionInfo) {
       const position = positionInfo.comet!.positions[positionIndex]
-      const healthCoefficient = fromCloneScale(positionInfo.tokenData.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
+      const healthCoefficient = fromCloneScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
       const currentPosition = fromCloneScale(position!.committedOnusdLiquidity)
 
       setAssetHealthCoefficient(healthCoefficient)

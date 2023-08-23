@@ -4,13 +4,12 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { TokenData } from 'clone-protocol-sdk/sdk/generated/clone'
+import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
-const fetchIassetBalances = async (program: CloneClient, tokenData: TokenData): Promise<number[]> => {
-
+const fetchIassetBalances = async (program: CloneClient, pools: Pools): Promise<number[]> => {
 	let balancesQueries = await Promise.allSettled(
-		tokenData.pools.slice(0, tokenData.numPools.toNumber()).map(async (pool) => {
+		pools.pools.slice(0, pools.pools.length).map(async (pool) => {
 			let ata = await getAssociatedTokenAddress(
 				pool.assetInfo.onassetMint,
 				program.provider.publicKey!
@@ -34,12 +33,11 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	if (!userPubKey) return null
 	console.log('fetchAssets')
 
-	const tokenData = await program.getTokenData();
-	const balances = await fetchIassetBalances(program, tokenData);
+	const pools = await program.getPools()
+	const balances = await fetchIassetBalances(program, pools);
 
 	const result: AssetList[] = []
-
-	for (let index = 0; index < tokenData.numPools.toNumber(); index++) {
+	for (let index = 0; index < pools.pools.length; index++) {
 		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
 		result.push({
 			id: index,

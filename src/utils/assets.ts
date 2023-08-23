@@ -1,4 +1,4 @@
-import { TokenDataArgs } from "clone-protocol-sdk/sdk/generated/clone";
+import { Oracles, Pools } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { calculatePoolAmounts } from "clone-protocol-sdk/sdk/src/utils";
 import { fetchFromCloneIndex } from "./fetch_netlify";
@@ -41,11 +41,11 @@ export const fetchStatsData = async (filter: Filter, interval: Interval): Promis
   return response.data as ResponseValue[]
 }
 
-export const getiAssetInfos = (tokenData: TokenDataArgs): { poolIndex: number, poolPrice: number, liquidity: number }[] => {
+export const getiAssetInfos = (pools: Pools, oracles: Oracles): { poolIndex: number, poolPrice: number, liquidity: number }[] => {
   const iassetInfo = [];
-  for (let poolIndex = 0; poolIndex < Number(tokenData.numPools); poolIndex++) {
-    const pool = tokenData.pools[poolIndex];
-    const oracle = tokenData.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+  for (let poolIndex = 0; poolIndex < Number(pools.pools.length); poolIndex++) {
+    const pool = pools.pools[poolIndex];
+    const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
     const { poolOnusd, poolOnasset } = calculatePoolAmounts(
       fromCloneScale(pool.onusdIld),
       fromCloneScale(pool.onassetIld),
@@ -72,10 +72,10 @@ const convertToNumber = (val: string | number) => {
   return Number(val) * Math.pow(10, -CLONE_TOKEN_SCALE)
 }
 
-export const getAggregatedPoolStats = async (tokenData: TokenDataArgs): Promise<AggregatedStats[]> => {
+export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedStats[]> => {
   let result: AggregatedStats[] = [];
-  for (let i = 0; i < tokenData.numPools.toNumber(); i++) {
-    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromCloneScale(tokenData.pools[i].committedOnusdLiquidity) * 2, previousLiquidity: 0 })
+  for (let i = 0; i < pools.pools.length; i++) {
+    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromCloneScale(pools.pools[i].committedOnusdLiquidity) * 2, previousLiquidity: 0 })
   }
 
   const statsData = await fetchStatsData('week', 'hour')

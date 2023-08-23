@@ -1,7 +1,7 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
-import { Comet, TokenData } from 'clone-protocol-sdk/sdk/generated/clone'
+import { Comet, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -21,13 +21,13 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	let collaterals: Collateral[] = [];
 	let positions: LiquidityPosition[] = [];
 
-	const [cometResult, tokenDataResult] = await Promise.allSettled([
-		program.getComet(), program.getTokenData()
+	const [cometResult, poolsData] = await Promise.allSettled([
+		program.getComet(), program.getPools()
 	]);
 
-	if (cometResult.status === "fulfilled" && tokenDataResult.status === "fulfilled") {
+	if (cometResult.status === "fulfilled" && poolsData.status === "fulfilled") {
 		collaterals = extractCollateralInfo(cometResult.value)
-		positions = extractLiquidityPositionsInfo(cometResult.value, tokenDataResult.value)
+		positions = extractLiquidityPositionsInfo(cometResult.value, poolsData.value)
 
 		collaterals.forEach(c => {
 			totalCollValue += c.collAmount * c.collAmountDollarPrice
@@ -36,7 +36,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 			totalLiquidity += p.liquidityDollarPrice
 		})
 		hasNoCollateral = totalCollValue === 0
-		healthScore = getHealthScore(tokenDataResult.value, cometResult.value).healthScore
+		healthScore = getHealthScore(poolsData.value, cometResult.value).healthScore
 	}
 
 	const result = {
@@ -101,10 +101,10 @@ export interface LiquidityPosition {
 }
 
 
-const extractLiquidityPositionsInfo = (comet: Comet, tokenData: TokenData): LiquidityPosition[] => {
+const extractLiquidityPositionsInfo = (comet: Comet, pools: Pools): LiquidityPosition[] => {
 	let result: LiquidityPosition[] = [];
 
-	const ildInfo = getILD(tokenData, comet)
+	const ildInfo = getILD(pools, comet)
 
 	for (let i = 0; i < comet.numPositions.toNumber(); i++) {
 		// For now only handle onUSD
@@ -164,13 +164,14 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return
 
-	const tokenData = await program.getTokenData();
-	const pool = tokenData.pools[index];
-	const oracle = tokenData.oracles[Number(pool.assetInfo.oracleInfoIndex)];
-	const { poolOnasset, poolOnusd } = calculatePoolAmounts(
+	const pools = await program.getPools();
+	const pool = pools.pools[index];
+	const oracles = await program.getOracles()
+	const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+	const { poolOnasset, poolCollateral } = calculatePoolAmounts(
 		fromCloneScale(pool.onusdIld), fromCloneScale(pool.onassetIld), fromCloneScale(pool.committedOnusdLiquidity), fromScale(oracle.price, oracle.expo)
 	)
-	let price = poolOnusd / poolOnasset
+	let price = poolCollateral / poolOnasset
 	let tightRange = price * 0.1
 	let maxRange = 2 * price
 	let centerPrice = price

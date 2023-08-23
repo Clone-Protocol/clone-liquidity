@@ -33,9 +33,10 @@ export const fetchAssets = async () => {
 		cloneAccountAddress
 	);
 	const program = new CloneClient(provider, account, network.clone)
-	const tokenData = await program.getTokenData();
-	const iassetInfos = getiAssetInfos(tokenData);
-	const poolStats = await getAggregatedPoolStats(tokenData)
+	const pools = await program.getPools()
+	const oracles = await program.getOracles();
+	const iassetInfos = getiAssetInfos(pools, oracles);
+	const poolStats = await getAggregatedPoolStats(pools)
 
 	const result: AssetList[] = []
 

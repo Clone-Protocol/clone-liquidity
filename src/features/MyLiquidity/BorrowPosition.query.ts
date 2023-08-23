@@ -14,13 +14,14 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 
   console.log('fetchBorrowDetail', index)
 
-  const tokenData = await program.getTokenData()
-
+  const pools = await program.getPools()
+  const oracles = await program.getOracles();
   let oPrice = 1
   let stableCollateralRatio = 0
   let cryptoCollateralRatio = 0
-  let assetInfo = tokenData.pools[index].assetInfo
-  const oracle = tokenData.oracles[Number(tokenData.pools[index].assetInfo.oracleInfoIndex)];
+  const pool = pools.pools[index]
+  let assetInfo = pool.assetInfo
+  const oracle = oracles.oracles[Number(assetInfo.oracleInfoIndex)];
   oPrice = fromScale(oracle.price, oracle.expo)
   stableCollateralRatio = fromScale(assetInfo.stableCollateralRatio, 2) * 100;
   cryptoCollateralRatio = fromScale(assetInfo.cryptoCollateralRatio, 2) * 100;
@@ -53,21 +54,23 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 
   console.log('fetchBorrowPosition')
 
-  const [tokenDataResult, borrowPositionResult] = await Promise.allSettled([
-    program.getTokenData(), program.getBorrowPositions()
+  const [poolsData, oraclesData, borrowPositionResult] = await Promise.allSettled([
+    program.getPools(), program.getOracles(), program.getBorrowPositions()
   ]);
 
-  if (tokenDataResult.status !== "fulfilled" || borrowPositionResult.status !== "fulfilled") return
+  if (poolsData.status !== "fulfilled" || oraclesData.status !== "fulfilled" || borrowPositionResult.status !== "fulfilled") return
 
   let mint = borrowPositionResult.value.borrowPositions[index];
   const poolIndex = Number(mint.poolIndex)
 
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
-  const pool = tokenDataResult.value.pools[poolIndex]
+  const pools = poolsData.value
+  const pool = pools.pools[poolIndex]
+  const oracles = oraclesData.value
   const assetInfo = pool.assetInfo;
-  const oracle = tokenDataResult.value.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+  const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
   const oraclePrice = fromScale(oracle.price, oracle.expo)
-  const positionsData = getUserMintInfos(tokenDataResult.value, borrowPositionResult.value);
+  const positionsData = getUserMintInfos(pools, oracles, borrowPositionResult.value);
   const positionData = positionsData[index];
 
   const balance = await fetchBalance({

@@ -4,7 +4,7 @@ import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { getTokenAccount, getOnUSDAccount } from '~/utils/token_accounts'
+import { getTokenAccount, getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -18,15 +18,15 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	console.log('close input data', data)
 
 	const borrows = await program.getBorrowPositions()
-	const tokenData = await program.getTokenData();
+	const pools = await program.getPools()
 	const borrowPosition = borrows.borrowPositions[borrowIndex];
-	const assetInfo = tokenData.pools[borrowPosition.poolIndex].assetInfo
+	const assetInfo = pools.pools[borrowPosition.poolIndex].assetInfo
 	const onassetAssociatedTokenAccount = await getTokenAccount(
 		assetInfo.onassetMint,
 		program.provider.publicKey!,
 		program.provider.connection
 	)
-	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
+	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	let mintPosition = (await program.getBorrowPositions()).borrowPositions[
 		borrowIndex
 	];
@@ -40,7 +40,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		),
 		program.withdrawCollateralFromBorrowInstruction(
 			borrowIndex,
-			collateralAssociatedTokenAccount!,
+			collateralAssociatedTokenAccount.address,
 			new BN(mintPosition.collateralAmount)
 		)
 	]
@@ -83,7 +83,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 
 	console.log('edit input data', data)
 
-	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
+	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 
 	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()]
 	let result: { result: boolean, msg: string };
@@ -92,7 +92,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	if (editType === 0) {
 		ixnCalls.push(program.addCollateralToBorrowInstruction(
 			borrowIndex,
-			collateralAssociatedTokenAccount!,
+			collateralAssociatedTokenAccount.address,
 			new anchor.BN(collateralAmount * 10 ** 8),
 		))
 
@@ -103,7 +103,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	} else {
 		/// Withdraw
 		const usdiAssociatedToken = await getAssociatedTokenAddress(
-			program.clone!.onusdMint,
+			program.clone.collateral.mint,
 			program.provider.publicKey!
 		)
 		if (collateralAssociatedTokenAccount === undefined) {
@@ -112,7 +112,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 					program.provider.publicKey!,
 					usdiAssociatedToken,
 					program.provider.publicKey!,
-					program.clone!.onusdMint
+					program.clone.collateral.mint
 				))()
 			)
 		}
@@ -146,9 +146,9 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 
 	console.log('edit input data', data)
 	const borrows = await program.getBorrowPositions()
-	const tokenData = await program.getTokenData();
+	const pools = await program.getPools()
 	const borrowPosition = borrows.borrowPositions[borrowIndex];
-	const assetInfo = tokenData.pools[borrowPosition.poolIndex].assetInfo
+	const assetInfo = pools.pools[borrowPosition.poolIndex].assetInfo
 
 	const onassetAssociatedTokenAccount = await getTokenAccount(
 		assetInfo.onassetMint,
@@ -252,11 +252,12 @@ const runMintInstructions = async (
 	collateralIndex: number,
 	setTxState: (state: TransactionStateType) => void
 ) => {
-	const tokenData = await clone.getTokenData();
+	const pools = await clone.getPools()
+	const oracles = await clone.getOracles()
 	const { userPubkey, bump } = await clone.getUserAddress()
-	let iassetMint = tokenData.pools[iassetIndex].assetInfo.onassetMint
+	let iassetMint = pools.pools[iassetIndex].assetInfo.onassetMint
 
-	let ixnCalls: Promise<TransactionInstruction>[] = [clone.updatePricesInstruction()]
+	let ixnCalls: Promise<TransactionInstruction>[] = [clone.updatePricesInstruction(oracles)]
 
 	const associatedToken = await getAssociatedTokenAddress(iassetMint, clone.provider.publicKey!)
 
@@ -319,10 +320,10 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 
 	const { collateralIndex, iassetIndex, iassetAmount, collateralAmount } = data
 
-	const tokenData = await program.getTokenData();
-	let iassetMint = tokenData.pools[iassetIndex].assetInfo.onassetMint
+	const pools = await program.getPools()
+	let iassetMint = pools.pools[iassetIndex].assetInfo.onassetMint
 
-	const collateralAssociatedTokenAccount = await getOnUSDAccount(program)
+	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const onassetAssociatedTokenAccount = await getTokenAccount(
 		iassetMint,
 		program.provider.publicKey!,
@@ -334,7 +335,7 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 		new anchor.BN(iassetAmount * 10 ** 8),
 		new anchor.BN(collateralAmount * 10 ** 8),
 		onassetAssociatedTokenAccount,
-		collateralAssociatedTokenAccount!,
+		collateralAssociatedTokenAccount.address,
 		iassetIndex,
 		collateralIndex,
 		setTxState,
@@ -344,7 +345,6 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 		result: true
 	}
 }
-
 
 type BorrowFormData = {
 	collateralIndex: number

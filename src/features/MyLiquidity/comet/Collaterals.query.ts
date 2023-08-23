@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getOnUSDAccount } from '~/utils/token_accounts'
+import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
@@ -19,11 +19,11 @@ export const fetchCollaterals = async ({
 	console.log('fetchPools :: Collaterals.query')
 
 	let usdiBalance = 0
-	let usdiTokenAccount = await getOnUSDAccount(program)
+	let collateralAssociatedTokenAccount = await getCollateralAccount(program)
 
-	if (usdiTokenAccount !== undefined) {
-		let usdiTokenBalance = await program.provider.connection.getTokenAccountBalance(usdiTokenAccount!)
-		usdiBalance = usdiTokenBalance.value.uiAmount!
+	if (collateralAssociatedTokenAccount.isInitialized) {
+		let collateralTokenBalance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccount.address)
+		usdiBalance = collateralTokenBalance.value.uiAmount!
 	}
 
 	const onUSDInfo = collateralMapping(StableCollateral.onUSD)

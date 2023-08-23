@@ -32,10 +32,10 @@ export function useCreateAccount() {
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 
-				const usdiTokenAccount = await getTokenAccount(program.clone!.onusdMint, publicKey!, program.provider.connection);
+				const usdiTokenAccount = await getTokenAccount(program.clone.collateral.mint, publicKey!, program.provider.connection);
 				const { userPubkey } = await program.getUserAddress()
 				const associatedToken = await getAssociatedTokenAddress(
-					program.clone!.onusdMint,
+					program.clone.collateral.mint,
 					publicKey!
 				);
 
@@ -45,7 +45,7 @@ export function useCreateAccount() {
 							publicKey!,
 							associatedToken,
 							publicKey!,
-							program.clone!.onusdMint
+							program.clone.collateral.mint
 						))()
 					)
 				}

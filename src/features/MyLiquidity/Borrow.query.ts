@@ -15,12 +15,12 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 
 	const result: AssetList[] = []
 
-	const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
-		program.getTokenData(), program.getBorrowPositions()
+	const [poolsData, oraclesData, mintPositionResult] = await Promise.allSettled([
+		program.getPools(), program.getOracles(), program.getBorrowPositions()
 	]);
 
-	if (tokenDataResult.status === "fulfilled" && mintPositionResult.status === "fulfilled") {
-		let mintInfos = getUserMintInfos(tokenDataResult.value, mintPositionResult.value);
+	if (poolsData.status === "fulfilled" && oraclesData.status === "fulfilled" && mintPositionResult.status === "fulfilled") {
+		let mintInfos = getUserMintInfos(poolsData.value, oraclesData.value, mintPositionResult.value);
 
 		let i = 0
 		for (const info of mintInfos) {
