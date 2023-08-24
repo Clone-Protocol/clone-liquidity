@@ -8,13 +8,13 @@ import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
 const fetchIassetBalances = async (program: CloneClient, pools: Pools): Promise<number[]> => {
-	let balancesQueries = await Promise.allSettled(
+	const balancesQueries = await Promise.allSettled(
 		pools.pools.slice(0, pools.pools.length).map(async (pool) => {
-			let ata = await getAssociatedTokenAddress(
+			const ata = await getAssociatedTokenAddress(
 				pool.assetInfo.onassetMint,
 				program.provider.publicKey!
 			);
-			let balance = await program.provider.connection.getTokenAccountBalance(
+			const balance = await program.provider.connection.getTokenAccountBalance(
 				ata
 			);
 			return balance.value.uiAmount !== null ? balance.value.uiAmount : 0;
@@ -38,7 +38,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 
 	const result: AssetList[] = []
 	for (let index = 0; index < pools.pools.length; index++) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
+		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
 		result.push({
 			id: index,
 			tickerName: tickerName,

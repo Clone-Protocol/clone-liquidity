@@ -1,20 +1,19 @@
-import { Oracles, Pools } from "clone-protocol-sdk/sdk/generated/clone";
-import { fromScale, fromCloneScale } from "clone-protocol-sdk/sdk/src/clone";
+import { Borrow, Oracles, Pools } from "clone-protocol-sdk/sdk/generated/clone";
+import { fromScale, fromCloneScale, CloneClient } from "clone-protocol-sdk/sdk/src/clone";
 
 
-export const getUserMintInfos = (pools: Pools, oracles: Oracles, borrowPositions: BorrowPositions) => {
+export const getUserMintInfos = (program: CloneClient, pools: Pools, oracles: Oracles, borrowPositions: Borrow[]) => {
   const mintInfos = [];
-  for (let i = 0; i < Number(borrowPositions.numPositions); i++) {
-    let borrowPosition = borrowPositions.positions[i];
-    let poolIndex = borrowPosition.poolIndex;
-    let collateralIndex = borrowPosition.collateralIndex;
-    let pool = pools.pools[poolIndex];
-    let oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
-    let assetInfo = pool.assetInfo;
-    let collateral = pools.collaterals[collateralIndex];
-    let collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale);
-    let price = fromScale(oracle.price, oracle.expo);
-    let borrowedOnasset = fromCloneScale(borrowPosition.borrowedOnasset);
+  const collateral = program.clone.collateral;
+  for (let i = 0; i < Number(borrowPositions.length); i++) {
+    const borrowPosition = borrowPositions[i];
+    const poolIndex = borrowPosition.poolIndex;
+    const pool = pools.pools[poolIndex];
+    const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+    const assetInfo = pool.assetInfo;
+    const collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale);
+    const price = fromScale(oracle.price, oracle.expo);
+    const borrowedOnasset = fromCloneScale(borrowPosition.borrowedOnasset);
     let collateralRatio: Number;
     let minCollateralRatio: Number;
     if (collateral.stable) {
@@ -30,7 +29,7 @@ export const getUserMintInfos = (pools: Pools, oracles: Oracles, borrowPositions
     }
     mintInfos.push([
       poolIndex,
-      collateralIndex,
+      0, // collateralIndex
       price,
       borrowedOnasset,
       collateralAmount,

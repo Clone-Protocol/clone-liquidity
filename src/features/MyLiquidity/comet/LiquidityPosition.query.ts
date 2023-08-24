@@ -3,14 +3,13 @@ import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
-import { getHealthScore, getILD, getEffectiveUSDCollateralValue } from "clone-protocol-sdk/sdk/src/healthscore"
+import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
-import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
+import { Comet, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -23,11 +22,11 @@ export const fetchLiquidityDetail = async ({
 }) => {
 	if (!userPubKey) return
 
-	const [poolsData, cometResult] = await Promise.allSettled([
-		program.getPools(), program.getComet()
+	const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+		program.getPools(), program.getOracles(), program.getUserAccount()
 	]);
 
-	if (poolsData.status === 'rejected')
+	if (poolsData.status === 'rejected' || oraclesData.status === 'rejected')
 		return;
 
 	const pools = poolsData.value
@@ -36,9 +35,9 @@ export const fetchLiquidityDetail = async ({
 	let assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	let { poolOnusd, poolOnasset } = calculatePoolAmounts(
-		toNumber(pool.onusdIld),
+		toNumber(pool.collateralIld),
 		toNumber(pool.onassetIld),
-		toNumber(pool.committedOnusdLiquidity),
+		toNumber(pool.committedCollateralLiquidity),
 		toNumber(pool.assetInfo.price)
 	)
 	const price = poolOnusd / poolOnasset
@@ -48,14 +47,13 @@ export const fetchLiquidityDetail = async ({
 	let comet;
 	let hasNoCollateral = false
 	let hasAlreadyPool = false
-	if (cometResult.status === 'fulfilled') {
-		// Only onUSD for now.
-		totalCollValue = toNumber(cometResult.value.collaterals[0].collateralAmount)
-		comet = cometResult.value
-		totalHealthScore = getHealthScore(pools, comet).healthScore
-		hasNoCollateral = Number(comet.numCollaterals) === 0 || totalCollValue === 0
+	if (userAccountData.status === 'fulfilled') {
+		const comet = userAccountData.value.comet
+		totalCollValue = Number(comet.collateralAmount)
+		totalHealthScore = getHealthScore(oraclesData.value, pools, comet, program.clone.collateral).healthScore
+		hasNoCollateral = totalCollValue === 0
 
-		for (let i = 0; i < Number(comet.numPositions); i++) {
+		for (let i = 0; i < Number(comet.positions.length); i++) {
 			const poolIndex = Number(comet.positions[i].poolIndex)
 			if (assetId === poolIndex) {
 				hasAlreadyPool = true
@@ -133,13 +131,14 @@ export const fetchCloseLiquidityPosition = async ({
 	setStartTimer(false);
 	setStartTimer(true);
 
-	const [poolsData, cometResult] = await Promise.allSettled([program.getPools(), program.getComet()])
+	const [poolsData, oraclesData, accountData] = await Promise.allSettled([program.getPools(), program.getOracles(), program.getUserAccount()])
 
-	if (poolsData.status === 'rejected' || cometResult.status === 'rejected') return
+	if (poolsData.status === 'rejected' || oraclesData.status === 'rejected' || accountData.status === 'rejected') return
 
 	const pools = poolsData.value
-	const comet = cometResult.value
-
+	const oracles = oraclesData.value
+	const comet = accountData.value.comet
+	const collateral = program.clone.collateral
 	const position = comet.positions[index]
 	const poolIndex = Number(position.poolIndex)
 	const pool = pools.pools[poolIndex]
@@ -152,36 +151,36 @@ export const fetchCloseLiquidityPosition = async ({
 		setStartTimer
 	})
 
-	const { onAssetILD, onusdILD, oraclePrice } = getILD(pools, comet)[index];
+	const { onAssetILD, collateralILD, oraclePrice } = getILD(collateral, pools, oracles, comet)[index];
 
 	let assetId = poolIndex
-	const committedOnusdLiquidity = toNumber(position.committedOnusdLiquidity)
+	const committedCollateralLiquidity = toNumber(position.committedCollateralLiquidity)
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let { poolOnusd, poolOnasset } = calculatePoolAmounts(
+	let { poolCollateral, poolOnasset } = calculatePoolAmounts(
 		toNumber(pool.onusdIld),
 		toNumber(pool.onassetIld),
-		committedOnusdLiquidity,
+		committedCollateralLiquidity,
 		oraclePrice
 	)
-	let price = poolOnusd / poolOnasset
+	let price = poolCollateral / poolOnasset
 
-	let currentHealthScore = getHealthScore(pools, comet)
+	let currentHealthScore = getHealthScore(oracles, pools, comet, program.clone.collateral)
 	let prevHealthScore = currentHealthScore.healthScore
 	const totalCollateralAmount = getEffectiveUSDCollateralValue(
 		pools,
 		comet
 	);
 
-	let ildInOnusd = onusdILD > 0
-	let ildDebt = ildInOnusd ? onusdILD : onAssetILD
-	let ildDebtDollarPrice = ildInOnusd ? 1 : oraclePrice
+	let ildInCollateral = collateralILD > 0
+	let ildDebt = ildInCollateral ? collateralILD : onAssetILD
+	let ildDebtDollarPrice = ildInCollateral ? 1 : oraclePrice
 	let ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
 	let healthScoreIncrease = (
 		toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue +
-		committedOnusdLiquidity * toNumber(pool.assetInfo.positionHealthScoreCoefficient)
+		committedCollateralLiquidity * toNumber(pool.assetInfo.positionHealthScoreCoefficient)
 	) / totalCollateralAmount
 	let healthScore = prevHealthScore + healthScoreIncrease
-	let isValidToClose = ildInOnusd ? balance?.onusdVal! >= onusdILD : balance?.onassetVal! >= onAssetILD
+	let isValidToClose = ildInCollateral ? balance?.onusdVal! >= collateralILD : balance?.onassetVal! >= onAssetILD
 
 	return {
 		tickerIcon,
@@ -192,16 +191,16 @@ export const fetchCloseLiquidityPosition = async ({
 		comet,
 		healthScore,
 		prevHealthScore,
-		onusdILD,
+		collateralILD,
 		onassetILD: onAssetILD,
 		ildDebt,
 		ildDebtNotionalValue,
 		onassetVal: balance?.onassetVal!,
 		onusdVal: balance?.onusdVal!,
 		isValidToClose,
-		ildInOnusd,
+		ildInCollateral,
 		onassetMint,
-		committedOnusdLiquidity
+		committedCollateralLiquidity
 	}
 }
 
@@ -214,15 +213,15 @@ export interface CloseLiquidityPositionInfo {
 	comet: Comet | undefined
 	healthScore: number
 	prevHealthScore: number
-	onusdILD: number
+	collateralILD: number
 	onassetILD: number
 	ildDebt: number
 	ildDebtNotionalValue: number
 	onassetVal: number
-	onusdVal: number
+	collateralVal: number
 	isValidToClose: boolean
 	onassetMint: PublicKey
-	committedOnusdLiquidity: number
+	committedCollateralLiquidity: number
 }
 
 export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {

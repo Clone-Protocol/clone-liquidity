@@ -119,8 +119,8 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
       const data = await mutateAsync(
         {
           collateralIndex: 0,
-          iassetIndex: assetIndex,
-          iassetAmount: borrowAmount,
+          onassetIndex: assetIndex,
+          onassetAmount: borrowAmount,
           collateralAmount: collAmount,
         }
       )

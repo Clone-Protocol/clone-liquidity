@@ -59,14 +59,14 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	console.log('edit input data', data)
 
-	const [cometResult, poolsData, collateralAccountResult] = await Promise.allSettled([
-		program.getComet(),
+	const [userAccountData, poolsData, collateralAccountResult] = await Promise.allSettled([
+		program.getUserAccount(),
 		program.getPools(),
 		getCollateralAccount(program)
 	])
 
 	if (
-		cometResult.status === 'rejected' ||
+		userAccountData.status === 'rejected' ||
 		poolsData.status === 'rejected' ||
 		collateralAccountResult.status === 'rejected'
 	) {
@@ -75,11 +75,12 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 
 	const { positionIndex, changeAmount, editType } = data
-	const comet = cometResult.value
+	const comet = userAccountData.value.comet
 	const cometPosition = comet.positions[positionIndex]
 	const poolIndex = cometPosition.poolIndex
+	const oracles = await program.getOracles();
 
-	let ixnCalls = [program.updatePricesInstruction()]
+	let ixnCalls = [program.updatePricesInstruction(oracles)]
 	/// Deposit
 	if (editType === 0) {
 		ixnCalls.push(program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex))
@@ -126,7 +127,7 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	let [onassetAssociatedToken, onusdAssociatedTokenAddress, userAccount] = await Promise.all([
+	let [onassetAssociatedToken, collateralAssociatedTokenAddress, userAccount] = await Promise.all([
 		getTokenAccount(
 			data.onassetMint,
 			program.provider.publicKey!,
@@ -143,6 +144,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		[Buffer.from("user"), userPubKey.toBuffer()],
 		program.programId
 	)
+	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
 
 	const oracles = await program.getOracles();
 
@@ -156,7 +158,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			data.onassetMint,
 			program.provider.publicKey!
 		)
-		onassetAssociatedToken = ata
+		onassetAssociatedTokenAddress = ata
 		ixnCalls.push(
 			(async () => createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
@@ -167,12 +169,12 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	const positionOnUsdLiquidity = toCloneScale(data.committedOnusdLiquidity)
+	const positionCollateralLiquidity = toCloneScale(data.committedCollateralLiquidity)
 
-	if (positionOnUsdLiquidity > 0) {
+	if (positionCollateralLiquidity > 0) {
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-				positionOnUsdLiquidity.muln(2), // Over withdraw to ensure its all paid.
+				positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
 				data.positionIndex,
 			)
 		)
@@ -184,8 +186,8 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 				data.positionIndex,
 				toCloneScale(data.onassetBalance),
 				false,
-				onassetAssociatedToken,
-				onusdAssociatedTokenAddress,
+				onassetAssociatedTokenAddress,
+				collateralAssociatedTokenAddress,
 			)
 		)
 	}
@@ -194,10 +196,10 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				data.positionIndex,
-				toCloneScale(data.onusdBalance),
+				toCloneScale(data.collateralBalance),
 				true,
 				onassetAssociatedToken,
-				onusdAssociatedTokenAddress,
+				collateralAssociatedTokenAddress,
 			)
 		)
 	}
@@ -213,7 +215,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 				comet: userAccount.comet,
 				onusdMint: program.clone.collateral.mint,
 				onassetMint: data.onassetMint,
-				userOnusdTokenAccount: onusdAssociatedTokenAddress,
+				userOnusdTokenAccount: collateralAssociatedTokenAddress,
 				userOnassetTokenAccount: onassetAssociatedToken,
 				tokenProgram: TOKEN_PROGRAM_ID,
 			})
@@ -244,11 +246,11 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 type CloseFormData = {
 	positionIndex: number
 	onassetILD: number
-	onusdILD: number
-	onusdBalance: number
+	collateralILD: number
+	collateralBalance: number
 	onassetBalance: number
 	onassetMint: PublicKey
-	committedOnusdLiquidity: number
+	committedCollateralLiquidity: number
 }
 interface CallCloseProps {
 	program: CloneClient
@@ -268,30 +270,3 @@ export function useClosePositionMutation(userPubKey: PublicKey | null) {
 	}
 }
 
-
-export const callCloseAll = async ({ program, userPubKey, setTxState }: CallCloseAllProps) => {
-	if (!userPubKey) throw new Error('no user public key')
-
-	//@TODO
-
-	return {
-		result: true
-	}
-}
-
-interface CallCloseAllProps {
-	program: CloneClient
-	userPubKey: PublicKey | null
-	setTxState: (state: TransactionStateType) => void
-}
-export function useCloseAllPositionMutation(userPubKey: PublicKey | null) {
-	const wallet = useAnchorWallet()
-	const { getCloneApp } = useClone()
-	const { setTxState } = useTransactionState()
-
-	if (wallet) {
-		return useMutation(async () => callCloseAll({ program: await getCloneApp(wallet), userPubKey, setTxState }))
-	} else {
-		return useMutation(() => funcNoWallet())
-	}
-}

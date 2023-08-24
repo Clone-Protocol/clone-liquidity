@@ -47,9 +47,9 @@ export const getiAssetInfos = (pools: Pools, oracles: Oracles): { poolIndex: num
     const pool = pools.pools[poolIndex];
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
     const { poolOnusd, poolOnasset } = calculatePoolAmounts(
-      fromCloneScale(pool.onusdIld),
+      fromCloneScale(pool.collateralIld),
       fromCloneScale(pool.onassetIld),
-      fromCloneScale(pool.committedOnusdLiquidity),
+      fromCloneScale(pool.committedCollateralLiquidity),
       fromScale(oracle.price, oracle.expo)
     )
     const poolPrice = poolOnusd / poolOnasset
@@ -75,7 +75,7 @@ const convertToNumber = (val: string | number) => {
 export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedStats[]> => {
   let result: AggregatedStats[] = [];
   for (let i = 0; i < pools.pools.length; i++) {
-    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromCloneScale(pools.pools[i].committedOnusdLiquidity) * 2, previousLiquidity: 0 })
+    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromCloneScale(pools.pools[i].committedCollateralLiquidity) * 2, previousLiquidity: 0 })
   }
 
   const statsData = await fetchStatsData('week', 'hour')

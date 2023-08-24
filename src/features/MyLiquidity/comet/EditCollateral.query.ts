@@ -2,7 +2,6 @@ import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { getCollateralAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
@@ -11,17 +10,16 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 export const fetchDefaultCollateral = async ({
 	program,
 	userPubKey,
-	index,
 }: {
 	program: CloneClient
 	userPubKey: PublicKey | null
-	index: number
 }) => {
 	if (!userPubKey) return
 
-	let [cometResult, poolsData, collateralAccountResult] = await Promise.allSettled([
-		program.getComet(),
+	let [userAccountData, poolsData, oraclesData, collateralAccountResult] = await Promise.allSettled([
+		program.getUserAccount(),
 		program.getPools(),
+		program.getOracles(),
 		getCollateralAccount(program),
 	])
 
@@ -35,11 +33,12 @@ export const fetchDefaultCollateral = async ({
 		balance = tokenBalance.value.uiAmount!
 	}
 
-	if (cometResult.status === 'fulfilled') {
-		collAmount = toNumber(cometResult.value.collaterals[index].collateralAmount)
-		hasCometPositions = cometResult.value.numPositions.toNumber() > 0
-		if (poolsData.status === 'fulfilled') {
-			prevHealthScore = getHealthScore(poolsData.value, cometResult.value).healthScore
+	if (userAccountData.status === 'fulfilled') {
+		const comet = userAccountData.value.comet
+		collAmount = Number(comet.collateralAmount)
+		hasCometPositions = comet.positions.length > 0
+		if (poolsData.status === 'fulfilled' && oraclesData.status === 'fulfilled') {
+			prevHealthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
 		}
 	}
 	let collAmountDollarPrice = 1 // Since its USDi.
@@ -65,18 +64,17 @@ export const fetchDefaultCollateral = async ({
 
 interface GetProps {
 	userPubKey: PublicKey | null
-	index: number
 	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 	enabled?: boolean
 }
 
-export function useEditCollateralQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useEditCollateralQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
 		return useQuery(
-			['editCollateral', wallet, userPubKey, index],
-			async () => fetchDefaultCollateral({ program: await getCloneApp(wallet), userPubKey, index }),
+			['editCollateral', wallet, userPubKey],
+			async () => fetchDefaultCollateral({ program: await getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
 				enabled,

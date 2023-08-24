@@ -27,14 +27,12 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
-  const collIndex = 0 // NOTE: currently only support onUSD
   const [healthScore, setHealthScore] = useState(0)
   const [totalCollValue, setTotalCollValue] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
 
   const { data: collData, refetch } = useEditCollateralQuery({
     userPubKey: publicKey,
-    index: collIndex,
     refetchOnMount: "always",
     enabled: open && publicKey != null
   })
@@ -107,7 +105,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     try {
       const data = await mutateAsync(
         {
-          collIndex,
           collAmount,
           editType: tab
         }

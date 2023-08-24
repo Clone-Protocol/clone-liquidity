@@ -1,7 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
@@ -16,20 +16,21 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const collateralTokenAccountInfo = await getCollateralAccount(program)
 
-	const { collAmount, collIndex, editType } = data
+	const { collAmount, editType } = data
 	const oracles = await program.getOracles();
 
 	let ixnCalls: TransactionInstruction[] = [program.updatePricesInstruction(oracles)];
-	/// Deposit
 	if (editType === 0) {
-		ixnCalls.push(program.addCollateralToCometInstruction(collateralTokenAccountInfo.address, toCloneScale(collAmount), 0))
-		/// Withdraw
+		ixnCalls.push(
+			program.addCollateralToCometInstruction(
+				collateralTokenAccountInfo.address,
+				toScale(collAmount, program.clone.collateral.scale)
+			))
 	} else {
 		ixnCalls.push(
 			program.withdrawCollateralFromCometInstruction(
 				collateralAssociatedTokenAccount.address,
-				toCloneScale(collAmount),
-				0,
+				toScale(collAmount, program.clone.collateral.scale)
 			))
 	}
 
@@ -43,7 +44,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 }
 
 type EditFormData = {
-	collIndex: number
 	collAmount: number
 	editType: number
 }

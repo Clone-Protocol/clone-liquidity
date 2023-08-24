@@ -54,13 +54,14 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 
   console.log('fetchBorrowPosition')
 
-  const [poolsData, oraclesData, borrowPositionResult] = await Promise.allSettled([
-    program.getPools(), program.getOracles(), program.getBorrowPositions()
+  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+    program.getPools(), program.getOracles(), program.getUserAccount()
   ]);
 
-  if (poolsData.status !== "fulfilled" || oraclesData.status !== "fulfilled" || borrowPositionResult.status !== "fulfilled") return
+  if (poolsData.status !== "fulfilled" || oraclesData.status !== "fulfilled" || userAccountData.status !== "fulfilled") return
 
-  let mint = borrowPositionResult.value.borrowPositions[index];
+  const borrowPositions = userAccountData.value.borrows
+  const mint = borrowPositions[index];
   const poolIndex = Number(mint.poolIndex)
 
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
@@ -70,7 +71,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const assetInfo = pool.assetInfo;
   const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
   const oraclePrice = fromScale(oracle.price, oracle.expo)
-  const positionsData = getUserMintInfos(pools, oracles, borrowPositionResult.value);
+  const positionsData = getUserMintInfos(program, pools, oracles, borrowPositions);
   const positionData = positionsData[index];
 
   const balance = await fetchBalance({

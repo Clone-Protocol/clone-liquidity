@@ -16,11 +16,10 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
   let totalBorrowLiquidity = 0;
   let totalBorrowCollateralVal = 0;
 
-  const [poolsData, oraclesData, borrowPositionsResult, cometsResult] = await Promise.allSettled([
+  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
     program.getPools(),
     program.getOracles(),
-    program.getBorrowPositions(),
-    program.getComet()
+    program.getUserAccount()
   ]);
 
   if (poolsData.status === "rejected" || oraclesData.status === "rejected") {
@@ -28,27 +27,23 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
   }
   let pools = poolsData.value!;
 
-  if (borrowPositionsResult.status === "fulfilled") {
-    const borrowPositions = borrowPositionsResult.value;
-    for (var i = 0; i < Number(borrowPositions.numPositions); i++) {
-      let borrowPosition = borrowPositions.borrowPositions[i]
-      let collateral = pools.collaterals[Number(borrowPosition.collateralIndex)];
-      let collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale)
+  if (userAccountData.status === "fulfilled") {
+    const borrowPositions = userAccountData.value.borrows;
+    for (var i = 0; i < Number(borrowPositions.length); i++) {
+      let borrowPosition = borrowPositions[i]
+      let collateralAmount = fromScale(borrowPosition.collateralAmount, program.clone.collateral.scale)
       totalBorrowCollateralVal += collateralAmount
       let pool = pools.pools[borrowPosition.poolIndex];
       const oracle = oraclesData.value.oracles[Number(pool.assetInfo.oracleInfoIndex)];
       totalBorrowLiquidity += fromCloneScale(borrowPosition.borrowedOnasset) * fromScale(oracle.price, oracle.expo);
     }
-  }
 
-  if (cometsResult.status === "fulfilled") {
-    const comets = cometsResult.value
-    // Only take usdi value for now.
-    let usdiValue = toNumber(comets.collaterals[0].collateralAmount)
-    totalCometValLocked += usdiValue
+    const comet = userAccountData.value.comet
+    let onusdValue = Number(comet.collateralAmount)
+    totalCometValLocked += onusdValue
 
-    comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalCometLiquidity += fromCloneScale(pos.committedOnusdLiquidity) * 2
+    comet.positions.slice(0, comet.positions.length).forEach((pos) => {
+      totalCometLiquidity += fromCloneScale(pos.committedCollateralLiquidity) * 2
     });
   }
 

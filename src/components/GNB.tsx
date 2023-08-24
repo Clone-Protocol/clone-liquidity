@@ -12,26 +12,18 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import WalletSelectBox from './Common/WalletSelectBox'
+import { isMobile } from 'react-device-detect';
 
 const GNB: React.FC = () => {
-	// const [mobileNavToggle, setMobileNavToggle] = useState(false)
-	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
-
-	// const { scrolled } = useScroll()
-	// const handleMobileNavBtn = () => setMobileNavToggle((prev) => !prev)
-	// const navClassName = useMemo(() => {
-	// 	let className = mobileNavToggle ? 'mobile-on' : ''
-	// 	className += scrolled ? ' scrolled' : ''
-	// 	return className
-	// }, [mobileNavToggle, scrolled])
 
 	return (
 		<>
@@ -45,14 +37,9 @@ const GNB: React.FC = () => {
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
 						</Box>
-						{/* <Box sx={{ marginLeft: 'auto', display: { xs: 'flex', sm: 'none' } }}>
-							<IconButton sx={{ color: 'white' }} onClick={handleMobileNavBtn}>
-								{mobileNavToggle ? <CancelIcon color="info" /> : <MenuIcon />}
-							</IconButton>
-						</Box> */}
 					</Toolbar>
 				</Container>
-				<MobileWarningDialog open={isMobile} handleClose={() => { return null }} />
+				<MobileWarningDialog open={isMobile || isMobileOnSize} handleClose={() => { return null }} />
 			</StyledAppBar>
 		</>
 	)
@@ -62,7 +49,7 @@ export default withCsrOnly(GNB)
 
 const RightMenu = () => {
 	const router = useRouter()
-	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const { connect, connecting, connected, publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)

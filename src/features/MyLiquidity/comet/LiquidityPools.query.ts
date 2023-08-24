@@ -19,23 +19,23 @@ export const fetchPools = async ({
   if (!userPubKey) return []
   console.log("fetchPools :: LiquidityPools.query")
 
-  const [poolsData, oraclesData, cometResult] = await Promise.allSettled([
+  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
     program.getPools(),
     program.getOracles(),
-    program.getComet(),
+    program.getUserAccount(),
   ])
-  if (poolsData.status === "rejected" || oraclesData.status === "rejected" || cometResult.status === "rejected") {
+  if (poolsData.status === "rejected" || oraclesData.status === "rejected" || userAccountData.status === "rejected") {
     throw new Error("Couldn't fetch data!")
   }
   const pools = poolsData.value
   const oracles = oraclesData.value
-  const comet = cometResult.value
+  const comet = userAccountData.value.comet
   const assetInfos = getiAssetInfos(pools, oracles)
   const poolStats = await getAggregatedPoolStats(pools)
 
   let currentPoolSet = new Set()
 
-  for (let i = 0; i < Number(comet.numPositions); i++) {
+  for (let i = 0; i < Number(comet.positions.length); i++) {
     const poolIndex = Number(comet.positions[i].poolIndex)
     currentPoolSet.add(poolIndex)
   }
