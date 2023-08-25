@@ -20,7 +20,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	]);
 
 	if (poolsData.status === "fulfilled" && oraclesData.status === "fulfilled" && userAccountData.status === "fulfilled") {
-		let mintInfos = getUserMintInfos(program, poolsData.value, oraclesData.value, userAccountData.value.borrows);
+		const mintInfos = getUserMintInfos(program, poolsData.value, oraclesData.value, userAccountData.value.borrows);
 
 		let i = 0
 		for (const info of mintInfos) {

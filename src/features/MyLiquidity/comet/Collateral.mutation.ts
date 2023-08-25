@@ -1,7 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
@@ -19,7 +19,7 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	const { collAmount, editType } = data
 	const oracles = await program.getOracles();
 
-	let ixnCalls: TransactionInstruction[] = [program.updatePricesInstruction(oracles)];
+	const ixnCalls: TransactionInstruction[] = [program.updatePricesInstruction(oracles)];
 	if (editType === 0) {
 		ixnCalls.push(
 			program.addCollateralToCometInstruction(
@@ -35,7 +35,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	}
 
 	const ixns = await Promise.all(ixnCalls)
-
 	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {

@@ -14,19 +14,8 @@ export const getUserMintInfos = (program: CloneClient, pools: Pools, oracles: Or
     const collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale);
     const price = fromScale(oracle.price, oracle.expo);
     const borrowedOnasset = fromCloneScale(borrowPosition.borrowedOnasset);
-    let collateralRatio: Number;
-    let minCollateralRatio: Number;
-    if (collateral.stable) {
-      collateralRatio = collateralAmount / (price * borrowedOnasset);
-      minCollateralRatio = fromScale(assetInfo.stableCollateralRatio, 2);
-    } else {
-      let collateralAssetInfo = pools.pools[collateral.poolIndex.toNumber()].assetInfo;
-      let collateralPrice = toNumber(collateralAssetInfo.price);
-      let collateralAmount = fromScale(borrowPosition.collateralAmount, collateral.scale);
-      collateralRatio =
-        (collateralPrice * collateralAmount) / (price * borrowedOnasset);
-      minCollateralRatio = fromScale(assetInfo.cryptoCollateralRatio, 2);
-    }
+    const collateralRatio = collateralAmount / (price * borrowedOnasset);
+    const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2);
     mintInfos.push([
       poolIndex,
       0, // collateralIndex

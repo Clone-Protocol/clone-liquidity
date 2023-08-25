@@ -18,12 +18,12 @@ export const fetchCollaterals = async ({
 
 	console.log('fetchPools :: Collaterals.query')
 
-	let usdiBalance = 0
-	let collateralAssociatedTokenAccount = await getCollateralAccount(program)
+	let collBalance = 0
+	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 
 	if (collateralAssociatedTokenAccount.isInitialized) {
-		let collateralTokenBalance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccount.address)
-		usdiBalance = collateralTokenBalance.value.uiAmount!
+		const collateralTokenBalance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccount.address)
+		collBalance = collateralTokenBalance.value.uiAmount!
 	}
 
 	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
@@ -33,7 +33,7 @@ export const fetchCollaterals = async ({
 			tickerName: onUSDInfo.collateralName,
 			tickerSymbol: onUSDInfo.collateralSymbol,
 			tickerIcon: onUSDInfo.collateralIcon,
-			balance: usdiBalance,
+			balance: collBalance,
 			isEnabled: true,
 		},
 	]

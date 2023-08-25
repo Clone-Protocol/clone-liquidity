@@ -33,15 +33,15 @@ export const fetchAssets = async () => {
 		cloneAccountAddress
 	);
 	const program = new CloneClient(provider, account, network.clone)
-	const pools = await program.getPools()
+	const pools = await program.getPools();
 	const oracles = await program.getOracles();
-	const iassetInfos = getiAssetInfos(pools, oracles);
+	const iassetInfos = await getiAssetInfos(program.provider.connection, program, pools, oracles);
 	const poolStats = await getAggregatedPoolStats(pools)
 
 	const result: AssetList[] = []
 
 	for (const info of iassetInfos) {
-		let { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
+		const { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
 		const stats = poolStats[info.poolIndex]
 		result.push({
 			id: info.poolIndex,

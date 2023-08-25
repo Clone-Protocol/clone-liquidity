@@ -96,12 +96,11 @@ export interface LiquidityPosition {
 
 
 const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools: Pools, oracles: Oracles): LiquidityPosition[] => {
-	let result: LiquidityPosition[] = [];
-	let collateral = program.clone.collateral;
+	const result: LiquidityPosition[] = [];
+	const collateral = program.clone.collateral;
 	const ildInfo = getILD(collateral, pools, oracles, comet);
 
 	for (let i = 0; i < comet.positions.length; i++) {
-		// For now only handle onUSD
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
 		const info = assetMapping(poolIndex);
@@ -163,14 +162,18 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	const oracles = await program.getOracles()
 	const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
 	const { poolOnasset, poolCollateral } = calculatePoolAmounts(
-		fromCloneScale(pool.onusdIld), fromCloneScale(pool.onassetIld), fromCloneScale(pool.committedCollateralLiquidity), fromScale(oracle.price, oracle.expo)
+		fromCloneScale(pool.collateralIld),
+		fromCloneScale(pool.onassetIld),
+		fromCloneScale(pool.committedCollateralLiquidity),
+		fromScale(oracle.price, oracle.expo),
+		program.clone.collateral
 	)
-	let price = poolCollateral / poolOnasset
-	let tightRange = price * 0.1
-	let maxRange = 2 * price
-	let centerPrice = price
-
+	const price = poolCollateral / poolOnasset
+	const tightRange = price * 0.1
+	const maxRange = 2 * price
+	const centerPrice = price
 	const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
+
 	return {
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,

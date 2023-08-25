@@ -1,6 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
@@ -31,16 +31,19 @@ export const fetchLiquidityDetail = async ({
 
 	const pools = poolsData.value
 	const pool = pools.pools[index]
-
-	let assetId = index
+	const oracles = await program.getOracles()
+	const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+	const assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let { poolOnusd, poolOnasset } = calculatePoolAmounts(
-		toNumber(pool.collateralIld),
-		toNumber(pool.onassetIld),
-		toNumber(pool.committedCollateralLiquidity),
-		toNumber(pool.assetInfo.price)
+
+	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
+		fromCloneScale(pool.collateralIld),
+		fromCloneScale(pool.onassetIld),
+		fromCloneScale(pool.committedCollateralLiquidity),
+		fromScale(oracle.price, oracle.expo),
+		program.clone.collateral
 	)
-	const price = poolOnusd / poolOnasset
+	const price = poolCollateral / poolOnasset
 
 	let totalCollValue = 0
 	let totalHealthScore = 0
@@ -152,35 +155,32 @@ export const fetchCloseLiquidityPosition = async ({
 	})
 
 	const { onAssetILD, collateralILD, oraclePrice } = getILD(collateral, pools, oracles, comet)[index];
-
-	let assetId = poolIndex
-	const committedCollateralLiquidity = toNumber(position.committedCollateralLiquidity)
+	const assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	let { poolCollateral, poolOnasset } = calculatePoolAmounts(
-		toNumber(pool.onusdIld),
-		toNumber(pool.onassetIld),
-		committedCollateralLiquidity,
-		oraclePrice
+	const committedCollateralLiquidity = position.committedCollateralLiquidity
+	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
+		fromCloneScale(pool.collateralIld),
+		fromCloneScale(pool.onassetIld),
+		fromCloneScale(position.committedCollateralLiquidity),
+		oraclePrice,
+		collateral
 	)
-	let price = poolCollateral / poolOnasset
+	const price = poolCollateral / poolOnasset
 
-	let currentHealthScore = getHealthScore(oracles, pools, comet, program.clone.collateral)
-	let prevHealthScore = currentHealthScore.healthScore
-	const totalCollateralAmount = getEffectiveUSDCollateralValue(
-		pools,
-		comet
-	);
+	const currentHealthScore = getHealthScore(oracles, pools, comet, program.clone.collateral)
+	const prevHealthScore = currentHealthScore.healthScore
+	const totalCollateralAmount = Number(comet.collateralAmount)
 
-	let ildInCollateral = collateralILD > 0
-	let ildDebt = ildInCollateral ? collateralILD : onAssetILD
-	let ildDebtDollarPrice = ildInCollateral ? 1 : oraclePrice
-	let ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
-	let healthScoreIncrease = (
-		toNumber(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue +
-		committedCollateralLiquidity * toNumber(pool.assetInfo.positionHealthScoreCoefficient)
+	const ildInCollateral = collateralILD > 0
+	const ildDebt = ildInCollateral ? collateralILD : onAssetILD
+	const ildDebtDollarPrice = ildInCollateral ? 1 : oraclePrice
+	const ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
+	const healthScoreIncrease = (
+		Number(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue +
+		committedCollateralLiquidity * Number(pool.assetInfo.positionHealthScoreCoefficient)
 	) / totalCollateralAmount
-	let healthScore = prevHealthScore + healthScoreIncrease
-	let isValidToClose = ildInCollateral ? balance?.onusdVal! >= collateralILD : balance?.onassetVal! >= onAssetILD
+	const healthScore = prevHealthScore + healthScoreIncrease
+	const isValidToClose = ildInCollateral ? balance?.onusdVal! >= collateralILD : balance?.onassetVal! >= onAssetILD
 
 	return {
 		tickerIcon,

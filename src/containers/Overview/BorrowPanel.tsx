@@ -79,7 +79,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
   useEffect(() => {
     if (borrowDetail) {
       console.log('borrowDetail', borrowDetail)
-      setCollRatio(borrowDetail.stableCollateralRatio + 30)
+      setCollRatio(borrowDetail.minCollateralRatio + 30)
     }
   }, [borrowDetail])
 
@@ -118,7 +118,6 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
     try {
       const data = await mutateAsync(
         {
-          collateralIndex: 0,
           onassetIndex: assetIndex,
           onassetAmount: borrowAmount,
           collateralAmount: collAmount,
@@ -189,7 +188,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
 
           <Box><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
           <Box sx={{ marginTop: '20px' }}>
-            <RatioSlider min={borrowDetail?.stableCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
+            <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
           </Box>
 
           <StyledDivider />
@@ -225,7 +224,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </Box>
           </Box>
 
-          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.stableCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
             <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow</Typography>
           </SubmitButton>
         </Box>

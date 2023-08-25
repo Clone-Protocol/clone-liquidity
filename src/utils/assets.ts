@@ -1,7 +1,9 @@
 import { Oracles, Pools } from "clone-protocol-sdk/sdk/generated/clone";
-import { CLONE_TOKEN_SCALE, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
-import { calculatePoolAmounts } from "clone-protocol-sdk/sdk/src/utils";
+import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
+import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
+import { assetMapping } from "~/data/assets";
 import { fetchFromCloneIndex } from "./fetch_netlify";
+import { Connection, PublicKey } from "@solana/web3.js"
 
 export type Interval = 'day' | 'hour';
 export type Filter = 'day' | 'week' | 'month' | 'year';
@@ -31,7 +33,6 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
       dates.push(new Date(currentDate)); // Create a new date object to avoid references to the same object
     }
   }
-
   return dates;
 }
 
@@ -41,19 +42,21 @@ export const fetchStatsData = async (filter: Filter, interval: Interval): Promis
   return response.data as ResponseValue[]
 }
 
-export const getiAssetInfos = (pools: Pools, oracles: Oracles): { poolIndex: number, poolPrice: number, liquidity: number }[] => {
+export const getiAssetInfos = async (connection: Connection, program: CloneClient, pools: Pools, oracles: Oracles): Promise<{ poolIndex: number, poolPrice: number, liquidity: number }[]> => {
+  const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
+  const data = await pythClient.getData();
+
   const iassetInfo = [];
   for (let poolIndex = 0; poolIndex < Number(pools.pools.length); poolIndex++) {
     const pool = pools.pools[poolIndex];
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
-    const { poolOnusd, poolOnasset } = calculatePoolAmounts(
-      fromCloneScale(pool.collateralIld),
-      fromCloneScale(pool.onassetIld),
-      fromCloneScale(pool.committedCollateralLiquidity),
-      fromScale(oracle.price, oracle.expo)
-    )
-    const poolPrice = poolOnusd / poolOnasset
-    const liquidity = poolOnusd * 2;
+    const committedCollateral = fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale)
+    const poolCollateralIld = fromScale(pool.collateralIld, program.clone.collateral.scale)
+    const poolOnassetIld = fromCloneScale(pool.onassetIld)
+    const { pythSymbol } = assetMapping(poolIndex)
+    const oraclePrice = data.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo);
+    const poolPrice = (committedCollateral - poolCollateralIld) / (committedCollateral / oraclePrice - poolOnassetIld)
+    const liquidity = committedCollateral * 2;
     iassetInfo.push({ poolIndex, poolPrice, liquidity });
   }
   return iassetInfo;

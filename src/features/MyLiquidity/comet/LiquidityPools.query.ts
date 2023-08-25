@@ -30,23 +30,21 @@ export const fetchPools = async ({
   const pools = poolsData.value
   const oracles = oraclesData.value
   const comet = userAccountData.value.comet
-  const assetInfos = getiAssetInfos(pools, oracles)
+  const assetInfos = getiAssetInfos(program, pools, oracles)
   const poolStats = await getAggregatedPoolStats(pools)
-
-  let currentPoolSet = new Set()
+  const currentPoolSet = new Set()
 
   for (let i = 0; i < Number(comet.positions.length); i++) {
     const poolIndex = Number(comet.positions[i].poolIndex)
     currentPoolSet.add(poolIndex)
   }
 
-  let result = []
-
-  for (let asset of assetInfos) {
+  const result = []
+  for (const asset of assetInfos) {
     if (!noFilter && currentPoolSet.has(asset.poolIndex)) {
       continue
     }
-    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
+    const { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
     const stats = poolStats[asset.poolIndex]
     result.push({
       id: asset.poolIndex,

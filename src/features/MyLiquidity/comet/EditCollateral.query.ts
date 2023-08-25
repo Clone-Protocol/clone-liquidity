@@ -16,7 +16,7 @@ export const fetchDefaultCollateral = async ({
 }) => {
 	if (!userPubKey) return
 
-	let [userAccountData, poolsData, oraclesData, collateralAccountResult] = await Promise.allSettled([
+	const [userAccountData, poolsData, oraclesData, collateralAccountResult] = await Promise.allSettled([
 		program.getUserAccount(),
 		program.getPools(),
 		program.getOracles(),
@@ -41,8 +41,8 @@ export const fetchDefaultCollateral = async ({
 			prevHealthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
 		}
 	}
-	let collAmountDollarPrice = 1 // Since its USDi.
-	let totalCollValue = collAmount * collAmountDollarPrice
+	const collAmountDollarPrice = 1 // Since its USD.
+	const totalCollValue = collAmount * collAmountDollarPrice
 
 	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
 	const tickerIcon = onUSDInfo.collateralIcon

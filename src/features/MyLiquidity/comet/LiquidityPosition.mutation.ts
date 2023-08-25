@@ -7,7 +7,8 @@ import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 import { getTokenAccount, getCollateralAccount } from '~/utils/token_accounts'
-import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
+import { PaymentType } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const callNew = async ({ program, userPubKey, setTxState, data }: CallNewProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -15,15 +16,13 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 	console.log('new input data', data)
 
 	const { changeAmount, poolIndex } = data
-
 	const oracles = await program.getOracles();
 
-	let ixnCalls = [
+	const ixnCalls = [
 		program.updatePricesInstruction(oracles),
 		program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex)
 	]
 	const ixns = await Promise.all(ixnCalls)
-
 	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
@@ -80,12 +79,12 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	const poolIndex = cometPosition.poolIndex
 	const oracles = await program.getOracles();
 
-	let ixnCalls = [program.updatePricesInstruction(oracles)]
-	/// Deposit
+	const ixnCalls = [program.updatePricesInstruction(oracles)]
 	if (editType === 0) {
+		//deposit
 		ixnCalls.push(program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex))
-		/// Withdraw
 	} else {
+		//withdraw
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
 				toCloneScale(changeAmount),
@@ -127,7 +126,7 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	let [onassetAssociatedToken, collateralAssociatedTokenAddress, userAccount] = await Promise.all([
+	const [onassetAssociatedToken, collateralAssociatedTokenAddress] = await Promise.all([
 		getTokenAccount(
 			data.onassetMint,
 			program.provider.publicKey!,
@@ -136,8 +135,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		getAssociatedTokenAddress(
 			program.clone.collateral.mint,
 			program.provider.publicKey!,
-		),
-		program.getUserAccount(),
+		)
 	])
 
 	const [userAccountAddress, bump] = PublicKey.findProgramAddressSync(
@@ -145,11 +143,12 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		program.programId
 	)
 	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
-
+	const pools = await program.getPools()
 	const oracles = await program.getOracles();
+	const userAccount = await program.getUserAccount()
 
 	// Pay ILD && withdraw all liquidity
-	let ixnCalls: Promise<TransactionInstruction>[] = [
+	const ixnCalls: Promise<TransactionInstruction>[] = [
 		(async () => program.updatePricesInstruction(oracles))(),
 	]
 
@@ -170,69 +169,59 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	}
 
 	const positionCollateralLiquidity = toCloneScale(data.committedCollateralLiquidity)
-
 	if (positionCollateralLiquidity > 0) {
 		ixnCalls.push(
-			program.withdrawLiquidityFromCometInstruction(
-				positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
-				data.positionIndex,
-			)
+			(async () =>
+				await program.withdrawLiquidityFromCometInstruction(
+					positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
+					data.positionIndex,
+				)
+			)()
 		)
 	}
 
 	if (toCloneScale(data.onassetILD) > 0) {
 		ixnCalls.push(
-			program.payCometILDInstruction(
-				data.positionIndex,
-				toCloneScale(data.onassetBalance),
-				false,
-				onassetAssociatedTokenAddress,
-				collateralAssociatedTokenAddress,
-			)
+			(async () =>
+				await program.payCometILDInstruction(
+					pools,
+					userAccount,
+					data.positionIndex,
+					toCloneScale(data.onassetBalance),
+					PaymentType.Collateral,
+					onassetAssociatedToken.address,
+					collateralAssociatedTokenAddress,
+				)
+			)()
 		)
 	}
 
-	if (toCloneScale(data.onusdILD) > 0) {
+	if (toCloneScale(data.collateralILD) > 0) {
 		ixnCalls.push(
-			program.payCometILDInstruction(
-				data.positionIndex,
-				toCloneScale(data.collateralBalance),
-				true,
-				onassetAssociatedToken,
-				collateralAssociatedTokenAddress,
-			)
+			(async () =>
+				await program.payCometILDInstruction(
+					pools,
+					userAccount,
+					data.positionIndex,
+					toCloneScale(data.collateralBalance),
+					PaymentType.CollateralFromWallet,
+					onassetAssociatedToken.address,
+					collateralAssociatedTokenAddress,
+				)
+			)()
 		)
 	}
 
 	ixnCalls.push(
-		program.methods
-			.collectLpRewards(data.positionIndex)
-			.accounts({
-				user: program.provider.publicKey!,
-				userAccount: userAccountAddress,
-				clone: program.cloneAddress[0],
-				tokenData: program.clone!.tokenData,
-				comet: userAccount.comet,
-				onusdMint: program.clone.collateral.mint,
-				onassetMint: data.onassetMint,
-				userOnusdTokenAccount: collateralAssociatedTokenAddress,
-				userOnassetTokenAccount: onassetAssociatedToken,
-				tokenProgram: TOKEN_PROGRAM_ID,
-			})
-			.instruction()
-	)
-
-	ixnCalls.push(
-		program.program.methods
-			.removeCometPosition(data.positionIndex)
-			.accounts({
-				user: userPubKey,
-				userAccount: userAccountAddress,
-				clone: program.cloneAddress[0],
-				tokenData: program.clone!.tokenData,
-				comet: userAccount.comet,
-			})
-			.instruction()
+		(async () =>
+			await program.collectLpRewardsInstruction(
+				pools,
+				userAccount,
+				collateralAssociatedTokenAddress,
+				onassetAssociatedToken.address,
+				data.positionIndex
+			)
+		)()
 	)
 
 	const ixns = await Promise.all(ixnCalls)

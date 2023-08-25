@@ -1,6 +1,6 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -9,6 +9,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
+import { getOrCreateAssociatedTokenAccount } from 'clone-protocol-sdk/sdk/src/utils';
 
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -29,9 +30,9 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		program.provider.connection
 	)
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
-	let mintPosition = borrowPositions[borrowIndex];
+	const mintPosition = borrowPositions[borrowIndex];
 
-	let ixnCalls = [
+	const ixnCalls = [
 		program.updatePricesInstruction(oracles),
 		program.payBorrowDebtInstruction(
 			pools,
@@ -88,7 +89,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const oracles = await program.getOracles()
 
-	let ixnCalls: Promise<TransactionInstruction>[] = []
+	const ixnCalls: Promise<TransactionInstruction>[] = []
 	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())
 	let result: { result: boolean, msg: string };
 
@@ -167,7 +168,7 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		program.provider.publicKey!,
 		program.provider.connection
 	)
-	let ixnCalls: Promise<TransactionInstruction>[] = []
+	const ixnCalls: Promise<TransactionInstruction>[] = []
 	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())
 	let result: { result: boolean, msg: string };
 
@@ -221,7 +222,7 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		}
 	}
 
-	let ixns = await Promise.all(ixnCalls)
+	const ixns = await Promise.all(ixnCalls)
 	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return result
@@ -263,106 +264,41 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	}
 }
 
-const runMintInstructions = async (
-	program: CloneClient,
-	mintAmount: anchor.BN,
-	collateralAmount: anchor.BN,
-	iassetAccount: PublicKey | undefined,
-	usdiAccount: PublicKey,
-	onassetIndex: number,
-	collateralIndex: number,
-	setTxState: (state: TransactionStateType) => void
-) => {
-	const pools = await program.getPools()
-	const oracles = await program.getOracles()
-	const { userPubkey, bump } = await program.getUserAddress()
-	let iassetMint = pools.pools[onassetIndex].assetInfo.onassetMint
-
-	let ixnCalls: Promise<TransactionInstruction>[] = []
-	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())
-
-	const associatedToken = await getAssociatedTokenAddress(iassetMint, program.provider.publicKey!)
-
-	let userAccount = await program.getUserAccount()
-	let borrowPositionAddress = userAccount.borrowPositions;
-	let signers = [];
-	// If mint positions account not created
-	if (borrowPositionAddress.equals(PublicKey.default)) {
-		const borrowPositionsAccount = anchor.web3.Keypair.generate();
-		signers.push(borrowPositionsAccount);
-		borrowPositionAddress = borrowPositionsAccount.publicKey;
-		ixnCalls.push(program.program.account.borrowPositions.createInstruction(borrowPositionsAccount));
-		ixnCalls.push(program.program.methods
-			.initializeBorrowPositions()
-			.accounts({
-				user: program.provider.publicKey!,
-				userAccount: userPubkey,
-				borrowPositions: borrowPositionsAccount.publicKey,
-				rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-				tokenProgram: TOKEN_PROGRAM_ID,
-				systemProgram: anchor.web3.SystemProgram.programId,
-			})
-			.instruction())
-	}
-
-	// If iAsset token account not created
-	if (iassetAccount === undefined) {
-		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(
-				program.provider.publicKey!,
-				associatedToken,
-				program.provider.publicKey!,
-				iassetMint
-			))()
-		)
-	}
-
-	ixnCalls.push(
-		program.initializeBorrowPositionInstruction(
-			pools,
-			usdiAccount,
-			associatedToken,
-			mintAmount,
-			collateralAmount,
-			onassetIndex,
-			collateralIndex,
-			borrowPositionAddress
-		)
-	)
-
-	let ixns = await Promise.all(ixnCalls)
-
-	// await clone.provider.sendAndConfirm!(tx, signers);
-	await sendAndConfirm(program.provider, ixns, setTxState, signers)
-}
-
 export const callBorrow = async ({ program, userPubKey, setTxState, data }: CallBorrowProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('borrow input data', data)
 
-	const { collateralIndex, onassetIndex, onassetAmount, collateralAmount } = data
+	const { onassetIndex, onassetAmount, collateralAmount } = data
 
 	const pools = await program.getPools()
-	let onassetMint = pools.pools[onassetIndex].assetInfo.onassetMint
+	const oracles = await program.getOracles()
+	const pool = pools.pools[onassetIndex]
 
-	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
-	const onassetAssociatedTokenAccount = await getTokenAccount(
-		onassetMint,
-		program.provider.publicKey!,
-		program.provider.connection
+	const onassetTokenAccountInfo = await getOrCreateAssociatedTokenAccount(
+		program.provider,
+		pool.assetInfo.onassetMint
+	);
+	const mockUSDCTokenAccountInfo = await getOrCreateAssociatedTokenAccount(
+		program.provider,
+		program.clone.collateral.mint
+	);
+
+	const ixnCalls: Promise<TransactionInstruction>[] = []
+	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())
+	ixnCalls.push(
+		(async () => await program.initializeBorrowPositionInstruction(
+			pools,
+			mockUSDCTokenAccountInfo.address,
+			onassetTokenAccountInfo.address,
+			toCloneScale(onassetAmount),
+			toScale(collateralAmount, program.clone.collateral.scale),
+			onassetIndex
+		))()
 	)
 
-	await runMintInstructions(
-		program,
-		new anchor.BN(onassetAmount * 10 ** 8),
-		new anchor.BN(collateralAmount * 10 ** 8),
-		onassetAssociatedTokenAccount.address,
-		collateralAssociatedTokenAccount.address,
-		onassetIndex,
-		collateralIndex,
-		setTxState,
-	)
+	const ixns = await Promise.all(ixnCalls)
+	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
 		result: true
@@ -370,7 +306,6 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 }
 
 type BorrowFormData = {
-	collateralIndex: number
 	onassetIndex: number
 	collateralAmount: number
 	onassetAmount: number

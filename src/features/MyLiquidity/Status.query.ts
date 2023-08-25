@@ -25,21 +25,21 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
   if (poolsData.status === "rejected" || oraclesData.status === "rejected") {
     throw new Error("couldn't fetch token data!")
   }
-  let pools = poolsData.value!;
+  const pools = poolsData.value!;
 
   if (userAccountData.status === "fulfilled") {
     const borrowPositions = userAccountData.value.borrows;
     for (var i = 0; i < Number(borrowPositions.length); i++) {
-      let borrowPosition = borrowPositions[i]
-      let collateralAmount = fromScale(borrowPosition.collateralAmount, program.clone.collateral.scale)
+      const borrowPosition = borrowPositions[i]
+      const collateralAmount = fromScale(borrowPosition.collateralAmount, program.clone.collateral.scale)
       totalBorrowCollateralVal += collateralAmount
-      let pool = pools.pools[borrowPosition.poolIndex];
+      const pool = pools.pools[borrowPosition.poolIndex];
       const oracle = oraclesData.value.oracles[Number(pool.assetInfo.oracleInfoIndex)];
       totalBorrowLiquidity += fromCloneScale(borrowPosition.borrowedOnasset) * fromScale(oracle.price, oracle.expo);
     }
 
     const comet = userAccountData.value.comet
-    let onusdValue = Number(comet.collateralAmount)
+    const onusdValue = Number(comet.collateralAmount)
     totalCometValLocked += onusdValue
 
     comet.positions.slice(0, comet.positions.length).forEach((pos) => {
@@ -47,16 +47,15 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
     });
   }
 
-  let totalCollateralLocked = totalBorrowCollateralVal + totalCometValLocked
-  let totalLiquidityProvided = totalBorrowLiquidity + totalCometLiquidity
-  let borrowPercent = totalCollateralLocked > 0 ? (totalBorrowCollateralVal / totalCollateralLocked) * 100 : 0
+  const totalCollateralLocked = totalBorrowCollateralVal + totalCometValLocked
+  const totalLiquidityProvided = totalBorrowLiquidity + totalCometLiquidity
+  const borrowPercent = totalCollateralLocked > 0 ? (totalBorrowCollateralVal / totalCollateralLocked) * 100 : 0
 
   const statusValues = {
     totalBorrowLiquidity,
     totalBorrowCollateralVal,
     totalLiquidityProvided
   }
-
 
   return {
     totalCollateralLocked,

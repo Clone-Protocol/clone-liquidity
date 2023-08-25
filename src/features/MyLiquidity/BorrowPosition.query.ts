@@ -16,16 +16,11 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 
   const pools = await program.getPools()
   const oracles = await program.getOracles();
-  let oPrice = 1
-  let stableCollateralRatio = 0
-  let cryptoCollateralRatio = 0
   const pool = pools.pools[index]
-  let assetInfo = pool.assetInfo
+  const assetInfo = pool.assetInfo
   const oracle = oracles.oracles[Number(assetInfo.oracleInfoIndex)];
-  oPrice = fromScale(oracle.price, oracle.expo)
-  stableCollateralRatio = fromScale(assetInfo.stableCollateralRatio, 2) * 100;
-  cryptoCollateralRatio = fromScale(assetInfo.cryptoCollateralRatio, 2) * 100;
-
+  const oPrice = fromScale(oracle.price, oracle.expo)
+  const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2) * 100;
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
 
   return {
@@ -34,8 +29,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
     tickerSymbol: tickerSymbol,
     pythSymbol,
     oPrice,
-    stableCollateralRatio,
-    cryptoCollateralRatio,
+    minCollateralRatio,
   }
 }
 
@@ -45,8 +39,7 @@ export interface DetailInfo {
   tickerSymbol: string
   pythSymbol: string
   oPrice: number
-  stableCollateralRatio: number
-  cryptoCollateralRatio: number
+  minCollateralRatio: number
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
@@ -68,7 +61,6 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const pools = poolsData.value
   const pool = pools.pools[poolIndex]
   const oracles = oraclesData.value
-  const assetInfo = pool.assetInfo;
   const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
   const oraclePrice = fromScale(oracle.price, oracle.expo)
   const positionsData = getUserMintInfos(program, pools, oracles, borrowPositions);
@@ -92,8 +84,6 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     tickerSymbol: tickerSymbol,
     pythSymbol,
     price: oraclePrice,
-    stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
-    cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
     borrowedIasset: positionData![3],
     collateralAmount: positionData![4],
     collateralRatio: Number(positionData![5]) * 100,
@@ -117,8 +107,6 @@ export interface PositionInfo {
   tickerSymbol: string
   pythSymbol?: string
   price: number
-  stableCollateralRatio: number
-  cryptoCollateralRatio: number
   borrowedIasset: number | Number
   collateralAmount: number | Number
   collateralRatio: number
