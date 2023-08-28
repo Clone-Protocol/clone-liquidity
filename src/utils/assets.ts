@@ -78,7 +78,7 @@ const convertToNumber = (val: string | number) => {
 export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedStats[]> => {
   let result: AggregatedStats[] = [];
   for (let i = 0; i < pools.pools.length; i++) {
-    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromCloneScale(pools.pools[i].committedCollateralLiquidity) * 2, previousLiquidity: 0 })
+    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromScale(pools.pools[i].committedCollateralLiquidity, 7) * 2, previousLiquidity: 0 })
   }
 
   const statsData = await fetchStatsData('week', 'hour')

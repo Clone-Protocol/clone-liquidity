@@ -31,14 +31,13 @@ export function useCreateAccount() {
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 
-				const usdiTokenAccount = await getTokenAccount(program.clone.collateral.mint, publicKey!, program.provider.connection);
+				const onusdTokenAccount = await getTokenAccount(program.clone.collateral.mint, publicKey!, program.provider.connection);
 				const associatedToken = await getAssociatedTokenAddress(
 					program.clone.collateral.mint,
 					publicKey!
 				);
-				const userAccount = await program.getUserAccount();
 
-				if (usdiTokenAccount === undefined) {
+				if (onusdTokenAccount === undefined) {
 					ixnCalls.push(
 						(async () => createAssociatedTokenAccountInstruction(
 							publicKey!,

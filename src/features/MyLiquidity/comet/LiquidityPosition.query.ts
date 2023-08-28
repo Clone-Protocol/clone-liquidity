@@ -39,7 +39,7 @@ export const fetchLiquidityDetail = async ({
 	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
 		fromCloneScale(pool.collateralIld),
 		fromCloneScale(pool.onassetIld),
-		fromCloneScale(pool.committedCollateralLiquidity),
+		fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale),
 		fromScale(oracle.price, oracle.expo),
 		program.clone.collateral
 	)
@@ -52,7 +52,7 @@ export const fetchLiquidityDetail = async ({
 	let hasAlreadyPool = false
 	if (userAccountData.status === 'fulfilled') {
 		const comet = userAccountData.value.comet
-		totalCollValue = Number(comet.collateralAmount)
+		totalCollValue = fromScale(comet.collateralAmount, program.clone.collateral.scale)
 		totalHealthScore = getHealthScore(oraclesData.value, pools, comet, program.clone.collateral).healthScore
 		hasNoCollateral = totalCollValue === 0
 
@@ -161,7 +161,7 @@ export const fetchCloseLiquidityPosition = async ({
 	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
 		fromCloneScale(pool.collateralIld),
 		fromCloneScale(pool.onassetIld),
-		fromCloneScale(position.committedCollateralLiquidity),
+		fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale),
 		oraclePrice,
 		collateral
 	)

@@ -19,13 +19,13 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
   const [isEditBorrowHover, setIsEditBorrowHover] = useState(false)
   const hasRiskRatio = positionInfo.collateralRatio - positionInfo.minCollateralRatio <= RISK_RATIO_VAL
 
-  const borrowedDollarPrice = Number(positionInfo.borrowedIasset) * positionInfo.price
+  const borrowedDollarPrice = Number(positionInfo.borrowedOnasset) * positionInfo.price
 
   return positionInfo ? (
     <Box mt='21px'>
       <BoxWithBorder mb='15px'>
         <Box><Typography variant='p_lg' color='#989898'>Collateral Ratio</Typography></Box>
-        {Number(positionInfo.borrowedIasset) > 0 ?
+        {Number(positionInfo.borrowedOnasset) > 0 ?
           <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={positionInfo.minCollateralRatio} ratio={positionInfo.collateralRatio} />
           :
           <Box>-</Box>
@@ -52,7 +52,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
         <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='27px'>
           <Typography variant='p_lg' color='#989898'>Borrowed</Typography>
           <Box lineHeight='18px' textAlign='right'>
-            <Box><Typography variant='p_xlg'>{positionInfo.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {positionInfo.tickerSymbol}</Typography></Box>
+            <Box><Typography variant='p_xlg'>{positionInfo.borrowedOnasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {positionInfo.tickerSymbol}</Typography></Box>
             <Box><Typography variant='p' color='#989898'>${borrowedDollarPrice.toLocaleString()} USD</Typography></Box>
           </Box>
         </Stack>

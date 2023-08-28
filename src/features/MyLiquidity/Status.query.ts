@@ -43,7 +43,7 @@ export const fetchStatus = async ({ program, userPubKey }: { program: CloneClien
     totalCometValLocked += onusdValue
 
     comet.positions.slice(0, comet.positions.length).forEach((pos) => {
-      totalCometLiquidity += fromCloneScale(pos.committedCollateralLiquidity) * 2
+      totalCometLiquidity += fromScale(pos.committedCollateralLiquidity, program.clone.collateral.scale) * 2
     });
   }
 

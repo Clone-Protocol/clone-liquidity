@@ -100,7 +100,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 				await program.addCollateralToBorrowInstruction(
 					borrowIndex,
 					collateralAssociatedTokenAccount.address,
-					new anchor.BN(collateralAmount * 10 ** 8),
+					toScale(collateralAmount, program.clone.collateral.scale),
 				))()
 		)
 
@@ -110,7 +110,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 		}
 	} else {
 		/// Withdraw
-		const usdiAssociatedToken = await getAssociatedTokenAddress(
+		const onusdAssociatedToken = await getAssociatedTokenAddress(
 			program.clone.collateral.mint,
 			program.provider.publicKey!
 		)
@@ -119,7 +119,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 				(async () =>
 					await createAssociatedTokenAccountInstruction(
 						program.provider.publicKey!,
-						usdiAssociatedToken,
+						onusdAssociatedToken,
 						program.provider.publicKey!,
 						program.clone.collateral.mint
 					))()
@@ -129,8 +129,8 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 			(async () =>
 				await program.withdrawCollateralFromBorrowInstruction(
 					borrowIndex,
-					usdiAssociatedToken,
-					new anchor.BN(collateralAmount * 10 ** 8)
+					onusdAssociatedToken,
+					toScale(collateralAmount, program.clone.collateral.scale),
 				)
 			)()
 		)

@@ -12,7 +12,7 @@ import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import { fromCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -34,10 +34,10 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 
   // initialized state
   useEffect(() => {
-    if (open && positionInfo) {
+    if (open && positionInfo && positionInfo.comet) {
       const position = positionInfo.comet.positions[positionIndex]
       const healthCoefficient = fromCloneScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
-      const currentPosition = fromCloneScale(position!.committedCollateralLiquidity)
+      const currentPosition = fromScale(position.committedCollateralLiquidity, 7)
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)

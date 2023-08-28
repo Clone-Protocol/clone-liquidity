@@ -27,7 +27,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 
 	if (userAccountData.status === "fulfilled" && poolsData.status === "fulfilled" && oraclesData.status === "fulfilled") {
 		const comet = userAccountData.value.comet
-		collaterals = extractCollateralInfo(comet)
+		collaterals = extractCollateralInfo(program, comet)
 		positions = extractLiquidityPositionsInfo(program, comet, poolsData.value, oraclesData.value)
 
 		collaterals.forEach(c => {
@@ -67,7 +67,7 @@ export interface Collateral {
 	collAmountDollarPrice: number
 }
 
-const extractCollateralInfo = (comet: Comet): Collateral[] => {
+const extractCollateralInfo = (program: CloneClient, comet: Comet): Collateral[] => {
 	const result: Collateral[] = [];
 	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
 	result.push(
@@ -75,7 +75,7 @@ const extractCollateralInfo = (comet: Comet): Collateral[] => {
 			tickerIcon: onUSDInfo.collateralIcon,
 			tickerSymbol: onUSDInfo.collateralSymbol,
 			tickerName: onUSDInfo.collateralName,
-			collAmount: Number(comet.collateralAmount),
+			collAmount: fromScale(comet.collateralAmount, program.clone.collateral.scale),
 			collAmountDollarPrice: 1
 		}
 	)
@@ -121,7 +121,7 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 				tickerIcon: info.tickerIcon,
 				tickerSymbol: info.tickerSymbol,
 				tickerName: info.tickerName,
-				liquidityDollarPrice: Number(position.committedCollateralLiquidity) * 2,
+				liquidityDollarPrice: fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale) * 2,
 				ildValue,
 				positionIndex: i,
 				poolIndex,
@@ -164,7 +164,7 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	const { poolOnasset, poolCollateral } = calculatePoolAmounts(
 		fromCloneScale(pool.collateralIld),
 		fromCloneScale(pool.onassetIld),
-		fromCloneScale(pool.committedCollateralLiquidity),
+		fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale),
 		fromScale(oracle.price, oracle.expo),
 		program.clone.collateral
 	)

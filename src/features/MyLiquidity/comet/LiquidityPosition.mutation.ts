@@ -1,7 +1,7 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -138,10 +138,6 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	])
 
-	const [userAccountAddress, bump] = PublicKey.findProgramAddressSync(
-		[Buffer.from("user"), userPubKey.toBuffer()],
-		program.programId
-	)
 	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
 	const pools = await program.getPools()
 	const oracles = await program.getOracles();
@@ -168,7 +164,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	const positionCollateralLiquidity = toCloneScale(data.committedCollateralLiquidity)
+	const positionCollateralLiquidity = toScale(data.committedCollateralLiquidity, program.clone.collateral.scale)
 	if (positionCollateralLiquidity > 0) {
 		ixnCalls.push(
 			(async () =>

@@ -162,11 +162,11 @@ const CloseLiquidityDialog = ({
               <CenterBox justifyContent="space-evenly">
                 <Stack direction="row" justifyContent="space-between">
                   <Box>
-                    <Typography variant="p">ILD Debt</Typography>{" "}
+                    <Typography variant="p">ILD Debt</Typography>
                     <InfoTooltip title={TooltipTexts.ildDebt} />
                   </Box>
                   <Box lineHeight={0.95}>
-                    <Box>
+                    <Box textAlign="right">
                       <Typography variant="p_xlg">{displayILDDebt()}</Typography>
                     </Box>
                     <Box textAlign="right">

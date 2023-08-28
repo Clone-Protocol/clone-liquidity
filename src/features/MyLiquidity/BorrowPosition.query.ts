@@ -84,7 +84,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     tickerSymbol: tickerSymbol,
     pythSymbol,
     price: oraclePrice,
-    borrowedIasset: positionData![3],
+    borrowedOnasset: positionData![3],
     collateralAmount: positionData![4],
     collateralRatio: Number(positionData![5]) * 100,
     minCollateralRatio: Number(positionData![6]) * 100,
@@ -107,7 +107,7 @@ export interface PositionInfo {
   tickerSymbol: string
   pythSymbol?: string
   price: number
-  borrowedIasset: number | Number
+  borrowedOnasset: number | Number
   collateralAmount: number | Number
   collateralRatio: number
   minCollateralRatio: number

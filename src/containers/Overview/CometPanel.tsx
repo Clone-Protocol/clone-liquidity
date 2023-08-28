@@ -44,8 +44,9 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   })
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
-      const healthCoefficient = fromCloneScale(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
+    if (positionInfo) {
+      const assetInfo = positionInfo.pools.pools[assetIndex].assetInfo
+      const healthCoefficient = Number(assetInfo.positionHealthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
@@ -97,7 +98,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   // }
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)

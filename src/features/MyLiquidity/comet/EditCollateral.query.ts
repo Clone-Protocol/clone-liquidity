@@ -1,6 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
 import { getCollateralAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
@@ -35,7 +35,7 @@ export const fetchDefaultCollateral = async ({
 
 	if (userAccountData.status === 'fulfilled') {
 		const comet = userAccountData.value.comet
-		collAmount = Number(comet.collateralAmount)
+		collAmount = fromScale(comet.collateralAmount, program.clone.collateral.scale)
 		hasCometPositions = comet.positions.length > 0
 		if (poolsData.status === 'fulfilled' && oraclesData.status === 'fulfilled') {
 			prevHealthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore

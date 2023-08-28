@@ -44,7 +44,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
     }
   }
 
-  const canCloseComet = Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedIasset)
+  const canCloseComet = Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedOnasset)
 
   return (
     <>
@@ -52,7 +52,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
         <Box mb='15px'>
           <Stack direction="row" justifyContent="space-between" mt='5px'>
             <Box><Typography variant='p_lg' color='#989898'>Borrowed Amount</Typography></Box>
-            <Box><Typography variant='p_lg' color={canCloseComet ? '#989898' : '#ed2525'}>{borrowDetail.borrowedIasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</Typography></Box>
+            <Box><Typography variant='p_lg' color={canCloseComet ? '#989898' : '#ed2525'}>{borrowDetail.borrowedOnasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</Typography></Box>
           </Stack>
           <Stack direction="row" justifyContent="space-between" mt='15px'>
             <Box><Typography variant='p_lg' color='#989898'>Borrowed onAsset Wallet Balance</Typography></Box>

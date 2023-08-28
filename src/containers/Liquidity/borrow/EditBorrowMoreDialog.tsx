@@ -23,14 +23,14 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
   const router = useRouter()
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
-  const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && Number(borrowDetail.borrowedIasset) > Number(borrowDetail.iassetVal))
+  const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && Number(borrowDetail.borrowedOnasset) > Number(borrowDetail.iassetVal))
   const [isFullRepaid, setIsFullRepaid] = useState(false)
   const [hasRiskRatio, setHasRiskRatio] = useState(editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio)
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.collateralAmount) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedIasset) : borrowDetail.iassetVal)
+    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.collateralAmount) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedOnasset) : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
@@ -73,9 +73,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
     let expectedCollRatio
     if (borrowAmount) {
       if (editType === 0) { // borrow more
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedIasset) + borrowAmount)))
+        expectedCollRatio = (Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedOnasset) + borrowAmount)))
       } else { // repay
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedIasset) - borrowAmount)))
+        expectedCollRatio = (Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedOnasset) - borrowAmount)))
       }
     } else {
       expectedCollRatio = (borrowDetail.collateralRatio)
@@ -84,7 +84,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
     if (editType === 1) {
       setHasLackBalance(borrowAmount > borrowDetail.iassetVal)
-      setIsFullRepaid(Number(borrowDetail.borrowedIasset) === borrowAmount)
+      setIsFullRepaid(Number(borrowDetail.borrowedOnasset) === borrowAmount)
     }
     setHasRiskRatio(borrowDetail.minCollateralRatio * 1.1 >= expectedCollRatio)
   }, [borrowAmount, editType])
@@ -152,7 +152,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                       } else {
                         return 'Repay amount cannot exceed the Wallet Balance'
                       }
-                    } else if (editType === 1 && value > Number(borrowDetail.borrowedIasset)) {
+                    } else if (editType === 1 && value > Number(borrowDetail.borrowedOnasset)) {
                       return 'Repay amount cannot exceed the Current Debt'
                     }
                   }
@@ -165,8 +165,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     collAmount={field.value}
                     collAmountDollarPrice={field.value * borrowDetail.price}
                     maxCollVal={maxCollVal}
-                    currentCollAmount={Number(borrowDetail.borrowedIasset)}
-                    dollarPrice={Number(borrowDetail.borrowedIasset) * borrowDetail.price}
+                    currentCollAmount={Number(borrowDetail.borrowedOnasset)}
+                    dollarPrice={Number(borrowDetail.borrowedOnasset) * borrowDetail.price}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
                       // const borrowAmt = parseFloat(event.currentTarget.value)
