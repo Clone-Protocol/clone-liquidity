@@ -12,7 +12,7 @@ import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import { fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -36,7 +36,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   useEffect(() => {
     if (open && positionInfo && positionInfo.comet) {
       const position = positionInfo.comet.positions[positionIndex]
-      const healthCoefficient = fromCloneScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
+      const healthCoefficient = Number(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
       const currentPosition = fromScale(position.committedCollateralLiquidity, 7)
 
       setAssetHealthCoefficient(healthCoefficient)
@@ -58,9 +58,8 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 
   const {
     handleSubmit,
-    control,
     setValue,
-    formState: { isDirty, errors, isSubmitting },
+    formState: { errors, isSubmitting },
     watch,
   } = useForm({
     mode: 'onChange',
@@ -73,10 +72,8 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   ])
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
-      // console.log('mintRatio', mintRatio)
-      setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.totalCollValue)
       setTotalLiquidity(mintAmount * 2);
       setValidMintAmount(mintAmount < maxMintable && mintRatio < 100 && mintAmount !== defaultMintAmount && mintRatio !== defaultMintRatio)
@@ -87,7 +84,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
     // console.log('newRatio', newRatio)
     // MEMO: if newRatio is near from default ratio, then set newRatio to default ratio
     const convertNewRatio = parseInt(newRatio.toString()) === defaultMintRatio ? defaultMintRatio : newRatio
-    console.log('convertNewRatio', convertNewRatio)
+    // console.log('convertNewRatio', convertNewRatio)
     setValue('mintAmount', maxMintable * convertNewRatio / 100)
     setMintRatio(convertNewRatio)
   }, [mintRatio, mintAmount])
@@ -107,7 +104,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
       })
 
       if (data) {
-        console.log('data', data)
+        // console.log('data', data)
         refetch()
         initData()
         handleClose()

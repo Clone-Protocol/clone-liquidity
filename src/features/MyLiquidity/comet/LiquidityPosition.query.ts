@@ -51,7 +51,7 @@ export const fetchLiquidityDetail = async ({
 	let hasNoCollateral = false
 	let hasAlreadyPool = false
 	if (userAccountData.status === 'fulfilled') {
-		const comet = userAccountData.value.comet
+		comet = userAccountData.value.comet
 		totalCollValue = fromScale(comet.collateralAmount, program.clone.collateral.scale)
 		totalHealthScore = getHealthScore(oraclesData.value, pools, comet, program.clone.collateral).healthScore
 		hasNoCollateral = totalCollValue === 0

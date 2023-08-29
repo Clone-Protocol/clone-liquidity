@@ -1,6 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { CLONE_TOKEN_SCALE, CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -20,10 +20,11 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
   let onassetVal = 0.0
 
   const collateralTokenAccountAddress = await getTokenAccount(program.clone.collateral.mint, userPubKey, program.provider.connection);
+  const cloneConversionFactor = Math.pow(10, -CLONE_TOKEN_SCALE)
 
   if (collateralTokenAccountAddress.isInitialized) {
     const onusdBalance = await program.provider.connection.getTokenAccountBalance(collateralTokenAccountAddress.address, "processed");
-    onusdVal = Number(onusdBalance.value.amount) / 100000000;
+    onusdVal = Number(onusdBalance.value.amount) * cloneConversionFactor;
   }
 
   const pools = await program.getPools()
@@ -31,7 +32,7 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
   const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.provider.connection);
   if (onassetTokenAccountAddress.isInitialized) {
     const onassetBalance = await program.provider.connection.getTokenAccountBalance(onassetTokenAccountAddress.address, "processed");
-    onassetVal = Number(onassetBalance.value.amount) / 100000000;
+    onassetVal = Number(onassetBalance.value.amount) * cloneConversionFactor;
   }
 
   return {
