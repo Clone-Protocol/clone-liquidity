@@ -20,16 +20,13 @@ const StyledBox = styled(Box)`
   width: 320px;
   height: 36px;
   color: #fff;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
   padding: 0;
   &:hover {
     border: 1px solid transparent;
     background-image: linear-gradient(#000000, #000000), ${(props) => props.theme.gradients.simple};
     background-clip: content-box, border-box;
     background-origin: border-box;
-  }
-  &:active {
-    border: solid 1px ${(props) => props.theme.boxes.greyShade};
   }
 `
 
@@ -44,7 +41,7 @@ const StyledInput = styled(Input)`
     margin-left: 35px;
 
     &::placeholder {
-      color: ${(props) => props.theme.palette.text.greyShade};
+      color: #fff;
     }
   }
 `

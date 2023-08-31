@@ -44,7 +44,7 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
         </Typography>
       </Box>
       <Box display="flex" alignItems="center">
-        <Typography variant="p_xxxlg">
+        <Typography variant="p_xxlg">
           $
           {isOraclePrice
             ? priceHistory.currentPrice?.toLocaleString(undefined, { maximumFractionDigits: 3 })

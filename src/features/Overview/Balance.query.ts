@@ -22,13 +22,17 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
     const onusdBalance = await program.connection.getTokenAccountBalance(onusdTokenAccountAddress, "processed");
     onusdVal = Number(onusdBalance.value.amount) / 100000000;
   }
-  const tokenData = await program.getTokenData();
 
-  const pool = tokenData.pools[index];
-  const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.connection);
-  if (onassetTokenAccountAddress !== undefined) {
-    const onassetBalance = await program.connection.getTokenAccountBalance(onassetTokenAccountAddress, "processed");
-    onassetVal = Number(onassetBalance.value.amount) / 100000000;
+  // if not default index
+  if (index !== -1) {
+    const tokenData = await program.getTokenData();
+
+    const pool = tokenData.pools[index];
+    const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.connection);
+    if (onassetTokenAccountAddress !== undefined) {
+      const onassetBalance = await program.connection.getTokenAccountBalance(onassetTokenAccountAddress, "processed");
+      onassetVal = Number(onassetBalance.value.amount) / 100000000;
+    }
   }
 
   return {
@@ -39,7 +43,7 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
 
 interface GetProps {
   userPubKey: PublicKey | null
-  index: number
+  index?: number
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
@@ -49,7 +53,7 @@ export interface Balance {
   onassetVal: number
 }
 
-export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useBalanceQuery({ userPubKey, index = -1, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
 

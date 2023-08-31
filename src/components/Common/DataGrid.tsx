@@ -108,8 +108,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
     disableDensitySelector
     disableExtendRowFullWidth
     hideFooter
-    headerHeight={40}
-    rowHeight={52}
+    headerHeight={38}
+    rowHeight={72}
     rowCount={20}
     onRowClick={onRowClick}
     columns={headers}
@@ -132,14 +132,14 @@ export interface TickerType {
 }
 
 export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, tickerSymbol }) => (
-  <Box display="flex" justifyContent="flex-start" marginLeft='4px'>
+  <Box display="flex" justifyContent="flex-start">
     {tickerIcon && <Image src={tickerIcon} width={27} height={27} alt={tickerSymbol} />}
-    <Box display='flex' alignItems='center' marginLeft='16px'>
-      <Box sx={{ maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-        <Typography variant='p_lg'>{tickerName}</Typography>
+    <Box display='flex' alignItems='center' ml='10px'>
+      <Box sx={{ maxWidth: '200px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+        <Typography variant='p_xlg'>{tickerName}</Typography>
       </Box>
-      <Box sx={{ color: '#989898' }} marginLeft='8px'>
-        <Typography variant='p'>{tickerSymbol}</Typography>
+      <Box sx={{ color: '#989898' }} ml='10px'>
+        <Typography variant='p_xlg'>{tickerSymbol}</Typography>
       </Box>
     </Box>
   </Box>

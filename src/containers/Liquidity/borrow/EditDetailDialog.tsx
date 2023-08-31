@@ -158,7 +158,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             <BoxWithBorder>
               {hasInvalidRatio ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>N/A</Typography></Box> :
                 <Box>
-                  <Typography variant='h8'>Projected Collateral Ratio</Typography>
+                  <Typography variant='p'>Projected Collateral Ratio</Typography>
                   <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
                 </Box>}
             </BoxWithBorder>

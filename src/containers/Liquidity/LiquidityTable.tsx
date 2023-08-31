@@ -16,7 +16,6 @@ import BorrowIconOn from 'public/images/borrow-position-icon-on.svg'
 import CometIconOff from 'public/images/multipool-icon-off.svg'
 import CometIconOn from 'public/images/multipool-icon-on.svg'
 import MyStatusValues from '~/components/Liquidity/MyStatusValues'
-// import MyStatus from '~/containers/Liquidity/MyStatus'
 
 export const TAB_COMET = 0
 export const TAB_BORROW = 1
@@ -36,10 +35,6 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
     setTab(newValue)
   }
 
-  // const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
-  //   setFilter(newValue)
-  // }
-
   const { publicKey } = useWallet()
   const { data: status } = useStatusQuery({
     userPubKey: publicKey,
@@ -55,9 +50,6 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
   return (
     <div>
       <Box>
-        {/* <MyStatus status={status} />
-        <Divider sx={{ backgroundColor: '#3f3f3f' }} /> */}
-
         <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
           <CometTab value={TAB_COMET} label='Comet' icon={tab === TAB_COMET ? <Image src={CometIconOn} alt='comet' /> : <Image src={CometIconOff} alt='comet' />} />\
           <StyledTab value={TAB_BORROW} label='Borrow' icon={tab === TAB_BORROW ? <Image src={BorrowIconOn} alt='borrow' /> : <Image src={BorrowIconOff} alt='borrow' />} />
@@ -75,14 +67,6 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
       </Box>
 
       <PanelBox>
-        {/* <Stack mt={3} mb={0} ml={3} pt={2} direction="row" justifyContent="space-between">
-          <PageTabs value={filter} onChange={handleFilterChange}>
-            {Object.keys(FilterTypeMap).map((f) => (
-              <PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
-            ))}
-          </PageTabs>
-        </Stack> */}
-
         {tab === TAB_BORROW &&
           <StyledDivider />
         }

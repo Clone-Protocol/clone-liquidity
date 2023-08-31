@@ -14,7 +14,7 @@ export interface CloneProviderProps {
 	children: ReactNode
 }
 
-export const CloneProvider: FC<CloneProviderProps> = ({ children, ...props }) => {
+export const CloneProvider: FC<CloneProviderProps> = ({ children }) => {
 	const createAccountStatus = useAtomValue(createAccountDialogState)
 	const getCloneApp = (wallet: AnchorWallet | undefined, force?: boolean): CloneClient => {
 		if (!force) {

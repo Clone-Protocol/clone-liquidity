@@ -235,11 +235,11 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 	},
 	gradients: {
 		metallic: 'linear-gradient(81deg, #258ded 0%, #4fe5ff 24%, #96efff 36%, #fff 48%, #96efff 60%, #4fe5ff 72%, #258ded 96%)',
-		temperatureL2H: 'linear-gradient(to right, #fff 0%, #ff8e4f 100%)',
+		temperatureL2H: 'linear-gradient(to right, #fff 51%, #ff0084 100%)',
 		purpleMetallic: 'linear-gradient(84deg, #8925ed 1%, #7d4fff 25%, #ab96ff 36%, #fff 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
 		simple: 'linear-gradient(to right, #fff 21%, #4fe5ff 96%)',
 		temperatureH2L: 'linear-gradient(to right, #ff8e4f 0%, #fff 100%)',
-		healthscore: 'linear-gradient(to right, #ed2525 0%, #ff8e4f 26%, #4fe5ff 100%)',
+		healthscore: 'linear-gradient(to right, #ff006b 0%, #4fe5ff 100%)',
 		liquidity: 'linear-gradient(67deg, #258ded 0%, #4ad1e9 24%, #7cdff0 35%, #95ddf4 47%, #7cd8e9 58%, #45cde4 70%, #258ded 94%)',
 		markets: 'linear-gradient(to right, #ed25c1 0%, #a74fff 16%, #f096ff 34%, #fff 50%, #ff96e2 68%, #874fff 83%, #4d25ed, #4d25ed)',
 		darker: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), linear-gradient(to right, #ed25c1 0%, #a74fff 16%, #f096ff 34%, #fff 50%, #ff96e2 68%, #874fff 83%, #4d25ed)'

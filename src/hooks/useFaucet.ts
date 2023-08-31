@@ -1,8 +1,10 @@
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { getOnUSDAccount, getTokenAccount } from '~/utils/token_accounts'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
+import { useAtom } from 'jotai'
+import { mintUSDi } from '~/features/globalAtom'
 import { PROGRAM_ADDRESS as JUPITER_PROGRAM_ADDRESS, createMintUsdcInstruction, Jupiter } from 'clone-protocol-sdk/sdk/generated/jupiter-agg-mock/index'
 import { DEVNET_TOKEN_SCALE } from 'clone-protocol-sdk/sdk/src/clone'
 import { BN } from "@coral-xyz/anchor"
@@ -14,7 +16,7 @@ export default function useFaucet() {
   const { connected, publicKey } = useWallet()
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const [mintUsdi, setMintUsdi] = useState(false)
+  const [mintUsdi, setMintUsdi] = useAtom(mintUSDi)
   const { setTxState } = useTransactionState()
 
   useEffect(() => {
@@ -78,8 +80,4 @@ export default function useFaucet() {
     }
     userMintOnusd()
   }, [mintUsdi, connected, publicKey])
-
-  return {
-    setMintUsdi
-  }
 }

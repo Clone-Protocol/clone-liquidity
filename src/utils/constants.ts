@@ -3,3 +3,5 @@ export enum CreateAccountDialogStates {
 	Initial,
 	Reminder
 }
+
+export const ON_USD = "devUSD"

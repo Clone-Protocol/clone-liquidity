@@ -10,7 +10,7 @@ const ChooseCollateralDialog = ({ open, handleChooseCollateral, handleClose }: {
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={560}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '10px 15px' }}>
           <BoxWrapper>
-            <Box><Typography variant='h7'>Available Collateral</Typography></Box>
+            <Box><Typography variant='p'>Available Collateral</Typography></Box>
             <StyledDivider />
             <GridCollateral onChoose={handleChooseCollateral} />
           </BoxWrapper>

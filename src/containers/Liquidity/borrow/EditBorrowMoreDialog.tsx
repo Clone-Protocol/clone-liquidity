@@ -184,7 +184,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
             <BoxWithBorder>
               {hasLackBalance || isFullRepaid ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>{hasLackBalance ? 'N/A' : 'Position will be paid in full'}</Typography></Box> :
                 < Box >
-                  <Typography variant='h8'>Projected Collateral Ratio</Typography>
+                  <Typography variant='p'>Projected Collateral Ratio</Typography>
                   <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
                 </Box>}
             </BoxWithBorder>

@@ -46,7 +46,7 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
           {score &&
             <Box sx={{ color: scoreTypeColor }}>
               <Box marginTop="15px">
-                <Typography variant='p_xxxlg'>{score.toFixed(0)}</Typography>
+                <Typography variant='p_xxlg'>{score.toFixed(0)}</Typography>
               </Box>
               <Box>
                 <Typography variant='p_sm'>{scoreType}</Typography>

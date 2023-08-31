@@ -197,7 +197,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
             { // MEMO : This is because when a user adds a new collateral type on devnet, they won’t see an exising healthscore. but will be add later on mainnet 
               !isNewDeposit &&
               <Box>
-                <Typography variant='h8'>Projected Comet Statistics</Typography>
+                <Typography variant='p'>Projected Comet Statistics</Typography>
                 <BoxWithBorder padding='10px 20px 0px 20px' mt='3px'>
                   <Box>
                     <Box><Typography variant='p' color='#989898'>Projected Collateral Value <InfoTooltip title={TooltipTexts.projectedCometCollValue} /></Typography></Box>

@@ -47,9 +47,7 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 	fontSize: '12px',
 	color: '#989898',
 	'&.Mui-selected': {
-		color: '#fff',
-		textDecoration: 'underline',
-		textUnderlinePosition: 'under'
+		color: '#fff'
 	},
 	'&.Mui-focusVisible': {
 		backgroundColor: '#3d3d3d',

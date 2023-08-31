@@ -1,15 +1,11 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
-import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
+import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
 import { useSnackbar } from 'notistack'
-import { makeStyles } from '@mui/styles'
-import CancelIcon from './Icons/CancelIcon'
-import MenuIcon from './Icons/MenuIcon'
-import { useScroll } from '~/hooks/useScroll'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
@@ -18,45 +14,29 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
+import { mintUSDi } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
+import NaviMenu from './NaviMenu'
 
 const GNB: React.FC = () => {
-	const [mobileNavToggle, setMobileNavToggle] = useState(false)
 	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
 
-	const { scrolled } = useScroll()
-
-	const handleMobileNavBtn = () => setMobileNavToggle((prev) => !prev)
-
-	const navClassName = useMemo(() => {
-		let className = mobileNavToggle ? 'mobile-on' : ''
-		className += scrolled ? ' scrolled' : ''
-		return className
-	}, [mobileNavToggle, scrolled])
-
 	return (
 		<>
 			<NavPlaceholder />
-			<StyledAppBar className={navClassName} position="static">
+			<StyledAppBar position="static">
 				<TempWarningMsg />
 				<Container maxWidth={false}>
-					<Toolbar disableGutters>
-						<Image src={logoIcon} width={148} height={36} alt="clone" />
-						<Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}></Box>
-						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
-							<RightMenu />
-						</Box>
-						<Box sx={{ marginLeft: 'auto', display: { xs: 'flex', sm: 'none' } }}>
-							<IconButton sx={{ color: 'white' }} onClick={handleMobileNavBtn}>
-								{mobileNavToggle ? <CancelIcon color="info" /> : <MenuIcon />}
-							</IconButton>
-						</Box>
+					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Image src={logoIcon} width={144} height={32} alt="clone" />
+						<Box ml='60px'><NaviMenu /></Box>
+						<RightMenu />
 					</Toolbar>
 				</Container>
 				<MobileWarningDialog open={isMobile} handleClose={() => { return null }} />
@@ -67,12 +47,13 @@ const GNB: React.FC = () => {
 
 export default withCsrOnly(GNB)
 
-const RightMenu = () => {
+const RightMenu: React.FC = () => {
 	const router = useRouter()
 	const { enqueueSnackbar } = useSnackbar()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
+	const setMintUsdi = useSetAtom(mintUSDi)
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
@@ -85,11 +66,12 @@ const RightMenu = () => {
 	const MoreMenu = dynamic(() => import('./Common/MoreMenu'))
 	const ReminderNewWalletPopup = dynamic(() => import('./Account/ReminderNewWalletPopup'))
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
+	const WalletSelectBox = dynamic(() => import('./Common/WalletSelectBox'))
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
-	const { setMintUsdi } = useFaucet()
+	useFaucet()
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
@@ -160,36 +142,19 @@ const RightMenu = () => {
 				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
-					<ConnectButton
-						onClick={handleWalletClick}
-						disabled={connecting}
-						startIcon={<Image src={walletIcon} alt="wallet" />}>
-						{!connected ? (
-							<Typography variant='p'>Connect Wallet</Typography>
-						) : (
-							<>
-								{publicKey && (
-									<Typography variant='p'>{shortenAddress(publicKey.toString())}</Typography>
-								)}
-							</>
-						)}
-					</ConnectButton>
-					{showWalletSelectPopup && <WalletSelectBox>
-						<Stack direction='row' alignItems='center'>
-							<WalletAddress onClick={handleChangeWallet}>
-								{publicKey && (
-									<Typography variant='h7'>{shortenAddress(publicKey.toString())}</Typography>
-								)}
-							</WalletAddress>
-							<Stack direction='row' spacing={2}>
-								<CopyToClipboard text={publicKey!!.toString()}
-									onCopy={() => enqueueSnackbar('Copied address')}>
-									<PopupButton><Typography variant='p_sm'>Copy</Typography></PopupButton>
-								</CopyToClipboard>
-								<PopupButton><Typography variant='p_sm' onClick={handleDisconnect}>Disconnect</Typography></PopupButton>
-							</Stack>
-						</Stack>
-					</WalletSelectBox>}
+					{!connected ?
+						<ConnectButton
+							onClick={handleWalletClick}
+							disabled={connecting}
+						>
+							<Typography variant='p_lg'>Connect Wallet</Typography>
+						</ConnectButton>
+						:
+						<ConnectedButton onClick={handleWalletClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+							<Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
+						</ConnectedButton>
+					}
+					{showWalletSelectPopup && <WalletSelectBox onHide={() => setShowWalletSelectPopup(false)} />}
 					{publicKey && <ReminderNewWalletPopup />}
 				</Box>
 			</Box>
@@ -209,7 +174,6 @@ const RightMenu = () => {
 
 const StyledAppBar = styled(AppBar)`
 	background-color: #000;
-	// height: 60px;
 	position: fixed;
 	z-index: 1300;
 	top: 0px;
@@ -232,9 +196,6 @@ const StyledAppBar = styled(AppBar)`
 		backdrop-filter: blur(20px);
 		border-radius: 20px;
 	}
-	// .MuiToolbar-root {
-	// 	height: 100%;
-	// }
 `
 const NavPlaceholder = styled('div')`
 	${(props) => props.theme.breakpoints.up('md')} {
@@ -245,26 +206,42 @@ const NavPlaceholder = styled('div')`
 	}
 `
 const HeaderButton = styled(Button)`
-	padding: 12px;
+	padding: 8px;
   margin-left: 16px;
 	color: ${(props) => props.theme.palette.text.secondary};
-	height: 35px;
+	height: 42px;
+	border-radius: 5px;
   &:hover {
-    background-color: ${(props) => props.theme.boxes.darkBlack};
+    background-color: ${(props) => props.theme.basis.jurassicGrey};
+		color: #fff;
   }
-	&:active {
-		background-color: ${(props) => props.theme.boxes.darkBlack};
-	}
 `
 const ConnectButton = styled(Button)`
-  background-color: ${(props) => props.theme.boxes.black};
-	padding: 12px;
+	width: 142px;
+	height: 42px;
+	padding: 9px;
+	border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
+	box-shadow: 0 0 10px 0 #005874;
   margin-left: 16px;
+	border-radius: 5px;
 	color: #fff;
-	width: 140px;
-	height: 36px;
   &:hover {
-    background-color: ${(props) => props.theme.boxes.darkBlack};
+		background: transparent;
+		border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
+  }
+`
+const ConnectedButton = styled(Button)`
+	width: 142px;
+	height: 42px;
+	padding: 9px;
+	margin-left: 16px;
+	border-radius: 5px;
+	color: #fff;
+	border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  background: ${(props) => props.theme.basis.jurassicGrey};
+	&:hover {
+		background: ${(props) => props.theme.basis.jurassicGrey};
+    border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
   }
 `
 const WalletSelectBox = styled(Box)`
@@ -289,17 +266,17 @@ const PopupButton = styled(Box)`
 	cursor: pointer;
 `
 
-const useStyles = makeStyles(({ palette }: Theme) => ({
-	indicator: {
-		display: 'flex',
-		justifyContent: 'center',
-		backgroundColor: 'transparent',
-		height: '3px',
-		'& > div': {
-			maxWidth: '20%',
-			width: '100%',
-			marginLeft: '-3px',
-			backgroundColor: palette.primary.main,
-		},
-	},
-}))
+// const useStyles = makeStyles(({ palette }: Theme) => ({
+// 	indicator: {
+// 		display: 'flex',
+// 		justifyContent: 'center',
+// 		backgroundColor: 'transparent',
+// 		height: '3px',
+// 		'& > div': {
+// 			maxWidth: '20%',
+// 			width: '100%',
+// 			marginLeft: '-3px',
+// 			backgroundColor: palette.primary.main,
+// 		},
+// 	},
+// }))

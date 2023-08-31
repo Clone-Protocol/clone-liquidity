@@ -12,7 +12,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
       <Dialog open={open} onClose={onHide} TransitionComponent={FadeTransition}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
-            <Box mb="21px"><Typography variant='h7'>Token Faucet</Typography></Box>
+            <Box mb="21px"><Typography variant='p'>Token Faucet</Typography></Box>
             <a href="https://solfaucet.com/" target="_blank" rel="noreferrer">
               <LinkBox>
                 <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>

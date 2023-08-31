@@ -36,6 +36,16 @@ export const fetchAssets = async () => {
 	for (const info of iassetInfos) {
 		let { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
 		const stats = poolStats[info.poolIndex]
+
+		let change24h = 0
+		// if (pythData && pythData.length > 0) {
+		// 	const priceData = pythData[i]
+
+		// 	const openPrice = priceData[0] ? Number(priceData[0].price) : 0
+		// 	const closePrice = priceData[0] ? Number(priceData.at(-1)!.price) : 0
+		// 	change24h = priceData[0] ? (closePrice / openPrice - 1) * 100 : 0
+		// }
+
 		result.push({
 			id: info.poolIndex,
 			tickerName: tickerName,
@@ -46,6 +56,7 @@ export const fetchAssets = async () => {
 			assetType: assetType,
 			liquidity: parseInt(info.liquidity.toString()),
 			volume24h: stats.volumeUSD,
+			change24h,
 			feeRevenue24h: stats.fees
 		})
 	}
@@ -69,6 +80,7 @@ export interface AssetList {
 	assetType: number
 	liquidity: number
 	volume24h: number
+	change24h: number
 	feeRevenue24h: number
 }
 
