@@ -24,7 +24,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
           </Box>
           <Box width='100%' margin='0 auto'>
             <ScoreBar />
-            {!hideIndicator && <Box display="flex" justifyContent='space-between'>
+            {!hideIndicator && <Box display="flex" justifyContent='space-between' color='#66707e'>
               <Box><Typography variant='p_sm'>0 (Poor)</Typography></Box>
               <Box><Typography variant='p_sm'>(Excellent) 100</Typography></Box>
             </Box>}

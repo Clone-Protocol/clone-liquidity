@@ -70,28 +70,32 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		<Box>
 			<Stack direction='row' spacing={3} justifyContent="center">
 				<Box>
-					<GoBackButton onClick={() => router.back()}><Typography variant='p'>Go back</Typography></GoBackButton>
+					<GoBackButton onClick={() => router.back()}><Typography variant='p'>{'<'} Go back</Typography></GoBackButton>
 					<Box mb='15px'>
-						<Typography variant='p_xxlg'>New Liquidity Position</Typography>
+						<Typography variant='p_xxlg'>New Comet Liquidity Position</Typography>
 					</Box>
 					<a href="https://docs.clone.so/system-architecture/comet-liquidity-system" target="_blank" rel="noreferrer">
 						<TipMsg>
-							<Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
+							<Image src={InfoIcon} alt='info' />
+							<Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Comet Liquidity System is built to introduce hyper liquidity to our onAssets. Click to learn more.</Typography>
 						</TipMsg>
 					</a>
-					<Box mt='15px'><Typography variant='p_lg'>Select Pool</Typography></Box>
-					<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
-						<Stack direction='row' gap={1}>
-							<Image src={assetData.tickerIcon} width={27} height={27} alt={assetData.tickerSymbol} />
-							<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} onUSD</Typography>
-						</Stack>
-						<Image src={SelectArrowIcon} alt='select' />
-					</SelectPoolBox>
 
 					<LeftBoxWrapper>
 						<Box paddingY='5px'>
 							<TabPanel value={tab} index={0}>
-								<CometPanel assetIndex={assetIndex} onRefetchData={() => refetch()} />
+								<CometPanel assetIndex={assetIndex} onRefetchData={() => refetch()}>
+									<Box>
+										<Box mt='15px'><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
+										<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
+											<Stack direction='row' gap={1}>
+												<Image src={assetData.tickerIcon} width={27} height={27} alt={assetData.tickerSymbol} />
+												<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} onUSD</Typography>
+											</Stack>
+											<Image src={SelectArrowIcon} alt='select' />
+										</SelectPoolBox>
+									</Box>
+								</CometPanel>
 							</TabPanel>
 						</Box>
 
@@ -121,8 +125,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 const LeftBoxWrapper = styled(Box)`
 	width: 607px; 
-	padding: 8px 25px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	padding: 8px 0px;
 	margin-bottom: 25px;
 `
 const RightBoxWrapper = styled(Box)`

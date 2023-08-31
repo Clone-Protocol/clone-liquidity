@@ -19,12 +19,11 @@ import DataPlusIcon from 'public/images/database-plus.svg'
 import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
-import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const RISK_SCORE_VAL = 20
 
-const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefetchData: () => void }) => {
+const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: number, children: React.ReactNode, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const router = useRouter()
   const [mintRatio, setMintRatio] = useState(0)
@@ -126,10 +125,6 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
     }
   }
 
-  // const handleChooseCollateral = (collId: number) => {
-  //   setOpenChooseCollateral(false)
-  // }
-
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
@@ -152,85 +147,44 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
       <Box mb='10px'>
         <BoxWithBorder p='20px'>
           <Box>
-            <Typography variant='p_lg'>Current Comet Statistics</Typography>
+            <Typography variant='p_lg'>Current Comet Status</Typography>
           </Box>
           <Box my='15px'>
-            <Box mb='10px'><Typography variant='p' color='#989898'>Total Collateral Value</Typography></Box>
-            <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
+            <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
+            <Box><Typography variant='h3' fontWeight={500}>${positionInfo.totalCollValue.toLocaleString()}</Typography></Box>
           </Box>
           <Box>
-            <Box mb='10px'><Typography variant='p' color='#989898'>Current Healthscore</Typography></Box>
+            <SubHeader><Typography variant='p'>Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubHeader>
             <HealthscoreBar score={positionInfo.totalHealthScore} width={480} hiddenThumbTitle={true} />
           </Box>
         </BoxWithBorder>
 
-        <StyledDivider />
-        <Box mb='13px'>
-          <Box>
-            <Typography variant='p_lg'>Liquidity Amount</Typography>
-          </Box>
-          <Box mt='15px' mb='10px' p='5px'>
-            <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-            <Box display='flex' justifyContent='space-between' marginTop='-10px'>
-              <Box><Typography variant='p_sm'>Min</Typography></Box>
-              <Box><Typography variant='p_sm'>Max</Typography></Box>
-            </Box>
-          </Box>
-          {/* <Stack direction='row' alignItems='flex-end' gap={1}>
-            <Box width='275px'>
-              <Controller
-                name="mintAmount"
-                control={control}
-                rules={{
-                  validate() {
-                    return validateMintAmount()
-                  }
-                }}
-                render={({ field }) => (
-                  <PairInput
-                    tickerIcon={'/images/assets/on-usd.svg'}
-                    tickerSymbol="onUSD"
-                    value={parseFloat(field.value.toFixed(3))}
-                    dollarPrice={0}
-                    headerTitle="Max Amount Mintable"
-                    headerValue={maxMintable}
-                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
-                      let mintVal = parseFloat(evt.currentTarget.value)
-                      mintVal = isNaN(mintVal) ? 0 : mintVal
-                      field.onChange(mintVal)
-                      maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
-                    }}
-                    onMax={(value: number) => {
-                      field.onChange(value)
-                      maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
-                    }}
-                    onTickerClicked={() => setOpenChooseCollateral(true)}
-                  />
-                )}
-              />
-            </Box>
-            <Box width='275px'>
-              <PairInputView
-                tickerIcon={positionInfo.tickerIcon}
-                tickerSymbol={positionInfo.tickerSymbol}
-                value={mintAmount / positionInfo.price}
-                dollarPrice={mintAmount}
-              />
-            </Box>
-          </Stack> */}
-          <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-        </Box>
+        {children}
+
         <BoxWithBorder padding="15px 24px">
-          <Stack direction='row' justifyContent='space-between'>
-            <Box><Typography variant="p">Your Liquidity Value</Typography></Box>
-            <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
-          </Stack>
+          <Box mb='13px'>
+            <Box>
+              <Typography variant='p_lg'>Liquidity Amount</Typography>
+            </Box>
+            <Box mt='15px' mb='10px' p='5px'>
+              <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+              <Box display='flex' justifyContent='space-between' marginTop='-10px'>
+                <Box><Typography variant='p_sm'>Min</Typography></Box>
+                <Box><Typography variant='p_sm'>Max</Typography></Box>
+              </Box>
+            </Box>
+            <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+          </Box>
+
+          <StackWithBorder direction='row' justifyContent='space-between'>
+            <Box><Typography variant="p">Liquidity Value</Typography></Box>
+            <Box><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
+          </StackWithBorder>
         </BoxWithBorder>
-        <StyledDivider />
 
         <BoxWithBorder padding="15px 24px">
           <Box>
-            <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
+            <Box mb="15px"><Typography variant="p_lg">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
             <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={470} hideIndicator={true} />
             {hasRiskScore &&
               <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
@@ -243,17 +197,16 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
         <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Comet Liquidity Position</Typography>
       </SubmitButton>
 
-      {/* <ChooseCollateralDialog
-        open={openChooseCollateral}
-        handleChooseCollateral={handleChooseCollateral}
-        handleClose={() => setOpenChooseCollateral(false)}
-      /> */}
     </>
   ) : <></>
 }
 
 const BoxWithBorder = styled(Box)`
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+`
+const StackWithBorder = styled(Stack)`
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  padding: 18px;
 `
 const WarningStack = styled(Stack)`
   justify-content: center;
@@ -263,6 +216,10 @@ const WarningStack = styled(Stack)`
   padding-bottom: 5px;
   border: 1px solid ${(props) => props.theme.palette.error.main};
   color: ${(props) => props.theme.palette.text.secondary};
+`
+const SubHeader = styled(Box)`
+  color: ${(props) => props.theme.basis.slug};
+  margin-bottom: 10px;
 `
 
 export default withSuspense(CometPanel, <LoadingProgress />)

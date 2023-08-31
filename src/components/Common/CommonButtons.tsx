@@ -2,7 +2,7 @@ import { styled } from '@mui/system'
 import { Box, Button } from '@mui/material'
 
 export const GoBackButton = styled(Box)`
-  color: ${(props) => props.theme.palette.text.secondary};
+  color: ${(props) => props.theme.basis.slug};
   cursor: pointer;
   &:hover {
     color: #fff;
