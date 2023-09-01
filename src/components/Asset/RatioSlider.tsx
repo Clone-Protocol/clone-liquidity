@@ -14,8 +14,8 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	padding: '13px 0',
 	marginTop: '13px',
 	'& .MuiSlider-thumb': {
-		height: 16,
-		width: 16,
+		height: 20,
+		width: 20,
 		backgroundColor: '#fff',
 		border: '3px solid #809cff',
 		'&:hover': {
@@ -23,9 +23,9 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 		},
 	},
 	'& .MuiSlider-track': {
-		height: 3,
+		height: 4,
 		border: 'none',
-		background: 'linear-gradient(to left, #ff8e4f 0%, #fff 100%)'
+		background: 'linear-gradient(to right, #fff 51%, #ff0084 550px)'
 	},
 	'& .MuiSlider-valueLabel': {
 		fontSize: '12px',
@@ -37,8 +37,8 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 		'&:before': { display: 'none' },
 	},
 	'& .MuiSlider-rail': {
-		color: '#444444',
-		height: 3,
+		color: '#414e66',
+		height: 4,
 	},
 }))
 
@@ -66,9 +66,6 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 						},
 						'& .MuiSlider-thumb': {
 							border: `0px`,
-						},
-						'& .MuiSlider-track': {
-							background: `linear-gradient(to left, #ff8e4f 0%, #fff ${value}%)`
 						}
 					}}
 					value={parseFloat(value.toFixed(2))}

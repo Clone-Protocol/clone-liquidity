@@ -68,7 +68,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 	return assetData ? (
 		<Box>
-			<Stack direction='row' spacing={3} justifyContent="center">
+			<Stack direction='row' spacing={9} justifyContent="center">
 				<Box>
 					<GoBackButton onClick={() => router.back()}><Typography variant='p'>{'<'} Go back</Typography></GoBackButton>
 					<Box mb='15px'>
@@ -86,11 +86,11 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 							<TabPanel value={tab} index={0}>
 								<CometPanel assetIndex={assetIndex} onRefetchData={() => refetch()}>
 									<Box>
-										<Box mt='15px'><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
+										<Box><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
 										<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
-											<Stack direction='row' gap={1}>
-												<Image src={assetData.tickerIcon} width={27} height={27} alt={assetData.tickerSymbol} />
-												<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} onUSD</Typography>
+											<Stack direction='row' gap={1} alignItems='center'>
+												<Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
+												<Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
 											</Stack>
 											<Image src={SelectArrowIcon} alt='select' />
 										</SelectPoolBox>
@@ -98,16 +98,12 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 								</CometPanel>
 							</TabPanel>
 						</Box>
-
-						<Box display='flex' justifyContent='center'>
-							<DataLoadingIndicator onRefresh={() => refetch()} />
-						</Box>
 					</LeftBoxWrapper>
 				</Box>
 
 				<RightBoxWrapper>
 					<StickyBox>
-						<PriceChart assetData={assetData} priceTitle='onAsset Price' />
+						<PriceChart assetData={assetData} priceTitle='Oracle Price' />
 						<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
 					</StickyBox>
 				</RightBoxWrapper>
@@ -124,13 +120,13 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 }
 
 const LeftBoxWrapper = styled(Box)`
-	width: 607px; 
+	width: 600px; 
 	padding: 8px 0px;
-	margin-bottom: 25px;
+	margin-bottom: 65px;
 `
 const RightBoxWrapper = styled(Box)`
-	width: 450px;
-	padding: 20px;
+	width: 472px;
+	padding: 8px 0px;
 `
 const StickyBox = styled(Box)`
   position: sticky;
@@ -139,15 +135,18 @@ const StickyBox = styled(Box)`
 const SelectPoolBox = styled(Box)`
 	display: flex;
 	justify-content: space-between;
-	width: 261px;
-	height: 45px;
+	align-items: center;
+	width: 195px;
+	height: 40px;
 	margin-top: 10px;
 	margin-bottom: 20px;
+	background-color: rgba(37, 141, 237, 0.15);
+	border-radius: 5px;
 	cursor: pointer;
-	padding: 9px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	padding: 8px;
 	&:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+		background-color: rgba(37, 141, 237, 0.23);
   }
 `
 

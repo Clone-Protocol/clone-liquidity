@@ -3,12 +3,13 @@ import { styled, Box, Typography } from '@mui/material'
 interface Props {
   score?: number
   prevScore?: number
+  hasRiskScore?: boolean
   hiddenThumbTitle?: boolean
   hideIndicator?: boolean
   width: number
 }
 
-const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
+const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hasRiskScore = false, hiddenThumbTitle = false, hideIndicator = false, width = 490 }) => {
   if (score && score > 100) score = 100
   const scorePoint = score ? width * score / 100 - 10 : -10
   const prevScorePoint = prevScore ? width * prevScore / 100 - 10 : -10
@@ -19,7 +20,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
           <Box sx={{ paddingLeft: `${scorePoint}px` }}>
             {!hiddenThumbTitle && <Box sx={{ marginLeft: '-5px' }}><Typography variant='p_sm'>New</Typography></Box>}
             <ScorePointer>
-              <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
+              <Box display='flex' justifyContent='center'><Typography variant='p_lg' color={hasRiskScore ? '#ff0084' : ''}>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
             </ScorePointer>
           </Box>
           <Box width='100%' margin='0 auto'>

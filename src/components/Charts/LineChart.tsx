@@ -11,12 +11,6 @@ dayjs.extend(utc)
 export type LineChartProps = {
   data: ChartElem[]
   color?: string | undefined
-  height?: number | undefined
-  minHeight?: number
-  setValue?: Dispatch<SetStateAction<number | undefined>> // used for value on hover
-  setLabel?: Dispatch<SetStateAction<string | undefined>> // used for label of valye
-  value?: number
-  label?: string
   maxY: number
   minY: number
 } & React.HTMLAttributes<HTMLDivElement>
@@ -25,14 +19,8 @@ export type LineChartProps = {
 const LineChart: React.FC<LineChartProps> = ({
   data,
   color = '#4fe5ff',
-  value,
-  label,
-  setValue,
-  setLabel,
-  minHeight = 109,
   maxY,
   minY,
-  ...rest
 }) => {
   return data ? (
     <Wrapper>
@@ -43,8 +31,8 @@ const LineChart: React.FC<LineChartProps> = ({
           data={data}
           margin={{
             top: 5,
-            right: 30,
-            left: 20,
+            right: 5,
+            left: 5,
             bottom: 5,
           }}
         >
@@ -65,9 +53,10 @@ const LineChart: React.FC<LineChartProps> = ({
 
 const Wrapper = styled(Card)`
   background: #000;
-  width: 410px;
-  max-width: 410px;
-  height: 288px;
+  width: 100%;
+  max-width: 472px;
+  margin: 30px 0px;
+  height: 171px;
   display: flex;
   flex-direction: column;
   > * {

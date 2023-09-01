@@ -145,7 +145,7 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
   return positionInfo ? (
     <>
       <Box mb='10px'>
-        <BoxWithBorder p='20px'>
+        <BoxWithBorder p='14px 22px'>
           <Box>
             <Typography variant='p_lg'>Current Comet Status</Typography>
           </Box>
@@ -159,44 +159,40 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
           </Box>
         </BoxWithBorder>
 
-        {children}
+        <BoxWithBorder padding="15px 24px" mt='24px'>
+          {children}
 
-        <BoxWithBorder padding="15px 24px">
-          <Box mb='13px'>
+          <Box>
             <Box>
               <Typography variant='p_lg'>Liquidity Amount</Typography>
             </Box>
             <Box mt='15px' mb='10px' p='5px'>
               <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-              <Box display='flex' justifyContent='space-between' marginTop='-10px'>
-                <Box><Typography variant='p_sm'>Min</Typography></Box>
-                <Box><Typography variant='p_sm'>Max</Typography></Box>
-              </Box>
             </Box>
             <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
           </Box>
 
-          <StackWithBorder direction='row' justifyContent='space-between'>
-            <Box><Typography variant="p">Liquidity Value</Typography></Box>
-            <Box><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
+          <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
+            <Box display='flex' alignItems='center'><Typography variant="p">Liquidity Value</Typography></Box>
+            <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
           </StackWithBorder>
-        </BoxWithBorder>
 
-        <BoxWithBorder padding="15px 24px">
-          <Box>
-            <Box mb="15px"><Typography variant="p_lg">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-            <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={470} hideIndicator={true} />
+          <Box mt='25px'>
+            <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} color='#66707e' /></Box>
+            <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
             {hasRiskScore &&
-              <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+              <WarningStack direction='row'>
+                <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
+                <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+              </WarningStack>
             }
           </Box>
         </BoxWithBorder>
       </Box>
 
-      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
-        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Comet Liquidity Position</Typography>
+      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
+        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
       </SubmitButton>
-
     </>
   ) : <></>
 }
@@ -212,14 +208,13 @@ const WarningStack = styled(Stack)`
   justify-content: center;
   align-items: center;
   margin-top: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border: 1px solid ${(props) => props.theme.palette.error.main};
-  color: ${(props) => props.theme.palette.text.secondary};
+  padding: 13px;
+  border-radius: 5px;
+  background-color: rgba(255, 0, 214, 0.15);
+  color: #ff0084;
 `
 const SubHeader = styled(Box)`
   color: ${(props) => props.theme.basis.slug};
-  margin-bottom: 10px;
 `
 
 export default withSuspense(CometPanel, <LoadingProgress />)

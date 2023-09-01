@@ -11,16 +11,18 @@ export const GoBackButton = styled(Box)`
 
 export const SubmitButton = styled(Button)`
 	width: 100%;
+  height: 52px;
 	background-color: ${(props) => props.theme.palette.primary.main};
 	color: #000;
-  border-radius: 0px;
+  border-radius: 5px;
   margin-top: 15px;
 	margin-bottom: 15px;
   &:hover {
-    background-color: ${(props) => props.theme.palette.hover};
+    background-color: ${(props) => props.theme.basis.gloomyBlue};
   }
   &:disabled {
-    background-color: ${(props) => props.theme.boxes.grey};
-    color: #000;
+    border: 1px solid ${(props) => props.theme.basis.shadowGloom};
+    font-weight: 600;
+    color: #989898;
   }
 `

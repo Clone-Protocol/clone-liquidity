@@ -1,7 +1,7 @@
 import { styled, Typography, Box } from '@mui/material'
 import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
 
-const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
+const TxtPriceRateComparePast = ({ val, rate }: { val: number, rate: number }) => {
   if (isFinite(rate)) {
     if (rate >= 0) {
       return (
@@ -17,6 +17,16 @@ const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
   }
 }
 
+const TxtPriceRate = ({ rate }: { rate: number }) => {
+  if (isFinite(rate)) {
+    return (
+      <Typography variant="p" color={rate >= 0 ? '#4fe5ff' : '#258ded'} ml='5px'>  {rate >= 0 ? '+' : '-'}{rate.toLocaleString()}%</Typography>
+    )
+  } else {
+    return <></>
+  }
+}
+
 const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
   const { data: resultData } = usePoolAnalyticsQuery({
     tickerSymbol,
@@ -26,18 +36,18 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
 
   return (
     <Box>
-      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/onUSD Pool Analytics</Typography></Box>
+      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/devUSD Pool Analytics</Typography></Box>
       <DataBox>
-        <Box><Typography variant="p_sm">Total Liquidity</Typography></Box>
-        <Box><Typography variant="p_lg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate val={resultData!.liquidityGain} rate={resultData!.liquidityGainPct} /></Box>
+        <Box><Typography variant="p" color='#66707e'>Total Liquidity</Typography></Box>
+        <Box><Typography variant="p_xlg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.liquidityGainPct} /></Box>
       </DataBox>
       <DataBox>
-        <Box><Typography variant="p_sm">24h Trading Volume</Typography></Box>
-        <Box><Typography variant="p_lg">${resultData?.tradingVol24h.toLocaleString()} USD</Typography> <TxtPriceRate val={resultData!.tradingVolGain} rate={resultData!.tradingVolGainPct} /></Box>
+        <Box><Typography variant="p" color='#66707e'>24h Trading Volume</Typography></Box>
+        <Box><Typography variant="p_xlg">${resultData?.tradingVol24h.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.tradingVolGainPct} /></Box>
       </DataBox>
       <DataBox>
-        <Box><Typography variant="p_sm">24h Fee Revenue</Typography></Box>
-        <Box><Typography variant="p_lg">${resultData?.feeRevenue24hr.toLocaleString()} USD</Typography> <TxtPriceRate val={resultData!.feeRevenueGain} rate={resultData!.feeRevenueGainPct} /></Box>
+        <Box><Typography variant="p" color='#66707e'>24h Fee Revenue</Typography></Box>
+        <Box><Typography variant="p_xlg">${resultData?.feeRevenue24hr.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.feeRevenueGainPct} /></Box>
       </DataBox>
     </Box>
   )
@@ -48,7 +58,7 @@ const DataBox = styled(Box)`
   height: 61px;
   margin-bottom: 12px;
   padding: 4px 16px;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 `
 
 export default PoolAnalytics

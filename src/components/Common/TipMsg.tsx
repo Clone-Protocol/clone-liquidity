@@ -17,7 +17,7 @@ const StyledBox = styled(Box)`
 	font-weight: 500;
 	text-align: center;
 	background-color: ${(props) => props.theme.basis.darkNavy};
-	color: rgba(255, 255, 255, 0.5);
+	color: rgba(255, 255, 255, 0.8);
 	border-radius: 5px;
 	height: 38px;
 `
