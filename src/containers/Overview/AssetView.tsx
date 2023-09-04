@@ -13,7 +13,6 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 // import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
@@ -52,7 +51,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		userPubKey: publicKey,
 		index: assetIndex,
 		refetchOnMount: "always",
-		enabled: publicKey != null
 	})
 
 	const openChooseLiquidityDialog = () => {
@@ -66,7 +64,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		router.replace(`/assets/${ASSETS[assetId].ticker}`)
 	}
 
-	return assetData ? (
+	return (
 		<Box>
 			<Stack direction='row' spacing={9} justifyContent="center">
 				<Box>
@@ -88,10 +86,12 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 									<Box>
 										<Box><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
 										<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
-											<Stack direction='row' gap={1} alignItems='center'>
-												<Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
-												<Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
-											</Stack>
+											{assetData &&
+												<Stack direction='row' gap={1} alignItems='center'>
+													<Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
+													<Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
+												</Stack>
+											}
 											<Image src={SelectArrowIcon} alt='select' />
 										</SelectPoolBox>
 									</Box>
@@ -104,7 +104,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				<RightBoxWrapper>
 					<StickyBox>
 						<PriceChart assetData={assetData} priceTitle='Oracle Price' />
-						<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
+						{publicKey && assetData && <PoolAnalytics tickerSymbol={assetData.tickerSymbol} />}
 					</StickyBox>
 				</RightBoxWrapper>
 			</Stack>
@@ -116,7 +116,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				noFilter={tab !== 0}
 			/>
 		</Box>
-	) : <><Typography variant='p_lg'>Please Connect Wallet</Typography></>
+	)
 }
 
 const LeftBoxWrapper = styled(Box)`
@@ -149,5 +149,6 @@ const SelectPoolBox = styled(Box)`
 		background-color: rgba(37, 141, 237, 0.23);
   }
 `
+
 
 export default withSuspense(AssetView, <LoadingProgress />)

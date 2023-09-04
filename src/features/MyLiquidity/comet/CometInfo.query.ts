@@ -1,13 +1,15 @@
 import { Query, useQuery } from '@tanstack/react-query'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, Connection } from "@solana/web3.js";
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { Comet, TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
+import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { AnchorProvider } from "@coral-xyz/anchor";
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 
@@ -164,12 +166,24 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 	}
 }
 
-export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
-	if (!userPubKey) return
-
+export const fetchInitializeCometDetail = async ({ index }: { index: number }) => {
+	// MEMO: to support provider without wallet adapter
+	const network = getNetworkDetailsFromEnv()
+	const new_connection = new Connection(network.endpoint)
+	const provider = new AnchorProvider(
+		new_connection,
+		{
+			signTransaction: () => Promise.reject(),
+			signAllTransactions: () => Promise.reject(),
+			publicKey: PublicKey.default, // MEMO: dummy pubkey
+		},
+		{}
+	);
+	// @ts-ignore
+	const program = new CloneClient(network.clone, provider)
 	await program.loadClone()
-
 	const tokenData = await program.getTokenData();
+
 	const pool = tokenData.pools[index];
 	const { poolOnasset, poolOnusd } = calculatePoolAmounts(
 		toNumber(pool.onusdIld), toNumber(pool.onassetIld), toNumber(pool.committedOnusdLiquidity), toNumber(pool.assetInfo.price)
@@ -192,15 +206,32 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	}
 }
 
-export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetPoolsProps) {
-	const wallet = useAnchorWallet()
-	const { getCloneApp } = useClone()
-	if (wallet) {
-		return useQuery(['initComet', wallet, userPubKey, index], () => fetchInitializeCometDetail({ program: getCloneApp(wallet), userPubKey, index }), {
-			refetchOnMount,
-			enabled
-		})
-	} else {
-		return useQuery(['initComet'], () => { return null })
+const fetchInitCometDetailDefault = () => {
+	return (
+		{
+			tickerIcon: '',
+			tickerName: '',
+			tickerSymbol: '',
+			pythSymbol: '',
+			price: 0,
+			tightRange: 0,
+			maxRange: 0,
+			centerPrice: 0,
+		}
+	)
+}
+
+export function useInitCometDetailQuery({ index = 0, refetchOnMount, enabled = true }: GetPoolsProps) {
+	let queryFunc
+	try {
+		queryFunc = () => fetchInitializeCometDetail({ index })
+	} catch (e) {
+		console.error(e)
+		queryFunc = () => fetchInitCometDetailDefault()
 	}
+
+	return useQuery(['initComet', index], queryFunc, {
+		refetchOnMount,
+		enabled
+	})
 }

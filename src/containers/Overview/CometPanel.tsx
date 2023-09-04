@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, Stack, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography, Button } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
@@ -19,7 +19,8 @@ import DataPlusIcon from 'public/images/database-plus.svg'
 import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
 import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
-import { SubmitButton } from '~/components/Common/CommonButtons'
+import { ConnectButton, SubmitButton } from '~/components/Common/CommonButtons'
+import { OpaqueConnectWallet } from '~/components/Overview/OpaqueArea'
 
 const RISK_SCORE_VAL = 20
 
@@ -43,7 +44,7 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
   })
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (positionInfo) {
       const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
@@ -96,7 +97,7 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
   // }
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
@@ -142,59 +143,67 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
     return <BlankAlreadyPool />
   }
 
-  return positionInfo ? (
+  return (
     <>
-      <Box mb='10px'>
-        <BoxWithBorder p='14px 22px'>
-          <Box>
-            <Typography variant='p_lg'>Current Comet Status</Typography>
-          </Box>
-          <Box my='15px'>
-            <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
-            <Box><Typography variant='h3' fontWeight={500}>${positionInfo.totalCollValue.toLocaleString()}</Typography></Box>
-          </Box>
-          <Box>
-            <SubHeader><Typography variant='p'>Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubHeader>
-            <HealthscoreBar score={positionInfo.totalHealthScore} width={480} hiddenThumbTitle={true} />
-          </Box>
-        </BoxWithBorder>
-
-        <BoxWithBorder padding="15px 24px" mt='24px'>
-          {children}
-
-          <Box>
+      <Box position='relative' mb='10px'>
+        <Box>
+          <BoxWithBorder p='14px 22px'>
             <Box>
-              <Typography variant='p_lg'>Liquidity Amount</Typography>
+              <Typography variant='p_lg'>Current Comet Status</Typography>
             </Box>
-            <Box mt='15px' mb='10px' p='5px'>
-              <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+            <Box my='15px'>
+              <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
+              <Box><Typography variant='h3' fontWeight={500}>${positionInfo?.totalCollValue.toLocaleString()}</Typography></Box>
             </Box>
-            <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-          </Box>
+            <Box>
+              <SubHeader><Typography variant='p'>Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubHeader>
+              <HealthscoreBar score={positionInfo?.totalHealthScore} width={480} hiddenThumbTitle={true} />
+            </Box>
+          </BoxWithBorder>
 
-          <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
-            <Box display='flex' alignItems='center'><Typography variant="p">Liquidity Value</Typography></Box>
-            <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
-          </StackWithBorder>
+          <BoxWithBorder padding="15px 24px" mt='24px'>
+            {children}
 
-          <Box mt='25px'>
-            <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} color='#66707e' /></Box>
-            <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
-            {hasRiskScore &&
-              <WarningStack direction='row'>
-                <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
-                <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
-              </WarningStack>
-            }
-          </Box>
-        </BoxWithBorder>
+            <Box>
+              <Box>
+                <Typography variant='p_lg'>Liquidity Amount</Typography>
+              </Box>
+              <Box mt='15px' mb='10px' p='5px'>
+                <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+              </Box>
+              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+            </Box>
+
+            <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
+              <Box display='flex' alignItems='center'><Typography variant="p">Liquidity Value</Typography></Box>
+              <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
+            </StackWithBorder>
+
+            <Box mt='25px'>
+              <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} color='#66707e' /></Box>
+              <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
+              {hasRiskScore &&
+                <WarningStack direction='row'>
+                  <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
+                  <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+                </WarningStack>
+              }
+            </Box>
+          </BoxWithBorder>
+        </Box>
+
+        {!publicKey && <OpaqueConnectWallet />}
       </Box>
 
-      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
-        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
-      </SubmitButton>
+      {!publicKey ?
+        <ConnectButton>Connect Button</ConnectButton>
+        :
+        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
+          <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
+        </SubmitButton>
+      }
     </>
-  ) : <></>
+  )
 }
 
 const BoxWithBorder = styled(Box)`
