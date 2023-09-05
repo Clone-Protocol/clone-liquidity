@@ -9,3 +9,21 @@ export const OpaqueConnectWallet = styled(Box)`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.65);
 `
+
+export const OpaqueNoCollateral = styled(Box)`
+  position: absolute;
+  top: 120px;
+  left: 3px;
+  width: 99%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+`
+
+export const OpaqueAlreadyPool = styled(Box)`
+  position: absolute;
+  top: 360px;
+  left: 3px;
+  width: 99%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+`

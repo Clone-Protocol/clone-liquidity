@@ -9,7 +9,6 @@ import withSuspense from '~/hocs/withSuspense'
 import { TabPanel } from '~/components/Common/StyledTab'
 import CometPanel from './CometPanel'
 import { useRouter } from 'next/navigation'
-import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 // import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
@@ -80,22 +79,9 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					</a>
 
 					<LeftBoxWrapper>
-						<Box paddingY='5px'>
+						<Box paddingY='15px'>
 							<TabPanel value={tab} index={0}>
-								<CometPanel assetIndex={assetIndex} onRefetchData={() => refetch()}>
-									<Box>
-										<Box><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
-										<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
-											{assetData &&
-												<Stack direction='row' gap={1} alignItems='center'>
-													<Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
-													<Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
-												</Stack>
-											}
-											<Image src={SelectArrowIcon} alt='select' />
-										</SelectPoolBox>
-									</Box>
-								</CometPanel>
+								<CometPanel assetIndex={assetIndex} assetData={assetData} openChooseLiquidityDialog={openChooseLiquidityDialog} onRefetchData={() => refetch()} />
 							</TabPanel>
 						</Box>
 					</LeftBoxWrapper>
@@ -131,23 +117,6 @@ const RightBoxWrapper = styled(Box)`
 const StickyBox = styled(Box)`
   position: sticky;
   top: 100px;
-`
-const SelectPoolBox = styled(Box)`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 195px;
-	height: 40px;
-	margin-top: 10px;
-	margin-bottom: 20px;
-	background-color: rgba(37, 141, 237, 0.15);
-	border-radius: 5px;
-	cursor: pointer;
-	padding: 8px;
-	&:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
-		background-color: rgba(37, 141, 237, 0.23);
-  }
 `
 
 

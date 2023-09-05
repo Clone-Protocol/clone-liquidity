@@ -29,10 +29,7 @@ const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
 	const [searchTerm, setSearchTerm] = useState('')
 	const debounceSearchTerm = useDebounce(searchTerm, 500)
-
-	const { connected } = useWallet()
 	const router = useRouter()
-	const setOpenConnectWalletGuideDlogState = useSetAtom(openConnectWalletGuideDlogState)
 
 	const { data: assets } = useAssetsQuery({
 		filter,
@@ -61,11 +58,7 @@ const AssetList: React.FC = () => {
 		params
 	) => {
 		if (isAlreadyInitializedAccount) {
-			if (connected) {
-				router.push(`/assets/${params.row.ticker}`)
-			} else {
-				setOpenConnectWalletGuideDlogState(true)
-			}
+			router.push(`/assets/${params.row.ticker}`)
 		} else {
 			handleLinkNeedingAccountClick(undefined)
 		}

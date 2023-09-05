@@ -30,17 +30,25 @@ export const SubmitButton = styled(Button)`
 export const ConnectButton = styled(Button)`
   width: 100%;
   height: 52px;
-  background-color: ${(props) => props.theme.palette.primary.main};
-  color: #000;
   border-radius: 5px;
+  box-shadow: 0 0 15px 0 #005874;
+  border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
+  color: #fff;
   margin-top: 15px;
   margin-bottom: 15px;
   &:hover {
-    background-color: ${(props) => props.theme.basis.gloomyBlue};
+    background: transparent;
+    border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
   }
   &:disabled {
     border: 1px solid ${(props) => props.theme.basis.shadowGloom};
     font-weight: 600;
     color: #989898;
   }
+`
+
+export const SelectButton = styled(ConnectButton)`
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  color: #989898;
+  box-shadow: 0 0 0 0 #000;
 `

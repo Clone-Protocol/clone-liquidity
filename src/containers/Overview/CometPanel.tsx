@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import withSuspense from '~/hocs/withSuspense'
+import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, Stack, FormHelperText, Typography, Button } from '@mui/material'
@@ -14,18 +15,18 @@ import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityP
 import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useRouter } from 'next/navigation'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
-import CometBlank from '~/components/Overview/CometBlank'
-import DataPlusIcon from 'public/images/database-plus.svg'
-import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
-import AirballoonIcon from 'public/images/airballoon-outline.svg'
-import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
-import { ConnectButton, SubmitButton } from '~/components/Common/CommonButtons'
-import { OpaqueConnectWallet } from '~/components/Overview/OpaqueArea'
+import { ConnectButton, SelectButton, SubmitButton } from '~/components/Common/CommonButtons'
+import { OpaqueAlreadyPool, OpaqueConnectWallet, OpaqueNoCollateral } from '~/components/Overview/OpaqueArea'
+import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
+import DepositIcon from 'public/images/deposit-icon.svg'
+import Link from 'next/link'
+import { useWalletDialog } from '~/hooks/useWalletDialog'
 
 const RISK_SCORE_VAL = 20
 
-const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: number, children: React.ReactNode, onRefetchData: () => void }) => {
+const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetchData }: { assetIndex: number, assetData: any, openChooseLiquidityDialog: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
+  const { setOpen } = useWalletDialog()
   const router = useRouter()
   const [mintRatio, setMintRatio] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
@@ -129,18 +130,37 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
-  const BlankNoCollateral = () => (
-    <CometBlank title='Deposit collateral to your comet to get started' subtitle='Comets are designed to allow users to leverage the full capabilities of the CLS' icon={DataPlusIcon} hoverIcon={DataPlusHoverIcon} />
-  )
-
-  const BlankAlreadyPool = () => (
-    <CometBlank title='Liquidity position for this pool already exists for Comet' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} hoverIcon={AirballoonHoverIcon} />
-  )
-
-  if (positionInfo?.hasNoCollateral) {
-    return <BlankNoCollateral />
+  let opaqueArea = null
+  let actionButton = null
+  if (!publicKey) {
+    opaqueArea = <OpaqueConnectWallet />
+    actionButton = (
+      <ConnectButton onClick={() => setOpen(true)}>
+        <Typography variant='p_xlg'>Connect Wallet</Typography>
+      </ConnectButton>
+    )
+  } else if (positionInfo?.hasNoCollateral) {
+    opaqueArea = <OpaqueNoCollateral />
+    actionButton = (
+      <Link href='/myliquidity'>
+        <SelectButton>
+          <Typography variant='p_xlg'>Deposit Collateral</Typography>
+        </SelectButton>
+      </Link>
+    )
   } else if (positionInfo?.hasAlreadyPool) {
-    return <BlankAlreadyPool />
+    opaqueArea = <OpaqueAlreadyPool />
+    actionButton = (
+      <SelectButton onClick={() => openChooseLiquidityDialog()}>
+        <Typography variant='p_xlg'>Select a Pool</Typography>
+      </SelectButton>
+    )
+  } else {
+    actionButton = (
+      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
+        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
+      </SubmitButton>
+    )
   }
 
   return (
@@ -151,9 +171,18 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
             <Box>
               <Typography variant='p_lg'>Current Comet Status</Typography>
             </Box>
-            <Box my='15px'>
+            <Box my='10px'>
               <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
-              <Box><Typography variant='h3' fontWeight={500}>${positionInfo?.totalCollValue.toLocaleString()}</Typography></Box>
+              {positionInfo?.hasNoCollateral ?
+                <Link href='/myliquidity'>
+                  <DepositCollateralButton>
+                    <Typography variant='p_lg'>Deposit collateral to get started </Typography>
+                    <Image src={DepositIcon} alt='deposit' />
+                  </DepositCollateralButton>
+                </Link>
+                :
+                <Box><Typography variant='h3' fontWeight={500}>${positionInfo?.totalCollValue.toLocaleString()}</Typography></Box>
+              }
             </Box>
             <Box>
               <SubHeader><Typography variant='p'>Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubHeader>
@@ -162,9 +191,22 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
           </BoxWithBorder>
 
           <BoxWithBorder padding="15px 24px" mt='24px'>
-            {children}
-
-            <Box>
+            <Box mb='10px'><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
+            {positionInfo?.hasAlreadyPool ?
+              <SelectDefaultPool onClick={() => openChooseLiquidityDialog()}>
+                <Box mb='4px'><Typography variant='p_lg'>Select a Pool</Typography></Box>
+                <Image src={SelectArrowIcon} alt='select' />
+              </SelectDefaultPool>
+              :
+              <SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
+                  <Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
+                </Stack>
+                <Image src={SelectArrowIcon} alt='select' />
+              </SelectPoolBox>
+            }
+            <Box mt='20px'>
               <Box>
                 <Typography variant='p_lg'>Liquidity Amount</Typography>
               </Box>
@@ -192,16 +234,10 @@ const CometPanel = ({ assetIndex, children, onRefetchData }: { assetIndex: numbe
           </BoxWithBorder>
         </Box>
 
-        {!publicKey && <OpaqueConnectWallet />}
+        {opaqueArea}
       </Box>
 
-      {!publicKey ?
-        <ConnectButton>Connect Button</ConnectButton>
-        :
-        <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
-          <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
-        </SubmitButton>
-      }
+      {actionButton}
     </>
   )
 }
@@ -225,5 +261,40 @@ const WarningStack = styled(Stack)`
 const SubHeader = styled(Box)`
   color: ${(props) => props.theme.basis.slug};
 `
-
+const SelectPoolBox = styled(Box)`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 190px;
+	height: 40px;
+	background-color: rgba(37, 141, 237, 0.15);
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 8px;
+	&:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+		background-color: rgba(37, 141, 237, 0.23);
+  }
+`
+const SelectDefaultPool = styled(Box)`
+  width: 134px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
+  &:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+  }
+`
+const DepositCollateralButton = styled(SelectDefaultPool)`
+  width: 285px;
+  height: 35px;
+  color: #fff;
+  justify-content: center;
+`
 export default withSuspense(CometPanel, <LoadingProgress />)
