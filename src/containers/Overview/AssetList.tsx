@@ -74,7 +74,6 @@ const AssetList: React.FC = () => {
 				</PageTabs>
 				<SearchInput onChange={handleSearch} />
 			</Stack>
-			<Divider sx={{ backgroundColor: '#535353' }} />
 			<Grid
 				headers={columns}
 				rows={assets || []}
@@ -186,13 +185,6 @@ const PanelBox = styled(Box)`
     color: #9d9d9d; 
     font-size: 11px; 
   }
-`
-const TradeButton = styled(Box)`
-	width: 25px;
-	height: 25px;
-	flex-grow: 0;
-	padding: 2px 4px 4px 7px;
-	cursor: pointer;
 `
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))

@@ -1,3 +1,4 @@
+//@deprecated
 import { Box, Stack, Divider, Typography, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
@@ -55,8 +56,6 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
           <StyledTab value={TAB_BORROW} label='Borrow' icon={tab === TAB_BORROW ? <Image src={BorrowIconOn} alt='borrow' /> : <Image src={BorrowIconOff} alt='borrow' />} />
         </StyledTabs>
 
-        <Divider sx={{ background: '#3f3f3f', maxWidth: '680px' }} />
-
         {tab === TAB_BORROW &&
           <Stack direction='row' justifyContent='space-between' alignItems='flex-end' pt='22px'>
             <MyStatusValues tab={tab} status={status} />
@@ -67,10 +66,6 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
       </Box>
 
       <PanelBox>
-        {tab === TAB_BORROW &&
-          <StyledDivider />
-        }
-
         <TabPanel value={tab} index={TAB_COMET}>
           <Comet />
         </TabPanel>
@@ -82,13 +77,6 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
   )
 }
 
-const StyledDivider = styled(Divider)`
-	background-color: #3f3f3f;
-  margin: 0 auto;
-	margin-top: 20px;
-  width: 100%;
-	height: 1px;
-`
 const PanelBox = styled(Box)`
   min-height: 250px;
   margin-bottom: 25px;

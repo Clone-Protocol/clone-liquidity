@@ -21,25 +21,40 @@ export const enum GridType {
 export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, onRowClick }) => (
   <DataGrid
     sx={{
+      width: '100%',
       border: 0,
       color: '#fff',
       minHeight: `${minHeight}px`,
+      '& .MuiDataGrid-main': {
+        borderLeft: '1px solid #1a1c28',
+        borderRight: '1px solid #1a1c28',
+        borderBottom: '1px solid #1a1c28',
+        borderTop: '1px solid #1a1c28',
+        borderBottomLeftRadius: '20px',
+        borderBottomRightRadius: '20px',
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+      },
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end',
-        marginRight: '4px',
+        maxWidth: '180px'
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#989898',
-        fontSize: '12px'
+        fontSize: '12px',
+        lineHeight: 1.33,
+        marginLeft: '10px'
       },
       '& .last--header': {
-        '& .MuiDataGrid-columnHeaderTitle': {
-          marginLeft: '20px'
+        '& .MuiDataGrid-columnHeaderTitleContainer': {
+          display: 'flex',
+          justifyContent: 'right',
+          marginRight: '35px'
         }
       },
       '& .MuiDataGrid-columnHeaders': {
-        borderBottom: '1px solid #3f3f3f',
+        borderBottom: '1px solid #1a1c28',
       },
       '& .MuiDataGrid-columnHeader:focus': {
         outline: 'none',
@@ -49,11 +64,11 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       },
       '& .MuiDataGrid-row': {
         marginRight: '10px',
-        borderBottom: '1px solid #3f3f3f',
+        paddingLeft: '10px',
         cursor: 'pointer'
       },
       '& .MuiDataGrid-row:hover': {
-        backgroundColor: '#1b1b1b'
+        backgroundColor: 'rgba(255, 255, 255, 0.05)'
       },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
@@ -65,10 +80,6 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       '& .MuiDataGrid-cell:focus-within': {
         outline: 'none !important'
       },
-      '& .MuiDataGrid-withBorder': {
-        borderRight: '0px solid #1b1b1b',
-        marginLeft: '-5px'
-      },
       '.border-warning--row': {
         borderLeft: '1px solid #ff8e4f',
         borderRight: '1px solid #ff8e4f',
@@ -77,8 +88,6 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
         borderLeft: '1px solid #ed2525',
         borderRight: '1px solid #ed2525'
       }
-      // '.super-app-theme--row': {
-      // }
     }}
     components={{
       NoResultsOverlay: customNoRowsOverlay

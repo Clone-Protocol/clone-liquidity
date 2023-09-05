@@ -3,20 +3,10 @@ import { List, ListItemButton, Fade, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Link from 'next/link'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
-import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
-import { useSetAtom } from 'jotai'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 const NaviMenu = () => {
   const pathname = usePathname()
-  const { connected } = useWallet()
-  const setOpenConnectWalletGuideDlogState = useSetAtom(openConnectWalletGuideDlogState)
   const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
-
-  const handleClickNavWhenUnconnected = (evt: React.MouseEvent) => {
-    evt.preventDefault()
-    setOpenConnectWalletGuideDlogState(true)
-  }
 
   return (
     <Fade in timeout={1500}>
@@ -27,12 +17,12 @@ const NaviMenu = () => {
           </StyledListItemButton>
         </Link>
         <Link href="/myliquidity">
-          <StyledListItemButton className={pathname?.startsWith('/myliquidity') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
+          <StyledListItemButton className={pathname?.startsWith('/myliquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
             <Typography variant="p">Comet</Typography>
           </StyledListItemButton>
         </Link>
         <Link href="/borrow">
-          <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
+          <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
             <Typography variant="p">Borrow</Typography>
           </StyledListItemButton>
         </Link>
