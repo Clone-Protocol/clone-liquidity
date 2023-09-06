@@ -4,13 +4,18 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Comet from '~/containers/Liquidity/comet/Comet'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
-import { TabPanel, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanel, StyledTabs, CometTab } from '~/components/Common/StyledTab'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
+import Collaterals from './Collaterals'
+import Image from 'next/image'
+import ArrowUpward from 'public/images/arrow-up-green.svg'
+import ArrowDownward from 'public/images/arrow-down-red.svg'
+import LiquidityPositions from './LiquidityPositions'
 
 export const TAB_COLLATERAL = 0
 export const TAB_POSITIONS = 1
@@ -37,10 +42,11 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
 
   return (
     <div>
+      <Typography variant='h3' fontWeight={500}>Comet Liquidity</Typography>
       {infos && <Wrapper>
-        <Stack direction='row'>
-          <Box marginRight='31px'>
-            <Box><Typography variant='p' color='#989898'>Health Score</Typography></Box>
+        <Stack direction='row' gap={16}>
+          <Box>
+            <Box display='flex' justifyContent='center'><Typography variant='p'>Comet Health Score</Typography></Box>
             <Box mt='15px'>
               {!infos.healthScore || Number.isNaN(infos.healthScore) ?
                 <></> :
@@ -48,42 +54,58 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
               }
             </Box>
           </Box>
-          <Box display='flex'>
-            <Box marginLeft='31px' marginRight='31px'>
-              <Box><Typography variant='p' color='#989898'>Colleteral Value</Typography></Box>
-              <Box mt='15px'>
-                <Typography variant='p_xlg'>
-                  {infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : ''}
-                </Typography>
-              </Box>
-            </Box>
+          <Box>
+            <Box display='flex' justifyContent='center'><Typography variant='p'>Your Liquidity</Typography></Box>
+            <StatusValue>
+              <Typography variant='p_xlg'>
+                {infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : ''}
+              </Typography>
+            </StatusValue>
           </Box>
-          <Box display='flex'>
-            <Box marginLeft='31px'>
-              <Box><Typography variant='p' color='#989898'>Liquidity</Typography></Box>
-              <Box mt='15px'>
-                <Typography variant='p_xlg'>
-                  {infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : ''}
-                </Typography>
+          <Box>
+            <Box display='flex' justifyContent='center'><Typography variant='p'>Your Colleteral</Typography></Box>
+            <StatusValue>
+              <Typography variant='p_xlg'>
+                {infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : ''}
+              </Typography>
+            </StatusValue>
+          </Box>
+          <Box>
+            <Box display='flex' justifyContent='center'><Typography variant='p'>Your PNL</Typography></Box>
+            <StatusValue>
+              <Box color='#4fe5ff'>
+                <Typography variant='p_xlg'>+$14,452.34</Typography>
+                <Box display='flex' justifyContent='center' alignItems='center'>
+                  <Typography variant='p'>+3.47%</Typography>
+                  <Image src={ArrowUpward} alt='arrowUp' />
+                </Box>
               </Box>
-            </Box>
+              {/* :
+              <Box color='#ff0084'>
+                <Typography variant='p_xlg'>-$14,452.34</Typography>
+                <Box display='flex' alignItems='center'>
+                  <Typography variant='p_xlg'>-3.47%</Typography>
+                  <Image src={ArrowDownward} alt='arrowDown' />
+                </Box>
+              </Box> */}
+            </StatusValue>
           </Box>
         </Stack>
       </Wrapper>}
 
       <Box>
-        <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '590px', marginTop: '12px', marginBottom: '12px' }}>
-          <StyledTab value={TAB_COLLATERAL} label='Collateral' />\
-          <StyledTab value={TAB_POSITIONS} label='Positions' />
+        <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '590px', marginTop: '12px' }}>
+          <CometTab value={TAB_COLLATERAL} label='Collateral' />\
+          <CometTab value={TAB_POSITIONS} label='Positions' />
         </StyledTabs>
       </Box>
 
       <PanelBox>
         <TabPanel value={tab} index={TAB_COLLATERAL}>
-          <Comet />
+          <Collaterals hasNoCollateral={infos?.hasNoCollateral || false} collaterals={infos?.collaterals || []} onRefetchData={() => refetch()} />
         </TabPanel>
         <TabPanel value={tab} index={TAB_POSITIONS}>
-          <GridBorrow />
+          <LiquidityPositions positions={infos?.positions || []} onRefetchData={() => refetch()} />
         </TabPanel>
       </PanelBox>
     </div>
@@ -91,7 +113,7 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
 }
 
 const Wrapper = styled(Box)`
-  min-height: 550px;
+  min-height: 160px;
   margin-top: 26px;
   margin-bottom: 25px;
   padding-top: 17px;
@@ -105,6 +127,12 @@ const PanelBox = styled(Box)`
     color: #9d9d9d; 
     font-size: 13px; 
   }
+`
+const StatusValue = styled(Box)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
 `
 // const NewPositionButton = styled(Button)`
 //   width: 100px;

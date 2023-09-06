@@ -26,10 +26,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       color: '#fff',
       minHeight: `${minHeight}px`,
       '& .MuiDataGrid-main': {
-        borderLeft: '1px solid #1a1c28',
-        borderRight: '1px solid #1a1c28',
-        borderBottom: '1px solid #1a1c28',
-        borderTop: '1px solid #1a1c28',
+        border: '1px solid #1a1c28',
         borderBottomLeftRadius: '20px',
         borderBottomRightRadius: '20px',
         borderTopLeftRadius: '20px',
@@ -129,7 +126,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
 export const CustomNoRowsOverlay = (msg: string) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '21px' }}>
-      <Typography variant='p'>{msg}</Typography>
+      <Typography variant='p_xlg' color='#66707e'>{msg}</Typography>
     </Box>
   )
 }

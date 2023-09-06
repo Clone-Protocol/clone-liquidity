@@ -1,10 +1,14 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
+import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
+import { Grid, CellTicker, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import LiquidityPairView from '~/components/Liquidity/comet/LiquidityPairView'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import AddIcon from 'public/images/add-icon.svg'
+import Image from 'next/image'
 
 const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -36,16 +40,38 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     router.push(`/assets/euro`)
   }
 
+  const handleRowClick: GridEventListener<'rowClick'> = (
+    params
+  ) => {
+    // if (isAlreadyInitializedAccount) {
+    // 	router.push(`/assets/${params.row.ticker}`)
+    // } else {
+    // 	handleLinkNeedingAccountClick(undefined)
+    // }
+  }
+
+  const rowsPositions = positions.map((position, id) => ({
+    ...position,
+    id,
+  }))
+
   return (
     <>
       <Box>
-        <PairHeader>
+        <Grid
+          headers={columns}
+          rows={rowsPositions || []}
+          minHeight={120}
+          customNoRowsOverlay={() => CustomNoRowsOverlay('Please connect wallet.')}
+          onRowClick={handleRowClick}
+        />
+        {/* <PairHeader>
           <Box><Typography variant="p_sm">Pool</Typography></Box>
           <Box ml='120px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
           <Box ml='15px'><Typography variant="p_sm">ILD</Typography></Box>
           <Box ml='-5px'><Typography variant="p_sm">Rewards</Typography></Box>
           <Box></Box>
-        </PairHeader>
+        </PairHeader> */}
         {positions.map((position, index) =>
           <LiquidityPairView
             key={index}
@@ -63,9 +89,9 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
       </Box>
       <Stack direction='row' justifyContent='space-between' marginTop='9px'>
         {positions.length > 0 ?
-          <AddButton onClick={redirectAddCometPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
+          <AddButton onClick={redirectAddCometPage}><Image src={AddIcon} width={15} height={15} alt='add' /><Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography></AddButton>
           :
-          <AddButtonNoPosition onClick={redirectAddCometPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
+          <AddButtonNoPosition onClick={redirectAddCometPage}><Image src={AddIcon} width={15} height={15} alt='add' /><Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography></AddButtonNoPosition>
         }
       </Stack>
 
@@ -89,6 +115,63 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
 
 }
 
+let columns: GridColDef[] = [
+  {
+    field: 'pool',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'Liquidity Pool',
+    flex: 2,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
+      )
+    },
+  },
+  {
+    field: 'liquidityAmount',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'Liquidity Amount',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>${params.row.liquidityDollarPrice.toLocaleString()}</Typography>
+    },
+  },
+  {
+    field: 'ild',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'ILD',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>${params.row.ildValue.toLocaleString()}</Typography>
+    },
+  },
+  {
+    field: 'rewards',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'Rewards',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString()}</Typography>
+    },
+  },
+  {
+    field: 'pnl',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'P/L',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>+3.47%</Typography>
+    },
+  },
+]
+
+columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
+
 const PairHeader = styled(Box)`
   display: flex;
   justify-content: space-between;
@@ -101,8 +184,9 @@ const AddButton = styled(Button)`
   width: 100%;
   height: 28px;
   padding: 4px 0;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  color: ${(props) => props.theme.palette.text.secondary};
+  background-color: rgba(255, 255, 255, 0.01);
+  border: 1px solid ${(props) => props.theme.basis.jurassicGrey};
+  color: ${(props) => props.theme.basis.shadowGloom};
   margin-top: 9px;
   &:hover {
     background: ${(props) => props.theme.boxes.darkBlack};

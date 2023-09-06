@@ -13,7 +13,7 @@ const enum HealthScoreType {
 }
 
 const enum HealthScoreTypeColor {
-  Fair = '#ff8e4f',
+  Fair = '#fff',
   Excellent = '#4fe5ff',
   Poor = '#ed2525'
 }
@@ -41,25 +41,21 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
 
   return (
     <Box>
-      <Stack direction="row" height='86px'>
-        <ScoreBox sx={{ color: '#ff8e4f' }}>
-          {score &&
-            <Box sx={{ color: scoreTypeColor }}>
-              <Box marginTop="15px">
-                <Typography variant='p_xxlg'>{score.toFixed(0)}</Typography>
-              </Box>
-              <Box>
-                <Typography variant='p_sm'>{scoreType}</Typography>
-              </Box>
+      <Stack direction="row" height='56px'>
+
+        {score &&
+          <Box sx={{ color: scoreTypeColor }}>
+            <Box mt='8px'>
+              <Typography variant='h2'>{score.toFixed(0)}</Typography>
             </Box>
-          }
-        </ScoreBox>
+          </Box>
+        }
         <Box display='flex' height='100%'>
-          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 10px)` }} />
+          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 5px)` }} />
           <ScoreBar />
           <Box height='100%'>
             <Box sx={{ position: 'relative', top: '-10px', left: '5px' }}><Typography variant='p_sm'>100 (Excellent)</Typography></Box>
-            <Box sx={{ position: 'relative', top: '40px', left: '5px' }}><Typography variant='p_sm'>0 (Poor)</Typography></Box>
+            <Box sx={{ position: 'relative', top: '13px', left: '5px' }}><Typography variant='p_sm'>0 (Poor)</Typography></Box>
           </Box>
         </Box>
       </Stack >
@@ -76,7 +72,7 @@ const ScoreBox = styled(Box)`
 const ScoreBar = styled(Box)`
   width: 4px;
   height: 100%;
-  background-image: linear-gradient(to top, #ed2525 0%, #ff8e4f 26%, #4fe5ff 100%);
+  background-image: linear-gradient(to top, #ff006b, #4fe5ff);
 `
 
 export default HealthscoreView
