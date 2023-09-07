@@ -3,13 +3,12 @@ import { useMutation } from '@tanstack/react-query'
 import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { getTokenAccount, getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { funcNoWallet } from '../baseQuery';
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
-import { getOrCreateAssociatedTokenAccount } from 'clone-protocol-sdk/sdk/src/utils';
 
 export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
@@ -275,14 +274,12 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 	const oracles = await program.getOracles()
 	const pool = pools.pools[onassetIndex]
 
-	const onassetTokenAccountInfo = await getOrCreateAssociatedTokenAccount(
-		program.provider,
-		pool.assetInfo.onassetMint
-	);
-	const mockUSDCTokenAccountInfo = await getOrCreateAssociatedTokenAccount(
-		program.provider,
-		program.clone.collateral.mint
-	);
+	const onassetTokenAccountInfo = await getTokenAccount(
+		pool.assetInfo.onassetMint,
+		program.provider.publicKey!,
+		program.provider.connection
+	)
+	const mockUSDCTokenAccountInfo = await getCollateralAccount(program)
 
 	const ixnCalls: Promise<TransactionInstruction>[] = []
 	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())

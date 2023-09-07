@@ -5,8 +5,8 @@ import { toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { sendAndConfirm } from '~/utils/tx_helper'
 import { useTransactionState } from './useTransactionState';
 import { useClone } from './useClone';
-import { getOrCreateAssociatedTokenAccount } from 'clone-protocol-sdk/sdk/src/utils';
 import { createMintAssetInstruction } from 'clone-protocol-sdk/sdk/generated/mock-asset-faucet'
+import { getCollateralAccount } from '~/utils/token_accounts';
 
 export default function useFaucet() {
   const { connected, publicKey } = useWallet()
@@ -28,10 +28,7 @@ export default function useFaucet() {
             new PublicKey(MOCK_FAUCET_PROGRAM_ID)
           );
 
-          const usdcAssociatedTokenAccount = await getOrCreateAssociatedTokenAccount(
-            program.provider,
-            program.clone.collateral.mint
-          );
+          const usdcTokenAccount = await getCollateralAccount(program)
 
           let ixnCalls = []
           try {
@@ -40,7 +37,7 @@ export default function useFaucet() {
                 minter: publicKey,
                 faucet: faucetAddress,
                 mint: program.clone.collateral.mint,
-                tokenAccount: usdcAssociatedTokenAccount.address,
+                tokenAccount: usdcTokenAccount.address,
               }, { amount: toScale(onusdToMint, program.clone.collateral.scale) })
             )
 
