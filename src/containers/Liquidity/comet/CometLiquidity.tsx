@@ -6,15 +6,14 @@ import Comet from '~/containers/Liquidity/comet/Comet'
 import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import { TabPanel, StyledTabs, CometTab } from '~/components/Common/StyledTab'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import Collaterals from './Collaterals'
 import Image from 'next/image'
-import ArrowUpward from 'public/images/arrow-up-green.svg'
-import ArrowDownward from 'public/images/arrow-down-red.svg'
+import ArrowUpward from 'public/images/arrow-upward.svg'
+import ArrowDownward from 'public/images/arrow-downward.svg'
 import LiquidityPositions from './LiquidityPositions'
 
 export const TAB_COLLATERAL = 0
@@ -102,10 +101,10 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
 
       <PanelBox>
         <TabPanel value={tab} index={TAB_COLLATERAL}>
-          <Collaterals hasNoCollateral={infos?.hasNoCollateral || false} collaterals={infos?.collaterals || []} onRefetchData={() => refetch()} />
+          <Collaterals hasNoCollateral={infos ? infos.hasNoCollateral : false} collaterals={infos?.collaterals || []} onRefetchData={() => refetch()} />
         </TabPanel>
         <TabPanel value={tab} index={TAB_POSITIONS}>
-          <LiquidityPositions positions={infos?.positions || []} onRefetchData={() => refetch()} />
+          <LiquidityPositions hasNoCollateral={infos ? infos.hasNoCollateral : false} positions={infos?.positions || []} onRefetchData={() => refetch()} />
         </TabPanel>
       </PanelBox>
     </div>

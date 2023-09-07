@@ -1,6 +1,8 @@
 import { styled, Box, Stack, Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import IconAlertComet from 'public/images/alert-comet.svg'
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface Props {
   score?: number
@@ -15,7 +17,7 @@ const enum HealthScoreType {
 const enum HealthScoreTypeColor {
   Fair = '#fff',
   Excellent = '#4fe5ff',
-  Poor = '#ed2525'
+  Poor = '#ff0084'
 }
 
 const HealthscoreView: React.FC<Props> = ({ score }) => {
@@ -45,9 +47,12 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
 
         {score &&
           <Box sx={{ color: scoreTypeColor }}>
-            <Box mt='8px'>
+            <Stack direction='row' alignItems='center' gap={1} mt='8px'>
+              {scoreType === HealthScoreType.Poor &&
+                <Image src={IconAlertComet} alt='alert' width={15} height={14} />
+              }
               <Typography variant='h2'>{score.toFixed(0)}</Typography>
-            </Box>
+            </Stack>
           </Box>
         }
         <Box display='flex' height='100%'>

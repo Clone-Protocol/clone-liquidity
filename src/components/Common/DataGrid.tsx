@@ -84,7 +84,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       '.border-poor--row': {
         borderLeft: '1px solid #ed2525',
         borderRight: '1px solid #ed2525'
-      }
+      },
     }}
     components={{
       NoResultsOverlay: customNoRowsOverlay
@@ -123,10 +123,10 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
   />
 )
 
-export const CustomNoRowsOverlay = (msg: string) => {
+export const CustomNoRowsOverlay = (msg: string, color?: string) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '21px' }}>
-      <Typography variant='p_xlg' color='#66707e'>{msg}</Typography>
+      <Typography variant='p_xlg' color={color || '#66707e'}>{msg}</Typography>
     </Box>
   )
 }

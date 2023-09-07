@@ -2,16 +2,17 @@ import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
-import { Grid, CellTicker, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
-import LiquidityPairView from '~/components/Liquidity/comet/LiquidityPairView'
+import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import AddIcon from 'public/images/add-icon.svg'
 import Image from 'next/image'
+import { useWallet } from '@solana/wallet-adapter-react'
 
-const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
+const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
+  const { publicKey } = useWallet()
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openClosePosition, setOpenClosePosition] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
@@ -55,6 +56,13 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
     id,
   }))
 
+  let customOverlay = () => CustomNoRowsOverlay('')
+  if (!publicKey) {
+    customOverlay = () => CustomNoRowsOverlay('Please connect wallet.')
+  } else if (hasNoCollateral) {
+    customOverlay = () => CustomNoRowsOverlay('Please add collateral first to initiate liquidity positions.', '#fff')
+  }
+
   return (
     <>
       <Box>
@@ -62,17 +70,10 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
           headers={columns}
           rows={rowsPositions || []}
           minHeight={120}
-          customNoRowsOverlay={() => CustomNoRowsOverlay('Please connect wallet.')}
+          customNoRowsOverlay={customOverlay}
           onRowClick={handleRowClick}
         />
-        {/* <PairHeader>
-          <Box><Typography variant="p_sm">Pool</Typography></Box>
-          <Box ml='120px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
-          <Box ml='15px'><Typography variant="p_sm">ILD</Typography></Box>
-          <Box ml='-5px'><Typography variant="p_sm">Rewards</Typography></Box>
-          <Box></Box>
-        </PairHeader> */}
-        {positions.map((position, index) =>
+        {/* {positions.map((position, index) =>
           <LiquidityPairView
             key={index}
             poolIndex={index}
@@ -85,31 +86,43 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
             onShowEditDialog={handleChooseEditPosition}
             onShowClosePositionDialog={handleShowClosePositionDialog}
           />
-        )}
+        )} */}
       </Box>
-      <Stack direction='row' justifyContent='space-between' marginTop='9px'>
-        {positions.length > 0 ?
-          <AddButton onClick={redirectAddCometPage}><Image src={AddIcon} width={15} height={15} alt='add' /><Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography></AddButton>
-          :
-          <AddButtonNoPosition onClick={redirectAddCometPage}><Image src={AddIcon} width={15} height={15} alt='add' /><Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography></AddButtonNoPosition>
-        }
-      </Stack>
+      {publicKey && !hasNoCollateral &&
+        <Stack direction='row' justifyContent='space-between' marginTop='9px'>
+          {positions.length > 0 ?
+            <AddButton onClick={redirectAddCometPage}>
+              <Image src={AddIcon} width={15} height={15} alt='add' />
+              <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
+            </AddButton>
+            :
+            <AddButtonNoPosition onClick={redirectAddCometPage}>
+              <Image src={AddIcon} width={15} height={15} alt='add' />
+              <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
+            </AddButtonNoPosition>
+          }
+        </Stack>
+      }
 
-      <EditLiquidityDialog
-        open={openEditLiquidity}
-        positionIndex={editAssetId}
-        poolIndex={poolIndex}
-        onShowCloseLiquidity={handleShowCloseLiquidityDialog}
-        onRefetchData={onRefetchData}
-        handleClose={() => setOpenEditLiquidity(false)}
-      />
-      <CloseLiquidityDialog
-        open={openClosePosition}
-        positionIndex={editAssetId}
-        poolIndex={poolIndex}
-        onRefetchData={onRefetchData}
-        handleClose={() => setOpenClosePosition(false)}
-      />
+      {openEditLiquidity &&
+        <EditLiquidityDialog
+          open={openEditLiquidity}
+          positionIndex={editAssetId}
+          poolIndex={poolIndex}
+          onShowCloseLiquidity={handleShowCloseLiquidityDialog}
+          onRefetchData={onRefetchData}
+          handleClose={() => setOpenEditLiquidity(false)}
+        />
+      }
+      {openClosePosition &&
+        <CloseLiquidityDialog
+          open={openClosePosition}
+          positionIndex={editAssetId}
+          poolIndex={poolIndex}
+          onRefetchData={onRefetchData}
+          handleClose={() => setOpenClosePosition(false)}
+        />
+      }
     </>
   )
 
@@ -124,7 +137,10 @@ let columns: GridColDef[] = [
     flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
+        <Box display="flex" justifyContent="flex-start">
+          <Image src={params.row.tickerIcon} width={27} height={27} alt={params.row.tickerSymbol} />
+          <Box ml='10px'><Typography variant='p_xlg'>{params.row.tickerSymbol}{'/devUSD'}</Typography></Box>
+        </Box>
       )
     },
   },
@@ -189,13 +205,12 @@ const AddButton = styled(Button)`
   color: ${(props) => props.theme.basis.shadowGloom};
   margin-top: 9px;
   &:hover {
-    background: ${(props) => props.theme.boxes.darkBlack};
+    background-color: rgba(255, 255, 255, 0.05);
     color: #fff;
-    border-color: ${(props) => props.theme.palette.text.secondary};
   }
 `
 const AddButtonNoPosition = styled(AddButton)`
-  border-color: ${(props) => props.theme.palette.info.main};
+  height: 42px;
   color: #fff;
   &:hover {
     border-color: ${(props) => props.theme.palette.info.main};
