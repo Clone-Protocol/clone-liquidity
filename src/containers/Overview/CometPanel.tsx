@@ -102,7 +102,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
-      setTotalLiquidity(mintAmount * 2)
+      setTotalLiquidity(mintAmount * 2 * 10)
       setValidMintValue(mintRatio > 0 && mintRatio < 100 && mintAmount > 0 && mintAmount < maxMintable)
       trigger()
     }

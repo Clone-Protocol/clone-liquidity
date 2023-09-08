@@ -144,8 +144,8 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	const userAccount = await program.getUserAccount()
 
 	// Pay ILD && withdraw all liquidity
-	const ixnCalls: Promise<TransactionInstruction>[] = [
-		(async () => program.updatePricesInstruction(oracles))(),
+	const ixnCalls: TransactionInstruction[] = [
+		program.updatePricesInstruction(oracles)
 	]
 
 	if (!onassetAssociatedToken) {
@@ -155,73 +155,66 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 		onassetAssociatedTokenAddress = ata
 		ixnCalls.push(
-			(async () => createAssociatedTokenAccountInstruction(
+			createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
 				ata,
 				program.provider.publicKey!,
 				data.onassetMint,
-			))()
+			)
 		)
 	}
 
 	const positionCollateralLiquidity = toScale(data.committedCollateralLiquidity, program.clone.collateral.scale)
 	if (positionCollateralLiquidity > 0) {
 		ixnCalls.push(
-			(async () =>
-				await program.withdrawLiquidityFromCometInstruction(
-					positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
-					data.positionIndex,
-				)
-			)()
+			program.withdrawLiquidityFromCometInstruction(
+				positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
+				data.positionIndex,
+			)
+		)
+		ixnCalls.push(
+			program.removeCometPositionInstruction(data.positionIndex)
 		)
 	}
 
 	if (toCloneScale(data.onassetILD) > 0) {
 		ixnCalls.push(
-			(async () =>
-				await program.payCometILDInstruction(
-					pools,
-					userAccount,
-					data.positionIndex,
-					toCloneScale(data.onassetBalance),
-					PaymentType.Collateral,
-					onassetAssociatedToken.address,
-					collateralAssociatedTokenAddress,
-				)
-			)()
+			program.payCometILDInstruction(
+				pools,
+				userAccount,
+				data.positionIndex,
+				toCloneScale(data.onassetBalance),
+				PaymentType.Collateral,
+				onassetAssociatedToken.address,
+				collateralAssociatedTokenAddress,
+			)
 		)
 	}
 
 	if (toCloneScale(data.collateralILD) > 0) {
 		ixnCalls.push(
-			(async () =>
-				await program.payCometILDInstruction(
-					pools,
-					userAccount,
-					data.positionIndex,
-					toCloneScale(data.collateralBalance),
-					PaymentType.CollateralFromWallet,
-					onassetAssociatedToken.address,
-					collateralAssociatedTokenAddress,
-				)
-			)()
+			program.payCometILDInstruction(
+				pools,
+				userAccount,
+				data.positionIndex,
+				toCloneScale(data.collateralBalance),
+				PaymentType.CollateralFromWallet,
+				onassetAssociatedToken.address,
+				collateralAssociatedTokenAddress,
+			)
 		)
 	}
 
 	ixnCalls.push(
-		(async () =>
-			await program.collectLpRewardsInstruction(
-				pools,
-				userAccount,
-				collateralAssociatedTokenAddress,
-				onassetAssociatedToken.address,
-				data.positionIndex
-			)
-		)()
+		program.collectLpRewardsInstruction(
+			pools,
+			userAccount,
+			collateralAssociatedTokenAddress,
+			onassetAssociatedToken.address,
+			data.positionIndex
+		)
 	)
-
-	const ixns = await Promise.all(ixnCalls)
-	await sendAndConfirm(program.provider, ixns, setTxState)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState)
 
 	return {
 		result: true
