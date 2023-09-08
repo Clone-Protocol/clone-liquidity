@@ -20,7 +20,7 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 
 	const ixnCalls = [
 		program.updatePricesInstruction(oracles),
-		program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex)
+		program.addLiquidityToCometInstruction(toScale(changeAmount, program.clone.collateral.scale), poolIndex)
 	]
 	const ixns = await Promise.all(ixnCalls)
 	await sendAndConfirm(program.provider, ixns, setTxState)
@@ -82,12 +82,12 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	const ixnCalls = [program.updatePricesInstruction(oracles)]
 	if (editType === 0) {
 		//deposit
-		ixnCalls.push(program.addLiquidityToCometInstruction(toCloneScale(changeAmount), poolIndex))
+		ixnCalls.push(program.addLiquidityToCometInstruction(toScale(changeAmount, program.clone.collateral.scale), poolIndex))
 	} else {
 		//withdraw
 		ixnCalls.push(
 			program.withdrawLiquidityFromCometInstruction(
-				toCloneScale(changeAmount),
+				toScale(changeAmount, program.clone.collateral.scale),
 				positionIndex
 			))
 	}
@@ -172,9 +172,6 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 				data.positionIndex,
 			)
 		)
-		ixnCalls.push(
-			program.removeCometPositionInstruction(data.positionIndex)
-		)
 	}
 
 	if (toCloneScale(data.onassetILD) > 0) {
@@ -213,6 +210,9 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			onassetAssociatedToken.address,
 			data.positionIndex
 		)
+	)
+	ixnCalls.push(
+		program.removeCometPositionInstruction(data.positionIndex)
 	)
 	await sendAndConfirm(program.provider, ixnCalls, setTxState)
 

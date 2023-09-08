@@ -36,7 +36,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   useEffect(() => {
     if (open && positionInfo && positionInfo.comet) {
       const position = positionInfo.comet.positions[positionIndex]
-      const healthCoefficient = Number(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
+      const healthCoefficient = fromScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient, 2)
       const currentPosition = fromScale(position.committedCollateralLiquidity, 7)
 
       setAssetHealthCoefficient(healthCoefficient)

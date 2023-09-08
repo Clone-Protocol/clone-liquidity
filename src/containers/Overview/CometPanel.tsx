@@ -20,7 +20,7 @@ import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import { fromCloneScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const RISK_SCORE_VAL = 20
 
@@ -46,7 +46,7 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   useEffect(() => {
     if (positionInfo) {
       const assetInfo = positionInfo.pools.pools[assetIndex].assetInfo
-      const healthCoefficient = Number(assetInfo.positionHealthScoreCoefficient);
+      const healthCoefficient = fromScale(assetInfo.positionHealthScoreCoefficient, 2);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
