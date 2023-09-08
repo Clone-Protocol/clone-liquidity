@@ -9,6 +9,8 @@ import dynamic from 'next/dynamic'
 import AddIcon from 'public/images/add-icon.svg'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
+import ArrowUpward from 'public/images/arrow-upward.svg'
+import ArrowDownward from 'public/images/arrow-downward.svg'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -181,21 +183,20 @@ let columns: GridColDef[] = [
     headerName: 'P/L',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>+3.47%</Typography>
+      return <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
+        <Typography variant='p'>+3.47%</Typography>
+        <Image src={ArrowUpward} alt='arrowUp' />
+      </Box>
+      // <Box display='flex' alignItems='center' color='#ff0084'>
+      //   <Typography variant='p_xlg'>-3.47%</Typography>
+      //   <Image src={ArrowDownward} alt='arrowDown' />
+      // </Box>
     },
   },
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-const PairHeader = styled(Box)`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 26px;
-  color: ${(props) => props.theme.palette.text.secondary};
-  border-top: 1px solid ${(props) => props.theme.boxes.greyShade};
-`
 const AddButton = styled(Button)`
   width: 100%;
   height: 28px;

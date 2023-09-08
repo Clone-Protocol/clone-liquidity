@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { styled } from '@mui/system'
 
 
-export const OpaqueConnectWallet = styled(Box)`
+export const OpaqueDefault = styled(Box)`
   position: absolute;
   top: 0;
   width: 100%;

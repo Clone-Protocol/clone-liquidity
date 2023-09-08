@@ -56,6 +56,15 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	return result
 }
 
+export interface CometInfoStatus {
+	healthScore: number
+	totalCollValue: number
+	totalLiquidity: number
+	collaterals: Collateral[]
+	hasNoCollateral: boolean
+	positions: LiquidityPosition[]
+}
+
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
@@ -162,7 +171,16 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 			}
 		)
 	} else {
-		return useQuery(['cometInfos'], () => { return null })
+		return useQuery(['cometInfos'], () => {
+			return {
+				healthScore: 0,
+				totalCollValue: 0,
+				totalLiquidity: 0,
+				collaterals: [],
+				hasNoCollateral: true,
+				positions: []
+			}
+		})
 	}
 }
 

@@ -6,7 +6,6 @@ import { useEditCollateralQuery } from '~/features/MyLiquidity/comet/EditCollate
 import { useCollateralMutation } from '~/features/MyLiquidity/comet/Collateral.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
@@ -19,6 +18,7 @@ import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
 import WarningMsg from '~/components/Common/WarningMsg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 
 const RISK_SCORE_VAL = 10
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl?: () => void, handleClose: () => void }) => {
@@ -135,20 +135,18 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 
   return collData ? (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={500}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={400}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>
-              <Typography variant='p_xlg'>
-                {isNewDeposit ? 'Deposit New Collateral' : 'Manage Collateral'}
-              </Typography>
+              <Typography variant='p_xlg'>Manage Collateral</Typography>
             </Box>
-            {!isNewDeposit &&
-              <StyledTabs value={tab} onChange={handleChangeTab}>
-                <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} alt='deposit' /> : <Image src={DepositMoreOffIcon} alt='deposit' />}></StyledTab>
-                <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} alt='withdraw' /> : <Image src={WithdrawOffIcon} alt='withdraw' />}></StyledTab>
-              </StyledTabs>
-            }
+
+            <StyledTabs value={tab} onChange={handleChangeTab}>
+              <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} alt='deposit' /> : <Image src={DepositMoreOffIcon} alt='deposit' />}></StyledTab>
+              <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} alt='withdraw' /> : <Image src={WithdrawOffIcon} alt='withdraw' />}></StyledTab>
+            </StyledTabs>
+
             <StyledDivider />
 
             <Box mb='15px'>
@@ -194,36 +192,29 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
             </Box>
 
+            <Box>
+              <Box><Typography variant='p' color='#989898'>Projected Collateral Value <InfoTooltip title={TooltipTexts.projectedCometCollValue} /></Typography></Box>
+              <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
+            </Box>
+
             { // MEMO : This is because when a user adds a new collateral type on devnet, they won’t see an exising healthscore. but will be add later on mainnet 
               !isNewDeposit &&
-              <Box>
-                <Typography variant='p'>Projected Comet Statistics</Typography>
-                <BoxWithBorder padding='10px 20px 0px 20px' mt='3px'>
-                  <Box>
-                    <Box><Typography variant='p' color='#989898'>Projected Collateral Value <InfoTooltip title={TooltipTexts.projectedCometCollValue} /></Typography></Box>
-                    <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
-                  </Box>
-                  <Box mt='10px'>
-                    <Box><Typography variant='p' color='#989898'>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
-                    <Box p='10px'>
-                      <HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} />
-                      {hasRiskScore &&
-                        <WarningMsg>This change will put all your remaining comet collateral at risk of liquidation.</WarningMsg>
-                      }
-                    </Box>
-                  </Box>
-                </BoxWithBorder>
-              </Box>
+              <BoxWithBorder padding='10px 20px 0px 20px' mt='3px'>
+                <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography>
+                <Box mt='10px'>
+                  {/* <HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} /> */}
+                  <HealthscoreView score={healthScore ? healthScore : collData.prevHealthScore} />
+                </Box>
+              </BoxWithBorder>
+            }
+
+            {hasRiskScore &&
+              <WarningMsg>This change will put all your remaining comet collateral at risk of liquidation.</WarningMsg>
             }
 
             <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
-              {isNewDeposit ? 'Deposit' :
-                tab === 0 ? 'Deposit more' : 'Withdraw'}
+              {tab === 0 ? 'Deposit Collateral' : 'Withdraw Collateral'}
             </SubmitButton>
-
-            <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator onRefresh={() => refetch()} />
-            </Box>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -232,7 +223,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 }
 
 const BoxWrapper = styled(Box)`
-  width: 500px;
+  width: 400px;
   color: #fff;
   overflow-x: hidden;
 `

@@ -16,7 +16,7 @@ import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPo
 import { useRouter } from 'next/navigation'
 import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { ConnectButton, SelectButton, SubmitButton } from '~/components/Common/CommonButtons'
-import { OpaqueAlreadyPool, OpaqueConnectWallet, OpaqueNoCollateral } from '~/components/Overview/OpaqueArea'
+import { OpaqueAlreadyPool, OpaqueDefault, OpaqueNoCollateral } from '~/components/Overview/OpaqueArea'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import DepositIcon from 'public/images/deposit-icon.svg'
 import Link from 'next/link'
@@ -133,7 +133,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
   let opaqueArea = null
   let actionButton = null
   if (!publicKey) {
-    opaqueArea = <OpaqueConnectWallet />
+    opaqueArea = <OpaqueDefault />
     actionButton = (
       <ConnectButton onClick={() => setOpen(true)}>
         <Typography variant='p_xlg'>Connect Wallet</Typography>

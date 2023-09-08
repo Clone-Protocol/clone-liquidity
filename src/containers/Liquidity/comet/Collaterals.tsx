@@ -8,41 +8,35 @@ import MultipoolBlank from '~/components/Overview/CometBlank'
 import dynamic from 'next/dynamic'
 import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
+import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
-  const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
   const setMintUsdi = useSetAtom(mintUSDi)
-  // const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
+  const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
   const EditCollateralDialog = dynamic(() => import('./Dialogs/EditCollateralDialog'))
   // const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
-  const openEdit = () => {
-    setOpenEditCollateral(true)
+  let dataCollaterals = collaterals
+  if (hasNoCollateral) {
+    const onUSDInfo = collateralMapping(StableCollateral.onUSD)
+    dataCollaterals = [{
+      tickerIcon: onUSDInfo.collateralIcon,
+      tickerSymbol: onUSDInfo.collateralSymbol,
+      tickerName: onUSDInfo.collateralName,
+      collAmount: 0,
+      collAmountDollarPrice: 0
+    }]
   }
 
-  // const handleChooseCollateral = (collId: number) => {
-  //   setOpenChooseCollateral(false)
-  // }
-
-  const BlankNoCollateral = () => (
-    <MultipoolBlank title='Deposit collateral to your comet to get started' subtitle='Comets are designed to allow users to leverage the full capabilities of the CLS' />
-  )
-
-  const rowsCollateral = collaterals.map((coll, id) => ({
+  const rowsCollateral = dataCollaterals.map((coll, id) => ({
     ...coll,
     id,
     setMintUsdi
   }))
 
-  const handleRowClick: GridEventListener<'rowClick'> = (
-    params
-  ) => {
-    // if (isAlreadyInitializedAccount) {
-    // 	router.push(`/assets/${params.row.ticker}`)
-    // } else {
-    // 	handleLinkNeedingAccountClick(undefined)
-    // }
+  const handleRowClick: GridEventListener<'rowClick'> = () => {
+    setOpenEditCollateral(true)
   }
 
   return (
@@ -82,7 +76,6 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
         open={openEditCollateral}
         isNewDeposit={!alreadyHasDeposit}
         onRefetchData={onRefetchData}
-        // handleChooseColl={() => setOpenChooseCollateral(true)}
         handleClose={() => setOpenEditCollateral(false)}
       />
 
@@ -116,7 +109,8 @@ let columns: GridColDef[] = [
     headerName: 'Deposit Amount',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.collAmount.toLocaleString()}</Typography>
+      const collAmount = params.row.collAmount
+      return <Typography variant='p_xlg' color={collAmount === 0 ? '#66707e' : '#fff'}>{collAmount.toLocaleString()}</Typography>
     },
   },
   {
@@ -126,7 +120,8 @@ let columns: GridColDef[] = [
     headerName: 'Value ($)',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${(params.row.collAmountDollarPrice * params.row.collAmount).toLocaleString()}</Typography>
+      const collUsdValue = params.row.collAmountDollarPrice * params.row.collAmount
+      return <Typography variant='p_xlg' color={collUsdValue === 0 ? '#66707e' : '#fff'}>${collUsdValue.toLocaleString()}</Typography>
     },
   },
   {
