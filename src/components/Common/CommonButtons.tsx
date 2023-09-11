@@ -22,8 +22,8 @@ export const SubmitButton = styled(Button)`
   }
   &:disabled {
     border: 1px solid ${(props) => props.theme.basis.shadowGloom};
-    font-weight: 600;
     color: #989898;
+    font-weight: 600;
   }
 `
 
