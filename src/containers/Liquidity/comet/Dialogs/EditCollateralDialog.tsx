@@ -11,7 +11,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import PairInput from '~/components/Liquidity/comet/PairInput'
 import InfoIcon from 'public/images/info-icon.svg'
-import { SubmitButton } from '~/components/Common/CommonButtons'
+import { RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButtons'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import IconAlertComet from 'public/images/alert-comet.svg'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
@@ -129,10 +129,16 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
-  const submitButtonText = tab === 0 ?
-    collAmount > 0 ? 'Deposit Collateral' : 'Enter Deposit Amount'
-    :
-    collAmount > 0 ? 'Withdraw Collateral' : 'Enter Withdraw Amount'
+  let submitButtonText = tab === 0 ? 'Deposit Collateral' : 'Withdraw Collateral'
+  if (!collAmount || collAmount === 0) {
+    submitButtonText = tab === 0 ? 'Enter Deposit Amount' : 'Enter Withdraw Amount'
+  } else if (tab === 0 && collData?.hasCometPositions && collAmount > collData?.balance) {
+    submitButtonText = 'Exceeded Deposit Amount'
+  } else if (tab === 1 && collData?.hasCometPositions && collAmount >= maxWithdrawable) {
+    submitButtonText = 'Exceeded Withdrawable Amount'
+  } else if (tab === 1 && maxWithdrawable === 0) {
+    submitButtonText = 'Withdrawable Amount is Zero'
+  }
 
 
   return collData ? (
@@ -192,11 +198,11 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                       />
                     )}
                   />
-                  <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
+                  {/* <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText> */}
                 </Box>
 
                 {
-                  (tab === 0 && collAmount > 0) || (tab === 1 && collAmount > 0 && collAmount < collData.collAmount) ?
+                  (tab === 0 && collAmount > 0) || (tab === 1 && collAmount > 0 && collAmount < maxWithdrawable) ?
                     <CometHealthBox padding='15px 20px'>
                       <Box display='flex' justifyContent='center'>
                         <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
@@ -232,7 +238,13 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                 </>
                 }
 
-                {(tab === 0 || (tab === 1 && collAmount < collData.collAmount && !hasRiskScore)) &&
+                {(tab === 1 && hasRiskScore && collAmount <= maxWithdrawable) ?
+                  <RiskSubmitButton onClick={handleSubmit(onEdit)}>
+                    <Typography variant='p_xlg'>
+                      {'Accept Risk and Withdraw'}
+                    </Typography>
+                  </RiskSubmitButton>
+                  :
                   <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
                     <Typography variant='p_xlg'>
                       {submitButtonText}
@@ -265,13 +277,20 @@ const InfoMsg = styled(Stack)`
   width: 100%;
   height: 77px;
   gap: 13px;
+  cursor: pointer;
   line-height: 1.33;
   border-radius: 5px;
   background-color: rgba(79, 229, 255, 0.1);
+  &:hover {
+    background-color: rgba(79, 229, 255, 0.05);
+  }
 `
 const WarningMsg = styled(InfoMsg)`
   color: #ff0084;
   background-color: rgba(255, 0, 214, 0.15);
+  &:hover {
+    background-color: rgba(255, 0, 214, 0.05);
+  }
 `
 const ZeroAmountBox = styled(Box)`
   width: 360px;

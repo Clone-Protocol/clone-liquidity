@@ -26,6 +26,14 @@ export const SubmitButton = styled(Button)`
     font-weight: 600;
   }
 `
+export const RiskSubmitButton = styled(SubmitButton)`
+  box-shadow: 0 0 10px 0 #c201a3;
+  background-color: #d92a84;
+  &:hover {
+    background-color: #d92a84;
+    opacity: 0.6;
+  }
+`
 
 export const ConnectButton = styled(Button)`
   width: 100%;
