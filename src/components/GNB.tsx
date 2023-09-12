@@ -1,20 +1,14 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
-import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, IconButton, styled, Theme, useMediaQuery } from '@mui/material'
+import { AppBar, Box, Button, Toolbar, Container, Typography, styled, useMediaQuery, Theme } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
-import { useSnackbar } from 'notistack'
-import { makeStyles } from '@mui/styles'
-import CancelIcon from './Icons/CancelIcon'
-import MenuIcon from './Icons/MenuIcon'
-import { useScroll } from '~/hooks/useScroll'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
@@ -22,28 +16,19 @@ import { createAccountDialogState, declinedAccountCreationState, isCreatingAccou
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
+import WalletSelectBox from './Common/WalletSelectBox'
+import { isMobile } from 'react-device-detect';
 
 const GNB: React.FC = () => {
-	const [mobileNavToggle, setMobileNavToggle] = useState(false)
-	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
 
-	const { scrolled } = useScroll()
-
-	const handleMobileNavBtn = () => setMobileNavToggle((prev) => !prev)
-
-	const navClassName = useMemo(() => {
-		let className = mobileNavToggle ? 'mobile-on' : ''
-		className += scrolled ? ' scrolled' : ''
-		return className
-	}, [mobileNavToggle, scrolled])
-
 	return (
 		<>
 			<NavPlaceholder />
-			<StyledAppBar className={navClassName} position="static">
+			<StyledAppBar position="static">
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters>
@@ -52,14 +37,9 @@ const GNB: React.FC = () => {
 						<Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'inherit' } }}>
 							<RightMenu />
 						</Box>
-						<Box sx={{ marginLeft: 'auto', display: { xs: 'flex', sm: 'none' } }}>
-							<IconButton sx={{ color: 'white' }} onClick={handleMobileNavBtn}>
-								{mobileNavToggle ? <CancelIcon color="info" /> : <MenuIcon />}
-							</IconButton>
-						</Box>
 					</Toolbar>
 				</Container>
-				<MobileWarningDialog open={isMobile} handleClose={() => { return null }} />
+				<MobileWarningDialog open={isMobile || isMobileOnSize} handleClose={() => { return null }} />
 			</StyledAppBar>
 		</>
 	)
@@ -69,8 +49,7 @@ export default withCsrOnly(GNB)
 
 const RightMenu = () => {
 	const router = useRouter()
-	const { enqueueSnackbar } = useSnackbar()
-	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const { connect, connecting, connected, publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
@@ -131,21 +110,6 @@ const RightMenu = () => {
 		}
 	}
 
-	const handleChangeWallet = () => {
-		disconnect()
-		setShowWalletSelectPopup(false)
-		setOpen(true)
-	}
-
-	const handleDisconnect = () => {
-		disconnect()
-		setShowWalletSelectPopup(false)
-		// refresh page by force
-		setTimeout(() => {
-			location.reload()
-		}, 1000)
-	}
-
 	return (
 		<>
 			<CreateAccountSetupDialog
@@ -174,22 +138,7 @@ const RightMenu = () => {
 							</>
 						)}
 					</ConnectButton>
-					{showWalletSelectPopup && <WalletSelectBox>
-						<Stack direction='row' alignItems='center'>
-							<WalletAddress onClick={handleChangeWallet}>
-								{publicKey && (
-									<Typography variant='h7'>{shortenAddress(publicKey.toString())}</Typography>
-								)}
-							</WalletAddress>
-							<Stack direction='row' spacing={2}>
-								<CopyToClipboard text={publicKey!!.toString()}
-									onCopy={() => enqueueSnackbar('Copied address')}>
-									<PopupButton><Typography variant='p_sm'>Copy</Typography></PopupButton>
-								</CopyToClipboard>
-								<PopupButton><Typography variant='p_sm' onClick={handleDisconnect}>Disconnect</Typography></PopupButton>
-							</Stack>
-						</Stack>
-					</WalletSelectBox>}
+					{showWalletSelectPopup && <WalletSelectBox onHide={() => setShowWalletSelectPopup(false)} />}
 					{publicKey && <ReminderNewWalletPopup />}
 				</Box>
 			</Box>
@@ -209,7 +158,6 @@ const RightMenu = () => {
 
 const StyledAppBar = styled(AppBar)`
 	background-color: #000;
-	// height: 60px;
 	position: fixed;
 	z-index: 1300;
 	top: 0px;
@@ -232,9 +180,6 @@ const StyledAppBar = styled(AppBar)`
 		backdrop-filter: blur(20px);
 		border-radius: 20px;
 	}
-	// .MuiToolbar-root {
-	// 	height: 100%;
-	// }
 `
 const NavPlaceholder = styled('div')`
 	${(props) => props.theme.breakpoints.up('md')} {
@@ -267,39 +212,18 @@ const ConnectButton = styled(Button)`
     background-color: ${(props) => props.theme.boxes.darkBlack};
   }
 `
-const WalletSelectBox = styled(Box)`
-  position: absolute;
-  top: 60px;
-  right: 0px;
-  width: 282px;
-  height: 56px;
-  padding: 13px 16px;
-  background-color: ${(props) => props.theme.boxes.darkBlack};
-  z-index: 99;
-`
-const WalletAddress = styled(Box)`
-  color: #fff;
-	margin-right: 45px;
-	cursor: pointer;
-`
-const PopupButton = styled(Box)`
-	font-size: 10px;
-	font-weight: 500;
-	color: ${(props) => props.theme.palette.text.secondary};
-	cursor: pointer;
-`
 
-const useStyles = makeStyles(({ palette }: Theme) => ({
-	indicator: {
-		display: 'flex',
-		justifyContent: 'center',
-		backgroundColor: 'transparent',
-		height: '3px',
-		'& > div': {
-			maxWidth: '20%',
-			width: '100%',
-			marginLeft: '-3px',
-			backgroundColor: palette.primary.main,
-		},
-	},
-}))
+// const useStyles = makeStyles(({ palette }: Theme) => ({
+// 	indicator: {
+// 		display: 'flex',
+// 		justifyContent: 'center',
+// 		backgroundColor: 'transparent',
+// 		height: '3px',
+// 		'& > div': {
+// 			maxWidth: '20%',
+// 			width: '100%',
+// 			marginLeft: '-3px',
+// 			backgroundColor: palette.primary.main,
+// 		},
+// 	},
+// }))

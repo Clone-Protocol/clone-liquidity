@@ -19,34 +19,32 @@ export const fetchPools = async ({
   if (!userPubKey) return []
   console.log("fetchPools :: LiquidityPools.query")
 
-  await program.loadClone()
-
-  const [tokenDataResult, cometResult] = await Promise.allSettled([
-    program.getTokenData(),
-    program.getComet(),
+  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+    program.getPools(),
+    program.getOracles(),
+    program.getUserAccount(),
   ])
-  if (tokenDataResult.status === "rejected" || cometResult.status === "rejected") {
+  if (poolsData.status === "rejected" || oraclesData.status === "rejected" || userAccountData.status === "rejected") {
     throw new Error("Couldn't fetch data!")
   }
-  const tokenData = tokenDataResult.value
-  const comet = cometResult.value
-  const assetInfos = getiAssetInfos(tokenData)
-  const poolStats = await getAggregatedPoolStats(tokenData)
+  const pools = poolsData.value
+  const oracles = oraclesData.value
+  const comet = userAccountData.value.comet
+  const assetInfos = await getiAssetInfos(program.provider.connection, program, pools, oracles)
+  const poolStats = await getAggregatedPoolStats(pools)
+  const currentPoolSet = new Set()
 
-  let currentPoolSet = new Set()
-
-  for (let i = 0; i < Number(comet.numPositions); i++) {
+  for (let i = 0; i < Number(comet.positions.length); i++) {
     const poolIndex = Number(comet.positions[i].poolIndex)
     currentPoolSet.add(poolIndex)
   }
 
-  let result = []
-
-  for (let asset of assetInfos) {
+  const result = []
+  for (const asset of assetInfos) {
     if (!noFilter && currentPoolSet.has(asset.poolIndex)) {
       continue
     }
-    let { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
+    const { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
     const stats = poolStats[asset.poolIndex]
     result.push({
       id: asset.poolIndex,
@@ -92,7 +90,7 @@ export function useLiquidityPoolsQuery({
   if (wallet) {
     return useQuery(
       ["liquidityPools", wallet, userPubKey],
-      () => fetchPools({ program: getCloneApp(wallet), userPubKey, noFilter }),
+      async () => fetchPools({ program: await getCloneApp(wallet), userPubKey, noFilter }),
       {
         refetchOnMount,
         refetchInterval: REFETCH_CYCLE,

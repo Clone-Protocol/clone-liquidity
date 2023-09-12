@@ -1,4 +1,4 @@
-import { Box, Slider, Stack, styled, Typography } from '@mui/material'
+import { Box, Slider, Stack, styled } from '@mui/material'
 // import Image from 'next/image'
 import { PositionInfo } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 

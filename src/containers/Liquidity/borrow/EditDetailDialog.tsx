@@ -13,6 +13,7 @@ import { RISK_RATIO_VAL } from '~/data/riskfactors'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
+import { fromCloneScale, fromScale, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -70,9 +71,9 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     let expectedCollRatio
     if (collAmount) {
       if (editType === 0) { // deposit
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) + collAmount) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedIasset))
+        expectedCollRatio = (Number(borrowDetail.collateralAmount) + Number(collAmount)) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedOnasset))
       } else { // withdraw
-        expectedCollRatio = ((Number(borrowDetail.collateralAmount) - collAmount) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedIasset)))
+        expectedCollRatio = (Number(borrowDetail.collateralAmount) - Number(collAmount)) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedOnasset))
       }
     } else {
       expectedCollRatio = borrowDetail.collateralRatio

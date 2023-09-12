@@ -13,7 +13,6 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useRouter } from 'next/navigation'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import CometBlank from '~/components/Overview/CometBlank'
 import DataPlusIcon from 'public/images/database-plus.svg'
 import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
@@ -21,6 +20,7 @@ import AirballoonIcon from 'public/images/airballoon-outline.svg'
 import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 
 const RISK_SCORE_VAL = 20
 
@@ -44,8 +44,9 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   })
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
+    if (positionInfo) {
+      const assetInfo = positionInfo.pools.pools[assetIndex].assetInfo
+      const healthCoefficient = fromScale(assetInfo.positionHealthScoreCoefficient, 2);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
@@ -97,11 +98,11 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
   // }
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
-      setTotalLiquidity(mintAmount * 2)
+      setTotalLiquidity(mintAmount * 2 * 10)
       setValidMintValue(mintRatio > 0 && mintRatio < 100 && mintAmount > 0 && mintAmount < maxMintable)
       trigger()
     }

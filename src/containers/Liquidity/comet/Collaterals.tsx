@@ -9,17 +9,11 @@ import dynamic from 'next/dynamic'
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
-  // const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
   const EditCollateralDialog = dynamic(() => import('./Dialogs/EditCollateralDialog'))
-  // const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   const openEdit = () => {
     setOpenEditCollateral(true)
   }
-
-  // const handleChooseCollateral = (collId: number) => {
-  //   setOpenChooseCollateral(false)
-  // }
 
   const BlankNoCollateral = () => (
     <MultipoolBlank title='Deposit collateral to your comet to get started' subtitle='Comets are designed to allow users to leverage the full capabilities of the CLS' />
@@ -54,15 +48,8 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
         open={openEditCollateral}
         isNewDeposit={!alreadyHasDeposit}
         onRefetchData={onRefetchData}
-        // handleChooseColl={() => setOpenChooseCollateral(true)}
         handleClose={() => setOpenEditCollateral(false)}
       />
-
-      {/* <ChooseCollateralDialog
-        open={openChooseCollateral}
-        handleChooseCollateral={handleChooseCollateral}
-        handleClose={() => setOpenChooseCollateral(false)}
-      /> */}
     </>
   )
 

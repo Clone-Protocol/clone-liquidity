@@ -1,8 +1,8 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import { TransactionStateContext, TransactionState } from '~/hooks/useTransactionState'
 import TransactionStateSnackbar from '~/components/Common/TransactionStateSnackbar'
 
-export const TransactionStateProvider: FC = ({ children, ...props }) => {
+export const TransactionStateProvider = ({ children, ...props }: any) => {
   const [txState, setTxState] = useState({
     state: TransactionState.INIT,
     txHash: '',

@@ -20,15 +20,7 @@ const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		() => [
 			new PhantomWalletAdapter(),
 			new SolflareWalletAdapter({ network }),
-			// new SolletWalletAdapter({ network }),
-			// new LedgerWalletAdapter(),
-			// new SlopeWalletAdapter(),
-			// new SolletExtensionWalletAdapter({ network }),
 			new TorusWalletAdapter(),
-			// new CloverWalletAdapter(),
-			// new SolongWalletAdapter(),
-			// new MathWalletAdapter(),
-			// new GlowWalletAdapter(),
 		],
 		[network]
 	)

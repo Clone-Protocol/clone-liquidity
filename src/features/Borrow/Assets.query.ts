@@ -4,18 +4,17 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { TokenData } from "clone-protocol-sdk/sdk/src/interfaces"
+import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 
-const fetchIassetBalances = async (program: CloneClient, tokenData: TokenData): Promise<number[]> => {
-
-	let balancesQueries = await Promise.allSettled(
-		tokenData.pools.slice(0, tokenData.numPools.toNumber()).map(async (pool) => {
-			let ata = await getAssociatedTokenAddress(
+const fetchIassetBalances = async (program: CloneClient, pools: Pools): Promise<number[]> => {
+	const balancesQueries = await Promise.allSettled(
+		pools.pools.slice(0, pools.pools.length).map(async (pool) => {
+			const ata = await getAssociatedTokenAddress(
 				pool.assetInfo.onassetMint,
 				program.provider.publicKey!
 			);
-			let balance = await program.provider.connection.getTokenAccountBalance(
+			const balance = await program.provider.connection.getTokenAccountBalance(
 				ata
 			);
 			return balance.value.uiAmount !== null ? balance.value.uiAmount : 0;
@@ -34,14 +33,12 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	if (!userPubKey) return null
 	console.log('fetchAssets')
 
-	await program.loadClone()
-	const tokenData = await program.getTokenData();
-	const balances = await fetchIassetBalances(program, tokenData);
+	const pools = await program.getPools()
+	const balances = await fetchIassetBalances(program, pools);
 
 	const result: AssetList[] = []
-
-	for (let index = 0; index < tokenData.numPools.toNumber(); index++) {
-		let { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
+	for (let index = 0; index < pools.pools.length; index++) {
+		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
 		result.push({
 			id: index,
 			tickerName: tickerName,
@@ -74,7 +71,7 @@ export function useAssetsQuery({ userPubKey, enabled = true, refetchOnMount }: G
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(['assets', wallet, userPubKey], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {
+		return useQuery(['assets', wallet, userPubKey], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
 			enabled
 		})

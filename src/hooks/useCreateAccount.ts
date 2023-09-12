@@ -3,10 +3,9 @@ import { useAtom, useSetAtom } from 'jotai'
 import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { TransactionInstruction } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor"
 import { useClone } from '~/hooks/useClone'
 import { getTokenAccount } from '~/utils/token_accounts'
-import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token"
+import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CURRENT_ACCOUNT } from '~/data/localstorage';
 import { CreateAccountDialogStates } from '~/utils/constants'
@@ -28,50 +27,36 @@ export function useCreateAccount() {
 	useEffect(() => {
 		async function createAccount() {
 			if (wallet) {
-				const program = getCloneApp(wallet, true)
-				await program.loadClone()
+				const program = await getCloneApp(wallet, true)
 
 				let ixnCalls: Promise<TransactionInstruction>[] = []
 
-				const usdiTokenAccount = await getTokenAccount(program.clone!.onusdMint, publicKey!, program.provider.connection);
-				const { userPubkey } = await program.getUserAddress()
+				const onusdTokenAccount = await getTokenAccount(program.clone.collateral.mint, publicKey!, program.provider.connection);
 				const associatedToken = await getAssociatedTokenAddress(
-					program.clone!.onusdMint,
+					program.clone.collateral.mint,
 					publicKey!
 				);
 
-				if (usdiTokenAccount === undefined) {
+				if (onusdTokenAccount === undefined) {
 					ixnCalls.push(
 						(async () => createAssociatedTokenAccountInstruction(
 							publicKey!,
 							associatedToken,
 							publicKey!,
-							program.clone!.onusdMint
+							program.clone.collateral.mint
 						))()
 					)
 				}
 
-				ixnCalls.push(program.initializeUserInstruction(publicKey!))
-
-
-				const cometsAccount = anchor.web3.Keypair.generate();
-				ixnCalls.push(program.program.account.comet.createInstruction(cometsAccount))
-				ixnCalls.push(program.program.methods
-					.initializeComet()
-					.accounts({
-						user: publicKey!,
-						userAccount: userPubkey,
-						comet: cometsAccount.publicKey,
-						rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-						tokenProgram: TOKEN_PROGRAM_ID,
-						systemProgram: anchor.web3.SystemProgram.programId,
-					})
-					.instruction()
+				ixnCalls.push(
+					(async () =>
+						program.initializeUserInstruction()
+					)()
 				)
 
 				try {
 					let ixns = await Promise.all(ixnCalls)
-					await sendAndConfirm(program.provider, ixns, setTxState, [cometsAccount])
+					await sendAndConfirm(program.provider, ixns, setTxState)
 
 					// store account to localstorage
 					console.log('store account')

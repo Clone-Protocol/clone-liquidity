@@ -19,7 +19,7 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hiddenThumbTitle = 
           <Box sx={{ paddingLeft: `${scorePoint}px` }}>
             {!hiddenThumbTitle && <Box sx={{ marginLeft: '-5px' }}><Typography variant='p_sm'>New</Typography></Box>}
             <ScorePointer>
-              <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? score.toFixed(0) : 0}</Typography></Box>
+              <Box display='flex' justifyContent='center'><Typography variant='p_lg'>{score && !isNaN(score) ? Math.floor(score) : 0}</Typography></Box>
             </ScorePointer>
           </Box>
           <Box width='100%' margin='0 auto'>

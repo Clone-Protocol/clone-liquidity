@@ -40,12 +40,12 @@ const CloseLiquidityDialog = ({
       setIsSubmitting(true)
       const data = await mutateAsync({
         positionIndex,
-        onusdBalance: positionInfo?.onusdVal!,
-        onusdILD: positionInfo?.onusdILD!,
+        collateralBalance: positionInfo?.onusdVal!,
+        collateralILD: positionInfo?.collateralILD!,
         onassetBalance: positionInfo?.onassetVal!,
         onassetILD: positionInfo?.onassetILD!,
         onassetMint: positionInfo?.onassetMint!,
-        committedOnusdLiquidity: positionInfo?.committedOnusdLiquidity!,
+        committedCollateralLiquidity: positionInfo?.committedCollateralLiquidity!,
       })
 
       if (data) {
@@ -66,9 +66,9 @@ const CloseLiquidityDialog = ({
 
   const displayILDDebt = () => {
     let components = []
-    if (positionInfo!.onusdILD > 0) {
+    if (positionInfo!.collateralILD > 0) {
       components.push(
-        `${Math.max(0, positionInfo!.onusdILD).toLocaleString(undefined, {
+        `${Math.max(0, positionInfo!.collateralILD).toLocaleString(undefined, {
           maximumFractionDigits: 8,
         })} onUSD`
       )
@@ -89,8 +89,8 @@ const CloseLiquidityDialog = ({
 
   const displayILDNotional = () => {
     let reward = 0
-    if (positionInfo!.onusdILD > 0)
-      reward += positionInfo!.onusdILD
+    if (positionInfo!.collateralILD > 0)
+      reward += positionInfo!.collateralILD
     if (positionInfo!.onassetILD > 0)
       reward += positionInfo!.onassetILD * positionInfo!.price
 
@@ -99,9 +99,9 @@ const CloseLiquidityDialog = ({
 
   const displayReward = () => {
     let components = []
-    if (positionInfo!.onusdILD < 0) {
+    if (positionInfo!.collateralILD < 0) {
       components.push(
-        `${Math.max(0, -positionInfo!.onusdILD).toLocaleString(undefined, {
+        `${Math.max(0, -positionInfo!.collateralILD).toLocaleString(undefined, {
           maximumFractionDigits: 8,
         })} onUSD`
       )
@@ -121,8 +121,8 @@ const CloseLiquidityDialog = ({
 
   const displayRewardNotional = () => {
     let reward = 0
-    if (positionInfo!.onusdILD < 0)
-      reward += (-positionInfo!.onusdILD)
+    if (positionInfo!.collateralILD < 0)
+      reward += (-positionInfo!.collateralILD)
     if (positionInfo!.onassetILD < 0)
       reward += (-positionInfo!.onassetILD * positionInfo!.price)
 
@@ -162,11 +162,11 @@ const CloseLiquidityDialog = ({
               <CenterBox justifyContent="space-evenly">
                 <Stack direction="row" justifyContent="space-between">
                   <Box>
-                    <Typography variant="p">ILD Debt</Typography>{" "}
+                    <Typography variant="p">ILD Debt</Typography>
                     <InfoTooltip title={TooltipTexts.ildDebt} />
                   </Box>
                   <Box lineHeight={0.95}>
-                    <Box>
+                    <Box textAlign="right">
                       <Typography variant="p_xlg">{displayILDDebt()}</Typography>
                     </Box>
                     <Box textAlign="right">

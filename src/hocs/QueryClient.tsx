@@ -10,7 +10,7 @@ export const queryClient = new QueryClient({
 	},
 })
 
-const QueryProvider: React.FC = ({ children }) => {
+const QueryProvider = ({ children }: { children: React.ReactNode }) => {
 	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }
 

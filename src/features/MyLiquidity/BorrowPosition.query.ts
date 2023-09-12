@@ -1,7 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
-import { toNumber } from "clone-protocol-sdk/sdk/src/decimal";
+import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
@@ -15,17 +14,13 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
 
   console.log('fetchBorrowDetail', index)
 
-  await program.loadClone()
-  const tokenData = await program.getTokenData()
-
-  let oPrice = 1
-  let stableCollateralRatio = 0
-  let cryptoCollateralRatio = 0
-  let assetInfo = tokenData.pools[index].assetInfo
-  oPrice = toNumber(assetInfo.price);
-  stableCollateralRatio = toNumber(assetInfo.stableCollateralRatio) * 100;
-  cryptoCollateralRatio = toNumber(assetInfo.cryptoCollateralRatio) * 100;
-
+  const pools = await program.getPools()
+  const oracles = await program.getOracles();
+  const pool = pools.pools[index]
+  const assetInfo = pool.assetInfo
+  const oracle = oracles.oracles[Number(assetInfo.oracleInfoIndex)];
+  const oPrice = fromScale(oracle.price, oracle.expo)
+  const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2) * 100;
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
 
   return {
@@ -34,8 +29,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
     tickerSymbol: tickerSymbol,
     pythSymbol,
     oPrice,
-    stableCollateralRatio,
-    cryptoCollateralRatio,
+    minCollateralRatio,
   }
 }
 
@@ -45,8 +39,7 @@ export interface DetailInfo {
   tickerSymbol: string
   pythSymbol: string
   oPrice: number
-  stableCollateralRatio: number
-  cryptoCollateralRatio: number
+  minCollateralRatio: number
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
@@ -54,21 +47,23 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
 
   console.log('fetchBorrowPosition')
 
-  await program.loadClone()
-
-  const [tokenDataResult, borrowPositionResult] = await Promise.allSettled([
-    program.getTokenData(), program.getBorrowPositions()
+  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+    program.getPools(), program.getOracles(), program.getUserAccount()
   ]);
 
-  if (tokenDataResult.status !== "fulfilled" || borrowPositionResult.status !== "fulfilled") return
+  if (poolsData.status !== "fulfilled" || oraclesData.status !== "fulfilled" || userAccountData.status !== "fulfilled") return
 
-  let mint = borrowPositionResult.value.borrowPositions[index];
+  const borrowPositions = userAccountData.value.borrows
+  const mint = borrowPositions[index];
   const poolIndex = Number(mint.poolIndex)
 
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
-  const assetInfo = tokenDataResult.value.pools[poolIndex].assetInfo;
-  const oraclePrice = toNumber(assetInfo.price);
-  const positionsData = getUserMintInfos(tokenDataResult.value, borrowPositionResult.value);
+  const pools = poolsData.value
+  const pool = pools.pools[poolIndex]
+  const oracles = oraclesData.value
+  const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+  const oraclePrice = fromScale(oracle.price, oracle.expo)
+  const positionsData = getUserMintInfos(program, pools, oracles, borrowPositions);
   const positionData = positionsData[index];
 
   const balance = await fetchBalance({
@@ -89,9 +84,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
     tickerSymbol: tickerSymbol,
     pythSymbol,
     price: oraclePrice,
-    stableCollateralRatio: toNumber(assetInfo.stableCollateralRatio),
-    cryptoCollateralRatio: toNumber(assetInfo.cryptoCollateralRatio),
-    borrowedIasset: positionData![3],
+    borrowedOnasset: positionData![3],
     collateralAmount: positionData![4],
     collateralRatio: Number(positionData![5]) * 100,
     minCollateralRatio: Number(positionData![6]) * 100,
@@ -114,9 +107,7 @@ export interface PositionInfo {
   tickerSymbol: string
   pythSymbol?: string
   price: number
-  stableCollateralRatio: number
-  cryptoCollateralRatio: number
-  borrowedIasset: number | Number
+  borrowedOnasset: number | Number
   collateralAmount: number | Number
   collateralRatio: number
   minCollateralRatio: number
@@ -135,12 +126,12 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
   if (wallet) {
-    return useQuery(['borrowDetail', userPubKey, index], () => fetchBorrowDetail({ program: getCloneApp(wallet), userPubKey, index }), {
+    return useQuery(['borrowDetail', userPubKey, index], async () => fetchBorrowDetail({ program: await getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       enabled
     })
   } else {
-    return useQuery(['borrowDetail'], () => { })
+    return useQuery(['borrowDetail'], () => { return null })
   }
 }
 
@@ -150,13 +141,13 @@ export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enab
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['borrowPosition', userPubKey, index], () => fetchBorrowPosition({ program: getCloneApp(wallet), userPubKey, index, setStartTimer }), {
+    return useQuery(['borrowPosition', userPubKey, index], async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,
       enabled
     })
   } else {
-    return useQuery(['borrowPosition'], () => { })
+    return useQuery(['borrowPosition'], () => { return null })
   }
 }
