@@ -15,6 +15,7 @@ import { RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButton
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import IconAlertComet from 'public/images/alert-comet.svg'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
+import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 
 const RISK_SCORE_VAL = 30
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl?: () => void, handleClose: () => void }) => {
@@ -223,15 +224,13 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
                 {tab === 1 && <>
                   {
                     collAmount >= collData.collAmount ?
-                      <InfoMsg direction='row'>
-                        <Image src={InfoIcon} alt='info' />
-                        <Typography variant='p'>If you are looking to withdraw all of your collateral, please close all of your liquidity positions first. Click here to learn more.</Typography>
+                      <InfoMsg>
+                        If you are looking to withdraw all of your collateral, please close all of your liquidity positions first. Click here to learn more.
                       </InfoMsg>
                       :
                       hasRiskScore ?
-                        <WarningMsg direction='row'>
-                          <Image src={IconAlertComet} alt='alert' width={15} height={14} />
-                          <Typography variant='p'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+                        <WarningMsg>
+                          Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.
                         </WarningMsg>
                         : <></>
                   }
@@ -269,28 +268,6 @@ const BoxWrapper = styled(Box)`
 const CometHealthBox = styled(Box)`
   background-color: ${(props) => props.theme.basis.darkNavy};
   margin-bottom: 30px;
-`
-const InfoMsg = styled(Stack)`
-  color: ${(props) => props.theme.basis.skylight};
-  align-items: center;
-  padding: 13px;
-  width: 100%;
-  height: 77px;
-  gap: 13px;
-  cursor: pointer;
-  line-height: 1.33;
-  border-radius: 5px;
-  background-color: rgba(79, 229, 255, 0.1);
-  &:hover {
-    background-color: rgba(79, 229, 255, 0.05);
-  }
-`
-const WarningMsg = styled(InfoMsg)`
-  color: #ff0084;
-  background-color: rgba(255, 0, 214, 0.15);
-  &:hover {
-    background-color: rgba(255, 0, 214, 0.05);
-  }
 `
 const ZeroAmountBox = styled(Box)`
   width: 360px;

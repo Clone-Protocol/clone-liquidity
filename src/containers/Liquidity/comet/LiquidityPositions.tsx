@@ -46,11 +46,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const handleRowClick: GridEventListener<'rowClick'> = (
     params
   ) => {
-    // if (isAlreadyInitializedAccount) {
-    // 	router.push(`/assets/${params.row.ticker}`)
-    // } else {
-    // 	handleLinkNeedingAccountClick(undefined)
-    // }
+    handleChooseEditPosition(params.row.id)
   }
 
   const rowsPositions = positions.map((position, id) => ({

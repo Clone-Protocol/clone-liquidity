@@ -11,7 +11,6 @@ import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { StyledDivider } from '~/components/Common/StyledDivider'
 import HealthscoreBar from '~/components/Overview/HealthscoreBar'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
@@ -118,6 +117,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
   }
 
   const isValid = Object.keys(errors).length === 0
+  const differentLiquidityVal = totalLiquidity - (defaultMintAmount * 2)
 
   return positionInfo ? (
     <>
@@ -125,7 +125,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
         <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
           <BoxWrapper>
             <Box mb='5px'>
-              <Typography variant='p_xlg'>Manage Comet Liquidity Position</Typography>
+              <Typography variant='h3'>Manage Liquidity</Typography>
             </Box>
             <StyledDivider />
 
@@ -133,7 +133,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
               <Box>
                 {/* <SelectedPoolBox positionInfo={positionInfo} /> */}
 
-                <Typography variant='p'>Adjust Liquidity to mint into onUSD/{positionInfo.tickerSymbol} Pool</Typography>
+                <Typography variant='p_lg'>Liquidity Amount</Typography>
                 <Box mt='25px'>
                   <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} maxMintable={maxMintable} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
                 </Box>
@@ -141,13 +141,18 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                 {mintRatio > 0 ?
                   <BoxWithBorder>
                     <Stack direction='row' justifyContent='space-between' alignItems="center" padding='15px'>
-                      <Typography variant='p'>Your New Liquidity Value</Typography>
-                      <Typography variant='p_xlg'>${totalLiquidity.toLocaleString()}</Typography>
+                      <Typography variant='p'>New Liquidity Value</Typography>
+                      <Box>
+                        <Typography variant='p_lg'>${totalLiquidity.toLocaleString()}</Typography>
+                        <Typography variant='p_lg' ml='9px' sx={differentLiquidityVal >= 0 ? { color: '#4fe5ff' } : { color: '#ff0084' }}>
+                          {differentLiquidityVal >= 0 ? '+' : '-'}${differentLiquidityVal.toLocaleString()}
+                        </Typography>
+                      </Box>
                     </Stack>
-                    <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
+                    {/* <Box borderTop='1px solid #3f3f3f' padding='5px 7px' display='flex' justifyContent='center'>
                       <Typography variant='p' color='#989898'>Your Current Liquidity Value: </Typography>
                       <Typography variant='p' ml='5px'>${(defaultMintAmount * 2).toLocaleString()} USD</Typography>
-                    </Box>
+                    </Box> */}
                   </BoxWithBorder>
                   :
                   <Box>
@@ -174,11 +179,9 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                   </BoxWithBorder>
                 }
 
-                <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>Edit Liquidity Position</SubmitButton>
-
-                <Box display='flex' justifyContent='center'>
-                  <DataLoadingIndicator onRefresh={() => refetch()} />
-                </Box>
+                <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>
+                  <Typography variant='p_xlg'>Adjust Liquidity</Typography>
+                </SubmitButton>
               </RightBox>
             </Stack>
           </BoxWrapper>

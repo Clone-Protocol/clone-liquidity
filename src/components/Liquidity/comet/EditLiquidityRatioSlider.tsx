@@ -34,7 +34,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
     zIndex: 10,
     height: 3,
     border: 'none',
-    background: 'linear-gradient(to left, #ff8e4f -12%, #fff 66%)'
+    background: 'linear-gradient(to right, #fff 51%, #ff0084 400px)'
   },
   '& .MuiSlider-valueLabel': {
     fontSize: '11px',
@@ -83,7 +83,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
           <StyledSlider
             sx={{
               '& .MuiSlider-track': {
-                background: `linear-gradient(to left, #ff8e4f -12%, #fff ${ratio}%)`
+                background: `linear-gradient(to right, #fff 51%, #ff0084 400px);`
               }
             }}
             value={ratio}
