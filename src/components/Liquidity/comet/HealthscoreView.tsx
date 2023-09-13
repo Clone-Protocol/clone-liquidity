@@ -8,6 +8,8 @@ interface Props {
   score?: number
 }
 
+export const RISK_HEALTH_SCORE = 30
+
 const enum HealthScoreType {
   Fair = 'Fair',
   Excellent = 'Excellent',
@@ -28,10 +30,10 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
 
   useEffect(() => {
     if (score) {
-      if (score < 30) {
+      if (score < RISK_HEALTH_SCORE) {
         setScoreType(HealthScoreType.Poor)
         setScoreTypeColor(HealthScoreTypeColor.Poor)
-      } else if (score >= 30 && score < 70) {
+      } else if (score >= RISK_HEALTH_SCORE && score < 70) {
         setScoreType(HealthScoreType.Fair)
         setScoreTypeColor(HealthScoreTypeColor.Fair)
       } else {
