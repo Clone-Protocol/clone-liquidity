@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getOnUSDAccount } from '~/utils/token_accounts'
+import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 
@@ -18,13 +18,12 @@ export const fetchCollaterals = async ({
 
 	console.log('fetchPools :: Collaterals.query')
 
-	let usdiBalance = 0
-	await program.loadClone()
-	let usdiTokenAccount = await getOnUSDAccount(program)
+	let collBalance = 0
+	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 
-	if (usdiTokenAccount !== undefined) {
-		let usdiTokenBalance = await program.connection.getTokenAccountBalance(usdiTokenAccount!)
-		usdiBalance = usdiTokenBalance.value.uiAmount!
+	if (collateralAssociatedTokenAccount.isInitialized) {
+		const collateralTokenBalance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccount.address)
+		collBalance = collateralTokenBalance.value.uiAmount!
 	}
 
 	const onUSDInfo = collateralMapping(StableCollateral.onUSD)
@@ -34,7 +33,7 @@ export const fetchCollaterals = async ({
 			tickerName: onUSDInfo.collateralName,
 			tickerSymbol: onUSDInfo.collateralSymbol,
 			tickerIcon: onUSDInfo.collateralIcon,
-			balance: usdiBalance,
+			balance: collBalance,
 			isEnabled: true,
 		},
 	]
@@ -63,7 +62,7 @@ export function useCollateralsQuery({ userPubKey, refetchOnMount, enabled = true
 	if (wallet) {
 		return useQuery(
 			['collaterals', wallet, userPubKey],
-			() => fetchCollaterals({ program: getCloneApp(wallet), userPubKey }),
+			async () => fetchCollaterals({ program: await getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

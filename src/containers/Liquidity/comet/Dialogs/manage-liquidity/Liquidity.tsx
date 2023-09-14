@@ -11,7 +11,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { PositionInfo } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 import { useEditPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useForm } from 'react-hook-form'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
@@ -28,10 +28,10 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
 
   // initialized state
   useEffect(() => {
-    if (positionInfo !== undefined) {
-      const position = positionInfo.comet!.positions[positionIndex]
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[poolIndex].assetInfo.positionHealthScoreCoefficient)
-      const currentPosition = toNumber(position!.committedOnusdLiquidity)
+    if (positionInfo && positionInfo.comet) {
+      const position = positionInfo.comet.positions[positionIndex]
+      const healthCoefficient = fromScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient, 2)
+      const currentPosition = fromScale(position.committedCollateralLiquidity, 7)
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
@@ -52,9 +52,8 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
 
   const {
     handleSubmit,
-    control,
     setValue,
-    formState: { isDirty, errors, isSubmitting },
+    formState: { errors, isSubmitting },
     watch,
   } = useForm({
     mode: 'onChange',
@@ -67,10 +66,8 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
   ])
 
   useEffect(() => {
-    if (positionInfo !== undefined) {
+    if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
-      // console.log('mintRatio', mintRatio)
-      setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.totalCollValue)
       setTotalLiquidity(mintAmount * 2);
       setValidMintAmount(mintAmount < maxMintable && mintRatio < 100 && mintAmount !== defaultMintAmount && mintRatio !== defaultMintRatio)

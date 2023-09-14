@@ -53,7 +53,7 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
               {scoreType === HealthScoreType.Poor &&
                 <Image src={IconAlertComet} alt='alert' width={15} height={14} />
               }
-              <Typography variant='h2'>{score.toFixed(0)}</Typography>
+              <Typography variant='h2'>{Math.floor(score)}</Typography>
             </Stack>
           </Box>
         }
@@ -70,12 +70,6 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
   )
 }
 
-const ScoreBox = styled(Box)`
-  width: 104px;
-  height: 100%;
-  text-align: center;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
 const ScoreBar = styled(Box)`
   width: 4px;
   height: 100%;

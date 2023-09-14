@@ -1,7 +1,7 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import { DataLoadingContext } from '~/hooks/useDataLoading'
 
-export const DataLoadingIndicatorProvider: FC = ({ children, ...props }) => {
+export const DataLoadingIndicatorProvider = ({ children, ...props }: any) => {
 	const [startTimer, setStartTimer] = useState(false)
 
 	return (
@@ -10,7 +10,7 @@ export const DataLoadingIndicatorProvider: FC = ({ children, ...props }) => {
 				startTimer,
 				setStartTimer,
 			}}>
-      {children}
+			{children}
 		</DataLoadingContext.Provider>
 	)
 }

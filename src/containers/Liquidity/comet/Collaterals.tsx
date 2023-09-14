@@ -15,7 +15,6 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
   const setMintUsdi = useSetAtom(mintUSDi)
   const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
   const EditCollateralDialog = dynamic(() => import('./Dialogs/EditCollateralDialog'))
-  // const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   let dataCollaterals = collaterals
   if (hasNoCollateral) {
@@ -78,12 +77,6 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
         onRefetchData={onRefetchData}
         handleClose={() => setOpenEditCollateral(false)}
       />
-
-      {/* <ChooseCollateralDialog
-        open={openChooseCollateral}
-        handleChooseCollateral={handleChooseCollateral}
-        handleClose={() => setOpenChooseCollateral(false)}
-      /> */}
     </>
   )
 

@@ -5,12 +5,10 @@ import { AppBar, Box, Button, Stack, Toolbar, Container, Typography, styled, The
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
 import walletIcon from 'public/images/wallet-icon.svg'
-import { useSnackbar } from 'notistack'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates } from '~/utils/constants'
@@ -20,9 +18,10 @@ import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import NaviMenu from './NaviMenu'
+import { isMobile } from 'react-device-detect';
 
 const GNB: React.FC = () => {
-	const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
@@ -39,8 +38,8 @@ const GNB: React.FC = () => {
 						<RightMenu />
 					</Toolbar>
 				</Container>
-				<MobileWarningDialog open={isMobile} handleClose={() => { return null }} />
-			</StyledAppBar>
+				<MobileWarningDialog open={isMobile || isMobileOnSize} handleClose={() => { return null }} />
+			</StyledAppBar >
 		</>
 	)
 }
@@ -49,11 +48,9 @@ export default withCsrOnly(GNB)
 
 const RightMenu: React.FC = () => {
 	const router = useRouter()
-	const { enqueueSnackbar } = useSnackbar()
-	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const { connect, connecting, connected, publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
-	const setMintUsdi = useSetAtom(mintUSDi)
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
@@ -71,7 +68,7 @@ const RightMenu: React.FC = () => {
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
-	useFaucet()
+	const { setMintUsdi } = useFaucet()
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
@@ -113,21 +110,6 @@ const RightMenu: React.FC = () => {
 		}
 	}
 
-	const handleChangeWallet = () => {
-		disconnect()
-		setShowWalletSelectPopup(false)
-		setOpen(true)
-	}
-
-	const handleDisconnect = () => {
-		disconnect()
-		setShowWalletSelectPopup(false)
-		// refresh page by force
-		setTimeout(() => {
-			location.reload()
-		}, 1000)
-	}
-
 	return (
 		<>
 			<CreateAccountSetupDialog
@@ -142,22 +124,23 @@ const RightMenu: React.FC = () => {
 				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
-					{!connected ?
-						<ConnectButton
-							onClick={handleWalletClick}
-							disabled={connecting}
-						>
-							<Typography variant='p_lg'>Connect Wallet</Typography>
-						</ConnectButton>
-						:
-						<ConnectedButton onClick={handleWalletClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-							<Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
-						</ConnectedButton>
+					{
+						!connected ?
+							<ConnectButton
+								onClick={handleWalletClick}
+								disabled={connecting}
+							>
+								<Typography variant='p_lg'>Connect Wallet</Typography>
+							</ConnectButton>
+							:
+							<ConnectedButton onClick={handleWalletClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+								<Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
+							</ConnectedButton>
 					}
 					{showWalletSelectPopup && <WalletSelectBox onHide={() => setShowWalletSelectPopup(false)} />}
 					{publicKey && <ReminderNewWalletPopup />}
-				</Box>
-			</Box>
+				</Box >
+			</Box >
 
 			<TokenFaucetDialog
 				open={openTokenFaucet}
@@ -244,39 +227,3 @@ const ConnectedButton = styled(Button)`
     border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
   }
 `
-const WalletSelectBox = styled(Box)`
-  position: absolute;
-  top: 60px;
-  right: 0px;
-  width: 282px;
-  height: 56px;
-  padding: 13px 16px;
-  background-color: ${(props) => props.theme.boxes.darkBlack};
-  z-index: 99;
-`
-const WalletAddress = styled(Box)`
-  color: #fff;
-	margin-right: 45px;
-	cursor: pointer;
-`
-const PopupButton = styled(Box)`
-	font-size: 10px;
-	font-weight: 500;
-	color: ${(props) => props.theme.palette.text.secondary};
-	cursor: pointer;
-`
-
-// const useStyles = makeStyles(({ palette }: Theme) => ({
-// 	indicator: {
-// 		display: 'flex',
-// 		justifyContent: 'center',
-// 		backgroundColor: 'transparent',
-// 		height: '3px',
-// 		'& > div': {
-// 			maxWidth: '20%',
-// 			width: '100%',
-// 			marginLeft: '-3px',
-// 			backgroundColor: palette.primary.main,
-// 		},
-// 	},
-// }))

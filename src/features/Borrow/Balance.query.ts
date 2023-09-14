@@ -1,10 +1,10 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { CLONE_TOKEN_SCALE, CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getOnUSDAccount } from '~/utils/token_accounts'
+import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getTokenAccount } from '~/utils/token_accounts'
 
@@ -16,24 +16,23 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadClone()
-
   let onusdVal = 0.0
   let onassetVal = 0.0
 
-  const onusdTokenAccountAddress = await getTokenAccount(program.clone!.onusdMint, userPubKey, program.connection);
+  const collateralTokenAccountAddress = await getTokenAccount(program.clone.collateral.mint, userPubKey, program.provider.connection);
+  const cloneConversionFactor = Math.pow(10, -CLONE_TOKEN_SCALE)
 
-  if (onusdTokenAccountAddress !== undefined) {
-    const onusdBalance = await program.connection.getTokenAccountBalance(onusdTokenAccountAddress, "processed");
-    onusdVal = Number(onusdBalance.value.amount) / 100000000;
+  if (collateralTokenAccountAddress.isInitialized) {
+    const onusdBalance = await program.provider.connection.getTokenAccountBalance(collateralTokenAccountAddress.address, "processed");
+    onusdVal = Number(onusdBalance.value.amount) * cloneConversionFactor;
   }
-  const tokenData = await program.getTokenData();
 
-  const pool = tokenData.pools[index];
-  const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.connection);
-  if (onassetTokenAccountAddress !== undefined) {
-    const onassetBalance = await program.connection.getTokenAccountBalance(onassetTokenAccountAddress, "processed");
-    onassetVal = Number(onassetBalance.value.amount) / 100000000;
+  const pools = await program.getPools()
+  const pool = pools.pools[index];
+  const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.provider.connection);
+  if (onassetTokenAccountAddress.isInitialized) {
+    const onassetBalance = await program.provider.connection.getTokenAccountBalance(onassetTokenAccountAddress.address, "processed");
+    onassetVal = Number(onassetBalance.value.amount) * cloneConversionFactor;
   }
 
   return {
@@ -50,18 +49,20 @@ export const fetchBalances = async ({ program, userPubKey, setStartTimer }: { pr
   setStartTimer(false);
   setStartTimer(true);
 
-  await program.loadClone()
-
   let balanceVal = 0.0
-
   try {
-    const associatedTokenAccount = await getOnUSDAccount(program);
-    const balance = await program.connection.getTokenAccountBalance(associatedTokenAccount!, "processed");
-    balanceVal = Number(balance.value.amount) / 100000000;
-  } catch { }
+    const devnetConversionFactor = Math.pow(10, -program.clone.collateral.scale)
+    const collateralAssociatedTokenAccountInfo = await getCollateralAccount(program);
+    if (collateralAssociatedTokenAccountInfo.isInitialized) {
+      const balance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccountInfo.address, "processed");
+      balanceVal = Number(balance.value.amount) * devnetConversionFactor;
+    }
+  } catch (e) {
+    console.error(e)
+  }
 
   return {
-    balanceVal: balanceVal,
+    balanceVal,
   }
 }
 
@@ -81,7 +82,7 @@ export function useBalanceQuery({ userPubKey, refetchOnMount, enabled = true }: 
   const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['cometBalance', wallet, userPubKey], () => fetchBalances({ program: getCloneApp(wallet), userPubKey, setStartTimer }), {
+    return useQuery(['cometBalance', wallet, userPubKey], async () => fetchBalances({ program: await getCloneApp(wallet), userPubKey, setStartTimer }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

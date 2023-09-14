@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, styled, Stack, Dialog, DialogContent, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FadeTransition } from '~/components/Common/Dialog'
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
@@ -65,56 +65,6 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
               <TabPanelForEdit value={tab} index={3}>
                 <ClosePosition />
               </TabPanelForEdit>
-
-              {/* <Typography variant='p_lg'>Liquidity Amount</Typography>
-              <Box mt='25px'>
-                <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} maxMintable={maxMintable} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
-              </Box>
-
-              {mintRatio > 0 ?
-                <BoxWithBorder>
-                  <Stack direction='row' justifyContent='space-between' alignItems="center" padding='15px'>
-                    <Typography variant='p'>New Liquidity Value</Typography>
-                    <Box>
-                      <Typography variant='p_lg'>${totalLiquidity.toLocaleString()}</Typography>
-                      <Typography variant='p_lg' ml='9px' sx={differentLiquidityVal >= 0 ? { color: '#4fe5ff' } : { color: '#ff0084' }}>
-                        {differentLiquidityVal >= 0 ? '+' : '-'}${differentLiquidityVal.toLocaleString()}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </BoxWithBorder>
-                :
-                <Box>
-                  <BoxWithBorder padding='15px 18px' maxWidth='420px' lineHeight={1}>
-                    <Typography variant='p'>Liquidity shouldn’t be at 0%. If you would like to close this position, please click on the button below.</Typography>
-                  </BoxWithBorder>
-                  <SubmitButton onClick={onShowCloseLiquidity}>Open Close Liquidity Position Workflow</SubmitButton>
-                </Box>
-              }
-            </Box>
-
-            <Box mt='38px'>
-              {mintRatio > 0 ?
-                <CometHealthBox padding='15px 20px'>
-                  <Box display='flex' justifyContent='center'>
-                    <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
-                  </Box>
-                  <Box mt='10px' display='flex' justifyContent='center'>
-                    <HealthscoreView score={healthScore ? healthScore : positionInfo.totalHealthScore} />
-                  </Box>
-                </CometHealthBox>
-                :
-                <CometHealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
-                  <Image src={IconHealthScoreGraph} alt='healthscore' />
-                  <Box mt='7px'>
-                    <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
-                  </Box>
-                </CometHealthBox>
-              }
-
-              <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>
-                <Typography variant='p_xlg'>Adjust Liquidity</Typography>
-              </SubmitButton> */}
             </Box>
           </BoxWrapper>
         </DialogContent>

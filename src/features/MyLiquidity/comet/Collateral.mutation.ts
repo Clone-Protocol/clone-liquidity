@@ -1,8 +1,8 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useMutation } from '@tanstack/react-query'
-import { CloneClient, toDevnetScale } from 'clone-protocol-sdk/sdk/src/clone'
-import { getOnUSDAccount } from '~/utils/token_accounts'
+import { CloneClient, toScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
@@ -13,27 +13,28 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 
 	console.log('edit input data', data)
 
-	await program.loadClone()
-	const userUsdiTokenAccount = await getOnUSDAccount(program)
+	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
+	const collateralTokenAccountInfo = await getCollateralAccount(program)
 
-	const { collAmount, collIndex, editType } = data
+	const { collAmount, editType } = data
+	const oracles = await program.getOracles();
 
-	let ixnCalls: Promise<TransactionInstruction>[] = [program.updatePricesInstruction()];
-	/// Deposit
+	const ixnCalls: TransactionInstruction[] = [program.updatePricesInstruction(oracles)];
 	if (editType === 0) {
-		ixnCalls.push(program.addCollateralToCometInstruction(userUsdiTokenAccount!, toDevnetScale(collAmount), 0))
-		/// Withdraw
+		ixnCalls.push(
+			program.addCollateralToCometInstruction(
+				collateralTokenAccountInfo.address,
+				toScale(collAmount, program.clone.collateral.scale)
+			))
 	} else {
 		ixnCalls.push(
 			program.withdrawCollateralFromCometInstruction(
-				userUsdiTokenAccount!,
-				toDevnetScale(collAmount),
-				0,
+				collateralAssociatedTokenAccount.address,
+				toScale(collAmount, program.clone.collateral.scale)
 			))
 	}
 
 	const ixns = await Promise.all(ixnCalls)
-
 	await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
@@ -42,7 +43,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 }
 
 type EditFormData = {
-	collIndex: number
 	collAmount: number
 	editType: number
 }
@@ -58,7 +58,7 @@ export function useCollateralMutation(userPubKey: PublicKey | null) {
 	const { setTxState } = useTransactionState()
 
 	if (wallet) {
-		return useMutation((data: EditFormData) => callEdit({ program: getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}

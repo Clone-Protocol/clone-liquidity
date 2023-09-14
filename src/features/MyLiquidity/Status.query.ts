@@ -1,65 +1,61 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
+import { CloneClient, fromCloneScale } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 
 export const fetchStatus = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
   if (!userPubKey) return null
 
   console.log('fetchStatus')
-  await program.loadClone()
 
   let totalCometLiquidity = 0;
   let totalCometValLocked = 0;
   let totalBorrowLiquidity = 0;
   let totalBorrowCollateralVal = 0;
 
-  const [tokenDataResult, borrowPositionsResult, cometsResult] = await Promise.allSettled([
-    program.getTokenData(),
-    program.getBorrowPositions(),
-    program.getComet()
+  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+    program.getPools(),
+    program.getOracles(),
+    program.getUserAccount()
   ]);
 
-  if (tokenDataResult.status === "rejected") {
+  if (poolsData.status === "rejected" || oraclesData.status === "rejected") {
     throw new Error("couldn't fetch token data!")
   }
-  let tokenData = tokenDataResult.value!;
+  const pools = poolsData.value!;
 
-  if (borrowPositionsResult.status === "fulfilled") {
-    const borrowPositions = borrowPositionsResult.value;
-    for (var i = 0; i < Number(borrowPositions.numPositions); i++) {
-      let borrowPosition = borrowPositions.borrowPositions[i]
-      let collateralAmount = toNumber(borrowPosition.collateralAmount)
+  if (userAccountData.status === "fulfilled") {
+    const borrowPositions = userAccountData.value.borrows;
+    for (var i = 0; i < Number(borrowPositions.length); i++) {
+      const borrowPosition = borrowPositions[i]
+      const collateralAmount = fromScale(borrowPosition.collateralAmount, program.clone.collateral.scale)
       totalBorrowCollateralVal += collateralAmount
-      let pool = tokenData.pools[borrowPosition.poolIndex];
-      totalBorrowLiquidity += toNumber(borrowPosition.borrowedOnasset) * toNumber(pool.assetInfo.price);
+      const pool = pools.pools[borrowPosition.poolIndex];
+      const oracle = oraclesData.value.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+      totalBorrowLiquidity += fromCloneScale(borrowPosition.borrowedOnasset) * fromScale(oracle.price, oracle.expo);
     }
-  }
 
-  if (cometsResult.status === "fulfilled") {
-    const comets = cometsResult.value
-    // Only take usdi value for now.
-    let usdiValue = toNumber(comets.collaterals[0].collateralAmount)
-    totalCometValLocked += usdiValue
+    const comet = userAccountData.value.comet
+    const onusdValue = Number(comet.collateralAmount)
+    totalCometValLocked += onusdValue
 
-    comets.positions.slice(0, comets.numPositions.toNumber()).forEach((pos) => {
-      totalCometLiquidity += toNumber(pos.committedOnusdLiquidity) * 2
+    comet.positions.slice(0, comet.positions.length).forEach((pos) => {
+      totalCometLiquidity += fromScale(pos.committedCollateralLiquidity, program.clone.collateral.scale) * 2
     });
   }
 
-  let totalCollateralLocked = totalBorrowCollateralVal + totalCometValLocked
-  let totalLiquidityProvided = totalBorrowLiquidity + totalCometLiquidity
-  let borrowPercent = totalCollateralLocked > 0 ? (totalBorrowCollateralVal / totalCollateralLocked) * 100 : 0
+  const totalCollateralLocked = totalBorrowCollateralVal + totalCometValLocked
+  const totalLiquidityProvided = totalBorrowLiquidity + totalCometLiquidity
+  const borrowPercent = totalCollateralLocked > 0 ? (totalBorrowCollateralVal / totalCollateralLocked) * 100 : 0
 
   const statusValues = {
     totalBorrowLiquidity,
     totalBorrowCollateralVal,
     totalLiquidityProvided
   }
-
 
   return {
     totalCollateralLocked,
@@ -97,7 +93,7 @@ export function useStatusQuery({ userPubKey, refetchOnMount, enabled = true }: G
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['statusData', wallet, userPubKey], () => fetchStatus({ program: getCloneApp(wallet), userPubKey }), {
+    return useQuery(['statusData', wallet, userPubKey], async () => fetchStatus({ program: await getCloneApp(wallet), userPubKey }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

@@ -14,7 +14,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useRouter } from 'next/navigation'
-import { toNumber } from 'clone-protocol-sdk/sdk/src/decimal'
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { ConnectButton, SelectButton, SubmitButton } from '~/components/Common/CommonButtons'
 import { OpaqueAlreadyPool, OpaqueDefault, OpaqueNoCollateral } from '~/components/Overview/OpaqueArea'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
@@ -46,7 +46,8 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
 
   useEffect(() => {
     if (positionInfo) {
-      const healthCoefficient = toNumber(positionInfo.tokenData.pools[assetIndex].assetInfo.positionHealthScoreCoefficient);
+      const assetInfo = positionInfo.pools.pools[assetIndex].assetInfo
+      const healthCoefficient = fromScale(assetInfo.positionHealthScoreCoefficient, 2);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
@@ -102,7 +103,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
       setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
-      setTotalLiquidity(mintAmount * 2)
+      setTotalLiquidity(mintAmount * 2 * 10)
       setValidMintValue(mintRatio > 0 && mintRatio < 100 && mintAmount > 0 && mintAmount < maxMintable)
       trigger()
     }

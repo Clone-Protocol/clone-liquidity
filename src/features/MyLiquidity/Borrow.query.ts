@@ -13,15 +13,14 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 
 	console.log('fetchPools :: Borrow.query')
 
-	await program.loadClone()
 	const result: AssetList[] = []
 
-	const [tokenDataResult, mintPositionResult] = await Promise.allSettled([
-		program.getTokenData(), program.getBorrowPositions()
+	const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+		program.getPools(), program.getOracles(), program.getUserAccount()
 	]);
 
-	if (tokenDataResult.status === "fulfilled" && mintPositionResult.status === "fulfilled") {
-		let mintInfos = getUserMintInfos(tokenDataResult.value, mintPositionResult.value);
+	if (poolsData.status === "fulfilled" && oraclesData.status === "fulfilled" && userAccountData.status === "fulfilled") {
+		const mintInfos = getUserMintInfos(program, poolsData.value, oraclesData.value, userAccountData.value.borrows);
 
 		let i = 0
 		for (const info of mintInfos) {
@@ -74,7 +73,7 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(['borrowAssets', wallet, userPubKey, filter], () => fetchAssets({ program: getCloneApp(wallet), userPubKey }), {
+		return useQuery(['borrowAssets', wallet, userPubKey, filter], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,

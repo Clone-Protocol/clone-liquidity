@@ -10,11 +10,14 @@ import { shortenAddress } from '~/utils/address'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getSolInBalance } from '~/utils/address';
 import { ON_USD } from '~/utils/constants';
+import { useSetAtom } from 'jotai'
+import { cloneClient } from '~/features/globalAtom'
 
 const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
   const { publicKey, disconnect } = useWallet()
   const [solBalance, setSolBalance] = useState(0)
+  const setCloneClient = useSetAtom(cloneClient)
 
   const { data: balance } = useBalanceQuery({
     userPubKey: publicKey,
@@ -37,8 +40,9 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
   }, [publicKey])
 
   const handleDisconnect = async () => {
+    setCloneClient(null)
     await disconnect()
-    onHide()
+    onHide && onHide()
     // refresh page by force
     await setTimeout(() => {
       location.reload()
@@ -65,7 +69,7 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
       <AssetBox>
         <Typography variant='h3'>${balance?.onusdVal.toLocaleString()}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
       </AssetBox>
-    </WalletWrapper>
+    </WalletWrapper >
   ) : <></>
 }
 

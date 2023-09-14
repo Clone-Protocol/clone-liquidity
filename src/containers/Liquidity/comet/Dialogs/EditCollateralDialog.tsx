@@ -11,25 +11,22 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import PairInput from '~/components/Liquidity/comet/PairInput'
 import { RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButtons'
-import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
+import HealthscoreView, { RISK_HEALTH_SCORE } from '~/components/Liquidity/comet/HealthscoreView'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 
-const RISK_SCORE_VAL = 30
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl?: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
-  const collIndex = 0 // NOTE: currently only support onUSD
   const [healthScore, setHealthScore] = useState(0)
   const [totalCollValue, setTotalCollValue] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
 
   const { data: collData, refetch } = useEditCollateralQuery({
     userPubKey: publicKey,
-    index: collIndex,
     refetchOnMount: "always",
     enabled: open && publicKey != null
   })
@@ -102,7 +99,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     try {
       const data = await mutateAsync(
         {
-          collIndex,
           collAmount,
           editType: tab
         }
@@ -126,7 +122,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     return valid
   })()
 
-  const hasRiskScore = healthScore < RISK_SCORE_VAL
+  const hasRiskScore = healthScore < RISK_HEALTH_SCORE
 
   let submitButtonText = tab === 0 ? 'Deposit Collateral' : 'Withdraw Collateral'
   if (!collAmount || collAmount === 0) {
