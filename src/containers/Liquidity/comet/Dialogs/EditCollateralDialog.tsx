@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, styled, Dialog, DialogContent, FormHelperText, Typography, Stack } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Image from 'next/image'
 import { useEditCollateralQuery } from '~/features/MyLiquidity/comet/EditCollateral.query'
