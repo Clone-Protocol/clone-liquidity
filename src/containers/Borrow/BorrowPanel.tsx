@@ -4,6 +4,7 @@ import { styled } from '@mui/system'
 import Image from 'next/image'
 import PairInput from '~/components/Asset/PairInput'
 import RatioSlider from '~/components/Borrow/RatioSlider'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { ASSETS } from '~/data/assets'
@@ -13,9 +14,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
-import { StyledDivider } from '~/components/Common/StyledDivider'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import dynamic from 'next/dynamic'
 
@@ -148,7 +147,6 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </Stack>
             <Image src={SelectArrowIcon} alt='select' />
           </SelectPoolBox>
-          <StyledDivider />
           <Box>
             <Box><Typography variant='p_lg'>Collateral Amount</Typography></Box>
             <Controller
@@ -184,18 +182,15 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             />
             <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
           </Box>
-          <StyledDivider />
 
-          <Box><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
-          <Box sx={{ marginTop: '20px' }}>
+          <Box my='25px'><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
+          <Box>
             <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
           </Box>
 
-          <StyledDivider />
-
           <Box mb='10px'>
-            <Box><Typography variant='p_lg'>Borrow Amount</Typography></Box>
-            <Box sx={{ marginTop: '20px' }}>
+            <Box mt='25px' mb='15px'><Typography variant='p_lg'>Borrow Amount</Typography></Box>
+            <Box>
               <Controller
                 name="borrowAmount"
                 control={control}
@@ -224,14 +219,17 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </Box>
           </Box>
 
+          {hasRiskRatio &&
+            <WarningStack direction='row'>
+              <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
+              <Typography variant='p' ml='8px'>Due to low collateral ratio, this borrow position will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+            </WarningStack>
+          }
+
           <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
-            <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow</Typography>
+            <Typography variant='p_lg'>{hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
           </SubmitButton>
         </Box>
-      </Box>
-
-      <Box display='flex' justifyContent='center'>
-        <DataLoadingIndicator onRefresh={() => refetch()} />
       </Box>
 
       <ChooseAssetDialog
@@ -247,17 +245,43 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
 const SelectPoolBox = styled(Box)`
 	display: flex;
 	justify-content: space-between;
-	width: 175px;
-	height: 45px;
-	margin-top: 15px;
-	margin-bottom: 28px;
-  cursor: pointer;
-  background: ${(props) => props.theme.boxes.black};
-	padding: 9px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  &:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
+	align-items: center;
+	width: 145px;
+	height: 40px;
+	background-color: rgba(37, 141, 237, 0.15);
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 8px;
+  margin-top: 15px;
+  margin-bottom: 25px;
+	&:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+		background-color: rgba(37, 141, 237, 0.23);
   }
+`
+const SelectDefaultPool = styled(Box)`
+  width: 134px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
+  &:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+  }
+`
+const WarningStack = styled(Stack)`
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding: 13px;
+  border-radius: 5px;
+  background-color: rgba(255, 0, 214, 0.15);
+  color: #ff0084;
 `
 
 export default withSuspense(BorrowPanel, <LoadingProgress />)

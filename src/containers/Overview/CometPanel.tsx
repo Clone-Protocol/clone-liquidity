@@ -121,7 +121,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
         console.log('data', data)
         refetch()
         initData()
-        router.push('/myliquidity')
+        router.push('/comet/myliquidity')
       }
     } catch (err) {
       console.error(err)
@@ -143,7 +143,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
   } else if (positionInfo?.hasNoCollateral) {
     opaqueArea = <OpaqueNoCollateral />
     actionButton = (
-      <Link href='/myliquidity'>
+      <Link href='/comet/myliquidity'>
         <SelectButton>
           <Typography variant='p_xlg'>Deposit Collateral</Typography>
         </SelectButton>
@@ -175,7 +175,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
             <Box my='10px'>
               <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
               {positionInfo?.hasNoCollateral ?
-                <Link href='/myliquidity'>
+                <Link href='/comet/myliquidity'>
                   <DepositCollateralButton>
                     <Typography variant='p_lg'>Deposit collateral to get started </Typography>
                     <Image src={DepositIcon} alt='deposit' />

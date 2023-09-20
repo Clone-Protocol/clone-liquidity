@@ -49,7 +49,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
     if (positionInfo!.onassetILD > 0)
       reward += positionInfo!.onassetILD * positionInfo!.price
 
-    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 8 })} USD`
+    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD`
   }
 
   // const { mutateAsync } = useEditPositionMutation(publicKey)
@@ -72,9 +72,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   }
 
 
-  const healthscore = 30
-  const balance: number = 100
-  const remainingILD: number = 0
+  const balance: number = positionInfo ? Math.max(0, positionInfo.onassetVal) : 0
+  const remainingILD: number = positionInfo ? Math.max(0, positionInfo.onassetILD - ildAmount) : 0
 
   return positionInfo ? (
     <>
@@ -88,16 +87,15 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <Box>
             <Typography variant='p_lg'>
               {Math.max(0, positionInfo.onassetILD).toLocaleString(undefined, {
-                maximumFractionDigits: 8,
+                maximumFractionDigits: 6,
               })} {positionInfo.tickerSymbol}
             </Typography>
-            <Typography variant='p_lg' color='#66707e'>
-              {`($${displayILDNotional()} USD)`}
+            <Typography variant='p_lg' color='#66707e' ml='10px'>
+              {`($${displayILDNotional()})`}
             </Typography>
           </Box>
         </StackWithBorder>
         <BoxWithBorder>
-
           <Controller
             name="ildAmount"
             control={control}
@@ -116,18 +114,18 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 value={field.value}
                 valueDollarPrice={field.value}
                 inputTitle={`${positionInfo.tickerSymbol} ILD Payment`}
-                balance={Math.max(0, positionInfo.onassetVal)}
+                balance={balance}
                 onChange={(event: React.FormEvent<HTMLInputElement>) => {
                   const ildAmt = parseFloat(event.currentTarget.value)
                   field.onChange(ildAmt)
                 }}
                 onMax={(value: number) => {
-                  field.onChange(value)
+                  field.onChange(Math.min(value, positionInfo.onassetILD))
                 }}
               />
             )}
           />
-          <StackWithBorder>
+          <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
             <Typography variant='p_lg'>Projected Remaining onAsset ILD</Typography>
             <Box>
               <Typography variant='p_lg'>{ildAmount > balance ? 'N/A' : remainingILD.toLocaleString()}</Typography>
@@ -135,9 +133,11 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
             </Box>
           </StackWithBorder>
           {ildAmount > balance &&
-            <WarningMsg>
-              Exceeded Wallet Balance. Please adjust the payment amount.
-            </WarningMsg>
+            <Box mb='10px'>
+              <WarningMsg>
+                Exceeded Wallet Balance. Please adjust the payment amount.
+              </WarningMsg>
+            </Box>
           }
           <InfoMsg>
             {balance === 0 ?
@@ -148,7 +148,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
         </BoxWithBorder>
         <Box>
           <Box><Typography variant='p_lg'>devUSD ILD</Typography></Box>
-          <StackWithBorder>
+          <StackWithBorder direction='row' justifyContent='space-between'>
             <Typography variant='p_lg'>devUSD ILD</Typography>
             <Typography variant='p_lg'>
               {Math.max(0, positionInfo.collateralILD).toLocaleString(undefined, {
@@ -163,7 +163,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
                 </Box>
                 <Box mt='10px' display='flex' justifyContent='center'>
-                  <HealthscoreView score={healthscore} />
+                  <HealthscoreView score={positionInfo.healthScore} />
                 </Box>
               </HealthBox>
               :
@@ -189,19 +189,18 @@ const StackWithBorder = styled(Stack)`
   width: 100%;
   height: 52px;
   margin-top: 15px;
-  margin-bottom: 38px;
+  margin-bottom: 15px;
   align-items: center;
   border-radius: 5px;
   gap: 10px;
   padding: 18px 21px;
+  background: ${(props) => props.theme.basis.darkNavy};
   border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 `
 const BoxWithBorder = styled(Box)`
   width: 100%;
-  display: flex;
   margin-top: 15px;
   margin-bottom: 38px;
-  justify-content: flex-start;
   border-radius: 5px;
   align-items: center;
   gap: 10px;
@@ -210,6 +209,7 @@ const BoxWithBorder = styled(Box)`
 `
 const HealthBox = styled(Box)`
   background-color: ${(props) => props.theme.basis.darkNavy};
+  margin-top: 38px;
   margin-bottom: 30px;
 `
 

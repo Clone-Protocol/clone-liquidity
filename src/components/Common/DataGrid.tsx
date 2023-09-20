@@ -152,5 +152,5 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
 )
 
 export const CellDigitValue = ({ value, symbol }: { value: string | undefined, symbol?: string }) => (
-  <Typography variant='p'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography>
+  <Typography variant='p_xlg'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography>
 )

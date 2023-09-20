@@ -25,7 +25,7 @@ const Rewards = ({ positionIndex }: { positionIndex: number }) => {
     if (positionInfo!.onassetILD < 0)
       reward += (-positionInfo!.onassetILD * positionInfo!.price)
 
-    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 8 })} USD`
+    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD`
   }
 
   const { mutateAsync } = useClosePositionMutation(publicKey)
@@ -57,7 +57,7 @@ const Rewards = ({ positionIndex }: { positionIndex: number }) => {
         <BoxWithBorder>
           <Typography variant='p_lg'>
             {Math.max(0, positionInfo.onassetILD).toLocaleString(undefined, {
-              maximumFractionDigits: 8,
+              maximumFractionDigits: 6,
             })} {positionInfo.tickerSymbol}</Typography>
           <Typography variant='p_lg' color='#66707e'>(${displayRewardNotional()})</Typography>
         </BoxWithBorder>
@@ -67,7 +67,7 @@ const Rewards = ({ positionIndex }: { positionIndex: number }) => {
         <BoxWithBorder>
           <Typography variant='p_lg'>
             {Math.max(0, positionInfo.collateralILD).toLocaleString(undefined, {
-              maximumFractionDigits: 8,
+              maximumFractionDigits: 6,
             })} devUSD</Typography>
         </BoxWithBorder>
       </Box>

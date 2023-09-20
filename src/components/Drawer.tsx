@@ -29,8 +29,8 @@ const Drawer: React.FC = () => {
 							<Typography variant="p">Overview</Typography>
 						</StyledListItemButton>
 					</Link>
-					<Link href="/myliquidity">
-						<StyledListItemButton className={pathname?.startsWith('/myliquidity') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
+					<Link href="/comet/myliquidity">
+						<StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''} onClick={connected ? handleLinkNeedingAccountClick : handleClickNavWhenUnconnected}>
 							<Typography variant="p">My Liquidity</Typography>
 						</StyledListItemButton>
 					</Link>

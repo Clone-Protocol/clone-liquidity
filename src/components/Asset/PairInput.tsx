@@ -28,9 +28,10 @@ const PairInput: React.FC<Props> = ({
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			{headerTitle ? (
 				<Stack direction="row" justifyContent="flex-end">
-					<Typography variant='p' color='#989898'>
+					<Typography variant='p' color='#66707e'>
 						{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
 					</Typography>
+					{headerValue && <MaxButton onClick={() => onMax && onMax(headerValue)}>MAX</MaxButton>}
 				</Stack>
 			) : (
 				<></>
@@ -52,7 +53,7 @@ const PairInput: React.FC<Props> = ({
 }
 
 const MaxValue = styled('span')`
-	color: #90e4fe; 
+	color: ${(props) => props.theme.basis.liquidityBlue};
 	cursor: pointer;
 `
 const FormStack = styled(Stack)`
@@ -74,6 +75,17 @@ const InputAmount = styled(`input`)`
 	font-size: 20.7px;
 	font-weight: 500;
 	color: #fff;
+`
+const MaxButton = styled(Box)`
+  border-radius: 4px;
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
+  margin-left: 6px;
+	margin-bottom: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  color: #fff;
+  cursor: pointer;
 `
 
 export default PairInput

@@ -8,7 +8,7 @@ const Borrow = () => {
     <StyledSection>
       <Container>
         <Box p='20px'>
-          <Box ml='16px'><Typography variant='p_xxlg'>New Borrow Position</Typography></Box>
+          <Box ml='16px'><Typography variant='h3' fontWeight={500}>New Borrow Position</Typography></Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
             <BorrowContainer />
           </Box>

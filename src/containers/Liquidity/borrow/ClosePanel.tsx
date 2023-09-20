@@ -35,7 +35,7 @@ const ClosePanel = ({ assetId, borrowDetail }: { assetId: string, borrowDetail: 
       )
       if (data) {
         console.log('data', data)
-        router.replace(`/myliquidity?ltab=${TAB_BORROW}`)
+        router.replace(`/comet/myliquidity?ltab=${TAB_BORROW}`)
       }
     } catch (err) {
       console.error(err)

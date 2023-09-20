@@ -1,9 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import Comet from '~/containers/Liquidity/comet/Comet'
-import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
 import { TabPanel, StyledTabs, CometTab } from '~/components/Common/StyledTab'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -17,7 +14,7 @@ import CometLiquidityStatus from './CometLiquidityStatus'
 export const TAB_COLLATERAL = 0
 export const TAB_POSITIONS = 1
 
-const LiquidityTable = ({ ltab }: { ltab: string }) => {
+const CometLiquidity = ({ ltab }: { ltab: string }) => {
   const [tab, setTab] = useState(TAB_COLLATERAL)
   const { publicKey } = useWallet()
   const { data: infos, refetch } = useCometInfoQuery({
@@ -82,4 +79,4 @@ const PanelBox = styled(Box)`
 //   }
 // `
 
-export default withSuspense(LiquidityTable, <LoadingProgress />)
+export default withSuspense(CometLiquidity, <LoadingProgress />)

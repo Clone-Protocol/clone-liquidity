@@ -40,7 +40,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   }
 
   const redirectAddCometPage = () => {
-    router.push(`/assets/euro`)
+    router.push(`/comet/assets/euro`)
   }
 
   const handleRowClick: GridEventListener<'rowClick'> = (
@@ -87,7 +87,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
         )} */}
       </Box>
       {publicKey && !hasNoCollateral &&
-        <Stack direction='row' justifyContent='space-between' marginTop='9px'>
+        <Stack direction='row' mt='9px'>
           {positions.length > 0 ?
             <AddButton onClick={redirectAddCometPage}>
               <Image src={AddIcon} width={15} height={15} alt='add' />

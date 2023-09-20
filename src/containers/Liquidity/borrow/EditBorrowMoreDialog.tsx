@@ -122,7 +122,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         console.log('data', data)
         onRefetchData()
         onHideEditForm()
-        router.replace(`/myliquidity?ltab=${TAB_BORROW}`)
+        router.replace(`/comet/myliquidity?ltab=${TAB_BORROW}`)
       }
     } catch (err) {
       console.error(err)

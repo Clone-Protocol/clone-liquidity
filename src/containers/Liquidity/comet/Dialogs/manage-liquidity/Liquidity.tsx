@@ -13,7 +13,6 @@ import { useEditPositionMutation } from '~/features/MyLiquidity/comet/LiquidityP
 import { useForm } from 'react-hook-form'
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
-import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()

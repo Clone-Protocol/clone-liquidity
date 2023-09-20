@@ -4,7 +4,7 @@ import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Comet from '~/containers/Liquidity/comet/Comet'
-import GridBorrow from '~/containers/Liquidity/borrow/GridBorrow'
+import BorrowPositions from '~/containers/Liquidity/borrow/BorrowPositions'
 import { TabPanel, StyledTabs, CometTab, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -46,7 +46,7 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
   const hasNoPosition = !status ||
     (tab === TAB_BORROW && status.statusValues.totalBorrowLiquidity === 0)
 
-  const newPositionUrl = tab === TAB_BORROW ? '/borrow' : `/assets/euro`
+  const newPositionUrl = tab === TAB_BORROW ? '/borrow' : `/comet/assets/euro`
 
   return (
     <div>
@@ -70,7 +70,7 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
           <Comet />
         </TabPanel>
         <TabPanel value={tab} index={TAB_BORROW}>
-          <GridBorrow filter={filter} />
+          <BorrowPositions filter={filter} />
         </TabPanel>
       </PanelBox>
     </div>

@@ -58,7 +58,7 @@ const AssetList: React.FC = () => {
 		params
 	) => {
 		if (isAlreadyInitializedAccount) {
-			router.push(`/assets/${params.row.ticker}`)
+			router.push(`/comet/assets/${params.row.ticker}`)
 		} else {
 			handleLinkNeedingAccountClick(undefined)
 		}

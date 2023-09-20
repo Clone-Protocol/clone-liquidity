@@ -16,12 +16,12 @@ const NaviMenu = () => {
             <Typography variant="p">Home</Typography>
           </StyledListItemButton>
         </Link>
-        <Link href="/myliquidity">
-          <StyledListItemButton className={pathname?.startsWith('/myliquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
+        <Link href="/comet/myliquidity">
+          <StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
             <Typography variant="p">Comet</Typography>
           </StyledListItemButton>
         </Link>
-        <Link href="/borrow">
+        <Link href="/borrow/myliquidity">
           <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
             <Typography variant="p">Borrow</Typography>
           </StyledListItemButton>

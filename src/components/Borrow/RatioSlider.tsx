@@ -12,7 +12,7 @@ interface Props {
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
 	color: '#FFF',
-	height: 4,
+	height: 5,
 	padding: '13px 0',
 	marginTop: '13px',
 	'& .MuiSlider-thumb': {
@@ -26,7 +26,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 	'& .MuiSlider-track': {
 		zIndex: 10,
-		height: 4,
+		height: 5,
 		border: 'none',
 	},
 	'& .MuiSlider-valueLabel': {
@@ -40,8 +40,8 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 	'& .MuiSlider-rail': {
 		zIndex: 10,
-		color: '#3f3f3f',
-		height: 4,
+		color: '#414e66',
+		height: 5,
 	},
 }))
 
@@ -65,7 +65,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 			<Box display='flex'>
 				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 				{showChangeRatio &&
-					<Box display='flex' sx={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}}>
+					<Box display='flex' sx={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} borderRadius='5px'>
 						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { color: '#ed2525', border: '1px solid #ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} placeholder="0.00" value={Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
 						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '11px' }}><Typography variant='p_xlg'>%</Typography></div>
 					</Box>
@@ -74,7 +74,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 					<StyledSlider
 						sx={{
 							'& .MuiSlider-track': {
-								background: `linear-gradient(to right, #ff8e4f 35%, #ffffff 250px)`
+								background: `linear-gradient(to right, #ff0084 20%, #fff 220px);`
 							}
 						}}
 						value={value > min ? value : min}

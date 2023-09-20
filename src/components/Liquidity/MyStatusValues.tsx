@@ -1,3 +1,4 @@
+///@Deprecated
 import { Box, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { Status } from '~/features/MyLiquidity/Status.query'

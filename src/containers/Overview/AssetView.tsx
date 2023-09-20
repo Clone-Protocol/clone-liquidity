@@ -41,7 +41,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
 				setAssetIndex(AssetTickers.euro)
-				router.replace('/assets/euro')
+				router.replace('/comet/assets/euro')
 			}
 		}
 	}, [assetTicker])
@@ -60,7 +60,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		setAssetIndex(assetId)
 		setOpenChooseLiquidity(false)
 
-		router.replace(`/assets/${ASSETS[assetId].ticker}`)
+		router.replace(`/comet/assets/${ASSETS[assetId].ticker}`)
 	}
 
 	return (
