@@ -65,9 +65,9 @@ const StyledBox = styled(Paper)`
 	background: #000;
 `
 const LeftBoxWrapper = styled(Box)`
-	width: 607px; 
-	padding: 8px 25px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	width: 600px; 
+	padding: 8px 22px;
+	border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
   margin-top: 23px;
 	margin-bottom: 25px;
 `

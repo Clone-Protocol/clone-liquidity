@@ -9,8 +9,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useBalanceQuery } from '~/features/Borrow/Balance.query'
 import { ASSETS } from '~/data/assets'
 import { PairData, DetailInfo } from '~/features/MyLiquidity/BorrowPosition.query'
-import { LoadingProgress } from '~/components/Common/Loading'
-import withSuspense from '~/hocs/withSuspense'
 import { useBorrowMutation } from '~/features/Borrow/Borrow.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
@@ -134,6 +132,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
 
   const isValid = Object.keys(errors).length === 0
   const hasRiskRatio = collRatio < RISK_RATIO_VAL
+  const hasLowerMin = collRatio < borrowDetail?.minCollateralRatio;
 
   return usdiBalance && borrowDetail ? (
     <>
@@ -148,7 +147,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             <Image src={SelectArrowIcon} alt='select' />
           </SelectPoolBox>
           <Box>
-            <Box><Typography variant='p_lg'>Collateral Amount</Typography></Box>
+            <Box mb='15px'><Typography variant='p_lg'>Collateral Amount</Typography></Box>
             <Controller
               name="collAmount"
               control={control}
@@ -166,7 +165,8 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                   tickerIcon={fromPair.tickerIcon}
                   tickerSymbol={fromPair.tickerSymbol}
                   value={parseFloat(field.value.toFixed(3))}
-                  dollarPrice={0}
+                  dollarPrice={field.value * borrowDetail.oPrice}
+                  inputTitle='Collateral'
                   headerTitle="Balance"
                   headerValue={usdiBalance?.balanceVal}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,7 +185,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
 
           <Box my='25px'><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
           <Box>
-            <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
+            <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} hasLowerMin={hasLowerMin} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
           </Box>
 
           <Box mb='10px'>
@@ -207,6 +207,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                     tickerSymbol={ASSETS[assetIndex].tickerSymbol}
                     value={parseFloat(field.value.toFixed(5))}
                     dollarPrice={field.value * borrowDetail.oPrice}
+                    disabledInput
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)
                       field.onChange(borrowAmt)
@@ -226,8 +227,8 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </WarningStack>
           }
 
-          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
-            <Typography variant='p_lg'>{hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff0084' } : {}}>
+            <Typography variant='p_lg'>{hasLowerMin ? 'Minimum Collateral Ratio is 150%' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
           </SubmitButton>
         </Box>
       </Box>
@@ -284,4 +285,4 @@ const WarningStack = styled(Stack)`
   color: #ff0084;
 `
 
-export default withSuspense(BorrowPanel, <LoadingProgress />)
+export default BorrowPanel
