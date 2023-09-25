@@ -44,7 +44,7 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
           {assetData.tickerSymbol}
         </Typography>
       </Box>
-      <Box display="flex" alignItems="center" mt='10px'>
+      <Box display="flex" alignItems="center" my='10px'>
         <Typography variant="h2" fontWeight={500}>
           $
           {isOraclePrice
@@ -56,7 +56,7 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
         </Typography>
       </Box>
       {isOraclePrice && priceHistory.rateOfPrice && (
-        <Typography variant="p" color="#4fe5ff">
+        <Typography variant="p_lg" color="#4fe5ff">
           {priceHistory.rateOfPrice >= 0 ? "+" : "-"}$
           {Math.abs(priceHistory.rateOfPrice).toFixed(3)} ({priceHistory.percentOfRate?.toFixed(2)}%)
           past 24h

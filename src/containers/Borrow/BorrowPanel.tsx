@@ -180,7 +180,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                 />
               )}
             />
-            <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
+            {/* <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText> */}
           </Box>
 
           <Box my='25px'><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
@@ -228,7 +228,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
           }
 
           <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff0084' } : {}}>
-            <Typography variant='p_lg'>{hasLowerMin ? 'Minimum Collateral Ratio is 150%' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
+            <Typography variant='p_lg'>{hasLowerMin ? 'Minimum Collateral Ratio is 150%' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : collAmount > usdiBalance?.balanceVal ? 'Exceeded Wallet Balance' : 'Borrow'}</Typography>
           </SubmitButton>
         </Box>
       </Box>

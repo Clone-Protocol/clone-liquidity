@@ -61,7 +61,7 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 	},
 }))
 
-export const CometTab = styled((props: StyledTabProps) => (
+export const CommonTab = styled((props: StyledTabProps) => (
 	<StyledTab {...props} />
 ))({
 	width: '138px',

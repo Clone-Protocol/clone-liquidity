@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Comet from '~/containers/Liquidity/comet/Comet'
 import BorrowPositions from '~/containers/Liquidity/borrow/BorrowPositions'
-import { TabPanel, StyledTabs, CometTab, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanel, StyledTabs, CommonTab, StyledTab } from '~/components/Common/StyledTab'
 import { FilterType } from '~/data/filter'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
@@ -52,7 +52,7 @@ const LiquidityTable = ({ ltab }: { ltab: string }) => {
     <div>
       <Box>
         <StyledTabs value={tab} onChange={handleChangeTab} sx={{ maxWidth: '990px', marginTop: '12px', marginBottom: '12px' }}>
-          <CometTab value={TAB_COMET} label='Comet' icon={tab === TAB_COMET ? <Image src={CometIconOn} alt='comet' /> : <Image src={CometIconOff} alt='comet' />} />\
+          <CommonTab value={TAB_COMET} label='Comet' icon={tab === TAB_COMET ? <Image src={CometIconOn} alt='comet' /> : <Image src={CometIconOff} alt='comet' />} />\
           <StyledTab value={TAB_BORROW} label='Borrow' icon={tab === TAB_BORROW ? <Image src={BorrowIconOn} alt='borrow' /> : <Image src={BorrowIconOff} alt='borrow' />} />
         </StyledTabs>
 
