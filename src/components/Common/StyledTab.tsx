@@ -17,6 +17,7 @@ interface StyledTabsProps {
 interface StyledTabProps {
 	label: string | ReactElement
 	value: number
+	width?: string
 	icon?: ReactElement
 	onMouseEnter?: MouseEventHandler
 }
@@ -37,9 +38,8 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	paddingTop: '0px'
 })
 
-export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
+export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} sx={{ width: props.width ? props.width : '114px' }} />)(({ theme }) => ({
 	'&.MuiTab-root': {
-		width: '114px',
 		height: '36px',
 		minHeight: '0px',
 		maxHeight: '55px',

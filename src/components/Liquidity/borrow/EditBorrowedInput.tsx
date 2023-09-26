@@ -1,6 +1,6 @@
 import { FormControl, styled, Stack, Box, Typography } from "@mui/material"
-import Image from "next/image"
 import { StyledTabs, StyledTab } from "~/components/Common/StyledTab"
+import PairInput from '~/components/Liquidity/comet/PairInput'
 
 interface Props {
   editType: number
@@ -13,7 +13,7 @@ interface Props {
   currentCollAmount: number
   dollarPrice?: number
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
-  onChangeAmount?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
 }
 
@@ -32,11 +32,22 @@ const EditBorrowedInput: React.FC<Props> = ({
 }) => {
   return (
     <FormControl variant="standard" sx={{ width: "100%" }}>
-      <Stack height="40px" direction="row" justifyContent="space-between">
+      <Box sx={{ backgroundColor: '#1a1c28' }}>
         <StyledTabs value={editType} onChange={onChangeType}>
-          <StyledTab value={0} label="Borrow more"></StyledTab>
+          <StyledTab value={0} label="Borrow More" width='142px'></StyledTab>
           <StyledTab value={1} label="Repay"></StyledTab>
         </StyledTabs>
+      </Box>
+
+      <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' mt='38px'>
+        <Typography variant="p">Current borrowed amount</Typography>
+        <Stack direction='row' gap={1}>
+          <Typography variant="p_lg">{currentCollAmount?.toLocaleString()} {tickerSymbol}</Typography>
+          <Typography variant="p_lg" color='#66707e'>(${dollarPrice?.toLocaleString()} USD)</Typography>
+        </Stack>
+      </StackWithBorder>
+
+      {/* <Stack height="40px" direction="row" justifyContent="space-between">
         <HeaderTitle>
           {editType === 0 ? (
             <span>
@@ -54,9 +65,29 @@ const EditBorrowedInput: React.FC<Props> = ({
             </span>
           )}
         </HeaderTitle>
-      </Stack>
-      <CenterBox>
-        <FormStack direction="row" justifyContent="space-between" alignItems="center">
+      </Stack> */}
+      <CenterBox mt='15px'>
+        <PairInput
+          tickerIcon={tickerIcon}
+          tickerSymbol={tickerSymbol}
+          rightHeaderTitle={editType === 0 ? 'Max Borrowable' : 'Wallet Balance'}
+          inputTitle={editType === 0 ? 'Borrow More' : 'Repay'}
+          value={collAmount}
+          valueDollarPrice={collAmountDollarPrice}
+          balance={maxCollVal}
+          onChange={onChangeAmount}
+          onMax={onMax}
+        />
+
+        <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
+          <Typography variant="p">Borrow amount after {editType === 0 ? "borrowing" : "repaying"}</Typography>
+          <Stack direction='row' gap={1}>
+            <Typography variant="p_lg">{`${currentCollAmount?.toLocaleString()} ${tickerSymbol}`}</Typography>
+            <Typography variant="p_lg" color='#66707e'>{`($${dollarPrice?.toLocaleString()})`}</Typography>
+          </Stack>
+        </StackWithBorder>
+
+        {/* <FormStack direction="row" justifyContent="space-between" alignItems="center">
           <Box display="flex">
             <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
             <Box ml="10px">
@@ -80,82 +111,22 @@ const EditBorrowedInput: React.FC<Props> = ({
                 : ""}
             </DollarAmount>
           </Box>
-        </FormStack>
+        </FormStack> */}
       </CenterBox>
-      <BottomBox>
-        <Typography variant="p" color="#989898">
-          Current Dept:{" "}
-        </Typography>
-        {editType === 0 ? (
-          <span>
-            <Typography variant="p">
-              {currentCollAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })}{" "}
-              {tickerSymbol}
-            </Typography>
-            <Typography variant="p" ml="3px">
-              {dollarPrice && "($" + dollarPrice.toLocaleString() + ")"}
-            </Typography>
-          </span>
-        ) : (
-          <MaxPointerValue onClick={() => onMax(currentCollAmount)}>
-            <Typography variant="p">
-              {currentCollAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })}{" "}
-              {tickerSymbol}
-            </Typography>
-            <Typography variant="p" ml="3px">
-              {dollarPrice && "($" + dollarPrice.toLocaleString() + ")"}
-            </Typography>
-          </MaxPointerValue>
-        )}
-      </BottomBox>
     </FormControl>
   )
 }
 
-const FormStack = styled(Stack)`
-  display: flex;
-  width: 100%;
-  height: 54px;
-  padding: 18px 12px;
-  &:hover {
-    box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
-  }
-`
-const HeaderTitle = styled(Box)`
-  display: flex;
-  align-items: flex-end;
-  font-size: 12px;
-  font-weight: 500;
-  color: ${(props) => props.theme.palette.text.secondary};
-`
-const MaxPointerValue = styled("span")`
-  color: #90e4fe;
-  cursor: pointer;
-`
-const InputAmount = styled(`input`)`
-  width: 230px;
-  margin-left: 30px;
-  text-align: right;
-  border: 0px;
-  background-color: transparent;
-  font-size: 17.3px;
-  font-weight: 500;
-  color: #fff;
-`
-const DollarAmount = styled("div")`
-  font-size: 12px;
-  font-weight: 500;
-  text-align: right;
-  color: ${(props) => props.theme.palette.text.secondary};
-  margin-right: 2px;
+const StackWithBorder = styled(Stack)`
+  background: ${(props) => props.theme.basis.darkNavy};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  padding: 15px 18px;
+  margin-top: 16px;
 `
 const CenterBox = styled(Box)`
-  background-color: ${(props) => props.theme.boxes.blackShade};
-`
-const BottomBox = styled(Box)`
-  text-align: center;
-  height: 30px;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  padding: 20px 17px;
+  border-radius: 5px;
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 `
 
 export default EditBorrowedInput

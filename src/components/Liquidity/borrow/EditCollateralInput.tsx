@@ -1,6 +1,6 @@
 import { FormControl, styled, Stack, Box, Typography } from "@mui/material"
-import Image from "next/image"
 import { StyledTabs, StyledTab } from "~/components/Common/StyledTab"
+import PairInput from '~/components/Liquidity/comet/PairInput'
 
 interface Props {
   editType: number
@@ -12,8 +12,9 @@ interface Props {
   collAmountDollarPrice?: number
   currentCollAmount?: number
   dollarPrice?: number
+  hasInvalidRatio?: boolean
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
-  onChangeAmount?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
 }
 
@@ -26,26 +27,56 @@ const EditCollateralInput: React.FC<Props> = ({
   collAmountDollarPrice,
   currentCollAmount,
   dollarPrice,
+  hasInvalidRatio,
   onChangeType,
   onChangeAmount,
   onMax,
 }) => {
   return (
     <FormControl variant="standard" sx={{ width: "100%" }}>
-      <Stack height="40px" direction="row" justifyContent="space-between">
+      <Box sx={{ backgroundColor: '#1a1c28' }}>
         <StyledTabs value={editType} onChange={onChangeType}>
-          <StyledTab value={0} label="Deposit"></StyledTab>
-          <StyledTab value={1} label="Withdraw"></StyledTab>
+          <StyledTab value={0} label="Deposit Collateral" width='176px'></StyledTab>
+          <StyledTab value={1} label="Withdraw Collateral" width='176px'></StyledTab>
         </StyledTabs>
+      </Box>
+      <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' mt='38px'>
+        <Typography variant="p">Current collateral amount</Typography>
+        <Stack direction='row' gap={1}>
+          <Typography variant="p_lg">{currentCollAmount?.toLocaleString()} devUSD</Typography>
+          <Typography variant="p_lg" color='#66707e'>({dollarPrice?.toLocaleString()} USD)</Typography>
+        </Stack>
+      </StackWithBorder>
+
+      {/* <Stack height="40px" direction="row" justifyContent="space-between">
         <HeaderTitle>
           {editType === 0 ? "Balance" : "Max Withdraw-able"} :{" "}
           <MaxPointerValue onClick={() => onMax(maxCollVal)}>
             {maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}
           </MaxPointerValue>
         </HeaderTitle>
-      </Stack>
-      <CenterBox>
-        <FormStack direction="row" justifyContent="space-between" alignItems="center">
+      </Stack> */}
+      <CenterBox mt='15px'>
+        <PairInput
+          tickerIcon={tickerIcon}
+          tickerSymbol={tickerSymbol}
+          rightHeaderTitle={editType === 0 ? 'Wallet Balance' : 'Max Withdrawable Amount'}
+          inputTitle={editType === 0 ? 'Deposit more collateral' : 'Withdraw Collateral'}
+          value={collAmount}
+          valueDollarPrice={collAmountDollarPrice}
+          balance={maxCollVal}
+          onChange={onChangeAmount}
+          onMax={onMax}
+        />
+
+        <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
+          <Typography variant="p">Collateral amount after {editType === 0 ? "deposit" : "withdrawal"}</Typography>
+          <Stack direction='row' gap={1}>
+            <Typography variant="p_lg">{hasInvalidRatio ? 'N/A' : `${currentCollAmount?.toLocaleString()} devUSD`}</Typography>
+            <Typography variant="p_lg" color='#66707e'>{hasInvalidRatio ? 'N/A' : `($${dollarPrice?.toLocaleString()})`}</Typography>
+          </Stack>
+        </StackWithBorder>
+        {/* <FormStack direction="row" justifyContent="space-between" alignItems="center">
           <Box display="flex">
             <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
             <Box ml="10px">
@@ -69,68 +100,22 @@ const EditCollateralInput: React.FC<Props> = ({
                 : ""}
             </DollarAmount>
           </Box>
-        </FormStack>
+        </FormStack> */}
       </CenterBox>
-      <BottomBox>
-        <Typography variant="p" color="#989898">
-          Current Collateral:{" "}
-        </Typography>{" "}
-        <Typography variant="p">
-          {currentCollAmount?.toLocaleString()} {tickerSymbol}{" "}
-          {dollarPrice && "($" + dollarPrice.toLocaleString() + ")"}
-        </Typography>
-      </BottomBox>
     </FormControl>
   )
 }
 
-const FormStack = styled(Stack)`
-  display: flex;
-  width: 100%;
-  height: 54px;
-  padding: 8px 15px;
-  border-bottom: solid 1px #444444;
-  background-color: #333333;
-  &:hover {
-    box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
-  }
-`
-const HeaderTitle = styled(Box)`
-  display: flex;
-  align-items: flex-end;
-  font-size: 12px;
-  font-weight: 500;
-  color: ${(props) => props.theme.palette.text.secondary};
-`
-const MaxPointerValue = styled("span")`
-  color: #90e4fe;
-  margin-left: 4px;
-  cursor: pointer;
+const StackWithBorder = styled(Stack)`
+  background: ${(props) => props.theme.basis.darkNavy};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  padding: 15px 18px;
+  margin-top: 16px;
 `
 const CenterBox = styled(Box)`
-  background-color: ${(props) => props.theme.boxes.blackShade};
-`
-const InputAmount = styled(`input`)`
-  width: 230px;
-  margin-left: 30px;
-  text-align: right;
-  border: 0px;
-  background-color: transparent;
-  font-size: 17.3px;
-  font-weight: 500;
-  color: #fff;
-`
-const DollarAmount = styled("div")`
-  font-size: 12px;
-  font-weight: 500;
-  text-align: right;
-  color: ${(props) => props.theme.palette.text.secondary};
-  margin-right: 2px;
-`
-const BottomBox = styled(Box)`
-  text-align: center;
-  height: 30px;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  padding: 20px 17px;
+  border-radius: 5px;
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 `
 
 export default EditCollateralInput
