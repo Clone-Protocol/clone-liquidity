@@ -9,9 +9,9 @@ interface Props {
   tickerSymbol: string | null
   maxCollVal: number
   collAmount: number
-  collAmountDollarPrice?: number
+  collAmountDollarPrice: number
   currentCollAmount: number
-  dollarPrice?: number
+  dollarPrice: number
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
   onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
@@ -30,6 +30,10 @@ const EditBorrowedInput: React.FC<Props> = ({
   onChangeAmount,
   onMax,
 }) => {
+  const afterBorrowedAmount = isNaN(collAmount) ? Number(currentCollAmount) : editType === 0 ? Number(currentCollAmount) + Number(collAmount) : Number(currentCollAmount) - Number(collAmount)
+  const afterBorrowedDollarPrice = isNaN(collAmountDollarPrice) ? Number(dollarPrice) : editType === 0 ? Number(dollarPrice) + Number(collAmountDollarPrice) : Number(dollarPrice) - Number(collAmountDollarPrice)
+  const isAfterNoBorrowedRemaining = afterBorrowedAmount <= 0
+
   return (
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Box sx={{ backgroundColor: '#1a1c28' }}>
@@ -72,6 +76,7 @@ const EditBorrowedInput: React.FC<Props> = ({
           tickerSymbol={tickerSymbol}
           rightHeaderTitle={editType === 0 ? 'Max Borrowable' : 'Wallet Balance'}
           inputTitle={editType === 0 ? 'Borrow More' : 'Repay'}
+          inputTitleColor="#fff"
           value={collAmount}
           valueDollarPrice={collAmountDollarPrice}
           balance={maxCollVal}
@@ -82,8 +87,8 @@ const EditBorrowedInput: React.FC<Props> = ({
         <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
           <Typography variant="p">Borrow amount after {editType === 0 ? "borrowing" : "repaying"}</Typography>
           <Stack direction='row' gap={1}>
-            <Typography variant="p_lg">{`${currentCollAmount?.toLocaleString()} ${tickerSymbol}`}</Typography>
-            <Typography variant="p_lg" color='#66707e'>{`($${dollarPrice?.toLocaleString()})`}</Typography>
+            <Typography variant="p_lg">{`${isAfterNoBorrowedRemaining ? '0' : afterBorrowedAmount.toLocaleString() + " " + tickerSymbol}`}</Typography>
+            <Typography variant="p_lg" color='#66707e'>{`${isAfterNoBorrowedRemaining ? '(Paid in Full)' : '$' + afterBorrowedDollarPrice.toLocaleString()}`}</Typography>
           </Stack>
         </StackWithBorder>
 

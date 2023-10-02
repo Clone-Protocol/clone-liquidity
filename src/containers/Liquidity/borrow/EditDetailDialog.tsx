@@ -7,12 +7,12 @@ import { useForm, Controller } from 'react-hook-form'
 import EditCollateralInput from '~/components/Liquidity/borrow/EditCollateralInput'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { FadeTransition } from '~/components/Common/Dialog'
-import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import Image from 'next/image'
-import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
+import IconSmile from 'public/images/icon-smile.svg'
+import { InfoMsg } from '~/components/Common/WarningMsg'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -21,6 +21,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
   const [maxCollVal, setMaxCollVal] = useState(0);
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
+  const [isFullWithdrawal, setIsFullWithdrawal] = useState(false)
   const [hasInvalidRatio, setHasInvalidRatio] = useState(false)
   const [hasRiskRatio, setHasRiskRatio] = useState(false)
 
@@ -80,6 +81,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     setExpectedCollRatio(expectedCollRatio)
     setHasInvalidRatio(expectedCollRatio < borrowDetail.minCollateralRatio || Math.abs(collAmount) > maxCollVal)
     setHasRiskRatio(expectedCollRatio - borrowDetail.minCollateralRatio <= RISK_RATIO_VAL)
+
+    if (editType === 1) {
+      setIsFullWithdrawal(collAmount >= maxCollVal)
+    }
+
     trigger()
   }, [collAmount, editType])
 
@@ -109,8 +115,8 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
   return (
     <>
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={500}>
-        <DialogContent sx={{ background: '#000916' }}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={600}>
+        <DialogContent sx={{ background: '#000916', width: '600px' }}>
           <BoxWrapper>
             <Typography variant='h3'>Manage Borrow Position: Collateral</Typography>
 
@@ -127,8 +133,8 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
               <ValueBox width='300px'>
                 <Box mb='6px'><Typography variant='p'>Collateral Ratio</Typography></Box>
                 <Stack direction='row' gap={1} alignItems='center'>
-                  <Typography variant='h4'>{borrowDetail.collateralRatio.toFixed(2)}%</Typography>
-                  <Typography variant='p_lg' color='#66707e'>(min {borrowDetail.minCollateralRatio.toFixed(2)}%)</Typography>
+                  <Typography variant='h3' fontWeight={500}>{borrowDetail.collateralRatio.toFixed(2)}%</Typography>
+                  <Typography variant='p_lg' color='#66707e'>(min {borrowDetail.minCollateralRatio.toFixed(0)}%)</Typography>
                 </Stack>
               </ValueBox>
             </Stack>
@@ -176,15 +182,15 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             <RatioBox>
               {hasInvalidRatio ?
                 <Box>
-                  <Image src={IconHealthScoreGraph} alt='healthscore' />
-                  <Box mt='7px'>
-                    <Typography variant='p' color='#414e66'>Projected Collateral Ratio Unavailable</Typography>
+                  <Image src={IconSmile} alt='paidInFull' />
+                  <Box>
+                    <Typography variant='p' color='#414e66'>{isFullWithdrawal ? 'Borrowed amount paid in full (no collateral ratio)' : 'Projected Collateral Ratio Unavailable'}</Typography>
                   </Box>
                 </Box>
                 :
                 <Box>
                   <Typography variant='p'>Projected Collateral Ratio</Typography>
-                  <Stack direction='row' gap={1}>
+                  <Stack direction='row' gap={1} mt='12px'>
                     <Typography variant='h3' fontWeight={500} color={editType === 0 ? '#fff' : '#ff0084'}>
                       {expectedCollRatio.toFixed(2)}%
                     </Typography>
@@ -197,7 +203,9 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                 </Box>}
             </RatioBox>
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+            {isFullWithdrawal && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
+
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
               <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Collateral</Typography>
             </SubmitButton>
           </BoxWrapper>
@@ -208,7 +216,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 }
 
 const BoxWrapper = styled(Box)`
-  width: 600px;
   color: #fff;
   overflow-x: hidden;
 `

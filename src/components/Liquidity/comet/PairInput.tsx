@@ -9,6 +9,7 @@ interface Props {
   rightHeaderTitle: string
   balance?: number
   inputTitle?: string
+  inputTitleColor?: string
   balanceDisabled?: boolean
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
@@ -22,6 +23,7 @@ const PairInput: React.FC<Props> = ({
   rightHeaderTitle,
   balance,
   inputTitle,
+  inputTitleColor = '#66707e',
   balanceDisabled = false,
   onChange,
   onMax,
@@ -30,7 +32,7 @@ const PairInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Stack direction="row" justifyContent="space-between">
         <Box>
-          <Typography variant="p_lg" color='#66707e'>{inputTitle}</Typography>
+          <Typography variant="p" color={inputTitleColor}>{inputTitle}</Typography>
         </Box>
         {!balanceDisabled ? (
           <Box display='flex' alignItems='center'>

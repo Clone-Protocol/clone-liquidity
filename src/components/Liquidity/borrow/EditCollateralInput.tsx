@@ -9,10 +9,10 @@ interface Props {
   tickerSymbol: string | null
   maxCollVal: number
   collAmount: number
-  collAmountDollarPrice?: number
-  currentCollAmount?: number
-  dollarPrice?: number
-  hasInvalidRatio?: boolean
+  collAmountDollarPrice: number
+  currentCollAmount: number
+  dollarPrice: number
+  hasInvalidRatio: boolean
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
   onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
@@ -32,6 +32,10 @@ const EditCollateralInput: React.FC<Props> = ({
   onChangeAmount,
   onMax,
 }) => {
+  const afterCollateralAmount = isNaN(collAmount) ? Number(currentCollAmount) : editType === 0 ? Number(currentCollAmount) + Number(collAmount) : Number(currentCollAmount) - Number(collAmount)
+  const afterCollateralDollarPrice = isNaN(collAmountDollarPrice) ? Number(dollarPrice) : (editType === 0 ? Number(dollarPrice) + Number(collAmountDollarPrice) : Number(dollarPrice) - Number(collAmountDollarPrice))
+  const isAfterNoCollateralRemaining = afterCollateralAmount <= 0
+
   return (
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Box sx={{ backgroundColor: '#1a1c28' }}>
@@ -62,6 +66,7 @@ const EditCollateralInput: React.FC<Props> = ({
           tickerSymbol={tickerSymbol}
           rightHeaderTitle={editType === 0 ? 'Wallet Balance' : 'Max Withdrawable Amount'}
           inputTitle={editType === 0 ? 'Deposit more collateral' : 'Withdraw Collateral'}
+          inputTitleColor="#fff"
           value={collAmount}
           valueDollarPrice={collAmountDollarPrice}
           balance={maxCollVal}
@@ -72,8 +77,8 @@ const EditCollateralInput: React.FC<Props> = ({
         <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
           <Typography variant="p">Collateral amount after {editType === 0 ? "deposit" : "withdrawal"}</Typography>
           <Stack direction='row' gap={1}>
-            <Typography variant="p_lg">{hasInvalidRatio ? 'N/A' : `${currentCollAmount?.toLocaleString()} devUSD`}</Typography>
-            <Typography variant="p_lg" color='#66707e'>{hasInvalidRatio ? 'N/A' : `($${dollarPrice?.toLocaleString()})`}</Typography>
+            <Typography variant="p_lg">{isAfterNoCollateralRemaining ? '0' : hasInvalidRatio ? 'N/A' : `${afterCollateralAmount.toLocaleString()} devUSD`}</Typography>
+            <Typography variant="p_lg" color='#66707e'>{isAfterNoCollateralRemaining ? '(No Collateral Remaining)' : hasInvalidRatio ? 'N/A' : `($${afterCollateralDollarPrice.toLocaleString()})`}</Typography>
           </Stack>
         </StackWithBorder>
         {/* <FormStack direction="row" justifyContent="space-between" alignItems="center">

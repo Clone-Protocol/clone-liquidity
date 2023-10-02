@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography, styled } from "@mui/material"
+import { Box, Stack, Typography, styled } from "@mui/material"
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from "@solana/wallet-adapter-react"
