@@ -39,9 +39,11 @@ const BackScreen = styled('div')`
   z-index: 99999;
 `
 const BoxWrapper = styled(Box)`
-  width: 500px;
+  width: 607px;
   color: #fff; 
   text-align: left;
+  background: #000916;
+  padding: 32px 53px;
 `
 const TextHead = styled(Box)`
   font-size: 36px;

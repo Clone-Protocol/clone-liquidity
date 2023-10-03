@@ -29,22 +29,14 @@ const GetButton = styled(Button)`
   height: 39px;
   flex-grow: 0;
   padding: 8px 4px 8px 5px;
-  border-radius: 100px;
+  border-radius: 5px;
   color: #fff;
   background-color: ${(props) => props.theme.basis.jurassicGrey};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 
   &:hover {
-		background-color: rgba(155, 121, 252, 0.15);
-
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			border-radius: 100px;
-		}
+    background: transparent;
+		border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
 	}
 `
 

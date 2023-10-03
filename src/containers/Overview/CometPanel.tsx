@@ -253,11 +253,15 @@ const StackWithBorder = styled(Stack)`
 const WarningStack = styled(Stack)`
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   margin-top: 10px;
   padding: 13px;
   border-radius: 5px;
   background-color: rgba(255, 0, 214, 0.15);
   color: #ff0084;
+  &:hover {
+    background-color: rgba(237, 37, 193, 0.1);
+  }
 `
 const SubHeader = styled(Box)`
   color: ${(props) => props.theme.basis.slug};

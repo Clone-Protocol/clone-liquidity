@@ -17,16 +17,14 @@ const SearchInput: React.FC<Props> = ({ onChange }) => {
 
 const StyledBox = styled(Box)`
   display: flex;
-  width: 320px;
+  width: 328px;
   height: 36px;
   color: #fff;
   border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  border-radius: 5px;
   padding: 0;
   &:hover {
-    border: 1px solid transparent;
-    background-image: linear-gradient(#000000, #000000), ${(props) => props.theme.gradients.simple};
-    background-clip: content-box, border-box;
-    background-origin: border-box;
+    border-color: ${(props) => props.theme.basis.liquidityBlue};
   }
 `
 

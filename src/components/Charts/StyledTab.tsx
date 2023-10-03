@@ -45,7 +45,10 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 	textTransform: 'none',
 	fontWeight: '500',
 	fontSize: '12px',
-	color: '#989898',
+	color: '#66707e',
+	'&:hover': {
+		color: '#414e66',
+	},
 	'&.Mui-selected': {
 		color: '#fff'
 	},

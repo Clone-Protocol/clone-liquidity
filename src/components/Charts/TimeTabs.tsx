@@ -30,8 +30,12 @@ export const TimeTab = styled(Tab)`
     min-width: 36px;
 		height: 20px;
 		min-height: 15px;
-		color: #989898;
+		color: ${(props) => props.theme.basis.slug};
 		text-transform: none;
+	}
+	&:hover {
+		background-color: ${(props) => props.theme.basis.jurassicGrey};
+		color: ${(props) => props.theme.basis.slug};
 	}
 	&.Mui-selected {
 		background-color: ${(props) => props.theme.basis.jurassicGrey};

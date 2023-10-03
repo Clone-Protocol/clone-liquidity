@@ -35,18 +35,16 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           </StatusValue>
         </Box>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p'>Your PNL</Typography></Box>
+          <Box display='flex' justifyContent='center'><Typography variant='p'>Your APY</Typography></Box>
           <StatusValue>
             <Box color='#4fe5ff'>
-              <Typography variant='p_xlg'>+$14,452.34</Typography>
               <Box display='flex' justifyContent='center' alignItems='center'>
-                <Typography variant='p'>+3.47%</Typography>
+                <Typography variant='p_xlg'>+3.47%</Typography>
                 <Image src={ArrowUpward} alt='arrowUp' />
               </Box>
             </Box>
             {/* :
                 <Box color='#ff0084'>
-                  <Typography variant='p_xlg'>-$14,452.34</Typography>
                   <Box display='flex' alignItems='center'>
                     <Typography variant='p_xlg'>-3.47%</Typography>
                     <Image src={ArrowDownward} alt='arrowDown' />

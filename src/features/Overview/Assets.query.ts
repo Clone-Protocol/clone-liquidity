@@ -3,66 +3,91 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
-import { AnchorProvider } from "@coral-xyz/anchor";
-import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
-import { PublicKey, Connection } from "@solana/web3.js";
-import { Clone as CloneAccount } from 'clone-protocol-sdk/sdk/generated/clone'
+import { fetch24hourVolume, getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
+import { useAtomValue } from 'jotai'
+import { getCloneClient } from '../baseQuery';
+import { cloneClient } from '../globalAtom'
+import { fetchPythPriceHistory } from '~/utils/pyth'
 
-export const fetchAssets = async () => {
+export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: CloneClient | null }) => {
 	console.log('fetchAssets')
 
+	let program
+	if (mainCloneClient) {
+		program = mainCloneClient
+	} else {
+		const { cloneClient: cloneProgram } = await getCloneClient()
+		program = cloneProgram
+	}
+
 	// MEMO: to support provider without wallet adapter
-	const network = getNetworkDetailsFromEnv()
-	const new_connection = new Connection(network.endpoint)
-	const provider = new AnchorProvider(
-		new_connection,
-		{
-			signTransaction: () => Promise.reject(),
-			signAllTransactions: () => Promise.reject(),
-			publicKey: PublicKey.default, // MEMO: dummy pubkey
-		},
-		{}
-	);
-	const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
-		[Buffer.from("clone")],
-		network.clone
-	);
-	const account = await CloneAccount.fromAccountAddress(
-		provider.connection,
-		cloneAccountAddress
-	);
-	const program = new CloneClient(provider, account, network.clone)
+	// const network = getNetworkDetailsFromEnv()
+	// const new_connection = new Connection(network.endpoint)
+	// const provider = new AnchorProvider(
+	// 	new_connection,
+	// 	{
+	// 		signTransaction: () => Promise.reject(),
+	// 		signAllTransactions: () => Promise.reject(),
+	// 		publicKey: PublicKey.default, // MEMO: dummy pubkey
+	// 	},
+	// 	{}
+	// );
+	// const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
+	// 	[Buffer.from("clone")],
+	// 	network.clone
+	// );
+	// const account = await CloneAccount.fromAccountAddress(
+	// 	provider.connection,
+	// 	cloneAccountAddress
+	// );
+	// const program = new CloneClient(provider, account, network.clone)
 	const pools = await program.getPools();
-	const oracles = await program.getOracles();
-	const iassetInfos = await getiAssetInfos(program.provider.connection, program, pools, oracles);
+	// const oracles = await program.getOracles();
+	const iassetInfos = await getiAssetInfos(program.provider.connection, program);
 	const poolStats = await getAggregatedPoolStats(pools)
+	const dailyVolumeStats = await fetch24hourVolume()
+
+	// Fetch Pyth
+	let pythData
+	try {
+		pythData = await Promise.all(
+			iassetInfos.map((info) => {
+				let { pythSymbol } = assetMapping(info.poolIndex)
+				return fetchPythPriceHistory(
+					pythSymbol, '1D'
+				)
+			})
+		)
+	} catch (e) {
+		console.error(e)
+	}
 
 	const result: AssetList[] = []
 
-	for (const info of iassetInfos) {
+	for (let i = 0; i < iassetInfos.length; i++) {
+		const info = iassetInfos[i]
 		const { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
 		const stats = poolStats[info.poolIndex]
 
 		let change24h = 0
-		// if (pythData && pythData.length > 0) {
-		// 	const priceData = pythData[i]
+		if (pythData && pythData.length > 0) {
+			const priceData = pythData[i]
 
-		// 	const openPrice = priceData[0] ? Number(priceData[0].price) : 0
-		// 	const closePrice = priceData[0] ? Number(priceData.at(-1)!.price) : 0
-		// 	change24h = priceData[0] ? (closePrice / openPrice - 1) * 100 : 0
-		// }
+			const openPrice = priceData[0] ? Number(priceData[0].price) : 0
+			const closePrice = priceData[0] ? Number(priceData.at(-1)!.price) : 0
+			change24h = priceData[0] ? (closePrice / openPrice - 1) * 100 : 0
+		}
 
 		result.push({
 			id: info.poolIndex,
-			tickerName: tickerName,
-			tickerSymbol: tickerSymbol,
-			tickerIcon: tickerIcon,
-			ticker: ticker,
+			tickerName,
+			tickerSymbol,
+			tickerIcon,
+			ticker,
 			price: info.poolPrice,
-			assetType: assetType,
+			assetType,
 			liquidity: parseInt(info.liquidity.toString()),
-			volume24h: stats.volumeUSD,
+			volume24h: dailyVolumeStats.get(info.poolIndex) ?? 0,
 			change24h,
 			feeRevenue24h: stats.fees
 		})
@@ -92,9 +117,11 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
+	const mainCloneClient = useAtomValue(cloneClient)
+
 	let queryFunc
 	try {
-		queryFunc = () => fetchAssets()
+		queryFunc = () => fetchAssets({ mainCloneClient })
 	} catch (e) {
 		console.error(e)
 		queryFunc = () => []

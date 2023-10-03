@@ -7,22 +7,18 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
-import Divider from '@mui/material/Divider';
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
-import ArrowUpward from 'public/images/arrow-up-green.svg'
+import ArrowUpward from 'public/images/arrow-upward.svg'
 import ArrowDownward from 'public/images/arrow-down-red.svg'
-import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
+import { Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
-import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import { useRouter } from 'next/navigation'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { MARKETS_APP } from '~/data/social'
 import { formatDollarAmount } from '~/utils/numbers'
 
 const AssetList: React.FC = () => {
@@ -116,7 +112,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return params.row.change24h >= 0 ?
-				<Box color='#00ff99' display='flex' alignItems='center'>
+				<Box color='#4fe5ff' display='flex' alignItems='center'>
 					<Typography variant='p_xlg'>+{params.row.change24h.toFixed(2)}%</Typography>
 					<Image src={ArrowUpward} alt='arrowUp' />
 				</Box>

@@ -1,5 +1,7 @@
 import { styled } from '@mui/system'
 import { Box, Button } from '@mui/material'
+import CloseIcon from 'public/images/icon-close.svg'
+import Image from 'next/image'
 
 export const GoBackButton = styled(Box)`
   color: ${(props) => props.theme.basis.slug};
@@ -59,4 +61,19 @@ export const SelectButton = styled(ConnectButton)`
   border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   color: #989898;
   box-shadow: 0 0 0 0 #000;
+`
+
+export const CloseButton = ({ handleClose }: { handleClose: () => void }) => (
+  <CloseBox onClick={handleClose}>
+    <Image src={CloseIcon} alt='close' />
+  </CloseBox>
+)
+const CloseBox = styled(Box)`
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `

@@ -1,34 +1,35 @@
 import { Box, styled, Dialog, DialogContent, Stack, Typography } from '@mui/material'
 import { FadeTransition } from '~/components/Common/Dialog'
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import Image from 'next/image'
+import ShareIcon from 'public/images/icon-share.svg'
 import WalletIcon from 'public/images/wallet-icon.svg'
 import infoOutlineIcon from 'public/images/info-outline.svg'
+import { CloseButton } from '../Common/CommonButtons';
 
 const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onHide }: { open: boolean, isConnect: boolean, connectWallet: () => void, onGetUsdiClick: () => void, onHide: () => void }) => {
 
   return (
     <>
       <Dialog open={open} onClose={onHide} TransitionComponent={FadeTransition}>
-        <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
+        <DialogContent sx={{ backgroundColor: '#000', border: 'solid 1px #414e66', borderRadius: '5px' }}>
           <BoxWrapper>
-            <Box mb="21px"><Typography variant='p'>Token Faucet</Typography></Box>
+            <Box mb="21px"><Typography variant='h3' fontWeight={500}>Devnet Token Faucet</Typography></Box>
             <a href="https://solfaucet.com/" target="_blank" rel="noreferrer">
               <LinkBox>
                 <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                   <Stack direction='row' spacing={2} alignItems='center'>
-                    <Image src={'/images/assets/solana.png'} width={27} height={27} alt='solana' />
+                    <Image src={'/images/assets/solana.png'} width={24} height={24} alt='solana' />
                     <Typography variant='p'>Devnet SOL</Typography>
                   </Stack>
-                  <ArrowOutwardIcon sx={{ width: '13px' }} />
+                  <Image src={ShareIcon} alt="share" />
                 </Stack>
               </LinkBox>
             </a>
-            <LinkBox mt="11px" mb="17px" onClick={onGetUsdiClick}>
+            <LinkBox mt="12px" mb="12px" onClick={onGetUsdiClick}>
               <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                 <Stack direction='row' spacing={2} alignItems='center'>
-                  <Image src={'/images/assets/on-usd.svg'} width={27} height={27} alt='onUSD' />
-                  <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet onUSD ($100)</Typography>
+                  <Image src={'/images/assets/on-usd.svg'} width={24} height={24} alt='onUSD' />
+                  <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet USD ($100)</Typography>
                 </Stack>
                 <Box>
                   {
@@ -41,19 +42,22 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
                 </Box>
               </Stack>
             </LinkBox>
-            <InfoBox mb="8px">
+            <InfoBox mb="12px">
               <Image src={infoOutlineIcon} alt="info" />
-              <Typography variant='p_sm' maxWidth='193px' ml='12px'>
-                You need Devnet SOL in you wallet before you can claim Devnet onUSD
+              <Typography variant='p' ml='12px'>
+                You need Devnet SOL in your wallet before you can claim Devnet onUSD.
               </Typography>
             </InfoBox>
-            <InfoBox>
+            <InfoBox sx={{ cursor: 'pointer' }}>
               <Image src={infoOutlineIcon} alt="info" />
-              <Typography variant='p_sm' maxWidth='200px' ml='12px'>
-                The Solana Devnet is a safe playground for developers, users, and validators to test applications at no risk. Learn more.
+              <Typography variant='p' ml='12px'>
+                The Solana Devnet is a safe playground for developers, users, and validators to test applications at no risk. Click this box to learn more.
               </Typography>
-              <a href='https://www.alchemy.com/overviews/solana-devnet' target="_blank" rel="noreferrer"><IconBase><ArrowOutwardIcon sx={{ width: '13px' }} /></IconBase></a>
             </InfoBox>
+
+            <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
+              <CloseButton handleClose={onHide} />
+            </Box>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -65,31 +69,34 @@ const BoxWrapper = styled(Box)`
   padding: 1px; 
   color: #fff;
   overflow-x: hidden;
+  border-radius: 5px;
 `
 const LinkBox = styled(Box)`
   display: flex;
   align-items: center;
-  width: 277px;
-  height: 52px;
-  padding: 12px 14.8px 13px 11px;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  width: 347px;
+  height: 54px;
+  padding: 8px 20px;
+  background: ${(props) => props.theme.basis.darkNavy};
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  border-radius: 5px;
   color: #fff;
   cursor: pointer;
   &:hover {
-    border-color: #fff;
+    border-color: ${(props) => props.theme.basis.liquidityBlue};
   }
 `
 const InfoBox = styled(Box)`
-  width: 277px;
+  width: 347px;
   display: flex;
   align-items: center;
-  padding: 8px;
-  border: solid 1px ${(props) => props.theme.palette.text.secondary};
+  padding: 8px 20px;
+  line-height: 1.33;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   color: ${(props) => props.theme.palette.text.secondary};
-`
-const IconBase = styled('span')`
-  color: #989898;
-  cursor: pointer;
+  &:hover {
+    border-color: ${(props) => props.theme.basis.liquidityBlue};
+  }
 `
 const ConnectWallet = styled(Box)`
   width: 70px;

@@ -1,10 +1,9 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CellTicker, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { Collateral } from '~/features/MyLiquidity/comet/CometInfo.query'
-import MultipoolBlank from '~/components/Overview/CometBlank'
 import dynamic from 'next/dynamic'
 import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
@@ -146,13 +145,6 @@ const AddButton = styled(Button)`
     border-color: ${(props) => props.theme.palette.text.secondary};
   }
 `
-const AddButtonNoPosition = styled(AddButton)`
-  border-color: ${(props) => props.theme.palette.info.main};
-  color: #fff;
-  &:hover {
-    border-color: ${(props) => props.theme.palette.info.main};
-  }
-`
 const GetButton = styled(Button)`
   width: 130px;
   height: 30px;
@@ -162,7 +154,7 @@ const GetButton = styled(Button)`
   border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   background: ${(props) => props.theme.basis.jurassicGrey};
   &:hover {
-    background: transparent;
+    background: ${(props) => props.theme.basis.jurassicGrey};
     border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
   }
 `

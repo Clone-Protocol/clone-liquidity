@@ -77,9 +77,9 @@ let columns: GridColDef[] = [
 		headerName: 'onAsset',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return (
+			return params.row.borrowed > 0 ?
 				<CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
-			)
+				: <Box><Typography variant='p_xlg' color='#989898'>Please continue to close this borrow position</Typography></Box>
 		},
 	},
 	{
@@ -89,12 +89,12 @@ let columns: GridColDef[] = [
 		headerName: 'Borrowed',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return (
+			return Number(params.value) > 0 ?
 				<Stack direction='column' alignItems='flex-end'>
 					<Box><CellDigitValue value={params.value} symbol={params.row.tickerSymbol} /></Box>
 					<Box><Typography variant='p_xlg' color='#66707e'>${params.value?.toLocaleString()} USD</Typography></Box>
 				</Stack>
-			)
+				: <Box></Box>
 		},
 	},
 	{

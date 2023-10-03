@@ -70,36 +70,38 @@ const aggregatePoolData = (poolDataArray: ResponseValue[], interval: Interval): 
   // Create the first entry of the result
   let result: AggregatedData[] = []
 
-  let startingDate = new Date(poolDataArray.at(0)!.time_interval);
-  setDatetime(startingDate)
-  const dates = generateDates(startingDate, interval)
+  if (poolDataArray.length > 0) {
+    let startingDate = new Date(poolDataArray.at(0)!.time_interval);
+    setDatetime(startingDate)
+    const dates = generateDates(startingDate, interval)
 
-  for (let i = 0; i < dates.length; i++) {
+    for (let i = 0; i < dates.length; i++) {
 
-    const currentDate = getDTKeys(dates[i])
-    let record: AggregatedData = {
-      datetime: currentDate, total_liquidity: 0, trading_volume: 0, trading_fees: 0
-    }
+      const currentDate = getDTKeys(dates[i])
+      let record: AggregatedData = {
+        datetime: currentDate, total_liquidity: 0, trading_volume: 0, trading_fees: 0
+      }
 
-    const currentGBData = groupedByDtAndPool[currentDate]
-    if (!currentGBData) {
-      poolIndices.forEach((index) => {
-        record.total_liquidity += recentLiquidityByPool[index]
-      })
-    } else {
-      poolIndices.forEach((index) => {
-        let data = currentGBData[index]
-        if (data) {
-          record.total_liquidity += convertToNumber(data.total_committed_onusd_liquidity)
-          record.trading_volume += convertToNumber(data.volume)
-          record.trading_fees += convertToNumber(data.trading_fees)
-          recentLiquidityByPool[index] = convertToNumber(data.total_committed_onusd_liquidity)
-        } else {
+      const currentGBData = groupedByDtAndPool[currentDate]
+      if (!currentGBData) {
+        poolIndices.forEach((index) => {
           record.total_liquidity += recentLiquidityByPool[index]
-        }
-      })
+        })
+      } else {
+        poolIndices.forEach((index) => {
+          let data = currentGBData[index]
+          if (data) {
+            record.total_liquidity += convertToNumber(data.total_committed_onusd_liquidity)
+            record.trading_volume += convertToNumber(data.volume)
+            record.trading_fees += convertToNumber(data.trading_fees)
+            recentLiquidityByPool[index] = convertToNumber(data.total_committed_onusd_liquidity)
+          } else {
+            record.total_liquidity += recentLiquidityByPool[index]
+          }
+        })
+      }
+      result.push(record)
     }
-    result.push(record)
   }
 
   return result;
