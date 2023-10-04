@@ -9,25 +9,25 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 export const fetchBalance = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return null
 
-  console.log('fetchBalance')
-
   let onusdVal = 0.0
   let onassetVal = 0.0
-
-  const onusdTokenAccountAddress = await getTokenAccount(program.clone.collateral.mint, userPubKey, program.provider.connection);
   const devnetConversionFactor = Math.pow(10, -program.clone.collateral.scale)
   const cloneConversionFactor = Math.pow(10, -CLONE_TOKEN_SCALE)
   const collateralAssociatedTokenAccountInfo = await getCollateralAccount(program);
-  if (onusdTokenAccountAddress.isInitialized) {
+  if (collateralAssociatedTokenAccountInfo.isInitialized) {
     const onusdBalance = await program.provider.connection.getTokenAccountBalance(collateralAssociatedTokenAccountInfo.address, "processed");
     onusdVal = Number(onusdBalance.value.amount) * devnetConversionFactor;
   }
-  const pools = await program.getPools()
-  const pool = pools.pools[index];
-  const onassetTokenAccountAddress = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.provider.connection);
-  if (onassetTokenAccountAddress.isInitialized) {
-    const onassetBalance = await program.provider.connection.getTokenAccountBalance(onassetTokenAccountAddress.address, "processed");
-    onassetVal = Number(onassetBalance.value.amount) * cloneConversionFactor;
+
+  // if not default index
+  if (index !== -1) {
+    const pools = await program.getPools();
+    const pool = pools.pools[index];
+    const onassetTokenAccountInfo = await getTokenAccount(pool.assetInfo.onassetMint, userPubKey, program.provider.connection);
+    if (onassetTokenAccountInfo.isInitialized) {
+      const onassetBalance = await program.provider.connection.getTokenAccountBalance(onassetTokenAccountInfo.address, "processed");
+      onassetVal = Number(onassetBalance.value.amount) * cloneConversionFactor;
+    }
   }
 
   return {
@@ -38,7 +38,7 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
 
 interface GetProps {
   userPubKey: PublicKey | null
-  index: number
+  index?: number
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
@@ -48,7 +48,7 @@ export interface Balance {
   onassetVal: number
 }
 
-export function useBalanceQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
+export function useBalanceQuery({ userPubKey, index = -1, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
 

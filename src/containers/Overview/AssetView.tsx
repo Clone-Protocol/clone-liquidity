@@ -9,11 +9,9 @@ import withSuspense from '~/hocs/withSuspense'
 import { TabPanel } from '~/components/Common/StyledTab'
 import CometPanel from './CometPanel'
 import { useRouter } from 'next/navigation'
-import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 // import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
@@ -43,7 +41,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
 				setAssetIndex(AssetTickers.euro)
-				router.replace('/assets/euro')
+				router.replace('/comet/assets/euro')
 			}
 		}
 	}, [assetTicker])
@@ -52,7 +50,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		userPubKey: publicKey,
 		index: assetIndex,
 		refetchOnMount: "always",
-		enabled: publicKey != null
 	})
 
 	const openChooseLiquidityDialog = () => {
@@ -63,48 +60,37 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 		setAssetIndex(assetId)
 		setOpenChooseLiquidity(false)
 
-		router.replace(`/assets/${ASSETS[assetId].ticker}`)
+		router.replace(`/comet/assets/${ASSETS[assetId].ticker}`)
 	}
 
-	return assetData ? (
+	return (
 		<Box>
-			<Stack direction='row' spacing={3} justifyContent="center">
+			<Stack direction='row' spacing={9} justifyContent="center">
 				<Box>
-					<GoBackButton onClick={() => router.back()}><Typography variant='p'>Go back</Typography></GoBackButton>
+					<GoBackButton onClick={() => router.back()}><Typography variant='p'>{'<'} Go back</Typography></GoBackButton>
 					<Box mb='15px'>
-						<Typography variant='p_xxlg'>New Liquidity Position</Typography>
+						<Typography variant='p_xxlg'>New Comet Liquidity Position</Typography>
 					</Box>
 					<a href="https://docs.clone.so/system-architecture/comet-liquidity-system" target="_blank" rel="noreferrer">
 						<TipMsg>
-							<Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about Comet Liquidity System (CLS)</Typography>
+							<Image src={InfoIcon} alt='info' />
+							<Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Comet Liquidity System is built to introduce hyper liquidity to our onAssets. Click to learn more.</Typography>
 						</TipMsg>
 					</a>
-					<Box mt='15px'><Typography variant='p_lg'>Select Pool</Typography></Box>
-					<SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
-						<Stack direction='row' gap={1}>
-							<Image src={assetData.tickerIcon} width={27} height={27} alt={assetData.tickerSymbol} />
-							<Typography variant='p_xlg'>{assetData.tickerSymbol} {'<>'} onUSD</Typography>
-						</Stack>
-						<Image src={SelectArrowIcon} alt='select' />
-					</SelectPoolBox>
 
 					<LeftBoxWrapper>
-						<Box paddingY='5px'>
+						<Box paddingY='15px'>
 							<TabPanel value={tab} index={0}>
-								<CometPanel assetIndex={assetIndex} onRefetchData={() => refetch()} />
+								<CometPanel assetIndex={assetIndex} assetData={assetData} openChooseLiquidityDialog={openChooseLiquidityDialog} onRefetchData={() => refetch()} />
 							</TabPanel>
-						</Box>
-
-						<Box display='flex' justifyContent='center'>
-							<DataLoadingIndicator onRefresh={() => refetch()} />
 						</Box>
 					</LeftBoxWrapper>
 				</Box>
 
 				<RightBoxWrapper>
 					<StickyBox>
-						<PriceChart assetData={assetData} priceTitle='onAsset Price' />
-						<PoolAnalytics tickerSymbol={assetData.tickerSymbol} />
+						<PriceChart assetData={assetData} priceTitle='Oracle Price' />
+						{publicKey && assetData && <PoolAnalytics tickerSymbol={assetData.tickerSymbol} />}
 					</StickyBox>
 				</RightBoxWrapper>
 			</Stack>
@@ -116,36 +102,22 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				noFilter={tab !== 0}
 			/>
 		</Box>
-	) : <><Typography variant='p_lg'>Please Connect Wallet</Typography></>
+	)
 }
 
 const LeftBoxWrapper = styled(Box)`
-	width: 607px; 
-	padding: 8px 25px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-	margin-bottom: 25px;
+	width: 600px; 
+	padding: 8px 0px;
+	margin-bottom: 65px;
 `
 const RightBoxWrapper = styled(Box)`
-	width: 450px;
-	padding: 20px;
+	width: 472px;
+	padding: 8px 0px;
 `
 const StickyBox = styled(Box)`
   position: sticky;
   top: 100px;
 `
-const SelectPoolBox = styled(Box)`
-	display: flex;
-	justify-content: space-between;
-	width: 261px;
-	height: 45px;
-	margin-top: 10px;
-	margin-bottom: 20px;
-	cursor: pointer;
-	padding: 9px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-	&:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
-  }
-`
+
 
 export default withSuspense(AssetView, <LoadingProgress />)

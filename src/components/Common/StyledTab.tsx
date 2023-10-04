@@ -17,6 +17,7 @@ interface StyledTabsProps {
 interface StyledTabProps {
 	label: string | ReactElement
 	value: number
+	width?: string
 	icon?: ReactElement
 	onMouseEnter?: MouseEventHandler
 }
@@ -25,49 +26,51 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
 	<Tabs {...props} TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }} />
 ))({
 	'& .MuiTabs-indicator': {
-		display: 'flex',
+		display: 'none',
 		justifyContent: 'center',
 		backgroundColor: 'transparent',
 	},
 	'& .MuiTabs-indicatorSpan': {
 		display: 'none'
 	},
-	maxWidth: '620px',
-	borderRadius: '10px',
-	height: '47px',
-	paddingTop: '6px'
+	minHeight: '36px',
+	height: '36px',
+	paddingTop: '0px'
 })
 
-export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} />)(({ theme }) => ({
+export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple iconPosition="start" {...props} sx={{ width: props.width ? props.width : '114px' }} />)(({ theme }) => ({
 	'&.MuiTab-root': {
-		height: '35px',
+		height: '36px',
 		minHeight: '0px',
-		maxHeight: '35px',
+		maxHeight: '55px',
 		display: 'flex',
-		gap: '10px',
+		whiteSpace: 'nowrap',
+		borderRadius: '5px',
 		'&:hover': {
 			color: '#fff',
 		}
 	},
 	fontWeight: '500',
-	fontSize: '12px',
+	fontSize: '14px',
 	marginLeft: '0px',
-	marginRight: '8px',
-	color: '#989898',
+	color: '#66707e',
 	'&.Mui-selected': {
-		border: 'solid 1px #fff',
+		border: 'solid 1px #b5fdf9',
+		backgroundColor: '#071031',
 		color: '#fff',
 	},
 }))
 
-export const CometTab = styled((props: StyledTabProps) => (
+export const CommonTab = styled((props: StyledTabProps) => (
 	<StyledTab {...props} />
 ))({
+	width: '138px',
 	'&.Mui-selected': {
+		background: '#1a1c28',
 		borderStyle: 'solid',
-		borderImage: 'linear-gradient(83deg, #8925ed 1%, #7d4fff 25%, #ab96ff 37%, #fff 48%, #ab96ff 60%, #7d4fff 72%, #8925ed 95%)',
+		borderColor: 'transparent',
+		borderTopColor: '#4fe5ff',
 		borderWidth: '1px',
-		borderImageSlice: 1,
 	}
 })
 

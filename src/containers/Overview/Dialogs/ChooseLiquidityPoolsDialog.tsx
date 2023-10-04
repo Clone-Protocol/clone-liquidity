@@ -10,7 +10,7 @@ const ChooseLiquidityPoolsDialog = ({ open, noFilter, handleChoosePool, handleCl
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={792}>
         <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '15px 15px' }}>
           <BoxWrapper>
-            <Box><Typography variant='h7'>Liquidity Pools</Typography></Box>
+            <Box><Typography variant='p'>Liquidity Pools</Typography></Box>
             <StyledDivider />
             <GridLiquidityPool onChoose={handleChoosePool} noFilter={noFilter} />
           </BoxWrapper>

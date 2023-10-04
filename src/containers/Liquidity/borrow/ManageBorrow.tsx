@@ -1,28 +1,23 @@
 import React, { useState } from 'react'
 import { Stack, Box, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import Image from 'next/image'
-import TipMsg from '~/components/Common/TipMsg'
 import { useWallet } from '@solana/wallet-adapter-react'
-import InfoIcon from 'public/images/info-icon.svg'
-import { TabPanelForEdit, StyledTabs, StyledTab } from '~/components/Common/StyledTab'
+import { TabPanelForEdit, StyledTabs, CommonTab } from '~/components/Common/StyledTab'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import ManageCometIconOff from 'public/images/manage-icon-off.svg'
-import ManageCometIconOn from 'public/images/manage-icon-on.svg'
-import ManageCloseIconOff from 'public/images/close-circle-multiple-outline-off.svg'
-import ManageCloseIconOn from 'public/images/close-circle-multiple-outline-on.svg'
 import EditPanel from '~/containers/Liquidity/borrow/EditPanel'
 import ClosePanel from '~/containers/Liquidity/borrow/ClosePanel'
 import { useBorrowPositionQuery } from '~/features/MyLiquidity/BorrowPosition.query'
 import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
-import { StyledDivider } from '~/components/Common/StyledDivider'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
+import { GoBackButton } from '~/components/Common/CommonButtons'
+import { useRouter } from 'next/navigation'
 
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
+  const router = useRouter()
   const [tab, setTab] = useState(0)
+  const [showEditRepay, setShowEditRepay] = useState(false)
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
@@ -36,32 +31,27 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
     enabled: publicKey != null
   });
 
+  const moveRepayPosition = () => {
+    setTab(0)
+    setShowEditRepay(true)
+  }
+
   return borrowDetail ? (
     <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
-        <Box mb='25px'><Typography variant='p_xxlg'>Manage Borrow Position</Typography></Box>
-        <TipMsg>
-          <Image src={InfoIcon} alt="info" /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography>
-        </TipMsg>
+        <GoBackButton onClick={() => router.back()}><Typography variant='p'>{'<'} Go back</Typography></GoBackButton>
+        <Box mt='5px' mb='25px'><Typography variant='h3' fontWeight={500}>Manage Borrow Position</Typography></Box>
         <LeftBoxWrapper mt='21px'>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <StyledTab value={0} label="Manage Borrow Position" icon={tab === 0 ? <Image src={ManageCometIconOn} alt='comet' /> : <Image src={ManageCometIconOff} alt='comet' />}></StyledTab>
-            <StyledTab value={1} label="Close Borrow Position" icon={tab === 1 ? <Image src={ManageCloseIconOn} alt='close' /> : <Image src={ManageCloseIconOff} alt='close' />}></StyledTab>
+            <CommonTab value={0} label="Manage" />
+            <CommonTab value={1} label="Close" />
           </StyledTabs>
-          <StyledDivider />
-          <TipMsg>
-            <Image src={InfoIcon} alt="info" /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how managing borrow position works.</Typography>
-          </TipMsg>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} borrowDetail={borrowDetail} onRefetchData={() => refetch()} />
+            <EditPanel assetId={assetId} borrowDetail={borrowDetail} showRepayPosition={showEditRepay} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
-            <ClosePanel assetId={assetId} borrowDetail={borrowDetail} />
+            <ClosePanel assetId={assetId} borrowDetail={borrowDetail} onMoveRepayPosition={moveRepayPosition} />
           </TabPanelForEdit>
-
-          <Box display='flex' justifyContent='center'>
-            <DataLoadingIndicator onRefresh={() => refetch()} />
-          </Box>
         </LeftBoxWrapper>
       </Box>
       <RightBoxWrapper>
@@ -75,13 +65,11 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
 }
 
 const LeftBoxWrapper = styled(Box)`
-	width: 521px; 
-	padding: 8px 25px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	width: 600px;
 	margin-bottom: 25px;
 `
 const RightBoxWrapper = styled(Box)`
-	width: 450px;
+	width: 472px;
 	padding: 20px;
 `
 const StickyBox = styled(Box)`

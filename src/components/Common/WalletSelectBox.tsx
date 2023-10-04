@@ -1,45 +1,64 @@
-import withSuspense from '~/hocs/withSuspense'
+import React, { useMemo, useState } from 'react';
+import { Box, Typography, Stack } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { Box, Stack, styled, Typography } from '@mui/material'
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useSnackbar } from 'notistack';
+import { useBalanceQuery } from '~/features/Overview/Balance.query'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useSnackbar } from 'notistack'
+import withSuspense from '~/hocs/withSuspense'
 import { shortenAddress } from '~/utils/address'
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useWalletDialog } from '~/hooks/useWalletDialog';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { getSolInBalance } from '~/utils/address';
+import { ON_USD } from '~/utils/constants';
 import { useSetAtom } from 'jotai'
 import { cloneClient } from '~/features/globalAtom'
 
 const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
   const { publicKey, disconnect } = useWallet()
-  const { setOpen } = useWalletDialog()
+  const [solBalance, setSolBalance] = useState(0)
   const setCloneClient = useSetAtom(cloneClient)
 
-  const handleChangeWallet = () => {
-    disconnect()
-    setOpen(true)
-    onHide && onHide()
-  }
+  const { data: balance } = useBalanceQuery({
+    userPubKey: publicKey,
+    refetchOnMount: 'always',
+    enabled: publicKey != null
+  })
 
-  const handleDisconnect = () => {
+  useMemo(() => {
+    const getBalance = async () => {
+      if (publicKey) {
+        try {
+          const balance = await getSolInBalance(publicKey)
+          setSolBalance(balance)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
+    getBalance()
+  }, [publicKey])
+
+  const handleDisconnect = async () => {
     setCloneClient(null)
-    disconnect()
+    await disconnect()
     onHide && onHide()
     // refresh page by force
-    setTimeout(() => {
+    await setTimeout(() => {
       location.reload()
     }, 1000)
   }
 
-  return (
+  return balance ? (
     <WalletWrapper>
-      <Stack direction='row' alignItems='center'>
-        <WalletAddress onClick={handleChangeWallet}>
+      <Stack direction='row' justifyContent='space-between' alignItems='center' padding='13px'>
+        <Box lineHeight={1}>
+          <Box><Typography variant='p' fontWeight={600} color='#fff'>{solBalance.toLocaleString()} SOL</Typography></Box>
           {publicKey && (
-            <Typography variant='h7'>{shortenAddress(publicKey.toString())}</Typography>
+            <Box><Typography variant='p' color='#c5c7d9'>{shortenAddress(publicKey.toString())}</Typography></Box>
           )}
-        </WalletAddress>
-        <Stack direction='row' spacing={2}>
+        </Box>
+        <Stack direction='row' spacing={1}>
           <CopyToClipboard text={publicKey!!.toString()}
             onCopy={() => enqueueSnackbar('Copied address')}>
             <PopupButton><Typography variant='p_sm'>Copy</Typography></PopupButton>
@@ -47,30 +66,42 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
           <PopupButton><Typography variant='p_sm' onClick={handleDisconnect}>Disconnect</Typography></PopupButton>
         </Stack>
       </Stack>
-    </WalletWrapper>
-  )
+      <AssetBox>
+        <Typography variant='h3'>${balance?.onusdVal.toLocaleString()}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
+      </AssetBox>
+    </WalletWrapper >
+  ) : <></>
 }
 
 export default withSuspense(WalletSelectBox, <LoadingProgress />)
 
 const WalletWrapper = styled(Stack)`
-  position: absolute;
-  top: 60px;
-  right: 0px;
-  width: 282px;
-  height: 56px;
-  padding: 13px 16px;
-  background-color: ${(props) => props.theme.boxes.darkBlack};
-  z-index: 99;
-`
-const WalletAddress = styled(Box)`
-  color: #fff;
-	margin-right: 45px;
-	cursor: pointer;
+	position: absolute;
+	top: 70px;
+	right: 0px;
+	width: 283px;
+	background-color: ${(props) => props.theme.basis.darkNavy};
+	border-radius: 5px;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+	z-index: 99;
 `
 const PopupButton = styled(Box)`
 	font-size: 10px;
-	font-weight: 500;
-	color: ${(props) => props.theme.palette.text.secondary};
+	font-weight: 600;
+	color: #fff;
+	padding: 2px 6px;
+	border-radius: 100px;
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
 	cursor: pointer;
+`
+const AssetBox = styled(Box)`
+	width: 100%;
+	height: 61px;
+	padding: 17px;
+	display: flex;
+  align-items: center;
+	gap: 10px;
+	color: #fff;
+  border-radius: 5px;
+	background-color: ${(props) => props.theme.basis.royalNavy};
 `

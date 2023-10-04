@@ -1,27 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Image from 'next/image'
 import { useEditCollateralQuery } from '~/features/MyLiquidity/comet/EditCollateral.query'
 import { useCollateralMutation } from '~/features/MyLiquidity/comet/Collateral.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
 import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { StyledDivider } from '~/components/Common/StyledDivider'
 import PairInput from '~/components/Liquidity/comet/PairInput'
-import DepositMoreOnIcon from 'public/images/add-liquidity-icon-on.svg'
-import DepositMoreOffIcon from 'public/images/add-liquidity-icon-off.svg'
-import WithdrawOnIcon from 'public/images/withdraw-liquidity-icon-on.svg'
-import WithdrawOffIcon from 'public/images/withdraw-liquidity-icon-off.svg'
-import HealthscoreBar from '~/components/Overview/HealthscoreBar'
-import WarningMsg from '~/components/Common/WarningMsg'
-import { SubmitButton } from '~/components/Common/CommonButtons'
+import { CloseButton, RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButtons'
+import HealthscoreView, { RISK_HEALTH_SCORE } from '~/components/Liquidity/comet/HealthscoreView'
+import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
+import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 
-const RISK_SCORE_VAL = 10
-const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl?: () => void, handleClose: () => void }) => {
+const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -120,7 +114,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     }
   }
 
-  let isValid = (() => {
+  const isValid = (() => {
     let valid = Object.keys(errors).length === 0
     if (collData?.hasCometPositions) {
       valid = valid && healthScore > 0.5
@@ -128,98 +122,134 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
     return valid
   })()
 
-  const hasRiskScore = healthScore < RISK_SCORE_VAL
+  const hasRiskScore = healthScore < RISK_HEALTH_SCORE
+
+  let submitButtonText = tab === 0 ? 'Deposit Collateral' : 'Withdraw Collateral'
+  if (!collAmount || collAmount === 0) {
+    submitButtonText = tab === 0 ? 'Enter Deposit Amount' : 'Enter Withdraw Amount'
+  } else if (tab === 0 && collData?.hasCometPositions && collAmount > collData?.balance) {
+    submitButtonText = 'Exceeded Deposit Amount'
+  } else if (tab === 1 && collData?.hasCometPositions && collAmount >= maxWithdrawable) {
+    submitButtonText = 'Exceeded Withdrawable Amount'
+  } else if (tab === 1 && maxWithdrawable === 0) {
+    submitButtonText = 'Withdrawable Amount is Zero'
+  }
+
 
   return collData ? (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={500}>
-        <DialogContent sx={{ backgroundColor: '#1b1b1b' }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={400}>
+        <DialogContent sx={{ backgroundColor: '#000916', width: '400px' }}>
           <BoxWrapper>
-            <Box mb='5px'>
-              <Typography variant='p_xlg'>
-                {isNewDeposit ? 'Deposit New Collateral' : 'Manage Collateral'}
-              </Typography>
-            </Box>
-            {!isNewDeposit &&
-              <StyledTabs value={tab} onChange={handleChangeTab}>
-                <StyledTab value={0} label="Deposit more" icon={tab === 0 ? <Image src={DepositMoreOnIcon} alt='deposit' /> : <Image src={DepositMoreOffIcon} alt='deposit' />}></StyledTab>
-                <StyledTab value={1} label="Withdraw" icon={tab === 1 ? <Image src={WithdrawOnIcon} alt='withdraw' /> : <Image src={WithdrawOffIcon} alt='withdraw' />}></StyledTab>
-              </StyledTabs>
-            }
-            <StyledDivider />
-
-            <Box mb='15px'>
-              <Controller
-                name="collAmount"
-                control={control}
-                rules={{
-                  validate(value) {
-                    if (!value || value <= 0) {
-                      return ''
-                    } else if (tab === 0 && value > collData.balance) {
-                      return 'The collateral amount cannot exceed the balance.'
-                    } else if (tab === 1 && collData.hasCometPositions && value >= maxWithdrawable) {
-                      return 'Cannot withdraw the maximum amount.'
-                    } else if (tab === 1 && !collData.hasCometPositions && value > maxWithdrawable) {
-                      return 'Cannot withdraw more than maximum amount.'
-                    }
-                  }
-                }}
-                render={({ field }) => (
-                  <PairInput
-                    tickerIcon={collData.tickerIcon}
-                    tickerSymbol={collData.tickerSymbol}
-                    rightHeaderTitle={tab === 0 ? 'Wallet Balance' : 'Max Withdrawable'}
-                    value={field.value}
-                    valueDollarPrice={field.value}
-                    inputTitle='Collateral'
-                    balance={tab === 0 ? collData.balance : maxWithdrawable}
-                    currentAmount={collData.collAmount}
-                    dollarPrice={collData.totalCollValue}
-                    maxDisabled={tab === 1 && collData.hasCometPositions}
-                    hideBottomBox={isNewDeposit}
-                    onChange={(event: React.FormEvent<HTMLInputElement>) => {
-                      const collAmt = parseFloat(event.currentTarget.value)
-                      field.onChange(collAmt)
-                    }}
-                    onMax={(value: number) => {
-                      field.onChange(value)
-                    }}
-                  />
-                )}
-              />
-              <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText>
+            <Box mb='20px'>
+              <Typography variant='h3'>Manage Collateral</Typography>
             </Box>
 
-            { // MEMO : This is because when a user adds a new collateral type on devnet, they won’t see an exising healthscore. but will be add later on mainnet 
-              !isNewDeposit &&
-              <Box>
-                <Typography variant='h8'>Projected Comet Statistics</Typography>
-                <BoxWithBorder padding='10px 20px 0px 20px' mt='3px'>
-                  <Box>
-                    <Box><Typography variant='p' color='#989898'>Projected Collateral Value <InfoTooltip title={TooltipTexts.projectedCometCollValue} /></Typography></Box>
-                    <Box><Typography variant='p_xlg'>${totalCollValue.toLocaleString()}</Typography> <Typography variant='p' color='#989898'>(current: ${collData.totalCollValue.toLocaleString()})</Typography></Box>
-                  </Box>
-                  <Box mt='10px'>
-                    <Box><Typography variant='p' color='#989898'>Projected Healthscore <InfoTooltip title={TooltipTexts.projectedHealthScore} /></Typography></Box>
-                    <Box p='10px'>
-                      <HealthscoreBar score={healthScore} prevScore={Number.isNaN(collData.prevHealthScore) ? 0 : collData.prevHealthScore} hideIndicator={true} width={400} />
-                      {hasRiskScore &&
-                        <WarningMsg>This change will put all your remaining comet collateral at risk of liquidation.</WarningMsg>
+            <StyledTabs value={tab} onChange={handleChangeTab}>
+              <StyledTab value={0} label="Deposit" />
+              <StyledTab value={1} label="Withdraw" />
+            </StyledTabs>
+
+            <Box my='36px'>
+              <Box><Typography variant='p_lg' color='#fff'>Current Collateral</Typography></Box>
+              <Box mt='7px'><Typography variant='h2' fontWeight={500}>${collData.collAmount.toLocaleString()}</Typography></Box>
+            </Box>
+
+            {!isNewDeposit ?
+              <>
+                <Box mb='18px'>
+                  <Controller
+                    name="collAmount"
+                    control={control}
+                    rules={{
+                      validate(value) {
+                        if (!value || value <= 0) {
+                          return ''
+                        } else if (tab === 0 && value > collData.balance) {
+                          return 'The collateral amount cannot exceed the balance.'
+                        } else if (tab === 1 && collData.hasCometPositions && value >= maxWithdrawable) {
+                          return 'Cannot withdraw the maximum amount.'
+                        } else if (tab === 1 && !collData.hasCometPositions && value > maxWithdrawable) {
+                          return 'Cannot withdraw more than maximum amount.'
+                        }
                       }
-                    </Box>
-                  </Box>
-                </BoxWithBorder>
-              </Box>
-            }
+                    }}
+                    render={({ field }) => (
+                      <PairInput
+                        tickerIcon={collData.tickerIcon}
+                        tickerSymbol={collData.tickerSymbol}
+                        rightHeaderTitle={tab === 0 ? 'Balance' : 'Withdrawable'}
+                        value={field.value}
+                        valueDollarPrice={field.value}
+                        inputTitle={tab === 0 ? 'Deposit' : 'Withdraw'}
+                        balance={tab === 0 ? collData.balance : maxWithdrawable}
+                        onChange={(event: React.FormEvent<HTMLInputElement>) => {
+                          const collAmt = parseFloat(event.currentTarget.value)
+                          field.onChange(collAmt)
+                        }}
+                        onMax={(value: number) => {
+                          field.onChange(value)
+                        }}
+                      />
+                    )}
+                  />
+                  {/* <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText> */}
+                </Box>
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
-              {isNewDeposit ? 'Deposit' :
-                tab === 0 ? 'Deposit more' : 'Withdraw'}
-            </SubmitButton>
+                {
+                  (tab === 0 && collAmount > 0) || (tab === 1 && collAmount > 0 && collAmount < maxWithdrawable) ?
+                    <CometHealthBox padding='15px 20px'>
+                      <Box display='flex' justifyContent='center'>
+                        <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
+                      </Box>
+                      <Box mt='10px' display='flex' justifyContent='center'>
+                        <HealthscoreView score={healthScore ? healthScore : collData.prevHealthScore} />
+                      </Box>
+                    </CometHealthBox>
+                    :
+                    <CometHealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+                      <Image src={IconHealthScoreGraph} alt='healthscore' />
+                      <Box mt='7px'>
+                        <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
+                      </Box>
+                    </CometHealthBox>
+                }
 
-            <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator onRefresh={() => refetch()} />
+                {tab === 1 && <>
+                  {
+                    collAmount >= collData.collAmount ?
+                      <InfoMsg>
+                        If you are looking to withdraw all of your collateral, please close all of your liquidity positions first. Click here to learn more.
+                      </InfoMsg>
+                      :
+                      hasRiskScore ?
+                        <WarningMsg>
+                          Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.
+                        </WarningMsg>
+                        : <></>
+                  }
+                </>
+                }
+
+                {(tab === 1 && hasRiskScore && collAmount <= maxWithdrawable) ?
+                  <RiskSubmitButton onClick={handleSubmit(onEdit)}>
+                    <Typography variant='p_xlg'>
+                      {'Accept Risk and Withdraw'}
+                    </Typography>
+                  </RiskSubmitButton>
+                  :
+                  <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
+                    <Typography variant='p_xlg'>
+                      {submitButtonText}
+                    </Typography>
+                  </SubmitButton>
+                }
+              </>
+              :
+              <ZeroAmountBox><Typography variant='h4'>Collateral Amount is Zero</Typography></ZeroAmountBox>}
+
+            <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
+              <CloseButton handleClose={handleClose} />
             </Box>
           </BoxWrapper>
         </DialogContent>
@@ -229,12 +259,23 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 }
 
 const BoxWrapper = styled(Box)`
-  width: 500px;
   color: #fff;
   overflow-x: hidden;
 `
-const BoxWithBorder = styled(Box)`
-	border: solid 1px ${(props) => props.theme.boxes.blackShade};
+const CometHealthBox = styled(Box)`
+  background-color: ${(props) => props.theme.basis.darkNavy};
+  margin-bottom: 30px;
+`
+const ZeroAmountBox = styled(Box)`
+  width: 360px;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 17px;
+  border-radius: 5px;
+  color: #989898;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
 `
 
 export default EditCollateralDialog

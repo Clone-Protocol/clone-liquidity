@@ -28,7 +28,7 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 		color: '#fff',
 		background: '#10141f',
 		boxShadow: '0 8px 20px rgb(0 0 0 / 60%)',
-		borderRadius: '10px'
+		borderRadius: '5px'
 	},
 	'& .MuiDialogTitle-root': {
 		background: '#10141f',

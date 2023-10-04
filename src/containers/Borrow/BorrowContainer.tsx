@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { styled } from '@mui/system'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import BorrowPanel from '../Overview/BorrowPanel'
+import BorrowPanel from './BorrowPanel'
 import PriceChart from '~/components/Overview/PriceChart'
 import PositionAnalytics from '~/components/Borrow/PositionAnalytics'
 import { ASSETS } from '~/data/assets'
@@ -35,7 +35,7 @@ const BorrowContainer = () => {
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
           <a href="https://docs.clone.so/devnet-guide/clone-liquidity-or-for-lps/borrowing" target="_blank" rel="noreferrer">
-            <TipMsg><Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to learn more about how Borrowing works.</Typography></TipMsg>
+            <TipMsg><Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>You are able to borrow any onAsset by providing sufficient collateral. Click to learn more.</Typography></TipMsg>
           </a>
           <LeftBoxWrapper>
             <Box paddingY='10px'>
@@ -65,10 +65,10 @@ const StyledBox = styled(Paper)`
 	background: #000;
 `
 const LeftBoxWrapper = styled(Box)`
-	width: 607px; 
-	padding: 8px 25px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  margin-top: 16px;
+	width: 600px; 
+	padding: 8px 22px;
+	border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  margin-top: 23px;
 	margin-bottom: 25px;
 `
 const RightBoxWrapper = styled(Box)`

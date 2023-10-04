@@ -14,13 +14,13 @@ const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
   return (
     <BackScreen>
       <BoxWrapper>
-        <TextHead>Before you enter...</TextHead>
-        <Box my='16px' lineHeight={0.9}>
-          <Typography variant='p_lg'>
+        <TextHead>Welcome!</TextHead>
+        <Box my='20px' lineHeight={0.9}>
+          <Typography variant='p_xlg' lineHeight={1.5}>
             Welcome to Clone Liquidity (Beta) on Solana Devnet. As the word “Beta” in the name suggests, you may find minor bugs in the interface. If you do, please report the issue to us on Discord or write an email to us at team@clone.so and we will address them ASAP. Thank you and congrats for being an early bird in Clone Ecosystem!
           </Typography>
         </Box>
-        <EnterButton onClick={() => close()}><Typography variant='p'>Enter</Typography></EnterButton>
+        <EnterButton onClick={() => close()}><Typography variant='p_xlg'>Enter Clone Devnet</Typography></EnterButton>
       </BoxWrapper>
     </BackScreen>
   )
@@ -39,23 +39,26 @@ const BackScreen = styled('div')`
   z-index: 99999;
 `
 const BoxWrapper = styled(Box)`
-  width: 600px;
+  width: 607px;
   color: #fff; 
   text-align: left;
+  background: #000916;
+  padding: 32px 53px;
 `
 const TextHead = styled(Box)`
-  font-size: 43px;
+  font-size: 36px;
   font-weight: 600;
-  background: ${(props) => props.theme.gradients.simple};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: ${(props) => props.theme.basis.skylight};
 `
 const EnterButton = styled(Button)`
   width: 100%;
-  height: 48px;
-  margin-top: 10px;
+  height: 52px;
   color: #000;
-  background-image: ${(props) => props.theme.gradients.simple};
+  margin-top: 10px;
+  background: ${(props) => props.theme.basis.liquidityBlue};
+  &:hover {
+    background: ${(props) => props.theme.basis.gloomyBlue};
+  }
 `
 
 export default InitEnterScreen

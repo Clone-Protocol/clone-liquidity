@@ -6,8 +6,10 @@ interface Props {
 	tickerSymbol: string
 	value?: number | string
 	dollarPrice?: number | undefined
+	inputTitle?: string
 	headerTitle?: string
 	headerValue?: number
+	disabledInput?: boolean
 	onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void
 	onMax?: (value: number) => void
 	onTickerClicked?: () => void
@@ -18,47 +20,73 @@ const PairInput: React.FC<Props> = ({
 	tickerSymbol,
 	value,
 	dollarPrice,
+	inputTitle,
 	headerTitle,
 	headerValue,
+	disabledInput = false,
 	onChange,
 	onMax,
 	onTickerClicked
 }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
-			{headerTitle ? (
-				<Stack direction="row" justifyContent="flex-end">
-					<Typography variant='p' color='#989898'>
-						{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
-					</Typography>
-				</Stack>
-			) : (
-				<></>
-			)}
-			<FormStack direction="row" justifyContent="space-between" alignItems="center">
-				<Box display="flex" alignItems='center' width='122px' onClick={onTickerClicked} style={onTickerClicked ? { cursor: 'pointer' } : {}}>
-					<Image src={tickerIcon} width={28} height={28} alt={tickerSymbol} />
-					<Box ml='10px'>
-						<Typography variant='p_lg'>{tickerSymbol}</Typography>
+			<Stack direction="row" justifyContent="space-between">
+				<Box>
+					<Typography variant="p_lg" color='#66707e'>{inputTitle}</Typography>
+				</Box>
+				{headerTitle ? (
+					<Stack direction="row" justifyContent="flex-end">
+						<Typography variant='p' color='#66707e'>
+							{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
+						</Typography>
+						{headerValue && <MaxButton onClick={() => onMax && onMax(headerValue)}>MAX</MaxButton>}
+					</Stack>
+				) : (
+					<></>
+				)}
+			</Stack>
+			<CenterBox>
+				<FormStack direction="row" justifyContent="space-between" alignItems="center" sx={disabledInput ? { border: '1px solid #414166', background: 'transparent' } : {}}>
+					<Box>
+						<InputAmount
+							type="number"
+							placeholder='0.00'
+							step='any'
+							min={0}
+							max={headerValue}
+							sx={value && value > 0 ? { color: '#fff' } : { color: '#adadad' }}
+							value={value}
+							disabled={disabledInput}
+							onChange={onChange} />
+						<DollarAmount>
+							{dollarPrice ? "$" + dollarPrice?.toLocaleString() : ""}
+						</DollarAmount>
 					</Box>
-				</Box>
-				<Box lineHeight={0.93} textAlign='right'>
-					<InputAmount id="ip-amount" type="number" placeholder='0.00' step='any' min={0} max={headerValue} sx={value && value > 0 ? { color: '#fff' } : { color: '#adadad' }} value={value} onChange={onChange} />
-					{dollarPrice ? <Box><Typography variant='p' color='#989898'>${dollarPrice.toLocaleString()} USD</Typography></Box> : <></>}
-				</Box>
-			</FormStack>
+					<TickerBox display="flex" alignItems='center' onClick={onTickerClicked} style={onTickerClicked ? { cursor: 'pointer' } : {}}>
+						<Image src={tickerIcon} width={22} height={22} alt={tickerSymbol!} />
+						<Box ml='4px'>
+							<Typography variant="h4">{tickerSymbol}</Typography>
+						</Box>
+					</TickerBox>
+				</FormStack>
+			</CenterBox>
 		</FormControl>
 	)
 }
 
+const CenterBox = styled(Box)`
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.05);
+`
 const MaxValue = styled('span')`
-	color: #90e4fe; 
+	color: ${(props) => props.theme.basis.liquidityBlue};
 	cursor: pointer;
 `
 const FormStack = styled(Stack)`
 	display: flex;
 	width: 100%;
 	height: 70px;
+	border-radius: 5px;
 	padding: 9px 21px 8px 24px;
 	background-color: ${(props) => props.theme.boxes.darkBlack};
   &:hover {
@@ -66,14 +94,40 @@ const FormStack = styled(Stack)`
   }
 `
 const InputAmount = styled(`input`)`
-	width: 140px;
-	padding: 0;
-	text-align: right;
+	width: 200px;
 	border: 0px;
-	background-color: ${(props) => props.theme.boxes.darkBlack};
-	font-size: 20.7px;
-	font-weight: 500;
+	background-color: transparent;
+	font-size: 26px;
 	color: #fff;
+	&::placeholder {
+		color: ${(props) => props.theme.basis.slug};
+	}
+`
+const MaxButton = styled(Box)`
+  border-radius: 4px;
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
+  margin-left: 6px;
+	margin-bottom: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+	border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+	&:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue};
+	}
+`
+const DollarAmount = styled("div")`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${(props) => props.theme.basis.slug};
+  margin-left: 2px;
+`
+const TickerBox = styled(Box)`
+  background-color: ${(props) => props.theme.basis.darkNavy};
+  border-radius: 10px;
+  padding: 3px 10px 3px 5px;
 `
 
 export default PairInput

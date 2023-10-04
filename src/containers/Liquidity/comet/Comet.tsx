@@ -1,3 +1,4 @@
+//@Deprecated
 import { Box, Stack, Grid, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useWallet } from '@solana/wallet-adapter-react'

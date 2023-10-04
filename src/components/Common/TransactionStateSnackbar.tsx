@@ -26,7 +26,7 @@ const getTxnURL = (txHash: string) => {
 const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHash: string }) => {
   return (<Box>
     <Box mt='10px'><Image src={isSuccess ? SuccessIcon : FailureIcon} width={47} height={47} alt='status' /></Box>
-    <Box mt='10px'><Typography variant='h7'>Transaction {isSuccess ? 'complete' : 'failed'}</Typography></Box>
+    <Box mt='10px'><Typography variant='p'>Transaction {isSuccess ? 'complete' : 'failed'}</Typography></Box>
     <Box my='10px' lineHeight='1'>
       <Typography variant='p' color='#989898'>
         {isSuccess ? 'You can now access all features.' : 'There was an error. Please try again.'}
@@ -46,7 +46,7 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
   return (
     <ConfirmBoxWrapper className={isFocus ? 'animate__animated animate__shakeX' : ''}>
       <CircularProgress sx={{ color: '#fff' }} size={23} thickness={8} />
-      <Box mt='10px'><Typography variant='h7'>Confirming transaction</Typography></Box>
+      <Box mt='10px'><Typography variant='p'>Confirming transaction</Typography></Box>
       <Box my='10px' lineHeight={1}><Typography variant='p' color={isFocus ? '#ff8e4f' : '#989898'}>All features are disabled until the transaction is confirmed.
         <br />Transactions on Solana typically take an average of 5 seconds. </Typography></Box>
       <Box sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>

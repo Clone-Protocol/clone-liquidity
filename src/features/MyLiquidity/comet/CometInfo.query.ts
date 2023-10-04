@@ -52,6 +52,15 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	return result
 }
 
+export interface CometInfoStatus {
+	healthScore: number
+	totalCollValue: number
+	totalLiquidity: number
+	collaterals: Collateral[]
+	hasNoCollateral: boolean
+	positions: LiquidityPosition[]
+}
+
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
 	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
@@ -150,7 +159,16 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 			}
 		)
 	} else {
-		return useQuery(['cometInfos'], () => { return null })
+		return useQuery(['cometInfos'], () => {
+			return {
+				healthScore: 0,
+				totalCollValue: 0,
+				totalLiquidity: 0,
+				collaterals: [],
+				hasNoCollateral: true,
+				positions: []
+			}
+		})
 	}
 }
 
@@ -186,6 +204,21 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 	}
 }
 
+const fetchInitCometDetailDefault = () => {
+	return (
+		{
+			tickerIcon: '',
+			tickerName: '',
+			tickerSymbol: '',
+			pythSymbol: '',
+			price: 0,
+			tightRange: 0,
+			maxRange: 0,
+			centerPrice: 0,
+		}
+	)
+}
+
 export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
@@ -195,6 +228,6 @@ export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, ena
 			enabled
 		})
 	} else {
-		return useQuery(['initComet'], () => { return null })
+		return useQuery(['initComet'], () => { return fetchInitCometDetailDefault() })
 	}
 }

@@ -2,6 +2,8 @@ import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { atom } from 'jotai'
 import { CreateAccountDialogStates } from '~/utils/constants'
 
+export const mintUSDi = atom(false)
+
 export const syncFetchNetworkState = atom(false)
 
 export const isAlreadyInitializedAccountState = atom(true)

@@ -1,3 +1,4 @@
+//@DEPRECATED
 import { styled, Box, Typography } from '@mui/material'
 import { useState } from 'react'
 import { withCsrOnly } from '~/hocs/CsrOnly'
@@ -28,13 +29,13 @@ const StatusView: React.FC<Props> = ({ status }) => {
 
       <TabPanel value={tab} index={0}>
         <BalanceValue>
-          <Typography variant='p_xxxlg'>${status.statusValues.totalLiquidityProvided.toLocaleString()}</Typography>
+          <Typography variant='p_xxlg'>${status.statusValues.totalLiquidityProvided.toLocaleString()}</Typography>
         </BalanceValue>
       </TabPanel>
 
       <TabPanel value={tab} index={1}>
         <BalanceValue>
-          <Typography variant='p_xxxlg'>{formatDollarAmount(status.totalCollateralLocked, 0, true)}</Typography>
+          <Typography variant='p_xxlg'>{formatDollarAmount(status.totalCollateralLocked, 0, true)}</Typography>
         </BalanceValue>
       </TabPanel>
     </StyledPaper>

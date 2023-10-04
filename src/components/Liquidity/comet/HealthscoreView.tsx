@@ -1,10 +1,14 @@
 import { styled, Box, Stack, Typography } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import IconAlertComet from 'public/images/alert-comet.svg'
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface Props {
   score?: number
 }
+
+export const RISK_HEALTH_SCORE = 30
 
 const enum HealthScoreType {
   Fair = 'Fair',
@@ -13,9 +17,9 @@ const enum HealthScoreType {
 }
 
 const enum HealthScoreTypeColor {
-  Fair = '#ff8e4f',
+  Fair = '#fff',
   Excellent = '#4fe5ff',
-  Poor = '#ed2525'
+  Poor = '#ff0084'
 }
 
 const HealthscoreView: React.FC<Props> = ({ score }) => {
@@ -26,10 +30,10 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
 
   useEffect(() => {
     if (score) {
-      if (score < 30) {
+      if (score < RISK_HEALTH_SCORE) {
         setScoreType(HealthScoreType.Poor)
         setScoreTypeColor(HealthScoreTypeColor.Poor)
-      } else if (score >= 30 && score < 70) {
+      } else if (score >= RISK_HEALTH_SCORE && score < 70) {
         setScoreType(HealthScoreType.Fair)
         setScoreTypeColor(HealthScoreTypeColor.Fair)
       } else {
@@ -41,25 +45,24 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
 
   return (
     <Box>
-      <Stack direction="row" height='86px'>
-        <ScoreBox sx={{ color: '#ff8e4f' }}>
-          {score &&
-            <Box sx={{ color: scoreTypeColor }}>
-              <Box marginTop="15px">
-                <Typography variant='p_xxxlg'>{Math.floor(score)}</Typography>
-              </Box>
-              <Box>
-                <Typography variant='p_sm'>{scoreType}</Typography>
-              </Box>
-            </Box>
-          }
-        </ScoreBox>
+      <Stack direction="row" height='56px'>
+
+        {score &&
+          <Box sx={{ color: scoreTypeColor }}>
+            <Stack direction='row' alignItems='center' gap={1} mt='8px'>
+              {scoreType === HealthScoreType.Poor &&
+                <Image src={IconAlertComet} alt='alert' width={15} height={14} />
+              }
+              <Typography variant='h2'>{Math.floor(score)}</Typography>
+            </Stack>
+          </Box>
+        }
         <Box display='flex' height='100%'>
-          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 10px)` }} />
+          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 5px)` }} />
           <ScoreBar />
           <Box height='100%'>
             <Box sx={{ position: 'relative', top: '-10px', left: '5px' }}><Typography variant='p_sm'>100 (Excellent)</Typography></Box>
-            <Box sx={{ position: 'relative', top: '40px', left: '5px' }}><Typography variant='p_sm'>0 (Poor)</Typography></Box>
+            <Box sx={{ position: 'relative', top: '13px', left: '5px' }}><Typography variant='p_sm'>0 (Poor)</Typography></Box>
           </Box>
         </Box>
       </Stack >
@@ -67,16 +70,10 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
   )
 }
 
-const ScoreBox = styled(Box)`
-  width: 104px;
-  height: 100%;
-  text-align: center;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-`
 const ScoreBar = styled(Box)`
   width: 4px;
   height: 100%;
-  background-image: linear-gradient(to top, #ed2525 0%, #ff8e4f 26%, #4fe5ff 100%);
+  background-image: linear-gradient(to top, #ff006b, #4fe5ff);
 `
 
 export default HealthscoreView

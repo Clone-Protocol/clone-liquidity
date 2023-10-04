@@ -40,7 +40,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
 						<Image src={logoIcon} width={148} height={36} alt="clone" />
 						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
 						<DescBox>
-							<Typography variant='p'>This is your first time connecting this wallet to Clone Liquidity on Devnet. Please open an account by pressing the button below. Afterwards, you will see a wallet popup requesting a one time fee of </Typography><Typography variant='h8' color='#fff'>~0.26 Devnet SOL.</Typography> <Typography variant='p'>Opening an account is necessary in order to use the features on Clone Liquidity.</Typography>
+							<Typography variant='p'>This is your first time connecting this wallet to Clone Liquidity on Devnet. Please open an account by pressing the button below. Afterwards, you will see a wallet popup requesting a one time fee of </Typography><Typography variant='p' color='#fff'>~0.26 Devnet SOL.</Typography> <Typography variant='p'>Opening an account is necessary in order to use the features on Clone Liquidity.</Typography>
 						</DescBox>
 						<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
 							<Typography variant='p_lg'>Open Devnet Account</Typography>
@@ -72,8 +72,6 @@ const ContentContainer = styled('div')`
 	align-items: center;
 	padding: 40px;
 	border-radius: 20px;
-	// background: no-repeat center center;
-	// background-size: cover;
 `
 const LeftBox = styled(Box)`
 	width: 352px;

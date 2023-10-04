@@ -21,25 +21,37 @@ export const enum GridType {
 export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, onRowClick }) => (
   <DataGrid
     sx={{
+      width: '100%',
       border: 0,
       color: '#fff',
       minHeight: `${minHeight}px`,
+      '& .MuiDataGrid-main': {
+        border: '1px solid #1a1c28',
+        borderBottomLeftRadius: '20px',
+        borderBottomRightRadius: '20px',
+        borderTopLeftRadius: '20px',
+        borderTopRightRadius: '20px',
+      },
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end',
-        marginRight: '4px',
+        maxWidth: '180px'
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#989898',
-        fontSize: '12px'
+        fontSize: '12px',
+        lineHeight: 1.33,
+        marginLeft: '10px'
       },
       '& .last--header': {
-        '& .MuiDataGrid-columnHeaderTitle': {
-          marginLeft: '20px'
+        '& .MuiDataGrid-columnHeaderTitleContainer': {
+          display: 'flex',
+          justifyContent: 'right',
+          marginRight: '35px'
         }
       },
       '& .MuiDataGrid-columnHeaders': {
-        borderBottom: '1px solid #3f3f3f',
+        borderBottom: '1px solid #1a1c28',
       },
       '& .MuiDataGrid-columnHeader:focus': {
         outline: 'none',
@@ -49,11 +61,11 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       },
       '& .MuiDataGrid-row': {
         marginRight: '10px',
-        borderBottom: '1px solid #3f3f3f',
+        paddingLeft: '10px',
         cursor: 'pointer'
       },
       '& .MuiDataGrid-row:hover': {
-        backgroundColor: '#1b1b1b'
+        backgroundColor: 'rgba(255, 255, 255, 0.05)'
       },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
@@ -65,10 +77,6 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       '& .MuiDataGrid-cell:focus-within': {
         outline: 'none !important'
       },
-      '& .MuiDataGrid-withBorder': {
-        borderRight: '0px solid #1b1b1b',
-        marginLeft: '-5px'
-      },
       '.border-warning--row': {
         borderLeft: '1px solid #ff8e4f',
         borderRight: '1px solid #ff8e4f',
@@ -76,9 +84,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       '.border-poor--row': {
         borderLeft: '1px solid #ed2525',
         borderRight: '1px solid #ed2525'
-      }
-      // '.super-app-theme--row': {
-      // }
+      },
     }}
     components={{
       NoResultsOverlay: customNoRowsOverlay
@@ -108,8 +114,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
     disableDensitySelector
     disableExtendRowFullWidth
     hideFooter
-    headerHeight={40}
-    rowHeight={52}
+    headerHeight={38}
+    rowHeight={72}
     rowCount={20}
     onRowClick={onRowClick}
     columns={headers}
@@ -117,10 +123,10 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
   />
 )
 
-export const CustomNoRowsOverlay = (msg: string) => {
+export const CustomNoRowsOverlay = (msg: string, color?: string) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '21px' }}>
-      <Typography variant='p'>{msg}</Typography>
+      <Typography variant='p_lg' color={color || '#66707e'}>{msg}</Typography>
     </Box>
   )
 }
@@ -132,19 +138,19 @@ export interface TickerType {
 }
 
 export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, tickerSymbol }) => (
-  <Box display="flex" justifyContent="flex-start" marginLeft='4px'>
+  <Box display="flex" justifyContent="flex-start">
     {tickerIcon && <Image src={tickerIcon} width={27} height={27} alt={tickerSymbol} />}
-    <Box display='flex' alignItems='center' marginLeft='16px'>
-      <Box sx={{ maxWidth: '100px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-        <Typography variant='p_lg'>{tickerName}</Typography>
+    <Box display='flex' alignItems='center' ml='10px'>
+      <Box sx={{ maxWidth: '200px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+        <Typography variant='p_xlg'>{tickerName}</Typography>
       </Box>
-      <Box sx={{ color: '#989898' }} marginLeft='8px'>
-        <Typography variant='p'>{tickerSymbol}</Typography>
+      <Box sx={{ color: '#989898' }} ml='10px'>
+        <Typography variant='p_xlg'>{tickerSymbol}</Typography>
       </Box>
     </Box>
   </Box>
 )
 
 export const CellDigitValue = ({ value, symbol }: { value: string | undefined, symbol?: string }) => (
-  <Typography variant='p'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography>
+  <Typography variant='p_xlg'>{value && value.toLocaleString(undefined, { maximumFractionDigits: 5 })} {symbol}</Typography>
 )

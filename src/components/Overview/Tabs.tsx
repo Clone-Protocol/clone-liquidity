@@ -22,14 +22,19 @@ export const PageTab = styled(Tab)`
 		padding-left: 3px;
     padding-right: 3px;
 		margin-right: 20px;
-		height: 28px;
-    min-width: 0px;
+		min-width: 36px;
 		min-height: 28px;
+		height: 28px;
 	}
 	&.Mui-selected {
+		background-color: ${(props) => props.theme.basis.jurassicGrey};
 		color: #fff;
-		text-decoration: underline;
-		text-underline-position: under;
 	}
-	
+	&.Mui-focusVisible {
+		background-color: #fff;
+		color: #fff;
+	}
+	.highlight {
+		color: #fff;
+	}
 `

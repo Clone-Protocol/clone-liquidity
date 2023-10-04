@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import withSuspense from '~/hocs/withSuspense'
+import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, Stack, FormHelperText, Typography } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography, Button } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
@@ -13,19 +14,19 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useLiquidityDetailQuery } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 import { useNewPositionMutation } from '~/features/MyLiquidity/comet/LiquidityPosition.mutation'
 import { useRouter } from 'next/navigation'
-import CometBlank from '~/components/Overview/CometBlank'
-import DataPlusIcon from 'public/images/database-plus.svg'
-import DataPlusHoverIcon from 'public/images/database-plus-on.svg'
-import AirballoonIcon from 'public/images/airballoon-outline.svg'
-import AirballoonHoverIcon from 'public/images/airballoon-outline-on.svg'
-import { StyledDivider } from '~/components/Common/StyledDivider'
-import { SubmitButton } from '~/components/Common/CommonButtons'
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { ConnectButton, SelectButton, SubmitButton } from '~/components/Common/CommonButtons'
+import { OpaqueAlreadyPool, OpaqueDefault, OpaqueNoCollateral } from '~/components/Overview/OpaqueArea'
+import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
+import DepositIcon from 'public/images/deposit-icon.svg'
+import Link from 'next/link'
+import { useWalletDialog } from '~/hooks/useWalletDialog'
 
 const RISK_SCORE_VAL = 20
 
-const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefetchData: () => void }) => {
+const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetchData }: { assetIndex: number, assetData: any, openChooseLiquidityDialog: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
+  const { setOpen } = useWalletDialog()
   const router = useRouter()
   const [mintRatio, setMintRatio] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0.0)
@@ -120,150 +121,185 @@ const CometPanel = ({ assetIndex, onRefetchData }: { assetIndex: number, onRefet
         console.log('data', data)
         refetch()
         initData()
-        router.push('/myliquidity')
+        router.push('/comet/myliquidity')
       }
     } catch (err) {
       console.error(err)
     }
   }
 
-  // const handleChooseCollateral = (collId: number) => {
-  //   setOpenChooseCollateral(false)
-  // }
-
   const isValid = Object.keys(errors).length === 0
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
-  const BlankNoCollateral = () => (
-    <CometBlank title='Deposit collateral to your comet to get started' subtitle='Comets are designed to allow users to leverage the full capabilities of the CLS' icon={DataPlusIcon} hoverIcon={DataPlusHoverIcon} />
-  )
-
-  const BlankAlreadyPool = () => (
-    <CometBlank title='Liquidity position for this pool already exists for Comet' subtitle='Please edit the liquidity for this pool in My Liquidity or select a different pool' icon={AirballoonIcon} hoverIcon={AirballoonHoverIcon} />
-  )
-
-  if (positionInfo?.hasNoCollateral) {
-    return <BlankNoCollateral />
+  let opaqueArea = null
+  let actionButton = null
+  if (!publicKey) {
+    opaqueArea = <OpaqueDefault />
+    actionButton = (
+      <ConnectButton onClick={() => setOpen(true)}>
+        <Typography variant='p_xlg'>Connect Wallet</Typography>
+      </ConnectButton>
+    )
+  } else if (positionInfo?.hasNoCollateral) {
+    opaqueArea = <OpaqueNoCollateral />
+    actionButton = (
+      <Link href='/comet/myliquidity'>
+        <SelectButton>
+          <Typography variant='p_xlg'>Deposit Collateral</Typography>
+        </SelectButton>
+      </Link>
+    )
   } else if (positionInfo?.hasAlreadyPool) {
-    return <BlankAlreadyPool />
+    opaqueArea = <OpaqueAlreadyPool />
+    actionButton = (
+      <SelectButton onClick={() => openChooseLiquidityDialog()}>
+        <Typography variant='p_xlg'>Select a Pool</Typography>
+      </SelectButton>
+    )
+  } else {
+    actionButton = (
+      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
+        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
+      </SubmitButton>
+    )
   }
 
-  return positionInfo ? (
+  return (
     <>
-      <Box mb='10px'>
-        <BoxWithBorder p='20px'>
-          <Box>
-            <Typography variant='p_lg'>Current Comet Statistics</Typography>
-          </Box>
-          <Box my='15px'>
-            <Box mb='10px'><Typography variant='p' color='#989898'>Total Collateral Value</Typography></Box>
-            <Box><Typography variant='p_xlg'>${positionInfo.totalCollValue.toLocaleString()} USD</Typography></Box>
-          </Box>
-          <Box>
-            <Box mb='10px'><Typography variant='p' color='#989898'>Current Healthscore</Typography></Box>
-            <HealthscoreBar score={positionInfo.totalHealthScore} width={480} hiddenThumbTitle={true} />
-          </Box>
-        </BoxWithBorder>
+      <Box position='relative' mb='10px'>
+        <Box>
+          <BoxWithBorder p='14px 22px'>
+            <Box>
+              <Typography variant='p_lg'>Current Comet Status</Typography>
+            </Box>
+            <Box my='10px'>
+              <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
+              {positionInfo?.hasNoCollateral ?
+                <Link href='/comet/myliquidity'>
+                  <DepositCollateralButton>
+                    <Typography variant='p_lg'>Deposit collateral to get started </Typography>
+                    <Image src={DepositIcon} alt='deposit' />
+                  </DepositCollateralButton>
+                </Link>
+                :
+                <Box><Typography variant='h3' fontWeight={500}>${positionInfo?.totalCollValue.toLocaleString()}</Typography></Box>
+              }
+            </Box>
+            <Box>
+              <SubHeader><Typography variant='p'>Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></SubHeader>
+              <HealthscoreBar score={positionInfo?.totalHealthScore} width={480} hiddenThumbTitle={true} />
+            </Box>
+          </BoxWithBorder>
 
-        <StyledDivider />
-        <Box mb='13px'>
-          <Box>
-            <Typography variant='p_lg'>Liquidity Amount</Typography>
-          </Box>
-          <Box mt='15px' mb='10px' p='5px'>
-            <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-            <Box display='flex' justifyContent='space-between' marginTop='-10px'>
-              <Box><Typography variant='p_sm'>Min</Typography></Box>
-              <Box><Typography variant='p_sm'>Max</Typography></Box>
-            </Box>
-          </Box>
-          {/* <Stack direction='row' alignItems='flex-end' gap={1}>
-            <Box width='275px'>
-              <Controller
-                name="mintAmount"
-                control={control}
-                rules={{
-                  validate() {
-                    return validateMintAmount()
-                  }
-                }}
-                render={({ field }) => (
-                  <PairInput
-                    tickerIcon={'/images/assets/on-usd.svg'}
-                    tickerSymbol="onUSD"
-                    value={parseFloat(field.value.toFixed(3))}
-                    dollarPrice={0}
-                    headerTitle="Max Amount Mintable"
-                    headerValue={maxMintable}
-                    onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
-                      let mintVal = parseFloat(evt.currentTarget.value)
-                      mintVal = isNaN(mintVal) ? 0 : mintVal
-                      field.onChange(mintVal)
-                      maxMintable > 0 ? setMintRatio(mintVal * 100 / maxMintable) : 0
-                    }}
-                    onMax={(value: number) => {
-                      field.onChange(value)
-                      maxMintable > 0 ? setMintRatio(value * 100 / maxMintable) : 0
-                    }}
-                    onTickerClicked={() => setOpenChooseCollateral(true)}
-                  />
-                )}
-              />
-            </Box>
-            <Box width='275px'>
-              <PairInputView
-                tickerIcon={positionInfo.tickerIcon}
-                tickerSymbol={positionInfo.tickerSymbol}
-                value={mintAmount / positionInfo.price}
-                dollarPrice={mintAmount}
-              />
-            </Box>
-          </Stack> */}
-          <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-        </Box>
-        <BoxWithBorder padding="15px 24px">
-          <Stack direction='row' justifyContent='space-between'>
-            <Box><Typography variant="p">Your Liquidity Value</Typography></Box>
-            <Box><Typography variant="p_xlg">${totalLiquidity.toLocaleString()}</Typography></Box>
-          </Stack>
-        </BoxWithBorder>
-        <StyledDivider />
-
-        <BoxWithBorder padding="15px 24px">
-          <Box>
-            <Box mb="15px"><Typography variant="p">Projected Healthscore</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} /></Box>
-            <HealthscoreBar score={healthScore} prevScore={positionInfo.totalHealthScore} width={470} hideIndicator={true} />
-            {hasRiskScore &&
-              <WarningStack direction='row'><WarningAmberIcon sx={{ color: '#ed2525', width: '15px' }} /> <Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningStack>
+          <BoxWithBorder padding="15px 24px" mt='24px'>
+            <Box mb='10px'><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
+            {positionInfo?.hasAlreadyPool ?
+              <SelectDefaultPool onClick={() => openChooseLiquidityDialog()}>
+                <Box mb='4px'><Typography variant='p_lg'>Select a Pool</Typography></Box>
+                <Image src={SelectArrowIcon} alt='select' />
+              </SelectDefaultPool>
+              :
+              <SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
+                  <Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
+                </Stack>
+                <Image src={SelectArrowIcon} alt='select' />
+              </SelectPoolBox>
             }
-          </Box>
-        </BoxWithBorder>
+            <Box mt='20px'>
+              <Box>
+                <Typography variant='p_lg'>Liquidity Amount</Typography>
+              </Box>
+              <Box mt='15px' mb='10px' p='5px'>
+                <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+              </Box>
+              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+            </Box>
+
+            <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
+              <Box display='flex' alignItems='center'><Typography variant="p">Liquidity Value</Typography></Box>
+              <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
+            </StackWithBorder>
+
+            <Box mt='25px'>
+              <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} color='#66707e' /></Box>
+              <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
+              {hasRiskScore &&
+                <WarningStack direction='row'>
+                  <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
+                  <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+                </WarningStack>
+              }
+            </Box>
+          </BoxWithBorder>
+        </Box>
+
+        {opaqueArea}
       </Box>
 
-      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff8e4f' } : {}}>
-        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open Comet Liquidity Position</Typography>
-      </SubmitButton>
-
-      {/* <ChooseCollateralDialog
-        open={openChooseCollateral}
-        handleChooseCollateral={handleChooseCollateral}
-        handleClose={() => setOpenChooseCollateral(false)}
-      /> */}
+      {actionButton}
     </>
-  ) : <></>
+  )
 }
 
 const BoxWithBorder = styled(Box)`
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+`
+const StackWithBorder = styled(Stack)`
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  padding: 18px;
 `
 const WarningStack = styled(Stack)`
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   margin-top: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border: 1px solid ${(props) => props.theme.palette.error.main};
-  color: ${(props) => props.theme.palette.text.secondary};
+  padding: 13px;
+  border-radius: 5px;
+  background-color: rgba(255, 0, 214, 0.15);
+  color: #ff0084;
+  &:hover {
+    background-color: rgba(237, 37, 193, 0.1);
+  }
 `
-
+const SubHeader = styled(Box)`
+  color: ${(props) => props.theme.basis.slug};
+`
+const SelectPoolBox = styled(Box)`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 190px;
+	height: 40px;
+	background-color: rgba(37, 141, 237, 0.15);
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 8px;
+	&:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+		background-color: rgba(37, 141, 237, 0.23);
+  }
+`
+const SelectDefaultPool = styled(Box)`
+  width: 134px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
+  &:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
+  }
+`
+const DepositCollateralButton = styled(SelectDefaultPool)`
+  width: 285px;
+  height: 35px;
+  color: #fff;
+  justify-content: center;
+`
 export default withSuspense(CometPanel, <LoadingProgress />)

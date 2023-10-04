@@ -1,26 +1,47 @@
-import Slide from '@mui/material/Slide';
-import { styled, Typography, Stack, Box } from '@mui/material'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { styled, Typography, Stack } from '@mui/material'
+import Image from 'next/image'
+import InfoIcon from 'public/images/info-icon.svg'
+import IconAlertComet from 'public/images/alert-comet.svg'
 
-const WarningMsg: React.FC = ({ children }: { children?: React.ReactNode }) => {
-	return (
-		<Slide direction="up" in={true} mountOnEnter unmountOnExit>
-			<WarningStack direction='row'>
-				<WarningAmberIcon sx={{ color: '#ed2525', width: '15px', marginLeft: '5px' }} />
-				<Box ml='10px'><Typography variant='p'>{children}</Typography></Box>
-			</WarningStack>
-		</Slide>
-	)
+export const InfoMsg = ({ children }: { children?: React.ReactNode }) => {
+  return (
+    <InfoStack direction='row'>
+      <Image src={InfoIcon} alt='info' />
+      <Typography variant='p'>{children}</Typography>
+    </InfoStack>
+  )
 }
-
-const WarningStack = styled(Stack)`
-  justify-content: center;
+const InfoStack = styled(Stack)`
+  color: ${(props) => props.theme.basis.skylight};
+  cursor: pointer;
   align-items: center;
-  margin-top: 10px;
-	line-height: 0.9;
-	padding: 10px;
-  border: 1px solid ${(props) => props.theme.palette.error.main};
-  color: ${(props) => props.theme.palette.text.secondary};
+  padding: 13px;
+  width: 100%;
+  gap: 13px;
+  cursor: pointer;
+  line-height: 1.33;
+  border-radius: 5px;
+  background-color: rgba(79, 229, 255, 0.1);
+  &:hover {
+    background-color: rgba(79, 229, 255, 0.05);
+  }
+`
+
+export const WarningMsg = ({ children }: { children?: React.ReactNode }) => {
+  return (
+    <WarningStack direction='row'>
+      <Image src={IconAlertComet} alt='alert' width={15} height={14} />
+      <Typography variant='p'>{children}</Typography>
+    </WarningStack>
+  )
+}
+const WarningStack = styled(InfoStack)`
+  color: #ff0084;
+  cursor: pointer;
+  background-color: rgba(255, 0, 214, 0.15);
+  &:hover {
+    background-color: rgba(255, 0, 214, 0.05);
+  }
 `
 
 export default WarningMsg

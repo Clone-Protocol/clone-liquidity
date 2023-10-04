@@ -3,18 +3,13 @@ import { styled } from '@mui/system'
 import { Box } from '@mui/material'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-// import dynamic from 'next/dynamic'
 import { formatDollarAmount } from '~/utils/numbers'
 import LineChartAlt from '~/components/Charts/LineChartAlt'
-// import { unixToDate } from '~/utils/date'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
 import { TimeTabs, TimeTab, FilterTimeMap, FilterTime } from '~/components/Charts/TimeTabs'
 import { useTotalLiquidityQuery, useTotalVolumeQuery } from '~/features/Chart/Liquidity.query'
 
-const LineChart: React.FC = () => {
-  // const LineChart = dynamic(() => import('~/components/Charts/LineChart'), { loading: () => <p>Loading ...</p>, ssr: false });
-  // const SimpleBarChart = dynamic(() => import('~/components/Charts/SimpleBarChart'), { loading: () => <p>Loading ...</p>, ssr: false });
-
+const MainChart: React.FC = () => {
   const [tab, setTab] = useState(0)
   const [filterTime, setFilterTime] = useState<FilterTime>('7d')
   const [chartHover, setChartHover] = useState<number | undefined>()
@@ -55,19 +50,6 @@ const LineChart: React.FC = () => {
     }
   }, [totalLiquidity, totalVolume, tab])
 
-  // const formattedData = useMemo(() => {
-  //   if (chartData) {
-  //     return chartData.map((day: ChartElem) => {
-  //       return {
-  //         time: unixToDate(day.date),
-  //         value: day.liquidity,
-  //       }
-  //     })
-  //   } else {
-  //     return []
-  //   }
-  // }, [chartData])
-
   return (
     <LineChartAlt
       data={tab === 0 ? totalLiquidity?.chartData : totalVolume?.chartData}
@@ -101,7 +83,7 @@ const LineChart: React.FC = () => {
 }
 
 const SelectValue = styled(Box)`
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 500;
   font-stretch: normal;
   font-style: normal;
@@ -110,7 +92,7 @@ const SelectValue = styled(Box)`
   text-align: left;
   color: #fff;
   margin-left: 20px;
-  margin-top: 17px;
+  margin-top: 5px;
 `
 
-export default withSuspense(LineChart, <LoadingProgress />)
+export default withSuspense(MainChart, <LoadingProgress />)

@@ -15,7 +15,7 @@ export interface CloneProviderProps {
 	children: ReactNode
 }
 
-export const CloneProvider: FC<CloneProviderProps> = ({ children, ...props }) => {
+export const CloneProvider: FC<CloneProviderProps> = ({ children }) => {
 	const createAccountStatus = useAtomValue(createAccountDialogState)
 	const [mainCloneClient, setMainCloneClient] = useAtom(cloneClient)
 	const [mainConnectedPubKey, setMainConnectedPubKey] = useAtom(connectedPubKey)

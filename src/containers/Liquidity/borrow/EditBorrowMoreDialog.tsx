@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, styled, Dialog, DialogContent, FormHelperText, Typography } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, FormHelperText, Typography, Stack } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditBorrowMutation } from '~/features/Borrow/Borrow.mutation'
@@ -9,16 +9,15 @@ import { useForm, Controller } from 'react-hook-form'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditBorrowedInput from '~/components/Liquidity/borrow/EditBorrowedInput'
 import { FadeTransition } from '~/components/Common/Dialog'
-import DataLoadingIndicator from '~/components/Common/DataLoadingIndicator'
-import CollRatioBar from '~/components/Liquidity/borrow/CollRatioBar'
-import { StyledDivider } from '~/components/Common/StyledDivider'
-import { SubmitButton } from '~/components/Common/CommonButtons'
+import { CloseButton, SubmitButton } from '~/components/Common/CommonButtons'
 import { TAB_BORROW } from '../LiquidityTable'
+import Image from 'next/image'
+import IconSmile from 'public/images/icon-smile.svg'
 
-const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
+const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const borrowIndex = borrowId
-  const [editType, setEditType] = useState(0) // 0 : borrow more , 1: repay
+  const [editType, setEditType] = useState(initEditType) // 0 : borrow more , 1: repay
   const [maxCollVal, setMaxCollVal] = useState(0);
   const router = useRouter()
 
@@ -84,7 +83,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
     if (editType === 1) {
       setHasLackBalance(borrowAmount > borrowDetail.iassetVal)
-      setIsFullRepaid(Number(borrowDetail.borrowedOnasset) === borrowAmount)
+      setIsFullRepaid(Number(borrowDetail.borrowedOnasset) <= borrowAmount)
     }
     setHasRiskRatio(borrowDetail.minCollateralRatio * 1.1 >= expectedCollRatio)
   }, [borrowAmount, editType])
@@ -122,7 +121,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
         console.log('data', data)
         onRefetchData()
         onHideEditForm()
-        router.replace(`/myliquidity?ltab=${TAB_BORROW}`)
+        router.replace(`/comet/myliquidity?ltab=${TAB_BORROW}`)
       }
     } catch (err) {
       console.error(err)
@@ -133,12 +132,31 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 
   return (
     <>
-      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={500}>
-        <DialogContent sx={{ background: '#1b1b1b' }}>
+      <Dialog open={open} onClose={onHideEditForm} TransitionComponent={FadeTransition} maxWidth={600}>
+        <DialogContent sx={{ background: '#000916', width: '600px' }}>
           <BoxWrapper>
-            <Typography variant='p_xlg'>Edit Borrowed Amount of Borrow Position</Typography>
-            <StyledDivider />
-            <Box>
+            <Typography variant='h3'>Manage Borrow Position: Borrowed Amount</Typography>
+
+            <Stack direction='row' gap={3} mt='38px'>
+              <ValueBox width='220px'>
+                <Box mb='6px'><Typography variant='p'>Borrowed Asset</Typography></Box>
+                <Box display="flex" alignItems='center'>
+                  <Image src={fromPair.tickerIcon} width={28} height={28} alt={fromPair.tickerSymbol!} />
+                  <Typography variant="h4" ml='10px'>
+                    {fromPair.tickerName}
+                  </Typography>
+                </Box>
+              </ValueBox>
+              <ValueBox width='300px'>
+                <Box mb='6px'><Typography variant='p'>Collateral Ratio</Typography></Box>
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <Typography variant='h3'>{borrowDetail.collateralRatio.toFixed(2)}%</Typography>
+                  <Typography variant='p_lg' color='#66707e'>(min {borrowDetail.minCollateralRatio.toFixed(0)}%)</Typography>
+                </Stack>
+              </ValueBox>
+            </Stack>
+
+            <Box my='38px'>
               <Controller
                 name="borrowAmount"
                 control={control}
@@ -168,8 +186,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                     currentCollAmount={Number(borrowDetail.borrowedOnasset)}
                     dollarPrice={Number(borrowDetail.borrowedOnasset) * borrowDetail.price}
                     onChangeType={handleChangeType}
-                    onChangeAmount={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      // const borrowAmt = parseFloat(event.currentTarget.value)
+                    onChangeAmount={(event: React.FormEvent<HTMLInputElement>) => {
                       field.onChange(event.currentTarget.value)
                     }}
                     onMax={(value: number) => {
@@ -178,24 +195,40 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
                   />
                 )}
               />
-              <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText>
+              {/* <FormHelperText sx={{ textAlign: 'right' }} error={!!errors.borrowAmount?.message}>{errors.borrowAmount?.message}</FormHelperText> */}
             </Box>
 
-            <BoxWithBorder>
-              {hasLackBalance || isFullRepaid ? <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>{hasLackBalance ? 'N/A' : 'Position will be paid in full'}</Typography></Box> :
-                < Box >
-                  <Typography variant='h8'>Projected Collateral Ratio</Typography>
-                  <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} />
+            <RatioBox>
+              {hasLackBalance || isFullRepaid ?
+                <Box>
+                  <Image src={IconSmile} alt='full borrowed amount' />
+                  <Box>
+                    <Typography variant='p' color='#414e66'>{hasLackBalance ? 'N/A' : 'Borrowed amount paid in full (no collateral ratio)'}</Typography>
+                  </Box>
+                </Box>
+                :
+                <Box>
+                  <Typography variant='p'>Projected Collateral Ratio</Typography>
+                  <Stack direction='row' gap={1} mt='12px'>
+                    <Typography variant='h3' fontWeight={500} color={editType === 0 && hasRiskRatio ? '#ff0084' : '#fff'}>
+                      {expectedCollRatio.toFixed(2)}%
+                    </Typography>
+                    <Typography variant='p_xlg' color={editType === 0 ? '#ff0084' : '#4fe5ff'}>
+                      {editType === 1 ? '+' : '-'}{(Math.abs(expectedCollRatio - borrowDetail.collateralRatio)).toFixed(2)}%
+                    </Typography>
+                  </Stack>
+                  <Typography variant='p_lg' color={editType === 0 && hasRiskRatio ? '#ff0084' : '#66707e'}>(min {borrowDetail.minCollateralRatio}%)</Typography>
+                  {/* <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} /> */}
                 </Box>}
-            </BoxWithBorder>
+            </RatioBox>
 
-            <SubmitButton onClick={handleSubmit(!isFullRepaid ? onEdit : onClose)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#ff8e4f' } : {}}>
+            <SubmitButton onClick={handleSubmit(!isFullRepaid ? onEdit : onClose)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
                 : <Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography>}
             </SubmitButton>
 
-            <Box display='flex' justifyContent='center'>
-              <DataLoadingIndicator onRefresh={() => onRefetchData()} />
+            <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
+              <CloseButton handleClose={onHideEditForm} />
             </Box>
           </BoxWrapper>
         </DialogContent>
@@ -205,14 +238,27 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, open, onHideEditForm, on
 }
 
 const BoxWrapper = styled(Box)`
-  width: 500px;
   color: #fff;
   overflow-x: hidden;
 `
-const BoxWithBorder = styled(Box)`
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  padding: 15px 18px;
-  margin-top: 16px;
+const ValueBox = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  height: 78px;
+  padding: 8px 30px;
+  border-radius: 10px;
+  line-height: 24px;
+  background-color: ${(props) => props.theme.basis.jurassicGrey};
+`
+const RatioBox = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+  border-radius: 5px;
+  background-color: ${(props) => props.theme.basis.darkNavy};
+  height: 120px;
 `
 
 export default EditBorrowMoreDialog

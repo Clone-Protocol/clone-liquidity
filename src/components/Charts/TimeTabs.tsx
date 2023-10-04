@@ -23,14 +23,29 @@ export const TimeTabs: React.FC<Pick<TabsProps, 'value' | 'onChange' | 'sx' | 'v
 export const TimeTab = styled(Tab)`
 	font-size: 10px;
 	font-weight: 500;
+	text-transform: none;
+	color: #fff;
 	&.MuiTab-root {
 		padding: 0px;
-    min-width: 35px;
-		height: 15px;
+    min-width: 36px;
+		height: 20px;
 		min-height: 15px;
+		color: ${(props) => props.theme.basis.slug};
+		text-transform: none;
+	}
+	&:hover {
+		background-color: ${(props) => props.theme.basis.jurassicGrey};
+		color: ${(props) => props.theme.basis.slug};
 	}
 	&.Mui-selected {
+		background-color: ${(props) => props.theme.basis.jurassicGrey};
 		color: #fff;
-		text-decoration: underline;
+	}
+	&.Mui-focusVisible {
+		background-color: #fff;
+		color: #fff;
+	}
+	.highlight {
+		color: #fff;
 	}
 `

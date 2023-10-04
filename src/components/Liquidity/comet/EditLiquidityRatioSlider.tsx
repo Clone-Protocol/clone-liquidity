@@ -1,5 +1,4 @@
-import { Box, Slider, Stack, styled } from '@mui/material'
-// import Image from 'next/image'
+import { Box, Slider, Stack, Typography, styled } from '@mui/material'
 import { PositionInfo } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 
 interface Props {
@@ -18,7 +17,7 @@ interface Props {
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
   color: '#FFF',
-  height: 4,
+  height: 5,
   marginTop: '13px',
   '& .MuiSlider-thumb': {
     zIndex: 30,
@@ -32,35 +31,32 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   },
   '& .MuiSlider-track': {
     zIndex: 10,
-    height: 3,
+    height: 5,
     border: 'none',
-    background: 'linear-gradient(to left, #ff8e4f -12%, #fff 66%)'
+    background: 'linear-gradient(to right, #fff 51%, #ff0084 400px)'
   },
   '& .MuiSlider-valueLabel': {
-    fontSize: '11px',
-    fontWeight: '600',
+    fontSize: '14px',
+    fontWeight: '500',
     width: '60px',
     height: '28px',
     padding: '4px 8px',
     border: 'solid 1px #fff',
+    borderRadius: '4px',
     backgroundColor: 'transparent',
     '&:before': { display: 'none' },
   },
   '& .MuiSlider-rail': {
     zIndex: 10,
-    color: '#444444',
-    height: 3,
+    color: '#414e66',
+    height: 5,
   },
 }))
 
 const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, positionInfo, maxMintable, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
   const valueLabelFormat = (value: number) => {
-    return `${value.toLocaleString(undefined, { maximumFractionDigits: 3 })}%`
+    return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
   }
-
-  // const handleMaxRatio = () => {
-  //   onChangeRatio && onChangeRatio(100)
-  // }
 
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') {
@@ -68,22 +64,14 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
     }
   }
 
-  // const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.currentTarget.value) {
-  //     const amount = parseFloat(e.currentTarget.value)
-  //     onChangeAmount && onChangeAmount(amount)
-  //   }
-  // }
-
   return (
     <Box>
       <Stack direction='row' alignItems='center' justifyContent='center' p='12px 8px'>
-        <MinMaxVal><Box>0%</Box><Box>(Min)</Box></MinMaxVal>
-        <Box width='337px'>
+        <Box width='100%'>
           <StyledSlider
             sx={{
               '& .MuiSlider-track': {
-                background: `linear-gradient(to left, #ff8e4f -12%, #fff ${ratio}%)`
+                background: `linear-gradient(to right, #fff 51%, #ff0084 400px);`
               }
             }}
             value={ratio}
@@ -94,107 +82,40 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             onChange={handleChangeMintRatio}
             valueLabelDisplay="on"
           />
-          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 8px)` }}>
-            <FixThumb />
-            <FixValueLabel>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 3 })}%</FixValueLabel>
+          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 32px)` }}>
+            <FixValueLabel><Typography variant='p_lg' ml='-15px'>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
+            <Box mt='-4px'><Typography variant='p' color='#66707e'>Current</Typography></Box>
           </PrevBox>
         </Box>
-        <MinMaxVal><Box>100%</Box><Box>(Max)</Box></MinMaxVal>
       </Stack>
-
-      {/* {ratio > 0 &&
-        <Box>
-          <Stack direction="row" gap={1} alignItems='flex-end'>
-            <Box>
-              <Stack direction="row" justifyContent="flex-end">
-                <Typography variant='p' color='#989898'>
-                  Max Amount Mintable: <MaxValue onClick={() => handleMaxRatio()}>{maxMintable.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>
-                </Typography>
-              </Stack>
-              <StyledBox>
-                <FormBox sx={{ background: '#363636' }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Box display="flex" alignItems='center'>
-                      <Image src={'/images/assets/on-usd.svg'} width={28} height={28} alt='onUSD' />
-                      <Box marginLeft='8px'>
-                        <Typography variant='p_lg'>onUSD</Typography>
-                      </Box>
-                    </Box>
-                    <Box lineHeight='20px'>
-                      <InputAmount id="ip-amount" type="number" min={0} sx={mintAmount && mintAmount > 0 ? { color: '#fff' } : { color: '#adadad' }} placeholder="0.00" value={parseFloat(mintAmount.toFixed(4))} onChange={handleChangeAmount} />
-                      <MintAmount>${mintAmount.toLocaleString()} USD</MintAmount>
-                    </Box>
-                  </Stack>
-                </FormBox>
-                <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{currentMintAmount.toLocaleString()} onUSD</Typography></BottomBox>
-              </StyledBox>
-            </Box>
-            <StyledBox>
-              <FormBox>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box display="flex">
-                    <Image src={positionInfo.tickerIcon} width={28} height={28} alt={positionInfo.tickerSymbol} />
-                    <Box marginLeft='8px'>
-                      <Typography variant='p_lg'>{positionInfo.tickerSymbol}</Typography>
-                    </Box>
-                  </Box>
-                  <Box textAlign='right' lineHeight='20px'>
-                    <Typography variant='p_xlg'>{(mintAmount / positionInfo.price).toLocaleString()}</Typography>
-                    <MintAmount>${mintAmount.toLocaleString()}</MintAmount>
-                  </Box>
-                </Stack>
-              </FormBox>
-              <BottomBox><Typography variant='p' color='#989898'>Current: </Typography> <Typography variant='p'>{(currentMintAmount / positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 3 })} {positionInfo.tickerSymbol}</Typography></BottomBox>
-            </StyledBox>
-          </Stack>
-        </Box>
-      } */}
     </Box>
   )
 }
 
-// const StyledBox = styled(Box)`
-//   border: solid 1px ${(props) => props.theme.boxes.blackShade};
-//   width: 215px;
-// `
-const FixThumb = styled('div')`
-  width: 20px;
-  height: 20px;
-  background-color: #fff;
-  border-radius: 99999px;
-  border: 3px solid #686868;
-`
-// const MaxValue = styled('span')`
-// 	color: #90e4fe; 
-// 	cursor: pointer;
-// `
-const MinMaxVal = styled(Box)`
-  font-size: 11px;
-  font-weight: 500;
-  color: ${(props) => props.theme.palette.text.secondary};
-  line-height: 12px;
-  margin-bottom: 40px;
-  margin-right: 6px;
-  margin-left: 6px;
-`
 const PrevBox = styled(Box)`
   position: relative; 
-  width: 83px;
+  width: 60px;
   text-align: center;
-  top: -32px;
+  top: -15px;
   z-index: 20;
 `
 const FixValueLabel = styled(Box)`
-  width: 60px;
+  width: 100%;
   height: 28px;
-  padding: 4px 3px;
+  padding: 2px 8px;
   margin-top: 8px;
-  margin-left: -23px;
-  border: solid 1px ${(props) => props.theme.palette.text.secondary};
-  text-align: center;
+  border: solid 1px ${(props) => props.theme.basis.slug};
+  border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
-  color: ${(props) => props.theme.palette.text.secondary};
+  line-height: 22px;
+  color: ${(props) => props.theme.basis.slug};
+  &::before {
+    content: '▲';
+    position: relative;
+    left: 17px;
+    top: -18px;
+  }
 `
 // const FormBox = styled(Box)`
 //   height: 63px; 

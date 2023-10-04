@@ -1,23 +1,27 @@
 'use client'
 import { styled } from '@mui/system'
-import { Container, Box } from '@mui/material'
-import WelcomeMsg from '~/components/Overview/WelcomeMsg'
-import LineChart from '~/containers/Overview/LineChart'
+import { Box } from '@mui/material'
+import GetUSDiBadge from '~/components/Overview/GetUSDiBadge'
+import MainChart from '~/containers/Overview/MainChart'
 import AssetList from '~/containers/Overview/AssetList'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const Overview = () => {
+  const { publicKey } = useWallet()
   return (
     <div>
       <StyledSection>
-        <Container>
-          <WelcomeMsg />
-          <Box marginTop='40px'>
-            <Box marginBottom='19px'>
-              <LineChart />
+        <Box sx={{ maxWidth: '1270px' }} margin='0 auto'>
+          {publicKey &&
+            <GetUSDiBadge />
+          }
+          <Box mt='25px'>
+            <Box mb='19px'>
+              <MainChart />
             </Box>
             <AssetList />
           </Box>
-        </Container>
+        </Box>
       </StyledSection>
     </div>
   )

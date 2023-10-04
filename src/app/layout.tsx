@@ -6,7 +6,6 @@ import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { theme } from '~/theme'
 import GNB from '~/components/GNB'
-import Drawer from '~/components/Drawer'
 import Box from '@mui/material/Box'
 import { SnackbarProvider } from 'notistack'
 import ClientWalletProvider from '~/hocs/ClientWalletProvider'
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <Box display='flex' sx={{ backgroundColor: '#000' }}>
                           <CssBaseline />
                           <GNB />
-                          <Drawer />
 
                           <Box
                             component="main"

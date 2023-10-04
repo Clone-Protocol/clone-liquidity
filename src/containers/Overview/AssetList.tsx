@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -7,30 +7,25 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
-import Divider from '@mui/material/Divider';
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
-import TradeIcon from 'public/images/trade-icon.svg'
-import { CellDigitValue, Grid, CellTicker } from '~/components/Common/DataGrid'
+import ArrowUpward from 'public/images/arrow-upward.svg'
+import ArrowDownward from 'public/images/arrow-down-red.svg'
+import { Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
 import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
-import { openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import { useRouter } from 'next/navigation'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { MARKETS_APP } from '~/data/social'
+import { formatDollarAmount } from '~/utils/numbers'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
 	const [searchTerm, setSearchTerm] = useState('')
 	const debounceSearchTerm = useDebounce(searchTerm, 500)
-
-	const { connected } = useWallet()
 	const router = useRouter()
-	const setOpenConnectWalletGuideDlogState = useSetAtom(openConnectWalletGuideDlogState)
 
 	const { data: assets } = useAssetsQuery({
 		filter,
@@ -59,11 +54,7 @@ const AssetList: React.FC = () => {
 		params
 	) => {
 		if (isAlreadyInitializedAccount) {
-			if (connected) {
-				router.push(`/assets/${params.row.ticker}`)
-			} else {
-				setOpenConnectWalletGuideDlogState(true)
-			}
+			router.push(`/comet/assets/${params.row.ticker}`)
 		} else {
 			handleLinkNeedingAccountClick(undefined)
 		}
@@ -79,7 +70,6 @@ const AssetList: React.FC = () => {
 				</PageTabs>
 				<SearchInput onChange={handleSearch} />
 			</Stack>
-			<Divider sx={{ backgroundColor: '#535353' }} />
 			<Grid
 				headers={columns}
 				rows={assets || []}
@@ -96,7 +86,7 @@ let columns: GridColDef[] = [
 		field: 'iAsset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'onAsset',
+		headerName: 'onAsset Pools',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
@@ -108,10 +98,28 @@ let columns: GridColDef[] = [
 		field: 'price',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Price',
+		headerName: 'Price (devUSD)',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="onUSD" />
+			return <Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
+		},
+	},
+	{
+		field: '24hChange',
+		headerClassName: 'super-app-theme--header',
+		cellClassName: 'super-app-theme--cell',
+		headerName: '24h Change',
+		flex: 1,
+		renderCell(params: GridRenderCellParams<string>) {
+			return params.row.change24h >= 0 ?
+				<Box color='#4fe5ff' display='flex' alignItems='center'>
+					<Typography variant='p_xlg'>+{params.row.change24h.toFixed(2)}%</Typography>
+					<Image src={ArrowUpward} alt='arrowUp' />
+				</Box>
+				: <Box color='#ff0084' display='flex' alignItems='center'>
+					<Typography variant='p_xlg'>{params.row.change24h.toFixed(2)}%</Typography>
+					<Image src={ArrowDownward} alt='arrowDown' />
+				</Box>
 		},
 	},
 	{
@@ -119,51 +127,51 @@ let columns: GridColDef[] = [
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
 		headerName: 'Liquidity',
-		flex: 2,
+		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.value} symbol="onUSD" />
+			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.value), 3)}</Typography>
 		},
 	},
 	{
 		field: '24hVolume',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: '24h Volume',
+		headerName: 'Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.row.volume24h} symbol="onUSD" />
+			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.row.volume24h), 3)}</Typography>
 		},
 	},
 	{
 		field: 'feeRevenue24h',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: '24h Fee Revenue',
+		headerName: 'Revenue',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <CellDigitValue value={params.row.feeRevenue24h} symbol="onUSD" />
+			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.value), 3)}</Typography>
 		},
 	},
-	{
-		field: 'action',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'last--cell',
-		headerName: '',
-		flex: 1,
-		renderCell(params: GridRenderCellParams<string>) {
-			const goToTrading = (e: any) => {
-				e.stopPropagation()
-				const url = `${MARKETS_APP}/trade/${params.row.ticker}`
-				window.open(url)
-			}
+	// {
+	// 	field: 'action',
+	// 	headerClassName: 'super-app-theme--header',
+	// 	cellClassName: 'last--cell',
+	// 	headerName: '',
+	// 	flex: 1,
+	// 	renderCell(params: GridRenderCellParams<string>) {
+	// 		const goToTrading = (e: any) => {
+	// 			e.stopPropagation()
+	// 			const url = `${MARKETS_APP}/trade/${params.row.ticker}`
+	// 			window.open(url)
+	// 		}
 
-			return (
-				<TradeButton onClick={goToTrading}>
-					<Image src={TradeIcon} alt='trade' />
-				</TradeButton>
-			)
-		},
-	},
+	// 		return (
+	// 			<TradeButton onClick={goToTrading}>
+	// 				<Image src={TradeIcon} alt='trade' />
+	// 			</TradeButton>
+	// 		)
+	// 	},
+	// },
 ]
 
 const PanelBox = styled(Box)`
@@ -173,13 +181,6 @@ const PanelBox = styled(Box)`
     color: #9d9d9d; 
     font-size: 11px; 
   }
-`
-const TradeButton = styled(Box)`
-	width: 25px;
-	height: 25px;
-	flex-grow: 0;
-	padding: 2px 4px 4px 7px;
-	cursor: pointer;
 `
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))

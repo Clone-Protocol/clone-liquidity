@@ -1,17 +1,26 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useState } from 'react'
-import LiquidityPairView from '~/components/Liquidity/comet/LiquidityPairView'
+import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
+import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import AddIconOff from 'public/images/add-icon.svg'
+import AddIconOn from 'public/images/add-icon-on.svg'
+import Image from 'next/image'
+import { useWallet } from '@solana/wallet-adapter-react'
+import ArrowUpward from 'public/images/arrow-upward.svg'
+import ArrowDownward from 'public/images/arrow-downward.svg'
 
-const LiquidityPositions = ({ positions, onRefetchData }: { positions: LiquidityPosition[], onRefetchData: () => void }) => {
+const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
+  const { publicKey } = useWallet()
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [openClosePosition, setOpenClosePosition] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
+  const [isBtnHover, setIsBtnHover] = useState(false)
   const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
   const CloseLiquidityDialog = dynamic(() => import('./Dialogs/CloseLiquidityDialog'))
 
@@ -33,20 +42,38 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
   }
 
   const redirectAddCometPage = () => {
-    router.push(`/assets/euro`)
+    router.push(`/comet/assets/euro`)
+  }
+
+  const handleRowClick: GridEventListener<'rowClick'> = (
+    params
+  ) => {
+    handleChooseEditPosition(params.row.id)
+  }
+
+  const rowsPositions = positions.map((position, id) => ({
+    ...position,
+    id,
+  }))
+
+  let customOverlay = () => CustomNoRowsOverlay('')
+  if (!publicKey) {
+    customOverlay = () => CustomNoRowsOverlay('Please connect wallet.')
+  } else if (hasNoCollateral) {
+    customOverlay = () => CustomNoRowsOverlay('Please add collateral first to initiate liquidity positions.', '#fff')
   }
 
   return (
     <>
       <Box>
-        <PairHeader>
-          <Box><Typography variant="p_sm">Pool</Typography></Box>
-          <Box ml='120px'><Typography variant="p_sm">Liquidity Value</Typography></Box>
-          <Box ml='15px'><Typography variant="p_sm">ILD</Typography></Box>
-          <Box ml='-5px'><Typography variant="p_sm">Rewards</Typography></Box>
-          <Box></Box>
-        </PairHeader>
-        {positions.map((position, index) =>
+        <Grid
+          headers={columns}
+          rows={rowsPositions || []}
+          minHeight={120}
+          customNoRowsOverlay={customOverlay}
+          onRowClick={handleRowClick}
+        />
+        {/* {positions.map((position, index) =>
           <LiquidityPairView
             key={index}
             poolIndex={index}
@@ -59,59 +86,130 @@ const LiquidityPositions = ({ positions, onRefetchData }: { positions: Liquidity
             onShowEditDialog={handleChooseEditPosition}
             onShowClosePositionDialog={handleShowClosePositionDialog}
           />
-        )}
+        )} */}
       </Box>
-      <Stack direction='row' justifyContent='space-between' marginTop='9px'>
-        {positions.length > 0 ?
-          <AddButton onClick={redirectAddCometPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButton>
-          :
-          <AddButtonNoPosition onClick={redirectAddCometPage}><Typography variant='p_sm'>+ New Liquidity Pool</Typography></AddButtonNoPosition>
-        }
-      </Stack>
+      {publicKey && !hasNoCollateral &&
+        <Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
+          {positions.length > 0 ?
+            <AddButton onClick={redirectAddCometPage}>
+              <Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
+              <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
+            </AddButton>
+            :
+            <AddButtonNoPosition onClick={redirectAddCometPage}>
+              <Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
+              <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
+            </AddButtonNoPosition>
+          }
+        </Stack>
+      }
 
-      <EditLiquidityDialog
-        open={openEditLiquidity}
-        positionIndex={editAssetId}
-        poolIndex={poolIndex}
-        onShowCloseLiquidity={handleShowCloseLiquidityDialog}
-        onRefetchData={onRefetchData}
-        handleClose={() => setOpenEditLiquidity(false)}
-      />
-      <CloseLiquidityDialog
-        open={openClosePosition}
-        positionIndex={editAssetId}
-        poolIndex={poolIndex}
-        onRefetchData={onRefetchData}
-        handleClose={() => setOpenClosePosition(false)}
-      />
+      {openEditLiquidity &&
+        <EditLiquidityDialog
+          open={openEditLiquidity}
+          positionIndex={editAssetId}
+          poolIndex={poolIndex}
+          onShowCloseLiquidity={handleShowCloseLiquidityDialog}
+          onRefetchData={onRefetchData}
+          handleClose={() => setOpenEditLiquidity(false)}
+        />
+      }
+      {openClosePosition &&
+        <CloseLiquidityDialog
+          open={openClosePosition}
+          positionIndex={editAssetId}
+          poolIndex={poolIndex}
+          onRefetchData={onRefetchData}
+          handleClose={() => setOpenClosePosition(false)}
+        />
+      }
     </>
   )
 
 }
 
-const PairHeader = styled(Box)`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 26px;
-  color: ${(props) => props.theme.palette.text.secondary};
-  border-top: 1px solid ${(props) => props.theme.boxes.greyShade};
-`
+let columns: GridColDef[] = [
+  {
+    field: 'pool',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'Liquidity Pool',
+    flex: 2,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <Box display="flex" justifyContent="flex-start">
+          <Image src={params.row.tickerIcon} width={27} height={27} alt={params.row.tickerSymbol} />
+          <Box ml='10px'><Typography variant='p_xlg'>{params.row.tickerSymbol}{'/devUSD'}</Typography></Box>
+        </Box>
+      )
+    },
+  },
+  {
+    field: 'liquidityAmount',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'Liquidity Amount',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>${params.row.liquidityDollarPrice.toLocaleString()}</Typography>
+    },
+  },
+  {
+    field: 'ild',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'ILD',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>${params.row.ildValue.toLocaleString()}</Typography>
+    },
+  },
+  {
+    field: 'rewards',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'Rewards',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString()}</Typography>
+    },
+  },
+  {
+    field: 'apy',
+    headerClassName: 'super-app-theme--header',
+    cellClassName: 'super-app-theme--cell',
+    headerName: 'APY',
+    flex: 1,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
+        <Typography variant='p_xlg'>+3.47%</Typography>
+        <Image src={ArrowUpward} alt='arrowUp' />
+      </Box>
+      // <Box display='flex' alignItems='center' color='#ff0084'>
+      //   <Typography variant='p_xlg'>-3.47%</Typography>
+      //   <Image src={ArrowDownward} alt='arrowDown' />
+      // </Box>
+    },
+  },
+]
+
+columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
+
 const AddButton = styled(Button)`
   width: 100%;
   height: 28px;
   padding: 4px 0;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  color: ${(props) => props.theme.palette.text.secondary};
+  background-color: rgba(255, 255, 255, 0.01);
+  border: 1px solid ${(props) => props.theme.basis.jurassicGrey};
+  color: ${(props) => props.theme.basis.shadowGloom};
   margin-top: 9px;
   &:hover {
-    background: ${(props) => props.theme.boxes.darkBlack};
+    background-color: rgba(255, 255, 255, 0.05);
     color: #fff;
-    border-color: ${(props) => props.theme.palette.text.secondary};
   }
 `
 const AddButtonNoPosition = styled(AddButton)`
-  border-color: ${(props) => props.theme.palette.info.main};
+  height: 42px;
   color: #fff;
   &:hover {
     border-color: ${(props) => props.theme.palette.info.main};

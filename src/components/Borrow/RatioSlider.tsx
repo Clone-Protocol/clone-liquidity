@@ -7,12 +7,13 @@ interface Props {
 	hideValueBox?: boolean
 	showChangeRatio?: boolean
 	hasRiskRatio?: boolean
+	hasLowerMin?: boolean
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
 	color: '#FFF',
-	height: 4,
+	height: 5,
 	padding: '13px 0',
 	marginTop: '13px',
 	'& .MuiSlider-thumb': {
@@ -26,30 +27,32 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 	'& .MuiSlider-track': {
 		zIndex: 10,
-		height: 4,
+		height: 5,
 		border: 'none',
 	},
 	'& .MuiSlider-valueLabel': {
-		width: '65px',
-		fontSize: '12px',
+		width: '56px',
+		height: '26px',
+		fontSize: '14px',
 		fontWeight: '500',
 		border: '1px solid #fff',
-		padding: '4px 8px 4px 8px',
-		backgroundColor: '#000',
+		borderRadius: '4px',
+		padding: '6px 8px',
+		backgroundColor: 'transparent',
 		'&:before': { display: 'none' },
 	},
 	'& .MuiSlider-rail': {
 		zIndex: 10,
-		color: '#3f3f3f',
-		height: 4,
+		color: '#414e66',
+		height: 5,
 	},
 }))
 
-const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, hasRiskRatio, onChange }) => {
-	const max = min + 100 + 50
+const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, showChangeRatio = false, hasRiskRatio, hasLowerMin, onChange }) => {
+	const max = min + 250
 
 	const valueLabelFormat = (val: number) => {
-		if (value > max) {
+		if (value >= max) {
 			return `${val.toFixed(0)}%+`
 		} else if (value < min) {
 			return `<${val.toFixed(0)}%`
@@ -58,50 +61,41 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 		}
 	}
 
-	const hasLowerMin = value < min;
-
 	return (
 		<Box>
-			<Box display='flex'>
+			<Box display='flex' mb='25px'>
 				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 				{showChangeRatio &&
-					<Box display='flex' sx={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}}>
-						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { color: '#ed2525', border: '1px solid #ed2525' } : hasRiskRatio ? { color: '#ff8e4f' } : {}} placeholder="0.00" value={Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-						<div style={{ marginLeft: '-26px', marginRight: '12px', marginTop: '11px' }}><Typography variant='p_xlg'>%</Typography></div>
+					<Box display='flex'>
+						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { border: '1px solid #ff0084' } : {}} placeholder="0.00" value={Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+						<div style={{ marginLeft: '-26px', marginRight: '5px', marginTop: '5px' }}><Typography fontSize='26px'>%</Typography></div>
 					</Box>
 				}
 				<Box width="100%">
 					<StyledSlider
 						sx={{
 							'& .MuiSlider-track': {
-								background: `linear-gradient(to right, #ff8e4f 35%, #ffffff 250px)`
+								background: `linear-gradient(to right, #ff0084 20%, #fff 130px);`
+							},
+							'& .MuiSlider-valueLabel': {
+								borderColor: hasLowerMin || hasRiskRatio ? '#ff0084' : '#fff'
 							}
 						}}
 						value={value > min ? value : min}
 						min={min - 25}
-						step={5}
-						max={min + 100 + 50}
+						step={1}
+						max={max}
 						valueLabelFormat={valueLabelFormat}
 						onChange={onChange}
 						valueLabelDisplay={'on'}
 					/>
 					<Box display='flex'>
-						<Box marginLeft='30px'><Stick /><FlagBox style={hasLowerMin ? { color: '#ed2525' } : hasRiskRatio ? { color: '#ed2525' } : {}}>min {min}%</FlagBox></Box>
-						<Box marginLeft='165px'><Stick /><FlagBox>safe {min + 100}%</FlagBox></Box>
+						<Box marginLeft='20px'><Stick /><FlagBox sx={hasLowerMin ? { borderColor: '#ff0084' } : {}}><Typography variant='p'>min {min}%</Typography></FlagBox></Box>
+						<Box marginLeft='38px'><Stick /><FlagBox><Typography variant='p'>safer {min + 50}%</Typography></FlagBox></Box>
 					</Box>
 				</Box>
 			</Box>
-			{hasLowerMin &&
-				<Box>
-					<Typography variant='p' color='#ed2525'>
-						The Collateral Ratio must be greater than minimum value
-					</Typography>
-				</Box>
-			}
-			{hasRiskRatio &&
-				<WarningMsg><Typography variant='p' ml='8px'>This position will have high possibility to become subject to liquidation.</Typography></WarningMsg>
-			}
-		</Box>
+		</Box >
 	)
 }
 
@@ -119,10 +113,11 @@ const InputAmount = styled(`input`)`
 	background-color: ${(props) => props.theme.boxes.darkBlack};
 	width: 108px;
 	height: 48px;
-	border: solid 1px ${(props) => props.theme.boxes.greyShade};
+	border: 0px;
+	border-radius: 5px;
 	line-height: 15px;
 	color: #fff;
-	font-size: 17.3px;
+	font-size: 26px;
 	font-weight: 500;
 	padding: 12px 18px;
 	cursor: pointer;
@@ -131,22 +126,22 @@ const InputAmount = styled(`input`)`
   }
 `
 const FlagBox = styled(Box)`
-  width: 90px;
-  height: 23px;
-  padding: 8px;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 3px;
-  margin-top: 0px;
+  width: 42px;
+  height: 37px;
+  line-height: 1.13;
+	border-radius: 4px;
+	border: 1px solid ${(props) => props.theme.basis.shadowGloom};
+	background: ${(props) => props.theme.basis.jurassicGrey};
+	text-align: center;
 `
 const Stick = styled('div')`
   z-index: 20;
 	border-radius: 0;
-	background: #fff;
-	width: 1px;
+	background: #414e66;
+	width: 2px;
 	height: 13px;
 	margin-top: -22px;
-	margin-left: 34px;
+	margin-left: 20px;
 `
 
 export default RatioSlider
