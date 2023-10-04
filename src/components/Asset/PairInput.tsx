@@ -111,8 +111,12 @@ const MaxButton = styled(Box)`
   font-size: 10px;
   font-weight: 600;
   padding: 2px 7px;
+	border-radius: 5px;
   color: #fff;
   cursor: pointer;
+	&:hover {
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue};
+	}
 `
 const DollarAmount = styled("div")`
   font-size: 12px;

@@ -6,7 +6,8 @@ import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import AddIcon from 'public/images/add-icon.svg'
+import AddIconOff from 'public/images/add-icon.svg'
+import AddIconOn from 'public/images/add-icon-on.svg'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
 import ArrowUpward from 'public/images/arrow-upward.svg'
@@ -19,6 +20,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const [openClosePosition, setOpenClosePosition] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
+  const [isBtnHover, setIsBtnHover] = useState(false)
   const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
   const CloseLiquidityDialog = dynamic(() => import('./Dialogs/CloseLiquidityDialog'))
 
@@ -87,15 +89,15 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
         )} */}
       </Box>
       {publicKey && !hasNoCollateral &&
-        <Stack direction='row' mt='9px'>
+        <Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
           {positions.length > 0 ?
             <AddButton onClick={redirectAddCometPage}>
-              <Image src={AddIcon} width={15} height={15} alt='add' />
+              <Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
               <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
             </AddButton>
             :
             <AddButtonNoPosition onClick={redirectAddCometPage}>
-              <Image src={AddIcon} width={15} height={15} alt='add' />
+              <Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
               <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
             </AddButtonNoPosition>
           }

@@ -9,6 +9,7 @@ import Liquidity from './manage-liquidity/Liquidity'
 import IldEdit from './manage-liquidity/IldEdit'
 import Rewards from './manage-liquidity/Rewards'
 import ClosePosition from './manage-liquidity/ClosePosition'
+import { CloseButton } from '~/components/Common/CommonButtons'
 
 const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -23,10 +24,14 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
     enabled: open && publicKey != null,
   })
 
+  const moveTab = (index: number) => {
+    setTab(index)
+  }
+
   return positionInfo ? (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={600}>
-        <DialogContent sx={{ backgroundColor: '#000916' }}>
+        <DialogContent sx={{ backgroundColor: '#000916', width: '600px' }}>
           <BoxWrapper>
             <Box mb='5px'>
               <Typography variant='h3'>Manage Liquidity</Typography>
@@ -65,6 +70,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
               <TabPanelForEdit value={tab} index={3}>
                 <ClosePosition
                   positionIndex={positionIndex}
+                  onMoveTab={moveTab}
                   onRefetchData={() => {
                     refetch()
                     onRefetchData()
@@ -72,6 +78,10 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                   handleClose={handleClose}
                 />
               </TabPanelForEdit>
+            </Box>
+
+            <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
+              <CloseButton handleClose={handleClose} />
             </Box>
           </BoxWrapper>
         </DialogContent>
@@ -81,7 +91,6 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 }
 
 const BoxWrapper = styled(Box)`
-  width: 600px;
   padding: 8px 18px; 
   color: #fff;
   overflow-x: hidden;

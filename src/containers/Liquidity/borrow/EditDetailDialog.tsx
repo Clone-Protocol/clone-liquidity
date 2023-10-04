@@ -8,7 +8,7 @@ import EditCollateralInput from '~/components/Liquidity/borrow/EditCollateralInp
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import { FadeTransition } from '~/components/Common/Dialog'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
-import { SubmitButton } from '~/components/Common/CommonButtons'
+import { CloseButton, SubmitButton } from '~/components/Common/CommonButtons'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
@@ -191,14 +191,14 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                 <Box>
                   <Typography variant='p'>Projected Collateral Ratio</Typography>
                   <Stack direction='row' gap={1} mt='12px'>
-                    <Typography variant='h3' fontWeight={500} color={editType === 0 ? '#fff' : '#ff0084'}>
+                    <Typography variant='h3' fontWeight={500} color={editType === 1 && hasRiskRatio ? '#ff0084' : '#fff'}>
                       {expectedCollRatio.toFixed(2)}%
                     </Typography>
-                    <Typography variant='p_xlg' color={editType === 0 ? '#4fe5ff' : '#ff0084'}>
+                    <Typography variant='p_xlg' color={editType === 1 ? '#ff0084' : '#4fe5ff'}>
                       {editType === 0 ? '+' : '-'}{(Math.abs(expectedCollRatio - borrowDetail.collateralRatio)).toFixed(2)}%
                     </Typography>
                   </Stack>
-                  <Typography variant='p_lg' color={editType === 0 ? '#66707e' : '#ff0084'}>(min {borrowDetail.minCollateralRatio}%)</Typography>
+                  <Typography variant='p_lg' color={editType === 1 && hasRiskRatio ? '#ff0084' : '#66707e'}>(min {borrowDetail.minCollateralRatio}%)</Typography>
                   {/* <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} /> */}
                 </Box>}
             </RatioBox>
@@ -208,6 +208,10 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
               <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Collateral</Typography>
             </SubmitButton>
+
+            <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
+              <CloseButton handleClose={onHideEditForm} />
+            </Box>
           </BoxWrapper>
         </DialogContent>
       </Dialog>

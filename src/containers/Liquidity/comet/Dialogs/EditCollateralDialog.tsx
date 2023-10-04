@@ -10,12 +10,12 @@ import { FadeTransition } from '~/components/Common/Dialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import PairInput from '~/components/Liquidity/comet/PairInput'
-import { RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButtons'
+import { CloseButton, RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButtons'
 import HealthscoreView, { RISK_HEALTH_SCORE } from '~/components/Liquidity/comet/HealthscoreView'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 
-const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseColl, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleChooseColl?: () => void, handleClose: () => void }) => {
+const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -139,7 +139,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
   return collData ? (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={400}>
-        <DialogContent sx={{ backgroundColor: '#000916' }}>
+        <DialogContent sx={{ backgroundColor: '#000916', width: '400px' }}>
           <BoxWrapper>
             <Box mb='20px'>
               <Typography variant='h3'>Manage Collateral</Typography>
@@ -247,6 +247,10 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
               </>
               :
               <ZeroAmountBox><Typography variant='h4'>Collateral Amount is Zero</Typography></ZeroAmountBox>}
+
+            <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
+              <CloseButton handleClose={handleClose} />
+            </Box>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -255,7 +259,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleChooseC
 }
 
 const BoxWrapper = styled(Box)`
-  width: 400px;
   color: #fff;
   overflow-x: hidden;
 `

@@ -135,7 +135,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
             <Box display='flex' justifyContent='center'>
               <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
             </Box>
-            <Box mt='10px' display='flex' justifyContent='center'>
+            <Box mt='15px' display='flex' justifyContent='center'>
               <HealthscoreView score={healthScore ? healthScore : positionInfo.totalHealthScore} />
             </Box>
           </CometHealthBox>

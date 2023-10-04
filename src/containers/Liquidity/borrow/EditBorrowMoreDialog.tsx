@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditBorrowedInput from '~/components/Liquidity/borrow/EditBorrowedInput'
 import { FadeTransition } from '~/components/Common/Dialog'
-import { SubmitButton } from '~/components/Common/CommonButtons'
+import { CloseButton, SubmitButton } from '~/components/Common/CommonButtons'
 import { TAB_BORROW } from '../LiquidityTable'
 import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
@@ -210,14 +210,14 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                 <Box>
                   <Typography variant='p'>Projected Collateral Ratio</Typography>
                   <Stack direction='row' gap={1} mt='12px'>
-                    <Typography variant='h3' fontWeight={500} color={editType === 1 ? '#fff' : '#ff0084'}>
+                    <Typography variant='h3' fontWeight={500} color={editType === 0 && hasRiskRatio ? '#ff0084' : '#fff'}>
                       {expectedCollRatio.toFixed(2)}%
                     </Typography>
-                    <Typography variant='p_xlg' color={editType === 1 ? '#4fe5ff' : '#ff0084'}>
+                    <Typography variant='p_xlg' color={editType === 0 ? '#ff0084' : '#4fe5ff'}>
                       {editType === 1 ? '+' : '-'}{(Math.abs(expectedCollRatio - borrowDetail.collateralRatio)).toFixed(2)}%
                     </Typography>
                   </Stack>
-                  <Typography variant='p_lg' color={editType === 1 ? '#66707e' : '#ff0084'}>(min {borrowDetail.minCollateralRatio}%)</Typography>
+                  <Typography variant='p_lg' color={editType === 0 && hasRiskRatio ? '#ff0084' : '#66707e'}>(min {borrowDetail.minCollateralRatio}%)</Typography>
                   {/* <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} /> */}
                 </Box>}
             </RatioBox>
@@ -226,6 +226,10 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
                 : <Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography>}
             </SubmitButton>
+
+            <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
+              <CloseButton handleClose={onHideEditForm} />
+            </Box>
           </BoxWrapper>
         </DialogContent>
       </Dialog>

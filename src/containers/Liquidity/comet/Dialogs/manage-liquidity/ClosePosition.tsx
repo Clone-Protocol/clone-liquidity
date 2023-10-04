@@ -8,8 +8,9 @@ import { useState } from "react"
 import { useClosePositionMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import Image from "next/image"
 import CheckIcon from 'public/images/check-icon.svg'
+import { fromScale } from "clone-protocol-sdk/sdk/src/clone"
 
-const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { positionIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
+const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -19,6 +20,33 @@ const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { position
     refetchOnMount: "always",
     enabled: publicKey != null,
   })
+
+  const liquidityNotional = () => {
+    let liquidity = 0
+    if (positionInfo) {
+      liquidity += fromScale(positionInfo.committedCollateralLiquidity, 7) * 2
+    }
+    return liquidity
+  }
+
+  const ildNotional = () => {
+    let reward = 0
+    if (positionInfo!.collateralILD > 0)
+      reward += positionInfo!.collateralILD
+    if (positionInfo!.onassetILD > 0)
+      reward += positionInfo!.onassetILD * positionInfo!.price
+    return Math.max(0, reward)
+  }
+
+  const rewardNotional = () => {
+    let reward = 0
+    if (positionInfo!.collateralILD < 0)
+      reward += (-positionInfo!.collateralILD)
+    if (positionInfo!.onassetILD < 0)
+      reward += (-positionInfo!.onassetILD * positionInfo!.price)
+
+    return Math.max(0, reward)
+  }
 
   const { mutateAsync } = useClosePositionMutation(publicKey)
   const handleClosePosition = async () => {
@@ -48,9 +76,11 @@ const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { position
     }
   }
 
-  const positionLiquidity: number = 0
-  const ildBalance: number = 0
-  const remainRewards: number = 0
+  const positionLiquidity: number = liquidityNotional()
+  const ildBalance: number = ildNotional()
+  const remainRewards: number = rewardNotional()
+
+  const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0
 
   return positionInfo ? (
     <>
@@ -70,7 +100,7 @@ const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { position
               <Typography variant="p">No Liquidity Remaining</Typography>
             </Stack>
             :
-            <GoButton><Typography variant="p_lg">Withdraw Liquidity</Typography></GoButton>
+            <GoButton onClick={() => onMoveTab(0)}><Typography variant="p_lg">Withdraw Liquidity</Typography></GoButton>
           }
         </StackWithBorder>
       </Box>
@@ -89,7 +119,7 @@ const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { position
               <Typography variant="p">No ILD Remaining</Typography>
             </Stack>
             :
-            <GoButton><Typography variant="p_lg">Pay ILD</Typography></GoButton>
+            <GoButton onClick={() => onMoveTab(1)}><Typography variant="p_lg">Pay ILD</Typography></GoButton>
           }
         </StackWithBorder>
       </Box>
@@ -107,7 +137,7 @@ const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { position
               <Typography variant="p">No Rewards Remaining</Typography>
             </Stack>
             :
-            <GoButton><Typography variant="p_lg">Claim Rewards</Typography></GoButton>
+            <GoButton onClick={() => onMoveTab(2)}><Typography variant="p_lg">Claim Rewards</Typography></GoButton>
           }
         </StackWithBorder>
       </Box>
@@ -116,8 +146,8 @@ const ClosePosition = ({ positionIndex, onRefetchData, handleClose }: { position
         <Typography variant='p_lg'>Step 4 (Final Step): Close This Liquidity Position</Typography>
         <InfoTooltip title={TooltipTexts.rewards} color="#66707e" />
       </Box>
-      <SubmitButton onClick={() => handleClosePosition()} disabled={!positionInfo.isValidToClose || isSubmitting}>
-        <Typography variant='p_xlg'>{positionInfo.isValidToClose ? 'Close This Liquidity Position' : 'Please Complete Step 1,2, and 3'}</Typography>
+      <SubmitButton onClick={() => handleClosePosition()} disabled={!isValidClose || isSubmitting}>
+        <Typography variant='p_xlg'>{isValidClose ? 'Close This Liquidity Position' : 'Please Complete Step 1,2, and 3'}</Typography>
       </SubmitButton>
     </>
   ) : <></>

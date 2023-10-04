@@ -83,7 +83,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             valueLabelDisplay="on"
           />
           <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 32px)` }}>
-            <FixValueLabel><Typography variant='p_lg' ml='-12px'>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
+            <FixValueLabel><Typography variant='p_lg' ml='-15px'>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
             <Box mt='-4px'><Typography variant='p' color='#66707e'>Current</Typography></Box>
           </PrevBox>
         </Box>

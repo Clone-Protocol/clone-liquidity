@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Stack, Typography, Button, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -11,12 +11,14 @@ import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import AddIcon from 'public/images/add-icon.svg'
+import AddIconOff from 'public/images/add-icon.svg'
+import AddIconOn from 'public/images/add-icon-on.svg'
 import BorrowLiquidityStatus from './BorrowLiquidityStatus'
 
 const BorrowPositions = () => {
 	const { publicKey } = useWallet()
 	const router = useRouter()
+	const [isBtnHover, setIsBtnHover] = useState(false)
 
 	const { data: positions } = useBorrowQuery({
 		userPubKey: publicKey,
@@ -51,15 +53,15 @@ const BorrowPositions = () => {
 			/>
 
 			{publicKey &&
-				<Stack direction='row' mt='9px'>
+				<Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
 					{positions && positions.length > 0 ?
 						<AddButton onClick={moveNewBorrowPositionPage}>
-							<Image src={AddIcon} width={15} height={15} alt='add' />
+							<Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
 							<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
 						</AddButton>
 						:
 						<AddButtonNoPosition onClick={() => { }}>
-							<Image src={AddIcon} width={15} height={15} alt='add' />
+							<Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
 							<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
 						</AddButtonNoPosition>
 					}
@@ -122,7 +124,7 @@ let columns: GridColDef[] = [
 			const isRisk = params.row.collateralRatio - params.row.minCollateralRatio < 20
 			return params.row.borrowed > 0 ?
 				(<Stack direction='column' alignItems='flex-end'>
-					<Box><Typography variant='h4' color={isRisk ? '#ed2525' : '#4fe5ff'}>{params.value?.toLocaleString()}%</Typography></Box>
+					<Box><Typography variant='h4' color={isRisk ? '#ed2525' : '#4fe5ff'}>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></Box>
 					<Box><Typography variant='p_xlg' color={isRisk ? '#ed2525' : '#66707e'}>(min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></Box>
 				</Stack>)
 				: (<></>)

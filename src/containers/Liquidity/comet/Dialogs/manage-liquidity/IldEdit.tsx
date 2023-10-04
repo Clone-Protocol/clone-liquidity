@@ -114,6 +114,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 value={field.value}
                 valueDollarPrice={field.value}
                 inputTitle={`${positionInfo.tickerSymbol} ILD Payment`}
+                inputTitleColor="#fff"
                 balance={balance}
                 onChange={(event: React.FormEvent<HTMLInputElement>) => {
                   const ildAmt = parseFloat(event.currentTarget.value)
@@ -126,10 +127,10 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
             )}
           />
           <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
-            <Typography variant='p_lg'>Projected Remaining onAsset ILD</Typography>
+            <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
             <Box>
-              <Typography variant='p_lg'>{ildAmount > balance ? 'N/A' : remainingILD.toLocaleString()}</Typography>
-              <Typography variant='p_lg' color='#66707e' ml='5px'>{ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : remainingILD.toLocaleString()}</Typography>
+              <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString()}</Typography>
+              <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : remainingILD.toLocaleString()}</Typography>
             </Box>
           </StackWithBorder>
           {ildAmount > balance &&
@@ -175,7 +176,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               </HealthBox>
           }
         </Box>
-        <SubmitButton onClick={handleSubmit(onEdit)} disabled={ildAmount === 0}>
+        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNaN(ildAmount) || ildAmount === 0}>
           <Typography variant='p_xlg'>{ildAmount > 0 ? 'Claim Rewards' : 'No ILD Balance'}</Typography>
         </SubmitButton>
       </Box>

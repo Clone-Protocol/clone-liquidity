@@ -72,7 +72,7 @@ const CloseBox = styled(Box)`
   cursor: pointer;
   width: 22px;
   height: 22px;
-  background-color: rgba(255, 255, 255, 0.1);
+  // background-color: rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
