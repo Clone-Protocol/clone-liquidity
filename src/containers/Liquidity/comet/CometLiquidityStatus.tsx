@@ -37,24 +37,26 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
         <Box>
           <Box display='flex' justifyContent='center'><Typography variant='p'>Your APY</Typography></Box>
           <StatusValue>
-            <Box color='#4fe5ff'>
-              <Box display='flex' justifyContent='center' alignItems='center'>
-                <Typography variant='p_xlg'>+3.47%</Typography>
-                <Image src={ArrowUpward} alt='arrowUp' />
+            {infos && infos.totalApy >= 0 ?
+              <Box color='#4fe5ff'>
+                <Box display='flex' justifyContent='center' alignItems='center'>
+                  <Typography variant='p_xlg'>+{infos?.totalApy.toFixed(2)}%</Typography>
+                  <Image src={ArrowUpward} alt='arrowUp' />
+                </Box>
               </Box>
-            </Box>
-            {/* :
-                <Box color='#ff0084'>
-                  <Box display='flex' alignItems='center'>
-                    <Typography variant='p_xlg'>-3.47%</Typography>
-                    <Image src={ArrowDownward} alt='arrowDown' />
-                  </Box>
-                </Box> */}
+              :
+              <Box color='#ff0084'>
+                <Box display='flex' alignItems='center'>
+                  <Typography variant='p_xlg'>-{infos && Math.abs(infos?.totalApy).toFixed(2)}%</Typography>
+                  <Image src={ArrowDownward} alt='arrowDown' />
+                </Box>
+              </Box>
+            }
           </StatusValue>
         </Box>
-      </Stack>
+      </Stack >
       {(!infos || infos.hasNoCollateral) && <OpaqueDefault />}
-    </Wrapper>
+    </Wrapper >
   )
 
 }

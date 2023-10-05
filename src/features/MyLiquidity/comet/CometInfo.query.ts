@@ -18,6 +18,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	let totalCollValue = 0
 	let totalLiquidity = 0
 	let hasNoCollateral = false
+	let totalApy = 0
 	let collaterals: Collateral[] = [];
 	let positions: LiquidityPosition[] = [];
 
@@ -46,6 +47,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 		totalLiquidity,
 		collaterals,
 		hasNoCollateral,
+		totalApy,
 		positions
 	}
 
@@ -56,6 +58,7 @@ export interface CometInfoStatus {
 	healthScore: number
 	totalCollValue: number
 	totalLiquidity: number
+	totalApy: number
 	collaterals: Collateral[]
 	hasNoCollateral: boolean
 	positions: LiquidityPosition[]
