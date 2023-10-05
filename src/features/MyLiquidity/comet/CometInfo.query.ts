@@ -40,7 +40,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 		});
 		positions.forEach(p => {
 			totalLiquidity += p.liquidityDollarPrice
-			total24hrFees += (poolStats[p.poolIndex].fees * p.liquidityDollarPrice) / poolStats[p.poolIndex].previousLiquidity
+			total24hrFees += (poolStats[p.poolIndex].fees * p.liquidityDollarPrice) / poolStats[p.poolIndex].liquidityUSD
 		})
 		hasNoCollateral = totalCollValue === 0
 		healthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
