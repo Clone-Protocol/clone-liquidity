@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, styled, Typography, Snackbar, CircularProgress } from '@mui/material'
+import { Box, styled, Typography, Snackbar, CircularProgress, Stack } from '@mui/material'
 import SuccessIcon from 'public/images/check-mark-icon.svg'
 import FailureIcon from 'public/images/failure-mark-icon.svg'
 import CloseIcon from 'public/images/close.svg'
@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { TransactionState } from '~/hooks/useTransactionState'
 import Slide from '@mui/material/Slide';
 import 'animate.css'
+import { makeStyles } from '@mui/styles'
 
 const getTxnURL = (txHash: string) => {
   let cluster = (() => {
@@ -24,19 +25,28 @@ const getTxnURL = (txHash: string) => {
 }
 
 const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHash: string }) => {
-  return (<Box>
-    <Box mt='10px'><Image src={isSuccess ? SuccessIcon : FailureIcon} width={47} height={47} alt='status' /></Box>
-    <Box mt='10px'><Typography variant='p'>Transaction {isSuccess ? 'complete' : 'failed'}</Typography></Box>
-    <Box my='10px' lineHeight='1'>
-      <Typography variant='p' color='#989898'>
-        {isSuccess ? 'You can now access all features.' : 'There was an error. Please try again.'}
-      </Typography>
+  const txStatusColor = isSuccess ? '#4fe5ff' : '#ff0084'
+  return (<Stack direction='row' alignItems='center' paddingY='18px' gap={1} borderRadius='10px' sx={isSuccess ? { backgroundColor: '#000e22', border: '1px solid #4fe5ff' } : { backgroundColor: '#1a081c', border: '1px solid #ff0084' }}>
+    <Image src={isSuccess ? SuccessIcon : FailureIcon} width={65} height={65} alt='icStatus' />
+    <Box lineHeight={1}>
+      <Box mt='6px'><Typography variant='p_xlg'>Transaction {isSuccess ? 'complete' : 'failed'}</Typography></Box>
+      {!isSuccess && <Box mt='6px'><Typography variant='p' color='#66707e'>Something went wrong. Please try again.</Typography></Box>}
+      <Box mt='6px' sx={{ textDecoration: 'underline', color: txStatusColor }}>
+        <a href={isSuccess ? getTxnURL(txHash) : 'https://status.solana.com/'} target='_blank' rel="noreferrer"><Typography variant='p_sm' color={txStatusColor}>{isSuccess ? 'View Transaction' : 'Check Solana network status'}</Typography></a>
+      </Box>
     </Box>
-    <Box mb='10px' sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>
-  </Box>)
+  </Stack>)
 }
 
+const useCircleStyles = makeStyles(() => ({
+  circle: {
+    stroke: "url(#linearColors)",
+  },
+}));
+
+
 const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boolean }) => {
+  const classes = useCircleStyles({});
   const [longTimeStatus, setLongTimeStatus] = useState<JSX.Element>()
   const StatusWrap = (<LongTimeStatus><Typography variant='p'>This transaction is taking unusually long. Please check <br /> <a href='https://status.solana.com/' target='_blank' rel="noreferrer">Solana Network status</a></Typography></LongTimeStatus>)
   setTimeout(() => {
@@ -45,11 +55,20 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
 
   return (
     <ConfirmBoxWrapper className={isFocus ? 'animate__animated animate__shakeX' : ''}>
-      <CircularProgress sx={{ color: '#fff' }} size={23} thickness={8} />
-      <Box mt='10px'><Typography variant='p'>Confirming transaction</Typography></Box>
-      <Box my='10px' lineHeight={1}><Typography variant='p' color={isFocus ? '#ff8e4f' : '#989898'}>All features are disabled until the transaction is confirmed.
-        <br />Transactions on Solana typically take an average of 5 seconds. </Typography></Box>
-      <Box sx={{ textDecoration: 'underline', color: '#258ded' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#258ded'>View Transaction</Typography></a></Box>
+      <Stack direction='row' alignItems='center' spacing={2}>
+        <svg width="8" height="6">
+          <linearGradient id="linearColors" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="25%" stopColor="#6cb8ff" />
+            <stop offset="90%" stopColor="rgba(0, 133, 255, 0)" />
+          </linearGradient>
+        </svg>
+        <CircularProgress classes={{ circle: classes.circle }} size={56} thickness={5} />
+        <Box>
+          <Box><Typography variant='p_xlg'>Confirming transaction</Typography></Box>
+          <Box mt='6px' lineHeight={1}><Typography variant='p' color={isFocus ? '#ff8e4f' : '#66707e'}>Transactions on Solana typically take about 5 seconds. </Typography></Box>
+          <Box sx={{ textDecoration: 'underline', color: '#4fe5ff' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p_sm' color='#4fe5ff'>View Transaction</Typography></a></Box>
+        </Box>
+      </Stack>
       {longTimeStatus}
     </ConfirmBoxWrapper>
   )
@@ -96,11 +115,7 @@ const BackLayer = styled('div')`
 `
 
 const BoxWrapper = styled(Box)`
-  width: 236px;
-  text-align: center;
-  border-radius: 15px;
-  padding: 12px;
-  background: ${(props) => props.theme.boxes.black};
+  width: 419px;
 `
 const CloseButton = styled(Box)`
   position: absolute;
@@ -111,18 +126,20 @@ const CloseButton = styled(Box)`
 
 const ConfirmBoxWrapper = styled(Box)`
   width: 442px;
-  border-radius: 15px;
-  padding: 15px 32px;
-  background: ${(props) => props.theme.boxes.black};
+  border-radius: 10px;
+  padding: 18px 10px;
+  background: ${(props) => props.theme.basis.darkNavy};
+  border: 1px solid ${(props) => props.theme.basis.shadowGloom};
 `
 const LongTimeStatus = styled(Box)`
-  padding: 12px 18px;
-  color: ${(props) => props.theme.palette.warning.main};
-  border: solid 1px ${(props) => props.theme.palette.warning.main};
+  padding: 12px 25px;
+  color: ${(props) => props.theme.basis.warningOrange};
   margin-top: 13px;
-  line-height: 0.8;
+  border-radius: 5px;
+  background-color: rgba(255, 141, 78, 0.1);
+  line-height: 1;
   a {
-    color: ${(props) => props.theme.palette.warning.main};
+    color: ${(props) => props.theme.basis.warningOrange};
     text-decoration: underline;
   }
 `

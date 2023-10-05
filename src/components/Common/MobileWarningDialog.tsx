@@ -12,15 +12,15 @@ import { DISCORD_URL, OFFICIAL_WEB, TWITTER_URL } from '~/data/social'
 const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={425}>
-        <DialogContent sx={{ backgroundColor: '#1b1b1b', padding: '15px' }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={324}>
+        <DialogContent sx={{ backgroundColor: '#000e22;', border: '1px solid #414e66', borderRadius: '15px', padding: '15px', width: '324px' }}>
           <BoxWrapper>
             <Image src={OctagonIcon} width={55} height={55} alt='alert-octagon-outline' />
 
-            <Box maxWidth='280px' lineHeight={1} margin='0 auto' mt='15px'><Typography variant='p_lg'>Unleash the power of Clone Liquidity App from larger screen</Typography></Box>
-            <Box width='288px' lineHeight={1} margin='0 auto' my='20px'>
+            <Box maxWidth='280px' lineHeight={1} margin='0 auto' mt='15px'><Typography variant='p_lg'>Unleash the power of Clone Liquidity beta app from larger screen</Typography></Box>
+            <Box width='260px' lineHeight={1} margin='0 auto' my='20px'>
               <Typography variant='p' color='#989898'>
-                Clone Liquidity App is packed with advanced features that are not optimal for mobile and tablet environments with smaller screens. Please access the app from your Desktop or Laptop with larger screens for the best experience.
+                Clone Liquidity Beta app contains advanced interface that is not available on smaller screens. Please enlarge your screen or visit us from a device with a larger screen. We apologize for any inconvenience!
               </Typography>
             </Box>
             {/* <StyledDivider />
@@ -43,8 +43,7 @@ const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose
 
 const BoxWrapper = styled(Box)`
   padding: 20px; 
-  color: #fff; 
-  width: 425px;
+  color: #fff;
   text-align: center;
 `
 // const MarketButton = styled(Button)`

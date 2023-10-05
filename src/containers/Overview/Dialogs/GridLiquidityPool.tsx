@@ -10,13 +10,15 @@ import { useLiquidityPoolsQuery } from '~/features/MyLiquidity/comet/LiquidityPo
 interface Props {
 	onChoose: (id: number) => void
 	noFilter: boolean
+	searchTerm?: string
 }
 
-const GridLiquidityPool: React.FC<Props> = ({ onChoose, noFilter }) => {
+const GridLiquidityPool: React.FC<Props> = ({ onChoose, noFilter, searchTerm }) => {
 	const { publicKey } = useWallet()
 	const { data: pools } = useLiquidityPoolsQuery({
 		userPubKey: publicKey,
 		refetchOnMount: "always",
+		searchTerm: searchTerm || '',
 		enabled: publicKey != null,
 		noFilter
 	})
@@ -43,38 +45,17 @@ let columns: GridColDef[] = [
 		field: 'asset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Pools',
+		headerName: '',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
-				<Box display="flex" justifyContent="flex-start" marginLeft='4px'>
+				<Box display="flex" justifyContent="flex-start" ml='4px'>
 					<Image src={params.row.tickerIcon} width={28} height={28} alt={params.row.tickerSymbol} />
-					<Box marginLeft='8px' marginTop='3px'>
-						<Typography variant='p_lg'>{params.row.tickerName}</Typography>
-						<Typography variant='p_lg' color='#989898' ml='10px'>{params.row.tickerSymbol} / onUSD</Typography>
+					<Box ml='10px' mt='3px'>
+						<Typography variant='p_xlg'>{params.row.tickerSymbol}/devUSD</Typography>
 					</Box>
 				</Box>
 			)
-		},
-	},
-	{
-		field: 'totalLiquidity',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
-		headerName: 'Total Liquidity',
-		flex: 1,
-		renderCell(params: GridRenderCellParams<string>) {
-			return <Box><Typography variant='p_lg'>${params.value?.toLocaleString()} USD</Typography></Box>
-		},
-	},
-	{
-		field: 'volume24H',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
-		headerName: '24h Volume',
-		flex: 1,
-		renderCell(params: GridRenderCellParams<string>) {
-			return <Box><Typography variant='p_lg'>${params.value?.toLocaleString()} USD</Typography></Box>
 		},
 	}
 ]

@@ -65,6 +65,7 @@ interface GetPoolsProps {
   userPubKey: PublicKey | null
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
+  searchTerm: string
   noFilter?: boolean
 }
 
@@ -82,6 +83,7 @@ export function useLiquidityPoolsQuery({
   userPubKey,
   refetchOnMount,
   enabled = true,
+  searchTerm,
   noFilter = true,
 }: GetPoolsProps) {
   const wallet = useAnchorWallet()
@@ -96,6 +98,14 @@ export function useLiquidityPoolsQuery({
         refetchInterval: REFETCH_CYCLE,
         refetchIntervalInBackground: true,
         enabled,
+        select: (assets) => {
+          let filteredAssets = assets
+          if (filteredAssets && searchTerm && searchTerm.length > 0) {
+            filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
+          }
+
+          return filteredAssets
+        }
       }
     )
   } else {

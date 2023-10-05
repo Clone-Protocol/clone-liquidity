@@ -52,6 +52,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 }
 
 interface GetAssetsProps {
+	searchTerm: string
 	userPubKey: PublicKey | null
 	enabled?: boolean
 	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
@@ -66,14 +67,22 @@ export interface AssetList {
 	balance: number
 }
 
-export function useAssetsQuery({ userPubKey, enabled = true, refetchOnMount }: GetAssetsProps) {
+export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetchOnMount }: GetAssetsProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
 		return useQuery(['assets', wallet, userPubKey], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
 			refetchOnMount,
-			enabled
+			enabled,
+			select: (assets) => {
+				let filteredAssets = assets
+				if (filteredAssets && searchTerm && searchTerm.length > 0) {
+					filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
+				}
+
+				return filteredAssets
+			}
 		})
 	} else {
 		return useQuery(['assets'], () => [])

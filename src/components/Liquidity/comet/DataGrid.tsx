@@ -49,13 +49,10 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         display: 'none',
       },
       '& .MuiDataGrid-row': {
-        marginRight: '10px',
-        border: '1px solid #3f3f3f',
         cursor: 'pointer',
-        marginBottom: '13px'
       },
       '& .MuiDataGrid-row:hover': {
-        backgroundColor: '#1b1b1b'
+        backgroundColor: 'rgba(255, 255, 255, 0.1)'
       },
       '& .MuiDataGrid-cell': {
         borderBottom: '0',
@@ -68,7 +65,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
         outline: 'none !important'
       },
       '& .MuiDataGrid-withBorder': {
-        borderRight: '1px solid #3f3f3f',
+        borderRight: '0px solid #3f3f3f',
         marginLeft: '-1px'
       },
     }}
