@@ -157,30 +157,26 @@ export const fetchCloseLiquidityPosition = async ({
 	const { onAssetILD, collateralILD, oraclePrice } = getILD(collateral, pools, oracles, comet)[index];
 	const assetId = poolIndex
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
-	const committedCollateralLiquidity = position.committedCollateralLiquidity
+	const committedCollateralLiquidity = fromScale(position.committedCollateralLiquidity, collateral.scale)
 	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
-		fromCloneScale(pool.collateralIld),
+		fromScale(pool.collateralIld, collateral.scale),
 		fromCloneScale(pool.onassetIld),
-		fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale),
+		committedCollateralLiquidity,
 		oraclePrice,
 		collateral
 	)
 	const price = poolCollateral / poolOnasset
 
-	const currentHealthScore = getHealthScore(oracles, pools, comet, program.clone.collateral)
-	const prevHealthScore = currentHealthScore.healthScore
-	const totalCollateralAmount = Number(comet.collateralAmount)
+	const prevHealthScore = getHealthScore(oracles, pools, comet, program.clone.collateral).healthScore
+	const totalCollateralAmount = fromScale(comet.collateralAmount, collateral.scale)
 
-	const ildInCollateral = collateralILD > 0
-	const ildDebt = ildInCollateral ? collateralILD : onAssetILD
-	const ildDebtDollarPrice = ildInCollateral ? 1 : oraclePrice
-	const ildDebtNotionalValue = ildDebtDollarPrice * ildDebt
+	const ildDebtNotionalValue = Math.max(collateralILD, 0) + Math.max(onAssetILD * oraclePrice, 0)
 	const healthScoreIncrease = (
-		Number(pool.assetInfo.ilHealthScoreCoefficient) * ildDebtNotionalValue +
-		committedCollateralLiquidity * Number(pool.assetInfo.positionHealthScoreCoefficient)
+		fromScale(pool.assetInfo.ilHealthScoreCoefficient, 2) * ildDebtNotionalValue +
+		committedCollateralLiquidity * fromScale(pool.assetInfo.positionHealthScoreCoefficient, 2)
 	) / totalCollateralAmount
 	const healthScore = prevHealthScore + healthScoreIncrease
-	const isValidToClose = ildInCollateral ? balance?.onusdVal! >= collateralILD : balance?.onassetVal! >= onAssetILD
+	const isValidToClose = balance?.onusdVal! >= collateralILD && balance?.onassetVal! >= onAssetILD
 
 	return {
 		tickerIcon,
@@ -193,12 +189,10 @@ export const fetchCloseLiquidityPosition = async ({
 		prevHealthScore,
 		collateralILD,
 		onassetILD: onAssetILD,
-		ildDebt,
 		ildDebtNotionalValue,
 		onassetVal: balance?.onassetVal!,
 		onusdVal: balance?.onusdVal!,
 		isValidToClose,
-		ildInCollateral,
 		onassetMint,
 		committedCollateralLiquidity
 	}
@@ -215,7 +209,6 @@ export interface CloseLiquidityPositionInfo {
 	prevHealthScore: number
 	collateralILD: number
 	onassetILD: number
-	ildDebt: number
 	ildDebtNotionalValue: number
 	onassetVal: number
 	collateralVal: number
