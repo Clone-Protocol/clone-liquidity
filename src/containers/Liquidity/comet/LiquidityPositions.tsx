@@ -181,14 +181,16 @@ let columns: GridColDef[] = [
     headerName: 'APY',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
-        <Typography variant='p_xlg'>+3.47%</Typography>
-        <Image src={ArrowUpward} alt='arrowUp' />
-      </Box>
-      // <Box display='flex' alignItems='center' color='#ff0084'>
-      //   <Typography variant='p_xlg'>-3.47%</Typography>
-      //   <Image src={ArrowDownward} alt='arrowDown' />
-      // </Box>
+      return Number(params.value) >= 0 ?
+        <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
+          <Typography variant='p_xlg'>+{Number(params.value).toFixed(2)}%</Typography>
+          <Image src={ArrowUpward} alt='arrowUp' />
+        </Box>
+        :
+        <Box display='flex' alignItems='center' color='#ff0084'>
+          <Typography variant='p_xlg'>-{Number(params.value).toFixed(2)}%</Typography>
+          <Image src={ArrowDownward} alt='arrowDown' />
+        </Box>
     },
   },
 ]

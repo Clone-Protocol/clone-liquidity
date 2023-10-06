@@ -4,7 +4,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from "@solana/wallet-adapter-react"
 import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/LiquidityPosition.query"
 import { SubmitButton } from "~/components/Common/CommonButtons"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useClosePositionMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import Image from "next/image"
 import CheckIcon from 'public/images/check-icon.svg'
@@ -13,6 +13,10 @@ import { fromScale } from "clone-protocol-sdk/sdk/src/clone"
 const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [positionLiquidity, setPositionLiquidity] = useState(0)
+  const [ildBalance, setIldBalance] = useState(0)
+  const [remainRewards, setRemainRewards] = useState(0)
 
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
@@ -24,7 +28,8 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
   const liquidityNotional = () => {
     let liquidity = 0
     if (positionInfo) {
-      liquidity += fromScale(positionInfo.committedCollateralLiquidity, 7) * 2
+      const position = positionInfo.comet.positions[positionIndex]
+      liquidity += fromScale(position.committedCollateralLiquidity, 7) * 2
     }
     return liquidity
   }
@@ -47,6 +52,14 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
 
     return Math.max(0, reward)
   }
+
+  useEffect(() => {
+    if (positionInfo) {
+      setPositionLiquidity(liquidityNotional())
+      setIldBalance(ildNotional())
+      setRemainRewards(rewardNotional())
+    }
+  }, [positionInfo])
 
   const { mutateAsync } = useClosePositionMutation(publicKey)
   const handleClosePosition = async () => {
@@ -76,9 +89,9 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
     }
   }
 
-  const positionLiquidity: number = liquidityNotional()
-  const ildBalance: number = ildNotional()
-  const remainRewards: number = rewardNotional()
+  // const positionLiquidity: number = liquidityNotional()
+  // const ildBalance: number = ildNotional()
+  // const remainRewards: number = rewardNotional()
 
   const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0
 

@@ -44,26 +44,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <SnackbarProvider maxSnack={3}>
                 <ClientWalletProvider>
                   <TransactionStateProvider>
-                    <DataLoadingIndicatorProvider>
-                      <ErrorBoundary fallback={<GlobalError />}>
-                        <Box display='flex' sx={{ backgroundColor: '#000' }}>
-                          <CssBaseline />
-                          <GNB />
+                    <ErrorBoundary fallback={<GlobalError />}>
+                      <Box display='flex' sx={{ backgroundColor: '#000' }}>
+                        <CssBaseline />
+                        <GNB />
 
-                          <Box
-                            component="main"
-                            sx={{
-                              flexGrow: 1,
-                              height: '100vh',
-                              overflow: 'auto',
-                              overscrollBehaviorY: 'contain'
-                            }}>
-                            {children}
-                          </Box>
-                          {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
+                        <Box
+                          component="main"
+                          sx={{
+                            flexGrow: 1,
+                            height: '100vh',
+                            overflow: 'auto',
+                            overscrollBehaviorY: 'contain'
+                          }}>
+                          {children}
                         </Box>
-                      </ErrorBoundary>
-                    </DataLoadingIndicatorProvider>
+                        {isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
+                      </Box>
+                    </ErrorBoundary>
                   </TransactionStateProvider>
                 </ClientWalletProvider>
               </SnackbarProvider>

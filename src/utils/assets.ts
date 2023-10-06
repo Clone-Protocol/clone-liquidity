@@ -64,7 +64,7 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
   return iassetInfo;
 }
 
-type AggregatedStats = {
+export type AggregatedStats = {
   volumeUSD: number,
   fees: number,
   previousVolumeUSD: number,

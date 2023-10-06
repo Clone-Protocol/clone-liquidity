@@ -123,7 +123,7 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	}
 }
 
-export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
+export const callPayILD = async ({ program, userPubKey, setTxState, data }: CallPayILDProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const [onassetAssociatedToken, collateralAssociatedTokenAddress] = await Promise.all([
@@ -143,7 +143,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	const oracles = await program.getOracles();
 	const userAccount = await program.getUserAccount()
 
-	// Pay ILD && withdraw all liquidity
+	// Pay ILD
 	const ixnCalls: TransactionInstruction[] = [
 		program.updatePricesInstruction(oracles)
 	]
@@ -164,15 +164,15 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
-	const positionCollateralLiquidity = toScale(data.committedCollateralLiquidity, program.clone.collateral.scale)
-	if (positionCollateralLiquidity > 0) {
-		ixnCalls.push(
-			program.withdrawLiquidityFromCometInstruction(
-				positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
-				data.positionIndex,
-			)
-		)
-	}
+	// const positionCollateralLiquidity = toScale(data.committedCollateralLiquidity, program.clone.collateral.scale)
+	// if (positionCollateralLiquidity > 0) {
+	// 	ixnCalls.push(
+	// 		program.withdrawLiquidityFromCometInstruction(
+	// 			positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
+	// 			data.positionIndex,
+	// 		)
+	// 	)
+	// }
 
 	if (toCloneScale(data.onassetILD) > 0) {
 		ixnCalls.push(
@@ -180,7 +180,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 				pools,
 				userAccount,
 				data.positionIndex,
-				toCloneScale(data.onassetBalance),
+				toCloneScale(data.ildAmount),
 				PaymentType.Collateral,
 				onassetAssociatedToken.address,
 				collateralAssociatedTokenAddress,
@@ -202,6 +202,71 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 		)
 	}
 
+	await sendAndConfirm(program.provider, ixnCalls, setTxState)
+
+	return {
+		result: true
+	}
+}
+type PayILDFormData = CloseFormData & {
+	ildAmount: number
+}
+interface CallPayILDProps extends CallCloseProps {
+	data: PayILDFormData
+}
+export function usePayILDMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getCloneApp } = useClone()
+	const { setTxState } = useTransactionState()
+
+	if (wallet) {
+		return useMutation(async (data: PayILDFormData) => callPayILD({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+	} else {
+		return useMutation((_: PayILDFormData) => funcNoWallet())
+	}
+}
+
+export const callRewards = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
+	if (!userPubKey) throw new Error('no user public key')
+
+	const [onassetAssociatedToken, collateralAssociatedTokenAddress] = await Promise.all([
+		getTokenAccount(
+			data.onassetMint,
+			program.provider.publicKey!,
+			program.provider.connection
+		),
+		getAssociatedTokenAddress(
+			program.clone.collateral.mint,
+			program.provider.publicKey!,
+		)
+	])
+
+	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
+	const pools = await program.getPools()
+	const oracles = await program.getOracles();
+	const userAccount = await program.getUserAccount()
+
+	// Pay ILD
+	const ixnCalls: TransactionInstruction[] = [
+		program.updatePricesInstruction(oracles)
+	]
+
+	if (!onassetAssociatedToken) {
+		const ata = await getAssociatedTokenAddress(
+			data.onassetMint,
+			program.provider.publicKey!
+		)
+		onassetAssociatedTokenAddress = ata
+		ixnCalls.push(
+			createAssociatedTokenAccountInstruction(
+				program.provider.publicKey!,
+				ata,
+				program.provider.publicKey!,
+				data.onassetMint,
+			)
+		)
+	}
+
 	ixnCalls.push(
 		program.collectLpRewardsInstruction(
 			pools,
@@ -211,6 +276,60 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 			data.positionIndex
 		)
 	)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState)
+
+	return {
+		result: true
+	}
+}
+
+export function useRewardsMutation(userPubKey: PublicKey | null) {
+	const wallet = useAnchorWallet()
+	const { getCloneApp } = useClone()
+	const { setTxState } = useTransactionState()
+
+	if (wallet) {
+		return useMutation(async (data: CloseFormData) => callRewards({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+	} else {
+		return useMutation((_: CloseFormData) => funcNoWallet())
+	}
+}
+
+export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
+	if (!userPubKey) throw new Error('no user public key')
+
+	const [onassetAssociatedToken] = await Promise.all([
+		getTokenAccount(
+			data.onassetMint,
+			program.provider.publicKey!,
+			program.provider.connection
+		)
+	])
+
+	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
+	const oracles = await program.getOracles();
+
+	// withdraw all liquidity
+	const ixnCalls: TransactionInstruction[] = [
+		program.updatePricesInstruction(oracles)
+	]
+
+	if (!onassetAssociatedToken) {
+		const ata = await getAssociatedTokenAddress(
+			data.onassetMint,
+			program.provider.publicKey!
+		)
+		onassetAssociatedTokenAddress = ata
+		ixnCalls.push(
+			createAssociatedTokenAccountInstruction(
+				program.provider.publicKey!,
+				ata,
+				program.provider.publicKey!,
+				data.onassetMint,
+			)
+		)
+	}
+
 	ixnCalls.push(
 		program.removeCometPositionInstruction(data.positionIndex)
 	)

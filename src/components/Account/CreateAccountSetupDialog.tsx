@@ -1,102 +1,68 @@
 import React from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { createAccountDialogState } from '~/features/globalAtom'
-import {
-	Button,
-	Box,
-	Dialog,
-	styled,
-	Typography
-} from '@mui/material'
-import Image from 'next/image'
+import { Box, styled, Typography, Button, Dialog } from '@mui/material'
+import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
+import { createAccountDialogState } from '~/features/globalAtom'
+import { CloseButton } from '../Common/CommonButtons'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { isCreatingAccountState } from '~/features/globalAtom'
-import logoIcon from 'public/images/logo-liquidity.svg'
-import BgDialog from 'public/images/new-wallet-popup.svg'
 
-interface CreateAccountSetupDialogProps {
-	state: CreateAccountDialogStates
-	handleCreateAccount: () => void
-	handleClose: () => void
+interface CreateAccountSetupScreenProps {
+  state: CreateAccountDialogStates
+  handleCreateAccount: () => void
+  handleClose: () => void
 }
-
-const CreateAccountSetupDialog: React.FC<CreateAccountSetupDialogProps> = ({
-	state,
-	handleCreateAccount,
-	handleClose
+const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
+  state,
+  handleCreateAccount,
+  handleClose
 }) => {
-	const isCreatingAccount = useAtomValue(isCreatingAccountState)
-	const setCreateAccountDialogState = useSetAtom(createAccountDialogState)
+  const isCreatingAccount = useAtomValue(isCreatingAccountState)
 
-	const shouldDialogOpen = (): boolean => {
-		return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
-	}
+  const shouldDialogOpen = (): boolean => {
+    return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
+  }
 
-	if (state === CreateAccountDialogStates.Initial) {
-		return (
-			<Dialog open={shouldDialogOpen()} onClose={handleClose} maxWidth={809} sx={{ boxShadow: 'none' }}>
-				<ContentContainer style={{ backgroundImage: `url(${BgDialog.src})` }}>
-					<LeftBox>
-						<Image src={logoIcon} width={148} height={36} alt="clone" />
-						<Box mt="25px"><Typography variant='h5'>Welcome!</Typography></Box>
-						<DescBox>
-							<Typography variant='p'>This is your first time connecting this wallet to Clone Liquidity on Devnet. Please open an account by pressing the button below. Afterwards, you will see a wallet popup requesting a one time fee of </Typography><Typography variant='p' color='#fff'>~0.26 Devnet SOL.</Typography> <Typography variant='p'>Opening an account is necessary in order to use the features on Clone Liquidity.</Typography>
-						</DescBox>
-						<SubmitButton onClick={handleCreateAccount} disabled={isCreatingAccount}>
-							<Typography variant='p_lg'>Open Devnet Account</Typography>
-						</SubmitButton>
-					</LeftBox>
-				</ContentContainer>
-			</Dialog>
-		)
-	} else {
-		return (
-			<Dialog open={shouldDialogOpen()} onClose={handleClose}>
-				<BoxWrapper p="20px 28px">
-					<Box mb="23px">
-						<Typography variant='p_lg'>To access this feature, please open an account first!</Typography>
-					</Box>
-					<SubmitButton onClick={() => setCreateAccountDialogState(CreateAccountDialogStates.Initial)} disabled={isCreatingAccount}>
-						<Typography variant='p_lg'>Take me there</Typography>
-					</SubmitButton>
-				</BoxWrapper>
-			</Dialog>
-		)
-	}
+  return (
+    <Dialog open={shouldDialogOpen()} maxWidth={742} sx={{ boxShadow: 'none' }}>
+      <Box width='742px' sx={{ background: '#000916', position: 'relative', padding: '52px 33px' }}>
+        <BoxWrapper>
+          <TextHead>Open Account</TextHead>
+          <Box my='20px' lineHeight={1.3} color='#989898'>
+            <Typography variant='p_xlg'>Welcome! This is your first time connecting this wallet to Devnet Clone Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='p_xlg' color='#4fe5ff'>~0.3 Devnet SOL</Typography><Typography variant='p_xlg'> for most optimal experience using Devnet Clone Liquidity.</Typography>
+          </Box>
+          <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_xlg'>Open Devnet Account</Typography></EnterButton>
+        </BoxWrapper>
+        <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
+          <CloseButton handleClose={handleClose} />
+        </Box>
+      </Box>
+    </Dialog>
+  )
 }
-
-const ContentContainer = styled('div')`
-	width: 809px;
-	height: 559px;
-	display: flex;
-	align-items: center;
-	padding: 40px;
-	border-radius: 20px;
-`
-const LeftBox = styled(Box)`
-	width: 352px;
-`
-const DescBox = styled(Box)`
-	margin-top: 5px;
-	margin-bottom: 15px;
-	line-height: 1.1;
-	color: ${(props) => props.theme.palette.text.secondary};
-`
-const SubmitButton = styled(Button)`
-	padding: 16px 41px;
-	background-image: ${(props) => props.theme.gradients.simple};
-	color: #000;
-	display: block;
-	width: 100%;
-	height: 48px;
-	line-height: 1.11;
-	&:hover {
-		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), linear-gradient(to right, #fff 21%, #4fe5ff 96%);
-	}
-`
 
 const BoxWrapper = styled(Box)`
-	background-color: ${(props) => props.theme.boxes.darkBlack};
+  width: 500px;
+  color: #fff;
+  margin: 0 auto;
+  text-align: left;
+  background: #000916;
+`
+const TextHead = styled(Box)`
+  font-size: 36px;
+  font-weight: 600;
+  color: ${(props) => props.theme.basis.skylight};
+`
+const EnterButton = styled(Button)`
+  width: 100%;
+  height: 52px;
+  color: #000;
+  margin-top: 10px;
+  background: ${(props) => props.theme.basis.liquidityBlue};
+  &:hover {
+    background: ${(props) => props.theme.basis.gloomyBlue};
+  }
 `
 
 export default CreateAccountSetupDialog
+

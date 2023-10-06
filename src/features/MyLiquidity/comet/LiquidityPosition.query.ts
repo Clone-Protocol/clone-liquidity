@@ -5,7 +5,6 @@ import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
@@ -121,18 +120,12 @@ export const fetchCloseLiquidityPosition = async ({
 	program,
 	userPubKey,
 	index,
-	setStartTimer,
 }: {
 	program: CloneClient
 	userPubKey: PublicKey | null
 	index: number
-	setStartTimer: (start: boolean) => void
 }) => {
 	if (!userPubKey) return
-
-	// start timer in data-loading-indicator
-	setStartTimer(false);
-	setStartTimer(true);
 
 	const [poolsData, oraclesData, accountData] = await Promise.allSettled([program.getPools(), program.getOracles(), program.getUserAccount()])
 
@@ -151,7 +144,6 @@ export const fetchCloseLiquidityPosition = async ({
 		program,
 		userPubKey,
 		index: poolIndex,
-		setStartTimer
 	})
 
 	const { onAssetILD, collateralILD, oraclePrice } = getILD(collateral, pools, oracles, comet)[index];
@@ -189,12 +181,14 @@ export const fetchCloseLiquidityPosition = async ({
 		prevHealthScore,
 		collateralILD,
 		onassetILD: onAssetILD,
+		oraclePrice,
 		ildDebtNotionalValue,
 		onassetVal: balance?.onassetVal!,
 		onusdVal: balance?.onusdVal!,
 		isValidToClose,
 		onassetMint,
-		committedCollateralLiquidity
+		committedCollateralLiquidity,
+		totalCollateralAmount
 	}
 }
 
@@ -209,23 +203,24 @@ export interface CloseLiquidityPositionInfo {
 	prevHealthScore: number
 	collateralILD: number
 	onassetILD: number
+	oraclePrice: number
 	ildDebtNotionalValue: number
 	onassetVal: number
 	collateralVal: number
 	isValidToClose: boolean
 	onassetMint: PublicKey
 	committedCollateralLiquidity: number
+	totalCollateralAmount: number
 }
 
 export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
-	const { setStartTimer } = useDataLoading()
 
 	if (wallet) {
 		return useQuery(
 			['closeLiquidityPosition', wallet, userPubKey, index],
-			async () => fetchCloseLiquidityPosition({ program: await getCloneApp(wallet), userPubKey, index, setStartTimer }),
+			async () => fetchCloseLiquidityPosition({ program: await getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
 				refetchInterval: REFETCH_CYCLE,

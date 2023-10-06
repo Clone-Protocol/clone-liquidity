@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, styled, Typography, Button } from '@mui/material'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
+import { CloseButton } from './CommonButtons'
 
 const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
   const [_, setIsCompleteInit] = useLocalStorage(IS_COMPLETE_INIT, false)
@@ -21,6 +22,10 @@ const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
           </Typography>
         </Box>
         <EnterButton onClick={() => close()}><Typography variant='p_xlg'>Enter Clone Devnet</Typography></EnterButton>
+
+        <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
+          <CloseButton handleClose={onClose} />
+        </Box>
       </BoxWrapper>
     </BackScreen>
   )
@@ -39,6 +44,7 @@ const BackScreen = styled('div')`
   z-index: 99999;
 `
 const BoxWrapper = styled(Box)`
+  position: relative;
   width: 607px;
   color: #fff; 
   text-align: left;

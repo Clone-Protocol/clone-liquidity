@@ -2,19 +2,15 @@ import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CLONE_TOKEN_SCALE, CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getTokenAccount } from '~/utils/token_accounts'
 
-export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+export const fetchBalance = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return null
 
   console.log('fetchBalance')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
 
   let onusdVal = 0.0
   let onassetVal = 0.0
@@ -41,13 +37,10 @@ export const fetchBalance = async ({ program, userPubKey, index, setStartTimer }
   }
 }
 
-export const fetchBalances = async ({ program, userPubKey, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, setStartTimer: (start: boolean) => void }) => {
+export const fetchBalances = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
   if (!userPubKey) return null
 
   console.log('fetchBalance - onUSD')
-  // start timer in data-loading-indicator
-  setStartTimer(false);
-  setStartTimer(true);
 
   let balanceVal = 0.0
   try {
@@ -79,10 +72,9 @@ export interface Balance {
 export function useBalanceQuery({ userPubKey, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['cometBalance', wallet, userPubKey], async () => fetchBalances({ program: await getCloneApp(wallet), userPubKey, setStartTimer }), {
+    return useQuery(['cometBalance', wallet, userPubKey], async () => fetchBalances({ program: await getCloneApp(wallet), userPubKey }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

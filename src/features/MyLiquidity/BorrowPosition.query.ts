@@ -4,7 +4,6 @@ import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
-import { useDataLoading } from '~/hooks/useDataLoading'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -42,7 +41,7 @@ export interface DetailInfo {
   minCollateralRatio: number
 }
 
-const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }: { program: CloneClient, userPubKey: PublicKey | null, index: number, setStartTimer: (start: boolean) => void }) => {
+const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
 
   console.log('fetchBorrowPosition')
@@ -69,8 +68,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index, setStartTimer }
   const balance = await fetchBalance({
     program,
     userPubKey,
-    index: poolIndex,
-    setStartTimer
+    index: poolIndex
   })
 
   const borrowAmountInIasset = Number(positionData![3]);
@@ -138,10 +136,9 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
 export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
-  const { setStartTimer } = useDataLoading()
 
   if (wallet) {
-    return useQuery(['borrowPosition', userPubKey, index], async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index, setStartTimer }), {
+    return useQuery(['borrowPosition', userPubKey, index], async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,

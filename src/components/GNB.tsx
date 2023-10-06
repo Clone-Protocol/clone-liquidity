@@ -18,6 +18,7 @@ import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import NaviMenu from './NaviMenu'
 import { isMobile } from 'react-device-detect';
+import CreateAccountSetupDialog from './Account/CreateAccountSetupDialog'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -47,7 +48,7 @@ export default withCsrOnly(GNB)
 
 const RightMenu: React.FC = () => {
 	const router = useRouter()
-	const { connect, connecting, connected, publicKey } = useWallet()
+	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
@@ -74,10 +75,12 @@ const RightMenu: React.FC = () => {
 		setIsCreatingAccount(true)
 	}
 
-	const closeAccountSetupDialog = () => {
+	const closeAccountSetupDialog = async () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
-		router.replace('/')
+		//disconnect
+		await disconnect()
+		// router.replace('/')
 	}
 
 	const handleGetUsdiClick = () => {

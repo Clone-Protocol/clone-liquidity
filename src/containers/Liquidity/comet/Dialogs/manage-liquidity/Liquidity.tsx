@@ -77,7 +77,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
     // console.log('newRatio', newRatio)
     // MEMO: if newRatio is near from default ratio, then set newRatio to default ratio
     const convertNewRatio = parseInt(newRatio.toString()) === defaultMintRatio ? defaultMintRatio : newRatio
-    console.log('convertNewRatio', convertNewRatio)
     setValue('mintAmount', maxMintable * convertNewRatio / 100)
     setMintRatio(convertNewRatio)
   }, [mintRatio, mintAmount])
@@ -163,7 +162,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
           }
         </>
 
-        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting || mintRatio === 0}>
+        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>
           <Typography variant='p_xlg'>Adjust Liquidity</Typography>
         </SubmitButton>
       </Box>

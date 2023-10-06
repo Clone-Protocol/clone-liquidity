@@ -4,10 +4,10 @@ import { SubmitButton } from "~/components/Common/CommonButtons"
 import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/LiquidityPosition.query"
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { useClosePositionMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
+import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import { useState } from "react"
 
-const Rewards = ({ positionIndex }: { positionIndex: number }) => {
+const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData?: () => void }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -18,27 +18,26 @@ const Rewards = ({ positionIndex }: { positionIndex: number }) => {
     enabled: publicKey != null,
   })
 
-  const displayRewardNotional = () => {
-    let reward = 0
-    if (positionInfo!.collateralILD < 0)
-      reward += (-positionInfo!.collateralILD)
-    if (positionInfo!.onassetILD < 0)
-      reward += (-positionInfo!.onassetILD * positionInfo!.price)
-
-    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD`
-  }
-
-  const { mutateAsync } = useClosePositionMutation(publicKey)
+  const { mutateAsync } = useRewardsMutation(publicKey)
   const handleClaim = async () => {
     try {
       setIsSubmitting(true)
 
-      // if (data) {
-      //   console.log("data", data)
-      //   refetch()
-      //   onRefetchData()
-      //   handleClose()
-      // }
+      const data = await mutateAsync({
+        positionIndex,
+        collateralBalance: positionInfo?.onusdVal!,
+        collateralILD: positionInfo?.collateralILD!,
+        onassetBalance: positionInfo?.onassetVal!,
+        onassetILD: positionInfo?.onassetILD!,
+        onassetMint: positionInfo?.onassetMint!,
+        committedCollateralLiquidity: positionInfo?.committedCollateralLiquidity!,
+      })
+
+      if (data) {
+        console.log("data", data)
+        refetch()
+        // onRefetchData()
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -56,10 +55,10 @@ const Rewards = ({ positionIndex }: { positionIndex: number }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, positionInfo.onassetILD).toLocaleString(undefined, {
+            {Math.max(0, -positionInfo!.onassetILD).toLocaleString(undefined, {
               maximumFractionDigits: 6,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${displayRewardNotional()})</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${(-positionInfo!.onassetILD * positionInfo!.price).toLocaleString(undefined, { maximumFractionDigits: 2 })})</Typography>
         </BoxWithBorder>
       </Box>
       <Box>

@@ -10,9 +10,14 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from "@solana/wallet-adapter-react"
 import WarningMsg, { InfoMsg } from "~/components/Common/WarningMsg"
 import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/LiquidityPosition.query"
+import { useEffect, useState } from "react"
+import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { usePayILDMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 
 const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const { publicKey } = useWallet()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [healthScore, setHealthScore] = useState(0)
 
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
@@ -24,7 +29,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors, isSubmitting },
+    formState: { isDirty, errors },
     watch,
     setValue,
     trigger,
@@ -38,37 +43,54 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
     'ildAmount',
   ])
 
+  useEffect(() => {
+    if (positionInfo && ildAmount > 0) {
+      const position = positionInfo.comet.positions[positionIndex]
+      const poolIndex = Number(position.poolIndex)
+      const pool = positionInfo.pools.pools[poolIndex]
+      const ildDebtNotionalValue = Math.max(positionInfo.collateralILD, 0) + Math.max((positionInfo.onassetILD - ildAmount) * positionInfo.oraclePrice, 0)
+      const healthScoreIncrease = (
+        fromScale(pool.assetInfo.ilHealthScoreCoefficient, 2) * ildDebtNotionalValue +
+        positionInfo.committedCollateralLiquidity * fromScale(pool.assetInfo.positionHealthScoreCoefficient, 2)
+      ) / positionInfo.totalCollateralAmount
+      // console.log('m', (positionInfo.onassetILD - ildAmount))
+      // console.log('s', fromScale(pool.assetInfo.ilHealthScoreCoefficient, 2) * ildDebtNotionalValue)
+      // console.log('h', healthScoreIncrease)
+      setHealthScore(positionInfo.prevHealthScore + healthScoreIncrease)
+    }
+  }, [ildAmount])
+
   const initData = () => {
     setValue('ildAmount', 0.0)
   }
 
-  const displayILDNotional = () => {
-    let reward = 0
-    if (positionInfo!.collateralILD > 0)
-      reward += positionInfo!.collateralILD
-    if (positionInfo!.onassetILD > 0)
-      reward += positionInfo!.onassetILD * positionInfo!.price
-
-    return `${Math.max(0, reward).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD`
-  }
-
-  // const { mutateAsync } = useEditPositionMutation(publicKey)
+  const { mutateAsync } = usePayILDMutation(publicKey)
   const onEdit = async () => {
-    // try {
-    //   const data = await mutateAsync(
-    //     {
-    //       ildAmount
-    //     }
-    //   )
-    //   if (data) {
-    //     console.log('data', data)
-    //     refetch()
-    //     initData()
-    //     onRefetchData()
-    //   }
-    // } catch (err) {
-    //   console.error(err)
-    // }
+    try {
+      setIsSubmitting(true)
+
+      const data = await mutateAsync({
+        ildAmount,
+        positionIndex,
+        collateralBalance: positionInfo?.onusdVal!,
+        collateralILD: positionInfo?.collateralILD!,
+        onassetBalance: positionInfo?.onassetVal!,
+        onassetILD: positionInfo?.onassetILD!,
+        onassetMint: positionInfo?.onassetMint!,
+        committedCollateralLiquidity: positionInfo?.committedCollateralLiquidity!,
+      })
+
+      if (data) {
+        console.log("data", data)
+        refetch()
+        initData()
+        // onRefetchData()
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
 
@@ -91,7 +113,9 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               })} {positionInfo.tickerSymbol}
             </Typography>
             <Typography variant='p_lg' color='#66707e' ml='10px'>
-              {`($${displayILDNotional()})`}
+              {`($${(Math.max(positionInfo!.onassetILD, 0) * positionInfo!.price).toLocaleString(undefined, {
+                maximumFractionDigits: 6
+              })})`}
             </Typography>
           </Box>
         </StackWithBorder>
@@ -99,13 +123,13 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <Controller
             name="ildAmount"
             control={control}
-            rules={{
-              validate(value) {
-                if (!value || value <= 0) {
-                  return ''
-                }
-              }
-            }}
+            // rules={{
+            //   validate(value) {
+            //     if (!value || value <= 0) {
+            //       return ''
+            //     }
+            //   }
+            // }}
             render={({ field }) => (
               <PairInput
                 tickerIcon={positionInfo.tickerIcon}
@@ -129,7 +153,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
             <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
             <Box>
-              <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString()}</Typography>
+              <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 6 })}</Typography>
               <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : remainingILD.toLocaleString()}</Typography>
             </Box>
           </StackWithBorder>
@@ -164,7 +188,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
                 </Box>
                 <Box mt='10px' display='flex' justifyContent='center'>
-                  <HealthscoreView score={positionInfo.healthScore} />
+                  <HealthscoreView score={healthScore ? healthScore : positionInfo.healthScore} />
                 </Box>
               </HealthBox>
               :
@@ -176,8 +200,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               </HealthBox>
           }
         </Box>
-        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNaN(ildAmount) || ildAmount === 0}>
-          <Typography variant='p_xlg'>{ildAmount > 0 ? 'Claim Rewards' : 'No ILD Balance'}</Typography>
+        <SubmitButton onClick={handleSubmit(onEdit)} disabled={(remainingILD <= 0 && positionInfo.collateralILD <= 0) || isSubmitting}>
+          <Typography variant='p_xlg'>{remainingILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : 'Pay ILD'}</Typography>
         </SubmitButton>
       </Box>
     </>

@@ -9,7 +9,7 @@ import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
-import { getAggregatedPoolStats } from '~/utils/assets'
+import { AggregatedStats, getAggregatedPoolStats } from '~/utils/assets'
 
 export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return
@@ -24,7 +24,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	let positions: LiquidityPosition[] = [];
 
 	const [userAccountData, poolsData, oraclesData] = await Promise.allSettled([
-		program.getUserAccount(), program.getPools(), program.getOracles(), 
+		program.getUserAccount(), program.getPools(), program.getOracles(),
 	]);
 
 	if (userAccountData.status === "fulfilled" && poolsData.status === "fulfilled" && oraclesData.status === "fulfilled") {
@@ -33,7 +33,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 
 		const comet = userAccountData.value.comet
 		collaterals = extractCollateralInfo(program, comet)
-		positions = extractLiquidityPositionsInfo(program, comet, poolsData.value, oraclesData.value)
+		positions = extractLiquidityPositionsInfo(program, comet, poolsData.value, oraclesData.value, collaterals[0], poolStats)
 
 		collaterals.forEach(c => {
 			totalCollValue += c.collAmount * c.collAmountDollarPrice
@@ -110,10 +110,11 @@ export interface LiquidityPosition {
 	ildValue: number,
 	ildInUsdi: boolean
 	rewards: number
+	apy: number
 }
 
 
-const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools: Pools, oracles: Oracles): LiquidityPosition[] => {
+const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools: Pools, oracles: Oracles, coll: Collateral, poolStats: AggregatedStats[]): LiquidityPosition[] => {
 	const result: LiquidityPosition[] = [];
 	const collateral = program.clone.collateral;
 	const ildInfo = getILD(collateral, pools, oracles, comet);
@@ -134,17 +135,31 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 			return [0, true]
 		})();
 
+		let rewards = 0
+		if (ildInfo[i].collateralILD < 0) {
+			rewards += (-ildInfo[i]!.collateralILD)
+		}
+		if (ildInfo[i].onAssetILD < 0) {
+			rewards += (-ildInfo[i]!.onAssetILD * ildInfo[i]!.oraclePrice)
+		}
+
+		const liquidityDollarPrice = fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale) * 2
+		const fees24hr = (poolStats[poolIndex].fees * liquidityDollarPrice) / poolStats[poolIndex].liquidityUSD
+		const collValue = coll.collAmount * coll.collAmountDollarPrice
+		const apy = collValue > 0 ? (365.25 * fees24hr / collValue) * 100 : 0
+
 		result.push(
 			{
 				tickerIcon: info.tickerIcon,
 				tickerSymbol: info.tickerSymbol,
 				tickerName: info.tickerName,
-				liquidityDollarPrice: fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale) * 2,
+				liquidityDollarPrice,
 				ildValue,
 				positionIndex: i,
 				poolIndex,
 				ildInUsdi,
-				rewards: 0
+				rewards,
+				apy
 			} as LiquidityPosition
 		)
 	}
