@@ -9,6 +9,7 @@ import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
+import { getAggregatedPoolStats } from '~/utils/assets'
 
 export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return
@@ -23,10 +24,13 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	let positions: LiquidityPosition[] = [];
 
 	const [userAccountData, poolsData, oraclesData] = await Promise.allSettled([
-		program.getUserAccount(), program.getPools(), program.getOracles()
+		program.getUserAccount(), program.getPools(), program.getOracles(), 
 	]);
 
 	if (userAccountData.status === "fulfilled" && poolsData.status === "fulfilled" && oraclesData.status === "fulfilled") {
+		const poolStats = await getAggregatedPoolStats(poolsData.value)
+		let total24hrFees = 0
+
 		const comet = userAccountData.value.comet
 		collaterals = extractCollateralInfo(program, comet)
 		positions = extractLiquidityPositionsInfo(program, comet, poolsData.value, oraclesData.value)
@@ -36,9 +40,11 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 		});
 		positions.forEach(p => {
 			totalLiquidity += p.liquidityDollarPrice
+			total24hrFees += (poolStats[p.poolIndex].fees * p.liquidityDollarPrice) / poolStats[p.poolIndex].liquidityUSD
 		})
 		hasNoCollateral = totalCollValue === 0
 		healthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
+		totalApy = totalCollValue > 0 ? (365.25 * total24hrFees / totalCollValue) * 100 : 0
 	}
 
 	const result = {
