@@ -22,7 +22,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           <Box display='flex' justifyContent='center'><Typography variant='p'>Your Liquidity</Typography></Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : ''}
+              {infos && infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : '$0'}
             </Typography>
           </StatusValue>
         </Box>
@@ -30,7 +30,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           <Box display='flex' justifyContent='center'><Typography variant='p'>Your Colleteral</Typography></Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : ''}
+              {infos && infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : '0'}
             </Typography>
           </StatusValue>
         </Box>

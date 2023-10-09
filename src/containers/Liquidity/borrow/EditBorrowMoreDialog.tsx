@@ -224,7 +224,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
 
             <SubmitButton onClick={handleSubmit(!isFullRepaid ? onEdit : onClose)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
-                : <Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography>}
+                : <Typography variant='p_lg'>Withdraw all Collateral</Typography>}
             </SubmitButton>
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>

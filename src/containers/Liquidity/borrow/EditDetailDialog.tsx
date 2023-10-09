@@ -83,7 +83,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     setHasRiskRatio(expectedCollRatio - borrowDetail.minCollateralRatio <= RISK_RATIO_VAL)
 
     if (editType === 1) {
-      setIsFullWithdrawal(collAmount >= maxCollVal)
+      setIsFullWithdrawal(collAmount >= Number(borrowDetail.collateralAmount))
     }
 
     trigger()

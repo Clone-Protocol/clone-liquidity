@@ -3,7 +3,7 @@ import { Box, Stack, Typography } from '@mui/material'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 
-const BorrowLiquidityStatus = () => {
+const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolean }) => {
   const { publicKey } = useWallet()
   const { data: status } = useStatusQuery({
     userPubKey: publicKey,
@@ -15,7 +15,7 @@ const BorrowLiquidityStatus = () => {
     <Wrapper>
       <Stack direction='row' gap={16}>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p' color={status ? '#fff' : '#66707e'}>Borrowed Amount</Typography></Box>
+          <Box display='flex' justifyContent='center'><Typography variant='p' color={!hasNoPosition ? '#fff' : '#66707e'}>Borrowed Amount</Typography></Box>
           <StatusValue>
             {status && status.statusValues &&
               <Typography variant='p_xlg'>
@@ -29,7 +29,7 @@ const BorrowLiquidityStatus = () => {
           </StatusValue>
         </Box>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p' color={status ? '#fff' : '#66707e'}>Colleteral in Borrow Positions</Typography></Box>
+          <Box display='flex' justifyContent='center'><Typography variant='p' color={!hasNoPosition ? '#fff' : '#66707e'}>Colleteral in Borrow Positions</Typography></Box>
           <StatusValue>
             {status && status.statusValues &&
               <Typography variant='p_xlg'>

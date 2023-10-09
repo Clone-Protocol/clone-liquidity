@@ -220,7 +220,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </Box>
           </Box>
 
-          {hasRiskRatio &&
+          {hasRiskRatio && !hasLowerMin &&
             <WarningStack direction='row'>
               <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
               <Typography variant='p' ml='8px'>Due to low collateral ratio, this borrow position will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
@@ -228,7 +228,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
           }
 
           <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff0084' } : {}}>
-            <Typography variant='p_lg'>{hasLowerMin ? 'Minimum Collateral Ratio is 150%' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : collAmount > usdiBalance?.balanceVal ? 'Exceeded Wallet Balance' : 'Borrow'}</Typography>
+            <Typography variant='p_lg'>{(isNaN(collAmount) || collAmount === 0) ? 'Enter Collateral Amount' : hasLowerMin ? 'Minimum Collateral Ratio is 150%' : collAmount > usdiBalance?.balanceVal ? 'Exceeded Wallet Balance' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
           </SubmitButton>
         </Box>
       </Box>

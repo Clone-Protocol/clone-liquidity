@@ -96,6 +96,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
 
   const balance: number = positionInfo ? Math.max(0, positionInfo.onassetVal) : 0
   const remainingILD: number = positionInfo ? Math.max(0, positionInfo.onassetILD - ildAmount) : 0
+  const isValid = positionInfo ? (remainingILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0) || (remainingILD > 0 && ildAmount === 0) || isSubmitting : false
 
   return positionInfo ? (
     <>
@@ -109,12 +110,12 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <Box>
             <Typography variant='p_lg'>
               {Math.max(0, positionInfo.onassetILD).toLocaleString(undefined, {
-                maximumFractionDigits: 6,
+                maximumFractionDigits: 8,
               })} {positionInfo.tickerSymbol}
             </Typography>
             <Typography variant='p_lg' color='#66707e' ml='10px'>
               {`($${(Math.max(positionInfo!.onassetILD, 0) * positionInfo!.price).toLocaleString(undefined, {
-                maximumFractionDigits: 6
+                maximumFractionDigits: 8
               })})`}
             </Typography>
           </Box>
@@ -153,7 +154,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
             <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
             <Box>
-              <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 6 })}</Typography>
+              <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
               <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : remainingILD.toLocaleString()}</Typography>
             </Box>
           </StackWithBorder>
@@ -200,7 +201,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               </HealthBox>
           }
         </Box>
-        <SubmitButton onClick={handleSubmit(onEdit)} disabled={(remainingILD <= 0 && positionInfo.collateralILD <= 0) || isSubmitting}>
+        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isValid}>
           <Typography variant='p_xlg'>{remainingILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : 'Pay ILD'}</Typography>
         </SubmitButton>
       </Box>

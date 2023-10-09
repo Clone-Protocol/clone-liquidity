@@ -45,6 +45,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
     }
   }
 
+  const isValidToRewards = positionInfo ? Math.abs(-positionInfo!.onassetILD * positionInfo!.price) + Math.max(0, -positionInfo.collateralILD) : false
 
   return positionInfo ? (
     <>
@@ -55,22 +56,22 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo!.onassetILD).toLocaleString(undefined, {
-              maximumFractionDigits: 6,
+            {Math.max(0, -positionInfo.onassetILD).toLocaleString(undefined, {
+              maximumFractionDigits: 8,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${(-positionInfo!.onassetILD * positionInfo!.price).toLocaleString(undefined, { maximumFractionDigits: 2 })})</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${Math.abs(-positionInfo.onassetILD * positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>
         <Box><Typography variant='p_lg'>devUSD Rewards</Typography></Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, positionInfo.collateralILD).toLocaleString(undefined, {
-              maximumFractionDigits: 6,
+            {Math.max(0, -positionInfo.collateralILD).toLocaleString(undefined, {
+              maximumFractionDigits: 8,
             })} devUSD</Typography>
         </BoxWithBorder>
       </Box>
-      <SubmitButton onClick={() => handleClaim()} disabled={!positionInfo.isValidToClose || isSubmitting}>
+      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
         <Typography variant='p_xlg'>{positionInfo.isValidToClose ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
       </SubmitButton>
     </>

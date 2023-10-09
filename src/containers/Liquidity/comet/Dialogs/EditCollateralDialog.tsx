@@ -135,7 +135,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
     submitButtonText = 'Withdrawable Amount is Zero'
   }
 
-
   return collData ? (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={400}>
@@ -155,7 +154,9 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
               <Box mt='7px'><Typography variant='h2' fontWeight={500}>${collData.collAmount.toLocaleString()}</Typography></Box>
             </Box>
 
-            {!isNewDeposit ?
+            {isNewDeposit && collData.balance === 0 ?
+              <ZeroAmountBox><Typography variant='h4'>Collateral Amount is Zero</Typography></ZeroAmountBox>
+              :
               <>
                 <Box mb='18px'>
                   <Controller
@@ -232,7 +233,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
                 }
 
                 {(tab === 1 && hasRiskScore && collAmount <= maxWithdrawable) ?
-                  <RiskSubmitButton onClick={handleSubmit(onEdit)}>
+                  <RiskSubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
                     <Typography variant='p_xlg'>
                       {'Accept Risk and Withdraw'}
                     </Typography>
@@ -245,8 +246,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
                   </SubmitButton>
                 }
               </>
-              :
-              <ZeroAmountBox><Typography variant='h4'>Collateral Amount is Zero</Typography></ZeroAmountBox>}
+            }
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
               <CloseButton handleClose={handleClose} />
@@ -267,7 +267,7 @@ const CometHealthBox = styled(Box)`
   margin-bottom: 30px;
 `
 const ZeroAmountBox = styled(Box)`
-  width: 360px;
+  width: 100%;
   height: 52px;
   display: flex;
   justify-content: center;

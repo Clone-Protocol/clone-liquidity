@@ -48,7 +48,7 @@ const EditCollateralInput: React.FC<Props> = ({
         <Typography variant="p">Current collateral amount</Typography>
         <Stack direction='row' gap={1}>
           <Typography variant="p_lg">{currentCollAmount?.toLocaleString()} devUSD</Typography>
-          <Typography variant="p_lg" color='#66707e'>({dollarPrice?.toLocaleString()} USD)</Typography>
+          <Typography variant="p_lg" color='#66707e'>(${dollarPrice?.toLocaleString()} USD)</Typography>
         </Stack>
       </StackWithBorder>
 

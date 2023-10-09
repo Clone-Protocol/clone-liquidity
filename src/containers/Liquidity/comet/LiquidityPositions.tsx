@@ -97,7 +97,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
             </AddButton>
             :
             <AddButtonNoPosition onClick={redirectAddCometPage}>
-              <Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
+              <Image src={AddIconOn} width={15} height={15} alt='add' />
               <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
             </AddButtonNoPosition>
           }
@@ -213,6 +213,7 @@ const AddButton = styled(Button)`
 const AddButtonNoPosition = styled(AddButton)`
   height: 42px;
   color: #fff;
+  margin-top: -110px;
   &:hover {
     border-color: ${(props) => props.theme.palette.info.main};
   }

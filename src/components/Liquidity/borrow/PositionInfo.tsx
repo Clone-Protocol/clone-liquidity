@@ -37,7 +37,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
             <ValueBox width='300px'>
               <Box mb='6px'><Typography variant='p'>Collateral Ratio</Typography></Box>
               <Stack direction='row' gap={1} alignItems='center'>
-                <Typography variant='h4'>{positionInfo.collateralRatio.toFixed(2)}%</Typography>
+                <Typography variant='h3'>{positionInfo.collateralRatio.toFixed(2)}%</Typography>
                 <Typography variant='p_lg' color='#66707e'>(min {positionInfo.minCollateralRatio}%)</Typography>
               </Stack>
             </ValueBox>
@@ -48,7 +48,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
             <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='14px'>
               <Box textAlign='left'>
                 <Box><Typography fontSize='26px'>{positionInfo.borrowedOnasset.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
-                <Box><Typography variant='p' color='#66707e'>${borrowedDollarPrice.toLocaleString()}</Typography></Box>
+                <Box mt='-5px'><Typography variant='p' color='#66707e'>${borrowedDollarPrice.toLocaleString()}</Typography></Box>
               </Box>
               <TickerBox display="flex" alignItems='center'>
                 <Image src={positionInfo.tickerIcon} width={22} height={22} alt={positionInfo.tickerSymbol!} />
@@ -69,7 +69,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
         <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='14px'>
           <Box textAlign='left'>
             <Box><Typography fontSize='26px'>{positionInfo.collateralAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
-            <Box><Typography variant='p' color='#66707e'>${positionInfo.collateralAmount.toLocaleString()}</Typography></Box>
+            <Box mt='-5px'><Typography variant='p' color='#66707e'>${positionInfo.collateralAmount.toLocaleString()}</Typography></Box>
           </Box>
           <TickerBox display="flex" alignItems='center'>
             <Image src={'/images/assets/on-usd.svg'} width={22} height={22} alt={'dev-usd'} />

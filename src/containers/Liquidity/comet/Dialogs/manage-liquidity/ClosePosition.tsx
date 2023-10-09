@@ -124,7 +124,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={ildBalance > 0 ? '#fff' : '#66707e'}>
-            ${ildBalance.toLocaleString()}</Typography>
+            ${ildBalance.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
 
           {ildBalance === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
@@ -143,7 +143,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={remainRewards > 0 ? '#fff' : '#66707e'}>
-            ${remainRewards.toLocaleString()}</Typography>
+            ${remainRewards.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
           {remainRewards === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
               <Image src={CheckIcon} alt='check' />

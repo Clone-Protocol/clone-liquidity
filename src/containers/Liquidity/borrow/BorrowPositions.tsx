@@ -37,10 +37,15 @@ const BorrowPositions = () => {
 		router.push('/borrow')
 	}
 
+	let customOverlayMsg = ''
+	if (!publicKey) {
+		customOverlayMsg = 'Please connect wallet.'
+	}
+
 	return (
 		<>
 			<Typography variant='h3' fontWeight={500} mb='20px'>Borrow</Typography>
-			<BorrowLiquidityStatus />
+			<BorrowLiquidityStatus hasNoPosition={positions && positions.length > 0 ? false : true} />
 
 			<Grid
 				headers={columns}
@@ -48,7 +53,7 @@ const BorrowPositions = () => {
 				minHeight={120}
 				hasRangeIndicator={true}
 				gridType={GridType.Borrow}
-				customNoRowsOverlay={() => CustomNoRowsOverlay('Please connect wallet')}
+				customNoRowsOverlay={() => CustomNoRowsOverlay(customOverlayMsg)}
 				onRowClick={handleRowClick}
 			/>
 
@@ -60,8 +65,8 @@ const BorrowPositions = () => {
 							<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
 						</AddButton>
 						:
-						<AddButtonNoPosition onClick={() => { }}>
-							<Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
+						<AddButtonNoPosition onClick={moveNewBorrowPositionPage}>
+							<Image src={AddIconOn} width={15} height={15} alt='add' />
 							<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
 						</AddButtonNoPosition>
 					}
@@ -150,6 +155,7 @@ const AddButton = styled(Button)`
 const AddButtonNoPosition = styled(AddButton)`
   height: 42px;
   color: #fff;
+	margin-top: -110px;
   &:hover {
     border-color: ${(props) => props.theme.palette.info.main};
   }

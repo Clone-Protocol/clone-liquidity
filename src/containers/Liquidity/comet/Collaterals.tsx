@@ -8,15 +8,16 @@ import dynamic from 'next/dynamic'
 import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
+  const { publicKey } = useWallet()
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const setMintUsdi = useSetAtom(mintUSDi)
-  const alreadyHasDeposit = collaterals.length > 0 && !hasNoCollateral
   const EditCollateralDialog = dynamic(() => import('./Dialogs/EditCollateralDialog'))
 
   let dataCollaterals = collaterals
-  if (hasNoCollateral) {
+  if (publicKey && hasNoCollateral) {
     const onUSDInfo = collateralMapping(StableCollateral.onUSD)
     dataCollaterals = [{
       tickerIcon: onUSDInfo.collateralIcon,
@@ -37,13 +38,18 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
     setOpenEditCollateral(true)
   }
 
+  let customOverlayMsg = ''
+  if (!publicKey) {
+    customOverlayMsg = 'Please connect wallet.'
+  }
+
   return (
     <>
       <Grid
         headers={columns}
         rows={rowsCollateral || []}
         minHeight={120}
-        customNoRowsOverlay={() => CustomNoRowsOverlay('Please connect wallet.')}
+        customNoRowsOverlay={() => CustomNoRowsOverlay(customOverlayMsg)}
         onRowClick={handleRowClick}
       />
 
@@ -72,7 +78,7 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
 
       <EditCollateralDialog
         open={openEditCollateral}
-        isNewDeposit={!alreadyHasDeposit}
+        isNewDeposit={hasNoCollateral}
         onRefetchData={onRefetchData}
         handleClose={() => setOpenEditCollateral(false)}
       />
@@ -124,7 +130,7 @@ let columns: GridColDef[] = [
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        <GetButton onClick={() => params.row.setMintUsdi(true)}><Typography variant='p'>Get devUSD</Typography></GetButton>
+        <GetButton onClick={(e) => { e.stopPropagation(); params.row.setMintUsdi(true) }}><Typography variant='p'>Get devUSD</Typography></GetButton>
       )
     },
   },
@@ -132,19 +138,6 @@ let columns: GridColDef[] = [
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
-const AddButton = styled(Button)`
-  width: 100%;
-  height: 28px;
-  padding: 4px 0;
-  border: solid 1px ${(props) => props.theme.boxes.greyShade};
-  color: ${(props) => props.theme.palette.text.secondary};
-  margin-top: 9px;
-  &:hover {
-    background: ${(props) => props.theme.boxes.darkBlack};
-    color: #fff;
-    border-color: ${(props) => props.theme.palette.text.secondary};
-  }
-`
 const GetButton = styled(Button)`
   width: 130px;
   height: 30px;

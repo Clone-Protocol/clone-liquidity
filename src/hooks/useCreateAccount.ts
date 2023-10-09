@@ -27,34 +27,34 @@ export function useCreateAccount() {
 	useEffect(() => {
 		async function createAccount() {
 			if (wallet) {
-				const program = await getCloneApp(wallet, true)
-
-				let ixnCalls: Promise<TransactionInstruction>[] = []
-
-				const onusdTokenAccount = await getTokenAccount(program.clone.collateral.mint, publicKey!, program.provider.connection);
-				const associatedToken = await getAssociatedTokenAddress(
-					program.clone.collateral.mint,
-					publicKey!
-				);
-
-				if (onusdTokenAccount === undefined) {
-					ixnCalls.push(
-						(async () => createAssociatedTokenAccountInstruction(
-							publicKey!,
-							associatedToken,
-							publicKey!,
-							program.clone.collateral.mint
-						))()
-					)
-				}
-
-				ixnCalls.push(
-					(async () =>
-						program.initializeUserInstruction()
-					)()
-				)
-
 				try {
+					const program = await getCloneApp(wallet, true)
+
+					let ixnCalls: Promise<TransactionInstruction>[] = []
+
+					const onusdTokenAccount = await getTokenAccount(program.clone.collateral.mint, publicKey!, program.provider.connection);
+					const associatedToken = await getAssociatedTokenAddress(
+						program.clone.collateral.mint,
+						publicKey!
+					);
+
+					if (onusdTokenAccount === undefined) {
+						ixnCalls.push(
+							(async () => createAssociatedTokenAccountInstruction(
+								publicKey!,
+								associatedToken,
+								publicKey!,
+								program.clone.collateral.mint
+							))()
+						)
+					}
+
+					ixnCalls.push(
+						(async () =>
+							program.initializeUserInstruction()
+						)()
+					)
+
 					let ixns = await Promise.all(ixnCalls)
 					await sendAndConfirm(program.provider, ixns, setTxState)
 
