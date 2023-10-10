@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, styled, Dialog, DialogContent, FormHelperText, Typography, Stack } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography, Stack } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
+import { useCloseMutation, useEditCollateralMutation } from '~/features/Borrow/Borrow.mutation'
 import { PairData } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import EditCollateralInput from '~/components/Liquidity/borrow/EditCollateralInput'
@@ -13,21 +13,31 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
 import { InfoMsg } from '~/components/Common/WarningMsg'
+import { useRouter } from 'next/navigation'
 
-const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
+const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const borrowIndex = borrowId
+  const router = useRouter()
 
-  const [editType, setEditType] = useState(0) // 0 : deposit , 1: withdraw
+  const [editType, setEditType] = useState(initEditType) // 0 : deposit , 1: withdraw
   const [maxCollVal, setMaxCollVal] = useState(0);
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
   const [isFullWithdrawal, setIsFullWithdrawal] = useState(false)
+  const [isFullRepaid, setIsFullRepaid] = useState(false)
   const [hasInvalidRatio, setHasInvalidRatio] = useState(false)
   const [hasRiskRatio, setHasRiskRatio] = useState(false)
 
   useEffect(() => {
     setMaxCollVal(borrowDetail.usdiVal)
   }, [borrowDetail.usdiVal])
+
+  useEffect(() => {
+    if (borrowDetail.borrowedOnasset === 0) {
+      setIsFullRepaid(true)
+      setEditType(1)
+    }
+  }, [borrowDetail.borrowedOnasset])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
     setEditType(newValue)
@@ -43,6 +53,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
   }
 
   const { mutateAsync } = useEditCollateralMutation(publicKey)
+  const { mutateAsync: mutateAsyncClose } = useCloseMutation(publicKey)
 
   const {
     handleSubmit,
@@ -111,6 +122,25 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
     }
   }
 
+  const onClose = async () => {
+    try {
+      const data = await mutateAsyncClose(
+        {
+          borrowIndex,
+        }
+      )
+      if (data) {
+        console.log('data', data)
+        initData()
+        onRefetchData()
+        onHideEditForm()
+        router.replace(`/borrow/myliquidity`)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const isValid = Object.keys(errors).length === 0
 
   return (
@@ -120,24 +150,26 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
           <BoxWrapper>
             <Typography variant='h3'>Manage Borrow Position: Collateral</Typography>
 
-            <Stack direction='row' gap={3} mt='38px'>
-              <ValueBox width='220px'>
-                <Box mb='6px'><Typography variant='p'>Borrowed Asset</Typography></Box>
-                <Box display="flex" alignItems='center'>
-                  <Image src={fromPair.tickerIcon} width={28} height={28} alt={fromPair.tickerSymbol!} />
-                  <Typography variant="h4" ml='10px'>
-                    {fromPair.tickerName}
-                  </Typography>
-                </Box>
-              </ValueBox>
-              <ValueBox width='300px'>
-                <Box mb='6px'><Typography variant='p'>Collateral Ratio</Typography></Box>
-                <Stack direction='row' gap={1} alignItems='center'>
-                  <Typography variant='h3' fontWeight={500}>{borrowDetail.collateralRatio.toFixed(2)}%</Typography>
-                  <Typography variant='p_lg' color='#66707e'>(min {borrowDetail.minCollateralRatio.toFixed(0)}%)</Typography>
-                </Stack>
-              </ValueBox>
-            </Stack>
+            {!isFullRepaid &&
+              <Stack direction='row' gap={3} mt='38px'>
+                <ValueBox width='220px'>
+                  <Box mb='6px'><Typography variant='p'>Borrowed Asset</Typography></Box>
+                  <Box display="flex" alignItems='center'>
+                    <Image src={fromPair.tickerIcon} width={28} height={28} alt={fromPair.tickerSymbol!} />
+                    <Typography variant="h4" ml='10px'>
+                      {fromPair.tickerName}
+                    </Typography>
+                  </Box>
+                </ValueBox>
+                <ValueBox width='300px'>
+                  <Box mb='6px'><Typography variant='p'>Collateral Ratio</Typography></Box>
+                  <Stack direction='row' gap={1} alignItems='center'>
+                    <Typography variant='h3' fontWeight={500}>{borrowDetail.collateralRatio.toFixed(2)}%</Typography>
+                    <Typography variant='p_lg' color='#66707e'>(min {borrowDetail.minCollateralRatio.toFixed(0)}%)</Typography>
+                  </Stack>
+                </ValueBox>
+              </Stack>
+            }
             <Box my='38px'>
               <Controller
                 name="collAmount"
@@ -166,12 +198,14 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
                     currentCollAmount={Number(borrowDetail.collateralAmount)}
                     dollarPrice={Number(borrowDetail.collateralAmount)}
                     hasInvalidRatio={hasInvalidRatio}
+                    isFullRepaid={isFullRepaid}
                     onChangeType={handleChangeType}
                     onChangeAmount={(event: React.FormEvent<HTMLInputElement>) => {
                       field.onChange(event.currentTarget.value)
                     }}
                     onMax={(value: number) => {
-                      field.onChange(value)
+                      const maxValue = editType === 1 ? Math.min(value, Number(borrowDetail.collateralAmount)) : value
+                      field.onChange(maxValue)
                     }}
                   />
                 )}
@@ -180,7 +214,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
             </Box>
 
             <RatioBox>
-              {hasInvalidRatio ?
+              {hasInvalidRatio || isFullRepaid ?
                 <Box>
                   <Image src={IconSmile} alt='paidInFull' />
                   <Box>
@@ -205,8 +239,10 @@ const EditDetailDialog = ({ borrowId, borrowDetail, open, onHideEditForm, onRefe
 
             {isFullWithdrawal && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
-              <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Collateral</Typography>
+            <SubmitButton onClick={handleSubmit((isFullWithdrawal && isFullRepaid) ? onClose : onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio && !isFullRepaid ? { backgroundColor: '#d92a84' } : {}}>
+              <Typography variant='p_lg'>
+                {(isFullWithdrawal && isFullRepaid) ? 'Withdraw and Close This Borrow Position' : `${hasRiskRatio ? 'Accept Risk and ' : ''} Edit Collateral`}
+              </Typography>
             </SubmitButton>
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>

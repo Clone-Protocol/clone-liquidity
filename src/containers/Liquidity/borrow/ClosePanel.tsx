@@ -1,52 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Stack, Typography, styled } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import InfoIcon from 'public/images/info-icon-black.svg'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
-import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import { MARKETS_APP } from '~/data/social'
-import { TAB_BORROW } from '../LiquidityTable'
 import { SubmitButton } from "~/components/Common/CommonButtons"
 import CheckIcon from 'public/images/check-icon.svg'
 
-const ClosePanel = ({ assetId, borrowDetail, onMoveRepayPosition }: { assetId: string, borrowDetail: BorrowDetail, onMoveRepayPosition: () => void }) => {
-  const { publicKey } = useWallet()
-  const router = useRouter()
-  const borrowIndex = parseInt(assetId)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const { mutateAsync } = useCloseMutation(publicKey)
-
-  // const redirectToMarket = () => {
-  //   const url = `${MARKETS_APP}`
-  //   window.open(url)
-  // }
-
-  const onClose = async () => {
-    try {
-      setIsSubmitting(true)
-      const data = await mutateAsync(
-        {
-          borrowIndex
-        }
-      )
-      if (data) {
-        console.log('data', data)
-        router.replace(`/comet/myliquidity?ltab=${TAB_BORROW}`)
-      }
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
+const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollateral }: { borrowDetail: BorrowDetail, onMoveRepayPosition: () => void, onMoveWithdrawCollateral: () => void }) => {
   const canCloseComet = borrowDetail.borrowedOnasset === 0  //Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedOnasset)
 
   return (
@@ -82,7 +45,7 @@ const ClosePanel = ({ assetId, borrowDetail, onMoveRepayPosition }: { assetId: s
             {borrowDetail.collateralAmount.toLocaleString()} onUSD
           </Typography>
 
-          <GoButton onClick={onClose} disabled={isSubmitting || !canCloseComet}><Typography variant="p" noWrap>{canCloseComet ? 'Withdraw Collateral' : 'Complete Step 1'}</Typography></GoButton>
+          <GoButton onClick={onMoveWithdrawCollateral} disabled={!canCloseComet}><Typography variant="p" noWrap>{canCloseComet ? 'Withdraw Collateral' : 'Complete Step 1'}</Typography></GoButton>
         </StackWithBorder>
       </Box>
 

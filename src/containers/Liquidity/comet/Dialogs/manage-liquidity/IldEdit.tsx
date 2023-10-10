@@ -96,7 +96,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
 
   const balance: number = positionInfo ? Math.max(0, positionInfo.onassetVal) : 0
   const remainingILD: number = positionInfo ? Math.max(0, positionInfo.onassetILD - ildAmount) : 0
-  const isValid = positionInfo ? (remainingILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0) || (remainingILD > 0 && ildAmount === 0) || isSubmitting : false
+  const isValid = positionInfo ? (positionInfo.onassetILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0) || (remainingILD > 0 && ildAmount === 0) || isSubmitting : false
 
   return positionInfo ? (
     <>
@@ -202,7 +202,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           }
         </Box>
         <SubmitButton onClick={handleSubmit(onEdit)} disabled={isValid}>
-          <Typography variant='p_xlg'>{remainingILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : 'Pay ILD'}</Typography>
+          <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : 'Pay ILD'}</Typography>
         </SubmitButton>
       </Box>
     </>

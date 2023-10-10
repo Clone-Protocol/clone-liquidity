@@ -4,7 +4,7 @@ import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import dynamic from 'next/dynamic'
 
-const EditPanel = ({ assetId, borrowDetail, showRepayPosition, onRefetchData }: { assetId: string, borrowDetail: BorrowDetail, showRepayPosition: boolean, onRefetchData: () => void }) => {
+const EditPanel = ({ assetId, borrowDetail, showRepayPosition, showWithdrawCollateral, onRefetchData }: { assetId: string, borrowDetail: BorrowDetail, showRepayPosition: boolean, showWithdrawCollateral: boolean, onRefetchData: () => void }) => {
   const [openEditDetail, setOpenEditDetail] = useState(false)
   const [openBorrowMore, setOpenBorrowMore] = useState(false)
   const borrowIndex = parseInt(assetId)
@@ -17,6 +17,12 @@ const EditPanel = ({ assetId, borrowDetail, showRepayPosition, onRefetchData }: 
     }
   }, [showRepayPosition])
 
+  useEffect(() => {
+    if (showWithdrawCollateral) {
+      setOpenEditDetail(true)
+    }
+  }, [showWithdrawCollateral])
+
   return borrowDetail ? (
     <Box>
       <PositionInfo
@@ -27,6 +33,7 @@ const EditPanel = ({ assetId, borrowDetail, showRepayPosition, onRefetchData }: 
 
       <EditDetailDialog
         open={openEditDetail}
+        initEditType={showWithdrawCollateral ? 1 : 0}
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenEditDetail(false)}

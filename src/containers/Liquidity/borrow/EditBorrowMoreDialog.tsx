@@ -1,16 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, styled, Dialog, DialogContent, FormHelperText, Typography, Stack } from '@mui/material'
-import { useRouter } from 'next/navigation'
+import { Box, styled, Dialog, DialogContent, Typography, Stack } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEditBorrowMutation } from '~/features/Borrow/Borrow.mutation'
-import { useCloseMutation } from '~/features/Borrow/Borrow.mutation'
 import { PairData } from '~/features/MyLiquidity/BorrowPosition.query'
 import { useForm, Controller } from 'react-hook-form'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
 import EditBorrowedInput from '~/components/Liquidity/borrow/EditBorrowedInput'
 import { FadeTransition } from '~/components/Common/Dialog'
 import { CloseButton, SubmitButton } from '~/components/Common/CommonButtons'
-import { TAB_BORROW } from '../LiquidityTable'
 import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
 
@@ -19,7 +16,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
   const borrowIndex = borrowId
   const [editType, setEditType] = useState(initEditType) // 0 : borrow more , 1: repay
   const [maxCollVal, setMaxCollVal] = useState(0);
-  const router = useRouter()
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
   const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && Number(borrowDetail.borrowedOnasset) > Number(borrowDetail.iassetVal))
@@ -44,7 +40,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
   }
 
   const { mutateAsync } = useEditBorrowMutation(publicKey)
-  const { mutateAsync: mutateAsyncClose } = useCloseMutation(publicKey)
 
   const {
     handleSubmit,
@@ -110,24 +105,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
 
   }
 
-  const onClose = async () => {
-    try {
-      const data = await mutateAsyncClose(
-        {
-          borrowIndex,
-        }
-      )
-      if (data) {
-        console.log('data', data)
-        onRefetchData()
-        onHideEditForm()
-        router.replace(`/comet/myliquidity?ltab=${TAB_BORROW}`)
-      }
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   const isValid = Object.keys(errors).length === 0
 
   return (
@@ -190,7 +167,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                       field.onChange(event.currentTarget.value)
                     }}
                     onMax={(value: number) => {
-                      field.onChange(value)
+                      const maxValue = editType === 1 ? Math.min(value, Number(borrowDetail.borrowedOnasset)) : value
+                      field.onChange(maxValue)
                     }}
                   />
                 )}
@@ -222,9 +200,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                 </Box>}
             </RatioBox>
 
-            <SubmitButton onClick={handleSubmit(!isFullRepaid ? onEdit : onClose)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
-                : <Typography variant='p_lg'>Withdraw all Collateral</Typography>}
+                : <Typography variant='p_lg'>Repay all borrowed amount</Typography>}
             </SubmitButton>
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>

@@ -18,6 +18,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const router = useRouter()
   const [tab, setTab] = useState(0)
   const [showEditRepay, setShowEditRepay] = useState(false)
+  const [showWithdrawCollateral, setShowWithdrawCollateral] = useState(false)
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
@@ -36,6 +37,11 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
     setShowEditRepay(true)
   }
 
+  const moveWithdrawCollateral = () => {
+    setTab(0)
+    setShowWithdrawCollateral(true)
+  }
+
   return borrowDetail ? (
     <Stack direction='row' spacing={3} justifyContent="center">
       <Box>
@@ -47,10 +53,10 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
             <CommonTab value={1} label="Close" />
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
-            <EditPanel assetId={assetId} borrowDetail={borrowDetail} showRepayPosition={showEditRepay} onRefetchData={() => refetch()} />
+            <EditPanel assetId={assetId} borrowDetail={borrowDetail} showRepayPosition={showEditRepay} showWithdrawCollateral={showWithdrawCollateral} onRefetchData={() => refetch()} />
           </TabPanelForEdit>
           <TabPanelForEdit value={tab} index={1}>
-            <ClosePanel assetId={assetId} borrowDetail={borrowDetail} onMoveRepayPosition={moveRepayPosition} />
+            <ClosePanel borrowDetail={borrowDetail} onMoveRepayPosition={moveRepayPosition} onMoveWithdrawCollateral={moveWithdrawCollateral} />
           </TabPanelForEdit>
         </LeftBoxWrapper>
       </Box>

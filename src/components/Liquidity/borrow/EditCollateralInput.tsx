@@ -13,6 +13,7 @@ interface Props {
   currentCollAmount: number
   dollarPrice: number
   hasInvalidRatio: boolean
+  isFullRepaid: boolean
   onChangeType: (event: React.SyntheticEvent, newValue: number) => void
   onChangeAmount?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax: (value: number) => void
@@ -28,6 +29,7 @@ const EditCollateralInput: React.FC<Props> = ({
   currentCollAmount,
   dollarPrice,
   hasInvalidRatio,
+  isFullRepaid,
   onChangeType,
   onChangeAmount,
   onMax,
@@ -40,7 +42,7 @@ const EditCollateralInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Box sx={{ backgroundColor: '#1a1c28' }}>
         <StyledTabs value={editType} onChange={onChangeType}>
-          <StyledTab value={0} label="Deposit Collateral" width='176px'></StyledTab>
+          {!isFullRepaid && <StyledTab value={0} label="Deposit Collateral" width='176px'></StyledTab>}
           <StyledTab value={1} label="Withdraw Collateral" width='176px'></StyledTab>
         </StyledTabs>
       </Box>
