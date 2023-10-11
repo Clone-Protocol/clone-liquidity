@@ -280,29 +280,35 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data }: Call
 		program.provider.connection
 	)
 
-	if (onassetTokenAccountInfo.isInitialized) {
-		const mockUSDCTokenAccountInfo = await getCollateralAccount(program)
-		const ixnCalls: TransactionInstruction[] = []
-		ixnCalls.push(program.updatePricesInstruction(oracles))
+	const ixnCalls: TransactionInstruction[] = []
+
+	if (!onassetTokenAccountInfo.isInitialized) {
 		ixnCalls.push(
-			program.initializeBorrowPositionInstruction(
-				pools,
-				mockUSDCTokenAccountInfo.address,
+			createAssociatedTokenAccountInstruction(
+				userPubKey,
 				onassetTokenAccountInfo.address,
-				toCloneScale(onassetAmount),
-				toScale(collateralAmount, program.clone.collateral.scale),
-				onassetIndex
+				userPubKey,
+				pool.assetInfo.onassetMint,
 			)
 		)
-		await sendAndConfirm(program.provider, ixnCalls, setTxState)
+	}
 
-		return {
-			result: true
-		}
-	} else {
-		return {
-			result: false
-		}
+	const mockUSDCTokenAccountInfo = await getCollateralAccount(program)
+	ixnCalls.push(program.updatePricesInstruction(oracles))
+	ixnCalls.push(
+		program.initializeBorrowPositionInstruction(
+			pools,
+			mockUSDCTokenAccountInfo.address,
+			onassetTokenAccountInfo.address,
+			toCloneScale(onassetAmount),
+			toScale(collateralAmount, program.clone.collateral.scale),
+			onassetIndex
+		)
+	)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState)
+
+	return {
+		result: true
 	}
 }
 
