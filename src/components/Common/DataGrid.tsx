@@ -27,10 +27,10 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       minHeight: `${minHeight}px`,
       '& .MuiDataGrid-main': {
         border: '1px solid #1a1c28',
-        borderBottomLeftRadius: '20px',
-        borderBottomRightRadius: '20px',
-        borderTopLeftRadius: '20px',
-        borderTopRightRadius: '20px',
+        borderBottomLeftRadius: '10px',
+        borderBottomRightRadius: '10px',
+        // borderTopLeftRadius: '10px',
+        // borderTopRightRadius: '10px',
       },
       '& .last--cell': {
         display: 'flex',
@@ -106,7 +106,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       }
       return 'super-app-theme--row'
     }}
-    autoHeight
+    // autoHeight
     disableColumnFilter
     disableSelectionOnClick
     disableColumnSelector

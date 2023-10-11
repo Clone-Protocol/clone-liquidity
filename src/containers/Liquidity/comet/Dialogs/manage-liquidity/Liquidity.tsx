@@ -13,6 +13,8 @@ import { useEditPositionMutation } from '~/features/MyLiquidity/comet/LiquidityP
 import { useForm } from 'react-hook-form'
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
 
 const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -178,4 +180,4 @@ const CometHealthBox = styled(Box)`
   margin-bottom: 30px;
 `
 
-export default Liquidity
+export default withSuspense(Liquidity, <LoadingProgress />)

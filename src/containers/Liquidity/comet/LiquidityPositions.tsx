@@ -161,7 +161,7 @@ let columns: GridColDef[] = [
     headerName: 'ILD',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.ildValue.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>${params.row.ildValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
     },
   },
   {
@@ -171,7 +171,7 @@ let columns: GridColDef[] = [
     headerName: 'Rewards',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
     },
   },
   {

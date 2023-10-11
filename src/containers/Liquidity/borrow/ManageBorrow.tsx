@@ -34,11 +34,13 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
 
   const moveRepayPosition = () => {
     setTab(0)
+    setShowWithdrawCollateral(false)
     setShowEditRepay(true)
   }
 
   const moveWithdrawCollateral = () => {
     setTab(0)
+    setShowEditRepay(false)
     setShowWithdrawCollateral(true)
   }
 

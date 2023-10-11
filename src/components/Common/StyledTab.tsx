@@ -45,7 +45,9 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 		maxHeight: '55px',
 		display: 'flex',
 		whiteSpace: 'nowrap',
-		borderRadius: '5px',
+		// borderRadius: '5px',
+		borderTopLeftRadius: '5px',
+		borderTopRightRadius: '5px',
 		'&:hover': {
 			color: '#fff',
 		}

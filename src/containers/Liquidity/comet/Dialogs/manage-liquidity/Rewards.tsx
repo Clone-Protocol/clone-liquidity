@@ -6,6 +6,8 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import { useState } from "react"
+import { LoadingProgress } from "~/components/Common/Loading"
+import withSuspense from "~/hocs/withSuspense"
 
 const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData?: () => void }) => {
   const { publicKey } = useWallet()
@@ -92,4 +94,4 @@ const BoxWithBorder = styled(Box)`
   border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 `
 
-export default Rewards
+export default withSuspense(Rewards, <LoadingProgress />)

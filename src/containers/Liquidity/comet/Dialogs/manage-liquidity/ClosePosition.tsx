@@ -9,6 +9,8 @@ import { useClosePositionMutation } from "~/features/MyLiquidity/comet/Liquidity
 import Image from "next/image"
 import CheckIcon from 'public/images/check-icon.svg'
 import { fromScale } from "clone-protocol-sdk/sdk/src/clone"
+import { LoadingProgress } from "~/components/Common/Loading"
+import withSuspense from "~/hocs/withSuspense"
 
 const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -182,4 +184,4 @@ const GoButton = styled(SubmitButton)`
   width: 200px;
 `
 
-export default ClosePosition
+export default withSuspense(ClosePosition, <LoadingProgress />)

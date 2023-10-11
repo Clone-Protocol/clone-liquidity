@@ -13,6 +13,8 @@ import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/Liquidit
 import { useEffect, useState } from "react"
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { usePayILDMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
+import { LoadingProgress } from "~/components/Common/Loading"
+import withSuspense from "~/hocs/withSuspense"
 
 const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const { publicKey } = useWallet()
@@ -239,4 +241,4 @@ const HealthBox = styled(Box)`
   margin-bottom: 30px;
 `
 
-export default IldEdit
+export default withSuspense(IldEdit, <LoadingProgress />)
