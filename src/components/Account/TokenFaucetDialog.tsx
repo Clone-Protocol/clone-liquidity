@@ -28,7 +28,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
             <LinkBox mt="12px" mb="12px" onClick={onGetUsdiClick}>
               <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                 <Stack direction='row' spacing={2} alignItems='center'>
-                  <Image src={'/images/assets/on-usd.svg'} width={24} height={24} alt='onUSD' />
+                  <Image src={'/images/assets/on-usd.svg'} width={24} height={24} alt='devUSD' />
                   <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet USD ($100)</Typography>
                 </Stack>
                 <Box>
@@ -45,7 +45,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
             <InfoBox mb="12px">
               <Image src={infoOutlineIcon} alt="info" />
               <Typography variant='p' ml='12px'>
-                You need Devnet SOL in your wallet before you can claim Devnet onUSD.
+                You need Devnet SOL in your wallet before you can claim Devnet USD.
               </Typography>
             </InfoBox>
             <InfoBox sx={{ cursor: 'pointer' }}>

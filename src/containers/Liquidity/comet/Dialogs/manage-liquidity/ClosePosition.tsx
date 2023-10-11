@@ -40,6 +40,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
       reward += positionInfo!.collateralILD
     if (positionInfo!.onassetILD > 0)
       reward += positionInfo!.onassetILD * positionInfo!.price
+    console.log('asset', positionInfo!.onassetILD)
     return Math.max(0, reward)
   }
 

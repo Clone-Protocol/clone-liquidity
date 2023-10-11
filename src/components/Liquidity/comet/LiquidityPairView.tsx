@@ -40,7 +40,7 @@ const LiquidityPairView: React.FC<Props> = ({
         <Box display="flex">
           <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
           <TickerWrapper>
-            <Typography variant="p" whiteSpace='nowrap'>{tickerSymbol} / onUSD</Typography>
+            <Typography variant="p" whiteSpace='nowrap'>{tickerSymbol} / devUSD</Typography>
           </TickerWrapper>
         </Box>
         <Box width='100px' textAlign='right'>

@@ -70,7 +70,7 @@ const CloseLiquidityDialog = ({
       components.push(
         `${Math.max(0, positionInfo!.collateralILD).toLocaleString(undefined, {
           maximumFractionDigits: 8,
-        })} onUSD`
+        })} devUSD`
       )
     }
     if (positionInfo!.onassetILD > 0) {
@@ -82,7 +82,7 @@ const CloseLiquidityDialog = ({
     }
 
     if (components.length === 0)
-      return "0 onUSD"
+      return "0 devUSD"
 
     return components.join(' + ')
   }
@@ -103,7 +103,7 @@ const CloseLiquidityDialog = ({
       components.push(
         `${Math.max(0, -positionInfo!.collateralILD).toLocaleString(undefined, {
           maximumFractionDigits: 8,
-        })} onUSD`
+        })} devUSD`
       )
     }
     if (positionInfo!.onassetILD < 0) {
@@ -114,7 +114,7 @@ const CloseLiquidityDialog = ({
       )
     }
     if (components.length === 0)
-      return "0 onUSD"
+      return "0 devUSD"
 
     return components.join(' + ')
   }
@@ -142,7 +142,7 @@ const CloseLiquidityDialog = ({
                 <Image src={positionInfo.tickerIcon} width={27} height={27} alt={positionInfo.tickerSymbol} />
                 <Box>
                   <Typography variant="p_xlg">
-                    {positionInfo.tickerSymbol} {"<>"} onUSD
+                    {positionInfo.tickerSymbol} {"<>"} devUSD
                   </Typography>
                 </Box>
               </Stack>
@@ -190,7 +190,7 @@ const CloseLiquidityDialog = ({
                 <Typography variant="p" ml="5px">
                   {`${Math.max(0, positionInfo!.onusdVal).toLocaleString(undefined, {
                     maximumFractionDigits: 5,
-                  })} onUSD`}
+                  })} devUSD`}
                 </Typography>
               </Box>
               <CenterBox justifyContent="space-evenly">

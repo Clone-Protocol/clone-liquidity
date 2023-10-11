@@ -42,7 +42,7 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg'>
-            {borrowDetail.collateralAmount.toLocaleString()} onUSD
+            {borrowDetail.collateralAmount.toLocaleString()} devUSD
           </Typography>
 
           <GoButton onClick={onMoveWithdrawCollateral} disabled={!canCloseComet}><Typography variant="p" noWrap>{canCloseComet ? 'Withdraw Collateral' : 'Complete Step 1'}</Typography></GoButton>
