@@ -88,19 +88,18 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const oracles = await program.getOracles()
 
-	const ixnCalls: Promise<TransactionInstruction>[] = []
-	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())
 	let result: { result: boolean, msg: string };
+	const ixnCalls: TransactionInstruction[] = []
+	ixnCalls.push(program.updatePricesInstruction(oracles))
 
 	/// Deposit
 	if (editType === 0) {
 		ixnCalls.push(
-			(async () =>
-				await program.addCollateralToBorrowInstruction(
-					borrowIndex,
-					collateralAssociatedTokenAccount.address,
-					toScale(collateralAmount, program.clone.collateral.scale),
-				))()
+			program.addCollateralToBorrowInstruction(
+				borrowIndex,
+				collateralAssociatedTokenAccount.address,
+				toScale(collateralAmount, program.clone.collateral.scale),
+			)
 		)
 
 		result = {
@@ -115,23 +114,20 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 		)
 		if (collateralAssociatedTokenAccount === undefined) {
 			ixnCalls.push(
-				(async () =>
-					await createAssociatedTokenAccountInstruction(
-						program.provider.publicKey!,
-						onusdAssociatedToken,
-						program.provider.publicKey!,
-						program.clone.collateral.mint
-					))()
+				createAssociatedTokenAccountInstruction(
+					program.provider.publicKey!,
+					onusdAssociatedToken,
+					program.provider.publicKey!,
+					program.clone.collateral.mint
+				)
 			)
 		}
 		ixnCalls.push(
-			(async () =>
-				await program.withdrawCollateralFromBorrowInstruction(
-					borrowIndex,
-					onusdAssociatedToken,
-					toScale(collateralAmount, program.clone.collateral.scale),
-				)
-			)()
+			program.withdrawCollateralFromBorrowInstruction(
+				borrowIndex,
+				onusdAssociatedToken,
+				toScale(collateralAmount, program.clone.collateral.scale),
+			)
 		)
 
 		result = {
@@ -162,41 +158,42 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 	const borrowPosition = borrowPositions[borrowIndex];
 	const assetInfo = pools.pools[borrowPosition.poolIndex].assetInfo
 
-	const onassetAssociatedTokenAccount = await getTokenAccount(
+	const onassetTokenAccountInfo = await getTokenAccount(
 		assetInfo.onassetMint,
 		program.provider.publicKey!,
 		program.provider.connection
 	)
-	const ixnCalls: Promise<TransactionInstruction>[] = []
-	ixnCalls.push((async () => await program.updatePricesInstruction(oracles))())
+
 	let result: { result: boolean, msg: string };
+	const ixnCalls: TransactionInstruction[] = []
+	ixnCalls.push(program.updatePricesInstruction(oracles))
 
 	const associatedToken = await getAssociatedTokenAddress(
 		assetInfo.onassetMint,
 		program.provider.publicKey!
 	)
+	if (!onassetTokenAccountInfo.isInitialized) {
+		ixnCalls.push(
+			createAssociatedTokenAccountInstruction(
+				program.provider.publicKey!,
+				associatedToken,
+				program.provider.publicKey!,
+				assetInfo.onassetMint
+			)
+		)
+	}
 
 	/// Borrow more
 	if (editType === 0) {
-		if (onassetAssociatedTokenAccount === undefined) {
-			ixnCalls.push(
-				(async () => createAssociatedTokenAccountInstruction(
-					program.provider.publicKey!,
-					associatedToken,
-					program.provider.publicKey!,
-					assetInfo.onassetMint
-				))()
-			)
-		}
 		ixnCalls.push(
-			(async () =>
-				program.borrowMoreInstruction(
-					pools,
-					userAccount,
-					onassetAssociatedTokenAccount.address,
-					toCloneScale(borrowAmount),
-					borrowIndex,
-				))()
+			program.borrowMoreInstruction(
+				pools,
+				userAccount,
+				onassetTokenAccountInfo.address,
+				toCloneScale(borrowAmount),
+				borrowIndex,
+
+			)
 		)
 
 		result = {
@@ -205,16 +202,15 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data }: 
 		}
 	} else {
 		ixnCalls.push(
-			(async () =>
-				program.payBorrowDebtInstruction(
-					pools,
-					userAccount,
-					associatedToken,
-					toCloneScale(borrowAmount),
-					borrowIndex
-				)
-			)()
+			program.payBorrowDebtInstruction(
+				pools,
+				userAccount,
+				associatedToken,
+				toCloneScale(borrowAmount),
+				borrowIndex
+			)
 		)
+
 		result = {
 			result: true,
 			msg: 'added borrow amount to borrow',
