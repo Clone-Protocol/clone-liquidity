@@ -47,7 +47,17 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
     }
   }
 
-  const isValidToRewards = positionInfo ? Math.abs(-positionInfo!.onassetILD * positionInfo!.price) + Math.max(0, -positionInfo.collateralILD) : false
+  const rewardNotional = () => {
+    let reward = 0
+    if (positionInfo!.collateralILD < 0)
+      reward += (-positionInfo!.collateralILD)
+    if (positionInfo!.onassetILD < 0)
+      reward += (-positionInfo!.onassetILD * positionInfo!.price)
+
+    return Math.max(0, reward)
+  }
+
+  const isValidToRewards = rewardNotional() > 0
 
   return positionInfo ? (
     <>
