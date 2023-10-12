@@ -53,29 +53,6 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
         onRowClick={handleRowClick}
       />
 
-      {/* {hasNoCollateral ?
-        <BlankNoCollateral />
-        :
-        <Box>
-          {collaterals.map((coll, id) =>
-            <CollateralPairView
-              key={id}
-              tickerIcon={coll.tickerIcon}
-              tickerSymbol={coll.tickerSymbol}
-              value={coll.collAmount}
-              usdValue={coll.collAmountDollarPrice * coll.collAmount}
-              handleOpenEdit={openEdit}
-            />
-          )}
-        </Box>
-      } */}
-
-      {/* {alreadyHasDeposit ?
-        <AddButton onClick={() => openEdit()} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButton>
-        :
-        <AddButtonNoPosition onClick={() => openEdit()} sx={collaterals.length == 0 ? { borderColor: '#258ded', color: '#fff' } : {}}><Typography variant='p_sm'>+ New Collateral Type</Typography></AddButtonNoPosition>
-      } */}
-
       <EditCollateralDialog
         open={openEditCollateral}
         isNewDeposit={hasNoCollateral}

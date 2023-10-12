@@ -57,9 +57,10 @@ const ScorePointer = styled(Box)`
   margin-left: -9px;
   margin-right: -9px;
   width: 34px;
-  height: 28px;
-  padding: 3px 6px;
+  height: 26px;
+  padding: 2px 6px;
   border: solid 1px #fff;
+  border-radius: 4px;
   margin-bottom: 13px;
   font-size: 12px;
   font-weight: 500;

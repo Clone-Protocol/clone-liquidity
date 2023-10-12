@@ -1,7 +1,6 @@
 'use client'
 import { StyledSection } from '~/app/page'
 import { Container, Box } from '@mui/material'
-// import LiquidityTable from '~/containers/Liquidity/LiquidityTable'
 import CometLiquidity from '~/containers/Liquidity/comet/CometLiquidity'
 import { useSearchParams } from 'next/navigation'
 
@@ -12,7 +11,7 @@ const MyLiquidity = () => {
   return (
     <StyledSection>
       <Container>
-        <Box marginTop='40px'>
+        <Box>
           <CometLiquidity ltab={lTab} />
         </Box>
       </Container>

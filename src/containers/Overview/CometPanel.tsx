@@ -3,7 +3,7 @@ import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Box, Stack, FormHelperText, Typography, Button } from '@mui/material'
+import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { styled } from '@mui/system'
 import RatioSlider from '~/components/Asset/RatioSlider'
@@ -192,7 +192,10 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
           </BoxWithBorder>
 
           <BoxWithBorder padding="15px 24px" mt='24px'>
-            <Box mb='10px'><Typography variant='p_lg'>Select Liquidity Pool</Typography></Box>
+            <Box mb='10px'>
+              <Typography variant='p_lg'>Select Liquidity Pool</Typography>
+              <InfoTooltip title={TooltipTexts.selectLiquidityPool} color='#66707e' />
+            </Box>
             {positionInfo?.hasAlreadyPool ?
               <SelectDefaultPool onClick={() => openChooseLiquidityDialog()}>
                 <Box mb='4px'><Typography variant='p_lg'>Select a Pool</Typography></Box>
@@ -210,6 +213,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
             <Box mt='20px'>
               <Box>
                 <Typography variant='p_lg'>Liquidity Amount</Typography>
+                <InfoTooltip title={TooltipTexts.liquidityAmount} color='#66707e' />
               </Box>
               <Box mt='15px' mb='10px' p='5px'>
                 <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
@@ -218,7 +222,10 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
             </Box>
 
             <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
-              <Box display='flex' alignItems='center'><Typography variant="p">Liquidity Value</Typography></Box>
+              <Box display='flex' alignItems='center'>
+                <Typography variant="p">Liquidity Value</Typography>
+                <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
+              </Box>
               <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
             </StackWithBorder>
 

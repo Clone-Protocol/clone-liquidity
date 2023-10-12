@@ -1,5 +1,7 @@
 import { styled, Typography, Box } from '@mui/material'
 import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
+import InfoTooltip from '../Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
   if (isFinite(rate)) {
@@ -35,11 +37,17 @@ const PositionAnalytics = ({ price, tickerSymbol }: { price: number, tickerSymbo
     <Box>
       <Box my="12px"><Typography variant="p_lg">{tickerSymbol} Borrow Position Analytics</Typography></Box>
       <DataBox>
-        <Box><Typography variant="p" color='#66707e'>Total Borrowed</Typography></Box>
+        <Box>
+          <Typography variant="p" color='#66707e'>Total Borrowed</Typography>
+          <InfoTooltip title={TooltipTexts.totalBorrowed} color='#66707e' />
+        </Box>
         <Box whiteSpace='nowrap'><Typography variant="p_xlg">{(resultData?.currentAmountBorrowed).toLocaleString()} {tickerSymbol}</Typography> <Typography variant='p_xlg' color='#66707e' mx='10px'>${(price * resultData?.currentAmountBorrowed).toLocaleString()} USD</Typography> <TxtPriceRate val={relativeVal(resultData!.currentAmountBorrowed, resultData!.amountBorrowedRate)} rate={resultData!.amountBorrowedRate} /></Box>
       </DataBox>
       <DataBox>
-        <Box><Typography variant="p" color='#66707e'>TVL (Collateral)</Typography></Box>
+        <Box>
+          <Typography variant="p" color='#66707e'>TVL (Collateral)</Typography>
+          <InfoTooltip title={TooltipTexts.tvlCollateral} color='#66707e' />
+        </Box>
         <Box><Typography variant="p_xlg" mr='10px'>${resultData?.currentTVL.toLocaleString()} USD</Typography> <TxtPriceRate val={relativeVal(resultData!.currentTVL, resultData!.tvlRate)} rate={resultData!.tvlRate} /></Box>
       </DataBox>
     </Box>

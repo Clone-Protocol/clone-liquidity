@@ -42,8 +42,8 @@ const EditCollateralInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Box sx={{ backgroundColor: '#1a1c28' }}>
         <StyledTabs value={editType} onChange={onChangeType}>
-          {!isFullRepaid && <StyledTab value={0} label="Deposit Collateral" width='176px'></StyledTab>}
-          <StyledTab value={1} label="Withdraw Collateral" width='176px'></StyledTab>
+          {!isFullRepaid && <StyledTab value={0} label="Deposit Collateral" width='176px' allBorderRadius={true}></StyledTab>}
+          <StyledTab value={1} label="Withdraw Collateral" width='176px' allBorderRadius={true}></StyledTab>
         </StyledTabs>
       </Box>
       <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' mt='38px'>
@@ -83,31 +83,6 @@ const EditCollateralInput: React.FC<Props> = ({
             <Typography variant="p_lg" color='#66707e'>{isAfterNoCollateralRemaining ? '(No Collateral Remaining)' : hasInvalidRatio ? 'N/A' : `($${afterCollateralDollarPrice.toLocaleString()})`}</Typography>
           </Stack>
         </StackWithBorder>
-        {/* <FormStack direction="row" justifyContent="space-between" alignItems="center">
-          <Box display="flex">
-            <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
-            <Box ml="10px">
-              <Typography variant="p_lg">{tickerSymbol}</Typography>
-            </Box>
-          </Box>
-          <Box>
-            <InputAmount
-              id="ip-amount"
-              type="number"
-              min={0}
-              max={maxCollVal}
-              sx={collAmount && collAmount > 0 ? { color: "#fff" } : { color: "#adadad" }}
-              placeholder="0.00"
-              value={collAmount}
-              onChange={onChangeAmount}
-            />
-            <DollarAmount>
-              {collAmountDollarPrice && collAmountDollarPrice > 0
-                ? "$" + collAmountDollarPrice?.toLocaleString() + " USD"
-                : ""}
-            </DollarAmount>
-          </Box>
-        </FormStack> */}
       </CenterBox>
     </FormControl>
   )

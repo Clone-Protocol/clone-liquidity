@@ -64,7 +64,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
       <Box>
         <Box>
           <Typography variant='p_lg'>onAsset Rewards</Typography>
-          <InfoTooltip title={TooltipTexts.rewards} />
+          <InfoTooltip title={TooltipTexts.rewards} color='#66707e' />
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
@@ -75,7 +75,10 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
         </BoxWithBorder>
       </Box>
       <Box>
-        <Box><Typography variant='p_lg'>devUSD Rewards</Typography></Box>
+        <Box>
+          <Typography variant='p_lg'>devUSD Rewards</Typography>
+          <InfoTooltip title={TooltipTexts.rewards} color='#66707e' />
+        </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
             {Math.max(0, -positionInfo.collateralILD).toLocaleString(undefined, {
@@ -94,7 +97,7 @@ const BoxWithBorder = styled(Box)`
   width: 100%;
   height: 52px;
   display: flex;
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 38px;
   justify-content: flex-start;
   border-radius: 5px;

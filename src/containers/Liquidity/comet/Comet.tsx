@@ -32,7 +32,7 @@ const Comet = () => {
         <Box display='flex'>
           <ColumnDivider />
           <Box marginLeft='31px' marginRight='31px'>
-            <Box><Typography variant='p' color='#989898'>Colleteral Value</Typography></Box>
+            <Box><Typography variant='p' color='#989898'>Collateral Value</Typography></Box>
             <Box mt='15px'>
               <Typography variant='p_xlg'>
                 {infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : ''}

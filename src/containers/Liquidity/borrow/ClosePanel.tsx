@@ -76,7 +76,7 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
 const StackWithBorder = styled(Stack)`
   width: 100%;
   height: 52px;
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 38px;
   border-radius: 5px;
   align-items: center;

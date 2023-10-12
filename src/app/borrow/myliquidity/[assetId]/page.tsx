@@ -7,9 +7,7 @@ const Manage = ({ params }: { params: { assetId: string } }) => {
   return (
     <StyledSection>
       <Container>
-        <Box marginTop='40px' marginLeft='24px'>
-          <ManageBorrow assetId={params.assetId} />
-        </Box>
+        <ManageBorrow assetId={params.assetId} />
       </Container>
     </StyledSection>
   )

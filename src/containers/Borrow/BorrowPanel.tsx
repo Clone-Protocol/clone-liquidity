@@ -15,6 +15,8 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import dynamic from 'next/dynamic'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const RISK_RATIO_VAL = 170
 
@@ -138,7 +140,10 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
     <>
       <Box>
         <Box>
-          <Box><Typography variant='p_lg'>onAsset to Borrow</Typography></Box>
+          <Box>
+            <Typography variant='p_lg'>onAsset to Borrow</Typography>
+            <InfoTooltip title={TooltipTexts.onAssetToBorrow} color='#66707e' />
+          </Box>
           <SelectPoolBox onClick={() => setOpenChooseAsset(true)}>
             <Stack direction='row' gap={1}>
               <Image src={ASSETS[assetIndex].tickerIcon} width={27} height={27} alt={ASSETS[assetIndex].tickerSymbol} />
@@ -147,7 +152,10 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             <Image src={SelectArrowIcon} alt='select' />
           </SelectPoolBox>
           <Box>
-            <Box mb='15px'><Typography variant='p_lg'>Collateral Amount</Typography></Box>
+            <Box mb='10px'>
+              <Typography variant='p_lg'>Collateral Amount</Typography>
+              <InfoTooltip title={TooltipTexts.collateralAmount} color='#66707e' />
+            </Box>
             <Controller
               name="collAmount"
               control={control}
@@ -183,13 +191,19 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             {/* <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText> */}
           </Box>
 
-          <Box my='25px'><Typography variant='p_lg'>Collateral Ratio</Typography></Box>
+          <Box mt='25px' mb='10px'>
+            <Typography variant='p_lg'>Collateral Ratio</Typography>
+            <InfoTooltip title={TooltipTexts.collateralRatio} color='#66707e' />
+          </Box>
           <Box>
             <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} hasLowerMin={hasLowerMin} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
           </Box>
 
           <Box mb='10px'>
-            <Box mt='25px' mb='15px'><Typography variant='p_lg'>Borrow Amount</Typography></Box>
+            <Box mt='25px' mb='10px'>
+              <Typography variant='p_lg'>Borrow Amount</Typography>
+              <InfoTooltip title={TooltipTexts.borrowAmount} color='#66707e' />
+            </Box>
             <Box>
               <Controller
                 name="borrowAmount"
@@ -258,21 +272,6 @@ const SelectPoolBox = styled(Box)`
 	&:hover {
 		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
 		background-color: rgba(37, 141, 237, 0.23);
-  }
-`
-const SelectDefaultPool = styled(Box)`
-  width: 134px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
-  background-color: ${(props) => props.theme.basis.jurassicGrey};
-  &:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
   }
 `
 const WarningStack = styled(Stack)`

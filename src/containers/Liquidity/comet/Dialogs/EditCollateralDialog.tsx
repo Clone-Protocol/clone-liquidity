@@ -145,8 +145,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
             </Box>
 
             <StyledTabs value={tab} onChange={handleChangeTab}>
-              <StyledTab value={0} label="Deposit" />
-              <StyledTab value={1} label="Withdraw" />
+              <StyledTab value={0} label="Deposit" allBorderRadius={true} />
+              <StyledTab value={1} label="Withdraw" allBorderRadius={true} />
             </StyledTabs>
 
             <Box my='36px'>

@@ -29,7 +29,7 @@ const Overview = () => {
 
 export const StyledSection = styled('section')`
 	${(props) => props.theme.breakpoints.up('md')} {
-		padding-top: 100px;
+		padding-top: 80px;
 	}
 	${(props) => props.theme.breakpoints.down('md')} {
 		padding: 50px 0px;

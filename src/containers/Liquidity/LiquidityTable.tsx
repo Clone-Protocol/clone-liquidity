@@ -1,5 +1,5 @@
 //@deprecated
-import { Box, Stack, Divider, Typography, Button } from '@mui/material'
+import { Box, Stack, Typography, Button } from '@mui/material'
 import { styled } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'

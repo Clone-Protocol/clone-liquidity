@@ -30,17 +30,6 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
     setOpenEditLiquidity(true)
   }
 
-  const handleShowClosePositionDialog = (positionIndex: number) => {
-    setPoolIndex(Number(positions[positionIndex].poolIndex))
-    setEditAssetId(positionIndex)
-    setOpenClosePosition(true)
-  }
-
-  const handleShowCloseLiquidityDialog = () => {
-    setOpenEditLiquidity(false)
-    setOpenClosePosition(true)
-  }
-
   const redirectAddCometPage = () => {
     router.push(`/comet/assets/euro`)
   }
@@ -73,20 +62,6 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
           customNoRowsOverlay={customOverlay}
           onRowClick={handleRowClick}
         />
-        {/* {positions.map((position, index) =>
-          <LiquidityPairView
-            key={index}
-            poolIndex={index}
-            tickerIcon={position.tickerIcon}
-            tickerSymbol={position.tickerSymbol}
-            value={position.liquidityDollarPrice}
-            ildInUsdi={position.ildInUsdi}
-            ildValue={position.ildValue}
-            rewards={position.rewards}
-            onShowEditDialog={handleChooseEditPosition}
-            onShowClosePositionDialog={handleShowClosePositionDialog}
-          />
-        )} */}
       </Box>
       {publicKey && !hasNoCollateral &&
         <Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
@@ -109,7 +84,6 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
           open={openEditLiquidity}
           positionIndex={editAssetId}
           poolIndex={poolIndex}
-          onShowCloseLiquidity={handleShowCloseLiquidityDialog}
           onRefetchData={onRefetchData}
           handleClose={() => setOpenEditLiquidity(false)}
         />

@@ -6,6 +6,8 @@ import ArrowUpward from 'public/images/arrow-upward.svg'
 import ArrowDownward from 'public/images/arrow-downward.svg'
 import { CometInfoStatus } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined }) => {
 
@@ -13,13 +15,19 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
     <Wrapper>
       <Stack direction='row' gap={16}>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p'>Comet Health Score</Typography></Box>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='p'>Comet Health Score</Typography>
+            <InfoTooltip title={TooltipTexts.cometdHealthScore} color='#66707e' />
+          </Box>
           <Box mt='15px'>
             <HealthscoreView score={infos && infos.healthScore ? infos.healthScore : 0} />
           </Box>
         </Box>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p'>Your Liquidity</Typography></Box>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='p'>Your Liquidity</Typography>
+            <InfoTooltip title={TooltipTexts.totalLiquidity} color='#66707e' />
+          </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
               {infos && infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : '$0'}
@@ -27,7 +35,10 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           </StatusValue>
         </Box>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p'>Your Colleteral</Typography></Box>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='p'>Your Collateral</Typography>
+            <InfoTooltip title={TooltipTexts.totalCollateralValue} color='#66707e' />
+          </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
               {infos && infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : '0'}
@@ -35,21 +46,28 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           </StatusValue>
         </Box>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p'>Your APY</Typography></Box>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='p'>Your APY</Typography>
+            <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
+          </Box>
           <StatusValue>
-            {infos && infos.totalApy >= 0 ?
-              <Box color='#4fe5ff'>
-                <Box display='flex' justifyContent='center' alignItems='center'>
-                  <Typography variant='p_xlg'>+{infos?.totalApy.toFixed(2)}%</Typography>
-                  <Image src={ArrowUpward} alt='arrowUp' />
-                </Box>
-              </Box>
-              :
-              <Box color='#ff0084'>
-                <Box display='flex' alignItems='center'>
-                  <Typography variant='p_xlg'>-{infos && Math.abs(infos?.totalApy).toFixed(2)}%</Typography>
-                  <Image src={ArrowDownward} alt='arrowDown' />
-                </Box>
+            {infos && infos.positions.length > 0 &&
+              <Box>
+                {infos.totalApy >= 0 ?
+                  <Box color='#4fe5ff'>
+                    <Box display='flex' justifyContent='center' alignItems='center'>
+                      <Typography variant='p_xlg'>+{infos?.totalApy.toFixed(2)}%</Typography>
+                      <Image src={ArrowUpward} alt='arrowUp' />
+                    </Box>
+                  </Box>
+                  :
+                  <Box color='#ff0084'>
+                    <Box display='flex' alignItems='center'>
+                      <Typography variant='p_xlg'>-{infos && Math.abs(infos?.totalApy).toFixed(2)}%</Typography>
+                      <Image src={ArrowDownward} alt='arrowDown' />
+                    </Box>
+                  </Box>
+                }
               </Box>
             }
           </StatusValue>

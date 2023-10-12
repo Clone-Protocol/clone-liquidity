@@ -103,11 +103,14 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   return positionInfo ? (
     <>
       <Box>
-        <Box><Typography variant='p_lg'>onAsset ILD</Typography></Box>
+        <Box>
+          <Typography variant='p_lg'>onAsset ILD</Typography>
+          <InfoTooltip title={TooltipTexts.ildDebt} color='#66707e' />
+        </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Box>
             <Typography variant='p_lg'>{positionInfo.tickerSymbol} ILD</Typography>
-            <InfoTooltip title={TooltipTexts.ildDebt} />
+            <InfoTooltip title={TooltipTexts.ildDebt} color='#66707e' />
           </Box>
           <Box>
             <Typography variant='p_lg'>
@@ -154,10 +157,13 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
             )}
           />
           <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
-            <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
+            <Box>
+              <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
+              <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
+            </Box>
             <Box>
               <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-              <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : remainingILD.toLocaleString()}</Typography>
+              <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : `($${remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
             </Box>
           </StackWithBorder>
           {ildAmount > balance &&
@@ -175,7 +181,10 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           </InfoMsg>
         </BoxWithBorder>
         <Box>
-          <Box><Typography variant='p_lg'>devUSD ILD</Typography></Box>
+          <Box>
+            <Typography variant='p_lg'>devUSD ILD</Typography>
+            <InfoTooltip title={TooltipTexts.devUSDILD} color='#66707e' />
+          </Box>
           <StackWithBorder direction='row' justifyContent='space-between'>
             <Typography variant='p_lg'>devUSD ILD</Typography>
             <Typography variant='p_lg'>
@@ -216,7 +225,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
 const StackWithBorder = styled(Stack)`
   width: 100%;
   height: 52px;
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 15px;
   align-items: center;
   border-radius: 5px;

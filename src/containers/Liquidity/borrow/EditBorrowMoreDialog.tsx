@@ -10,6 +10,8 @@ import { FadeTransition } from '~/components/Common/Dialog'
 import { CloseButton, SubmitButton } from '~/components/Common/CommonButtons'
 import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -186,8 +188,11 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                 </Box>
                 :
                 <Box>
-                  <Typography variant='p'>Projected Collateral Ratio</Typography>
-                  <Stack direction='row' gap={1} mt='12px'>
+                  <Box>
+                    <Typography variant='p'>Projected Collateral Ratio</Typography>
+                    <InfoTooltip title={TooltipTexts.projectedCollateralRatio} color='#66707e' />
+                  </Box>
+                  <Stack direction='row' gap={1} mt='8px'>
                     <Typography variant='h3' fontWeight={500} color={editType === 0 && hasRiskRatio ? '#ff0084' : '#fff'}>
                       {expectedCollRatio.toFixed(2)}%
                     </Typography>
@@ -196,7 +201,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                     </Typography>
                   </Stack>
                   <Typography variant='p_lg' color={editType === 0 && hasRiskRatio ? '#ff0084' : '#66707e'}>(min {borrowDetail.minCollateralRatio}%)</Typography>
-                  {/* <CollRatioBar hasRiskRatio={hasRiskRatio} minRatio={borrowDetail.minCollateralRatio} ratio={expectedCollRatio} prevRatio={borrowDetail.collateralRatio} /> */}
                 </Box>}
             </RatioBox>
 

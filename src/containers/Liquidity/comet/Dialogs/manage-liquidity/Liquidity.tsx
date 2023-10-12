@@ -16,7 +16,7 @@ import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 
-const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
+const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, handleClose }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
@@ -113,14 +113,20 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onShowCloseLiquidit
 
   return (
     <>
-      <Typography variant='p_lg'>Liquidity Amount</Typography>
-      <Box mt='25px'>
+      <Box>
+        <Typography variant='p_lg'>Liquidity Amount</Typography>
+        <InfoTooltip title={TooltipTexts.liquidityAmount} color='#66707e' />
+      </Box>
+      <Box mt='20px'>
         <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} maxMintable={maxMintable} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
       </Box>
 
       <BoxWithBorder>
         <Stack direction='row' justifyContent='space-between' alignItems="center" padding='15px'>
-          <Typography variant='p'>New Liquidity Value</Typography>
+          <Box>
+            <Typography variant='p'>New Liquidity Value</Typography>
+            <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
+          </Box>
           <Box>
             <Typography variant='p_lg'>${totalLiquidity.toLocaleString()}</Typography>
             <Typography variant='p_lg' ml='9px' sx={differentLiquidityVal >= 0 ? { color: '#4fe5ff' } : { color: '#ff0084' }}>

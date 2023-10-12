@@ -11,7 +11,7 @@ import Rewards from './manage-liquidity/Rewards'
 import ClosePosition from './manage-liquidity/ClosePosition'
 import { CloseButton } from '~/components/Common/CommonButtons'
 
-const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquidity, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onShowCloseLiquidity: () => void, onRefetchData: () => void, handleClose: () => void }) => {
+const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : liquidity , 1: ild , 2: rewards , 3: close position
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -42,10 +42,10 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
 
               <Box my='38px' sx={{ backgroundColor: '#1a1c28' }}>
                 <StyledTabs value={tab} onChange={handleChangeTab}>
-                  <StyledTab value={0} label="Liquidity" />
-                  <StyledTab value={1} label="ILD" />
-                  <StyledTab value={2} label="Rewards" />
-                  <StyledTab value={3} label="Close Position" />
+                  <StyledTab value={0} label="Liquidity" allBorderRadius={true} />
+                  <StyledTab value={1} label="ILD" allBorderRadius={true} />
+                  <StyledTab value={2} label="Rewards" allBorderRadius={true} />
+                  <StyledTab value={3} label="Close Position" allBorderRadius={true} />
                 </StyledTabs>
               </Box>
 
@@ -54,7 +54,6 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onShowCloseLiquid
                   positionInfo={positionInfo}
                   positionIndex={positionIndex}
                   poolIndex={poolIndex}
-                  onShowCloseLiquidity={onShowCloseLiquidity}
                   onRefetchData={() => {
                     refetch()
                     onRefetchData()

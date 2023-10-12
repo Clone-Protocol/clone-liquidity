@@ -1,11 +1,10 @@
 import React from 'react'
 import { Box, styled, Typography, Button, Dialog } from '@mui/material'
-import useLocalStorage from '~/hooks/useLocalStorage'
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState } from '~/features/globalAtom'
 import { CloseButton } from '../Common/CommonButtons'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { isCreatingAccountState } from '~/features/globalAtom'
+import BgDialog from 'public/images/open-account.png'
 
 interface CreateAccountSetupScreenProps {
   state: CreateAccountDialogStates
@@ -25,7 +24,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
 
   return (
     <Dialog open={shouldDialogOpen()} maxWidth={742} sx={{ boxShadow: 'none' }}>
-      <Box width='742px' sx={{ background: '#000916', position: 'relative', padding: '52px 33px' }}>
+      <Box width='742px' sx={{ backgroundImage: `url(${BgDialog.src})`, position: 'relative', padding: '52px 33px' }}>
         <BoxWrapper>
           <TextHead>Open Account</TextHead>
           <Box my='20px' lineHeight={1.3} color='#989898'>
@@ -46,7 +45,6 @@ const BoxWrapper = styled(Box)`
   color: #fff;
   margin: 0 auto;
   text-align: left;
-  background: #000916;
 `
 const TextHead = styled(Box)`
   font-size: 36px;

@@ -11,7 +11,7 @@ const AssetPage = ({ params }: { params: { assetTicker: string } }) => {
   return (
     <StyledSection>
       <Container>
-        <Box display='flex' justifyContent='center' mt="15px">
+        <Box display='flex' justifyContent='center'>
           <AssetView assetTicker={assetTicker} />
         </Box>
       </Container>

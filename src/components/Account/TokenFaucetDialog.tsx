@@ -19,7 +19,7 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
               <LinkBox>
                 <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                   <Stack direction='row' spacing={2} alignItems='center'>
-                    <Image src={'/images/assets/on-sol.svg'} width={27} height={27} alt='sol' />
+                    <Image src={'/images/sol-raw.png'} width={27} height={27} alt='sol' />
                     <Typography variant='p'>Devnet SOL</Typography>
                   </Stack>
                   <Image src={ShareIcon} alt="share" />

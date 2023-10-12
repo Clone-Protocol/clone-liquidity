@@ -11,7 +11,6 @@ import CometPanel from './CometPanel'
 import { useRouter } from 'next/navigation'
 import PriceChart from '~/components/Overview/PriceChart'
 import PoolAnalytics from '~/components/Overview/PoolAnalytics'
-// import ChooseLiquidityPoolsDialog from './Dialogs/ChooseLiquidityPoolsDialog'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
@@ -25,13 +24,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const [assetIndex, setAssetIndex] = useState(0)
 	const [openChooseLiquidity, setOpenChooseLiquidity] = useState(false)
 	const ChooseLiquidityPoolsDialog = dynamic(() => import('./Dialogs/ChooseLiquidityPoolsDialog'))
-
-	// sub routing for tab
-	// useEffect(() => {
-	// 	if (ltab && parseInt(ltab.toString()) <= 1) {
-	// 		setTab(parseInt(ltab.toString()))
-	// 	}
-	// }, [ltab])
 
 	useEffect(() => {
 		if (assetTicker) {
@@ -118,6 +110,5 @@ const StickyBox = styled(Box)`
   position: sticky;
   top: 100px;
 `
-
 
 export default withSuspense(AssetView, <LoadingProgress />)

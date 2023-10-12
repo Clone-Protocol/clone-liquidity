@@ -68,15 +68,4 @@ const PanelBox = styled(Box)`
   }
 `
 
-// const NewPositionButton = styled(Button)`
-//   width: 100px;
-//   height: 28px;
-//   color: #fff;
-//   padding: 8px 10px 8px 7px;
-//   border: solid 1px ${(props) => props.theme.palette.text.secondary};
-//   &:hover {
-//     background: ${(props) => props.theme.boxes.darkBlack};
-//   }
-// `
-
 export default withSuspense(CometLiquidity, <LoadingProgress />)

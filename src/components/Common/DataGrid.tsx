@@ -106,7 +106,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       }
       return 'super-app-theme--row'
     }}
-    // autoHeight
+    autoHeight
     disableColumnFilter
     disableSelectionOnClick
     disableColumnSelector

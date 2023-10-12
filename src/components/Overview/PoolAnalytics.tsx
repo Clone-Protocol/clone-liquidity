@@ -1,5 +1,7 @@
 import { styled, Typography, Box } from '@mui/material'
 import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
+import InfoTooltip from '../Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const TxtPriceRateComparePast = ({ val, rate }: { val: number, rate: number }) => {
   if (isFinite(rate)) {
@@ -38,15 +40,24 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
     <Box>
       <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/devUSD Pool Analytics</Typography></Box>
       <DataBox>
-        <Box><Typography variant="p" color='#66707e'>Total Liquidity</Typography></Box>
+        <Box>
+          <Typography variant="p" color='#66707e'>Total Liquidity</Typography>
+          <InfoTooltip title={TooltipTexts.totalLiquidity} color='#66707e' />
+        </Box>
         <Box><Typography variant="p_xlg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.liquidityGainPct} /></Box>
       </DataBox>
       <DataBox>
-        <Box><Typography variant="p" color='#66707e'>24h Trading Volume</Typography></Box>
+        <Box>
+          <Typography variant="p" color='#66707e'>24h Trading Volume</Typography>
+          <InfoTooltip title={TooltipTexts.tradingVolume24h} color='#66707e' />
+        </Box>
         <Box><Typography variant="p_xlg">${resultData?.tradingVol24h.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.tradingVolGainPct} /></Box>
       </DataBox>
       <DataBox>
-        <Box><Typography variant="p" color='#66707e'>24h Fee Revenue</Typography></Box>
+        <Box>
+          <Typography variant="p" color='#66707e'>24h Fee Revenue</Typography>
+          <InfoTooltip title={TooltipTexts.feeRevenue24h} color='#66707e' />
+        </Box>
         <Box><Typography variant="p_xlg">${resultData?.feeRevenue24hr.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.feeRevenueGainPct} /></Box>
       </DataBox>
     </Box>

@@ -2,6 +2,8 @@ import { styled } from '@mui/system'
 import { Box, Stack, Typography } from '@mui/material'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { TooltipTexts } from '~/data/tooltipTexts'
+import InfoTooltip from '~/components/Common/InfoTooltip'
 
 const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolean }) => {
   const { publicKey } = useWallet()
@@ -15,7 +17,10 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
     <Wrapper>
       <Stack direction='row' gap={16}>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p' color={!hasNoPosition ? '#fff' : '#66707e'}>Borrowed Amount</Typography></Box>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='p' color={!hasNoPosition ? '#fff' : '#66707e'}>Borrowed Amount</Typography>
+            <InfoTooltip title={TooltipTexts.borrowedAmount} color='#66707e' />
+          </Box>
           <StatusValue>
             {status && status.statusValues &&
               <Typography variant='p_xlg'>
@@ -29,7 +34,10 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
           </StatusValue>
         </Box>
         <Box>
-          <Box display='flex' justifyContent='center'><Typography variant='p' color={!hasNoPosition ? '#fff' : '#66707e'}>Colleteral in Borrow Positions</Typography></Box>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='p' color={!hasNoPosition ? '#fff' : '#66707e'}>Collateral in Borrow Positions</Typography>
+            <InfoTooltip title={TooltipTexts.collateralInBorrow} color='#66707e' />
+          </Box>
           <StatusValue>
             {status && status.statusValues &&
               <Typography variant='p_xlg'>

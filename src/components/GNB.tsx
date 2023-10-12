@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
-import { useRouter } from 'next/navigation'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -18,7 +17,6 @@ import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import NaviMenu from './NaviMenu'
 import { isMobile } from 'react-device-detect';
-import CreateAccountSetupDialog from './Account/CreateAccountSetupDialog'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -47,7 +45,6 @@ const GNB: React.FC = () => {
 export default withCsrOnly(GNB)
 
 const RightMenu: React.FC = () => {
-	const router = useRouter()
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()

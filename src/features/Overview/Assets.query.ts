@@ -20,27 +20,6 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 		program = cloneProgram
 	}
 
-	// MEMO: to support provider without wallet adapter
-	// const network = getNetworkDetailsFromEnv()
-	// const new_connection = new Connection(network.endpoint)
-	// const provider = new AnchorProvider(
-	// 	new_connection,
-	// 	{
-	// 		signTransaction: () => Promise.reject(),
-	// 		signAllTransactions: () => Promise.reject(),
-	// 		publicKey: PublicKey.default, // MEMO: dummy pubkey
-	// 	},
-	// 	{}
-	// );
-	// const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
-	// 	[Buffer.from("clone")],
-	// 	network.clone
-	// );
-	// const account = await CloneAccount.fromAccountAddress(
-	// 	provider.connection,
-	// 	cloneAccountAddress
-	// );
-	// const program = new CloneClient(provider, account, network.clone)
 	const pools = await program.getPools();
 	// const oracles = await program.getOracles();
 	const iassetInfos = await getiAssetInfos(program.provider.connection, program);
