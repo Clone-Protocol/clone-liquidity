@@ -159,7 +159,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
                   <Box display="flex" alignItems='center'>
                     <Image src={fromPair.tickerIcon} width={28} height={28} alt={fromPair.tickerSymbol!} />
                     <Typography variant="h4" ml='10px'>
-                      {fromPair.tickerName}
+                      {fromPair.tickerSymbol}
                     </Typography>
                   </Box>
                 </ValueBox>

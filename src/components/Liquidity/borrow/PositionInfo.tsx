@@ -5,7 +5,6 @@ import { PositionInfo as PI } from '~/features/MyLiquidity/BorrowPosition.query'
 import Image from 'next/image'
 import RightArrowIcon from 'public/images/right-arrow.svg'
 import { useState } from 'react'
-import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 interface Props {
   positionInfo: PI
@@ -30,7 +29,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
               <Box display="flex" alignItems='center'>
                 <Image src={positionInfo.tickerIcon} width={28} height={28} alt={positionInfo.tickerSymbol!} />
                 <Typography variant="h4" ml='10px'>
-                  {positionInfo.tickerName}
+                  {positionInfo.tickerSymbol}
                 </Typography>
               </Box>
             </ValueBox>
@@ -53,7 +52,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
               <TickerBox display="flex" alignItems='center'>
                 <Image src={positionInfo.tickerIcon} width={22} height={22} alt={positionInfo.tickerSymbol!} />
                 <Typography variant="h4" ml='3px'>
-                  {positionInfo.tickerName}
+                  {positionInfo.tickerSymbol}
                 </Typography>
               </TickerBox>
             </Stack>

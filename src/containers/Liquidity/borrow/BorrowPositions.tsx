@@ -86,7 +86,7 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			return params.row.borrowed > 0 ?
 				<CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
-				: <Box><Typography variant='p_xlg' color='#989898'>Please continue to close this borrow position</Typography></Box>
+				: <Box><Typography variant='p_xlg' color='#989898'>Please continue to close</Typography></Box>
 		},
 	},
 	{

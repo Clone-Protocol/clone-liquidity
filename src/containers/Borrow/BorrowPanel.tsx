@@ -17,11 +17,13 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 import dynamic from 'next/dynamic'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { useRouter } from 'next/navigation'
 
 const RISK_RATIO_VAL = 170
 
 const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIndex: number, borrowDetail: DetailInfo, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
+  const router = useRouter()
   const onUSDInfo = collateralMapping(StableCollateral.onUSD)
   const fromPair: PairData = {
     tickerIcon: onUSDInfo.collateralIcon,
@@ -126,6 +128,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
       if (data) {
         console.log('data', data)
         initData()
+        router.replace(`/borrow/myliquidity`)
       }
     } catch (err) {
       console.error(err)

@@ -58,7 +58,7 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
 
 const Wrapper = styled(Box)`
   position: relative;
-  height: 128px;
+  height: 120px;
   margin-top: 16px;
   margin-bottom: 28px;
   padding: 12px 75px 28px 75px;
@@ -68,8 +68,8 @@ const Wrapper = styled(Box)`
 const StatusValue = styled(Box)`
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  height: 70px;
+  align-items: center;
+  height: 80px;
 `
 
 export default BorrowLiquidityStatus
