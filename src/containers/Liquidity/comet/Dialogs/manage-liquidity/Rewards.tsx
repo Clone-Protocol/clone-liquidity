@@ -5,7 +5,7 @@ import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/Liquidit
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 
@@ -19,6 +19,10 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
     refetchOnMount: "always",
     enabled: publicKey != null,
   })
+
+  useEffect(() => {
+
+  }, [positionInfo])
 
   const { mutateAsync } = useRewardsMutation(publicKey)
   const handleClaim = async () => {
@@ -49,15 +53,16 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
 
   const rewardNotional = () => {
     let reward = 0
-    if (positionInfo!.collateralILD < 0)
-      reward += (-positionInfo!.collateralILD)
-    if (positionInfo!.onassetILD < 0)
-      reward += (-positionInfo!.onassetILD * positionInfo!.price)
-
+    if (positionInfo) {
+      if (positionInfo.collateralILD < 0)
+        reward += (-positionInfo.collateralILD)
+      if (positionInfo.onassetILD < 0)
+        reward += (-positionInfo.onassetILD * positionInfo.oraclePrice)
+    }
     return Math.max(0, reward)
   }
 
-  const isValidToRewards = rewardNotional() > 0
+  const isValidToRewards = rewardNotional() > 0 && !isSubmitting
 
   return positionInfo ? (
     <>
@@ -71,7 +76,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
             {Math.max(0, -positionInfo.onassetILD).toLocaleString(undefined, {
               maximumFractionDigits: 8,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${Math.abs(-positionInfo.onassetILD * positionInfo.price).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD)</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${Math.abs(-positionInfo.onassetILD * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>
@@ -86,7 +91,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
             })} devUSD</Typography>
         </BoxWithBorder>
       </Box>
-      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
+      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards}>
         <Typography variant='p_xlg'>{positionInfo.isValidToClose ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
       </SubmitButton>
     </>
@@ -97,8 +102,8 @@ const BoxWithBorder = styled(Box)`
   width: 100%;
   height: 52px;
   display: flex;
-  margin-top: 10px;
-  margin-bottom: 38px;
+  margin-top: 5px;
+  margin-bottom: 28px;
   justify-content: flex-start;
   border-radius: 5px;
   align-items: center;

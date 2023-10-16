@@ -100,6 +100,13 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const remainingILD: number = positionInfo ? Math.max(0, positionInfo.onassetILD - ildAmount) : 0
   const isValid = positionInfo ? (positionInfo.onassetILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0) || (remainingILD > 0 && ildAmount === 0) || isSubmitting : false
 
+  let warningMsg = ''
+  if (balance === 0) {
+    warningMsg = 'You wallet balance is zero'
+  } else if (positionInfo && Math.max(0, positionInfo.onassetILD) - ildAmount > 0) {
+    warningMsg = 'Not enough wallet balance to fully payoff onAsseet ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
+  }
+
   return positionInfo ? (
     <>
       <Box>
@@ -119,67 +126,66 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               })} {positionInfo.tickerSymbol}
             </Typography>
             <Typography variant='p_lg' color='#66707e' ml='10px'>
-              {`($${(Math.max(positionInfo!.onassetILD, 0) * positionInfo!.price).toLocaleString(undefined, {
+              {`($${(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString(undefined, {
                 maximumFractionDigits: 8
               })})`}
             </Typography>
           </Box>
         </StackWithBorder>
-        <BoxWithBorder>
-          <Controller
-            name="ildAmount"
-            control={control}
-            // rules={{
-            //   validate(value) {
-            //     if (!value || value <= 0) {
-            //       return ''
-            //     }
-            //   }
-            // }}
-            render={({ field }) => (
-              <PairInput
-                tickerIcon={positionInfo.tickerIcon}
-                tickerSymbol={positionInfo.tickerSymbol}
-                rightHeaderTitle={'Wallet Balance'}
-                value={field.value}
-                valueDollarPrice={field.value}
-                inputTitle={`${positionInfo.tickerSymbol} ILD Payment`}
-                inputTitleColor="#fff"
-                balance={balance}
-                onChange={(event: React.FormEvent<HTMLInputElement>) => {
-                  const ildAmt = parseFloat(event.currentTarget.value)
-                  field.onChange(ildAmt)
-                }}
-                onMax={(value: number) => {
-                  field.onChange(Math.min(value, positionInfo.onassetILD))
-                }}
-              />
-            )}
-          />
-          <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
-            <Box>
-              <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
-              <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
-            </Box>
-            <Box>
-              <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-              <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : `($${remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
-            </Box>
-          </StackWithBorder>
-          {ildAmount > balance &&
-            <Box mb='10px'>
-              <WarningMsg>
-                Exceeded Wallet Balance. Please adjust the payment amount.
-              </WarningMsg>
-            </Box>
-          }
-          <InfoMsg>
-            {balance === 0 ?
-              'You wallet balance is zero' :
-              'Not enough wallet balance to fully payoff onAsseet ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
+
+        {Math.max(0, positionInfo.onassetILD) > 0 &&
+          <BoxWithBorder>
+            <Controller
+              name="ildAmount"
+              control={control}
+              // rules={{
+              //   validate(value) {
+              //     if (!value || value <= 0) {
+              //       return ''
+              //     }
+              //   }
+              // }}
+              render={({ field }) => (
+                <PairInput
+                  tickerIcon={positionInfo.tickerIcon}
+                  tickerSymbol={positionInfo.tickerSymbol}
+                  rightHeaderTitle={'Wallet Balance'}
+                  value={field.value}
+                  valueDollarPrice={field.value}
+                  inputTitle={`${positionInfo.tickerSymbol} ILD Payment`}
+                  inputTitleColor="#fff"
+                  balance={balance}
+                  onChange={(event: React.FormEvent<HTMLInputElement>) => {
+                    const ildAmt = parseFloat(event.currentTarget.value)
+                    field.onChange(ildAmt)
+                  }}
+                  onMax={(value: number) => {
+                    const onassetILD = Math.max(0, positionInfo.onassetILD)
+                    field.onChange(Math.min(value, onassetILD))
+                  }}
+                />
+              )}
+            />
+            <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
+              <Box>
+                <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
+                <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
+              </Box>
+              <Box>
+                <Typography variant='p_lg'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+                <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAmount) || ildAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : `($${remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+              </Box>
+            </StackWithBorder>
+            {ildAmount > balance &&
+              <Box mb='10px'>
+                <WarningMsg>
+                  Exceeded Wallet Balance. Please adjust the payment amount.
+                </WarningMsg>
+              </Box>
             }
-          </InfoMsg>
-        </BoxWithBorder>
+            {warningMsg !== '' && <InfoMsg>{warningMsg}</InfoMsg>}
+          </BoxWithBorder>
+        }
         <Box>
           <Box>
             <Typography variant='p_lg'>devUSD ILD</Typography>
@@ -237,7 +243,7 @@ const StackWithBorder = styled(Stack)`
 const BoxWithBorder = styled(Box)`
   width: 100%;
   margin-top: 15px;
-  margin-bottom: 38px;
+  margin-bottom: 33px;
   border-radius: 5px;
   align-items: center;
   gap: 10px;

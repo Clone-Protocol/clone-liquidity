@@ -38,8 +38,8 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   '& .MuiSlider-valueLabel': {
     fontSize: '14px',
     fontWeight: '500',
-    width: '60px',
-    height: '28px',
+    width: '58px',
+    height: '26px',
     padding: '4px 8px',
     border: 'solid 1px #fff',
     borderRadius: '4px',
@@ -66,7 +66,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
 
   return (
     <Box>
-      <Stack direction='row' alignItems='center' justifyContent='center' p='12px 8px'>
+      <Stack direction='row' alignItems='center' justifyContent='center' p='12px'>
         <Box width='100%'>
           <StyledSlider
             sx={{
@@ -82,8 +82,9 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             onChange={handleChangeMintRatio}
             valueLabelDisplay="on"
           />
-          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 32px)` }}>
-            <FixValueLabel><Typography variant='p_lg' ml='-15px'>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
+          <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 30px)` }}>
+            <Pointer>▲</Pointer>
+            <FixValueLabel><Typography variant='p_lg'>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
             <Box mt='-4px'><Typography variant='p' color='#66707e'>Current</Typography></Box>
           </PrevBox>
         </Box>
@@ -94,28 +95,22 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
 
 const PrevBox = styled(Box)`
   position: relative; 
-  width: 60px;
+  width: 58px;
   text-align: center;
-  top: -15px;
+  top: -20px;
   z-index: 20;
+`
+const Pointer = styled(Box)`
+  color: ${(props) => props.theme.basis.slug};
+  height: 17px;
 `
 const FixValueLabel = styled(Box)`
   width: 100%;
-  height: 28px;
-  padding: 2px 8px;
-  margin-top: 8px;
+  height: 26px;
   border: solid 1px ${(props) => props.theme.basis.slug};
   border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 22px;
+  line-height: 20px;
   color: ${(props) => props.theme.basis.slug};
-  &::before {
-    content: '▲';
-    position: relative;
-    left: 17px;
-    top: -18px;
-  }
 `
 // const FormBox = styled(Box)`
 //   height: 63px; 

@@ -9,7 +9,7 @@ interface Props {
 const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
   return (
     <BoxWrapper>
-      <Typography variant='p_lg'>Liquidity pool:</Typography>
+      <Typography variant='p_lg'>Liquidity pool</Typography>
       <Stack direction='row' alignItems='center' my='14px'>
         <Image src={positionInfo.tickerIcon} width={28} height={28} alt={positionInfo.tickerSymbol} />
         <Box sx={{ marginLeft: '9px' }}>
@@ -22,7 +22,7 @@ const SelectedPoolBox: React.FC<Props> = ({ positionInfo }) => {
 
 const BoxWrapper = styled(Box)`
   background-color: ${(props) => props.theme.basis.darkNavy};
-  padding: 15px 23px;
+  padding: 5px 23px;
 `
 
 export default SelectedPoolBox

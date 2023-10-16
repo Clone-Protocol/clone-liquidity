@@ -100,14 +100,14 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, hand
       if (data) {
         console.log('data', data)
         initData()
-        handleClose()
+        // handleClose()
       }
     } catch (err) {
       console.error(err)
     }
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && validMintAmount && !isSubmitting
   const differentLiquidityVal = totalLiquidity - (defaultMintAmount * 2)
   const hasRiskScore = healthScore < RISK_HEALTH_SCORE
 
@@ -170,7 +170,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, hand
           }
         </>
 
-        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!(isValid && validMintAmount) || isSubmitting}>
+        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid}>
           <Typography variant='p_xlg'>Adjust Liquidity</Typography>
         </SubmitButton>
       </Box>

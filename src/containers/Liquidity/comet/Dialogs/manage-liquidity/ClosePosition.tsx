@@ -38,20 +38,23 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
 
   const ildNotional = () => {
     let reward = 0
-    if (positionInfo!.collateralILD > 0)
+    if (positionInfo!.collateralILD > 0) {
       reward += positionInfo!.collateralILD
-    if (positionInfo!.onassetILD > 0)
-      reward += positionInfo!.onassetILD * positionInfo!.price
-    console.log('asset', positionInfo!.onassetILD)
+    }
+    if (positionInfo!.onassetILD > 0) {
+      reward += positionInfo!.onassetILD * positionInfo!.oraclePrice
+    }
     return Math.max(0, reward)
   }
 
   const rewardNotional = () => {
     let reward = 0
-    if (positionInfo!.collateralILD < 0)
+    if (positionInfo!.collateralILD < 0) {
       reward += (-positionInfo!.collateralILD)
-    if (positionInfo!.onassetILD < 0)
-      reward += (-positionInfo!.onassetILD * positionInfo!.price)
+    }
+    if (positionInfo!.onassetILD < 0) {
+      reward += (-positionInfo!.onassetILD * positionInfo!.oraclePrice)
+    }
 
     return Math.max(0, reward)
   }
@@ -92,7 +95,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
     }
   }
 
-  const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0
+  const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0 && !isSubmitting
 
   return positionInfo ? (
     <>
@@ -146,7 +149,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
           {remainRewards === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
               <Image src={CheckIcon} alt='check' />
-              <Typography variant="p">No Rewards Remaining</Typography>
+              <Typography variant="p">No Reward Remaining</Typography>
             </Stack>
             :
             <GoButton onClick={() => onMoveTab(2)}><Typography variant="p_lg">Claim Rewards</Typography></GoButton>
@@ -158,7 +161,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
         <Typography variant='p_lg'>Step 4 (Final Step): Close This Liquidity Position</Typography>
         <InfoTooltip title={TooltipTexts.closeThisLiquidityPosition} color="#66707e" />
       </Box>
-      <SubmitButton onClick={() => handleClosePosition()} disabled={!isValidClose || isSubmitting}>
+      <SubmitButton onClick={() => handleClosePosition()} disabled={!isValidClose}>
         <Typography variant='p_xlg'>{isValidClose ? 'Close This Liquidity Position' : 'Please Complete Step 1,2, and 3'}</Typography>
       </SubmitButton>
     </>
@@ -168,8 +171,8 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
 const StackWithBorder = styled(Stack)`
   width: 100%;
   height: 52px;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-top: 4px;
+  margin-bottom: 12px;
   border-radius: 5px;
   align-items: center;
   gap: 10px;

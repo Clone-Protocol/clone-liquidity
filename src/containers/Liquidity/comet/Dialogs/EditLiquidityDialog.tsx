@@ -31,52 +31,56 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   return positionInfo ? (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={600}>
-        <DialogContent sx={{ backgroundColor: '#000916', width: '600px' }}>
+        <DialogContent sx={{ backgroundColor: '#000916', width: '600px', minHeight: '450px' }}>
           <BoxWrapper>
-            <Box mb='5px'>
+            <Box>
               <Typography variant='h3'>Manage Liquidity</Typography>
             </Box>
 
             <Box>
-              <SelectedPoolBox positionInfo={positionInfo} />
+              <Box my='38px'>
+                <SelectedPoolBox positionInfo={positionInfo} />
+              </Box>
 
-              <Box my='38px' sx={{ backgroundColor: '#1a1c28' }}>
+              <Box mb='33px' sx={{ backgroundColor: '#1a1c28' }}>
                 <StyledTabs value={tab} onChange={handleChangeTab}>
                   <StyledTab value={0} label="Liquidity" allBorderRadius={true} />
-                  <StyledTab value={1} label="ILD" allBorderRadius={true} />
+                  <StyledTab value={1} label="ILD" width='78px' allBorderRadius={true} />
                   <StyledTab value={2} label="Rewards" allBorderRadius={true} />
-                  <StyledTab value={3} label="Close Position" allBorderRadius={true} />
+                  <StyledTab value={3} label="Close Position" width='152px' allBorderRadius={true} />
                 </StyledTabs>
               </Box>
 
-              <TabPanelForEdit value={tab} index={0}>
-                <Liquidity
-                  positionInfo={positionInfo}
-                  positionIndex={positionIndex}
-                  poolIndex={poolIndex}
-                  onRefetchData={() => {
-                    refetch()
-                    onRefetchData()
-                  }}
-                  handleClose={handleClose} />
-              </TabPanelForEdit>
-              <TabPanelForEdit value={tab} index={1}>
-                <IldEdit positionIndex={positionIndex} />
-              </TabPanelForEdit>
-              <TabPanelForEdit value={tab} index={2}>
-                <Rewards positionIndex={positionIndex} />
-              </TabPanelForEdit>
-              <TabPanelForEdit value={tab} index={3}>
-                <ClosePosition
-                  positionIndex={positionIndex}
-                  onMoveTab={moveTab}
-                  onRefetchData={() => {
-                    refetch()
-                    onRefetchData()
-                  }}
-                  handleClose={handleClose}
-                />
-              </TabPanelForEdit>
+              <Box>
+                <TabPanelForEdit value={tab} index={0}>
+                  <Liquidity
+                    positionInfo={positionInfo}
+                    positionIndex={positionIndex}
+                    poolIndex={poolIndex}
+                    onRefetchData={() => {
+                      refetch()
+                      onRefetchData()
+                    }}
+                    handleClose={handleClose} />
+                </TabPanelForEdit>
+                <TabPanelForEdit value={tab} index={1}>
+                  <IldEdit positionIndex={positionIndex} />
+                </TabPanelForEdit>
+                <TabPanelForEdit value={tab} index={2}>
+                  <Rewards positionIndex={positionIndex} />
+                </TabPanelForEdit>
+                <TabPanelForEdit value={tab} index={3}>
+                  <ClosePosition
+                    positionIndex={positionIndex}
+                    onMoveTab={moveTab}
+                    onRefetchData={() => {
+                      refetch()
+                      onRefetchData()
+                    }}
+                    handleClose={handleClose}
+                  />
+                </TabPanelForEdit>
+              </Box>
             </Box>
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
