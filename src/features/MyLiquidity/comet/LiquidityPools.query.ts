@@ -30,7 +30,7 @@ export const fetchPools = async ({
   const pools = poolsData.value
   const oracles = oraclesData.value
   const comet = userAccountData.value.comet
-  const assetInfos = await getiAssetInfos(program.provider.connection, program, pools, oracles)
+  const assetInfos = await getiAssetInfos(program.provider.connection, program)
   const poolStats = await getAggregatedPoolStats(pools)
   const currentPoolSet = new Set()
 
