@@ -241,7 +241,6 @@ export const callRewards = async ({ program, userPubKey, setTxState, data }: Cal
 		)
 	])
 
-	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
 	const pools = await program.getPools()
 	const oracles = await program.getOracles();
 	const userAccount = await program.getUserAccount()
@@ -251,16 +250,11 @@ export const callRewards = async ({ program, userPubKey, setTxState, data }: Cal
 		program.updatePricesInstruction(oracles)
 	]
 
-	if (!onassetAssociatedToken) {
-		const ata = await getAssociatedTokenAddress(
-			data.onassetMint,
-			program.provider.publicKey!
-		)
-		onassetAssociatedTokenAddress = ata
+	if (!onassetAssociatedToken.isInitialized) {
 		ixnCalls.push(
 			createAssociatedTokenAccountInstruction(
 				program.provider.publicKey!,
-				ata,
+				onassetAssociatedToken.address,
 				program.provider.publicKey!,
 				data.onassetMint,
 			)
