@@ -9,6 +9,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { Comet, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
+import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -21,38 +22,51 @@ export const fetchLiquidityDetail = async ({
 }) => {
 	if (!userPubKey) return
 
-	const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
-		program.getPools(), program.getOracles(), program.getUserAccount()
+	const pythClient = new PythHttpClient(program.provider.connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
+
+	const [poolsData, oraclesData, userAccountData, pythData] = await Promise.allSettled([
+		program.getPools(), program.getOracles(), program.getUserAccount(), pythClient.getData()
 	]);
 
-	if (poolsData.status === 'rejected' || oraclesData.status === 'rejected')
+	if (poolsData.status === 'rejected' || oraclesData.status === 'rejected' || pythData.status === 'rejected' || userAccountData.status === 'rejected')
 		return;
+
 
 	const pools = poolsData.value
 	const pool = pools.pools[index]
 	const oracles = await program.getOracles()
-	const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+
+	const pythOraclePrices = [...Array(pools.pools.length)].map((_, i) => {
+		const { pythSymbol } = assetMapping(i)
+		const pool = pools.pools[i]
+		const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+		return pythData.value.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo)
+	})
 	const assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
+	const oraclePrice = pythOraclePrices[index];
 
 	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
 		fromCloneScale(pool.collateralIld),
 		fromCloneScale(pool.onassetIld),
 		fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale),
-		fromScale(oracle.price, oracle.expo),
+		oraclePrice,
 		program.clone.collateral
 	)
 	const price = poolCollateral / poolOnasset
 
 	let totalCollValue = 0
 	let totalHealthScore = 0
+	let effCollValue = 0
 	let comet;
 	let hasNoCollateral = false
 	let hasAlreadyPool = false
 	if (userAccountData.status === 'fulfilled') {
 		comet = userAccountData.value.comet
 		totalCollValue = fromScale(comet.collateralAmount, program.clone.collateral.scale)
-		totalHealthScore = getHealthScore(oraclesData.value, pools, comet, program.clone.collateral).healthScore
+		const { healthScore, effectiveCollateralValue } = getHealthScore(oraclesData.value, pools, comet, program.clone.collateral, pythOraclePrices)
+		totalHealthScore = healthScore
+		effCollValue = effectiveCollateralValue
 		hasNoCollateral = totalCollValue === 0
 
 		for (let i = 0; i < Number(comet.positions.length); i++) {
@@ -74,7 +88,9 @@ export const fetchLiquidityDetail = async ({
 		pools: poolsData.value,
 		comet,
 		hasNoCollateral,
-		hasAlreadyPool
+		hasAlreadyPool,
+		oraclePrice,
+		effectiveCollateralValue: effCollValue
 	}
 }
 
@@ -89,6 +105,8 @@ export interface PositionInfo {
 	comet: Comet | undefined
 	hasNoCollateral: boolean
 	hasAlreadyPool: boolean
+	oraclePrice: number
+	effectiveCollateralValue: number
 }
 
 interface GetProps {

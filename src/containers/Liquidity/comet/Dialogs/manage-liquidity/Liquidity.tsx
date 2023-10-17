@@ -69,7 +69,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, hand
   useEffect(() => {
     if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
-      setHealthScore(positionInfo.totalHealthScore - (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.totalCollValue)
+      setHealthScore(positionInfo.totalHealthScore - (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.effectiveCollateralValue)
       setTotalLiquidity(mintAmount * 2);
       setValidMintAmount(mintAmount < maxMintable && mintRatio < 100 && mintAmount !== defaultMintAmount && mintRatio !== defaultMintRatio)
     }
