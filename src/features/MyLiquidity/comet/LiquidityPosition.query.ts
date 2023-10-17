@@ -1,7 +1,7 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
-import { assetMapping } from 'src/data/assets'
+import { ASSETS, assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
@@ -49,17 +49,22 @@ export const fetchLiquidityDetail = async ({
 	let comet;
 	let hasNoCollateral = false
 	let hasAlreadyPool = false
+	let hasFullPool = false
 	if (userAccountData.status === 'fulfilled') {
 		comet = userAccountData.value.comet
 		totalCollValue = fromScale(comet.collateralAmount, program.clone.collateral.scale)
 		totalHealthScore = getHealthScore(oraclesData.value, pools, comet, program.clone.collateral).healthScore
 		hasNoCollateral = totalCollValue === 0
 
-		for (let i = 0; i < Number(comet.positions.length); i++) {
-			const poolIndex = Number(comet.positions[i].poolIndex)
-			if (assetId === poolIndex) {
-				hasAlreadyPool = true
-				break;
+		if (comet.positions.length >= ASSETS.length) {
+			hasFullPool = true
+		} else {
+			for (let i = 0; i < Number(comet.positions.length); i++) {
+				const poolIndex = Number(comet.positions[i].poolIndex)
+				if (assetId === poolIndex) {
+					hasAlreadyPool = true
+					break;
+				}
 			}
 		}
 	}
@@ -74,7 +79,8 @@ export const fetchLiquidityDetail = async ({
 		pools: poolsData.value,
 		comet,
 		hasNoCollateral,
-		hasAlreadyPool
+		hasAlreadyPool,
+		hasFullPool
 	}
 }
 
@@ -89,6 +95,7 @@ export interface PositionInfo {
 	comet: Comet | undefined
 	hasNoCollateral: boolean
 	hasAlreadyPool: boolean
+	hasFullPool: boolean
 }
 
 interface GetProps {

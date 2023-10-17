@@ -6,7 +6,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useInitCometDetailQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import { TabPanel } from '~/components/Common/StyledTab'
 import CometPanel from './CometPanel'
 import { useRouter } from 'next/navigation'
 import PriceChart from '~/components/Overview/PriceChart'
@@ -20,14 +19,13 @@ import dynamic from 'next/dynamic'
 const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const { publicKey } = useWallet()
 	const router = useRouter()
-	const tab = 0
 	const [assetIndex, setAssetIndex] = useState(0)
 	const [openChooseLiquidity, setOpenChooseLiquidity] = useState(false)
 	const ChooseLiquidityPoolsDialog = dynamic(() => import('./Dialogs/ChooseLiquidityPoolsDialog'))
 
 	useEffect(() => {
 		if (assetTicker) {
-			console.log('assetId', AssetTickers[assetTicker as keyof typeof AssetTickers])
+			// console.log('assetId', AssetTickers[assetTicker as keyof typeof AssetTickers])
 
 			if (AssetTickers[assetTicker as keyof typeof AssetTickers]) {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
@@ -72,9 +70,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 					<LeftBoxWrapper>
 						<Box paddingY='15px'>
-							<TabPanel value={tab} index={0}>
-								<CometPanel assetIndex={assetIndex} assetData={assetData} openChooseLiquidityDialog={openChooseLiquidityDialog} onRefetchData={() => refetch()} />
-							</TabPanel>
+							<CometPanel assetIndex={assetIndex} assetData={assetData} openChooseLiquidityDialog={openChooseLiquidityDialog} onRefetchData={() => refetch()} />
 						</Box>
 					</LeftBoxWrapper>
 				</Box>
@@ -91,7 +87,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				open={openChooseLiquidity}
 				handleChoosePool={handleChoosePool}
 				handleClose={() => setOpenChooseLiquidity(false)}
-				noFilter={tab !== 0}
+				noFilter={false}
 			/>
 		</Box>
 	)
