@@ -96,6 +96,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
   }
 
   const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0 && !isSubmitting
+  console.log('d', positionLiquidity)
 
   return positionInfo ? (
     <>
@@ -106,7 +107,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={positionLiquidity > 0 ? '#fff' : '#66707e'}>
-            ${positionLiquidity.toLocaleString()}
+            ${positionLiquidity.toLocaleString(undefined, { maximumFractionDigits: 5 })}
           </Typography>
 
           {positionLiquidity === 0 ?
