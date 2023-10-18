@@ -21,6 +21,7 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import DepositIcon from 'public/images/deposit-icon.svg'
 import Link from 'next/link'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
+import { InfoMsg } from '~/components/Common/WarningMsg'
 
 const RISK_SCORE_VAL = 20
 
@@ -140,6 +141,12 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
         <Typography variant='p_xlg'>Connect Wallet</Typography>
       </ConnectButton>
     )
+  } else if (positionInfo?.hasFullPool) {
+    actionButton = (
+      <SelectButton>
+        <Typography variant='p_xlg'>Exhausted all available pool</Typography>
+      </SelectButton>
+    )
   } else if (positionInfo?.hasNoCollateral) {
     opaqueArea = <OpaqueNoCollateral />
     actionButton = (
@@ -172,7 +179,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
             <Box>
               <Typography variant='p_lg'>Current Comet Status</Typography>
             </Box>
-            <Box my='10px'>
+            <Box mt='5px' mb='10px'>
               <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
               {positionInfo?.hasNoCollateral ?
                 <Link href='/comet/myliquidity'>
@@ -192,53 +199,59 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
           </BoxWithBorder>
 
           <BoxWithBorder padding="15px 24px" mt='24px'>
-            <Box mb='10px'>
-              <Typography variant='p_lg'>Select Liquidity Pool</Typography>
-              <InfoTooltip title={TooltipTexts.selectLiquidityPool} color='#66707e' />
-            </Box>
-            {positionInfo?.hasAlreadyPool ?
-              <SelectDefaultPool onClick={() => openChooseLiquidityDialog()}>
-                <Box mb='4px'><Typography variant='p_lg'>Select a Pool</Typography></Box>
-                <Image src={SelectArrowIcon} alt='select' />
-              </SelectDefaultPool>
+            {positionInfo?.hasFullPool ?
+              <Box my='20px'><InfoMsg>You’ve exhausted all available pools on Clone Protocol to provide comet liquidity. If you need to create more positions, please consider opening a new account with different wallet address.</InfoMsg></Box>
               :
-              <SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
-                <Stack direction='row' gap={1} alignItems='center'>
-                  <Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
-                  <Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
-                </Stack>
-                <Image src={SelectArrowIcon} alt='select' />
-              </SelectPoolBox>
-            }
-            <Box mt='20px'>
               <Box>
-                <Typography variant='p_lg'>Liquidity Amount</Typography>
-                <InfoTooltip title={TooltipTexts.liquidityAmount} color='#66707e' />
-              </Box>
-              <Box mt='15px' mb='10px' p='5px'>
-                <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
-              </Box>
-              <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
-            </Box>
+                <Box mb='10px'>
+                  <Typography variant='p_lg'>Select Liquidity Pool</Typography>
+                  <InfoTooltip title={TooltipTexts.selectLiquidityPool} color='#66707e' />
+                </Box>
+                {positionInfo?.hasAlreadyPool ?
+                  <SelectDefaultPool onClick={() => openChooseLiquidityDialog()}>
+                    <Box mb='4px'><Typography variant='p_lg'>Select a Pool</Typography></Box>
+                    <Image src={SelectArrowIcon} alt='select' />
+                  </SelectDefaultPool>
+                  :
+                  <SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
+                    <Stack direction='row' gap={1} alignItems='center'>
+                      <Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
+                      <Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
+                    </Stack>
+                    <Image src={SelectArrowIcon} alt='select' />
+                  </SelectPoolBox>
+                }
+                <Box mt='20px'>
+                  <Box>
+                    <Typography variant='p_lg'>Liquidity Amount</Typography>
+                    <InfoTooltip title={TooltipTexts.liquidityAmount} color='#66707e' />
+                  </Box>
+                  <Box mt='15px' mb='10px' p='5px'>
+                    <RatioSlider min={0} max={100} value={mintRatio} hideValueBox onChange={handleChangeMintRatio} />
+                  </Box>
+                  <FormHelperText error={!!errors.mintAmount?.message}>{errors.mintAmount?.message}</FormHelperText>
+                </Box>
 
-            <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
-              <Box display='flex' alignItems='center'>
-                <Typography variant="p">Liquidity Value</Typography>
-                <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
-              </Box>
-              <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
-            </StackWithBorder>
+                <StackWithBorder direction='row' justifyContent='space-between' alignItems='center'>
+                  <Box display='flex' alignItems='center'>
+                    <Typography variant="p">Liquidity Value</Typography>
+                    <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
+                  </Box>
+                  <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
+                </StackWithBorder>
 
-            <Box mt='25px'>
-              <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} color='#66707e' /></Box>
-              <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
-              {hasRiskScore &&
-                <WarningStack direction='row'>
-                  <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
-                  <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
-                </WarningStack>
-              }
-            </Box>
+                <Box mt='25px'>
+                  <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.healthScoreCol} color='#66707e' /></Box>
+                  <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
+                  {hasRiskScore &&
+                    <WarningStack direction='row'>
+                      <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
+                      <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+                    </WarningStack>
+                  }
+                </Box>
+              </Box>
+            }
           </BoxWithBorder>
         </Box>
 
