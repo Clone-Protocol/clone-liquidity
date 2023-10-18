@@ -83,10 +83,10 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, hand
     setMintRatio(convertNewRatio)
   }, [mintRatio, mintAmount])
 
-  const handleChangeMintAmount = useCallback((mintAmount: number) => {
-    setValue('mintAmount', mintAmount)
-    setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
-  }, [mintRatio, mintAmount])
+  // const handleChangeMintAmount = useCallback((mintAmount: number) => {
+  //   setValue('mintAmount', mintAmount)
+  //   setMintRatio(maxMintable > 0 ? mintAmount * 100 / maxMintable : 0)
+  // }, [mintRatio, mintAmount])
 
   const { mutateAsync } = useEditPositionMutation(publicKey)
   const onEditLiquidity = async () => {
@@ -118,7 +118,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, hand
         <InfoTooltip title={TooltipTexts.liquidityAmount} color='#66707e' />
       </Box>
       <Box mt='20px'>
-        <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} positionInfo={positionInfo} totalLiquidity={totalLiquidity} mintAmount={mintAmount} currentMintAmount={defaultMintAmount} maxMintable={maxMintable} onChangeRatio={handleChangeMintRatio} onChangeAmount={handleChangeMintAmount} />
+        <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} onChangeRatio={handleChangeMintRatio} />
       </Box>
 
       <BoxWithBorder>
@@ -128,7 +128,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, hand
             <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
           </Box>
           <Box>
-            <Typography variant='p_lg'>${totalLiquidity.toLocaleString()}</Typography>
+            <Typography variant='p_lg'>${totalLiquidity.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
             <Typography variant='p_lg' ml='9px' sx={differentLiquidityVal >= 0 ? { color: '#4fe5ff' } : { color: '#ff0084' }}>
               {differentLiquidityVal >= 0 ? '+' : '-'}${Math.abs(differentLiquidityVal).toLocaleString()}
             </Typography>

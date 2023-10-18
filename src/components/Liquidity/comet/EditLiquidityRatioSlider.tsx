@@ -1,18 +1,11 @@
 import { Box, Slider, Stack, Typography, styled } from '@mui/material'
-import { PositionInfo } from '~/features/MyLiquidity/comet/LiquidityPosition.query'
 
 interface Props {
   min?: number
   max?: number
   ratio: number
   currentRatio: number
-  positionInfo: PositionInfo
-  maxMintable: number
-  totalLiquidity: number
-  mintAmount: number
-  currentMintAmount: number
   onChangeRatio?: (newRatio: number) => void
-  onChangeAmount?: (mintAmount: number) => void
 }
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
@@ -53,7 +46,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   },
 }))
 
-const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, positionInfo, maxMintable, totalLiquidity, mintAmount, currentMintAmount, onChangeRatio, onChangeAmount }) => {
+const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, onChangeRatio }) => {
   const valueLabelFormat = (value: number) => {
     return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
   }

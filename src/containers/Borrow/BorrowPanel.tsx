@@ -155,7 +155,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             <Image src={SelectArrowIcon} alt='select' />
           </SelectPoolBox>
           <Box>
-            <Box mb='10px'>
+            <Box mb='5px'>
               <Typography variant='p_lg'>Collateral Amount</Typography>
               <InfoTooltip title={TooltipTexts.collateralAmount} color='#66707e' />
             </Box>
@@ -176,7 +176,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                   tickerIcon={fromPair.tickerIcon}
                   tickerSymbol={fromPair.tickerSymbol}
                   value={parseFloat(field.value.toFixed(3))}
-                  dollarPrice={field.value * borrowDetail.oPrice}
+                  dollarPrice={field.value}
                   inputTitle='Collateral'
                   headerTitle="Balance"
                   headerValue={usdiBalance?.balanceVal}
@@ -187,6 +187,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                   }}
                   onMax={(balance: number) => {
                     field.onChange(balance)
+                    calculateBorrowAmount(balance, collRatio)
                   }}
                 />
               )}
@@ -194,7 +195,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             {/* <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText> */}
           </Box>
 
-          <Box mt='25px' mb='10px'>
+          <Box mt='25px' mb='5px'>
             <Typography variant='p_lg'>Collateral Ratio</Typography>
             <InfoTooltip title={TooltipTexts.collateralRatio} color='#66707e' />
           </Box>
@@ -203,7 +204,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
           </Box>
 
           <Box mb='10px'>
-            <Box mt='25px' mb='10px'>
+            <Box mt='25px' mb='5px'>
               <Typography variant='p_lg'>Borrow Amount</Typography>
               <InfoTooltip title={TooltipTexts.borrowAmount} color='#66707e' />
             </Box>
@@ -270,7 +271,7 @@ const SelectPoolBox = styled(Box)`
 	border-radius: 5px;
 	cursor: pointer;
 	padding: 8px;
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 25px;
 	&:hover {
 		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;

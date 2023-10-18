@@ -46,8 +46,8 @@ const EditBorrowedInput: React.FC<Props> = ({
       <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' mt='38px'>
         <Typography variant="p">Current borrowed amount</Typography>
         <Stack direction='row' gap={1}>
-          <Typography variant="p_lg">{currentCollAmount?.toLocaleString()} {tickerSymbol}</Typography>
-          <Typography variant="p_lg" color='#66707e'>(${dollarPrice?.toLocaleString()} USD)</Typography>
+          <Typography variant="p_lg">{currentCollAmount?.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}</Typography>
+          <Typography variant="p_lg" color='#66707e'>(${dollarPrice?.toLocaleString(undefined, { maximumFractionDigits: 5 })} USD)</Typography>
         </Stack>
       </StackWithBorder>
 
@@ -87,8 +87,8 @@ const EditBorrowedInput: React.FC<Props> = ({
         <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
           <Typography variant="p">Borrow amount after {editType === 0 ? "borrowing" : "repaying"}</Typography>
           <Stack direction='row' gap={1}>
-            <Typography variant="p_lg">{`${isAfterNoBorrowedRemaining ? '0' : afterBorrowedAmount.toLocaleString() + " " + tickerSymbol}`}</Typography>
-            <Typography variant="p_lg" color='#66707e'>{`${isAfterNoBorrowedRemaining ? '(Paid in Full)' : '$' + afterBorrowedDollarPrice.toLocaleString()}`}</Typography>
+            <Typography variant="p_lg">{`${isAfterNoBorrowedRemaining ? '0' : afterBorrowedAmount.toLocaleString(undefined, { maximumFractionDigits: 5 }) + " " + tickerSymbol}`}</Typography>
+            <Typography variant="p_lg" color='#66707e'>{`${isAfterNoBorrowedRemaining ? '(Paid in Full)' : '$' + afterBorrowedDollarPrice.toLocaleString(undefined, { maximumFractionDigits: 5 })}`}</Typography>
           </Stack>
         </StackWithBorder>
 
