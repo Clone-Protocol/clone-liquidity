@@ -28,6 +28,7 @@
     "@mui/x-data-grid": "^5.5.0",
     "@netlify/functions": "^1.6.0",
     "@netlify/plugin-nextjs": "4.36.1",
+    "@pythnetwork/client": "^2.19.0",
     "@solana/buffer-layout": "^4.0.0",
     "@solana/spl-token": "^0.2.0",
     "@solana/wallet-adapter-base": "^0.9.4",

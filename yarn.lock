@@ -1137,7 +1137,7 @@
     bs58 "^4.0.1"
     eventemitter3 "^4.0.7"
 
-"@pythnetwork/client@^2.17.0":
+"@pythnetwork/client@^2.17.0", "@pythnetwork/client@^2.19.0":
   version "2.19.0"
   resolved "https://registry.yarnpkg.com/@pythnetwork/client/-/client-2.19.0.tgz#4b3b4fccb402d93ff00c01beec633e6f2bac94fe"
   integrity sha512-0VSQ0NqBOa5EtloXbOVYZ6Wpu8CLP3oaOKVTaUMSX/HXbB00S6G+xdwF7stxo6emgrAMopotx3icEVug5Lpomg==
