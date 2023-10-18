@@ -23,11 +23,14 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
     open={open}
     onClose={onClose}
     onClick={onClose}
+    transitionDuration={0}
     PaperProps={{
       elevation: 0,
       sx: {
         overflow: 'visible',
         mt: 1.5,
+        transition: 'none',
+        transitionDuration: 0,
         background: '#1b1b1b',
         color: '#fff',
         border: '1px solid #414e66',
@@ -39,7 +42,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
   >
     <StyledMenuItem onClick={onShowTokenFaucet}>
       <HoverStack direction='row' alignItems='center'>
-        <Box width='144px' ml='12px'>
+        <Box width='184px'>
           <div><Typography variant='p'>Token Faucet</Typography></div>
           <div><Typography variant='p_sm' color='#989898'>Get started on Solana devnet</Typography></div>
         </Box>
@@ -48,7 +51,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
     <a href={DOCS_URL} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
-          <Box width='144px' ml='12px'>
+          <Box width='184px'>
             <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Docs</Typography></Stack>
             <Box><Typography variant='p_sm' color='#989898'>Learn about Clone Liquidity</Typography></Box>
           </Box>
@@ -58,8 +61,8 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
     <a href={MARKETS_APP} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
-          <Box width='144px' ml='12px'>
-            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Markets</Typography></Stack>
+          <Box width='184px'>
+            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Clone Markets</Typography></Stack>
             <Box><Typography variant='p_sm' color='#989898'>Trade all kinds of onAssets</Typography></Box>
           </Box>
         </HoverStack>
@@ -68,7 +71,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
     <a href={CAREER_URL} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
-          <Box width='144px' ml='12px'>
+          <Box width='184px'>
             <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Opportunities</Typography></Stack>
             <Box><Typography variant='p_sm' color='#989898'>Wanna be a pioneer of Defi?</Typography></Box>
           </Box>
@@ -85,15 +88,16 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
 
 const StyledMenuItem = styled(MenuItem)`
   display: flex;
-  width: 210px;
+  width: 220px;
   height: 35px;
   line-height: 12px;
   color: #fff;
   margin-bottom: 10px;
-  padding: 8px 12px;
+  padding: 0;
 `
 const HoverStack = styled(Stack)`
-  padding: 6px;
+  width: 100%;
+  padding: 6px 20px;
   &:hover {
     background-color: #2d2d2d;
   }

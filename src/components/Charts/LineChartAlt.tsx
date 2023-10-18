@@ -84,9 +84,9 @@ const LineChartAlt: React.FC<LineChartProps> = ({
           }}
           onMouseLeave={() => {
             setLabel && setLabel(undefined)
-            if (defaultValue && defaultValue > 0) {
-              setValue && setValue(defaultValue)
-            }
+            // if (defaultValue && defaultValue > 0) {
+            //   setValue && setValue(defaultValue)
+            // }
           }}
         >
           <defs>

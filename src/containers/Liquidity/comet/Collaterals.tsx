@@ -48,7 +48,8 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
       <Grid
         headers={columns}
         rows={rowsCollateral || []}
-        minHeight={120}
+        minHeight={110}
+        noAutoHeight={!publicKey}
         customNoRowsOverlay={() => CustomNoRowsOverlay(customOverlayMsg)}
         onRowClick={handleRowClick}
       />

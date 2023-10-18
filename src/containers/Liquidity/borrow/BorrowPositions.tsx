@@ -51,6 +51,7 @@ const BorrowPositions = () => {
 				headers={columns}
 				rows={positions || []}
 				minHeight={120}
+				noAutoHeight={(!publicKey || positions?.length === 0) === true}
 				hasRangeIndicator={true}
 				gridType={GridType.Borrow}
 				customNoRowsOverlay={() => CustomNoRowsOverlay(customOverlayMsg)}
@@ -153,10 +154,12 @@ const AddButton = styled(Button)`
   }
 `
 const AddButtonNoPosition = styled(AddButton)`
-  height: 42px;
+	height: 28px;
   color: #fff;
-	margin-top: -110px;
+	border: 0px;
+	margin-top: -70px;
   &:hover {
+		background-color: rgba(255, 255, 255, 0.01);
     border-color: ${(props) => props.theme.palette.info.main};
   }
 `

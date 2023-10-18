@@ -20,24 +20,13 @@ const MainChart: React.FC = () => {
     setFilterTime(newValue)
   }
 
-  const { data: totalLiquidity } = useTotalLiquidityQuery({
-    timeframe: filterTime,
-    refetchOnMount: false,
-    enabled: tab === 0
-  })
-  const { data: totalVolume } = useTotalVolumeQuery({
-    timeframe: filterTime,
-    refetchOnMount: false,
-    enabled: tab === 1
-  })
-
   const { data: totalLiquidityDay } = useTotalLiquidityQuery({
-    timeframe: '24h',
+    timeframe: filterTime,
     refetchOnMount: false,
     enabled: tab === 0
   })
   const { data: totalVolumeDay } = useTotalVolumeQuery({
-    timeframe: '24h',
+    timeframe: filterTime,
     refetchOnMount: false,
     enabled: tab === 1
   })
@@ -48,16 +37,16 @@ const MainChart: React.FC = () => {
     } else {
       setChartHover(totalVolumeDay?.sumAllValue)
     }
-  }, [totalLiquidity, totalVolume, tab])
+  }, [totalLiquidityDay, totalVolumeDay, tab])
 
   return (
     <LineChartAlt
-      data={tab === 0 ? totalLiquidity?.chartData : totalVolume?.chartData}
+      data={tab === 0 ? totalLiquidityDay?.chartData : totalVolumeDay?.chartData}
       value={chartHover}
       setValue={setChartHover}
-      maxY={tab === 0 ? totalLiquidity?.maxValue : totalVolume?.maxValue}
-      minY={tab === 0 ? totalLiquidity?.minValue : totalVolume?.minValue}
-      defaultValue={tab === 0 ? 0 : totalVolume?.sumAllValue}
+      maxY={tab === 0 ? totalLiquidityDay?.maxValue : totalVolumeDay?.maxValue}
+      minY={tab === 0 ? totalLiquidityDay?.minValue : totalVolumeDay?.minValue}
+      defaultValue={tab === 0 ? 0 : totalVolumeDay?.sumAllValue}
       topLeft={
         <Box>
           <Box ml='20px'>

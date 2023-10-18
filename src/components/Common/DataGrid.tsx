@@ -9,6 +9,7 @@ interface GridProps {
   hasRangeIndicator?: boolean,
   gridType?: GridType,
   minHeight?: number,
+  noAutoHeight?: boolean
   onRowClick?: GridEventListener<'rowClick'>
 }
 
@@ -18,7 +19,7 @@ export const enum GridType {
   Borrow = 'borrow'
 }
 
-export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, onRowClick }) => (
+export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, noAutoHeight = false, onRowClick }) => (
   <DataGrid
     sx={{
       width: '100%',
@@ -106,7 +107,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
       }
       return 'super-app-theme--row'
     }}
-    autoHeight
+    autoHeight={!noAutoHeight}
     disableColumnFilter
     disableSelectionOnClick
     disableColumnSelector
@@ -125,7 +126,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
 
 export const CustomNoRowsOverlay = (msg: string, color?: string) => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '21px' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '25px' }}>
       <Typography variant='p_lg' color={color || '#66707e'}>{msg}</Typography>
     </Box>
   )
