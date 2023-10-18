@@ -126,11 +126,11 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 export const callPayILD = async ({ program, userPubKey, setTxState, data }: CallPayILDProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
+	// NOTE: we shouldn't need to initialize either account here since we're paying from it.
 	const [onassetAssociatedToken, collateralAssociatedTokenAddress] = await Promise.all([
-		getTokenAccount(
+		getAssociatedTokenAddress(
 			data.onassetMint,
 			program.provider.publicKey!,
-			program.provider.connection
 		),
 		getAssociatedTokenAddress(
 			program.clone.collateral.mint,
@@ -138,7 +138,6 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 		)
 	])
 
-	let onassetAssociatedTokenAddress = onassetAssociatedToken.address
 	const pools = await program.getPools()
 	const oracles = await program.getOracles();
 	const userAccount = await program.getUserAccount()
@@ -148,32 +147,6 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 		program.updatePricesInstruction(oracles)
 	]
 
-	if (!onassetAssociatedToken) {
-		const ata = await getAssociatedTokenAddress(
-			data.onassetMint,
-			program.provider.publicKey!
-		)
-		onassetAssociatedTokenAddress = ata
-		ixnCalls.push(
-			createAssociatedTokenAccountInstruction(
-				program.provider.publicKey!,
-				ata,
-				program.provider.publicKey!,
-				data.onassetMint,
-			)
-		)
-	}
-
-	// const positionCollateralLiquidity = toScale(data.committedCollateralLiquidity, program.clone.collateral.scale)
-	// if (positionCollateralLiquidity > 0) {
-	// 	ixnCalls.push(
-	// 		program.withdrawLiquidityFromCometInstruction(
-	// 			positionCollateralLiquidity.muln(2), // Over withdraw to ensure its all paid.
-	// 			data.positionIndex,
-	// 		)
-	// 	)
-	// }
-
 	if (toCloneScale(data.onassetILD) > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
@@ -182,21 +155,22 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 				data.positionIndex,
 				toCloneScale(data.ildAmount),
 				PaymentType.Onasset,
-				onassetAssociatedToken.address,
+				onassetAssociatedToken,
 				collateralAssociatedTokenAddress,
 			)
 		)
 	}
 
-	if (toCloneScale(data.collateralILD) > 0) {
+	const collateralILD = toScale(data.collateralILD, program.clone.collateral.scale)
+	if (collateralILD > 0) {
 		ixnCalls.push(
 			program.payCometILDInstruction(
 				pools,
 				userAccount,
 				data.positionIndex,
-				toCloneScale(data.collateralBalance),
+				collateralILD,
 				PaymentType.CollateralFromWallet,
-				onassetAssociatedToken.address,
+				onassetAssociatedToken,
 				collateralAssociatedTokenAddress,
 			)
 		)
