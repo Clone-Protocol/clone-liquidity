@@ -204,7 +204,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                 </Box>}
             </RatioBox>
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio ? { backgroundColor: '#d92a84' } : {}}>
+            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} hasRisk={hasRiskRatio}>
               {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
                 : <Typography variant='p_lg'>Repay all borrowed amount</Typography>}
             </SubmitButton>

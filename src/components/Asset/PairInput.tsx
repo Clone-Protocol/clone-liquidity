@@ -46,7 +46,7 @@ const PairInput: React.FC<Props> = ({
 				)}
 			</Stack>
 			<CenterBox>
-				<FormStack direction="row" justifyContent="space-between" alignItems="center" sx={disabledInput ? { border: '1px solid #414166', background: 'transparent' } : {}}>
+				<FormStack direction="row" justifyContent="space-between" alignItems="center" noHover={disabledInput} sx={disabledInput ? { border: '1px solid #414166', background: 'transparent' } : {}}>
 					<Box>
 						<InputAmount
 							type="number"
@@ -82,7 +82,7 @@ const MaxValue = styled('span')`
 	color: ${(props) => props.theme.basis.liquidityBlue};
 	cursor: pointer;
 `
-const FormStack = styled(Stack)`
+const FormStack = styled(Stack) <{ noHover?: boolean }>`
 	display: flex;
 	width: 100%;
 	height: 70px;
@@ -90,7 +90,7 @@ const FormStack = styled(Stack)`
 	padding: 9px 21px 8px 24px;
 	background-color: ${(props) => props.theme.boxes.darkBlack};
   &:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
+		${(props) => props.noHover ? 'box-shadow: 0px !important;' : `box-shadow: 0 0 0 1px #989898 inset;`}
   }
 `
 const InputAmount = styled(`input`)`

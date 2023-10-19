@@ -41,7 +41,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      collAmount: 0.0,
+      collAmount: NaN,
     }
   })
   const [collAmount] = watch([
@@ -49,7 +49,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
   ])
 
   const initData = () => {
-    setValue('collAmount', 0.0)
+    setValue('collAmount', NaN)
   }
 
   // initialize state data

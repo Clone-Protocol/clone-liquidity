@@ -7,15 +7,12 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
 import { FilterType, FilterTypeMap } from '~/data/filter'
-import { useAtomValue } from 'jotai'
-import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PageTabs, PageTab } from '~/components/Overview/Tabs'
 import ArrowUpward from 'public/images/arrow-upward.svg'
 import ArrowDownward from 'public/images/arrow-down-red.svg'
 import { Grid, CellTicker } from '~/components/Common/DataGrid'
 import SearchInput from '~/components/Overview/SearchInput'
 import useDebounce from '~/hooks/useDebounce'
-import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
@@ -47,17 +44,17 @@ const AssetList: React.FC = () => {
 		}
 	}, [searchTerm])
 
-	const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
-	const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
+	// const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
+	// const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
 	const handleRowClick: GridEventListener<'rowClick'> = (
 		params
 	) => {
-		if (isAlreadyInitializedAccount) {
-			router.push(`/comet/assets/${params.row.ticker}`)
-		} else {
-			handleLinkNeedingAccountClick(undefined)
-		}
+		// if (isAlreadyInitializedAccount) {
+		router.push(`/comet/assets/${params.row.ticker}`)
+		// } else {
+		// 	handleLinkNeedingAccountClick(undefined)
+		// }
 	}
 
 	return (
@@ -73,7 +70,7 @@ const AssetList: React.FC = () => {
 			<Grid
 				headers={columns}
 				rows={assets || []}
-				minHeight={680}
+				minHeight={110}
 				customNoRowsOverlay={() => CustomNoRowsOverlay('No assets')}
 				onRowClick={handleRowClick}
 			/>

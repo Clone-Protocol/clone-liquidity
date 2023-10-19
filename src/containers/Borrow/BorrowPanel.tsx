@@ -41,7 +41,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors, isSubmitting },
+    formState: { errors, isSubmitting },
     watch,
     setValue
   } = useForm({
@@ -61,8 +61,8 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
   const [openChooseAsset, setOpenChooseAsset] = useState(false)
 
   const initData = () => {
-    setValue('collAmount', 0.0)
-    setValue('borrowAmount', 0.0)
+    setValue('collAmount', NaN)
+    setValue('borrowAmount', NaN)
     refetch()
   }
 
@@ -135,7 +135,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
     }
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && !isSubmitting && borrowAmount > 0 && (borrowDetail && borrowDetail.minCollateralRatio <= collRatio)
   const hasRiskRatio = collRatio < RISK_RATIO_VAL
   const hasLowerMin = collRatio < borrowDetail?.minCollateralRatio;
 
@@ -245,7 +245,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </WarningStack>
           }
 
-          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isDirty || !isValid || isSubmitting || borrowAmount == 0 || (borrowDetail && borrowDetail.minCollateralRatio > collRatio)} sx={hasRiskRatio ? { backgroundColor: '#ff0084' } : {}}>
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isValid} hasRisk={hasRiskRatio}>
             <Typography variant='p_lg'>{(isNaN(collAmount) || collAmount === 0) ? 'Enter Collateral Amount' : hasLowerMin ? 'Minimum Collateral Ratio is 150%' : collAmount > usdiBalance?.balanceVal ? 'Exceeded Wallet Balance' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
           </SubmitButton>
         </Box>

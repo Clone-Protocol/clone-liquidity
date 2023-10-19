@@ -165,7 +165,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
     )
   } else {
     actionButton = (
-      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} sx={hasRiskScore ? { backgroundColor: '#ff0084' } : {}}>
+      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} hasRisk={hasRiskScore}>
         <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
       </SubmitButton>
     )

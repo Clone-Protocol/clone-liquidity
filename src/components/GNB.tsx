@@ -17,6 +17,8 @@ import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
 import NaviMenu from './NaviMenu'
 import { isMobile } from 'react-device-detect';
+import MoreMenu from './Common/MoreMenu'
+import WalletSelectBox from './Common/WalletSelectBox'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -57,10 +59,7 @@ const RightMenu: React.FC = () => {
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
 
 	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
-	const MoreMenu = dynamic(() => import('./Common/MoreMenu'))
-	const ReminderNewWalletPopup = dynamic(() => import('./Account/ReminderNewWalletPopup'))
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
-	const WalletSelectBox = dynamic(() => import('./Common/WalletSelectBox'))
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
@@ -137,7 +136,6 @@ const RightMenu: React.FC = () => {
 							</ConnectedButton>
 					}
 					{showWalletSelectPopup && <WalletSelectBox onHide={() => setShowWalletSelectPopup(false)} />}
-					{publicKey && <ReminderNewWalletPopup />}
 				</Box >
 			</Box >
 

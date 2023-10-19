@@ -1,3 +1,4 @@
+//@DEPRECATED
 import React from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { createAccountDialogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'

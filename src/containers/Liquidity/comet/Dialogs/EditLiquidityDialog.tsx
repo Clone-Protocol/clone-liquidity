@@ -61,7 +61,7 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                       refetch()
                       onRefetchData()
                     }}
-                    handleClose={handleClose} />
+                  />
                 </TabPanelForEdit>
                 <TabPanelForEdit value={tab} index={1}>
                   <IldEdit positionIndex={positionIndex} />

@@ -243,7 +243,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
 
             {isFullWithdrawal && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
 
-            <SubmitButton onClick={handleSubmit((isFullWithdrawal && isFullRepaid) ? onClose : onEdit)} disabled={!isDirty || !isValid || isSubmitting} sx={hasRiskRatio && !isFullRepaid ? { backgroundColor: '#d92a84' } : {}}>
+            <SubmitButton onClick={handleSubmit((isFullWithdrawal && isFullRepaid) ? onClose : onEdit)} disabled={!isDirty || !isValid || isSubmitting} hasRisk={hasRiskRatio && !isFullRepaid}>
               <Typography variant='p_lg'>
                 {(isFullWithdrawal && isFullRepaid) ? 'Withdraw and Close This Borrow Position' : `${hasRiskRatio ? 'Accept Risk and ' : ''} Edit Collateral`}
               </Typography>

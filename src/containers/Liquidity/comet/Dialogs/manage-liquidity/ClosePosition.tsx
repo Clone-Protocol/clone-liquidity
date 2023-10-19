@@ -171,17 +171,18 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
 
 const StackWithBorder = styled(Stack)`
   width: 100%;
-  height: 52px;
+  height: 60px;
   margin-top: 4px;
   margin-bottom: 12px;
   border-radius: 5px;
   align-items: center;
   gap: 10px;
-  padding: 18px 21px;
+  padding: 21px;
   border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
 `
 const GoButton = styled(SubmitButton)`
   width: 200px;
+  height: 40px;
 `
 
 export default withSuspense(ClosePosition, <LoadingProgress />)

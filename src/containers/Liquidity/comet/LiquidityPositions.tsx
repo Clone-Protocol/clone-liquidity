@@ -58,7 +58,8 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
         <Grid
           headers={columns}
           rows={rowsPositions || []}
-          minHeight={120}
+          minHeight={108}
+          noAutoHeight={(!publicKey || hasNoCollateral || (!hasNoCollateral && positions.length === 0)) === true}
           customNoRowsOverlay={customOverlay}
           onRowClick={handleRowClick}
         />
@@ -66,7 +67,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
       {publicKey && !hasNoCollateral &&
         <Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
           {positions.length > 0 ?
-            <AddButton onClick={redirectAddCometPage}>
+            <AddButton onClick={redirectAddCometPage} sx={isBtnHover ? { color: '#fff' } : { color: '#414e66' }} disableRipple>
               <Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
               <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
             </AddButton>
@@ -181,13 +182,13 @@ const AddButton = styled(Button)`
   margin-top: 9px;
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
-    color: #fff;
   }
 `
 const AddButtonNoPosition = styled(AddButton)`
-  height: 42px;
+  height: 70px;
   color: #fff;
-  margin-top: -110px;
+  border: 0px;
+  margin-top: -80px;
   &:hover {
     border-color: ${(props) => props.theme.palette.info.main};
   }
