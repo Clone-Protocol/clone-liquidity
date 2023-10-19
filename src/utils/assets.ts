@@ -42,7 +42,7 @@ export const fetchStatsData = async (filter: Filter, interval: Interval): Promis
   return response.data as ResponseValue[]
 }
 
-export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ poolIndex: number, poolPrice: number, liquidity: number }[]> => {
+export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ poolIndex: number, poolPrice: number, liquidity: number, oraclePrice: number }[]> => {
   const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
   const data = await pythClient.getData();
   const pools = await program.getPools();
@@ -59,7 +59,7 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
     const oraclePrice = data.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo);
     const poolPrice = (committedCollateral - poolCollateralIld) / (committedCollateral / oraclePrice - poolOnassetIld)
     const liquidity = committedCollateral * 2;
-    iassetInfo.push({ poolIndex, poolPrice, liquidity });
+    iassetInfo.push({ poolIndex, poolPrice, liquidity, oraclePrice });
   }
   return iassetInfo;
 }

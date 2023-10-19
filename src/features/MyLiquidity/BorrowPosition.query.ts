@@ -1,12 +1,13 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
+import { CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { getiAssetInfos } from '~/utils/assets'
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
@@ -49,11 +50,11 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
 
   console.log('fetchBorrowPosition')
 
-  const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
-    program.getPools(), program.getOracles(), program.getUserAccount()
+  const [poolsData, oraclesData, userAccountData, assetInfos] = await Promise.allSettled([
+    program.getPools(), program.getOracles(), program.getUserAccount(), getiAssetInfos(program.provider.connection, program)
   ]);
 
-  if (poolsData.status !== "fulfilled" || oraclesData.status !== "fulfilled" || userAccountData.status !== "fulfilled") return
+  if (poolsData.status !== "fulfilled" || oraclesData.status !== "fulfilled" || userAccountData.status !== "fulfilled" || assetInfos.status !== "fulfilled") return
 
   const borrowPositions = userAccountData.value.borrows
   const mint = borrowPositions[index];
@@ -62,10 +63,10 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
   const pools = poolsData.value
   const pool = pools.pools[poolIndex]
-  const oracles = oraclesData.value
-  const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
-  const oraclePrice = fromScale(oracle.price, oracle.expo)
-  const positionsData = getUserMintInfos(program, pools, oracles, borrowPositions);
+
+  const oraclePrice = assetInfos.value[poolIndex].oraclePrice
+
+  const positionsData = getUserMintInfos(program, pools, oraclesData.value, borrowPositions);
   const positionData = positionsData[index];
 
   const balance = await fetchBalance({
@@ -91,6 +92,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
     iassetVal: balance?.onassetVal!,
     maxWithdrawableColl,
     effectiveCollateralValue: positionData.effectiveCollateralValue,
+    collateralizationRatio
   }
 }
 
@@ -115,6 +117,7 @@ export interface PositionInfo {
   iassetVal: number
   maxWithdrawableColl: number
   effectiveCollateralValue: number
+  collateralizationRatio: number
 }
 
 export interface PairData {

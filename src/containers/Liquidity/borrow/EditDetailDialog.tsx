@@ -84,9 +84,11 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
     let expectedCollRatio
     if (collAmount) {
       if (editType === 0) { // deposit
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) + Math.abs(Number(collAmount))) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedOnasset))
+        const collateralDelta = Number(borrowDetail.collateralAmount) + Math.abs(Number(collAmount))
+        expectedCollRatio = collateralDelta * borrowDetail.collateralizationRatio * 100 / (borrowDetail.price * Number(borrowDetail.borrowedOnasset))
       } else { // withdraw
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) - Math.abs(Number(collAmount))) * 100 / (borrowDetail.price * Number(borrowDetail.borrowedOnasset))
+        const collateralDelta = Number(borrowDetail.collateralAmount) - Math.abs(Number(collAmount))
+        expectedCollRatio = collateralDelta * borrowDetail.collateralizationRatio * 100 / (borrowDetail.price * Number(borrowDetail.borrowedOnasset))
       }
     } else {
       expectedCollRatio = borrowDetail.collateralRatio
