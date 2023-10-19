@@ -49,7 +49,7 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
     }, 1000)
   }
 
-  return balance ? (
+  return (
     <WalletWrapper>
       <Stack direction='row' justifyContent='space-between' alignItems='center' padding='13px'>
         <Box lineHeight={1}>
@@ -70,7 +70,7 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
         <Typography variant='h3'>${balance?.onusdVal.toLocaleString()}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
       </AssetBox>
     </WalletWrapper >
-  ) : <></>
+  )
 }
 
 export default withSuspense(WalletSelectBox, <LoadingProgress />)

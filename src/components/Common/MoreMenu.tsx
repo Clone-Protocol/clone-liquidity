@@ -31,12 +31,13 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
         mt: 1.5,
         transition: 'none',
         transitionDuration: 0,
-        background: '#1b1b1b',
+        background: '#000',
         color: '#fff',
         border: '1px solid #414e66',
         borderRadius: '5px'
       },
     }}
+    MenuListProps={{ sx: { pt: 0, pb: '15px' } }}
     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
   >
@@ -83,23 +84,23 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
       <a href={TWITTER_URL} target="_blank" rel="noreferrer"><Image src={TwitterIcon} alt="twitter" /></a>
       <a href={DISCORD_URL} target="_blank" rel="noreferrer"><Image src={DiscordIcon} alt="discord" /></a>
     </Stack>
-  </Menu >
+  </Menu>
 }
 
 const StyledMenuItem = styled(MenuItem)`
   display: flex;
   width: 220px;
-  height: 35px;
+  height: 50px;
   line-height: 12px;
   color: #fff;
-  margin-bottom: 10px;
-  padding: 0;
+  padding: 0 !important;
 `
 const HoverStack = styled(Stack)`
   width: 100%;
+  height: 100%;
   padding: 6px 20px;
   &:hover {
-    background-color: #2d2d2d;
+    background-color: rgba(255, 255, 255, 0.05);
   }
 `
 

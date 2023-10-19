@@ -50,7 +50,7 @@ const BorrowPositions = () => {
 			<Grid
 				headers={columns}
 				rows={positions || []}
-				minHeight={120}
+				minHeight={108}
 				noAutoHeight={(!publicKey || positions?.length === 0) === true}
 				hasRangeIndicator={true}
 				gridType={GridType.Borrow}
@@ -61,7 +61,7 @@ const BorrowPositions = () => {
 			{publicKey &&
 				<Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
 					{positions && positions.length > 0 ?
-						<AddButton onClick={moveNewBorrowPositionPage}>
+						<AddButton onClick={moveNewBorrowPositionPage} sx={isBtnHover ? { color: '#fff' } : { color: '#414e66' }} disableRipple>
 							<Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
 							<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
 						</AddButton>
@@ -150,16 +150,14 @@ const AddButton = styled(Button)`
   margin-top: 9px;
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
-    color: #fff;
   }
 `
 const AddButtonNoPosition = styled(AddButton)`
-	height: 28px;
+	height: 70px;
   color: #fff;
 	border: 0px;
-	margin-top: -70px;
+	margin-top: -80px;
   &:hover {
-		background-color: rgba(255, 255, 255, 0.01);
     border-color: ${(props) => props.theme.palette.info.main};
   }
 `

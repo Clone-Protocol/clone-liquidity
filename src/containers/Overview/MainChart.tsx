@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/system'
 import { Box } from '@mui/material'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -38,6 +38,16 @@ const MainChart: React.FC = () => {
       setChartHover(totalVolumeDay?.sumAllValue)
     }
   }, [totalLiquidityDay, totalVolumeDay, tab])
+
+  useMemo(() => {
+    if (chartHover === undefined) {
+      if (tab === 0) {
+        setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
+      } else {
+        setChartHover(totalVolumeDay?.sumAllValue)
+      }
+    }
+  }, [chartHover, tab, totalLiquidityDay, totalVolumeDay])
 
   return (
     <LineChartAlt

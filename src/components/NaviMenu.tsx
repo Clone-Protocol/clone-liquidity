@@ -2,11 +2,9 @@ import { usePathname } from 'next/navigation'
 import { List, ListItemButton, Fade, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Link from 'next/link'
-import { useOnLinkNeedingAccountClick } from '~/hooks/useOnLinkNeedingAccountClick'
 
 const NaviMenu = () => {
   const pathname = usePathname()
-  const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
   return (
     <Fade in timeout={1500}>
@@ -17,12 +15,12 @@ const NaviMenu = () => {
           </StyledListItemButton>
         </Link>
         <Link href="/comet/myliquidity">
-          <StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
+          <StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''}>
             <Typography variant="p">Comet</Typography>
           </StyledListItemButton>
         </Link>
         <Link href="/borrow/myliquidity">
-          <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''} onClick={handleLinkNeedingAccountClick}>
+          <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''}>
             <Typography variant="p">Borrow</Typography>
           </StyledListItemButton>
         </Link>
