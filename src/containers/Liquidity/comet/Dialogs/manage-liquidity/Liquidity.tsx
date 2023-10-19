@@ -16,7 +16,7 @@ import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 
-const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData, handleClose }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
+const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
