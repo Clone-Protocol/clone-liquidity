@@ -21,6 +21,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   const oPrice = fromScale(oracle.price, oracle.expo)
   const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2) * 100;
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
+  const collateralizationRatio = fromScale(program.clone.collateral.collateralizationRatio, 2)
 
   return {
     tickerIcon: tickerIcon,
@@ -29,6 +30,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
     pythSymbol,
     oPrice,
     minCollateralRatio,
+    collateralizationRatio
   }
 }
 
@@ -39,6 +41,7 @@ export interface DetailInfo {
   pythSymbol: string
   oPrice: number
   minCollateralRatio: number
+  collateralizationRatio: number
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
@@ -70,11 +73,9 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
     userPubKey,
     index: poolIndex
   })
-
-  const borrowAmountInIasset = Number(positionData![3]);
-  const minCollateralRatio = positionData![6];
-  const minCollateralAmount = borrowAmountInIasset * oraclePrice * Number(minCollateralRatio);
-  const maxWithdrawableColl = Number(positionData![4]) - minCollateralAmount;
+  const collateralizationRatio = fromScale(program.clone.collateral.collateralizationRatio, 2)
+  const minCollateralAmount = positionData.borrowedOnasset * oraclePrice * positionData.minCollateralRatio / collateralizationRatio;
+  const maxWithdrawableColl = positionData.collateralAmount - minCollateralAmount;
 
   return {
     tickerIcon: tickerIcon,
@@ -82,13 +83,14 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
     tickerSymbol: tickerSymbol,
     pythSymbol,
     price: oraclePrice,
-    borrowedOnasset: positionData![3],
-    collateralAmount: positionData![4],
-    collateralRatio: Number(positionData![5]) * 100,
-    minCollateralRatio: Number(positionData![6]) * 100,
+    borrowedOnasset: positionData.borrowedOnasset,
+    collateralAmount: positionData.collateralAmount,
+    collateralRatio: positionData.collateralRatio * 100,
+    minCollateralRatio: positionData.minCollateralRatio * 100,
     usdiVal: balance?.onusdVal!,
     iassetVal: balance?.onassetVal!,
-    maxWithdrawableColl
+    maxWithdrawableColl,
+    effectiveCollateralValue: positionData.effectiveCollateralValue,
   }
 }
 
@@ -112,6 +114,7 @@ export interface PositionInfo {
   usdiVal: number
   iassetVal: number
   maxWithdrawableColl: number
+  effectiveCollateralValue: number
 }
 
 export interface PairData {

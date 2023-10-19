@@ -27,7 +27,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.collateralAmount) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedOnasset) : borrowDetail.iassetVal)
+    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.effectiveCollateralValue) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedOnasset) : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
@@ -69,9 +69,9 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
     let expectedCollRatio
     if (borrowAmount) {
       if (editType === 0) { // borrow more
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedOnasset) + Number(borrowAmount))))
+        expectedCollRatio = (Number(borrowDetail.effectiveCollateralValue) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedOnasset) + Number(borrowAmount))))
       } else { // repay
-        expectedCollRatio = (Number(borrowDetail.collateralAmount) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedOnasset) - Number(borrowAmount))))
+        expectedCollRatio = (Number(borrowDetail.effectiveCollateralValue) * 100 / (borrowDetail.price * (Number(borrowDetail.borrowedOnasset) - Number(borrowAmount))))
       }
     } else {
       expectedCollRatio = (borrowDetail.collateralRatio)

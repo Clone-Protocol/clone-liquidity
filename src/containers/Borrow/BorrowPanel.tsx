@@ -68,13 +68,13 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
     const assetOraclePrice = borrowDetail ? borrowDetail.oPrice : 1
-    const borrowAmount = (inputCollAmount * 100) / (assetOraclePrice * inputCollRatio)
+    const borrowAmount = (inputCollAmount * borrowDetail.collateralizationRatio * 100) / (assetOraclePrice * inputCollRatio)
     setValue('borrowAmount', borrowAmount)
   }
 
   const calculateCollRatio = (inputBorrowAmount: number) => {
     const assetOraclePrice = borrowDetail ? borrowDetail.oPrice : 1
-    setCollRatio((collAmount * 100) / (inputBorrowAmount * assetOraclePrice))
+    setCollRatio((collAmount * borrowDetail.collateralizationRatio * 100) / (inputBorrowAmount * assetOraclePrice))
   }
 
   useEffect(() => {
