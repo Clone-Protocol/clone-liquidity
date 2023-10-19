@@ -153,7 +153,7 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 				pools,
 				userAccount,
 				data.positionIndex,
-				toCloneScale(data.ildAmount),
+				toCloneScale(data.ildAssetAmount),
 				PaymentType.Onasset,
 				onassetAssociatedToken,
 				collateralAssociatedTokenAddress,
@@ -168,14 +168,13 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 				pools,
 				userAccount,
 				data.positionIndex,
-				collateralILD,
+				toCloneScale(data.ildCollAmount),
 				PaymentType.CollateralFromWallet,
 				onassetAssociatedToken,
 				collateralAssociatedTokenAddress,
 			)
 		)
 	}
-
 	await sendAndConfirm(program.provider, ixnCalls, setTxState)
 
 	return {
@@ -183,7 +182,8 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 	}
 }
 type PayILDFormData = CloseFormData & {
-	ildAmount: number
+	ildAssetAmount: number
+	ildCollAmount: number
 }
 interface CallPayILDProps extends CallCloseProps {
 	data: PayILDFormData

@@ -15,11 +15,13 @@ import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { usePayILDMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
+import { Collateral as StableCollateral, collateralMapping } from "~/data/assets"
 
 const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [healthScore, setHealthScore] = useState(0)
+  const onUSDInfo = collateralMapping(StableCollateral.onUSD)
 
   const { data: positionInfo, refetch } = useLiquidityPositionQuery({
     userPubKey: publicKey,
@@ -47,11 +49,11 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   ])
 
   useEffect(() => {
-    if (positionInfo && ildAssetAmount > 0) {
+    if (positionInfo) {
       const position = positionInfo.comet.positions[positionIndex]
       const poolIndex = Number(position.poolIndex)
       const pool = positionInfo.pools.pools[poolIndex]
-      const ildDebtNotionalValue = Math.max(positionInfo.collateralILD, 0) + Math.max((positionInfo.onassetILD - ildAssetAmount) * positionInfo.oraclePrice, 0)
+      const ildDebtNotionalValue = Math.max(positionInfo.collateralILD - ildCollAmount, 0) + Math.max((positionInfo.onassetILD - ildAssetAmount) * positionInfo.oraclePrice, 0)
       const healthScoreIncrease = (
         fromScale(pool.assetInfo.ilHealthScoreCoefficient, 2) * ildDebtNotionalValue +
         positionInfo.committedCollateralLiquidity * fromScale(pool.assetInfo.positionHealthScoreCoefficient, 2)
@@ -74,7 +76,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
       setIsSubmitting(true)
 
       const data = await mutateAsync({
-        ildAmount: ildAssetAmount,
+        ildAssetAmount,
+        ildCollAmount,
         positionIndex,
         collateralBalance: positionInfo?.onusdVal!,
         collateralILD: positionInfo?.collateralILD!,
@@ -98,16 +101,32 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   }
 
 
-  const balance: number = positionInfo ? Math.max(0, positionInfo.onassetVal) : 0
-  const remainingILD: number = positionInfo ? Math.max(0, positionInfo.onassetILD - ildAssetAmount) : 0
-  const isValid = positionInfo ? (positionInfo.onassetILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0) || (remainingILD > 0 && ildAmount === 0) || isSubmitting : false
+  const balanceOnAsset: number = positionInfo ? Math.max(0, positionInfo.onassetVal) : 0
+  const remainingAssetILD: number = positionInfo ? Math.max(0, positionInfo.onassetILD - ildAssetAmount) : 0
+  const balanceColl: number = positionInfo ? Math.max(0, positionInfo.onusdVal) : 0
+  const remainingCollILD: number = positionInfo ? Math.max(0, positionInfo.collateralILD - ildCollAmount) : 0
 
-  let warningMsg = ''
-  if (balance === 0) {
-    warningMsg = 'You wallet balance is zero'
+  let warningMsgForAsset = ''
+  if (balanceOnAsset === 0) {
+    warningMsgForAsset = 'You wallet balance is zero'
   } else if (positionInfo && Math.max(0, positionInfo.onassetILD) - ildAssetAmount > 0) {
-    warningMsg = 'Not enough wallet balance to fully payoff onAsseet ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
+    warningMsgForAsset = 'Not enough wallet balance to fully payoff onAsseet ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
   }
+
+  let warningMsgForColl = ''
+  if (balanceColl === 0) {
+    warningMsgForColl = 'You wallet balance is zero'
+  } else if (positionInfo && Math.max(0, positionInfo.collateralILD) - ildCollAmount > 0) {
+    warningMsgForColl = 'Not enough wallet balance to fully payoff devUSD ILD Amount. You can acquire more on devnet faucet.'
+  }
+
+  const isNotValid = positionInfo ?
+    (positionInfo.onassetILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0)
+    || isNaN(ildAssetAmount)
+    || isNaN(ildCollAmount)
+    || (remainingAssetILD > 0 && ildAssetAmount === 0)
+    || (remainingCollILD > 0 && ildCollAmount === 0)
+    || isSubmitting : false
 
   return positionInfo ? (
     <>
@@ -149,7 +168,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   valueDollarPrice={field.value}
                   inputTitle={`${positionInfo.tickerSymbol} ILD Payment`}
                   inputTitleColor="#fff"
-                  balance={balance}
+                  balance={balanceOnAsset}
                   onChange={(event: React.FormEvent<HTMLInputElement>) => {
                     const ildAmt = parseFloat(event.currentTarget.value)
                     field.onChange(ildAmt)
@@ -167,18 +186,18 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
               </Box>
               <Box>
-                <Typography variant='p_lg'>{isNaN(ildAssetAmount) || ildAssetAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-                <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAssetAmount) || ildAssetAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : `($${remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+                <Typography variant='p_lg'>{isNaN(ildAssetAmount) || ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+                <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAssetAmount) || ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
               </Box>
             </StackWithBorder>
-            {ildAssetAmount > balance &&
+            {ildAssetAmount > balanceOnAsset &&
               <Box mb='10px'>
                 <WarningMsg>
                   Exceeded Wallet Balance. Please adjust the payment amount.
                 </WarningMsg>
               </Box>
             }
-            {warningMsg !== '' && <InfoMsg>{warningMsg}</InfoMsg>}
+            {warningMsgForAsset !== '' && <InfoMsg>{warningMsgForAsset}</InfoMsg>}
           </BoxWithBorder>
         }
 
@@ -203,21 +222,21 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 control={control}
                 render={({ field }) => (
                   <PairInput
-                    tickerIcon={positionInfo.tickerIcon}
-                    tickerSymbol={positionInfo.tickerSymbol}
+                    tickerIcon={onUSDInfo.collateralIcon}
+                    tickerSymbol={onUSDInfo.collateralSymbol}
                     rightHeaderTitle={'Wallet Balance'}
                     value={field.value}
                     valueDollarPrice={field.value}
                     inputTitle={`devUSD ILD Payment`}
                     inputTitleColor="#fff"
-                    balance={balance}
+                    balance={balanceColl}
                     onChange={(event: React.FormEvent<HTMLInputElement>) => {
                       const ildAmt = parseFloat(event.currentTarget.value)
                       field.onChange(ildAmt)
                     }}
                     onMax={(value: number) => {
-                      const onassetILD = Math.max(0, positionInfo.onassetILD)
-                      field.onChange(Math.min(value, onassetILD))
+                      const collateralILD = Math.max(0, positionInfo.collateralILD)
+                      field.onChange(Math.min(value, collateralILD))
                     }}
                   />
                 )}
@@ -228,16 +247,23 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
                 </Box>
                 <Box>
-                  <Typography variant='p_lg'>{isNaN(ildCollAmount) || ildCollAmount > balance ? 'N/A' : remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-                  <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildCollAmount) || ildCollAmount > balance ? 'N/A' : remainingILD === 0 ? '(Paid Off)' : `($${remainingILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+                  <Typography variant='p_lg'>{isNaN(ildCollAmount) || ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+                  <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildCollAmount) || ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
                 </Box>
               </StackWithBorder>
-              {/* {warningMsg !== '' && <InfoMsg>{warningMsg}</InfoMsg>} */}
+              {ildCollAmount > balanceColl &&
+                <Box mb='10px'>
+                  <WarningMsg>
+                    Exceeded Wallet Balance. Please adjust the payment amount.
+                  </WarningMsg>
+                </Box>
+              }
+              {warningMsgForColl !== '' && <InfoMsg>{warningMsgForColl}</InfoMsg>}
             </BoxWithBorder>
           }
 
           {
-            (ildAssetAmount > 0) ?
+            (ildAssetAmount > 0 || ildCollAmount > 0) ?
               <HealthBox padding='15px 20px'>
                 <Box display='flex' justifyContent='center'>
                   <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
@@ -255,8 +281,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               </HealthBox>
           }
         </Box>
-        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isValid}>
-          <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : 'Pay ILD'}</Typography>
+        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNotValid}>
+          <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : (!ildAssetAmount && !ildCollAmount) ? 'Please adjust payment amount' : (remainingAssetILD === 0 && remainingCollILD === 0) ? 'Pay Entire ILD Balance' : 'Adjust ILD'}</Typography>
         </SubmitButton>
       </Box>
     </>
