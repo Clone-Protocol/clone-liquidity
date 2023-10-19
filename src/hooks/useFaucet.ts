@@ -1,14 +1,16 @@
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect } from 'react'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 import { toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { sendAndConfirm } from '~/utils/tx_helper'
 import { useTransactionState } from './useTransactionState';
 import { useClone } from './useClone';
 import { createMintAssetInstruction } from 'clone-protocol-sdk/sdk/generated/mock-asset-faucet'
-import { getOrCreateAssociatedTokenAccount } from 'clone-protocol-sdk/sdk/src/utils';
+import { getTokenAccount } from '~/utils/token_accounts';
 import { useAtom } from 'jotai';
 import { mintUSDi } from '~/features/globalAtom';
+import { create } from '@mui/material/styles/createTransitions';
 
 export default function useFaucet() {
   const { connected, publicKey } = useWallet()
@@ -30,14 +32,26 @@ export default function useFaucet() {
             new PublicKey(MOCK_FAUCET_PROGRAM_ID)
           );
 
-          const usdcAssociatedTokenAccount = await getOrCreateAssociatedTokenAccount(
-            program.provider,
-            program.clone.collateral.mint
+          const usdcAssociatedTokenAccount = await getTokenAccount(
+            program.clone.collateral.mint,
+            program.provider.publicKey!,
+            program.provider.connection,
           );
 
-          let ixnCalls = []
-          ixnCalls.push(
-            await createMintAssetInstruction({
+          let ixns: TransactionInstruction[] = []
+    
+          if (!usdcAssociatedTokenAccount.isInitialized) {
+            ixns.push(
+              createAssociatedTokenAccountInstruction(
+                program.provider.publicKey!,
+                usdcAssociatedTokenAccount.address,
+                program.provider.publicKey!,
+                program.clone.collateral.mint
+              )
+            )
+          }
+          ixns.push(
+            createMintAssetInstruction({
               minter: publicKey,
               faucet: faucetAddress,
               mint: program.clone.collateral.mint,
@@ -45,7 +59,6 @@ export default function useFaucet() {
             }, { amount: toScale(onusdToMint, program.clone.collateral.scale) })
           )
 
-          let ixns = await Promise.all(ixnCalls)
           await sendAndConfirm(program.provider, ixns, setTxState)
         } finally {
           setMintUsdi(false)
