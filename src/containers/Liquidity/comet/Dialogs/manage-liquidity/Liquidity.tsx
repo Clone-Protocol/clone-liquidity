@@ -36,7 +36,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
-      const maxMintable = positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient + currentPosition
+      const maxMintable = positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / healthCoefficient + currentPosition
       setMaxMintable(maxMintable)
 
       setDefaultMintRatio(100 * currentPosition / maxMintable)
@@ -78,7 +78,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
     // console.log('newRatio', newRatio)
     // MEMO: if newRatio is near from default ratio, then set newRatio to default ratio
-    const convertNewRatio = parseInt(newRatio.toString()) === defaultMintRatio ? defaultMintRatio : newRatio
+    const convertNewRatio = Math.min(parseInt(newRatio.toString()) === defaultMintRatio ? defaultMintRatio : newRatio, 99)
     setValue('mintAmount', maxMintable * convertNewRatio / 100)
     setMintRatio(convertNewRatio)
   }, [mintRatio, mintAmount])
@@ -143,7 +143,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
               <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
             </Box>
             <Box mt='15px' display='flex' justifyContent='center'>
-              <HealthscoreView score={healthScore ? healthScore : positionInfo.totalHealthScore} />
+              <HealthscoreView score={healthScore ?? positionInfo.totalHealthScore} />
             </Box>
           </CometHealthBox>
           :
