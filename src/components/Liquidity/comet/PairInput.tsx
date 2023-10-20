@@ -11,6 +11,7 @@ interface Props {
   inputTitle?: string
   inputTitleColor?: string
   balanceDisabled?: boolean
+  hideMaxButton?: boolean
   onChange?: (e: React.FormEvent<HTMLInputElement>) => void
   onMax?: (value: number) => void
 }
@@ -25,6 +26,7 @@ const PairInput: React.FC<Props> = ({
   inputTitle,
   inputTitleColor = '#66707e',
   balanceDisabled = false,
+  hideMaxButton = false,
   onChange,
   onMax,
 }) => {
@@ -43,7 +45,7 @@ const PairInput: React.FC<Props> = ({
               <Typography variant="p">
                 {balance?.toLocaleString(undefined, { maximumFractionDigits: 5 })}
               </Typography>
-              <MaxButton onClick={() => onMax && onMax(balance!)}>MAX</MaxButton>
+              {!hideMaxButton && <MaxButton onClick={() => onMax && onMax(balance!)}>MAX</MaxButton>}
             </MaxPointerValue>
           </Box>
         ) : (
@@ -90,7 +92,7 @@ const FormStack = styled(Stack)`
   height: 84px;
   padding: 18px 12px;
   &:hover {
-    box-shadow: 0 0 0 1px ${(props) => props.theme.palette.text.secondary} inset;
+    box-shadow: 0 0 0 1px ${(props) => props.theme.basis.shadowGloom} inset;
   }
 `
 const MaxPointerValue = styled(Box)`

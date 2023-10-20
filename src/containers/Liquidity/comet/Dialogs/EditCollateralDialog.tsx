@@ -184,6 +184,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
                         valueDollarPrice={field.value}
                         inputTitle={tab === 0 ? 'Deposit' : 'Withdraw'}
                         balance={tab === 0 ? collData.balance : maxWithdrawable}
+                        hideMaxButton={tab === 1}
                         onChange={(event: React.FormEvent<HTMLInputElement>) => {
                           const collAmt = parseFloat(event.currentTarget.value)
                           field.onChange(collAmt)

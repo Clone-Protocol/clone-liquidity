@@ -10,6 +10,7 @@ interface GridProps {
   gridType?: GridType,
   minHeight?: number,
   noAutoHeight?: boolean
+  hasTopBorderRadius?: boolean
   onRowClick?: GridEventListener<'rowClick'>
 }
 
@@ -19,7 +20,7 @@ export const enum GridType {
   Borrow = 'borrow'
 }
 
-export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, noAutoHeight = false, onRowClick }) => (
+export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, noAutoHeight = false, hasTopBorderRadius = false, onRowClick }) => (
   <DataGrid
     sx={{
       width: '100%',
@@ -30,8 +31,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
         border: '1px solid #1a1c28',
         borderBottomLeftRadius: '10px',
         borderBottomRightRadius: '10px',
-        // borderTopLeftRadius: '10px',
-        // borderTopRightRadius: '10px',
+        borderTopLeftRadius: hasTopBorderRadius ? '10px' : '0px',
+        borderTopRightRadius: hasTopBorderRadius ? '10px' : '0px',
       },
       '& .last--cell': {
         display: 'flex',

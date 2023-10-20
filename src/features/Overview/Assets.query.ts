@@ -68,7 +68,8 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 			liquidity: parseInt(info.liquidity.toString()),
 			volume24h: dailyVolumeStats.get(info.poolIndex) ?? 0,
 			change24h,
-			feeRevenue24h: stats.fees
+			feeRevenue24h: stats.fees,
+			avgAPY24h: stats.liquidityUSD > 0 ? (365.25 * stats.fees / stats.liquidityUSD) * 100 : 0,
 		})
 	}
 	return result
@@ -93,6 +94,7 @@ export interface AssetList {
 	volume24h: number
 	change24h: number
 	feeRevenue24h: number
+	avgAPY24h: number
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {

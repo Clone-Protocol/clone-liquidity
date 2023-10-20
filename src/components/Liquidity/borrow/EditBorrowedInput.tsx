@@ -80,6 +80,7 @@ const EditBorrowedInput: React.FC<Props> = ({
           value={collAmount}
           valueDollarPrice={collAmountDollarPrice}
           balance={maxCollVal}
+          hideMaxButton={editType === 0}
           onChange={onChangeAmount}
           onMax={onMax}
         />

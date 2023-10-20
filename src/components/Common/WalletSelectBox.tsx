@@ -13,7 +13,7 @@ import { ON_USD } from '~/utils/constants';
 import { useSetAtom } from 'jotai'
 import { cloneClient } from '~/features/globalAtom'
 
-const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
+const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
   const { publicKey, disconnect } = useWallet()
   const [solBalance, setSolBalance] = useState(0)
@@ -49,7 +49,7 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
     }, 1000)
   }
 
-  return (
+  return show ? (
     <WalletWrapper>
       <Stack direction='row' justifyContent='space-between' alignItems='center' padding='13px'>
         <Box lineHeight={1}>
@@ -70,7 +70,7 @@ const WalletSelectBox = ({ onHide }: { onHide: () => void }) => {
         <Typography variant='h3'>${balance?.onusdVal.toLocaleString()}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
       </AssetBox>
     </WalletWrapper >
-  )
+  ) : <></>
 }
 
 export default withSuspense(WalletSelectBox, <LoadingProgress />)

@@ -70,4 +70,5 @@ export const TooltipTexts = {
     selectLiquidityPool: 'Select Liquidity Pool',
     tradingVolume24h: 'Trading Volume (24h)',
     feeRevenue24h: 'Fee Revenue (24h)',
+    avgAPY24h: '24hr Average APY',
 }

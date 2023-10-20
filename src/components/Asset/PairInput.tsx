@@ -85,12 +85,11 @@ const MaxValue = styled('span')`
 const FormStack = styled(Stack) <{ noHover?: boolean }>`
 	display: flex;
 	width: 100%;
-	height: 70px;
+	height: 84px;
 	border-radius: 5px;
 	padding: 9px 21px 8px 24px;
-	background-color: ${(props) => props.theme.boxes.darkBlack};
   &:hover {
-		${(props) => props.noHover ? 'box-shadow: 0px !important;' : `box-shadow: 0 0 0 1px #989898 inset;`}
+		${(props) => props.noHover ? 'box-shadow: 0px !important;' : `box-shadow: 0 0 0 1px #414e66 inset;`}
   }
 `
 const InputAmount = styled(`input`)`

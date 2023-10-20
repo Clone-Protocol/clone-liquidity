@@ -71,6 +71,7 @@ const AssetList: React.FC = () => {
 				headers={columns}
 				rows={assets || []}
 				minHeight={110}
+				hasTopBorderRadius={true}
 				customNoRowsOverlay={() => CustomNoRowsOverlay('No assets')}
 				onRowClick={handleRowClick}
 			/>
@@ -140,13 +141,21 @@ let columns: GridColDef[] = [
 		},
 	},
 	{
-		field: 'feeRevenue24h',
+		field: 'avgAPY24h',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Revenue',
+		headerName: 'APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.value), 3)}</Typography>
+			return params.row.avgAPY24h >= 0 ?
+				<Box color='#4fe5ff' display='flex' alignItems='center'>
+					<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
+					<Image src={ArrowUpward} alt='arrowUp' />
+				</Box>
+				: <Box color='#ff0084' display='flex' alignItems='center'>
+					<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
+					<Image src={ArrowDownward} alt='arrowDown' />
+				</Box>
 		},
 	},
 	// {

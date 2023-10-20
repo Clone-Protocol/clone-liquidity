@@ -46,18 +46,20 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
                 </Box>
               </Stack>
             </LinkBox>
-            <InfoBox mb="12px">
+            <InfoBox mb="12px" noHover={true}>
               <Image src={infoOutlineIcon} alt="info" />
               <Typography variant='p' ml='12px'>
                 You need Devnet SOL in your wallet before you can claim Devnet USD.
               </Typography>
             </InfoBox>
-            <InfoBox sx={{ cursor: 'pointer' }}>
-              <Image src={infoOutlineIcon} alt="info" />
-              <Typography variant='p' ml='12px'>
-                The Solana Devnet is a safe playground for developers, users, and validators to test applications at no risk. Click this box to learn more.
-              </Typography>
-            </InfoBox>
+            <a href="https://www.alchemy.com/overviews/solana-devnet" target='_blank' rel="noreferrer">
+              <InfoBox>
+                <Image src={infoOutlineIcon} alt="info" />
+                <Typography variant='p' ml='12px'>
+                  The Solana Devnet is a safe playground for developers, users, and validators to test applications at no risk. Click this box to learn more.
+                </Typography>
+              </InfoBox>
+            </a>
 
             <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
               <CloseButton handleClose={onHide} />
@@ -90,16 +92,17 @@ const LinkBox = styled(Box)`
     border-color: ${(props) => props.theme.basis.liquidityBlue};
   }
 `
-const InfoBox = styled(Box)`
+const InfoBox = styled(Box) <{ noHover?: boolean }>`
   width: 347px;
   display: flex;
   align-items: center;
   padding: 8px 20px;
   line-height: 1.33;
+  cursor: ${(props) => props.noHover ? 'initial' : 'pointer'};
   border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   color: ${(props) => props.theme.palette.text.secondary};
   &:hover {
-    border-color: ${(props) => props.theme.basis.liquidityBlue};
+    border-color: ${(props) => props.noHover ? props.theme.basis.shadowGloom : props.theme.basis.liquidityBlue};
   }
 `
 const ConnectWallet = styled(Box)`

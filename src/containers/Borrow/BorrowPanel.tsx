@@ -18,6 +18,8 @@ import dynamic from 'next/dynamic'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRouter } from 'next/navigation'
+import { formatNumberToString } from '~/utils/numbers'
+import DisabledRatioSlider from '~/components/Borrow/DisabledRatioSlider'
 
 const RISK_RATIO_VAL = 170
 
@@ -175,8 +177,8 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                 <PairInput
                   tickerIcon={fromPair.tickerIcon}
                   tickerSymbol={fromPair.tickerSymbol}
-                  value={parseFloat(field.value.toFixed(3))}
-                  dollarPrice={field.value}
+                  value={parseFloat(formatNumberToString(field.value, 4))}
+                  // dollarPrice={field.value}
                   inputTitle='Collateral'
                   headerTitle="Balance"
                   headerValue={usdiBalance?.balanceVal}
@@ -200,7 +202,11 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             <InfoTooltip title={TooltipTexts.collateralRatio} color='#66707e' />
           </Box>
           <Box>
-            <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} hasLowerMin={hasLowerMin} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
+            {!isNaN(collAmount) && collAmount > 0 ?
+              <RatioSlider min={borrowDetail?.minCollateralRatio} value={collRatio} hasRiskRatio={hasRiskRatio} hasLowerMin={hasLowerMin} showChangeRatio hideValueBox onChange={handleChangeCollRatio} />
+              :
+              <DisabledRatioSlider />
+            }
           </Box>
 
           <Box mb='10px'>
@@ -223,9 +229,8 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                   <PairInput
                     tickerIcon={ASSETS[assetIndex].tickerIcon}
                     tickerSymbol={ASSETS[assetIndex].tickerSymbol}
-                    value={parseFloat(field.value.toFixed(5))}
+                    value={parseFloat(formatNumberToString(field.value, 5))}
                     dollarPrice={field.value * borrowDetail.oPrice}
-                    disabledInput
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const borrowAmt = parseFloat(event.currentTarget.value)
                       field.onChange(borrowAmt)

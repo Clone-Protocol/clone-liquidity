@@ -1,5 +1,4 @@
 import { Box, Slider, styled, Typography } from '@mui/material'
-import WarningMsg from '../Common/WarningMsg';
 
 interface Props {
 	min?: number
@@ -68,7 +67,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				{showChangeRatio &&
 					<Box display='flex'>
 						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { border: '1px solid #ff0084' } : {}} placeholder="0.00" value={Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-						<div style={{ marginLeft: '-26px', marginRight: '5px', marginTop: '5px' }}><Typography fontSize='26px'>%</Typography></div>
+						<div style={{ marginLeft: '-26px', marginRight: '5px', marginTop: '10px' }}><Typography fontSize='26px' color={value > 0 ? '#fff' : '#66707e'}>%</Typography></div>
 					</Box>
 				}
 				<Box width="100%">
@@ -103,16 +102,16 @@ const ValueBox = styled(Box)`
 	text-align: center;
 	background-color: ${(props) => props.theme.boxes.black};
 	width: 108px;
-	height: 48px;
+	height: 58px;
 	line-height: 28px;
 	color: #fff;
 	padding: 12px 18px 12px 26px;
 `
 const InputAmount = styled(`input`)`
 	text-align: center;
-	background-color: ${(props) => props.theme.boxes.darkBlack};
+	background-color: rgba(255, 255, 255, 0.05);
 	width: 108px;
-	height: 48px;
+	height: 58px;
 	border: 0px;
 	border-radius: 5px;
 	line-height: 15px;
@@ -122,7 +121,7 @@ const InputAmount = styled(`input`)`
 	padding: 12px 18px;
 	cursor: pointer;
 	&:hover {
-    border: solid 1px ${(props) => props.theme.palette.text.secondary};
+    border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   }
 `
 const FlagBox = styled(Box)`

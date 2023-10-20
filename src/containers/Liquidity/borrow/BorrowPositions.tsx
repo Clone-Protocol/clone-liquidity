@@ -62,8 +62,17 @@ const BorrowPositions = () => {
 				<Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
 					{positions && positions.length > 0 ?
 						<AddButton onClick={moveNewBorrowPositionPage} sx={isBtnHover ? { color: '#fff' } : { color: '#414e66' }} disableRipple>
-							<Image src={isBtnHover ? AddIconOn : AddIconOff} width={15} height={15} alt='add' />
-							<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
+							{isBtnHover ?
+								<Stack direction='row'>
+									<Image src={AddIconOn} width={15} height={15} alt='add' />
+									<Typography variant='p_lg' ml='10px' color='#fff'>Add new borrow position</Typography>
+								</Stack>
+								:
+								<Stack direction='row'>
+									<Image src={AddIconOff} width={15} height={15} alt='add' />
+									<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
+								</Stack>
+							}
 						</AddButton>
 						:
 						<AddButtonNoPosition onClick={moveNewBorrowPositionPage}>

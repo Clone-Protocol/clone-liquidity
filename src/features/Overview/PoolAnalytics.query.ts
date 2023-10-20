@@ -33,6 +33,7 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymb
         feeRevenue24hr: stats.fees,
         feeRevenueGain: stats.fees - stats.previousFees,
         feeRevenueGainPct: calcPctGain(stats.fees, stats.previousFees),
+        avgAPY24hr: stats.liquidityUSD > 0 ? (365.25 * stats.fees / stats.liquidityUSD) * 100 : 0,
         currentAmountBorrowed: borrowedStats.currentAmount,
         currentTVL: borrowedStats.currentTVL,
         amountBorrowedRate: calcPctGain(borrowedStats.currentAmount, borrowedStats.previousAmount),
@@ -47,12 +48,6 @@ interface GetAssetsProps {
   tickerSymbol: string
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
-}
-
-export interface AnalyticsInfo {
-  totalLiquidity: number
-  tradingVol24h: number
-  feeRevenue24h: number
 }
 
 export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = true }: GetAssetsProps) {

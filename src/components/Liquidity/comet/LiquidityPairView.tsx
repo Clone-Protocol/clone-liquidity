@@ -1,3 +1,4 @@
+//@DEPRECATED
 import { styled, Stack, Box, Typography } from "@mui/material"
 import Image from "next/image"
 import { CloseButton, PayIldButton } from "~/components/Liquidity/LiquidityButton"

@@ -1,4 +1,5 @@
 import { Box, Slider, styled } from '@mui/material'
+import { formatNumberToString } from '~/utils/numbers'
 
 interface Props {
 	min?: number
@@ -69,7 +70,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, max = 200, value, hideValueBox 
 							border: `0px`,
 						}
 					}}
-					value={parseFloat(value.toFixed(2))}
+					value={parseFloat(formatNumberToString(value, 2))}
 					min={min}
 					step={1}
 					max={max}

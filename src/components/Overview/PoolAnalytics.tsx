@@ -22,7 +22,7 @@ const TxtPriceRateComparePast = ({ val, rate }: { val: number, rate: number }) =
 const TxtPriceRate = ({ rate }: { rate: number }) => {
   if (isFinite(rate)) {
     return (
-      <Typography variant="p" color={rate >= 0 ? '#4fe5ff' : '#258ded'} ml='5px'>  {rate >= 0 ? '+' : '-'}{rate.toLocaleString()}%</Typography>
+      <Typography variant="p" color={rate >= 0 ? '#4fe5ff' : '#258ded'} ml='5px'>  {rate >= 0 ? '+' : '-'}{Math.abs(rate).toLocaleString()}%</Typography>
     )
   } else {
     return <></>
@@ -55,10 +55,10 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
       </DataBox>
       <DataBox>
         <Box>
-          <Typography variant="p" color='#66707e'>24h Fee Revenue</Typography>
-          <InfoTooltip title={TooltipTexts.feeRevenue24h} color='#66707e' />
+          <Typography variant="p" color='#66707e'>APY</Typography>
+          <InfoTooltip title={TooltipTexts.avgAPY24h} color='#66707e' />
         </Box>
-        <Box><Typography variant="p_xlg">${resultData?.feeRevenue24hr.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.feeRevenueGainPct} /></Box>
+        <Box><Typography variant="p_xlg" color={resultData?.avgAPY24hr >= 0 ? '#4fe5ff' : '#258ded'}>{resultData?.avgAPY24hr > 0 ? '+' : '-'}{Math.abs(resultData?.avgAPY24hr).toLocaleString()}%</Typography></Box>
       </DataBox>
     </Box>
   )

@@ -135,9 +135,9 @@ const RightMenu: React.FC = () => {
 								<Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
 							</ConnectedButton>
 					}
-					{showWalletSelectPopup && <WalletSelectBox onHide={() => setShowWalletSelectPopup(false)} />}
-				</Box >
-			</Box >
+					<WalletSelectBox show={showWalletSelectPopup} onHide={() => setShowWalletSelectPopup(false)} />
+				</Box>
+			</Box>
 
 			<TokenFaucetDialog
 				open={openTokenFaucet}
