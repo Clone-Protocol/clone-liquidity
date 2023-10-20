@@ -170,8 +170,8 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
           }
         </>
 
-        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid}>
-          <Typography variant='p_xlg'>Adjust Liquidity</Typography>
+        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
+          <Typography variant='p_xlg'>{hasRiskScore && 'Accept Risk and '}Adjust Liquidity</Typography>
         </SubmitButton>
       </Box>
     </>
