@@ -7,6 +7,7 @@ import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
+import { Collateral } from '~/data/assets'
 
 export const fetchAssets = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return []
@@ -24,8 +25,8 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 
 		let i = 0
 		for (const info of mintInfos) {
-			const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(Number(info[0]))
-			const { collateralName, collateralType } = collateralMapping(Number(info[1]))
+			const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(info.poolIndex)
+			const { collateralName, collateralType } = collateralMapping(Collateral.onUSD)
 
 			result.push({
 				id: i,
@@ -33,13 +34,13 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 				tickerSymbol: tickerSymbol,
 				tickerIcon: tickerIcon,
 				collateralName: collateralName,
-				oPrice: info[2],
+				oPrice: info.price,
 				assetType: assetType,
 				collateralType: collateralType,
-				borrowed: info[3],
-				collateral: info[4],
-				collateralRatio: Number(info[5]) * 100,
-				minCollateralRatio: Number(info[6]) * 100,
+				borrowed: info.borrowedOnasset,
+				collateral: info.collateralAmount,
+				collateralRatio: info.collateralRatio * 100,
+				minCollateralRatio: info.minCollateralRatio * 100,
 			})
 			i++
 		}

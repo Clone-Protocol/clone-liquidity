@@ -51,7 +51,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
       const healthCoefficient = fromScale(assetInfo.positionHealthScoreCoefficient, 2);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
-      setMaxMintable(positionInfo.totalCollValue * positionInfo.totalHealthScore / healthCoefficient)
+      setMaxMintable(positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / healthCoefficient)
       initData()
     }
   }, [positionInfo])
@@ -103,7 +103,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
     if (positionInfo) {
       const mintAmount = maxMintable * mintRatio / 100
       setValue('mintAmount', mintAmount);
-      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.totalCollValue)
+      setHealthScore(positionInfo.totalHealthScore - assetHealthCoefficient * mintAmount / positionInfo.effectiveCollateralValue)
       setTotalLiquidity(mintAmount * 2)
       setValidMintValue(mintRatio > 0 && mintRatio < 100 && mintAmount > 0 && mintAmount < maxMintable)
       trigger()

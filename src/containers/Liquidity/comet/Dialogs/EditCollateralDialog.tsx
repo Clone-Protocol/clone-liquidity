@@ -69,11 +69,11 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
     async function fetch() {
       if (open && collData) {
         if (collData.prevHealthScore) {
-          let loss = (100 - collData.prevHealthScore) * collData.collAmount;
+          let loss = (100 - collData.prevHealthScore) * collData.effectiveCollateral;
           let collDelta = (tab === 0 ? 1 : -1) * collAmount;
 
-          setHealthScore(100 - loss / (collData.collAmount + collDelta))
-          setMaxWithdrawable(collData.collAmount - loss / 100)
+          setHealthScore(100 - loss / (collData.effectiveCollateral + collData.collateralizationRatio * collDelta))
+          setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
         } else {
           if (tab === 0) {
             setHealthScore(100)

@@ -168,7 +168,7 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 				pools,
 				userAccount,
 				data.positionIndex,
-				toCloneScale(data.ildCollAmount),
+				collateralILD,
 				PaymentType.CollateralFromWallet,
 				onassetAssociatedToken,
 				collateralAssociatedTokenAddress,
