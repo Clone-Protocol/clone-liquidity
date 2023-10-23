@@ -51,7 +51,9 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 	const max = min + 250
 
 	const valueLabelFormat = (val: number) => {
-		if (value >= max) {
+		if (value >= 10000) {
+			return `SAFE`
+		} else if (value >= max) {
 			return `${val.toFixed(0)}%+`
 		} else if (value < min) {
 			return `<${val.toFixed(0)}%`
@@ -66,8 +68,8 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 				{showChangeRatio &&
 					<Box display='flex'>
-						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { border: '1px solid #ff0084' } : {}} placeholder="0.00" value={Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
-						<div style={{ marginLeft: '-26px', marginRight: '5px', marginTop: '10px' }}><Typography fontSize='26px' color={value > 0 ? '#fff' : '#66707e'}>%</Typography></div>
+						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { border: '1px solid #ff0084' } : {}} placeholder="0.00" value={value >= 1000 ? Number(value).toFixed(0) : Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+						<div style={{ marginLeft: '-23px', marginRight: '5px', marginTop: '10px' }}><Typography fontSize='26px' color={value > 0 ? '#fff' : '#66707e'}>%</Typography></div>
 					</Box>
 				}
 				<Box width="100%">

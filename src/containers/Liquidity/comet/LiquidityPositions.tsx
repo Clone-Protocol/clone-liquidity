@@ -17,12 +17,10 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const router = useRouter()
   const { publicKey } = useWallet()
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
-  const [openClosePosition, setOpenClosePosition] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
   const [isBtnHover, setIsBtnHover] = useState(false)
   const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
-  const CloseLiquidityDialog = dynamic(() => import('./Dialogs/CloseLiquidityDialog'))
 
   const handleChooseEditPosition = (positionIndex: number) => {
     setPoolIndex(Number(positions[positionIndex].poolIndex))
@@ -98,7 +96,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
           handleClose={() => setOpenEditLiquidity(false)}
         />
       }
-      {openClosePosition &&
+      {/* {openClosePosition &&
         <CloseLiquidityDialog
           open={openClosePosition}
           positionIndex={editAssetId}
@@ -106,7 +104,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
           onRefetchData={onRefetchData}
           handleClose={() => setOpenClosePosition(false)}
         />
-      }
+      } */}
     </>
   )
 

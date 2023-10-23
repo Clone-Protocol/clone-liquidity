@@ -1,5 +1,6 @@
 import React from "react"
 import { Box, Typography } from "@mui/material"
+import { styled } from '@mui/system'
 import Image from "next/image"
 // import dynamic from 'next/dynamic'
 import LineChart from "~/components/Charts/LineChart"
@@ -7,9 +8,12 @@ import { usePriceHistoryQuery } from "~/features/Chart/PriceByAsset.query"
 // import { unixToDate } from '~/utils/date'
 import withSuspense from "~/hocs/withSuspense"
 import { LoadingProgress } from "~/components/Common/Loading"
+import AnalyticsIcon from 'public/images/analytics-sketch.svg'
+import { PublicKey } from "@solana/web3.js"
 
 interface Props {
   assetData: PositionInfo
+  publicKey: PublicKey
   isOraclePrice?: boolean
   priceTitle: string
 }
@@ -25,12 +29,12 @@ interface PositionInfo {
   centerPrice?: number
 }
 
-const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTitle }) => {
+const PriceChart: React.FC<Props> = ({ assetData, publicKey, isOraclePrice = false, priceTitle }) => {
   const { data: priceHistory } = usePriceHistoryQuery({
     pythSymbol: assetData?.pythSymbol,
     isOraclePrice: isOraclePrice,
     refetchOnMount: true,
-    enabled: assetData != null,
+    enabled: assetData != null && publicKey != null,
   })
 
   return priceHistory ? (
@@ -65,8 +69,22 @@ const PriceChart: React.FC<Props> = ({ assetData, isOraclePrice = false, priceTi
       <LineChart data={priceHistory.chartData} />
     </>
   ) : (
-    <></>
+    <DefaultAnalyticsBox>
+      <Box><Image src={AnalyticsIcon} alt='analytics' /></Box>
+      <Typography variant='p_xlg'>Pool analytics will appear here</Typography>
+    </DefaultAnalyticsBox>
   )
 }
+
+const DefaultAnalyticsBox = styled(Box)`
+  width: 100%;
+  height: 590px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  color: ${(props) => props.theme.basis.shadowGloom};
+`
 
 export default withSuspense(PriceChart, <LoadingProgress />)

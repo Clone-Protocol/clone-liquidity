@@ -1,3 +1,4 @@
+//@DEPRECATED
 import React, { useState } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { Box, styled, Stack, Dialog, DialogContent, Typography } from "@mui/material"

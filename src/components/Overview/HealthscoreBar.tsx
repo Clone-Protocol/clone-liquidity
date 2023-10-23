@@ -38,11 +38,17 @@ const HealthscoreBar: React.FC<Props> = ({ score, prevScore, hasRiskScore = fals
               <Box ml='-12px' mt='-4px'><Typography variant='p_sm' color='#989898'>Current</Typography></Box>
             </PrevBox>
           }
-        </Box >
+        </Box>
         :
-        <BoxWithBorder>
-          <Box width='100%' display='flex' justifyContent='center' alignItems='center'><Typography variant='p'>N/A</Typography></Box>
-        </BoxWithBorder>
+        <Box py='6px'>
+          <Box width='100%' margin='0 auto'>
+            <ScoreBar />
+            <Box display="flex" justifyContent='space-between' color='#66707e'>
+              <Box><Typography variant='p_sm'>0 (Poor)</Typography></Box>
+              <Box><Typography variant='p_sm'>(Excellent) 100</Typography></Box>
+            </Box>
+          </Box>
+        </Box>
       }
     </Box >
   )

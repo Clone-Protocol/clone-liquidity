@@ -63,12 +63,10 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
 
   const {
     handleSubmit,
-    control,
     setValue,
     trigger,
-    formState: { isDirty, errors, isSubmitting },
+    formState: { errors, isSubmitting },
     watch,
-    clearErrors
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -181,7 +179,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
             </Box>
             <Box mt='5px' mb='10px'>
               <SubHeader><Typography variant='p'>Collateral Value</Typography> <InfoTooltip title={TooltipTexts.totalCollateralValue} /></SubHeader>
-              {positionInfo?.hasNoCollateral ?
+              {!positionInfo || positionInfo?.hasNoCollateral ?
                 <Link href='/comet/myliquidity'>
                   <DepositCollateralButton>
                     <Typography variant='p_lg'>Deposit collateral to get started </Typography>

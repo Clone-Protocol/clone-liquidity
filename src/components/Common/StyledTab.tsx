@@ -11,7 +11,7 @@ export interface TabPanelProps {
 interface StyledTabsProps {
 	children?: React.ReactNode
 	value: number
-	onChange: (event: React.SyntheticEvent, newValue: number) => void
+	onChange?: (event: React.SyntheticEvent, newValue: number) => void
 }
 
 interface StyledTabProps {

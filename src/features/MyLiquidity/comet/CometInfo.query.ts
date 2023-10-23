@@ -196,9 +196,7 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 	}
 }
 
-export const fetchInitializeCometDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
-	if (!userPubKey) return
-
+export const fetchInitializeCometDetail = async ({ program, index }: { program: CloneClient, index: number }) => {
 	const pools = await program.getPools();
 	const pool = pools.pools[index];
 	const oracles = await program.getOracles()
@@ -229,25 +227,26 @@ export const fetchInitializeCometDetail = async ({ program, userPubKey, index }:
 }
 
 const fetchInitCometDetailDefault = () => {
+	const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(0)
 	return (
 		{
-			tickerIcon: '',
-			tickerName: '',
-			tickerSymbol: '',
-			pythSymbol: '',
-			price: 0,
-			tightRange: 0,
-			maxRange: 0,
-			centerPrice: 0,
+			tickerIcon,
+			tickerName,
+			tickerSymbol,
+			pythSymbol,
+			price: 1.1,
+			tightRange: 0.11,
+			maxRange: 2.2,
+			centerPrice: 1.1,
 		}
 	)
 }
 
-export function useInitCometDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetPoolsProps) {
+export function useInitCometDetailQuery({ index, refetchOnMount, enabled = true }: GetPoolsProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(['initComet', wallet, userPubKey, index], async () => fetchInitializeCometDetail({ program: await getCloneApp(wallet), userPubKey, index }), {
+		return useQuery(['initComet', wallet, index], async () => fetchInitializeCometDetail({ program: await getCloneApp(wallet), index }), {
 			refetchOnMount,
 			enabled
 		})
