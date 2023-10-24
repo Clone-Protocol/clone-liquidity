@@ -10,6 +10,7 @@ import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { Comet, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
+import { fetchPythOraclePrices } from '~/utils/pyth'
 
 export const fetchLiquidityDetail = async ({
 	program,
@@ -24,24 +25,18 @@ export const fetchLiquidityDetail = async ({
 
 	const pythClient = new PythHttpClient(program.provider.connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
 
-	const [poolsData, oraclesData, userAccountData, pythData] = await Promise.allSettled([
-		program.getPools(), program.getOracles(), program.getUserAccount(), pythClient.getData()
+	const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
+		program.getPools(), program.getOracles(), program.getUserAccount()
 	]);
 
-	if (poolsData.status === 'rejected' || oraclesData.status === 'rejected' || pythData.status === 'rejected' || userAccountData.status === 'rejected')
+	if (poolsData.status === 'rejected' || oraclesData.status === 'rejected' || userAccountData.status === 'rejected')
 		return;
 
+	const pythOraclePrices = await fetchPythOraclePrices(program.provider.connection, oraclesData.value)
 
 	const pools = poolsData.value
 	const pool = pools.pools[index]
-	const oracles = await program.getOracles()
 
-	const pythOraclePrices = [...Array(pools.pools.length)].map((_, i) => {
-		const { pythSymbol } = assetMapping(i)
-		const pool = pools.pools[i]
-		const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
-		return pythData.value.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo)
-	})
 	const assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	const oraclePrice = pythOraclePrices[index];
