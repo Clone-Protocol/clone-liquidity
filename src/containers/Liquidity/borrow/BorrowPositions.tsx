@@ -11,8 +11,9 @@ import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import AddIconOff from 'public/images/add-icon.svg'
+// import AddIconOff from 'public/images/add-icon.svg'
 import AddIconOn from 'public/images/add-icon-on.svg'
+import { AddIcon } from '~/components/Common/SvgIcons'
 import BorrowLiquidityStatus from './BorrowLiquidityStatus'
 
 const BorrowPositions = () => {
@@ -53,6 +54,7 @@ const BorrowPositions = () => {
 				minHeight={108}
 				noAutoHeight={(!publicKey || positions?.length === 0) === true}
 				hasRangeIndicator={true}
+				hasTopBorderRadius={true}
 				gridType={GridType.Borrow}
 				customNoRowsOverlay={() => CustomNoRowsOverlay(customOverlayMsg)}
 				onRowClick={handleRowClick}
@@ -62,17 +64,10 @@ const BorrowPositions = () => {
 				<Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
 					{positions && positions.length > 0 ?
 						<AddButton onClick={moveNewBorrowPositionPage} sx={isBtnHover ? { color: '#fff' } : { color: '#414e66' }} disableRipple>
-							{isBtnHover ?
-								<Stack direction='row'>
-									<Image src={AddIconOn} width={15} height={15} alt='add' />
-									<Typography variant='p_lg' ml='10px' color='#fff'>Add new borrow position</Typography>
-								</Stack>
-								:
-								<Stack direction='row'>
-									<Image src={AddIconOff} width={15} height={15} alt='add' />
-									<Typography variant='p_lg' ml='10px'>Add new borrow position</Typography>
-								</Stack>
-							}
+							<Stack direction='row'>
+								<AddIcon color={isBtnHover ? '#fff' : '#414e66'} />
+								<Typography variant='p_lg' ml='10px' color={isBtnHover ? '#fff' : '#414e66'}>Add new liquidity position</Typography>
+							</Stack>
 						</AddButton>
 						:
 						<AddButtonNoPosition onClick={moveNewBorrowPositionPage}>
@@ -109,7 +104,7 @@ let columns: GridColDef[] = [
 			return Number(params.value) > 0 ?
 				<Stack direction='column' alignItems='flex-end'>
 					<Box><CellDigitValue value={params.value} symbol={params.row.tickerSymbol} /></Box>
-					<Box><Typography variant='p_xlg' color='#66707e'>${params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })} USD</Typography></Box>
+					<Box><Typography variant='p_lg' color='#66707e'>${params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })} USD</Typography></Box>
 				</Stack>
 				: <Box></Box>
 		},
@@ -124,7 +119,7 @@ let columns: GridColDef[] = [
 			return (
 				<Stack direction='column' alignItems='flex-end'>
 					<Box><CellDigitValue value={params.value} symbol="devUSD" /></Box>
-					<Box><Typography variant='p_xlg' color='#66707e'>${params.value?.toLocaleString()} USD</Typography></Box>
+					<Box><Typography variant='p_lg' color='#66707e'>${params.value?.toLocaleString()} USD</Typography></Box>
 				</Stack>
 			)
 		},
@@ -140,7 +135,7 @@ let columns: GridColDef[] = [
 			return params.row.borrowed > 0 ?
 				(<Stack direction='column' alignItems='flex-end'>
 					<Box><Typography variant='h4' color={isRisk ? '#ed2525' : '#4fe5ff'}>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></Box>
-					<Box><Typography variant='p_xlg' color={isRisk ? '#ed2525' : '#66707e'}>(min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></Box>
+					<Box><Typography variant='p_lg' color={isRisk ? '#ed2525' : '#66707e'}>(min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></Box>
 				</Stack>)
 				: (<></>)
 		},

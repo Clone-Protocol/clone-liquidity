@@ -127,7 +127,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
     }
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && !isSubmitting && validMintValue
   const hasRiskScore = healthScore < RISK_SCORE_VAL
 
   let opaqueArea = null
@@ -163,7 +163,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
     )
   } else {
     actionButton = (
-      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!(isValid && validMintValue) || isSubmitting} hasRisk={hasRiskScore}>
+      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
         <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
       </SubmitButton>
     )

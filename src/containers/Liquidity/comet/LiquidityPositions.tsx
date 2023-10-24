@@ -6,12 +6,12 @@ import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import AddIconOff from 'public/images/add-icon.svg'
 import AddIconOn from 'public/images/add-icon-on.svg'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
 import ArrowUpward from 'public/images/arrow-upward.svg'
 import ArrowDownward from 'public/images/arrow-downward.svg'
+import { AddIcon } from '~/components/Common/SvgIcons'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -66,17 +66,10 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
         <Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
           {positions.length > 0 ?
             <AddButton onClick={redirectAddCometPage} disableRipple>
-              {isBtnHover ?
-                <Stack direction='row'>
-                  <Image src={AddIconOn} width={15} height={15} alt='add' />
-                  <Typography variant='p_lg' ml='10px' color='#fff'>Add new liquidity position</Typography>
-                </Stack>
-                :
-                <Stack direction='row'>
-                  <Image src={AddIconOff} width={15} height={15} alt='add' />
-                  <Typography variant='p_lg' ml='10px'>Add new liquidity position</Typography>
-                </Stack>
-              }
+              <Stack direction='row'>
+                <AddIcon color={isBtnHover ? '#fff' : '#414e66'} />
+                <Typography variant='p_lg' ml='10px' color={isBtnHover ? '#fff' : '#414e66'}>Add new liquidity position</Typography>
+              </Stack>
             </AddButton>
             :
             <AddButtonNoPosition onClick={redirectAddCometPage}>

@@ -1,10 +1,11 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { ChartElem } from './Liquidity.query'
-import { fetchPythPriceHistory } from '~/utils/pyth'
+import { Range, fetchPythPriceHistory } from '~/utils/pyth'
 import { getDailyPoolPrices30Day } from '~/utils/assets'
 import { ASSETS } from 'src/data/assets'
+import { FilterTime } from '~/components/Charts/TimeTabs'
 
-export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { pythSymbol: string | undefined, isOraclePrice: boolean }) => {
+export const fetchOraclePriceHistory = async ({ timeframe, pythSymbol, isOraclePrice }: { timeframe: FilterTime, pythSymbol: string | undefined, isOraclePrice: boolean }) => {
   if (!pythSymbol) return null
 
   let chartData = []
@@ -16,10 +17,22 @@ export const fetchOraclePriceHistory = async ({ pythSymbol, isOraclePrice }: { p
 
   // oracle price:
   if (isOraclePrice) {
-    const history = await fetchPythPriceHistory(
-      pythSymbol,
-      "1D"
-    );
+    const range: Range = (() => {
+      switch (timeframe) {
+        case '1y':
+          return "1Y"
+        case '30d':
+          return "1M"
+        case '7d':
+          return "1W"
+        case '24h':
+          return "1D"
+        default:
+          throw new Error(`Unexpected timeframe: ${timeframe}`)
+      }
+    })()
+
+    const history = await fetchPythPriceHistory(pythSymbol, range);
 
     chartData = history.map((data) => {
       return { time: data.timestamp, value: data.price }
@@ -71,14 +84,15 @@ export interface PriceHistory {
 }
 
 interface GetProps {
+  timeframe: FilterTime
   pythSymbol: string | undefined
   isOraclePrice?: boolean
   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
   enabled?: boolean
 }
 
-export function usePriceHistoryQuery({ pythSymbol, isOraclePrice = false, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['oraclePriceHistory', pythSymbol], () => fetchOraclePriceHistory({ pythSymbol, isOraclePrice }), {
+export function usePriceHistoryQuery({ timeframe, pythSymbol, isOraclePrice = false, refetchOnMount, enabled = true }: GetProps) {
+  return useQuery(['oraclePriceHistory', timeframe, pythSymbol], () => fetchOraclePriceHistory({ timeframe, pythSymbol, isOraclePrice }), {
     refetchOnMount,
     enabled
   })

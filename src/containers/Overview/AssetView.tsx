@@ -77,7 +77,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 				<RightBoxWrapper>
 					<StickyBox>
-						<PriceChart assetData={assetData} publicKey={publicKey} priceTitle='Oracle Price' />
+						<PriceChart assetData={assetData} publicKey={publicKey} isOraclePrice={true} priceTitle='Oracle Price' />
 						{publicKey && assetData && <PoolAnalytics tickerSymbol={assetData.tickerSymbol} />}
 					</StickyBox>
 				</RightBoxWrapper>
