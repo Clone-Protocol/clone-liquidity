@@ -31,8 +31,9 @@ interface PositionInfo {
 
 const PriceChart: React.FC<Props> = ({ assetData, publicKey, isOraclePrice = false, priceTitle }) => {
   const { data: priceHistory } = usePriceHistoryQuery({
+    timeframe: "24h",
     pythSymbol: assetData?.pythSymbol,
-    isOraclePrice: isOraclePrice,
+    isOraclePrice,
     refetchOnMount: true,
     enabled: assetData != null && publicKey != null,
   })
