@@ -39,8 +39,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      ildAssetAmount: 0.0,
-      ildCollAmount: 0.0
+      ildAssetAmount: NaN,
+      ildCollAmount: NaN
     }
   })
   const [ildAssetAmount, ildCollAmount] = watch([
@@ -66,8 +66,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   }, [ildAssetAmount])
 
   const initData = () => {
-    setValue('ildAssetAmount', 0.0)
-    setValue('ildCollAmount', 0.0)
+    setValue('ildAssetAmount', NaN)
+    setValue('ildCollAmount', NaN)
   }
 
   const { mutateAsync } = usePayILDMutation(publicKey)
@@ -122,8 +122,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
 
   const isNotValid = positionInfo ?
     (positionInfo.onassetILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0)
-    || isNaN(ildAssetAmount)
-    || isNaN(ildCollAmount)
+    || (isNaN(ildAssetAmount) && positionInfo.onassetILD > 0)
+    || (isNaN(ildCollAmount) && Math.max(0, positionInfo.collateralILD) > 0)
     || (remainingAssetILD > 0 && ildAssetAmount === 0)
     || (remainingCollILD > 0 && ildCollAmount === 0)
     || isSubmitting : false
