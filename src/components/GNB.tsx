@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
-import logoIcon from 'public/images/logo-liquidity.svg'
+import logoIcon from 'public/images/logo-liquidity.png'
 import walletIcon from 'public/images/wallet-icon-small.svg'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
@@ -33,7 +33,7 @@ const GNB: React.FC = () => {
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Image src={logoIcon} width={144} height={32} alt="clone" />
+						<Image src={logoIcon} width={121} height={25} alt="clone" />
 						<Box ml='60px'><NaviMenu /></Box>
 						<RightMenu />
 					</Toolbar>
@@ -74,9 +74,7 @@ const RightMenu: React.FC = () => {
 	const closeAccountSetupDialog = async () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
-		//disconnect
 		await disconnect()
-		// router.replace('/')
 	}
 
 	const handleGetUsdiClick = () => {
@@ -119,7 +117,7 @@ const RightMenu: React.FC = () => {
 				<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
 					<Typography variant='p'>Devnet Faucet</Typography>
 				</HeaderButton>
-				<HeaderButton sx={{ fontSize: '15px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
+				<HeaderButton sx={{ fontSize: '16px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
 					{

@@ -18,7 +18,7 @@ const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
         <TextHead>Welcome!</TextHead>
         <Box my='20px' lineHeight={0.9}>
           <Typography variant='p_xlg' lineHeight={1.5}>
-            Welcome to Clone Liquidity (Beta) on Solana Devnet. As the word “Beta” in the name suggests, you may find minor bugs in the interface. If you do, please report the issue to us on Discord or write an email to us at team@clone.so and we will address them ASAP. Thank you and congrats for being an early bird in Clone Ecosystem!
+            Welcome to Clone Liquidity on Solana Devnet. Devnet is the perfect place to explore Clone and Solana without any cost!
           </Typography>
         </Box>
         <EnterButton onClick={() => close()}><Typography variant='p_xlg'>Enter Clone Devnet</Typography></EnterButton>
@@ -49,7 +49,7 @@ const BoxWrapper = styled(Box)`
   color: #fff; 
   text-align: left;
   background: #000916;
-  padding: 32px 53px;
+  padding: 28px 53px;
 `
 const TextHead = styled(Box)`
   font-size: 36px;

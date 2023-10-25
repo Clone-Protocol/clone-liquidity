@@ -27,7 +27,7 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
 
   useMemo(() => {
     const getBalance = async () => {
-      if (publicKey) {
+      if (publicKey && show) {
         try {
           const balance = await getSolInBalance(publicKey)
           setSolBalance(balance)
@@ -37,7 +37,7 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
       }
     }
     getBalance()
-  }, [publicKey])
+  }, [show, publicKey])
 
   const handleDisconnect = async () => {
     setCloneClient(null)

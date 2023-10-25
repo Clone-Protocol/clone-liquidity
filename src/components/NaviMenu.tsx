@@ -11,17 +11,17 @@ const NaviMenu = () => {
       <List component="nav" sx={{ display: 'flex', padding: 0 }}>
         <Link href="/">
           <StyledListItemButton className={pathname === '/' || pathname?.startsWith('/assets') ? 'selected' : ''}>
-            <Typography variant="p">Home</Typography>
+            <Typography variant="p_lg">Home</Typography>
           </StyledListItemButton>
         </Link>
         <Link href="/comet/myliquidity">
           <StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''}>
-            <Typography variant="p">Comet</Typography>
+            <Typography variant="p_lg">Comet</Typography>
           </StyledListItemButton>
         </Link>
         <Link href="/borrow/myliquidity">
           <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''}>
-            <Typography variant="p">Borrow</Typography>
+            <Typography variant="p_lg">Borrow</Typography>
           </StyledListItemButton>
         </Link>
       </List>

@@ -9,8 +9,6 @@ import dynamic from 'next/dynamic'
 import AddIconOn from 'public/images/add-icon-on.svg'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
-import ArrowUpward from 'public/images/arrow-upward.svg'
-import ArrowDownward from 'public/images/arrow-downward.svg'
 import { AddIcon } from '~/components/Common/SvgIcons'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
@@ -106,10 +104,10 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
 let columns: GridColDef[] = [
   {
     field: 'pool',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: '',
+    cellClassName: '',
     headerName: 'Liquidity Pool',
-    flex: 2,
+    flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display="flex" justifyContent="flex-start">
@@ -121,8 +119,8 @@ let columns: GridColDef[] = [
   },
   {
     field: 'liquidityAmount',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: 'Liquidity Amount',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
@@ -131,8 +129,8 @@ let columns: GridColDef[] = [
   },
   {
     field: 'ild',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: 'ILD',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
@@ -141,8 +139,8 @@ let columns: GridColDef[] = [
   },
   {
     field: 'rewards',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: 'Rewards',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
@@ -151,20 +149,18 @@ let columns: GridColDef[] = [
   },
   {
     field: 'apy',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: 'APY',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return Number(params.value) >= 0 ?
         <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
           <Typography variant='p_xlg'>+{Number(params.value).toFixed(2)}%</Typography>
-          <Image src={ArrowUpward} alt='arrowUp' />
         </Box>
         :
         <Box display='flex' alignItems='center' color='#ff0084'>
           <Typography variant='p_xlg'>-{Number(params.value).toFixed(2)}%</Typography>
-          <Image src={ArrowDownward} alt='arrowDown' />
         </Box>
     },
   },

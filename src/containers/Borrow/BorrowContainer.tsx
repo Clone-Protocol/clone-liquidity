@@ -35,7 +35,7 @@ const BorrowContainer = () => {
       <Stack direction='row' spacing={3} justifyContent="center">
         <Box>
           <a href="https://docs.clone.so/devnet-guide/clone-liquidity-or-for-lps/borrowing" target="_blank" rel="noreferrer">
-            <TipMsg><Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>You are able to borrow any onAsset by providing sufficient collateral. Click to learn more.</Typography></TipMsg>
+            <TipMsg><Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>You are able to borrow any clAsset by providing sufficient collateral. Click to learn more.</Typography></TipMsg>
           </a>
           <LeftBoxWrapper>
             <Box paddingY='10px'>

@@ -34,6 +34,11 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
         borderTopLeftRadius: hasTopBorderRadius ? '10px' : '0px',
         borderTopRightRadius: hasTopBorderRadius ? '10px' : '0px',
       },
+      '& .right--cell': {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        paddingRight: '40px'
+      },
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -44,6 +49,13 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
         fontSize: '12px',
         lineHeight: 1.33,
         marginLeft: '10px'
+      },
+      '& .right--header': {
+        '& .MuiDataGrid-columnHeaderTitleContainer': {
+          display: 'flex',
+          justifyContent: 'flex-end',
+          paddingRight: '20px'
+        }
       },
       '& .last--header': {
         '& .MuiDataGrid-columnHeaderTitleContainer': {

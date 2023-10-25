@@ -132,7 +132,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
     <>
       <Box>
         <Box>
-          <Typography variant='p_lg'>onAsset ILD</Typography>
+          <Typography variant='p_lg'>clAsset ILD</Typography>
           <InfoTooltip title={TooltipTexts.ildDebt} color='#66707e' />
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
@@ -182,7 +182,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
             />
             <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
               <Box>
-                <Typography variant='p'>Projected Remaining onAsset ILD</Typography>
+                <Typography variant='p'>Projected Remaining clAsset ILD</Typography>
                 <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
               </Box>
               <Box>

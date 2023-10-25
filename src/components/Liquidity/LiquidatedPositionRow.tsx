@@ -22,7 +22,7 @@ const LiquidatedPositionRow: React.FC<Props> = ({ positionInfo, ltype, hasHeader
       {hasHeader &&
         <Box>
           <Grid container spacing={2}>
-            <Grid item xs={5}><TxtHeader>{ltype === 0 ? 'Token' : 'Borrowed onAsset'}</TxtHeader></Grid>
+            <Grid item xs={5}><TxtHeader>{ltype === 0 ? 'Token' : 'Borrowed clAsset'}</TxtHeader></Grid>
             <Grid item xs={4}><TxtHeader>{ltype === 0 ? 'Claimable amount' : 'Claimable collateral'}</TxtHeader></Grid>
             <Grid item xs={3}></Grid>
           </Grid>

@@ -84,9 +84,9 @@ const BorrowPositions = () => {
 let columns: GridColDef[] = [
 	{
 		field: 'asset',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
-		headerName: 'onAsset',
+		headerClassName: '',
+		cellClassName: '',
+		headerName: 'clAsset',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return params.row.borrowed > 0 ?
@@ -96,8 +96,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'borrowed',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'right--header',
+		cellClassName: 'right--cell',
 		headerName: 'Borrowed',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -111,8 +111,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'collateral',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'right--header',
+		cellClassName: 'right--cell',
 		headerName: 'Collateral',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -126,8 +126,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'collateralRatio',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'right--header',
+		cellClassName: 'right--cell',
 		headerName: 'Collateral Ratio',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {

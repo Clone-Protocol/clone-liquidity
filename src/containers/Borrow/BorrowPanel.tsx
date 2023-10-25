@@ -146,7 +146,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
       <Box>
         <Box>
           <Box>
-            <Typography variant='p_lg'>onAsset to Borrow</Typography>
+            <Typography variant='p_lg'>clAsset to Borrow</Typography>
             <InfoTooltip title={TooltipTexts.onAssetToBorrow} color='#66707e' />
           </Box>
           <SelectPoolBox onClick={() => setOpenChooseAsset(true)}>

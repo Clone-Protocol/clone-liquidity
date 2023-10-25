@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { TabPanel, StyledTabs, CommonTab } from '~/components/Common/StyledTab'
+import { StyledTabs, CommonTab } from '~/components/Common/StyledTab'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
@@ -54,10 +54,6 @@ const PanelBox = styled(Box)`
   // min-height: 250px;
   margin-bottom: 40px;
   color: #fff;
-  & .super-app-theme--header { 
-    color: #9d9d9d; 
-    font-size: 13px; 
-  }
 `
 
 export default withSuspense(CometLiquidity, <LoadingProgress />)

@@ -64,7 +64,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					<a href="https://docs.clone.so/system-architecture/comet-liquidity-system" target="_blank" rel="noreferrer">
 						<TipMsg>
 							<Image src={InfoIcon} alt='info' />
-							<Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Comet Liquidity System is built to introduce hyper liquidity to our onAssets. Click to learn more.</Typography>
+							<Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Comet Liquidity System is built to introduce hyper liquidity to our clAssets. Click to learn more.</Typography>
 						</TipMsg>
 					</a>
 

@@ -68,7 +68,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
     <>
       <Box>
         <Box>
-          <Typography variant='p_lg'>onAsset Rewards</Typography>
+          <Typography variant='p_lg'>clAsset Rewards</Typography>
           <InfoTooltip title={TooltipTexts.rewards} color='#66707e' />
         </Box>
         <BoxWithBorder>

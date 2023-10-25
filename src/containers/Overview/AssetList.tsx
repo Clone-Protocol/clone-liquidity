@@ -84,7 +84,7 @@ let columns: GridColDef[] = [
 		field: 'iAsset',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'onAsset Pools',
+		headerName: 'clAsset Pools',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
@@ -150,11 +150,9 @@ let columns: GridColDef[] = [
 			return params.row.avgAPY24h >= 0 ?
 				<Box color='#4fe5ff' display='flex' alignItems='center'>
 					<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
-					<Image src={ArrowUpward} alt='arrowUp' />
 				</Box>
 				: <Box color='#ff0084' display='flex' alignItems='center'>
 					<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
-					<Image src={ArrowDownward} alt='arrowDown' />
 				</Box>
 		},
 	},

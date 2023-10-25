@@ -68,10 +68,10 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
 let columns: GridColDef[] = [
   {
     field: 'collType',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: '',
+    cellClassName: '',
     headerName: 'Collateral Type',
-    flex: 2,
+    flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
@@ -80,8 +80,8 @@ let columns: GridColDef[] = [
   },
   {
     field: 'depositAmount',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: 'Deposit Amount',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
@@ -91,8 +91,8 @@ let columns: GridColDef[] = [
   },
   {
     field: 'usdValue',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: 'Value ($)',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
@@ -102,8 +102,8 @@ let columns: GridColDef[] = [
   },
   {
     field: 'action',
-    headerClassName: 'super-app-theme--header',
-    cellClassName: 'super-app-theme--cell',
+    headerClassName: 'right--header',
+    cellClassName: 'right--cell',
     headerName: '',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
