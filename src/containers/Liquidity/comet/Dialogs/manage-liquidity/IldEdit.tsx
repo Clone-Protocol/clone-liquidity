@@ -124,6 +124,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
     (positionInfo.onassetILD <= 0 && Math.max(0, positionInfo.collateralILD) <= 0)
     || (isNaN(ildAssetAmount) && positionInfo.onassetILD > 0)
     || (isNaN(ildCollAmount) && Math.max(0, positionInfo.collateralILD) > 0)
+    || ildCollAmount > Math.max(0, positionInfo.collateralILD)
+    || ildAssetAmount > Math.max(0, positionInfo.onassetILD)
     || (remainingAssetILD > 0 && ildAssetAmount === 0)
     || (remainingCollILD > 0 && ildCollAmount === 0)
     || isSubmitting : false

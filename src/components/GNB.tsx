@@ -39,7 +39,7 @@ const GNB: React.FC = () => {
 					</Toolbar>
 				</Container>
 				<MobileWarningDialog open={isMobile || isMobileOnSize} handleClose={() => { return null }} />
-			</StyledAppBar >
+			</StyledAppBar>
 		</>
 	)
 }

@@ -116,7 +116,6 @@ export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime
 }
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
-
   return await fetchTotalValues(timeframe,
     (data: AggregatedData) => {
       return { time: data.datetime, value: data.trading_volume }
@@ -125,7 +124,6 @@ export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime })
 }
 
 export const fetchTotalValues = async (timeframe: FilterTime, mapFunction: (tsVal: AggregatedData) => TimeSeriesValue) => {
-
   const [daysLookback, filter, interval, intervalMs] = (() => {
     switch (timeframe) {
       case '1y':
@@ -144,6 +142,7 @@ export const fetchTotalValues = async (timeframe: FilterTime, mapFunction: (tsVa
   const rawData = await fetchStatsData(filter as Filter, interval)
   const aggregatedData = aggregatePoolData(rawData, interval)
   const tsData: TimeSeriesValue[] = aggregatedData.map(mapFunction)
+  console.log('t', tsData)
 
   const now = new Date()
   const currentIntervalDt = new Date(now.getTime() - now.getTime() % intervalMs)

@@ -46,9 +46,11 @@ export const sendAndConfirm = async (provider: AnchorProvider | Provider, instru
     }, 'finalized')
     setTxState({ state: TransactionState.SUCCESS, txHash })
 
+    return txHash
   } catch (e: any) {
     console.log("TX ERROR:", e)
     setTxState({ state: TransactionState.FAIL, txHash })
     // throw new Error(e)
+    return false
   }
 }

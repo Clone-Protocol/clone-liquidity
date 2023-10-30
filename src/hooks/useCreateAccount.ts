@@ -56,14 +56,19 @@ export function useCreateAccount() {
 					)
 
 					let ixns = await Promise.all(ixnCalls)
-					await sendAndConfirm(program.provider, ixns, setTxState)
+
+					const txHash = await sendAndConfirm(program.provider, ixns, setTxState)
+
+					console.log('txHash', txHash)
 
 					// store account to localstorage
-					console.log('store account')
-					setLocalAccount(publicKey!.toString())
-					setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
-					//hacky sync
-					location.reload()
+					if (txHash) {
+						console.log('store account')
+						setLocalAccount(publicKey!.toString())
+						setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
+						//hacky sync
+						location.reload()
+					}
 				} catch (err) {
 					console.log(err)
 					console.log('err: Attempt to debit an account but found no record of a prior credit.')
