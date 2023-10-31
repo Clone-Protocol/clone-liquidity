@@ -41,10 +41,10 @@ export interface OHLCVResponse {
     trading_fees: string
   }
 
-export const fetchOHLCV = async (interval: string, filter: string, pool: string | null = null): Promise<OHLCVResponse[]> => {
+export const fetchOHLCV = async (interval: string, filter: string, pool?: number | string): Promise<OHLCVResponse[]> => {
     let endpoint = `/.netlify/functions/get-ohlcv?interval=${interval}&filter=${filter}`
 
-    if (pool !== null) 
+    if (pool !== undefined) 
         endpoint += `&pool=${pool}`
 
     const response = await axios.get(endpoint)
