@@ -65,7 +65,9 @@ const AssetList: React.FC = () => {
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
 				</PageTabs>
-				<SearchInput onChange={handleSearch} />
+				<Box width='320px'>
+					<SearchInput onChange={handleSearch} />
+				</Box>
 			</Stack>
 			<Grid
 				headers={columns}
