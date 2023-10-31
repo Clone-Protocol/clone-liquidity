@@ -57,14 +57,14 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
                   <Box color='#4fe5ff'>
                     <Box display='flex' justifyContent='center' alignItems='center'>
                       <Typography variant='p_xlg'>+{infos?.totalApy.toFixed(2)}%</Typography>
-                      <Image src={ArrowUpward} alt='arrowUp' />
+                      {/* <Image src={ArrowUpward} alt='arrowUp' /> */}
                     </Box>
                   </Box>
                   :
                   <Box color='#ff0084'>
                     <Box display='flex' alignItems='center'>
                       <Typography variant='p_xlg'>-{infos && Math.abs(infos?.totalApy).toFixed(2)}%</Typography>
-                      <Image src={ArrowDownward} alt='arrowDown' />
+                      {/* <Image src={ArrowDownward} alt='arrowDown' /> */}
                     </Box>
                   </Box>
                 }

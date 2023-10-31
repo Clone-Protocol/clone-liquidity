@@ -8,21 +8,22 @@ interface Props {
 }
 const SearchInput: React.FC<Props> = ({ onChange }) => {
   return <StyledBox>
-    <StyledInput placeholder="Search clAssets" disableUnderline onChange={onChange} />
-    <Box sx={{ position: 'relative', left: '-230px', top: '6px' }}>
+    <Box sx={{ position: 'relative', left: '0px', top: '-6px' }}>
       <Image src={SearchIcon} alt='search' />
     </Box>
+    <StyledInput placeholder="Search clAssets" disableUnderline onChange={onChange} />
   </StyledBox>
 }
 
 const StyledBox = styled(Box)`
   display: flex;
-  width: 328px;
-  height: 36px;
+  width: 100%;
+  height: 46px;
   color: #fff;
-  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  padding: 18px 11px;
+  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   border-radius: 5px;
-  padding: 0;
+  background-color: rgba(255, 255, 255, 0.05);
   &:hover {
     border-color: ${(props) => props.theme.basis.liquidityBlue};
   }
@@ -31,12 +32,16 @@ const StyledBox = styled(Box)`
 const StyledInput = styled(Input)`
   & input {
     width: 206px;
-    height: 30px;
-    font-size: 12px;
+    height: 46px;
+    font-size: 14px;
     font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
     text-align: left;
     color: #fff;
-    margin-left: 35px;
+    margin-left: 15px;
 
     &::placeholder {
       color: #fff;
