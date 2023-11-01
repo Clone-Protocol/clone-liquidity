@@ -9,7 +9,6 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { Comet, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
-import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { fetchPythOraclePrices } from '~/utils/pyth'
 
 export const fetchLiquidityDetail = async ({
@@ -22,8 +21,6 @@ export const fetchLiquidityDetail = async ({
 	index: number
 }) => {
 	if (!userPubKey) return
-
-	const pythClient = new PythHttpClient(program.provider.connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
 
 	const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
 		program.getPools(), program.getOracles(), program.getUserAccount()

@@ -1,3 +1,4 @@
+//@DEPRECATED
 import { styled, Box, Stack, Typography } from '@mui/material'
 import WarningMsg from '~/components/Common/WarningMsg';
 

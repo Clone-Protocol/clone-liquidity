@@ -1,4 +1,4 @@
-import { Oracles, Pools } from "clone-protocol-sdk/sdk/generated/clone";
+import { Pools } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { assetMapping } from "~/data/assets";

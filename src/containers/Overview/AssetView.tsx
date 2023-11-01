@@ -25,8 +25,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 
 	useEffect(() => {
 		if (assetTicker) {
-			// console.log('assetId', AssetTickers[assetTicker as keyof typeof AssetTickers])
-
 			if (AssetTickers[assetTicker as keyof typeof AssetTickers]) {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
@@ -87,7 +85,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				open={openChooseLiquidity}
 				handleChoosePool={handleChoosePool}
 				handleClose={() => setOpenChooseLiquidity(false)}
-				noFilter={false}
 			/>
 		</Box>
 	)

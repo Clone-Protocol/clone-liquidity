@@ -15,7 +15,6 @@ interface Props {
 const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBorrowMore }) => {
   const [isEditCollHover, setIsEditCollHover] = useState(false)
   const [isEditBorrowHover, setIsEditBorrowHover] = useState(false)
-  // const hasRiskRatio = positionInfo.collateralRatio - positionInfo.minCollateralRatio <= RISK_RATIO_VAL
 
   const borrowedDollarPrice = Number(positionInfo.borrowedOnasset) * positionInfo.price
 

@@ -33,7 +33,6 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const {
     handleSubmit,
     control,
-    formState: { isDirty, errors },
     watch,
     setValue,
   } = useForm({
@@ -91,7 +90,6 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
         console.log("data", data)
         refetch()
         initData()
-        // onRefetchData()
       }
     } catch (err) {
       console.error(err)

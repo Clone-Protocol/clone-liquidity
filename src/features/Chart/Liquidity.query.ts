@@ -11,7 +11,7 @@ export interface ChartElem {
 type TimeSeriesValue = { time: string, value: number }
 
 const filterHistoricalData = (data: TimeSeriesValue[], numDays: number): TimeSeriesValue[] => {
-  const today = new Date(); // get the current date
+  const today = new Date();
   const numMilliseconds = numDays * 86400 * 1000; // calculate the number of milliseconds in the specified number of days
   const historicalDate = new Date(today.getTime() - numMilliseconds); // calculate the historical date
 

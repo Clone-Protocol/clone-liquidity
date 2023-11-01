@@ -158,26 +158,6 @@ let columns: GridColDef[] = [
 				</Box>
 		},
 	},
-	// {
-	// 	field: 'action',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'last--cell',
-	// 	headerName: '',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-	// 		const goToTrading = (e: any) => {
-	// 			e.stopPropagation()
-	// 			const url = `${MARKETS_APP}/trade/${params.row.ticker}`
-	// 			window.open(url)
-	// 		}
-
-	// 		return (
-	// 			<TradeButton onClick={goToTrading}>
-	// 				<Image src={TradeIcon} alt='trade' />
-	// 			</TradeButton>
-	// 		)
-	// 	},
-	// },
 ]
 
 const PanelBox = styled(Box)`
