@@ -1,6 +1,6 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
@@ -30,11 +30,11 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
     router.push(`/comet/assets/euro`)
   }
 
-  const handleRowClick: GridEventListener<'rowClick'> = (
+  const handleRowClick: GridEventListener<'rowClick'> = useCallback((
     params
   ) => {
     handleChooseEditPosition(params.row.id)
-  }
+  }, [])
 
   const rowsPositions = positions.map((position, id) => ({
     ...position,

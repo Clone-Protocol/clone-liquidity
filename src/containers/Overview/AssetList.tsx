@@ -31,9 +31,9 @@ const AssetList: React.FC = () => {
 		enabled: true
 	})
 
-	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
+	const handleFilterChange = useCallback((event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
-	}
+	}, [filter])
 
 	const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -47,7 +47,7 @@ const AssetList: React.FC = () => {
 	// const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
 	// const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
-	const handleRowClick: GridEventListener<'rowClick'> = (
+	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params
 	) => {
 		// if (isAlreadyInitializedAccount) {
@@ -55,7 +55,7 @@ const AssetList: React.FC = () => {
 		// } else {
 		// 	handleLinkNeedingAccountClick(undefined)
 		// }
-	}
+	}, [])
 
 	return (
 		<PanelBox>

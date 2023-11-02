@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
@@ -85,9 +85,9 @@ const RightMenu: React.FC = () => {
 		}
 	}
 
-	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+	const handleMoreClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
-	}
+	}, [])
 
 	const handleWalletClick = () => {
 		try {

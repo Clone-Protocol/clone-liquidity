@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Stack, Typography, Button, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -27,11 +27,11 @@ const BorrowPositions = () => {
 		enabled: publicKey != null
 	})
 
-	const handleRowClick: GridEventListener<'rowClick'> = (
+	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params,
 	) => {
 		router.push(`/borrow/myliquidity/${params.row.id}`)
-	}
+	}, [])
 
 	const moveNewBorrowPositionPage = () => {
 		router.push('/borrow')
