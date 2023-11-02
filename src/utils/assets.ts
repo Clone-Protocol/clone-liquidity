@@ -2,7 +2,7 @@ import { Pools } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { assetMapping } from "~/data/assets";
-import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats } from "./fetch_netlify";
+import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats, fetchPoolApy } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
 
 export type Interval = 'day' | 'hour';
@@ -65,7 +65,8 @@ export type AggregatedStats = {
   previousVolumeUSD: number,
   previousFees: number,
   liquidityUSD: number,
-  previousLiquidity: number
+  previousLiquidity: number,
+  apy: number
 }
 
 const convertToNumber = (val: string | number) => {
@@ -77,7 +78,7 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
   let result = pools.pools.map((pool) => {
     return { volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, 
       liquidityUSD: fromScale(pool.committedCollateralLiquidity, 7) * 2,
-      previousLiquidity: 0 
+      previousLiquidity: 0, apy: 0
     }
   });
 
@@ -122,6 +123,12 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
       result[poolIndex].previousVolumeUSD += tradingVolume
       result[poolIndex].previousFees += tradingFees
     }
+  })
+
+  const apyData = await fetchPoolApy();
+
+  apyData.forEach((item) => {
+    result[Number(item.pool_index)].apy = item.apy_24hr
   })
 
   return result
