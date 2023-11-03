@@ -73,6 +73,11 @@ export const fetchUserApy = async (user_address: string): Promise<number> => {
     return response.data as number
 }
 
+export const fetchTotalLiquidity = async (interval: string, filter: string): Promise<{time_interval: string, total_liquidity: number}[]> => {
+    const response = await axios.get(`/.netlify/functions/get-total-liquidity?interval=${interval}&filter=${filter}`)
+    return response.data as {time_interval: string, total_liquidity: number}[]
+}
+
 export const fetchFromSupabaseNotice = async () => {
     return await axios.get(`/.netlify/functions/supabase-notice-fetch`)
 }
