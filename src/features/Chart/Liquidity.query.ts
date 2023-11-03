@@ -1,7 +1,9 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 import { Interval } from 'src/utils/assets'
-import { fetchStatsData } from 'src/utils/fetch_netlify'
+import { fetchStatsData, fetchTotalLiquidity as netlifyFetchTotalLiquidity } from 'src/utils/fetch_netlify'
+import { Connection, PublicKey } from '@solana/web3.js'
+import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export interface ChartElem {
   time: string
@@ -19,34 +21,45 @@ const getTimeFrames = (timeframe: FilterTime): [number, string, string, number] 
       case '7d':
         return [7, "week", 'hour' as Interval, 3600000]
       case '24h':
-        return [1, "week", 'hour' as Interval, 3600000]
+        return [1, "day", 'hour' as Interval, 3600000]
       default:
         throw new Error(`Unexpected timeframe: ${timeframe}`)
     }
 }
 
 export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
-  const [daysLookback, interval, filter, intervalMs] = getTimeFrames(timeframe)
-  const aggregatedData = await fetchStatsData(filter, interval, true)
-  const dataMap = new Map<Date, number>()
+
+  const [_, filter, interval, intervalMs] = getTimeFrames(timeframe)
+  const aggregatedData = await netlifyFetchTotalLiquidity(interval, filter)
+  const dataMap = new Map<number, number>()
   aggregatedData.forEach((item) => {
-    dataMap.set(new Date(item.time_interval), item.total_committed_collateral_liquidity)
+    dataMap.set((new Date(item.time_interval)).getTime(), 2 * item.total_liquidity * Math.pow(10, -7))
   })
 
   const now = new Date()
   const currentIntervalDt = new Date(now.getTime() - now.getTime() % intervalMs)
-  const startDate = new Date(currentIntervalDt.getTime() - daysLookback * 86400000)
+  const startDate = new Date(aggregatedData[0].time_interval)
 
   let chartData = backfillWithZeroValue(startDate, currentIntervalDt, intervalMs)
   let currentValue = 0;
-
   for (const item of chartData) {
-    const value = dataMap.get(new Date(item.time))
+    const value = dataMap.get((new Date(item.time)).getTime())
     if (value) {
       currentValue = value
     }
     item.value = currentValue
   }
+  // Fetch latest record
+  const connection = new Connection(process.env.NEXT_PUBLIC_NETWORK_ENDPOINT!, 'confirmed')
+  const poolAddress = PublicKey.findProgramAddressSync(
+    [Buffer.from("pools")], new PublicKey(process.env.NEXT_PUBLIC_CLONE_PROGRAM_ID!)
+  )[0]
+  const pools = await Pools.fromAccountAddress(connection, poolAddress)
+  let latestLiquidity = 0;
+  pools.pools.forEach((pool) => {
+    latestLiquidity += pool.committedCollateralLiquidity * Math.pow(10, -7) * 2
+  });
+  chartData.push({ time: now.toISOString(), value: latestLiquidity })
 
   const sumAllValue = chartData.reduce((a, b) => a + b.value, 0)
   const allValues = chartData.map(elem => elem.value!)
@@ -63,11 +76,11 @@ export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime
 }
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
-  const [daysLookback, interval, filter, intervalMs] = getTimeFrames(timeframe)
-  const aggregatedData = await fetchStatsData(filter, interval, true)
-  const dataMap = new Map<Date, number>()
+  const [daysLookback, filter, interval, intervalMs] = getTimeFrames(timeframe)
+  const aggregatedData = await fetchStatsData(interval, filter, true)
+  const dataMap = new Map<number, number>()
   aggregatedData.forEach((item) => {
-    dataMap.set(new Date(item.time_interval), item.volume)
+    dataMap.set((new Date(item.time_interval)).getTime(), item.volume * Math.pow(10, -7))
   })
 
   const now = new Date()
@@ -76,7 +89,7 @@ export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime })
 
   let chartData = backfillWithZeroValue(startDate, currentIntervalDt, intervalMs)
   for (const item of chartData) {
-    const value = dataMap.get(new Date(item.time))
+    const value = dataMap.get((new Date(item.time)).getTime())
     if (value) {
       item.value = value
     }
