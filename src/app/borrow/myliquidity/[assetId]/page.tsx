@@ -1,6 +1,6 @@
 'use client'
 import { StyledSection } from '~/app/page'
-import { Container, Box } from '@mui/material'
+import { Container } from '@mui/material'
 import ManageBorrow from '~/containers/Liquidity/borrow/ManageBorrow'
 
 const Manage = ({ params }: { params: { assetId: string } }) => {

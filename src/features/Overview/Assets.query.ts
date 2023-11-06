@@ -21,7 +21,6 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 	}
 
 	const pools = await program.getPools();
-	// const oracles = await program.getOracles();
 	const iassetInfos = await getiAssetInfos(program.provider.connection, program);
 	const poolStats = await getAggregatedPoolStats(pools)
 	const dailyVolumeStats = await fetch24hourVolume()

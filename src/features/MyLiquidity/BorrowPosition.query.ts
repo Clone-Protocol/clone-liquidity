@@ -1,6 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
-import { CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
+import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
@@ -62,7 +62,6 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
 
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(poolIndex)
   const pools = poolsData.value
-  const pool = pools.pools[poolIndex]
 
   const oraclePrice = assetInfos.value[poolIndex].oraclePrice
 

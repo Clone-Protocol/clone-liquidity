@@ -5,7 +5,7 @@ import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/Liquidit
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 
@@ -19,10 +19,6 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
     refetchOnMount: "always",
     enabled: publicKey != null,
   })
-
-  useEffect(() => {
-
-  }, [positionInfo])
 
   const { mutateAsync } = useRewardsMutation(publicKey)
   const handleClaim = async () => {
@@ -42,7 +38,6 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
       if (data) {
         console.log("data", data)
         refetch()
-        // onRefetchData()
       }
     } catch (err) {
       console.error(err)

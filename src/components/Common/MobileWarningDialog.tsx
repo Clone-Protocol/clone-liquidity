@@ -23,11 +23,6 @@ const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose
                 Clone Liquidity Beta app contains advanced interface that is not available on smaller screens. Please enlarge your screen or visit us from a device with a larger screen. We apologize for any inconvenience!
               </Typography>
             </Box>
-            {/* <StyledDivider />
-            <Box><Typography variant='p_sm' color='#989898'>Mobile and Tablet compatible:</Typography></Box>
-            <a href={MARKETS_APP} target="_blank" rel="noreferrer">
-              <MarketButton><Typography variant='p'>Clone Markets App</Typography></MarketButton>
-            </a> */}
             <Stack direction='row' justifyContent='center' gap={2}>
               <a href={OFFICIAL_WEB} target="_blank" rel="noreferrer"><Image src={HomeIcon} alt='home' /></a>
               <a href={TWITTER_URL} target="_blank" rel="noreferrer"><Image src={TwitterIcon} alt='twitter' /></a>
@@ -46,18 +41,6 @@ const BoxWrapper = styled(Box)`
   color: #fff;
   text-align: center;
 `
-// const MarketButton = styled(Button)`
-//   width: 195px;
-//   height: 37px;
-//   color: #fff;
-//   margin-top: 15px;
-//   margin-bottom: 28px;
-//   border-radius: 20px;
-//   border: solid 1px ${(props) => props.theme.palette.primary.main};
-//   &:hover {
-//     background-color: #2d2d2d;
-//   }
-// `
 
 export default MobileWarningDialog
 

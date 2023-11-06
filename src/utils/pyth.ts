@@ -14,7 +14,6 @@ export interface PythData {
 }
 
 export const convertPythSymbolToSupabaseSymbol = (pythSymbol: string): string => {
-
     for (let i = 0; i < ASSETS.length; i++) {
         const mapping = assetMapping(i)
         if (pythSymbol === mapping.pythSymbol)
@@ -24,7 +23,6 @@ export const convertPythSymbolToSupabaseSymbol = (pythSymbol: string): string =>
 }
 
 export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): Promise<PythData[]> => {
-
     const symbol = convertPythSymbolToSupabaseSymbol(pythSymbol)
     const currentTimestamp = Math.floor((new Date()).getTime() / 1000)
     const [from, filterDaily] = (() => {
@@ -60,13 +58,13 @@ export const fetchPythOraclePrices = async (connection: Connection, oracles: Ora
     const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster(cluster)));
     const pythData = await pythClient.getData();
 
-	const pythOraclePrices = oracles.oracles.map((oracle) => {
+    const pythOraclePrices = oracles.oracles.map((oracle) => {
         if (oracle.source === OracleSource.PYTH) {
             const feedAddress = oracle.address.toString()
             const product = pythData.products.find((p) => p.price_account === feedAddress)!
             return pythData.productPrice.get(product.symbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo)
         }
         return fromScale(oracle.price, oracle.expo)
-	})
+    })
     return pythOraclePrices;
 }

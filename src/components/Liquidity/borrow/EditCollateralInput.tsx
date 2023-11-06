@@ -54,14 +54,6 @@ const EditCollateralInput: React.FC<Props> = ({
         </Stack>
       </StackWithBorder>
 
-      {/* <Stack height="40px" direction="row" justifyContent="space-between">
-        <HeaderTitle>
-          {editType === 0 ? "Balance" : "Max Withdraw-able"} :{" "}
-          <MaxPointerValue onClick={() => onMax(maxCollVal)}>
-            {maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {tickerSymbol}
-          </MaxPointerValue>
-        </HeaderTitle>
-      </Stack> */}
       <CenterBox mt='15px'>
         <PairInput
           tickerIcon={tickerIcon}

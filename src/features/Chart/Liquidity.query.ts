@@ -13,18 +13,18 @@ export interface ChartElem {
 type TimeSeriesValue = { time: string, value: number }
 
 const getTimeFrames = (timeframe: FilterTime): [number, string, string, number] => {
-    switch (timeframe) {
-      case '1y':
-        return [365, "year", 'day' as Interval, 86400000]
-      case '30d':
-        return [30, "month", 'day' as Interval, 86400000]
-      case '7d':
-        return [7, "week", 'hour' as Interval, 3600000]
-      case '24h':
-        return [1, "day", 'hour' as Interval, 3600000]
-      default:
-        throw new Error(`Unexpected timeframe: ${timeframe}`)
-    }
+  switch (timeframe) {
+    case '1y':
+      return [365, "year", 'day' as Interval, 86400000]
+    case '30d':
+      return [30, "month", 'day' as Interval, 86400000]
+    case '7d':
+      return [7, "week", 'hour' as Interval, 3600000]
+    case '24h':
+      return [1, "day", 'hour' as Interval, 3600000]
+    default:
+      throw new Error(`Unexpected timeframe: ${timeframe}`)
+  }
 }
 
 export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {

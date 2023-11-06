@@ -19,27 +19,12 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 
 	const userAccount = await program.getUserAccount();
 	const borrowPositions = userAccount.borrows
-	// const pools = await program.getPools()
 	const oracles = await program.getOracles()
-	// const borrowPosition = borrowPositions[borrowIndex];
-	// const assetInfo = pools.pools[borrowPosition.poolIndex].assetInfo
-	// const onassetAssociatedTokenAccount = await getTokenAccount(
-	// 	assetInfo.onassetMint,
-	// 	program.provider.publicKey!,
-	// 	program.provider.connection
-	// )
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const mintPosition = borrowPositions[borrowIndex];
 
 	const ixnCalls = [
 		program.updatePricesInstruction(oracles),
-		// program.payBorrowDebtInstruction(
-		// 	pools,
-		// 	userAccount,
-		// 	onassetAssociatedTokenAccount.address,
-		// 	new anchor.BN(mintPosition.borrowedOnasset),
-		// 	borrowIndex
-		// ),
 		program.withdrawCollateralFromBorrowInstruction(
 			borrowIndex,
 			collateralAssociatedTokenAccount.address,
