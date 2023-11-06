@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Stack, Typography, Button, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -11,7 +11,6 @@ import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-// import AddIconOff from 'public/images/add-icon.svg'
 import AddIconOn from 'public/images/add-icon-on.svg'
 import { AddIcon } from '~/components/Common/SvgIcons'
 import BorrowLiquidityStatus from './BorrowLiquidityStatus'
@@ -28,11 +27,11 @@ const BorrowPositions = () => {
 		enabled: publicKey != null
 	})
 
-	const handleRowClick: GridEventListener<'rowClick'> = (
+	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params,
 	) => {
 		router.push(`/borrow/myliquidity/${params.row.id}`)
-	}
+	}, [])
 
 	const moveNewBorrowPositionPage = () => {
 		router.push('/borrow')

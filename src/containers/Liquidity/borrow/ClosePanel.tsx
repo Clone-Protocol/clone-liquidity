@@ -48,27 +48,6 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
           <GoButton onClick={onMoveWithdrawCollateral} disabled={!canCloseComet}><Typography variant="p" noWrap>{canCloseComet ? 'Withdraw Collateral' : 'Complete Step 1'}</Typography></GoButton>
         </StackWithBorder>
       </Box>
-
-      {/* <Box mb='15px'>
-        <Stack direction="row" justifyContent="space-between" mt='5px'>
-          <Box><Typography variant='p_lg' color='#989898'>Borrowed Amount</Typography></Box>
-          <Box><Typography variant='p_lg' color={canCloseComet ? '#989898' : '#ed2525'}>{borrowDetail.borrowedOnasset.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</Typography></Box>
-        </Stack>
-        <Stack direction="row" justifyContent="space-between" mt='15px'>
-          <Box><Typography variant='p_lg' color='#989898'>Borrowed onAsset Wallet Balance</Typography></Box>
-          <Box><Typography variant='p_lg' color={canCloseComet ? '#989898' : '#ed2525'}>{borrowDetail.iassetVal.toLocaleString(undefined, { maximumFractionDigits: 5 })} {borrowDetail.tickerSymbol}</Typography></Box>
-        </Stack>
-        {!canCloseComet && <Box textAlign='right'><Typography variant='p' color='#ed2525'>onAsset Wallet Balance must be greater than Borrowed Amount</Typography></Box>}
-        <Stack direction="row" justifyContent="space-between" mt='15px'>
-          <Box><Typography variant='p_lg'>Withdraw-able Collateral</Typography></Box>
-          <Box><Typography variant='p_lg'>{borrowDetail.collateralAmount.toLocaleString()} onUSD</Typography></Box>
-        </Stack>
-      </Box> */}
-
-      {/* {!canCloseComet &&
-        <SubmitButton onClick={redirectToMarket}><Image src={InfoIcon} alt='info' /> <Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Click here to go to Clone Markets to acquire this onAsset</Typography></SubmitButton>
-      }
-      <SubmitButton onClick={onClose} disabled={isSubmitting || !canCloseComet} sx={{ marginTop: '2px' }}><Typography variant='p_lg'>Withdraw all Collateral & Close Position</Typography></SubmitButton> */}
     </>
   )
 }

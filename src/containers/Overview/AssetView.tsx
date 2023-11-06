@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import { styled } from '@mui/system'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -23,10 +23,8 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 	const [openChooseLiquidity, setOpenChooseLiquidity] = useState(false)
 	const ChooseLiquidityPoolsDialog = dynamic(() => import('./Dialogs/ChooseLiquidityPoolsDialog'))
 
-	useEffect(() => {
+	useMemo(() => {
 		if (assetTicker) {
-			// console.log('assetId', AssetTickers[assetTicker as keyof typeof AssetTickers])
-
 			if (AssetTickers[assetTicker as keyof typeof AssetTickers]) {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
@@ -87,7 +85,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				open={openChooseLiquidity}
 				handleChoosePool={handleChoosePool}
 				handleClose={() => setOpenChooseLiquidity(false)}
-				noFilter={false}
 			/>
 		</Box>
 	)
