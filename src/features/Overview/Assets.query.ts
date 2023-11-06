@@ -68,7 +68,7 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 			volume24h: dailyVolumeStats.get(info.poolIndex) ?? 0,
 			change24h,
 			feeRevenue24h: stats.fees,
-			avgAPY24h: stats.apy,
+			avgAPY24h: stats.liquidityUSD > 0 ? (365.25 * stats.fees / stats.liquidityUSD) * 100 : 0,
 		})
 	}
 	return result
