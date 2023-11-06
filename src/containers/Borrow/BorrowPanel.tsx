@@ -178,7 +178,6 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
                   tickerIcon={fromPair.tickerIcon}
                   tickerSymbol={fromPair.tickerSymbol}
                   value={parseFloat(formatNumberToString(field.value, 4))}
-                  // dollarPrice={field.value}
                   inputTitle='Collateral'
                   headerTitle="Balance"
                   headerValue={usdiBalance?.balanceVal}

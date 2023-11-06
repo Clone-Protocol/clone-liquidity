@@ -2,10 +2,8 @@ import React from "react"
 import { Box, Typography } from "@mui/material"
 import { styled } from '@mui/system'
 import Image from "next/image"
-// import dynamic from 'next/dynamic'
 import LineChart from "~/components/Charts/LineChart"
 import { usePriceHistoryQuery } from "~/features/Chart/PriceByAsset.query"
-// import { unixToDate } from '~/utils/date'
 import withSuspense from "~/hocs/withSuspense"
 import { LoadingProgress } from "~/components/Common/Loading"
 import AnalyticsIcon from 'public/images/analytics-sketch.svg'

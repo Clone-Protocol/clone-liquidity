@@ -22,7 +22,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
     setTab(newValue)
   }
   const [healthScore, setHealthScore] = useState(0)
-  const [totalCollValue, setTotalCollValue] = useState(0)
+  // const [totalCollValue, setTotalCollValue] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
 
   const { data: collData, refetch } = useEditCollateralQuery({
@@ -58,7 +58,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
       if (open && collData) {
         initData()
         setHealthScore(collData.prevHealthScore)
-        setTotalCollValue(collData.totalCollValue)
+        // setTotalCollValue(collData.totalCollValue)
       }
     }
     fetch()
@@ -82,11 +82,11 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
           }
         }
 
-        if (tab === 0) {
-          setTotalCollValue(collData.totalCollValue + (collAmount * collData.collAmountDollarPrice))
-        } else {
-          setTotalCollValue(collData.totalCollValue - (collAmount * collData.collAmountDollarPrice))
-        }
+        // if (tab === 0) {
+        //   setTotalCollValue(collData.totalCollValue + (collAmount * collData.collAmountDollarPrice))
+        // } else {
+        //   setTotalCollValue(collData.totalCollValue - (collAmount * collData.collAmountDollarPrice))
+        // }
 
         trigger()
       }

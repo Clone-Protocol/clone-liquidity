@@ -5,7 +5,7 @@ import SearchInput from '~/components/Overview/SearchInput'
 import { CloseButton } from '~/components/Common/CommonButtons'
 import GridLiquidityPool from './GridLiquidityPool'
 
-const ChooseLiquidityPoolsDialog = ({ open, noFilter, handleChoosePool, handleClose }: { open: boolean, noFilter: boolean, handleChoosePool: (id: number) => void, handleClose: () => void }) => {
+const ChooseLiquidityPoolsDialog = ({ open, handleChoosePool, handleClose }: { open: boolean, handleChoosePool: (id: number) => void, handleClose: () => void }) => {
   const [searchTerm, setSearchTerm] = useState('')
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

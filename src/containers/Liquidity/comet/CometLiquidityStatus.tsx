@@ -1,9 +1,6 @@
 import { styled } from '@mui/system'
 import { Box, Stack, Typography } from '@mui/material'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
-import Image from 'next/image'
-import ArrowUpward from 'public/images/arrow-upward.svg'
-import ArrowDownward from 'public/images/arrow-downward.svg'
 import { CometInfoStatus } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import InfoTooltip from '~/components/Common/InfoTooltip'
@@ -57,14 +54,12 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
                   <Box color='#4fe5ff'>
                     <Box display='flex' justifyContent='center' alignItems='center'>
                       <Typography variant='p_xlg'>+{infos?.totalApy.toFixed(2)}%</Typography>
-                      <Image src={ArrowUpward} alt='arrowUp' />
                     </Box>
                   </Box>
                   :
                   <Box color='#ff0084'>
                     <Box display='flex' alignItems='center'>
                       <Typography variant='p_xlg'>-{infos && Math.abs(infos?.totalApy).toFixed(2)}%</Typography>
-                      <Image src={ArrowDownward} alt='arrowDown' />
                     </Box>
                   </Box>
                 }

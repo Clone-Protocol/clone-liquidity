@@ -10,7 +10,6 @@ import { createMintAssetInstruction } from 'clone-protocol-sdk/sdk/generated/moc
 import { getTokenAccount } from '~/utils/token_accounts';
 import { useAtom } from 'jotai';
 import { mintUSDi } from '~/features/globalAtom';
-import { create } from '@mui/material/styles/createTransitions';
 
 export default function useFaucet() {
   const { connected, publicKey } = useWallet()
@@ -39,7 +38,7 @@ export default function useFaucet() {
           );
 
           let ixns: TransactionInstruction[] = []
-    
+
           if (!usdcAssociatedTokenAccount.isInitialized) {
             ixns.push(
               createAssociatedTokenAccountInstruction(

@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CellTicker, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { Collateral } from '~/features/MyLiquidity/comet/CometInfo.query'
@@ -34,9 +34,9 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
     setMintUsdi
   }))
 
-  const handleRowClick: GridEventListener<'rowClick'> = () => {
+  const handleRowClick: GridEventListener<'rowClick'> = useCallback(() => {
     setOpenEditCollateral(true)
-  }
+  }, [])
 
   let customOverlayMsg = ''
   if (!publicKey) {

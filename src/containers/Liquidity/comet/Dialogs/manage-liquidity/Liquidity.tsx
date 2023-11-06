@@ -76,7 +76,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
   }, [mintRatio])
 
   const handleChangeMintRatio = useCallback((newRatio: number) => {
-    // console.log('newRatio', newRatio)
     // MEMO: if newRatio is near from default ratio, then set newRatio to default ratio
     const convertNewRatio = Math.min(parseInt(newRatio.toString()) === defaultMintRatio ? defaultMintRatio : newRatio, 99)
     setValue('mintAmount', maxMintable * convertNewRatio / 100)
@@ -100,7 +99,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
       if (data) {
         console.log('data', data)
         initData()
-        // handleClose()
       }
     } catch (err) {
       console.error(err)

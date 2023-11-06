@@ -25,7 +25,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       '& .last--cell': {
         display: 'flex',
         justifyContent: 'flex-end',
-        marginRight: '4px',
+        maxWidth: '180px',
       },
       '& .MuiDataGrid-columnHeaderTitle': {
         color: '#989898',
@@ -82,8 +82,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
     disableDensitySelector
     disableExtendRowFullWidth
     hideFooter
-    headerHeight={25}
-    rowHeight={50}
+    headerHeight={0}
+    rowHeight={60}
     rowCount={20}
     onRowClick={onRowClick}
     columns={headers}

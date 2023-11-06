@@ -51,25 +51,6 @@ const EditBorrowedInput: React.FC<Props> = ({
         </Stack>
       </StackWithBorder>
 
-      {/* <Stack height="40px" direction="row" justifyContent="space-between">
-        <HeaderTitle>
-          {editType === 0 ? (
-            <span>
-              <Typography variant="p">Max Borrow-able: </Typography>
-              <MaxPointerValue onClick={() => onMax(maxCollVal)}>
-                {maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}
-              </MaxPointerValue>
-            </span>
-          ) : (
-            <span>
-              <Typography variant="p">Wallet Balance: </Typography>
-              <Typography variant="p">
-                {maxCollVal.toLocaleString(undefined, { maximumFractionDigits: 5 })}
-              </Typography>
-            </span>
-          )}
-        </HeaderTitle>
-      </Stack> */}
       <CenterBox mt='15px'>
         <PairInput
           tickerIcon={tickerIcon}
@@ -92,32 +73,6 @@ const EditBorrowedInput: React.FC<Props> = ({
             <Typography variant="p_lg" color='#66707e'>{`${isAfterNoBorrowedRemaining ? '(Paid in Full)' : '$' + afterBorrowedDollarPrice.toLocaleString(undefined, { maximumFractionDigits: 5 })}`}</Typography>
           </Stack>
         </StackWithBorder>
-
-        {/* <FormStack direction="row" justifyContent="space-between" alignItems="center">
-          <Box display="flex">
-            <Image src={tickerIcon} width={28} height={28} alt={tickerSymbol!} />
-            <Box ml="10px">
-              <Typography variant="p_lg">{tickerSymbol}</Typography>
-            </Box>
-          </Box>
-          <Box>
-            <InputAmount
-              id="ip-amount"
-              type="number"
-              min={0}
-              max={maxCollVal}
-              sx={collAmount && collAmount > 0 ? { color: "#fff" } : { color: "#adadad" }}
-              placeholder="0.00"
-              value={collAmount}
-              onChange={onChangeAmount}
-            />
-            <DollarAmount>
-              {collAmountDollarPrice && collAmountDollarPrice > 0
-                ? "$" + collAmountDollarPrice?.toLocaleString() + " USD"
-                : ""}
-            </DollarAmount>
-          </Box>
-        </FormStack> */}
       </CenterBox>
     </FormControl>
   )

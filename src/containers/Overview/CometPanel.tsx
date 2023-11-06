@@ -35,8 +35,6 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [validMintValue, setValidMintValue] = useState(false)
-  // const [openChooseCollateral, setOpenChooseCollateral] = useState(false)
-  // const ChooseCollateralDialog = dynamic(() => import('./Dialogs/ChooseCollateralDialog'))
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,

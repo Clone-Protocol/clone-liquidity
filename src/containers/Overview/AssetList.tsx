@@ -31,9 +31,9 @@ const AssetList: React.FC = () => {
 		enabled: true
 	})
 
-	const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
+	const handleFilterChange = useCallback((event: React.SyntheticEvent, newValue: FilterType) => {
 		setFilter(newValue)
-	}
+	}, [filter])
 
 	const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -47,7 +47,7 @@ const AssetList: React.FC = () => {
 	// const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
 	// const handleLinkNeedingAccountClick = useOnLinkNeedingAccountClick()
 
-	const handleRowClick: GridEventListener<'rowClick'> = (
+	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params
 	) => {
 		// if (isAlreadyInitializedAccount) {
@@ -55,7 +55,7 @@ const AssetList: React.FC = () => {
 		// } else {
 		// 	handleLinkNeedingAccountClick(undefined)
 		// }
-	}
+	}, [])
 
 	return (
 		<PanelBox>
@@ -65,7 +65,9 @@ const AssetList: React.FC = () => {
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
 				</PageTabs>
-				<SearchInput onChange={handleSearch} />
+				<Box width='320px'>
+					<SearchInput onChange={handleSearch} />
+				</Box>
 			</Stack>
 			<Grid
 				headers={columns}
@@ -156,26 +158,6 @@ let columns: GridColDef[] = [
 				</Box>
 		},
 	},
-	// {
-	// 	field: 'action',
-	// 	headerClassName: 'super-app-theme--header',
-	// 	cellClassName: 'last--cell',
-	// 	headerName: '',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-	// 		const goToTrading = (e: any) => {
-	// 			e.stopPropagation()
-	// 			const url = `${MARKETS_APP}/trade/${params.row.ticker}`
-	// 			window.open(url)
-	// 		}
-
-	// 		return (
-	// 			<TradeButton onClick={goToTrading}>
-	// 				<Image src={TradeIcon} alt='trade' />
-	// 			</TradeButton>
-	// 		)
-	// 	},
-	// },
 ]
 
 const PanelBox = styled(Box)`
