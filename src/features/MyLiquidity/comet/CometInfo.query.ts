@@ -10,7 +10,6 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { AggregatedStats, getAggregatedPoolStats } from '~/utils/assets'
-import { fetchUserApy } from '~/utils/fetch_netlify'
 
 export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return
@@ -25,12 +24,12 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	let positions: LiquidityPosition[] = [];
 
 	const [userAccountData, poolsData, oraclesData] = await Promise.allSettled([
-		program.getUserAccount(), program.getPools(), program.getOracles()
+		program.getUserAccount(), program.getPools(), program.getOracles(),
 	]);
 
 	if (userAccountData.status === "fulfilled" && poolsData.status === "fulfilled" && oraclesData.status === "fulfilled") {
 		const poolStats = await getAggregatedPoolStats(poolsData.value)
-		totalApy = (await fetchUserApy(userPubKey.toString()))
+		let total24hrFees = 0
 
 		const comet = userAccountData.value.comet
 		collaterals = extractCollateralInfo(program, comet)
@@ -41,9 +40,11 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 		});
 		positions.forEach(p => {
 			totalLiquidity += p.liquidityDollarPrice
+			total24hrFees += (poolStats[p.poolIndex].fees * p.liquidityDollarPrice) / poolStats[p.poolIndex].liquidityUSD
 		})
 		hasNoCollateral = totalCollValue === 0
 		healthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
+		totalApy = totalCollValue > 0 ? (365.25 * total24hrFees / totalCollValue) * 100 : 0
 	}
 
 	const result = {
@@ -143,7 +144,9 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 		}
 
 		const liquidityDollarPrice = fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale) * 2
-		const apy = poolStats[poolIndex].apy
+		const fees24hr = (poolStats[poolIndex].fees * liquidityDollarPrice) / poolStats[poolIndex].liquidityUSD
+		const collValue = coll.collAmount * coll.collAmountDollarPrice
+		const apy = collValue > 0 ? (365.25 * fees24hr / collValue) * 100 : 0
 
 		result.push(
 			{
