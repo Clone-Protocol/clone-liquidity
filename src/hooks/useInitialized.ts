@@ -20,11 +20,11 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 			if (connected && publicKey && wallet) {
 				console.log('useInitialized')
 				// for initialize once per each account
-				if (localAccount === publicKey.toString()) {
-					console.log('the account is already initialized')
-					setIsAlreadyInitializedAccountState(true);
-					return;
-				}
+				// if (localAccount === publicKey.toString()) {
+				// 	console.log('the account is already initialized')
+				// 	setIsAlreadyInitializedAccountState(true);
+				// 	return;
+				// }
 
 				try {
 					console.log('getUserAccount')
