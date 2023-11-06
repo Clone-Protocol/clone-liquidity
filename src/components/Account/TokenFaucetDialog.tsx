@@ -105,12 +105,5 @@ const InfoBox = styled(Box) <{ noHover?: boolean }>`
     border-color: ${(props) => props.noHover ? props.theme.basis.shadowGloom : props.theme.basis.liquidityBlue};
   }
 `
-const ConnectWallet = styled(Box)`
-  width: 70px;
-  color: ${(props) => props.theme.palette.warning.main};
-  text-align: right;
-  line-height: 15px;
-  cursor: pointer;
-`
 
 export default TokenFaucetDialog
