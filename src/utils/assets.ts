@@ -2,7 +2,7 @@ import { Pools } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { assetMapping } from "~/data/assets";
-import { fetchFromCloneIndex } from "./fetch_netlify";
+import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats, fetchPoolApy } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
 
 export type Interval = 'day' | 'hour';
@@ -37,11 +37,6 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
 }
 
 
-export const fetchStatsData = async (filter: Filter, interval: Interval): Promise<ResponseValue[]> => {
-  const response = await fetchFromCloneIndex('stats', { interval, filter })
-  return response.data as ResponseValue[]
-}
-
 export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ poolIndex: number, poolPrice: number, liquidity: number, oraclePrice: number }[]> => {
   const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
   const data = await pythClient.getData();
@@ -70,7 +65,8 @@ export type AggregatedStats = {
   previousVolumeUSD: number,
   previousFees: number,
   liquidityUSD: number,
-  previousLiquidity: number
+  previousLiquidity: number,
+  apy: number
 }
 
 const convertToNumber = (val: string | number) => {
@@ -78,36 +74,41 @@ const convertToNumber = (val: string | number) => {
 }
 
 export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedStats[]> => {
-  let result: AggregatedStats[] = [];
-  for (let i = 0; i < pools.pools.length; i++) {
-    result.push({ volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, liquidityUSD: fromScale(pools.pools[i].committedCollateralLiquidity, 7) * 2, previousLiquidity: 0 })
-  }
 
-  const statsData = await fetchStatsData('week', 'hour')
+  let result = pools.pools.map((pool) => {
+    return { volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, 
+      liquidityUSD: fromScale(pool.committedCollateralLiquidity, 7) * 2,
+      previousLiquidity: 0, apy: 0
+    }
+  });
+
   const now = (new Date()).getTime(); // Get current timestamp
   const hoursDiff = (dt: Date) => {
     return (now - dt.getTime()) / 3600000
   }
 
-  statsData.forEach((item) => {
+  // Sorted by time_interval ascending
+  const poolStatsData = await fetchStatsData("hour", "week", false)
+
+  poolStatsData.forEach((item) => {
+
     const dt = new Date(item.time_interval)
-    const hoursDifference = hoursDiff(dt)
     const poolIndex = Number(item.pool_index)
-    const tradingFees = convertToNumber(item.trading_fees)
-    const liquidity = convertToNumber(item.total_committed_onusd_liquidity)
+    const hoursDifference = hoursDiff(dt)
+    const tradingFees = fromScale(item.trading_fees, 7)
+    const liquidity = fromScale(item.total_committed_collateral_liquidity, 7) * 2
+  
     if (hoursDifference <= 24) {
       result[poolIndex].fees += tradingFees
     } else if (hoursDifference > 24) {
       result[poolIndex].previousLiquidity = liquidity
-
-      if (hoursDifference <= 48)
+      if (hoursDifference <= 48) {
         result[poolIndex].previousFees += tradingFees
-
+      }
     }
   })
 
-  const response = await fetchFromCloneIndex('ohlcv', { interval: 'hour', filter: 'week' })
-  const data: OHLCVResponse[] = response.data
+  const data = await fetchOHLCV("hour", "week");
 
   data.forEach((item) => {
     const dt = new Date(item.time_interval)
@@ -124,28 +125,19 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
     }
   })
 
+  const apyData = await fetchPoolApy();
+
+  apyData.forEach((item) => {
+    result[Number(item.pool_index)].apy = item.apy_24hr
+  })
+
   return result
 }
 
-type OHLCVResponse = {
-  time_interval: string,
-  pool_index: number,
-  open: string,
-  high: string,
-  low: string,
-  close: string,
-  volume: string,
-  trading_fees: string
-}
 
-const fetch30DayOHLCV = async (poolIndex: number, interval: 'hour' | 'day') => {
-  const response = await fetchFromCloneIndex('ohlcv', { interval, pool: poolIndex, filter: 'month' })
-  const result: OHLCVResponse[] = response.data
-  return result
-}
 
 export const getDailyPoolPrices30Day = async (poolIndex: number) => {
-  const requestResult = await fetch30DayOHLCV(poolIndex, 'hour')
+  const requestResult = await fetchOHLCV("hour", "month", poolIndex);
   const now = new Date()
   const lookback30Day = new Date(now.getTime() - 30 * 86400 * 1000)
 
@@ -179,8 +171,7 @@ export const getDailyPoolPrices30Day = async (poolIndex: number) => {
 
 export const fetch24hourVolume = async () => {
 
-  let response = await fetchFromCloneIndex('ohlcv', { interval: 'hour', filter: 'week' })
-  let data: OHLCVResponse[] = response.data
+  let data = await fetchOHLCV("hour", "month");
 
   let result: Map<number, number> = new Map()
   const now = new Date()
@@ -198,20 +189,11 @@ export const fetch24hourVolume = async () => {
   return result
 }
 
-type BorrowInfo = {
-  pool_index: number,
-  time_interval: string,
-  cumulative_collateral_delta: number,
-  cumulative_borrowed_delta: number
-}
-
 type BorrowResult = { currentAmount: number, previousAmount: number, currentTVL: number, previousTVL: number }
 
 
 export const fetchBorrowData = async (numPools: number): Promise<BorrowResult[]> => {
-  const response = await fetchFromCloneIndex('borrow_stats', { interval: 'hour', filter: 'month' })
-  const rawData: BorrowInfo[] = response.data
-
+  const rawData = await fetchBorrowStats()
   let result: BorrowResult[] = []
   for (let i = 0; i < numPools; i++) {
     result.push(
@@ -221,15 +203,14 @@ export const fetchBorrowData = async (numPools: number): Promise<BorrowResult[]>
   return result;
 }
 
-const parseBorrowData = (data: BorrowInfo[]): BorrowResult => {
-  const conversionFactor = Math.pow(10, -8)
+const parseBorrowData = (data: BorrowStats[]): BorrowResult => {
 
   if (data.length === 0) {
     return { currentAmount: 0, previousAmount: 0, currentTVL: 0, previousTVL: 0 }
   } else if (data.length === 1) {
     const latestEntry = data[0]
-    const currentAmount = Number(latestEntry.cumulative_borrowed_delta) * conversionFactor
-    const currentTVL = Number(latestEntry.cumulative_collateral_delta) * conversionFactor
+    const currentAmount = fromCloneScale(latestEntry.cumulative_borrowed_delta)
+    const currentTVL = fromScale(latestEntry.cumulative_collateral_delta, 7)
     const latestEntryDate = new Date(latestEntry.time_interval)
     const now = new Date();
     const hoursElapsed = (now.getTime() - latestEntryDate.getTime()) / 3600000
@@ -241,11 +222,11 @@ const parseBorrowData = (data: BorrowInfo[]): BorrowResult => {
   } else {
     // Should only be two entries.
     const firstEntry = data[0]
-    const previousAmount = Number(firstEntry.cumulative_borrowed_delta) * conversionFactor
-    const previousTVL = Number(firstEntry.cumulative_collateral_delta) * conversionFactor
+    const previousAmount = fromCloneScale(firstEntry.cumulative_borrowed_delta)
+    const previousTVL = fromScale(firstEntry.cumulative_collateral_delta, 7)
     const latestEntry = data.at(-1)!
-    const currentAmount = Number(latestEntry.cumulative_borrowed_delta) * conversionFactor
-    const currentTVL = Number(latestEntry.cumulative_collateral_delta) * conversionFactor
+    const currentAmount = fromCloneScale(latestEntry.cumulative_borrowed_delta)
+    const currentTVL = fromScale(latestEntry.cumulative_collateral_delta, 7)
     return { currentAmount, previousAmount, currentTVL, previousTVL }
   }
 }
