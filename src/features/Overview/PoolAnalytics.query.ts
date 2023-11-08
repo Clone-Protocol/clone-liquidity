@@ -33,7 +33,7 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymb
         feeRevenue24hr: stats.fees,
         feeRevenueGain: stats.fees - stats.previousFees,
         feeRevenueGainPct: calcPctGain(stats.fees, stats.previousFees),
-        avgAPY24hr: stats.liquidityUSD > 0 ? (365.25 * stats.fees / stats.liquidityUSD) * 100 : 0,
+        avgAPY24hr: stats.apy,
         currentAmountBorrowed: borrowedStats.currentAmount,
         currentTVL: borrowedStats.currentTVL,
         amountBorrowedRate: calcPctGain(borrowedStats.currentAmount, borrowedStats.previousAmount),
