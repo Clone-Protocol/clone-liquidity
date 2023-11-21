@@ -17,6 +17,7 @@ import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import { formatDollarAmount } from '~/utils/numbers'
+import { ON_USD } from '~/utils/constants'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -98,7 +99,7 @@ let columns: GridColDef[] = [
 		field: 'price',
 		headerClassName: 'super-app-theme--header',
 		cellClassName: 'super-app-theme--cell',
-		headerName: 'Price (devUSD)',
+		headerName: `Price (${ON_USD})`,
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return <Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>

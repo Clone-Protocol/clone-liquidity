@@ -2,6 +2,7 @@ import { styled, Typography, Box } from '@mui/material'
 import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
 import InfoTooltip from '../Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { ON_USD } from '~/utils/constants'
 
 const TxtPriceRateComparePast = ({ val, rate }: { val: number, rate: number }) => {
   if (isFinite(rate)) {
@@ -38,7 +39,7 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
 
   return (
     <Box>
-      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/devUSD Pool Analytics</Typography></Box>
+      <Box mb="12px"><Typography variant="p_lg">{tickerSymbol}/{ON_USD} Pool Analytics</Typography></Box>
       <DataBox>
         <Box>
           <Typography variant="p" color='#66707e'>Total Liquidity</Typography>

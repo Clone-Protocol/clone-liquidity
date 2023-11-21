@@ -4,15 +4,16 @@ import Image from 'next/image'
 import PrimaryIcon from 'public/images/icons-badge.svg'
 import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
+import { NETWORK_NAME, ON_USD, ON_USD_NAME } from '~/utils/constants'
 
 const GetUSDiBadge: React.FC = () => {
   const setMintUsdi = useSetAtom(mintUSDi)
   return <StyledStack direction='row' justifyContent='center' alignItems='center' spacing={3}>
     <Image src={PrimaryIcon} alt='primary' />
     <Box>
-      <Typography variant='p_lg'>Get devnet USD from the devnet faucet to start liquidity app experience on devnet. On mainnet, you will be using USDC in place of devnet USD.</Typography>
+      <Typography variant='p_lg'>Get {ON_USD_NAME} from the {NETWORK_NAME} faucet to start liquidity app experience on {NETWORK_NAME}. On mainnet, you will be using USDC in place of {ON_USD_NAME}.</Typography>
     </Box>
-    <GetButton onClick={() => setMintUsdi(true)}><Typography variant='p'>Get Devnet USD</Typography></GetButton>
+    <GetButton onClick={() => setMintUsdi(true)}><Typography variant='p'>Get {ON_USD_NAME}</Typography></GetButton>
   </StyledStack>
 }
 

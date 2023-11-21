@@ -16,6 +16,7 @@ import { usePayILDMutation } from "~/features/MyLiquidity/comet/LiquidityPositio
 import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { Collateral as StableCollateral, collateralMapping } from "~/data/assets"
+import { NETWORK_NAME, ON_USD } from "~/utils/constants"
 
 const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const { publicKey } = useWallet()
@@ -115,7 +116,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   if (balanceColl === 0) {
     warningMsgForColl = 'You wallet balance is zero'
   } else if (positionInfo && Math.max(0, positionInfo.collateralILD) - ildCollAmount > 0) {
-    warningMsgForColl = 'Not enough wallet balance to fully payoff devUSD ILD Amount. You can acquire more on devnet faucet.'
+    warningMsgForColl = `Not enough wallet balance to fully payoff ${ON_USD} ILD Amount. You can acquire more on ${NETWORK_NAME} faucet.`
   }
 
   const isNotValid = positionInfo ?
@@ -203,15 +204,15 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
 
         <Box>
           <Box>
-            <Typography variant='p_lg'>devUSD ILD</Typography>
-            <InfoTooltip title={TooltipTexts.devUSDILD} color='#66707e' />
+            <Typography variant='p_lg'>{ON_USD} ILD</Typography>
+            <InfoTooltip title={TooltipTexts.onUSDILD} color='#66707e' />
           </Box>
           <StackWithBorder direction='row' justifyContent='space-between'>
-            <Typography variant='p_lg'>devUSD ILD</Typography>
+            <Typography variant='p_lg'>{ON_USD} ILD</Typography>
             <Typography variant='p_lg'>
               {Math.max(0, positionInfo.collateralILD).toLocaleString(undefined, {
                 maximumFractionDigits: 8,
-              })} devUSD
+              })} {ON_USD}
             </Typography>
           </StackWithBorder>
 
@@ -227,7 +228,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                     rightHeaderTitle={'Wallet Balance'}
                     value={field.value}
                     valueDollarPrice={field.value}
-                    inputTitle={`devUSD ILD Payment`}
+                    inputTitle={`${ON_USD} ILD Payment`}
                     inputTitleColor="#fff"
                     balance={balanceColl}
                     onChange={(event: React.FormEvent<HTMLInputElement>) => {
@@ -243,7 +244,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               />
               <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
                 <Box>
-                  <Typography variant='p'>Projected Remaining devUSD ILD</Typography>
+                  <Typography variant='p'>Projected Remaining {ON_USD} ILD</Typography>
                   <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
                 </Box>
                 <Box>

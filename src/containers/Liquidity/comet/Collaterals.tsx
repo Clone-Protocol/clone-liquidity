@@ -9,6 +9,7 @@ import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { ON_USD } from '~/utils/constants'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -108,7 +109,7 @@ let columns: GridColDef[] = [
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        <GetButton onClick={(e) => { e.stopPropagation(); params.row.setMintUsdi(true) }}><Typography variant='p'>Get devUSD</Typography></GetButton>
+        <GetButton onClick={(e) => { e.stopPropagation(); params.row.setMintUsdi(true) }}><Typography variant='p'>Get {ON_USD}</Typography></GetButton>
       )
     },
   },

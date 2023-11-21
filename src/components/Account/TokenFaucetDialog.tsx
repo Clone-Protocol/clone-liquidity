@@ -6,6 +6,7 @@ import WalletIcon from 'public/images/wallet-icon.svg'
 import infoOutlineIcon from 'public/images/info-outline.svg'
 import ConnectWalletIcon from 'public/images/icons-connect-wallet.svg'
 import { CloseButton } from '../Common/CommonButtons';
+import { NETWORK_NAME, ON_USD, ON_USD_NAME } from '~/utils/constants'
 
 const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onHide }: { open: boolean, isConnect: boolean, connectWallet: () => void, onGetUsdiClick: () => void, onHide: () => void }) => {
 
@@ -14,13 +15,13 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
       <Dialog open={open} onClose={onHide} TransitionComponent={FadeTransition}>
         <DialogContent sx={{ backgroundColor: '#000', border: 'solid 1px #414e66', borderRadius: '5px' }}>
           <BoxWrapper>
-            <Box mb="21px"><Typography variant='h3' fontWeight={500}>Devnet Token Faucet</Typography></Box>
+            <Box mb="21px"><Typography variant='h3' fontWeight={500}>{NETWORK_NAME} Token Faucet</Typography></Box>
             <a href="https://faucet.solana.com/" target="_blank" rel="noreferrer">
               <LinkBox>
                 <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                   <Stack direction='row' spacing={2} alignItems='center'>
                     <Image src={'/images/sol-raw.png'} width={27} height={27} alt='sol' />
-                    <Typography variant='p'>Devnet SOL</Typography>
+                    <Typography variant='p'>{NETWORK_NAME} SOL</Typography>
                   </Stack>
                   <Image src={ShareIcon} alt="share" />
                 </Stack>
@@ -29,8 +30,8 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
             <LinkBox mt="12px" mb="12px" onClick={onGetUsdiClick}>
               <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
                 <Stack direction='row' spacing={2} alignItems='center'>
-                  <Image src={'/images/assets/on-usd.svg'} width={24} height={24} alt='devUSD' />
-                  <Typography variant='p' color={!isConnect ? '#989898' : ''}>Devnet USD ($100)</Typography>
+                  <Image src={'/images/assets/on-usd.svg'} width={24} height={24} alt={ON_USD} />
+                  <Typography variant='p' color={!isConnect ? '#989898' : ''}>{ON_USD_NAME} ($100)</Typography>
                 </Stack>
                 <Box>
                   {
@@ -49,14 +50,14 @@ const TokenFaucetDialog = ({ open, isConnect, connectWallet, onGetUsdiClick, onH
             <InfoBox mb="12px" noHover={true}>
               <Image src={infoOutlineIcon} alt="info" />
               <Typography variant='p' ml='12px'>
-                You need Devnet SOL in your wallet before you can claim Devnet USD.
+                You need {NETWORK_NAME} SOL in your wallet before you can claim {ON_USD_NAME}.
               </Typography>
             </InfoBox>
             <a href="https://www.alchemy.com/overviews/solana-devnet" target='_blank' rel="noreferrer">
               <InfoBox>
                 <Image src={infoOutlineIcon} alt="info" />
                 <Typography variant='p' ml='12px'>
-                  The Solana Devnet is a safe playground for developers, users, and validators to test applications at no risk. Click this box to learn more.
+                  The Solana {NETWORK_NAME} is a safe playground for developers, users, and validators to test applications at no risk. Click this box to learn more.
                 </Typography>
               </InfoBox>
             </a>

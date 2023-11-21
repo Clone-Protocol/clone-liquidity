@@ -6,6 +6,7 @@ import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useLiquidityPoolsQuery } from '~/features/MyLiquidity/comet/LiquidityPools.query'
+import { ON_USD } from '~/utils/constants'
 
 interface Props {
 	onChoose: (id: number) => void
@@ -52,7 +53,7 @@ let columns: GridColDef[] = [
 				<Box display="flex" justifyContent="flex-start" ml='4px'>
 					<Image src={params.row.tickerIcon} width={28} height={28} alt={params.row.tickerSymbol} />
 					<Box ml='10px' mt='3px'>
-						<Typography variant='p_xlg'>{params.row.tickerSymbol}/devUSD</Typography>
+						<Typography variant='p_xlg'>{params.row.tickerSymbol}/{ON_USD}</Typography>
 					</Box>
 				</Box>
 			)

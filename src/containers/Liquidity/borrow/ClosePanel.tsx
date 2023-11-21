@@ -8,6 +8,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from "~/components/Common/CommonButtons"
 import CheckIcon from 'public/images/check-icon.svg'
+import { ON_USD } from '~/utils/constants'
 
 const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollateral }: { borrowDetail: BorrowDetail, onMoveRepayPosition: () => void, onMoveWithdrawCollateral: () => void }) => {
   const canCloseComet = borrowDetail.borrowedOnasset === 0  //Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedOnasset)
@@ -42,7 +43,7 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg'>
-            {borrowDetail.collateralAmount.toLocaleString()} devUSD
+            {borrowDetail.collateralAmount.toLocaleString()} {ON_USD}
           </Typography>
 
           <GoButton onClick={onMoveWithdrawCollateral} disabled={!canCloseComet}><Typography variant="p" noWrap>{canCloseComet ? 'Withdraw Collateral' : 'Complete Step 1'}</Typography></GoButton>

@@ -14,6 +14,7 @@ import Image from 'next/image'
 import AddIconOn from 'public/images/add-icon-on.svg'
 import { AddIcon } from '~/components/Common/SvgIcons'
 import BorrowLiquidityStatus from './BorrowLiquidityStatus'
+import { ON_USD } from '~/utils/constants'
 
 const BorrowPositions = () => {
 	const { publicKey } = useWallet()
@@ -117,7 +118,7 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			return (
 				<Stack direction='column' alignItems='flex-end'>
-					<Box><CellDigitValue value={params.value} symbol="devUSD" /></Box>
+					<Box><CellDigitValue value={params.value} symbol={ON_USD} /></Box>
 					<Box><Typography variant='p_lg' color='#66707e'>${params.value?.toLocaleString()} USD</Typography></Box>
 				</Stack>
 			)

@@ -10,6 +10,7 @@ import AddIconOn from 'public/images/add-icon-on.svg'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { AddIcon } from '~/components/Common/SvgIcons'
+import { ON_USD } from '~/utils/constants'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -103,7 +104,7 @@ let columns: GridColDef[] = [
       return (
         <Box display="flex" justifyContent="flex-start">
           <Image src={params.row.tickerIcon} width={27} height={27} alt={params.row.tickerSymbol} />
-          <Box ml='10px'><Typography variant='p_xlg'>{params.row.tickerSymbol}{'/devUSD'}</Typography></Box>
+          <Box ml='10px'><Typography variant='p_xlg'>{params.row.tickerSymbol}{'/'}{ON_USD}</Typography></Box>
         </Box>
       )
     },

@@ -10,7 +10,7 @@ import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
-import { CreateAccountDialogStates } from '~/utils/constants'
+import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
@@ -115,7 +115,7 @@ const RightMenu: React.FC = () => {
 
 			<Box display="flex">
 				<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
-					<Typography variant='p'>Devnet Faucet</Typography>
+					<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
 				</HeaderButton>
 				<HeaderButton sx={{ fontSize: '16px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />

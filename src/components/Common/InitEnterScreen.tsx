@@ -3,6 +3,7 @@ import { Box, styled, Typography, Button } from '@mui/material'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { IS_COMPLETE_INIT } from '~/data/localstorage'
 import { CloseButton } from './CommonButtons'
+import { NETWORK_NAME } from '~/utils/constants'
 
 const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
   const [_, setIsCompleteInit] = useLocalStorage(IS_COMPLETE_INIT, false)
@@ -18,10 +19,10 @@ const InitEnterScreen = ({ onClose }: { onClose: () => void }) => {
         <TextHead>Welcome!</TextHead>
         <Box my='20px' lineHeight={0.9}>
           <Typography variant='p_xlg' lineHeight={1.5}>
-            Welcome to Clone Liquidity on Solana Devnet. Devnet is the perfect place to explore Clone and Solana without any cost!
+            Welcome to Clone Liquidity on Solana {NETWORK_NAME}. {NETWORK_NAME} is the perfect place to explore Clone and Solana without any cost!
           </Typography>
         </Box>
-        <EnterButton onClick={() => close()}><Typography variant='p_xlg'>Enter Clone Devnet</Typography></EnterButton>
+        <EnterButton onClick={() => close()}><Typography variant='p_xlg'>Enter Clone {NETWORK_NAME}</Typography></EnterButton>
 
         <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
           <CloseButton handleClose={onClose} />

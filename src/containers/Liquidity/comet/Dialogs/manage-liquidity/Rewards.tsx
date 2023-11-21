@@ -8,6 +8,7 @@ import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPositi
 import { useState } from "react"
 import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
+import { ON_USD } from "~/utils/constants"
 
 const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData?: () => void }) => {
   const { publicKey } = useWallet()
@@ -76,14 +77,14 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
       </Box>
       <Box>
         <Box>
-          <Typography variant='p_lg'>devUSD Rewards</Typography>
+          <Typography variant='p_lg'>{ON_USD} Rewards</Typography>
           <InfoTooltip title={TooltipTexts.rewards} color='#66707e' />
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
             {Math.max(0, -positionInfo.collateralILD).toLocaleString(undefined, {
               maximumFractionDigits: 8,
-            })} devUSD</Typography>
+            })} {ON_USD}</Typography>
         </BoxWithBorder>
       </Box>
       <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards}>

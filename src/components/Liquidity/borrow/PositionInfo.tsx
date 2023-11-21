@@ -5,6 +5,7 @@ import { PositionInfo as PI } from '~/features/MyLiquidity/BorrowPosition.query'
 import Image from 'next/image'
 import RightArrowIcon from 'public/images/right-arrow.svg'
 import { useState } from 'react'
+import { ON_USD } from '~/utils/constants'
 
 interface Props {
   positionInfo: PI
@@ -72,7 +73,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
           <TickerBox display="flex" alignItems='center'>
             <Image src={'/images/assets/on-usd.svg'} width={22} height={22} alt={'dev-usd'} />
             <Typography variant="h4" ml='3px'>
-              devUSD
+              {ON_USD}
             </Typography>
           </TickerBox>
         </Stack>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, styled, Typography, Button, Dialog } from '@mui/material'
-import { CreateAccountDialogStates } from '~/utils/constants'
+import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
 import { CloseButton } from '../Common/CommonButtons'
 import { useAtomValue } from 'jotai'
 import { isCreatingAccountState } from '~/features/globalAtom'
@@ -28,9 +28,9 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
         <BoxWrapper>
           <TextHead>Open Account</TextHead>
           <Box my='20px' lineHeight={1.3} color='#989898'>
-            <Typography variant='p_xlg'>Welcome! This is your first time connecting this wallet to Devnet Clone Liquidity. Please open an account on Devnet Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='p_xlg' color='#4fe5ff'>~0.07 Devnet SOL</Typography><Typography variant='p_xlg'> for most optimal experience using Devnet Clone Liquidity.</Typography>
+            <Typography variant='p_xlg'>Welcome! This is your first time connecting this wallet to {NETWORK_NAME} Clone Liquidity. Please open an account on {NETWORK_NAME} Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='p_xlg' color='#4fe5ff'>~0.07 {NETWORK_NAME} SOL</Typography><Typography variant='p_xlg'> for most optimal experience using {NETWORK_NAME} Clone Liquidity.</Typography>
           </Box>
-          <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_xlg'>Open Devnet Account</Typography></EnterButton>
+          <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_xlg'>Open {NETWORK_NAME} Account</Typography></EnterButton>
         </BoxWrapper>
         <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
           <CloseButton handleClose={handleClose} />

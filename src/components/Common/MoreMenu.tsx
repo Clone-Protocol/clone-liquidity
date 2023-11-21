@@ -7,6 +7,7 @@ import TwitterIcon from 'public/images/more/twitter.svg'
 import DiscordIcon from 'public/images/more/discord.svg'
 import { Stack } from '@mui/system';
 import { CAREER_URL, DISCORD_URL, DOCS_URL, MARKETS_APP, OFFICIAL_WEB, TWITTER_URL } from '~/data/social';
+import { NETWORK_NAME } from '~/utils/constants'
 
 interface Props {
   anchorEl: null | HTMLElement
@@ -45,7 +46,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
       <HoverStack direction='row' alignItems='center'>
         <Box width='184px'>
           <div><Typography variant='p'>Token Faucet</Typography></div>
-          <div><Typography variant='p_sm' color='#989898'>Get started on Solana devnet</Typography></div>
+          <div><Typography variant='p_sm' color='#989898'>Get started on Solana {NETWORK_NAME}</Typography></div>
         </Box>
       </HoverStack>
     </StyledMenuItem>

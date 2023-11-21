@@ -22,6 +22,7 @@ import DepositIcon from 'public/images/deposit-icon.svg'
 import Link from 'next/link'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { InfoMsg } from '~/components/Common/WarningMsg'
+import { ON_USD } from '~/utils/constants'
 
 const RISK_SCORE_VAL = 20
 
@@ -212,7 +213,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
                   <SelectPoolBox onClick={() => openChooseLiquidityDialog()}>
                     <Stack direction='row' gap={1} alignItems='center'>
                       <Image src={assetData.tickerIcon} width={20} height={20} alt={assetData.tickerSymbol} />
-                      <Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}devUSD</Typography>
+                      <Typography variant='p_lg' mb='3px'>{assetData.tickerSymbol}{'/'}{ON_USD}</Typography>
                     </Stack>
                     <Image src={SelectArrowIcon} alt='select' />
                   </SelectPoolBox>

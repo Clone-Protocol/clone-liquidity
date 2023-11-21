@@ -1,6 +1,7 @@
 import { FormControl, styled, Stack, Box, Typography } from "@mui/material"
 import { StyledTabs, StyledTab } from "~/components/Common/StyledTab"
 import PairInput from '~/components/Liquidity/comet/PairInput'
+import { ON_USD } from "~/utils/constants"
 
 interface Props {
   editType: number
@@ -49,7 +50,7 @@ const EditCollateralInput: React.FC<Props> = ({
       <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' mt='38px'>
         <Typography variant="p">Current collateral amount</Typography>
         <Stack direction='row' gap={1}>
-          <Typography variant="p_lg">{currentCollAmount?.toLocaleString()} devUSD</Typography>
+          <Typography variant="p_lg">{currentCollAmount?.toLocaleString()} {ON_USD}</Typography>
           <Typography variant="p_lg" color='#66707e'>(${dollarPrice?.toLocaleString()} USD)</Typography>
         </Stack>
       </StackWithBorder>
@@ -72,7 +73,7 @@ const EditCollateralInput: React.FC<Props> = ({
         <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
           <Typography variant="p">Collateral amount after {editType === 0 ? "deposit" : "withdrawal"}</Typography>
           <Stack direction='row' gap={1}>
-            <Typography variant="p_lg">{isAfterNoCollateralRemaining ? '0' : hasInvalidRatio ? 'N/A' : `${afterCollateralAmount.toLocaleString()} devUSD`}</Typography>
+            <Typography variant="p_lg">{isAfterNoCollateralRemaining ? '0' : hasInvalidRatio ? 'N/A' : `${afterCollateralAmount.toLocaleString()} ${ON_USD}`}</Typography>
             <Typography variant="p_lg" color='#66707e'>{isAfterNoCollateralRemaining ? '(No Collateral Remaining)' : hasInvalidRatio ? 'N/A' : `($${afterCollateralDollarPrice.toLocaleString()})`}</Typography>
           </Stack>
         </StackWithBorder>
