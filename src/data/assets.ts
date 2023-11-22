@@ -223,13 +223,13 @@ export const collateralMapping = (index: number) => {
     let collateralType: number
     switch (index) {
         case Collateral.onUSD:
-            collateralName = 'Clone USD'
+            collateralName = 'USD Coin' //'Clone USD'
             collateralType = Collateral.onUSD
             collateralSymbol = ON_USD
             collateralIcon = '/images/assets/on-usd.svg'
             break
         case Collateral.mockUSDC:
-            collateralName = 'USDC'
+            collateralName = 'USD Coin'
             collateralType = Collateral.mockUSDC
             collateralSymbol = 'USDC'
             collateralIcon = '/images/assets/on-usd.svg'

@@ -83,9 +83,11 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 				return assets.filter((asset) => {
 					if (filter === 'crypto') {
 						return asset.assetType === AssetType.Crypto
-					} else if (filter === 'fx') {
-						return asset.assetType === AssetType.Fx
-					} else if (filter === 'commodities') {
+					}
+					// else if (filter === 'fx') {
+					// 	return asset.assetType === AssetType.Fx
+					// } 
+					else if (filter === 'commodities') {
 						return asset.assetType === AssetType.Commodities
 					}
 					return true;

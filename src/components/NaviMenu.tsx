@@ -24,6 +24,11 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Borrow</Typography>
           </StyledListItemButton>
         </Link>
+        <Link href="/points">
+          <StyledListItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
+            <Typography variant="p_lg">Points</Typography>
+          </StyledListItemButton>
+        </Link>
       </List>
     </Fade>
   )
