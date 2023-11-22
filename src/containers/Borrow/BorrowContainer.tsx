@@ -15,8 +15,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 
 const BorrowContainer = () => {
   const { publicKey } = useWallet()
-  const [assetIndex, setAssetIndex] = useState(0)
-  const [borrowAsset, setBorrowAsset] = useState(ASSETS[0])
+  const [assetIndex, setAssetIndex] = useState(1)
+  const [borrowAsset, setBorrowAsset] = useState(ASSETS[1])
 
   const { data: borrowDetail } = useBorrowDetailQuery({
     userPubKey: publicKey,

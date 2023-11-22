@@ -28,8 +28,8 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 			if (AssetTickers[assetTicker as keyof typeof AssetTickers]) {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
-				setAssetIndex(AssetTickers.euro)
-				router.replace('/comet/assets/euro')
+				setAssetIndex(AssetTickers.gold)
+				router.replace('/comet/assets/gold')
 			}
 		}
 	}, [assetTicker])
@@ -62,7 +62,7 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 					<a href="https://docs.clone.so/system-architecture/comet-liquidity-system" target="_blank" rel="noreferrer">
 						<TipMsg>
 							<Image src={InfoIcon} alt='info' />
-							<Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Comet Liquidity System is built to introduce hyper liquidity to our clAssets. Click to learn more.</Typography>
+							<Typography variant='p' ml='5px' sx={{ cursor: 'pointer' }}>Comet Liquidity System is built to introduce hyper liquidity to clAssets. Click to learn more.</Typography>
 						</TipMsg>
 					</a>
 
