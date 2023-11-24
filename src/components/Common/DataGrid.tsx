@@ -22,6 +22,7 @@ export const enum GridType {
 
 export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, noAutoHeight = false, hasTopBorderRadius = false, onRowClick }) => (
   <DataGrid
+
     sx={{
       width: '100%',
       border: 0,
