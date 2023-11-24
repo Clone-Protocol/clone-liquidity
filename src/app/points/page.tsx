@@ -23,7 +23,7 @@ const Points = () => {
           <Box mt='10px'>
             <MyPointStatus />
 
-            {/* <RankingList /> */}
+            <RankingList />
           </Box>
         </Box>
       </Container>
