@@ -41,6 +41,7 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
 
   const handleDisconnect = async () => {
     setCloneClient(null)
+    enqueueSnackbar('Wallet disconnected')
     await disconnect()
     onHide && onHide()
     // refresh page by force
@@ -60,7 +61,7 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
         </Box>
         <Stack direction='row' spacing={1}>
           <CopyToClipboard text={publicKey!!.toString()}
-            onCopy={() => enqueueSnackbar('Copied address')}>
+            onCopy={() => enqueueSnackbar('Wallet address copied')}>
             <PopupButton><Typography variant='p_sm'>Copy</Typography></PopupButton>
           </CopyToClipboard>
           <PopupButton><Typography variant='p_sm' onClick={handleDisconnect}>Disconnect</Typography></PopupButton>
