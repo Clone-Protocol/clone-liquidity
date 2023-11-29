@@ -8,6 +8,7 @@ import { useAtomValue } from 'jotai'
 import { getCloneClient } from '../baseQuery';
 import { cloneClient } from '../globalAtom'
 import { fetchPythPriceHistory } from '~/utils/pyth'
+import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: CloneClient | null }) => {
 	console.log('fetchAssets')
@@ -69,6 +70,7 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 			change24h,
 			feeRevenue24h: stats.fees,
 			avgAPY24h: stats.apy,
+			status: info.status
 		})
 	}
 	return result
@@ -94,6 +96,7 @@ export interface AssetList {
 	change24h: number
 	feeRevenue24h: number
 	avgAPY24h: number
+	status: Status
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {

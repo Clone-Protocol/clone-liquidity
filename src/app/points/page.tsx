@@ -15,8 +15,8 @@ const Points = () => {
           <Box><Typography fontSize='20px' fontWeight={500}>Points</Typography></Box>
           <Stack direction='row' alignItems='center' gap={1}>
             <Typography variant='p' color='#66707e'>Earn points by participating in Clone ecosystem.</Typography>
-            <Box display='flex' sx={{ cursor: 'pointer' }}>
-              <Typography variant='p' color='#b5fdf9' mr='3px'>Learn more</Typography>
+            <Box display='flex' color='#b5fdf9' sx={{ cursor: 'pointer', ":hover": { color: '#4fe5ff' } }}>
+              <Typography variant='p' mr='3px'>Learn more</Typography>
               <Image src={LearnMoreIcon} alt='learnMore' />
             </Box>
           </Stack>

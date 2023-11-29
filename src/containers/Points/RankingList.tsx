@@ -51,7 +51,7 @@ let columns: GridColDef[] = [
     headerName: `User`,
     flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>{shortenAddress(params.value!.toString())}</Typography>
+      return <Typography variant='p_xlg' sx={{ ':hover': { color: '#4fe5ff' } }}>{shortenAddress(params.value!.toString())}</Typography>
     },
   },
   {
