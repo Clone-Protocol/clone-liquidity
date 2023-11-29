@@ -82,6 +82,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
                   }
                 }}
                 MenuProps={{
+                  disablePortal: true,
                   PaperProps: {
                     sx: {
                       '& .MuiMenu-list': {
@@ -125,6 +126,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
                   },
                 }}
                 MenuProps={{
+                  disablePortal: true,
                   PaperProps: {
                     sx: {
                       '& .MuiMenu-list': {
@@ -166,6 +168,10 @@ const SelectBox = styled(Select)`
   border-radius: 5px;
   background: #000;
   border: 1px solid ${(props) => props.theme.basis.shadowGloom};
+
+  &:hover {
+    border: 1px solid ${(props) => props.theme.basis.liquidityBlue};
+  }
 `
 const SelectMenuItem = styled(MenuItem)`
   display: flex;
