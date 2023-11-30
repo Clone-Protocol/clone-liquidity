@@ -15,6 +15,8 @@ import AddIconOn from 'public/images/add-icon-on.svg'
 import { AddIcon } from '~/components/Common/SvgIcons'
 import BorrowLiquidityStatus from './BorrowLiquidityStatus'
 import { ON_USD } from '~/utils/constants'
+import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
+import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const BorrowPositions = () => {
 	const { publicKey } = useWallet()
@@ -31,7 +33,9 @@ const BorrowPositions = () => {
 	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params,
 	) => {
-		router.push(`/borrow/myliquidity/${params.row.id}`)
+		if (params.row.status !== Status.Frozen) {
+			router.push(`/borrow/myliquidity/${params.row.id}`)
+		}
 	}, [])
 
 	const moveNewBorrowPositionPage = () => {
@@ -132,12 +136,14 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			const isRisk = params.row.collateralRatio - params.row.minCollateralRatio < 20
-			return params.row.borrowed > 0 ?
-				(<Stack direction='column' alignItems='flex-end'>
-					<Box><Typography variant='h4' color={isRisk ? '#ed2525' : '#4fe5ff'}>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></Box>
-					<Box><Typography variant='p_lg' color={isRisk ? '#ed2525' : '#66707e'}>(min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></Box>
-				</Stack>)
-				: (<></>)
+			return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
+				:
+				params.row.borrowed > 0 ?
+					(<Stack direction='column' alignItems='flex-end'>
+						<Box><Typography variant='h4' color={isRisk ? '#ed2525' : '#4fe5ff'}>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></Box>
+						<Box><Typography variant='p_lg' color={isRisk ? '#ed2525' : '#66707e'}>(min {params.row.minCollateralRatio.toLocaleString()}%)</Typography></Box>
+					</Stack>)
+					: (<></>)
 		},
 	},
 ]
