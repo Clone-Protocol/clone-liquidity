@@ -18,7 +18,7 @@ import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import { formatDollarAmount } from '~/utils/numbers'
 import { ON_USD } from '~/utils/constants'
-import { ExtractionButton, FrozenButton, LiquidationButton, PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
+import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const AssetList: React.FC = () => {

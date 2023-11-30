@@ -123,8 +123,7 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 					return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
 				} else if (filter === 'crypto') {
 					return asset.assetType === AssetType.Crypto
-				}
-				else if (filter === 'commodities') {
+				} else if (filter === 'commodities') {
 					return asset.assetType === AssetType.Commodities
 				}
 				return true;

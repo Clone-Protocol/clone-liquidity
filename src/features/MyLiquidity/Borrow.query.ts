@@ -8,6 +8,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral } from '~/data/assets'
+import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchAssets = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return []
@@ -41,6 +42,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 				collateral: info.collateralAmount,
 				collateralRatio: info.collateralRatio * 100,
 				minCollateralRatio: info.minCollateralRatio * 100,
+				status: info.status
 			})
 			i++
 		}
@@ -68,6 +70,7 @@ export interface AssetList {
 	collateral: number | Number
 	collateralRatio: number | Number
 	minCollateralRatio: number | Number
+	status: Status
 }
 
 export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = true }: GetAssetsProps) {
@@ -81,13 +84,11 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 			enabled,
 			select: (assets) => {
 				return assets.filter((asset) => {
-					if (filter === 'crypto') {
+					if (filter === 'all') {
+						return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
+					} else if (filter === 'crypto') {
 						return asset.assetType === AssetType.Crypto
-					}
-					// else if (filter === 'fx') {
-					// 	return asset.assetType === AssetType.Fx
-					// } 
-					else if (filter === 'commodities') {
+					} else if (filter === 'commodities') {
 						return asset.assetType === AssetType.Commodities
 					}
 					return true;
