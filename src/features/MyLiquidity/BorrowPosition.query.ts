@@ -24,6 +24,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2) * 100;
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
   const collateralizationRatio = fromScale(program.clone.collateral.collateralizationRatio, 2)
+  const status = pool.status
 
   return {
     tickerIcon: tickerIcon,
@@ -32,7 +33,8 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
     pythSymbol,
     oPrice,
     minCollateralRatio,
-    collateralizationRatio
+    collateralizationRatio,
+    status
   }
 }
 
@@ -44,6 +46,7 @@ export interface DetailInfo {
   oPrice: number
   minCollateralRatio: number
   collateralizationRatio: number
+  status: Status
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
