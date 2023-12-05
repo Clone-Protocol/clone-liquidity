@@ -19,3 +19,7 @@ export const openConnectWalletGuideDlogState = atom(false)
 export const connectedPubKey = atom('')
 
 export const cloneClient = atom<CloneClient | null>(null)
+
+export const rpcEndpointIndex = atom(0)
+
+export const rpcEndpoint = atom('')
