@@ -8,21 +8,7 @@ import { TransactionState } from '~/hooks/useTransactionState'
 import Slide from '@mui/material/Slide';
 import 'animate.css'
 import { makeStyles } from '@mui/styles'
-
-const getTxnURL = (txHash: string) => {
-  let cluster = (() => {
-    let network = process.env.NEXT_PUBLIC_USE_NETWORK;
-    if (network === "DEV_NET") {
-      return 'devnet-qn1'
-    }
-    if (network === "MAIN_NET") {
-      return 'mainnet-qn1'
-    }
-    throw new Error(`Network ${network} not yet supported!`)
-  })();
-
-  return `https://solana.fm/tx/${txHash}?cluster=${cluster}`
-}
+import { getTxnURL } from '~/data/networks'
 
 const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHash: string }) => {
   const txStatusColor = isSuccess ? '#4fe5ff' : '#ff0084'

@@ -31,7 +31,7 @@ const GeoblockDialog = ({ open, handleClose }: { open: boolean, handleClose: () 
 
 
 const BoxWrapper = styled(Box)`
-  padding: 15px; 
+  padding: 10px 15px; 
   color: #fff;
 `
 export default GeoblockDialog
