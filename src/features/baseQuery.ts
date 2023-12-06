@@ -1,4 +1,3 @@
-import { getNetworkDetailsFromEnv } from 'clone-protocol-sdk/sdk/src/network'
 import { Clone as CloneAccount } from 'clone-protocol-sdk/sdk/generated/clone'
 import { PublicKey, Connection, Commitment } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
@@ -12,9 +11,8 @@ export const funcNoWallet = async () => {
   }
 }
 
-export const getCloneClient = async (wallet?: AnchorWallet) => {
-  const network = getNetworkDetailsFromEnv()
-  const connection = new Connection(network.endpoint)
+export const getCloneClient = async (networkEndpoint: string, wallet?: AnchorWallet) => {
+  const connection = new Connection(networkEndpoint)
 
   let provider
   if (wallet) {
@@ -35,16 +33,17 @@ export const getCloneClient = async (wallet?: AnchorWallet) => {
     );
   }
 
+  const programId = new PublicKey(process.env.NEXT_PUBLIC_CLONE_PROGRAM_ID!);
   const [cloneAccountAddress, _] = PublicKey.findProgramAddressSync(
     [Buffer.from("clone")],
-    network.clone
+    programId
   );
   const cloneAccount = await CloneAccount.fromAccountAddress(
     provider.connection,
     cloneAccountAddress
   );
 
-  const program = new CloneClient(provider, cloneAccount, network.clone)
+  const program = new CloneClient(provider, cloneAccount, programId)
   return {
     cloneClient: program,
     connection,

@@ -18,6 +18,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
   const setAtomRpcEndpoint = useSetAtom(rpcEndpoint)
 
   const [showCustom, setShowCustom] = useState(false)
+  const [customUrl, setCustomUrl] = useState('')
   const [errorCustomMsg, setErrorCustomMsg] = useState(false)
   const RPCs = IS_DEV ? DEV_RPCs : MAIN_RPCs
 
@@ -43,17 +44,16 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
   };
 
   const handleChangeCustomRPCUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const customUrl = event.target.value
+    setCustomUrl(event.target.value)
+  }
+
+  const saveCustomURL = () => {
     // @TODO : validate url with regex
     if (customUrl) {
       setAtomRpcEndpointIndex(CUSTOM_RPC_INDEX);
       setAtomRpcEndpoint(customUrl.trim())
-      //TODO: showing after rpc is connected
-      saveCustomURL()
     }
-  }
 
-  const saveCustomURL = () => {
     try {
       enqueueSnackbar('Connected to Custom RPC')
     } catch (e) {
@@ -160,7 +160,7 @@ const SelectBox = styled(Select)`
   border: 1px solid ${(props) => props.theme.basis.shadowGloom};
 
   &:hover {
-    border: 1px solid ${(props) => props.theme.basis.liquidityBlue};
+    // border: 1px solid ${(props) => props.theme.basis.liquidityBlue};
   }
 `
 const SelectMenuItem = styled(MenuItem)`

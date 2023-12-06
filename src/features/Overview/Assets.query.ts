@@ -6,18 +6,18 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetch24hourVolume, getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { useAtomValue } from 'jotai'
 import { getCloneClient } from '../baseQuery';
-import { cloneClient } from '../globalAtom'
+import { cloneClient, rpcEndpoint } from '../globalAtom'
 import { fetchPythPriceHistory } from '~/utils/pyth'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
-export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: CloneClient | null }) => {
+export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
 	console.log('fetchAssets')
 
 	let program
 	if (mainCloneClient) {
 		program = mainCloneClient
 	} else {
-		const { cloneClient: cloneProgram } = await getCloneClient()
+		const { cloneClient: cloneProgram } = await getCloneClient(networkEndpoint)
 		program = cloneProgram
 	}
 
@@ -101,10 +101,11 @@ export interface AssetList {
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
 	const mainCloneClient = useAtomValue(cloneClient)
+	const networkEndpoint = useAtomValue(rpcEndpoint)
 
 	let queryFunc
 	try {
-		queryFunc = () => fetchAssets({ mainCloneClient })
+		queryFunc = () => fetchAssets({ mainCloneClient, networkEndpoint })
 	} catch (e) {
 		console.error(e)
 		queryFunc = () => []

@@ -3,18 +3,18 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAtomValue } from 'jotai'
 import { getCloneClient } from '../baseQuery';
-import { cloneClient } from '../globalAtom'
+import { cloneClient, rpcEndpoint } from '../globalAtom'
 
-export const fetchRanking = async ({ mainCloneClient }: { mainCloneClient?: CloneClient | null }) => {
+export const fetchRanking = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
   console.log('fetchRanking')
 
-  let program
-  if (mainCloneClient) {
-    program = mainCloneClient
-  } else {
-    const { cloneClient: cloneProgram } = await getCloneClient()
-    program = cloneProgram
-  }
+  // let program
+  // if (mainCloneClient) {
+  //   program = mainCloneClient
+  // } else {
+  //   const { cloneClient: cloneProgram } = await getCloneClient(networkEndpoint)
+  //   program = cloneProgram
+  // }
 
 
   const result: RankingList[] = []
@@ -49,10 +49,11 @@ export interface RankingList {
 
 export function useRankingQuery({ refetchOnMount, enabled = true }: GetProps) {
   const mainCloneClient = useAtomValue(cloneClient)
+  const networkEndpoint = useAtomValue(rpcEndpoint)
 
   let queryFunc
   try {
-    queryFunc = () => fetchRanking({ mainCloneClient })
+    queryFunc = () => fetchRanking({ mainCloneClient, networkEndpoint })
   } catch (e) {
     console.error(e)
     queryFunc = () => []

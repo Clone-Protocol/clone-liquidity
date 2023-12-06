@@ -2,8 +2,12 @@ import { Query, useQuery } from '@tanstack/react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 import { Interval } from 'src/utils/assets'
 import { fetchStatsData, fetchTotalLiquidity as netlifyFetchTotalLiquidity } from 'src/utils/fetch_netlify'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
+import { useAtomValue } from 'jotai'
+import { cloneClient, rpcEndpoint } from '../globalAtom'
+import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
+import { getCloneClient } from '../baseQuery'
 
 export interface ChartElem {
   time: string
@@ -27,7 +31,15 @@ const getTimeFrames = (timeframe: FilterTime): [number, string, string, number] 
   }
 }
 
-export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime }) => {
+export const fetchTotalLiquidity = async ({ mainCloneClient, timeframe, networkEndpoint }: { mainCloneClient?: CloneClient | null, timeframe: FilterTime, networkEndpoint: string }) => {
+
+  let program
+  if (mainCloneClient) {
+    program = mainCloneClient
+  } else {
+    const { cloneClient: cloneProgram } = await getCloneClient(networkEndpoint)
+    program = cloneProgram
+  }
 
   const [_, filter, interval, intervalMs] = getTimeFrames(timeframe)
   const aggregatedData = await netlifyFetchTotalLiquidity(interval, filter)
@@ -50,7 +62,8 @@ export const fetchTotalLiquidity = async ({ timeframe }: { timeframe: FilterTime
     item.value = currentValue
   }
   // Fetch latest record
-  const connection = new Connection(process.env.NEXT_PUBLIC_NETWORK_ENDPOINT!, 'confirmed')
+  // const connection = new Connection(networkEndpoint, 'confirmed')
+  const connection = program.provider.connection
   const poolAddress = PublicKey.findProgramAddressSync(
     [Buffer.from("pools")], new PublicKey(process.env.NEXT_PUBLIC_CLONE_PROGRAM_ID!)
   )[0]
@@ -129,7 +142,9 @@ interface GetProps {
 }
 
 export function useTotalLiquidityQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['totalLiquidity', timeframe], () => fetchTotalLiquidity({ timeframe }), {
+  const mainCloneClient = useAtomValue(cloneClient)
+  const networkEndpoint = useAtomValue(rpcEndpoint)
+  return useQuery(['totalLiquidity', timeframe], () => fetchTotalLiquidity({ mainCloneClient, timeframe, networkEndpoint }), {
     refetchOnMount,
     enabled
   })

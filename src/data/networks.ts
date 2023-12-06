@@ -6,9 +6,6 @@ export const CURRENT_NETWORK = process.env.NEXT_PUBLIC_USE_NETWORK
 export const DEVNET_PUBLIC = 'https://dev-liquidity.clone.so'
 export const MAINNET_PUBLIC = 'https://liquidity.clone.so'
 
-export const DEVNET_SOLANA_PUBLIC = 'https://api.devnet.solana.com'
-export const DEVNET_QUICKNODE = 'https://special-compatible-glitter.solana-devnet.quiknode.pro/e03f765976b529d7a22f3b0058711de825cf18c2/'
-
 export type RPCType = {
   rpc_name: string
   rpc_url: string
@@ -16,32 +13,40 @@ export type RPCType = {
 
 export const DEV_RPCs: RPCType[] = [
   {
-    rpc_name: 'Solana RPC',
-    rpc_url: clusterApiUrl(WalletAdapterNetwork.Devnet) //'https://api.devnet.solana.com',
+    rpc_name: 'Helius RPC',
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELIUS! //clusterApiUrl(WalletAdapterNetwork.Devnet)
   },
   {
     rpc_name: 'Quicknode RPC',
-    rpc_url: 'https://special-compatible-glitter.solana-devnet.quiknode.pro/e03f765976b529d7a22f3b0058711de825cf18c2/',
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
   },
   {
     rpc_name: 'HelloMoon RPC',
-    rpc_url: 'https://special-compatible-glitter.solana-devnet.quiknode.pro/e03f765976b529d7a22f3b0058711de825cf18c2/',
-  }
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELLOMOON!,
+  },
+  // {
+  //   rpc_name: 'Solana Devnet',
+  //   rpc_url: 'https://api.devnet.solana.com',
+  // },
 ]
 
 export const MAIN_RPCs: RPCType[] = [
   {
-    rpc_name: 'Solana RPC',
-    rpc_url: 'https://api.devnet.solana.com',  //clusterApiUrl(WalletAdapterNetwork.Mainnet) 
+    rpc_name: 'Helius RPC',
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELIUS!,  //clusterApiUrl(WalletAdapterNetwork.Mainnet) 
   },
   {
     rpc_name: 'Quicknode RPC',
-    rpc_url: 'https://special-compatible-glitter.solana-devnet.quiknode.pro/e03f765976b529d7a22f3b0058711de825cf18c2/',
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
   },
   {
     rpc_name: 'HelloMoon RPC',
-    rpc_url: 'https://special-compatible-glitter.solana-devnet.quiknode.pro/e03f765976b529d7a22f3b0058711de825cf18c2/',
-  }
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELLOMOON!,
+  },
+  // {
+  //   rpc_name: 'Solana Mainnet',
+  //   rpc_url: 'https://api.devnet.solana.com',
+  // },
 ]
 
 export const CUSTOM_RPC_INDEX = DEV_RPCs.length
