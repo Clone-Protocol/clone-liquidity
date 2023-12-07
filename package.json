@@ -2,7 +2,7 @@
   "name": "clone-liquidity-app",
   "version": "0.1.0",
   "engines": {
-    "node": ">= 14.18.1"
+    "node": ">= 18.18.1"
   },
   "private": true,
   "scripts": {
@@ -27,7 +27,7 @@
     "@mui/styles": "^5.2.3",
     "@mui/x-data-grid": "^5.5.0",
     "@netlify/functions": "^1.6.0",
-    "@netlify/plugin-nextjs": "4.36.1",
+    "@netlify/plugin-nextjs": "4.41.2",
     "@next/bundle-analyzer": "^13.4.6",
     "@pythnetwork/client": "^2.19.0",
     "@solana/buffer-layout": "^4.0.0",
@@ -45,7 +45,7 @@
     "clone-protocol-sdk": "git+https://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:x-oauth-basic@github.com/Clone-Protocol/clone-protocol.git#develop",
     "dayjs": "^1.11.0",
     "jotai": "^2.2.2",
-    "next": "13.3.1",
+    "next": "13.3.4",
     "notistack": "^2.0.3",
     "polished": "^4.2.2",
     "react": "^18.2.0",
