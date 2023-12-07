@@ -48,10 +48,13 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
   }
 
   const saveCustomURL = () => {
-    // @TODO : validate url with regex
-    if (customUrl) {
+    const urlRegex = /^(http:\/\/|https:\/\/).+/;
+    if (customUrl && urlRegex.test(customUrl)) {
       setAtomRpcEndpointIndex(CUSTOM_RPC_INDEX);
       setAtomRpcEndpoint(customUrl.trim())
+      setErrorCustomMsg(false)
+    } else {
+      setErrorCustomMsg(true)
     }
 
     try {
@@ -82,55 +85,57 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
         <DialogContent sx={{ backgroundColor: '#000', width: '375px' }}>
           <BoxWrapper>
             <Typography variant='h3' fontWeight={500}>App Settings</Typography>
-            <Box my='20px'>
-              <Box><Typography variant="p_lg">RPC Endpoint</Typography></Box>
-              <Box lineHeight={1.1} mb='7px'><Typography variant="p" color="#8988a3">At anytime, choose the fastest RPC for most optimal experience!</Typography></Box>
-              <SelectBox
-                labelId="rpc-select-label"
-                id="rpc-select"
-                value={atomRpcEndpointIndex}
-                onChange={handleChangeRpcEndpoint}
-                sx={{
-                  padding: '0px',
-                  '& .MuiSelect-icon': {
-                    color: '#fff'
-                  }
-                }}
-                MenuProps={{
-                  disablePortal: true,
-                  PaperProps: {
-                    sx: {
-                      '& .MuiMenu-list': {
-                        padding: 0,
-                        '&:hover': {
-                          backgroundColor: '#000',
+            {!IS_DEV &&
+              <Box my='20px'>
+                <Box><Typography variant="p_lg">RPC Endpoint</Typography></Box>
+                <Box lineHeight={1.1} mb='7px'><Typography variant="p" color="#8988a3">At anytime, choose the fastest RPC for most optimal experience!</Typography></Box>
+                <SelectBox
+                  labelId="rpc-select-label"
+                  id="rpc-select"
+                  value={atomRpcEndpointIndex}
+                  onChange={handleChangeRpcEndpoint}
+                  sx={{
+                    padding: '0px',
+                    '& .MuiSelect-icon': {
+                      color: '#fff'
+                    }
+                  }}
+                  MenuProps={{
+                    disablePortal: true,
+                    PaperProps: {
+                      sx: {
+                        '& .MuiMenu-list': {
+                          padding: 0,
+                          '&:hover': {
+                            backgroundColor: '#000',
+                          }
+                        },
+                        '& .Mui-selected': {
+                          backgroundColor: '#000 !important',
                         }
-                      },
-                      '& .Mui-selected': {
-                        backgroundColor: '#000 !important',
                       }
                     }
-                  }
-                }}
-              >
-                {RPCs.map((rpc, index) => (
-                  <SelectMenuItem key={index} value={index}>
-                    <Stack direction='row' alignItems='center' gap={1}>
-                      <Typography variant='p'>{rpc.rpc_name}</Typography>
-                      {/* <StatusIndicator status={IndicatorStatus.Green} speed={134.1} /> */}
-                    </Stack>
-                  </SelectMenuItem>
-                ))}
-                <SelectMenuItem value={CUSTOM_RPC_INDEX}><Typography variant='p'>Custom</Typography></SelectMenuItem>
-              </SelectBox>
-              {showCustom &&
-                <Box>
-                  <StyledInput placeholder="Enter custom RPC URL" disableUnderline onChange={handleChangeCustomRPCUrl} />
-                  {errorCustomMsg && <Box><Typography variant='p' color='#ed2525'>Custom RPC Connection Failed. Try different URL.</Typography></Box>}
-                  <SaveBtn onClick={saveCustomURL}>Save</SaveBtn>
-                </Box>
-              }
-            </Box>
+                  }}
+                >
+                  {RPCs.map((rpc, index) => (
+                    <SelectMenuItem key={index} value={index}>
+                      <Stack direction='row' alignItems='center' gap={1}>
+                        <Typography variant='p'>{rpc.rpc_name}</Typography>
+                        {/* <StatusIndicator status={IndicatorStatus.Green} speed={134.1} /> */}
+                      </Stack>
+                    </SelectMenuItem>
+                  ))}
+                  <SelectMenuItem value={CUSTOM_RPC_INDEX}><Typography variant='p'>Custom</Typography></SelectMenuItem>
+                </SelectBox>
+                {showCustom &&
+                  <Box>
+                    <StyledInput placeholder="Enter custom RPC URL" disableUnderline onChange={handleChangeCustomRPCUrl} />
+                    {errorCustomMsg && <Box><Typography variant='p' color='#ed2525'>Custom RPC Connection Failed. Try different URL.</Typography></Box>}
+                    <SaveBtn onClick={saveCustomURL}>Save</SaveBtn>
+                  </Box>
+                }
+              </Box>
+            }
             <Box my='20px'>
               <Box><Typography variant="p_lg">Network Switching</Typography></Box>
               <Box lineHeight={1.1} mb='10px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more about it <a href="#" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>

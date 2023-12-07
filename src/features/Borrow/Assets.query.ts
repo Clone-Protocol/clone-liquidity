@@ -4,8 +4,9 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { AssetType, assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
+import { Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { showPoolStatus } from '~/components/Common/PoolStatus'
 
 const fetchIassetBalances = async (program: CloneClient, pools: Pools): Promise<number[]> => {
 	const balancesQueries = await Promise.allSettled(
@@ -39,6 +40,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	const result: AssetList[] = []
 	for (let index = 0; index < pools.pools.length; index++) {
 		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
+		const status = pools.pools[index].status
 		result.push({
 			id: index,
 			tickerName: tickerName,
@@ -46,6 +48,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 			tickerIcon: tickerIcon,
 			assetType: assetType,
 			balance: balances[index],
+			status
 		})
 	}
 	return result
@@ -58,13 +61,14 @@ interface GetAssetsProps {
 	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
 }
 
-export interface AssetList {
+interface AssetList {
 	id: number
 	tickerName: string
 	tickerSymbol: string
 	tickerIcon: string
 	assetType: number
 	balance: number
+	status: Status
 }
 
 export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetchOnMount }: GetAssetsProps) {
@@ -79,7 +83,7 @@ export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetch
 				let filteredAssets = assets
 				if (filteredAssets) {
 					filteredAssets = filteredAssets.filter((asset) => {
-						return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
+						return !showPoolStatus(asset.status) && (asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities)
 					})
 				}
 				if (filteredAssets && searchTerm && searchTerm.length > 0) {
