@@ -82,3 +82,22 @@ export const fetchFromSupabaseNotice = async () => {
     return await axios.get(`/.netlify/functions/supabase-notice-fetch`)
 }
 
+export type UserPointsView = {
+    rank: number
+    user_address: string
+    trading_points: number
+    lp_points: number
+    social_points: number
+    total_points: number
+    name?: string
+  }
+
+export const fetchUserPoints = async (userAddress?: string): Promise<UserPointsView[]> => {
+    let url = `/.netlify/functions/get-user-points`;
+    if (userAddress) {
+        url += `?userAddress=${userAddress}`;
+    }
+    const response = await axios.get(url)
+    return response.data as UserPointsView[]
+}
+
