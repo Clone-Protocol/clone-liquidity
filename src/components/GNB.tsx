@@ -22,6 +22,7 @@ import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
 import SettingDialog from './Common/SettingDialog'
 import { IS_DEV } from '~/data/networks'
+import { fetchGeoBlock } from '~/utils/fetch_netlify'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -95,11 +96,19 @@ const RightMenu: React.FC = () => {
 		setAnchorEl(event.currentTarget);
 	}, [])
 
-	const handleWalletClick = () => {
+	const handleWalletClick = async () => {
 		try {
 			if (!connected) {
 				if (!wallet) {
-					setOpen(true)
+					// validate geoblock
+					const geoblock = await fetchGeoBlock()
+					console.log('geo', geoblock)
+
+					if (geoblock.result) {
+						setOpen(true)
+					} else {
+						setShowGeoblock(true)
+					}
 				} else {
 					connect()
 				}
