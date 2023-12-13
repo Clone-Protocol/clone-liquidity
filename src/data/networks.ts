@@ -1,6 +1,3 @@
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base"
-import { clusterApiUrl } from "@solana/web3.js"
-
 export const CURRENT_NETWORK = process.env.NEXT_PUBLIC_USE_NETWORK
 
 export const DEVNET_PUBLIC = 'https://dev-liquidity.clone.so'
