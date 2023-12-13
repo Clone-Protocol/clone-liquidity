@@ -15,3 +15,15 @@ export const RankIndex = ({ rank }: { rank: number }) => {
     return <Typography variant='p_xlg'>{rank}</Typography>
   }
 }
+
+export const RankIndexForStatus = ({ rank }: { rank: number }) => {
+  if (rank === 1) {
+    return <Image src={RankingIcon1} alt="ranking" />
+  } else if (rank === 2) {
+    return <Image src={RankingIcon2} alt="ranking" />
+  } else if (rank === 3) {
+    return <Image src={RankingIcon3} alt="ranking" />
+  } else {
+    return <Typography variant='h3' fontWeight={500}>{rank ? rank : '-'}</Typography>
+  }
+}

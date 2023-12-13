@@ -2,7 +2,7 @@ import { styled } from '@mui/system'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { RankIndex } from '~/components/Points/RankItems'
+import { RankIndexForStatus } from '~/components/Points/RankItems'
 import { usePointStatusQuery } from '~/features/Points/PointStatus.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
@@ -26,7 +26,7 @@ const MyPointStatus = () => {
             <Typography variant='p_lg'>Global Rank</Typography>
           </Box>
           <StatusValue>
-            {infos && <RankIndex rank={infos.myRank} />}
+            <RankIndexForStatus rank={infos?.myRank} />
           </StatusValue>
         </BorderBox>
         <BorderBox width='350px' position='relative'>
@@ -36,7 +36,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='h3' fontWeight={500}>
-              {infos && infos.totalPoints.toLocaleString()}
+              {infos ? infos.totalPoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
         </BorderBox>
@@ -49,7 +49,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.lpPoints.toLocaleString()}
+              {infos ? infos.lpPoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
         </BorderBox>
@@ -60,7 +60,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.tradePoints.toLocaleString()}
+              {infos ? infos.tradePoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
         </BorderBox>
@@ -71,7 +71,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.socialPoints.toLocaleString()}
+              {infos ? infos.socialPoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
         </BorderBox>

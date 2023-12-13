@@ -102,8 +102,7 @@ const RightMenu: React.FC = () => {
 				if (!wallet) {
 					// validate geoblock
 					const geoblock = await fetchGeoBlock()
-					console.log('geo', geoblock)
-
+					// console.log('geo', geoblock)
 					if (geoblock.result) {
 						setOpen(true)
 					} else {
