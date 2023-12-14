@@ -12,16 +12,19 @@ import { DISCORD_URL, OFFICIAL_WEB, TWITTER_URL, MARKETS_APP } from '~/data/soci
 const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   return (
     <>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={324}>
+      <Dialog open={open} TransitionComponent={FadeTransition} maxWidth={324}>
         <DialogContent sx={{ backgroundColor: '#000e22', border: '1px solid #414e66', borderRadius: '10px', padding: '15px', width: '324px' }}>
           <BoxWrapper>
-            <Image src={OctagonIcon} width={55} height={55} alt='alert-octagon-outline' />
+            <Image src={OctagonIcon} width={73} height={73} alt='alert-octagon-outline' />
 
-            <Box maxWidth='280px' lineHeight={1} margin='0 auto' mt='15px'><Typography variant='p_lg'>Unleash the power of Clone Liquidity beta app from larger screen</Typography></Box>
+            <Box maxWidth='280px' lineHeight={1} margin='0 auto' mt='15px'><Typography variant='p_lg'>Unleash the power of Clone Liquidity app from larger screen</Typography></Box>
             <Box width='260px' lineHeight={1} margin='0 auto' my='20px'>
               <Typography variant='p' color='#989898'>
-                Clone Liquidity Beta app contains advanced interface that is not available on smaller screens. Please enlarge your screen or visit us from a device with a larger screen. We apologize for any inconvenience!
+                Clone Liquidity app contains advanced interface that is not optimal on smaller screens. Please enlarge your screen or visit us from a device with a larger screen for optimal experience.
               </Typography>
+            </Box>
+            <Box onClick={handleClose} mb='20px' sx={{ color: '#989898', textDecoration: 'underline', cursor: 'pointer' }}>
+              <Typography variant='p'>Proceed Anyways</Typography>
             </Box>
             <Stack direction='row' justifyContent='center' gap={2}>
               <a href={OFFICIAL_WEB} target="_blank" rel="noreferrer"><Image src={HomeIcon} alt='home' /></a>
