@@ -1,7 +1,9 @@
 'use client'
 import { styled } from '@mui/system'
-import { Container, Stack, Typography } from '@mui/material'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Container, Stack, Box, Typography } from '@mui/material'
+import { FailedStatusBox } from '~/components/Common/TransactionStateSnackbar';
+import SupportDiscordIcon from 'public/images/support-button-discord.svg'
+import Image from 'next/image';
 
 export default function GlobalError({
   error,
@@ -13,8 +15,10 @@ export default function GlobalError({
   return (
     <StyledSection>
       <Container>
-        <Stack direction='row' justifyContent='center' alignItems='center' spacing={2} border='1px solid #3a3a3a' marginTop='200px' padding='20px'>
-          <WarningAmberIcon /> <Typography variant="p_lg">{`We're sorry, but we're experiencing technical difficulties at the moment. Our team is working to fix the issue. We apologize for any inconvenience caused.`}</Typography>
+        <Stack width='300px' direction='column' alignItems='center' justifyContent='center' margin='0 auto' mt='130px'>
+          <Box mb='10px'><Typography fontSize='70px' fontWeight={600} color='#b5fdf9'>{':('}</Typography></Box>
+          <Typography variant="p_lg" textAlign='center'>{`We’re sorry, an unexpected error has occurred. If the error persists after reloading, please join us on Discord for support.`}</Typography>
+          <a href="https://discord.gg/BXAeVWdmmD" target='_blank' rel="noreferrer"><FailedStatusBox width='74px' mt='15px'><Image src={SupportDiscordIcon} alt='discord' /> <Typography variant='p'>Discord</Typography></FailedStatusBox></a>
         </Stack>
       </Container>
     </StyledSection>

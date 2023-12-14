@@ -85,7 +85,7 @@ let columns: GridColDef[] = [
 	{
 		field: 'iAsset',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'super-app-theme--cell ',
 		headerName: 'clAsset Pools',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -96,8 +96,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'price',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: `Price (${ON_USD})`,
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -108,8 +108,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: '24hChange',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: '24h Change',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -128,8 +128,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'liquidity',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: 'Liquidity',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -140,8 +140,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: '24hVolume',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: 'Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -152,8 +152,8 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'avgAPY24h',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: 'APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
