@@ -95,6 +95,17 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
                     padding: '0px',
                     '& .MuiSelect-icon': {
                       color: '#fff'
+                    },
+                    "&.MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        border: '1px solid #343441',
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#4fe5ff"
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#4fe5ff"
+                      }
                     }
                   }}
                   MenuProps={{
@@ -160,11 +171,6 @@ const SelectBox = styled(Select)`
   padding: 10px;
   border-radius: 5px;
   background: #000;
-  border: 1px solid ${(props) => props.theme.basis.shadowGloom};
-
-  &:hover {
-    // border: 1px solid ${(props) => props.theme.basis.liquidityBlue};
-  }
 `
 const SelectMenuItem = styled(MenuItem)`
   display: flex;
