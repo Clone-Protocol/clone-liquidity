@@ -51,9 +51,7 @@ let columns: GridColDef[] = [
     headerName: `User`,
     flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
-      return <a href={`https://solana.fm/address/${params.value!.toString()}`} target='_blank' rel='noreferrer' style={{ color: '#fff' }}>
-        <Typography variant='p_xlg' sx={{ ':hover': { color: '#4fe5ff' } }}>{params.value?.length > 10 ? shortenAddress(params.value!.toString()) : params.value}</Typography>
-      </a>
+      return <Typography variant='p_xlg' sx={{ ':hover': { color: '#4fe5ff' } }}>{shortenAddress(params.value!.toString())}</Typography>
     },
   },
   {

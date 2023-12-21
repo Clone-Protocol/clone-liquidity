@@ -67,7 +67,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
           <Box width='184px'>
-            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>{IS_DEV && 'Devnet'} Clone Markets</Typography></Stack>
+            <Stack direction='row' justifyContent='space-between' alignItems='center'><Typography variant='p'>Clone Markets</Typography></Stack>
             <Box><Typography variant='p_sm' color='#989898'>Trade all kinds of clAssets</Typography></Box>
           </Box>
         </HoverStack>
