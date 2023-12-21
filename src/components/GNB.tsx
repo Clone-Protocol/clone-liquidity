@@ -3,7 +3,6 @@ import { useAtom, useSetAtom } from 'jotai'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.png'
-import logoIconDev from 'public/images/logo-liquidity-devnet.png'
 import walletIcon from 'public/images/wallet-icon-small.svg'
 import SettingsIcon from 'public/images/buttons-more-menu-settings.svg'
 import { withCsrOnly } from '~/hocs/CsrOnly'
@@ -47,7 +46,7 @@ const GNB: React.FC = () => {
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Image src={IS_DEV ? logoIconDev : logoIcon} width={IS_DEV ? 145 : 100} height={IS_DEV ? 30 : 26} alt="clone" />
+						<Image src={logoIcon} width={100} height={26} alt="clone" />
 						<Box ml='60px'><NaviMenu /></Box>
 						<RightMenu />
 					</Toolbar>

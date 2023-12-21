@@ -2,7 +2,6 @@ import { usePathname } from 'next/navigation'
 import { List, ListItemButton, Fade, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Link from 'next/link'
-import { IS_DEV } from '~/data/networks'
 
 const NaviMenu = () => {
   const pathname = usePathname()
@@ -31,13 +30,11 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Bridge</Typography>
           </StyledListItemButton>
         </Link> */}
-        {!IS_DEV &&
-          <Link href="/points">
-            <StyledListItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
-              <Typography variant="p_lg">Points</Typography>
-            </StyledListItemButton>
-          </Link>
-        }
+        <Link href="/points">
+          <StyledListItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
+            <Typography variant="p_lg">Points</Typography>
+          </StyledListItemButton>
+        </Link>
       </List>
     </Fade>
   )
