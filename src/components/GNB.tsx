@@ -11,7 +11,7 @@ import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
-import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
+import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
@@ -22,7 +22,6 @@ import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
 import SettingDialog from './Common/SettingDialog'
 import { useSnackbar } from 'notistack'
-import { IS_DEV } from '~/data/networks'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -126,11 +125,9 @@ const RightMenu: React.FC = () => {
 				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
-				{IS_DEV &&
-					<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
-						<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
-					</HeaderButton>
-				}
+				{/* <HeaderButton onClick={() => setOpenTokenFaucet(true)}>
+					<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
+				</HeaderButton> */}
 				<HeaderButton sx={{ fontSize: '16px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
 				<HeaderButton onClick={() => setOpenSettingDlog(true)}><Image src={SettingsIcon} alt="settings" /></HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />

@@ -8,7 +8,6 @@ import DiscordIcon from 'public/images/more/discord.svg'
 import { Stack } from '@mui/system';
 import { CAREER_URL, DISCORD_URL, DOCS_URL, MARKETS_APP, OFFICIAL_WEB, TWITTER_URL } from '~/data/social';
 import { NETWORK_NAME } from '~/utils/constants'
-import { IS_DEV } from '~/data/networks'
 
 interface Props {
   anchorEl: null | HTMLElement
@@ -43,16 +42,14 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
   >
-    {IS_DEV &&
-      <StyledMenuItem onClick={onShowTokenFaucet}>
-        <HoverStack direction='row' alignItems='center'>
-          <Box width='184px'>
-            <div><Typography variant='p'>Token Faucet</Typography></div>
-            <div><Typography variant='p_sm' color='#989898'>Get started on Solana {NETWORK_NAME}</Typography></div>
-          </Box>
-        </HoverStack>
-      </StyledMenuItem>
-    }
+    {/* <StyledMenuItem onClick={onShowTokenFaucet}>
+      <HoverStack direction='row' alignItems='center'>
+        <Box width='184px'>
+          <div><Typography variant='p'>Token Faucet</Typography></div>
+          <div><Typography variant='p_sm' color='#989898'>Get started on Solana {NETWORK_NAME}</Typography></div>
+        </Box>
+      </HoverStack>
+    </StyledMenuItem> */}
     <a href={DOCS_URL} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>

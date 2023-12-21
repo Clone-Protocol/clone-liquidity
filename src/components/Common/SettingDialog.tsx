@@ -5,52 +5,36 @@ import { FadeTransition } from '~/components/Common/Dialog'
 import { CloseButton } from '~/components/Common/CommonButtons'
 import { IndicatorGreen, IndicatorRed, IndicatorStatus, IndicatorYellow } from './StatusIndicator';
 import { useSnackbar } from 'notistack';
-import IconShare from 'public/images/icon-share.svg'
-import Image from 'next/image';
-import { CUSTOM_RPC_INDEX, DEVNET_PUBLIC, DEV_RPCs, IS_DEV, MAINNET_PUBLIC, MAIN_RPCs } from '~/data/networks';
-import { useAtom, useSetAtom } from 'jotai';
-import { rpcEndpoint, rpcEndpointIndex } from '~/features/globalAtom';
 
-
+const RPCs = [
+  'Helius RPC',
+  'Quicknode RPC',
+  'HelloMoon RPC',
+  'Custom'
+]
 const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
-  const [atomRpcEndpointIndex, setAtomRpcEndpointIndex] = useAtom(rpcEndpointIndex)
-  const setAtomRpcEndpoint = useSetAtom(rpcEndpoint)
-
+  const [rpcEndpointIndex, setRpcEndpointIndex] = useState('0')
+  const [networkIndex, setNetworkIndex] = useState('devnet')
   const [showCustom, setShowCustom] = useState(false)
   const [errorCustomMsg, setErrorCustomMsg] = useState(false)
-  const RPCs = IS_DEV ? DEV_RPCs : MAIN_RPCs
 
   const handleChangeRpcEndpoint = (event: SelectChangeEvent) => {
-    const rpcIndex = Number(event.target.value)
-    setShowCustom(rpcIndex == CUSTOM_RPC_INDEX)
+    setRpcEndpointIndex(event.target.value as string);
+    setShowCustom(event.target.value == '3')
 
-    if (rpcIndex != CUSTOM_RPC_INDEX) {
-      setAtomRpcEndpointIndex(rpcIndex);
-      setAtomRpcEndpoint(RPCs[rpcIndex].rpc_url)
-
-      //TODO: showing after rpc is connected
-      enqueueSnackbar(`Connected to ${RPCs[rpcIndex].rpc_name}`)
+    //TODO: showing after rpc is connected
+    if (event.target.value != '3') {
+      enqueueSnackbar(`Connected to ${RPCs[parseInt(event.target.value)]}`)
     }
   };
 
-  const goNetwork = () => {
-    if (IS_DEV) {
-      window.open(MAINNET_PUBLIC, '_blank')
-    } else {
-      window.open(DEVNET_PUBLIC, '_blank')
-    }
+  const handleChangeNetwork = (event: SelectChangeEvent) => {
+    setNetworkIndex(event.target.value as string);
   };
 
   const handleChangeCustomRPCUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const customUrl = event.target.value
-    // @TODO : validate url with regex
-    if (customUrl) {
-      setAtomRpcEndpointIndex(CUSTOM_RPC_INDEX);
-      setAtomRpcEndpoint(customUrl.trim())
-      //TODO: showing after rpc is connected
-      saveCustomURL()
-    }
+
   }
 
   const saveCustomURL = () => {
@@ -62,6 +46,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
   }
 
   const StatusIndicator = ({ status, speed }: { status: IndicatorStatus, speed: number }) => {
+
     return (
       <Stack direction='row' alignItems='center' gap={1}>
         <Box><Typography variant='p_sm' color='#c5c7d9'>{speed.toFixed(1)}ms</Typography></Box>
@@ -88,7 +73,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
               <SelectBox
                 labelId="rpc-select-label"
                 id="rpc-select"
-                value={atomRpcEndpointIndex}
+                value={rpcEndpointIndex}
                 onChange={handleChangeRpcEndpoint}
                 sx={{
                   padding: '0px',
@@ -113,15 +98,10 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
                   }
                 }}
               >
-                {RPCs.map((rpc, index) => (
-                  <SelectMenuItem key={index} value={index}>
-                    <Stack direction='row' alignItems='center' gap={1}>
-                      <Typography variant='p'>{rpc.rpc_name}</Typography>
-                      {/* <StatusIndicator status={IndicatorStatus.Green} speed={134.1} /> */}
-                    </Stack>
-                  </SelectMenuItem>
-                ))}
-                <SelectMenuItem value={CUSTOM_RPC_INDEX}><Typography variant='p'>Custom</Typography></SelectMenuItem>
+                <SelectMenuItem value={0}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>{RPCs[0]}</Typography> <StatusIndicator status={IndicatorStatus.Green} speed={134.1} /></Stack></SelectMenuItem>
+                <SelectMenuItem value={1}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>{RPCs[1]}</Typography> <StatusIndicator status={IndicatorStatus.Yellow} speed={84.1} /></Stack></SelectMenuItem>
+                <SelectMenuItem value={2}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>{RPCs[2]}</Typography> <StatusIndicator status={IndicatorStatus.Red} speed={34.1} /></Stack></SelectMenuItem>
+                <SelectMenuItem value={3}><Typography variant='p'>{RPCs[3]}</Typography></SelectMenuItem>
               </SelectBox>
               {showCustom &&
                 <Box>
@@ -132,9 +112,39 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
               }
             </Box>
             <Box my='20px'>
-              <Box><Typography variant="p_lg">Network Switching</Typography></Box>
-              <Box lineHeight={1.1} mb='10px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more about it <a href="#" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>
-              <ChangeNetworkButton onClick={goNetwork}><Typography variant='p'>Go to Solana {IS_DEV ? 'Mainnet' : 'Devnet'}</Typography> <Image src={IconShare} alt='icon-share' /></ChangeNetworkButton>
+              <Box><Typography variant="p_lg">Network Setting</Typography></Box>
+              <Box lineHeight={1.1} mb='7px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more about it <a href="#" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>
+              <SelectBox
+                labelId="network-select-label"
+                id="network-select"
+                value={networkIndex}
+                onChange={handleChangeNetwork}
+                sx={{
+                  padding: '0px',
+                  '& .MuiSelect-icon': {
+                    color: '#fff'
+                  },
+                }}
+                MenuProps={{
+                  disablePortal: true,
+                  PaperProps: {
+                    sx: {
+                      '& .MuiMenu-list': {
+                        padding: 0,
+                        '&:hover': {
+                          backgroundColor: '#000',
+                        }
+                      },
+                      '& .Mui-selected': {
+                        backgroundColor: '#000 !important',
+                      },
+                    }
+                  }
+                }}
+              >
+                <SelectMenuItem value={'mainnet'}><Typography variant='p'>Solana Mainnet</Typography></SelectMenuItem>
+                <SelectMenuItem value={'devnet'}><Typography variant='p'>Solana Devnet</Typography></SelectMenuItem>
+              </SelectBox>
             </Box>
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
               <CloseButton handleClose={handleClose} />
@@ -192,21 +202,6 @@ const StyledInput = styled(Input)`
   
   &:hover {
     border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
-  }
-`
-const ChangeNetworkButton = styled(Box)`
-  width: 209px;
-  height: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 6px 11px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.15);
   }
 `
 const SaveBtn = styled(Button)`

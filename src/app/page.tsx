@@ -5,7 +5,6 @@ import GetUSDiBadge from '~/components/Overview/GetUSDiBadge'
 import MainChart from '~/containers/Overview/MainChart'
 import AssetList from '~/containers/Overview/AssetList'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { IS_DEV } from '~/data/networks'
 
 const Overview = () => {
   const { publicKey } = useWallet()
@@ -13,7 +12,7 @@ const Overview = () => {
     <div>
       <StyledSection>
         <Box sx={{ maxWidth: '1270px' }} margin='0 auto'>
-          {IS_DEV && publicKey &&
+          {publicKey &&
             <GetUSDiBadge />
           }
           <Box mt='25px'>
