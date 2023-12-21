@@ -23,7 +23,7 @@ const MyPointStatus = () => {
       <Stack direction='row' gap={2}>
         <BorderBox width='176px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p_lg'>Global Rank</Typography>
+            <Typography variant='p'>Global Rank</Typography>
           </Box>
           <StatusValue>
             {infos && <RankIndex rank={infos.myRank} />}
@@ -31,11 +31,11 @@ const MyPointStatus = () => {
         </BorderBox>
         <BorderBox width='350px' position='relative'>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p_lg'>Your Total Points</Typography>
+            <Typography variant='p'>Your Total Points</Typography>
             <InfoTooltip title={TooltipTexts.points.totalPoints} color='#66707e' />
           </Box>
           <StatusValue>
-            <Typography variant='h3' fontWeight={500}>
+            <Typography variant='p_xlg'>
               {infos && infos.totalPoints.toLocaleString()}
             </Typography>
           </StatusValue>
@@ -78,10 +78,7 @@ const MyPointStatus = () => {
       </Stack>
       {!publicKey && <>
         <OpaqueDefault />
-        <Box position='absolute' top='20px' marginY='55px' marginX='213px'>
-          <Box display='flex' justifyContent='center' mb='7px'><Typography variant='p_lg'>To see your points: </Typography></Box>
-          <ConnectWallet onClick={() => setOpen(true)}><Typography variant='p_xlg'>Connect Wallet</Typography></ConnectWallet>
-        </Box>
+        <ConnectWallet onClick={() => setOpen(true)}><Typography variant='p_xlg'>Connect Wallet</Typography></ConnectWallet>
       </>}
     </Wrapper>
   )
@@ -121,8 +118,11 @@ const ClickBox = styled(Box)`
   color: ${(props) => props.theme.basis.slug};
 `
 const ConnectWallet = styled(Button)`
-  width: 266px;
+  position: absolute;
+  top: 20px;
+  width: 360px;
   height: 52px;
+  margin: 87px 213px;
   object-fit: contain;
   border-radius: 5px;
   box-shadow: 0 0 15px 0 #005874;
