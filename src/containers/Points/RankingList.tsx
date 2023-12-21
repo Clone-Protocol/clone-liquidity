@@ -4,14 +4,16 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useState } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import { Grid } from '~/components/Common/DataGrid'
+import { useAssetsQuery } from '~/features/Overview/Assets.query'
+import { Grid, CellTicker } from '~/components/Common/DataGrid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
+import { formatDollarAmount } from '~/utils/numbers'
 import { RankIndex } from '~/components/Points/RankItems'
-import { shortenAddress } from '~/utils/address'
-import { useRankingQuery } from '~/features/Points/Ranking.query'
 
 const RankingList: React.FC = () => {
-  const { data: rankList } = useRankingQuery({
+  const { data: assets } = useAssetsQuery({
+    filter: 'all',
+    searchTerm: '',
     refetchOnMount: true,
     enabled: true
   })
@@ -20,7 +22,7 @@ const RankingList: React.FC = () => {
     <PanelBox>
       <Grid
         headers={columns}
-        rows={rankList || []}
+        rows={assets || []}
         minHeight={110}
         hasTopBorderRadius={true}
         customNoRowsOverlay={() => CustomNoRowsOverlay('No Rank')}
@@ -31,16 +33,14 @@ const RankingList: React.FC = () => {
 
 let columns: GridColDef[] = [
   {
-    field: 'id',
+    field: 'ranking',
     headerClassName: 'super-app-theme--header',
     cellClassName: 'super-app-theme--cell',
     headerName: 'Ranking',
-    flex: 0,
+    flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        <Box display='flex' justifyContent='center' width='50px'>
-          <RankIndex rank={params.value} />
-        </Box>
+        <CellTicker tickerIcon={params.row.tickerIcon} tickerName={params.row.tickerName} tickerSymbol={params.row.tickerSymbol} />
       )
     },
   },
@@ -49,9 +49,9 @@ let columns: GridColDef[] = [
     headerClassName: 'super-app-theme--header',
     cellClassName: 'super-app-theme--cell',
     headerName: `User`,
-    flex: 2,
+    flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>{shortenAddress(params.value!.toString())}</Typography>
+      return <Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
     },
   },
   {
@@ -61,7 +61,7 @@ let columns: GridColDef[] = [
     headerName: 'LP Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
     },
   },
   {
@@ -71,7 +71,7 @@ let columns: GridColDef[] = [
     headerName: 'Trade Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.value), 3)}</Typography>
     },
   },
   {
@@ -81,7 +81,7 @@ let columns: GridColDef[] = [
     headerName: 'Social Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.row.volume24h), 3)}</Typography>
     },
   },
   {
@@ -91,7 +91,7 @@ let columns: GridColDef[] = [
     headerName: 'Total Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
     },
   },
 ]
