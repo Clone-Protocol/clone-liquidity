@@ -21,6 +21,7 @@ import { isMobile } from 'react-device-detect';
 import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
 import SettingDialog from './Common/SettingDialog'
+import { useSnackbar } from 'notistack'
 import { IS_DEV } from '~/data/networks'
 
 const GNB: React.FC = () => {
