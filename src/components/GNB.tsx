@@ -61,11 +61,9 @@ const RightMenu: React.FC = () => {
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useAtom(declinedAccountCreationState)
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useAtom(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
-	const [showGeoblock, setShowGeoblock] = useState(false)
 
 	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
-	const GeoblockDialog = dynamic(() => import('~/components/Common/GeoblockDialog'), { ssr: false })
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
@@ -157,7 +155,6 @@ const RightMenu: React.FC = () => {
 			/>
 
 			<ConnectWalletGuideDialog open={openConnectWalletGuideDlog} connectWallet={handleWalletClick} handleClose={() => setOpenConnectWalletGuideDialog(false)} />
-			{showGeoblock && <GeoblockDialog open={showGeoblock} handleClose={() => setShowGeoblock(false)} />}
 		</>
 	)
 }
