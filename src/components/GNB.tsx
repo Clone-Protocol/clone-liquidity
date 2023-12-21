@@ -52,6 +52,7 @@ export default withCsrOnly(GNB)
 
 const RightMenu: React.FC = () => {
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
+	const { enqueueSnackbar } = useSnackbar()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
@@ -70,6 +71,12 @@ const RightMenu: React.FC = () => {
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
+
+	useEffect(() => {
+		if (connected) {
+			enqueueSnackbar('Wallet connected')
+		}
+	}, [connected])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
