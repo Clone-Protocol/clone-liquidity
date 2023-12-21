@@ -20,7 +20,6 @@ import NaviMenu from './NaviMenu'
 import { isMobile } from 'react-device-detect';
 import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
-import SettingDialog from './Common/SettingDialog'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -53,7 +52,6 @@ const RightMenu: React.FC = () => {
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
-	const [openSettingDlog, setOpenSettingDlog] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useAtom(createAccountDialogState)
@@ -121,7 +119,7 @@ const RightMenu: React.FC = () => {
 					<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
 				</HeaderButton> */}
 				<HeaderButton sx={{ fontSize: '16px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
-				<HeaderButton onClick={() => setOpenSettingDlog(true)}><Image src={SettingsIcon} alt="settings" /></HeaderButton>
+				<HeaderButton><Image src={SettingsIcon} alt="settings" /></HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
 					{
@@ -140,8 +138,6 @@ const RightMenu: React.FC = () => {
 					<WalletSelectBox show={showWalletSelectPopup} onHide={() => setShowWalletSelectPopup(false)} />
 				</Box>
 			</Box>
-
-			<SettingDialog open={openSettingDlog} handleClose={() => setOpenSettingDlog(false)} />
 
 			<TokenFaucetDialog
 				open={openTokenFaucet}

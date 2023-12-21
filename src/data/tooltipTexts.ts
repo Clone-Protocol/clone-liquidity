@@ -73,10 +73,4 @@ export const TooltipTexts = {
     tradingVolume24h: 'Trading Volume (24h)',
     feeRevenue24h: 'Fee Revenue (24h)',
     avgAPY24h: '24hr Average APY',
-    points: {
-        totalPoints: 'Your Total Points',
-        lpPoints: 'Your LP Points',
-        tradePoints: 'Your Trade Points',
-        socialPoints: 'Your Social Points',
-    }
 }
