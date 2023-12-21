@@ -18,6 +18,7 @@ import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import { formatDollarAmount } from '~/utils/numbers'
 import { ON_USD } from '~/utils/constants'
+import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -51,15 +52,13 @@ const AssetList: React.FC = () => {
 	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params
 	) => {
-		// if (isAlreadyInitializedAccount) {
-		router.push(`/comet/assets/${params.row.ticker}`)
-		// } else {
-		// 	handleLinkNeedingAccountClick(undefined)
-		// }
+		if (!showPoolStatus(params.row.status)) {
+			router.push(`/comet/assets/${params.row.ticker}`)
+		}
 	}, [])
 
 	return (
-		<PanelBox>
+		<PanelBox sx={{ '& .non-hover-row': { ':hover': { background: '#000' } } }}>
 			<Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
 				<PageTabs value={filter} onChange={handleFilterChange}>
 					{Object.keys(FilterTypeMap).map((f) => (
@@ -86,7 +85,7 @@ let columns: GridColDef[] = [
 	{
 		field: 'iAsset',
 		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		cellClassName: 'super-app-theme--cell ',
 		headerName: 'clAsset Pools',
 		flex: 2,
 		renderCell(params: GridRenderCellParams<string>) {
@@ -97,66 +96,76 @@ let columns: GridColDef[] = [
 	},
 	{
 		field: 'price',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: `Price (${ON_USD})`,
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
+			return !showPoolStatus(params.row.status) ?
+				<Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
+				: <></>
 		},
 	},
 	{
 		field: '24hChange',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: '24h Change',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return params.row.change24h >= 0 ?
-				<Box color='#4fe5ff' display='flex' alignItems='center'>
-					<Typography variant='p_xlg'>+{params.row.change24h.toFixed(2)}%</Typography>
-					<Image src={ArrowUpward} alt='arrowUp' />
-				</Box>
-				: <Box color='#ff0084' display='flex' alignItems='center'>
-					<Typography variant='p_xlg'>{params.row.change24h.toFixed(2)}%</Typography>
-					<Image src={ArrowDownward} alt='arrowDown' />
-				</Box>
+			return !showPoolStatus(params.row.status) ?
+				params.row.change24h >= 0 ?
+					<Box color='#4fe5ff' display='flex' alignItems='center'>
+						<Typography variant='p_xlg'>+{params.row.change24h.toFixed(2)}%</Typography>
+						<Image src={ArrowUpward} alt='arrowUp' />
+					</Box>
+					: <Box color='#ff0084' display='flex' alignItems='center'>
+						<Typography variant='p_xlg'>{params.row.change24h.toFixed(2)}%</Typography>
+						<Image src={ArrowDownward} alt='arrowDown' />
+					</Box>
+				: <></>
 		},
 	},
 	{
 		field: 'liquidity',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: 'Liquidity',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.value), 3)}</Typography>
+			return !showPoolStatus(params.row.status) ?
+				<Typography variant='p_xlg'>{formatDollarAmount(Number(params.value), 3)}</Typography>
+				: <></>
 		},
 	},
 	{
 		field: '24hVolume',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: 'Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.row.volume24h), 3)}</Typography>
+			return !showPoolStatus(params.row.status) ?
+				<Typography variant='p_xlg'>{formatDollarAmount(Number(params.row.volume24h), 3)}</Typography>
+				: <></>
 		},
 	},
 	{
 		field: 'avgAPY24h',
-		headerClassName: 'super-app-theme--header',
-		cellClassName: 'super-app-theme--cell',
+		headerClassName: 'super-app-theme--header right--header',
+		cellClassName: 'super-app-theme--cell right--cell',
 		headerName: 'APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return params.row.avgAPY24h >= 0 ?
-				<Box color='#4fe5ff' display='flex' alignItems='center'>
-					<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
-				</Box>
-				: <Box color='#ff0084' display='flex' alignItems='center'>
-					<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
-				</Box>
+			return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
+				:
+				params.row.avgAPY24h >= 0 ?
+					<Box color='#4fe5ff' display='flex' alignItems='center'>
+						<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
+					</Box>
+					: <Box color='#ff0084' display='flex' alignItems='center'>
+						<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
+					</Box>
 		},
 	},
 ]

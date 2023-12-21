@@ -1,6 +1,7 @@
 import { DataGrid, GridColDef, GridEventListener } from '@mui/x-data-grid'
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
+import { showPoolStatus } from './PoolStatus'
 
 interface GridProps {
   headers: GridColDef[],
@@ -22,6 +23,7 @@ export const enum GridType {
 
 export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, noAutoHeight = false, hasTopBorderRadius = false, onRowClick }) => (
   <DataGrid
+
     sx={{
       width: '100%',
       border: 0,
@@ -118,7 +120,8 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
           }
         }
       }
-      return 'super-app-theme--row'
+      // if pool status, show non-hover-row
+      return showPoolStatus(params.row?.status) ? 'non-hover-row' : 'super-app-theme--row'
     }}
     autoHeight={!noAutoHeight}
     disableColumnFilter

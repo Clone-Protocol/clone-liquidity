@@ -20,6 +20,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import React, { FC, ReactElement, SyntheticEvent, useCallback, useMemo, useState } from 'react'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { WalletListItem } from './WalletListItem'
+import { useSnackbar } from 'notistack'
 
 const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
 	'& .MuiDialog-paper': {
@@ -97,6 +98,7 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 }) => {
 	const { wallets, select } = useWallet()
 	const { open, setOpen } = useWalletDialog()
+	const { enqueueSnackbar } = useSnackbar()
 	const [expanded, setExpanded] = useState(false)
 
 	const [featured, more] = useMemo(
@@ -116,6 +118,8 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 		(event: SyntheticEvent, walletName: WalletName) => {
 			select(walletName)
 			handleClose(event)
+
+			enqueueSnackbar('Wallet connected')
 		},
 		[select, handleClose]
 	)

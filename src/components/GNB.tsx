@@ -1,9 +1,11 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.png'
+import logoIconDev from 'public/images/logo-liquidity-devnet.png'
 import walletIcon from 'public/images/wallet-icon-small.svg'
+import SettingsIcon from 'public/images/buttons-more-menu-settings.svg'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
@@ -19,12 +21,24 @@ import NaviMenu from './NaviMenu'
 import { isMobile } from 'react-device-detect';
 import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
+import SettingDialog from './Common/SettingDialog'
+import { IS_DEV } from '~/data/networks'
+import { fetchGeoBlock } from '~/utils/fetch_netlify'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+	const [openMobileWarningDialog, setOpenMobileWarningDialog] = useState(false)
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
+
+	useEffect(() => {
+		if (isMobile || isMobileOnSize) {
+			setOpenMobileWarningDialog(true)
+		} else {
+			setOpenMobileWarningDialog(false)
+		}
+	}, [isMobile, isMobileOnSize])
 
 	return (
 		<>
@@ -33,12 +47,12 @@ const GNB: React.FC = () => {
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Image src={logoIcon} width={121} height={25} alt="clone" />
+						<Image src={IS_DEV ? logoIconDev : logoIcon} width={IS_DEV ? 145 : 100} height={IS_DEV ? 30 : 26} alt="clone" />
 						<Box ml='60px'><NaviMenu /></Box>
 						<RightMenu />
 					</Toolbar>
 				</Container>
-				<MobileWarningDialog open={isMobile || isMobileOnSize} handleClose={() => { return null }} />
+				<MobileWarningDialog open={openMobileWarningDialog} handleClose={() => setOpenMobileWarningDialog(false)} />
 			</StyledAppBar>
 		</>
 	)
@@ -51,20 +65,38 @@ const RightMenu: React.FC = () => {
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
+	const [openSettingDlog, setOpenSettingDlog] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [showWalletSelectPopup, setShowWalletSelectPopup] = useState(false)
 	const [createAccountDialogStatus, setCreateAccountDialogStatus] = useAtom(createAccountDialogState)
 	const [declinedAccountCreation, setDeclinedAccountCreation] = useAtom(declinedAccountCreationState)
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useAtom(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
+	const [showGeoblock, setShowGeoblock] = useState(false)
 
 	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
+	const GeoblockDialog = dynamic(() => import('~/components/Common/GeoblockDialog'), { ssr: false })
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
+
+	// validate geoblock if connected
+	useEffect(() => {
+		const validateGeoblock = async () => {
+			if (connected) {
+				const geoblock = await fetchGeoBlock()
+
+				if (!geoblock.result) {
+					setShowGeoblock(true)
+					disconnect()
+				}
+			}
+		}
+		validateGeoblock()
+	}, [connected])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
@@ -89,11 +121,18 @@ const RightMenu: React.FC = () => {
 		setAnchorEl(event.currentTarget);
 	}, [])
 
-	const handleWalletClick = () => {
+	const handleWalletClick = async () => {
 		try {
 			if (!connected) {
 				if (!wallet) {
-					setOpen(true)
+					// validate geoblock
+					const geoblock = await fetchGeoBlock()
+					// console.log('geo', geoblock)
+					if (geoblock.result) {
+						setOpen(true)
+					} else {
+						setShowGeoblock(true)
+					}
 				} else {
 					connect()
 				}
@@ -114,10 +153,13 @@ const RightMenu: React.FC = () => {
 				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
-				<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
-					<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
-				</HeaderButton>
+				{IS_DEV &&
+					<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
+						<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
+					</HeaderButton>
+				}
 				<HeaderButton sx={{ fontSize: '16px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
+				<HeaderButton onClick={() => setOpenSettingDlog(true)}><Image src={SettingsIcon} alt="settings" /></HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
 					{
@@ -137,6 +179,8 @@ const RightMenu: React.FC = () => {
 				</Box>
 			</Box>
 
+			<SettingDialog open={openSettingDlog} handleClose={() => setOpenSettingDlog(false)} />
+
 			<TokenFaucetDialog
 				open={openTokenFaucet}
 				isConnect={connected}
@@ -146,6 +190,7 @@ const RightMenu: React.FC = () => {
 			/>
 
 			<ConnectWalletGuideDialog open={openConnectWalletGuideDlog} connectWallet={handleWalletClick} handleClose={() => setOpenConnectWalletGuideDialog(false)} />
+			{showGeoblock && <GeoblockDialog open={showGeoblock} handleClose={() => setShowGeoblock(false)} />}
 		</>
 	)
 }
@@ -185,7 +230,7 @@ const NavPlaceholder = styled('div')`
 `
 const HeaderButton = styled(Button)`
 	padding: 8px;
-  margin-left: 16px;
+  margin-left: 6px;
 	color: ${(props) => props.theme.palette.text.secondary};
 	height: 42px;
 	border-radius: 5px;

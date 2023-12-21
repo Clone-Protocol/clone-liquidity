@@ -8,6 +8,7 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { getiAssetInfos } from '~/utils/assets'
+import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchBorrowDetail = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
@@ -23,6 +24,7 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
   const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2) * 100;
   const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
   const collateralizationRatio = fromScale(program.clone.collateral.collateralizationRatio, 2)
+  const status = pool.status
 
   return {
     tickerIcon: tickerIcon,
@@ -31,7 +33,8 @@ export const fetchBorrowDetail = async ({ program, userPubKey, index }: { progra
     pythSymbol,
     oPrice,
     minCollateralRatio,
-    collateralizationRatio
+    collateralizationRatio,
+    status
   }
 }
 
@@ -43,6 +46,7 @@ export interface DetailInfo {
   oPrice: number
   minCollateralRatio: number
   collateralizationRatio: number
+  status: Status
 }
 
 const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
@@ -91,7 +95,8 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
     iassetVal: balance?.onassetVal!,
     maxWithdrawableColl,
     effectiveCollateralValue: positionData.effectiveCollateralValue,
-    collateralizationRatio
+    collateralizationRatio,
+    status: positionData.status
   }
 }
 
@@ -117,6 +122,7 @@ export interface PositionInfo {
   maxWithdrawableColl: number
   effectiveCollateralValue: number
   collateralizationRatio: number
+  status: Status
 }
 
 export interface PairData {

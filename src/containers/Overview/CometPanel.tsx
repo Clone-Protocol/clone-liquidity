@@ -23,6 +23,7 @@ import Link from 'next/link'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { InfoMsg } from '~/components/Common/WarningMsg'
 import { ON_USD } from '~/utils/constants'
+import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 
 const RISK_SCORE_VAL = 20
 
@@ -137,6 +138,13 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
       <ConnectButton onClick={() => setOpen(true)}>
         <Typography variant='p_xlg'>Connect Wallet</Typography>
       </ConnectButton>
+    )
+  } else if (showPoolStatus(positionInfo?.status!)) {
+    opaqueArea = <OpaqueDefault />
+    actionButton = (
+      <Box display='flex' justifyContent='center'>
+        <PoolStatusButton status={positionInfo?.status!} />
+      </Box>
     )
   } else if (positionInfo?.hasFullPool) {
     actionButton = (

@@ -5,6 +5,7 @@ interface Props {
   max?: number
   ratio: number
   currentRatio: number
+  disableHandleRatio?: boolean
   onChangeRatio?: (newRatio: number) => void
 }
 
@@ -46,7 +47,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
   },
 }))
 
-const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, onChangeRatio }) => {
+const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, disableHandleRatio = false, onChangeRatio }) => {
   const valueLabelFormat = (value: number) => {
     return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
   }
@@ -71,6 +72,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
             min={min}
             step={1}
             max={max}
+            disabled={disableHandleRatio}
             valueLabelFormat={valueLabelFormat}
             onChange={handleChangeMintRatio}
             valueLabelDisplay="on"

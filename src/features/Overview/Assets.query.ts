@@ -6,17 +6,18 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetch24hourVolume, getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { useAtomValue } from 'jotai'
 import { getCloneClient } from '../baseQuery';
-import { cloneClient } from '../globalAtom'
+import { cloneClient, rpcEndpoint } from '../globalAtom'
 import { fetchPythPriceHistory } from '~/utils/pyth'
+import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
-export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: CloneClient | null }) => {
+export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
 	console.log('fetchAssets')
 
 	let program
 	if (mainCloneClient) {
 		program = mainCloneClient
 	} else {
-		const { cloneClient: cloneProgram } = await getCloneClient()
+		const { cloneClient: cloneProgram } = await getCloneClient(networkEndpoint)
 		program = cloneProgram
 	}
 
@@ -69,6 +70,7 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 			change24h,
 			feeRevenue24h: stats.fees,
 			avgAPY24h: stats.apy,
+			status: info.status
 		})
 	}
 	return result
@@ -94,14 +96,16 @@ export interface AssetList {
 	change24h: number
 	feeRevenue24h: number
 	avgAPY24h: number
+	status: Status
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
 	const mainCloneClient = useAtomValue(cloneClient)
+	const networkEndpoint = useAtomValue(rpcEndpoint)
 
 	let queryFunc
 	try {
-		queryFunc = () => fetchAssets({ mainCloneClient })
+		queryFunc = () => fetchAssets({ mainCloneClient, networkEndpoint })
 	} catch (e) {
 		console.error(e)
 		queryFunc = () => []
@@ -116,10 +120,10 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 			let filteredAssets = assets
 
 			filteredAssets = assets.filter((asset) => {
-				if (filter === 'crypto') {
+				if (filter === 'all') {
+					return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
+				} else if (filter === 'crypto') {
 					return asset.assetType === AssetType.Crypto
-				} else if (filter === 'fx') {
-					return asset.assetType === AssetType.Fx
 				} else if (filter === 'commodities') {
 					return asset.assetType === AssetType.Commodities
 				}
