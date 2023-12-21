@@ -1,4 +1,4 @@
-import { Pools, Status } from "clone-protocol-sdk/sdk/generated/clone";
+import { Pools } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { assetMapping } from "~/data/assets";
@@ -37,7 +37,7 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
 }
 
 
-export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ status: Status, poolIndex: number, poolPrice: number, liquidity: number, oraclePrice: number }[]> => {
+export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ poolIndex: number, poolPrice: number, liquidity: number, oraclePrice: number }[]> => {
   const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
   const data = await pythClient.getData();
   const pools = await program.getPools();
@@ -46,7 +46,6 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
   const iassetInfo = [];
   for (let poolIndex = 0; poolIndex < Number(pools.pools.length); poolIndex++) {
     const pool = pools.pools[poolIndex];
-    const status = pool.status
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
     const committedCollateral = fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale)
     const poolCollateralIld = fromScale(pool.collateralIld, program.clone.collateral.scale)
@@ -55,7 +54,7 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
     const oraclePrice = data.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo);
     const poolPrice = (committedCollateral - poolCollateralIld) / (committedCollateral / oraclePrice - poolOnassetIld)
     const liquidity = committedCollateral * 2;
-    iassetInfo.push({ status, poolIndex, poolPrice, liquidity, oraclePrice });
+    iassetInfo.push({ poolIndex, poolPrice, liquidity, oraclePrice });
   }
   return iassetInfo;
 }
@@ -77,8 +76,7 @@ const convertToNumber = (val: string | number) => {
 export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedStats[]> => {
 
   let result = pools.pools.map((pool) => {
-    return {
-      volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0,
+    return { volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0, 
       liquidityUSD: fromScale(pool.committedCollateralLiquidity, 7) * 2,
       previousLiquidity: 0, apy: 0
     }
@@ -99,7 +97,7 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
     const hoursDifference = hoursDiff(dt)
     const tradingFees = fromScale(item.trading_fees, 7)
     const liquidity = fromScale(item.total_committed_collateral_liquidity, 7) * 2
-
+  
     if (hoursDifference <= 24) {
       result[poolIndex].fees += tradingFees
     } else if (hoursDifference > 24) {

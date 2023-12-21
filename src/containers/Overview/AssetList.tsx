@@ -18,8 +18,6 @@ import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
 import { formatDollarAmount } from '~/utils/numbers'
 import { ON_USD } from '~/utils/constants'
-import { ExtractionButton, FrozenButton, LiquidationButton, PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
-import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -53,9 +51,11 @@ const AssetList: React.FC = () => {
 	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params
 	) => {
-		if (params.row.status !== Status.Frozen) {
-			router.push(`/comet/assets/${params.row.ticker}`)
-		}
+		// if (isAlreadyInitializedAccount) {
+		router.push(`/comet/assets/${params.row.ticker}`)
+		// } else {
+		// 	handleLinkNeedingAccountClick(undefined)
+		// }
 	}, [])
 
 	return (
@@ -140,9 +140,7 @@ let columns: GridColDef[] = [
 		headerName: 'Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return !showPoolStatus(params.row.status) ?
-				<Typography variant='p_xlg'>{formatDollarAmount(Number(params.row.volume24h), 3)}</Typography>
-				: <></>
+			return <Typography variant='p_xlg'>{formatDollarAmount(Number(params.row.volume24h), 3)}</Typography>
 		},
 	},
 	{
@@ -152,15 +150,13 @@ let columns: GridColDef[] = [
 		headerName: 'APY',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
-				:
-				params.row.avgAPY24h >= 0 ?
-					<Box color='#4fe5ff' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
-					</Box>
-					: <Box color='#ff0084' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
-					</Box>
+			return params.row.avgAPY24h >= 0 ?
+				<Box color='#4fe5ff' display='flex' alignItems='center'>
+					<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
+				</Box>
+				: <Box color='#ff0084' display='flex' alignItems='center'>
+					<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
+				</Box>
 		},
 	},
 ]

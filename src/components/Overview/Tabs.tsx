@@ -25,7 +25,6 @@ export const PageTab = styled(Tab)`
 		min-width: 36px;
 		min-height: 28px;
 		height: 28px;
-		color: ${(props) => props.theme.basis.slug};
 	}
 	&.Mui-selected {
 		background-color: ${(props) => props.theme.basis.jurassicGrey};
