@@ -1,19 +1,11 @@
 import React, { useState } from 'react'
-import { Box, styled, Dialog, DialogContent, Typography, Button, MenuItem, Stack, Input } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography, Button, InputLabel, MenuItem, FormControl, Stack, Input } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FadeTransition } from '~/components/Common/Dialog'
 import { CloseButton } from '~/components/Common/CommonButtons'
 import { IndicatorGreen, IndicatorRed, IndicatorStatus, IndicatorYellow } from './StatusIndicator';
-import { useSnackbar } from 'notistack';
 
-const RPCs = [
-  'Helius RPC',
-  'Quicknode RPC',
-  'HelloMoon RPC',
-  'Custom'
-]
 const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
-  const { enqueueSnackbar } = useSnackbar()
   const [rpcEndpointIndex, setRpcEndpointIndex] = useState('0')
   const [networkIndex, setNetworkIndex] = useState('devnet')
   const [showCustom, setShowCustom] = useState(false)
@@ -22,11 +14,6 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
   const handleChangeRpcEndpoint = (event: SelectChangeEvent) => {
     setRpcEndpointIndex(event.target.value as string);
     setShowCustom(event.target.value == '3')
-
-    //TODO: showing after rpc is connected
-    if (event.target.value != '3') {
-      enqueueSnackbar(`Connected to ${RPCs[parseInt(event.target.value)]}`)
-    }
   };
 
   const handleChangeNetwork = (event: SelectChangeEvent) => {
@@ -35,14 +22,6 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
 
   const handleChangeCustomRPCUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
 
-  }
-
-  const saveCustomURL = () => {
-    try {
-      enqueueSnackbar('Connected to Custom RPC')
-    } catch (e) {
-      enqueueSnackbar('Custom RPC connection failed, please try a different custom RPC URL.')
-    }
   }
 
   const StatusIndicator = ({ status, speed }: { status: IndicatorStatus, speed: number }) => {
@@ -97,16 +76,16 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
                   }
                 }}
               >
-                <SelectMenuItem value={0}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>{RPCs[0]}</Typography> <StatusIndicator status={IndicatorStatus.Green} speed={134.1} /></Stack></SelectMenuItem>
-                <SelectMenuItem value={1}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>{RPCs[1]}</Typography> <StatusIndicator status={IndicatorStatus.Yellow} speed={84.1} /></Stack></SelectMenuItem>
-                <SelectMenuItem value={2}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>{RPCs[2]}</Typography> <StatusIndicator status={IndicatorStatus.Red} speed={34.1} /></Stack></SelectMenuItem>
-                <SelectMenuItem value={3}><Typography variant='p'>{RPCs[3]}</Typography></SelectMenuItem>
+                <SelectMenuItem value={0}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>Helius RPC</Typography> <StatusIndicator status={IndicatorStatus.Green} speed={134.1} /></Stack></SelectMenuItem>
+                <SelectMenuItem value={1}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>Quicknode RPC</Typography> <StatusIndicator status={IndicatorStatus.Yellow} speed={84.1} /></Stack></SelectMenuItem>
+                <SelectMenuItem value={2}><Stack direction='row' alignItems='center' gap={1}><Typography variant='p'>HelloMoon RPC</Typography> <StatusIndicator status={IndicatorStatus.Red} speed={34.1} /></Stack></SelectMenuItem>
+                <SelectMenuItem value={3}><Typography variant='p'>Custom</Typography></SelectMenuItem>
               </SelectBox>
               {showCustom &&
                 <Box>
                   <StyledInput placeholder="Enter custom RPC URL" disableUnderline onChange={handleChangeCustomRPCUrl} />
                   {errorCustomMsg && <Box><Typography variant='p' color='#ed2525'>Custom RPC Connection Failed. Try different URL.</Typography></Box>}
-                  <SaveBtn onClick={saveCustomURL}>Save</SaveBtn>
+                  <SaveBtn>Save</SaveBtn>
                 </Box>
               }
             </Box>

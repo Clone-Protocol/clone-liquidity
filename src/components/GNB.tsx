@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
@@ -21,7 +21,6 @@ import { isMobile } from 'react-device-detect';
 import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
 import SettingDialog from './Common/SettingDialog'
-import { useSnackbar } from 'notistack'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -36,7 +35,7 @@ const GNB: React.FC = () => {
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Image src={logoIcon} width={100} height={26} alt="clone" />
+						<Image src={logoIcon} width={120} height={32} alt="clone" />
 						<Box ml='60px'><NaviMenu /></Box>
 						<RightMenu />
 					</Toolbar>
@@ -51,7 +50,6 @@ export default withCsrOnly(GNB)
 
 const RightMenu: React.FC = () => {
 	const { connect, connecting, connected, publicKey, disconnect } = useWallet()
-	const { enqueueSnackbar } = useSnackbar()
 	const wallet = useAnchorWallet()
 	const { setOpen } = useWalletDialog()
 	const [openTokenFaucet, setOpenTokenFaucet] = useState(false)
@@ -70,12 +68,6 @@ const RightMenu: React.FC = () => {
 	useInitialized(connected, publicKey, wallet)
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
-
-	useEffect(() => {
-		if (connected) {
-			enqueueSnackbar('Wallet connected')
-		}
-	}, [connected])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {

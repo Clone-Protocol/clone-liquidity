@@ -39,6 +39,7 @@ const MyPointStatus = () => {
               {infos && infos.totalPoints.toLocaleString()}
             </Typography>
           </StatusValue>
+          <ClickBox>Click me</ClickBox>
         </BorderBox>
       </Stack>
       <Stack direction='row' gap={2} mt='18px'>
