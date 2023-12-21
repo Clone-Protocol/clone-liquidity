@@ -14,8 +14,8 @@ import { getTxnURL } from '~/data/networks'
 
 const SuccessFailureWrapper = ({ isSuccess, txHash }: { isSuccess: boolean, txHash: string }) => {
   const txStatusColor = isSuccess ? '#4fe5ff' : '#ff0084'
-  return (<Stack direction='row' alignItems='center'>
-    <Image src={isSuccess ? SuccessIcon : FailureIcon} alt='icStatus' />
+  return (<Stack direction='row' alignItems='center' gap={1}>
+    <Image src={isSuccess ? SuccessIcon : FailureIcon} width={45} height={45} alt='icStatus' />
     <Box lineHeight={1.2}>
       <Box mt='6px'><Typography variant='p_xlg'>Transaction {isSuccess ? 'complete' : 'failed'}</Typography></Box>
       {!isSuccess && <Box mt='6px'><Typography variant='p' color='#989898'>Something went wrong. Please try again.</Typography></Box>}
@@ -120,7 +120,7 @@ const BoxWrapper = styled(Box)`
   position: relative;
   align-items: center;
   border-radius: 10px;
-  padding: 12px 0px;
+  padding: 12px;
   background: #000;
 `
 const CloseButton = styled(Box)`

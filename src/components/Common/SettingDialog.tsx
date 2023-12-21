@@ -101,7 +101,6 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
                     disablePortal: true,
                     PaperProps: {
                       sx: {
-                        zIndex: 999999,
                         '& .MuiMenu-list': {
                           padding: 0,
                           '&:hover': {
