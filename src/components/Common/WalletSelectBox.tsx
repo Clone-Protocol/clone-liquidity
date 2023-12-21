@@ -3,7 +3,7 @@ import { Box, Typography, Stack } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useBalanceQuery } from '~/features/Overview/Balance.query'
-import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import withSuspense from '~/hocs/withSuspense'
 import { shortenAddress } from '~/utils/address'
@@ -12,12 +12,9 @@ import { getSolInBalance } from '~/utils/address';
 import { ON_USD } from '~/utils/constants';
 import { useSetAtom } from 'jotai'
 import { cloneClient } from '~/features/globalAtom'
-import { useClone } from '~/hooks/useClone';
 
 const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
-  const { getCloneApp } = useClone()
-  const wallet = useAnchorWallet()
   const { publicKey, disconnect } = useWallet()
   const [solBalance, setSolBalance] = useState(0)
   const setCloneClient = useSetAtom(cloneClient)
@@ -30,10 +27,9 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
 
   useMemo(() => {
     const getBalance = async () => {
-      if (publicKey && wallet && show) {
+      if (publicKey && show) {
         try {
-          const program = await getCloneApp(wallet)
-          const balance = await getSolInBalance(program, publicKey)
+          const balance = await getSolInBalance(publicKey)
           setSolBalance(balance)
         } catch (e) {
           console.error(e)

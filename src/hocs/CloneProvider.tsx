@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, useEffect } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { AnchorWallet } from '@solana/wallet-adapter-react'
 import { CloneContext } from '~/hooks/useClone'
 import { useAtom, useAtomValue } from 'jotai'
-import { cloneClient, connectedPubKey, rpcEndpoint } from '~/features/globalAtom'
+import { cloneClient, connectedPubKey } from '~/features/globalAtom'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState } from '~/features/globalAtom'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
@@ -13,7 +13,6 @@ export interface CloneProviderProps {
 }
 
 export const CloneProvider: FC<CloneProviderProps> = ({ children }) => {
-	const networkEndpoint = useAtomValue(rpcEndpoint)
 	const createAccountStatus = useAtomValue(createAccountDialogState)
 	const [mainCloneClient, setMainCloneClient] = useAtom(cloneClient)
 	const [mainConnectedPubKey, setMainConnectedPubKey] = useAtom(connectedPubKey)
@@ -36,8 +35,7 @@ export const CloneProvider: FC<CloneProviderProps> = ({ children }) => {
 
 		let clone
 		if (!mainCloneClient || isChangePubKey) {
-			console.log('networkEndpoint', networkEndpoint)
-			const { cloneClient } = await getCloneClient(networkEndpoint, wallet)
+			const { cloneClient } = await getCloneClient(wallet)
 			clone = cloneClient
 			setMainCloneClient(clone)
 		} else {
@@ -46,13 +44,6 @@ export const CloneProvider: FC<CloneProviderProps> = ({ children }) => {
 
 		return clone
 	}
-
-	// when networkEndpoint changes, reset the cloneClient
-	useEffect(() => {
-		if (networkEndpoint) {
-			setMainCloneClient(null)
-		}
-	}, [networkEndpoint])
 
 	return (
 		<CloneContext.Provider
