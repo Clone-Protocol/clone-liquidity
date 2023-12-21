@@ -12,14 +12,12 @@ import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const borrowIndex = borrowId
   const [editType, setEditType] = useState(initEditType) // 0 : borrow more , 1: repay
   const [maxCollVal, setMaxCollVal] = useState(0);
-  const [disableChangeTab, setDisableChangeTab] = useState(false)
 
   // MEMO: expected collateral Ratio is 10% under from the min collateral ratio
   const [hasLackBalance, setHasLackBalance] = useState(editType === 1 && Number(borrowDetail.borrowedOnasset) > Number(borrowDetail.iassetVal))
@@ -27,26 +25,14 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
   const [hasRiskRatio, setHasRiskRatio] = useState(editType === 0 && borrowDetail.minCollateralRatio * 1.1 >= borrowDetail.collateralRatio)
   const [expectedCollRatio, setExpectedCollRatio] = useState(0)
 
-  //only allowable to repay on the status is extraction or liquidation
-  useEffect(() => {
-    if (borrowDetail) {
-      if (borrowDetail.status === Status.Extraction || borrowDetail.status === Status.Liquidation) {
-        setEditType(1)
-        setDisableChangeTab(true)
-      }
-    }
-  }, [borrowDetail])
-
   //max borrowable
   useEffect(() => {
     setMaxCollVal(editType === 0 ? ((Number(borrowDetail.effectiveCollateralValue) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedOnasset) : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {
-    if (!disableChangeTab) {
-      setEditType(newValue)
-      initData()
-    }
+    setEditType(newValue)
+    initData()
   }, [editType])
 
   const fromPair: PairData = {

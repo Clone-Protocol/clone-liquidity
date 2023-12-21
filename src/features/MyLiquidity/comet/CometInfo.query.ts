@@ -1,7 +1,7 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
-import { Comet, Oracles, Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
+import { Comet, Oracles, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
@@ -110,8 +110,8 @@ export interface LiquidityPosition {
 	ildInUsdi: boolean
 	rewards: number
 	apy: number
-	status: Status
 }
+
 
 const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools: Pools, oracles: Oracles, coll: Collateral, poolStats: AggregatedStats[]): LiquidityPosition[] => {
 	const result: LiquidityPosition[] = [];
@@ -122,8 +122,6 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 		const position = comet.positions[i];
 		const poolIndex = Number(position.poolIndex)
 		const info = assetMapping(poolIndex);
-		const pool = pools.pools[Number(position.poolIndex)];
-		const status = pool.status
 
 		const [ildValue, ildInUsdi] = (() => {
 			const info = ildInfo[i];
@@ -158,8 +156,7 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 				poolIndex,
 				ildInUsdi,
 				rewards,
-				apy,
-				status
+				apy
 			} as LiquidityPosition
 		)
 	}

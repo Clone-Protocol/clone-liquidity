@@ -1,4 +1,4 @@
-import { Borrow, Oracles, Pools, Status } from "clone-protocol-sdk/sdk/generated/clone";
+import { Borrow, Oracles, Pools } from "clone-protocol-sdk/sdk/generated/clone";
 import { fromScale, fromCloneScale, CloneClient } from "clone-protocol-sdk/sdk/src/clone";
 
 export interface MintInfo {
@@ -9,8 +9,8 @@ export interface MintInfo {
   collateralRatio: number;
   minCollateralRatio: number;
   effectiveCollateralValue: number;
-  status: Status
 }
+
 
 export const getUserMintInfos = (program: CloneClient, pools: Pools, oracles: Oracles, borrowPositions: Borrow[]): MintInfo[] => {
   const mintInfos = [];
@@ -27,7 +27,6 @@ export const getUserMintInfos = (program: CloneClient, pools: Pools, oracles: Or
     const borrowedOnasset = fromCloneScale(borrowPosition.borrowedOnasset);
     const collateralRatio = effectiveCollateralValue / (price * borrowedOnasset);
     const minCollateralRatio = fromScale(assetInfo.minOvercollateralRatio, 2);
-    const status = pool.status
     mintInfos.push({
       poolIndex,
       price,
@@ -36,7 +35,6 @@ export const getUserMintInfos = (program: CloneClient, pools: Pools, oracles: Or
       collateralRatio,
       minCollateralRatio,
       effectiveCollateralValue,
-      status
     });
   }
   return mintInfos;

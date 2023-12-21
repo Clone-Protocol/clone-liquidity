@@ -11,8 +11,6 @@ import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { AddIcon } from '~/components/Common/SvgIcons'
 import { ON_USD } from '~/utils/constants'
-import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
-import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -36,9 +34,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const handleRowClick: GridEventListener<'rowClick'> = useCallback((
     params
   ) => {
-    if (params.row.status !== Status.Frozen) {
-      handleChooseEditPosition(params.row.id)
-    }
+    handleChooseEditPosition(params.row.id)
   }, [])
 
   const rowsPositions = positions.map((position, id) => ({
@@ -150,16 +146,14 @@ let columns: GridColDef[] = [
     headerName: 'APY',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
+      return Number(params.value) >= 0 ?
+        <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
+          <Typography variant='p_xlg'>+{Number(params.value).toFixed(2)}%</Typography>
+        </Box>
         :
-        Number(params.value) >= 0 ?
-          <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
-            <Typography variant='p_xlg'>+{Number(params.value).toFixed(2)}%</Typography>
-          </Box>
-          :
-          <Box display='flex' alignItems='center' color='#ff0084'>
-            <Typography variant='p_xlg'>-{Number(params.value).toFixed(2)}%</Typography>
-          </Box>
+        <Box display='flex' alignItems='center' color='#ff0084'>
+          <Typography variant='p_xlg'>-{Number(params.value).toFixed(2)}%</Typography>
+        </Box>
     },
   },
 ]

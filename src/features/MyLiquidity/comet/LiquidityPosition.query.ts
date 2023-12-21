@@ -8,7 +8,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
-import { Comet, Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
+import { Comet, Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { fetchPythOraclePrices } from '~/utils/pyth'
 
 export const fetchLiquidityDetail = async ({
@@ -37,7 +37,6 @@ export const fetchLiquidityDetail = async ({
 	const assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
 	const oraclePrice = pythOraclePrices[index];
-	const status = pool.status
 
 	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
 		fromCloneScale(pool.collateralIld),
@@ -80,7 +79,6 @@ export const fetchLiquidityDetail = async ({
 		tickerIcon: tickerIcon,
 		tickerName: tickerName,
 		tickerSymbol: tickerSymbol,
-		status,
 		price,
 		totalCollValue,
 		totalHealthScore,
@@ -98,7 +96,6 @@ export interface PositionInfo {
 	tickerIcon: string
 	tickerName: string
 	tickerSymbol: string
-	status: Status
 	price: number
 	totalCollValue: number
 	totalHealthScore: number

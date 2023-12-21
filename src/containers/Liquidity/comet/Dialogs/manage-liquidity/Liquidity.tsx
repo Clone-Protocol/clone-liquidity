@@ -15,14 +15,12 @@ import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
   const [mintRatio, setMintRatio] = useState(50)
-  const [disableRatio, setDisableRatio] = useState(false)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
   const [maxMintable, setMaxMintable] = useState(0)
@@ -43,14 +41,8 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
 
       setDefaultMintRatio(100 * currentPosition / maxMintable)
       setDefaultMintAmount(currentPosition)
+      setMintRatio(100 * currentPosition / maxMintable)
       setTotalLiquidity(currentPosition * 2)
-
-      if (positionInfo.status === Status.Extraction || positionInfo.status === Status.Liquidation) {
-        setMintRatio(0)
-        setDisableRatio(true)
-      } else {
-        setMintRatio(100 * currentPosition / maxMintable)
-      }
     }
   }, [positionInfo])
 
@@ -124,7 +116,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
         <InfoTooltip title={TooltipTexts.liquidityAmount} color='#66707e' />
       </Box>
       <Box mt='20px'>
-        <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} disableHandleRatio={disableRatio} onChangeRatio={handleChangeMintRatio} />
+        <EditLiquidityRatioSlider min={0} max={100} ratio={mintRatio} currentRatio={defaultMintRatio} onChangeRatio={handleChangeMintRatio} />
       </Box>
 
       <BoxWithBorder>
