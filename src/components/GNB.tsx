@@ -26,18 +26,9 @@ import { fetchGeoBlock } from '~/utils/fetch_netlify'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
-	const [openMobileWarningDialog, setOpenMobileWarningDialog] = useState(false)
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
 	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
-
-	useEffect(() => {
-		if (isMobile || isMobileOnSize) {
-			setOpenMobileWarningDialog(true)
-		} else {
-			setOpenMobileWarningDialog(false)
-		}
-	}, [isMobile, isMobileOnSize])
 
 	return (
 		<>
@@ -51,7 +42,7 @@ const GNB: React.FC = () => {
 						<RightMenu />
 					</Toolbar>
 				</Container>
-				<MobileWarningDialog open={openMobileWarningDialog} handleClose={() => setOpenMobileWarningDialog(false)} />
+				<MobileWarningDialog open={isMobile || isMobileOnSize} handleClose={() => { return null }} />
 			</StyledAppBar>
 		</>
 	)

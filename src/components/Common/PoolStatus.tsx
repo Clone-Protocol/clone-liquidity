@@ -46,7 +46,7 @@ export const LiquidationButton = () => {
 }
 
 const CustomButton = styled(Button)`
-  width: 100px;
+  width: 131px;
   height: 36px;
   border-radius: 5px;
   color: #fff;

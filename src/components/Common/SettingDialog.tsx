@@ -169,9 +169,6 @@ const SelectMenuItem = styled(MenuItem)`
   display: flex;
   padding: 10px;
   background: #000;
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
 `
 const StyledInput = styled(Input)`
   border: solid 1px ${(props) => props.theme.basis.shadowGloom};
