@@ -1,7 +1,6 @@
 import { DataGrid, GridColDef, GridEventListener } from '@mui/x-data-grid'
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
-import { showPoolStatus } from './PoolStatus'
 
 interface GridProps {
   headers: GridColDef[],
@@ -120,8 +119,7 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
           }
         }
       }
-      // if pool status, show non-hover-row
-      return showPoolStatus(params.row?.status) ? 'non-hover-row' : 'super-app-theme--row'
+      return 'super-app-theme--row'
     }}
     autoHeight={!noAutoHeight}
     disableColumnFilter

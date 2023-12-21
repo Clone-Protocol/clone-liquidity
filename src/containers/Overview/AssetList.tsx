@@ -58,7 +58,7 @@ const AssetList: React.FC = () => {
 	}, [])
 
 	return (
-		<PanelBox sx={{ '& .non-hover-row': { ':hover': { background: '#000' } } }}>
+		<PanelBox>
 			<Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
 				<PageTabs value={filter} onChange={handleFilterChange}>
 					{Object.keys(FilterTypeMap).map((f) => (
