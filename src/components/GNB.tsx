@@ -82,21 +82,6 @@ const RightMenu: React.FC = () => {
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
 
-	// validate geoblock if connected
-	useEffect(() => {
-		const validateGeoblock = async () => {
-			if (connected) {
-				const geoblock = await fetchGeoBlock()
-
-				if (!geoblock.result) {
-					setShowGeoblock(true)
-					disconnect()
-				}
-			}
-		}
-		validateGeoblock()
-	}, [connected])
-
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
 		setIsCreatingAccount(true)
