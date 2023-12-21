@@ -9,20 +9,12 @@ import { WalletDialogProvider } from '~/hocs/WalletDialogProvider'
 import { CloneProvider } from '~/hocs/CloneProvider'
 import { clusterApiUrl } from '@solana/web3.js'
 import React, { FC, ReactNode, useMemo } from 'react'
-import { useAtomValue } from 'jotai'
-import { rpcEndpoint } from '~/features/globalAtom'
 
 const ClientWalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
-	//@TODO: need to set network based on network
 	const network = WalletAdapterNetwork.Devnet
-	const rpcUrl = useAtomValue(rpcEndpoint)
 
 	// MEMO: it can connect custom RPC endpoint
-	const endpoint = useMemo(() => {
-		const endpointUrl = clusterApiUrl(network)
-		console.log('endpointUrl', endpointUrl)
-		return endpointUrl
-	}, [network])
+	const endpoint = useMemo(() => clusterApiUrl(network), [network])
 
 	const wallets = useMemo(
 		() => [

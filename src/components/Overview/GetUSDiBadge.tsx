@@ -4,7 +4,7 @@ import Image from 'next/image'
 import PrimaryIcon from 'public/images/icons-badge.svg'
 import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
-import { NETWORK_NAME, ON_USD_NAME } from '~/utils/constants'
+import { NETWORK_NAME, ON_USD, ON_USD_NAME } from '~/utils/constants'
 
 const GetUSDiBadge: React.FC = () => {
   const setMintUsdi = useSetAtom(mintUSDi)
