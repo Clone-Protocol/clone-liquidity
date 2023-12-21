@@ -4,23 +4,25 @@ import { CloneClient, fromCloneScale } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { fetchUserPoints, UserPointsView } from '~/utils/fetch_netlify'
 
 export const fetchStatus = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
   if (!userPubKey) return null
 
   console.log('fetchStatus')
 
-  const userPoints: UserPointsView[] = await fetchUserPoints(userPubKey.toString())
+  let myRank = 1;
+  let totalPoints = 1.34;
+  let lpPoints = 1.34;
+  let tradePoints = 1.34;
+  let socialPoints = 1.34;
 
-  if (userPoints.length === 0) return null
 
   return {
-    myRank: userPoints[0].rank,
-    totalPoints: userPoints[0].total_points,
-    lpPoints: userPoints[0].lp_points,
-    tradePoints: userPoints[0].trading_points,
-    socialPoints: userPoints[0].social_points
+    myRank,
+    totalPoints,
+    lpPoints,
+    tradePoints,
+    socialPoints
   }
 }
 

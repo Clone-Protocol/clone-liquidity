@@ -4,24 +4,31 @@ import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAtomValue } from 'jotai'
 import { getCloneClient } from '../baseQuery';
 import { cloneClient, rpcEndpoint } from '../globalAtom'
-import { fetchUserPoints, UserPointsView } from '~/utils/fetch_netlify'
 
 export const fetchRanking = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
   console.log('fetchRanking')
 
-  const userPoints = await fetchUserPoints()
-  let result: RankingList[] = []
+  // let program
+  // if (mainCloneClient) {
+  //   program = mainCloneClient
+  // } else {
+  //   const { cloneClient: cloneProgram } = await getCloneClient(networkEndpoint)
+  //   program = cloneProgram
+  // }
 
-  userPoints.forEach((user) => {
+
+  const result: RankingList[] = []
+
+  for (let i = 1; i <= 10; i++) {
     result.push({
-      id: user.rank,
-      userAddr: user.name ?? user.user_address,
-      lpPoints: user.lp_points,
-      tradePoints: user.trading_points,
-      socialPoints: user.social_points,
-      totalPoints: user.total_points
+      id: i,
+      userAddr: 'ger132kdfjkj3mvn3ksdlms3124fed',
+      lpPoints: 1545.45,
+      tradePoints: 1545.45,
+      socialPoints: 1545.45,
+      totalPoints: 1545.45
     })
-  });
+  }
 
   return result
 }
