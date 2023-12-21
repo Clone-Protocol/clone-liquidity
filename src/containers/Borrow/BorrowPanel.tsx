@@ -20,7 +20,6 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRouter } from 'next/navigation'
 import { formatNumberToString } from '~/utils/numbers'
 import DisabledRatioSlider from '~/components/Borrow/DisabledRatioSlider'
-import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 
 const RISK_RATIO_VAL = 170
 
@@ -250,15 +249,9 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </WarningStack>
           }
 
-          {showPoolStatus(borrowDetail.status) ?
-            <Box display='flex' justifyContent='center'>
-              <PoolStatusButton status={borrowDetail.status} />
-            </Box>
-            :
-            <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isValid} hasRisk={hasRiskRatio}>
-              <Typography variant='p_lg'>{(isNaN(collAmount) || collAmount === 0) ? 'Enter Collateral Amount' : hasLowerMin ? 'Minimum Collateral Ratio is 150%' : collAmount > usdiBalance?.balanceVal ? 'Exceeded Wallet Balance' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
-            </SubmitButton>
-          }
+          <SubmitButton onClick={handleSubmit(onBorrow)} disabled={!isValid} hasRisk={hasRiskRatio}>
+            <Typography variant='p_lg'>{(isNaN(collAmount) || collAmount === 0) ? 'Enter Collateral Amount' : hasLowerMin ? 'Minimum Collateral Ratio is 150%' : collAmount > usdiBalance?.balanceVal ? 'Exceeded Wallet Balance' : hasRiskRatio ? 'Accept Risk and Open Borrow Position' : 'Borrow'}</Typography>
+          </SubmitButton>
         </Box>
       </Box>
 

@@ -1,23 +1,15 @@
 'use client'
 import { styled } from '@mui/system'
-import { Container, Typography, Box, Button } from '@mui/material'
-import Image from 'next/image'
-import logoIcon from 'public/images/logo-liquidity.png'
+import { Container, Stack, Typography } from '@mui/material'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const NotFound = () => {
   return (
     <StyledSection>
       <Container>
-        <Box mt='150px' textAlign='center'>
-          <Box mb='10px'>
-            <Image src={logoIcon} width={100} height={26} alt="clone" />
-          </Box>
-          <Box mb='30px' lineHeight={0.8}>
-            <Typography fontSize='70px' fontWeight={600} color='#4fe5ff'>404</Typography>
-            <Typography variant='p_lg' fontWeight={600}>Page not found</Typography>
-          </Box>
-          <a href='/'><ReturnButton><Typography variant='p_lg'>Return Home</Typography></ReturnButton></a>
-        </Box>
+        <Stack direction='row' justifyContent='center' alignItems='center' spacing={2} border='1px solid #3a3a3a' marginTop='200px' padding='20px'>
+          <WarningAmberIcon /> <Typography variant="p_lg">{`Oops! It seems like you've taken a wrong turn.`}</Typography>
+        </Stack>
       </Container>
     </StyledSection>
   )
@@ -33,20 +25,6 @@ const StyledSection = styled('section')`
   ${(props) => props.theme.breakpoints.down('md')} {
     padding: 50px 0px;
 	}
-`
-
-const ReturnButton = styled(Button)`
-  width: 162px;
-  height: 42px;
-  border-radius: 5px;
-  box-shadow: 0 0 15px 0 #005874;
-  border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
-  background-color: #000;
-  color: #fff;
-  &:hover {
-    border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
-    background-color: #000;
-  }
 `
 
 export default NotFound
