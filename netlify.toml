@@ -8,5 +8,4 @@
   NEXT_USE_NETLIFY_EDGE = "true"
 
 [build]
-    edge_functions = "netlify/edge-functions"
     publish = ".next"
