@@ -116,12 +116,11 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 			let filteredAssets = assets
 
 			filteredAssets = assets.filter((asset) => {
-				if (filter === 'all') {
-					return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
-				} else if (filter === 'crypto') {
+				if (filter === 'crypto') {
 					return asset.assetType === AssetType.Crypto
-				}
-				else if (filter === 'commodities') {
+				} else if (filter === 'fx') {
+					return asset.assetType === AssetType.Fx
+				} else if (filter === 'commodities') {
 					return asset.assetType === AssetType.Commodities
 				}
 				return true;

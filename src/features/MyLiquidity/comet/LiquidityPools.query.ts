@@ -4,7 +4,7 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from "~/hooks/useClone"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
-import { AssetType, assetMapping } from "~/data/assets"
+import { assetMapping } from "~/data/assets"
 import { useAnchorWallet } from "@solana/wallet-adapter-react"
 
 export const fetchPools = async ({
@@ -42,11 +42,10 @@ export const fetchPools = async ({
     if (!noFilter && currentPoolSet.has(asset.poolIndex)) {
       continue
     }
-    const { tickerIcon, tickerSymbol, tickerName, assetType } = assetMapping(asset.poolIndex)
+    const { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
     const stats = poolStats[asset.poolIndex]
     result.push({
       id: asset.poolIndex,
-      assetType,
       tickerName,
       tickerSymbol,
       tickerIcon,
@@ -99,11 +98,6 @@ export function useLiquidityPoolsQuery({
         enabled,
         select: (assets) => {
           let filteredAssets = assets
-          if (filteredAssets) {
-            filteredAssets = filteredAssets.filter((asset) => {
-              return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
-            })
-          }
           if (filteredAssets && searchTerm && searchTerm.length > 0) {
             filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
           }

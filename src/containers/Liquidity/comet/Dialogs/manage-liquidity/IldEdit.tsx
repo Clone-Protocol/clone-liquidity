@@ -109,7 +109,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   if (balanceOnAsset === 0) {
     warningMsgForAsset = 'You wallet balance is zero'
   } else if (positionInfo && Math.max(0, positionInfo.onassetILD) - ildAssetAmount > 0) {
-    warningMsgForAsset = 'Not enough wallet balance to fully payoff clAsset ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
+    warningMsgForAsset = 'Not enough wallet balance to fully payoff onAsseet ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
   }
 
   let warningMsgForColl = ''

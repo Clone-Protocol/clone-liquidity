@@ -27,8 +27,8 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
       <Box width='742px' sx={{ backgroundImage: `url(${BgDialog.src})`, position: 'relative', padding: '52px 33px' }}>
         <BoxWrapper>
           <TextHead>Open Account</TextHead>
-          <Box my='20px' lineHeight={1.5} color='#989898'>
-            <Typography variant='p_xlg'>Welcome! This is your first time connecting this wallet to Clone Liquidity. Please open your Clone Liquidity account on Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='p_xlg' color='#4fe5ff'>~0.07 SOL</Typography><Typography variant='p_xlg'> for most optimal experience using Clone Liquidity. The fee is paid to the Solana Network not Clone Protocol.</Typography>
+          <Box my='20px' lineHeight={1.3} color='#989898'>
+            <Typography variant='p_xlg'>Welcome! This is your first time connecting this wallet to {NETWORK_NAME} Clone Liquidity. Please open an account on {NETWORK_NAME} Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='p_xlg' color='#4fe5ff'>~0.07 {NETWORK_NAME} SOL</Typography><Typography variant='p_xlg'> for most optimal experience using {NETWORK_NAME} Clone Liquidity.</Typography>
           </Box>
           <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_xlg'>Open {NETWORK_NAME} Account</Typography></EnterButton>
         </BoxWrapper>

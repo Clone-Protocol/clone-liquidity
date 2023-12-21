@@ -4,14 +4,13 @@ import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, use
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.png'
 import walletIcon from 'public/images/wallet-icon-small.svg'
-import SettingsIcon from 'public/images/buttons-more-menu-settings.svg'
 import { withCsrOnly } from '~/hocs/CsrOnly'
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react'
 import { shortenAddress } from '~/utils/address'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
-import { CreateAccountDialogStates } from '~/utils/constants'
+import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
@@ -34,7 +33,7 @@ const GNB: React.FC = () => {
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Image src={logoIcon} width={120} height={32} alt="clone" />
+						<Image src={logoIcon} width={121} height={25} alt="clone" />
 						<Box ml='60px'><NaviMenu /></Box>
 						<RightMenu />
 					</Toolbar>
@@ -115,11 +114,10 @@ const RightMenu: React.FC = () => {
 				handleClose={closeAccountSetupDialog} />
 
 			<Box display="flex">
-				{/* <HeaderButton onClick={() => setOpenTokenFaucet(true)}>
+				<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
 					<Typography variant='p'>{NETWORK_NAME} Faucet</Typography>
-				</HeaderButton> */}
+				</HeaderButton>
 				<HeaderButton sx={{ fontSize: '16px', fontWeight: 'bold', paddingBottom: '20px' }} onClick={handleMoreClick}>...</HeaderButton>
-				<HeaderButton><Image src={SettingsIcon} alt="settings" /></HeaderButton>
 				<MoreMenu anchorEl={anchorEl} onShowTokenFaucet={() => setOpenTokenFaucet(true)} onClose={() => setAnchorEl(null)} />
 				<Box>
 					{
@@ -187,7 +185,7 @@ const NavPlaceholder = styled('div')`
 `
 const HeaderButton = styled(Button)`
 	padding: 8px;
-  margin-left: 6px;
+  margin-left: 16px;
 	color: ${(props) => props.theme.palette.text.secondary};
 	height: 42px;
 	border-radius: 5px;

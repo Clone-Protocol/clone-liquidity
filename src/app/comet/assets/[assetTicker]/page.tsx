@@ -6,7 +6,7 @@ import { Box } from '@mui/material'
 import { AssetTickers } from '~/data/assets'
 
 const AssetPage = ({ params }: { params: { assetTicker: string } }) => {
-  const assetTicker = params.assetTicker || AssetTickers.gold
+  const assetTicker = params.assetTicker || AssetTickers.euro
 
   return (
     <StyledSection>
