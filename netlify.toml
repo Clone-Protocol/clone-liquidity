@@ -4,8 +4,5 @@
 [functions]
     directory = "functions/"
 
-[build.environment]
-  NEXT_USE_NETLIFY_EDGE = "true"
-
 [build]
     publish = ".next"
