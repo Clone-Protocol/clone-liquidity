@@ -77,13 +77,11 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
 const TransactionStateSnackbar = ({ txState, txHash, open, handleClose }: { txState: TransactionState, txHash: string, open: boolean, handleClose: () => void }) => {
   const [isFocusWarning, setIsFocusWarning] = useState(false)
 
-  const hideDuration = txState === TransactionState.PENDING ? 60000 : 5000
-
   return (
     <Box zIndex={999999}>
       {txState === TransactionState.PENDING && <BackLayer onClick={() => setIsFocusWarning(true)} />}
       <Slide direction="left" in={true} mountOnEnter unmountOnExit>
-        <Snackbar open={open} autoHideDuration={hideDuration} onClose={txState === TransactionState.PENDING ? () => { } : handleClose}>
+        <Snackbar open={open} autoHideDuration={60000} onClose={txState === TransactionState.PENDING ? () => { } : handleClose}>
           <Box>
             {txState === TransactionState.SUCCESS &&
               <BoxWrapper sx={{ border: '1px solid #4fe5ff' }}>
