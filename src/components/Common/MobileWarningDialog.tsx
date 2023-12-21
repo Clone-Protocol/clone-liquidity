@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, styled, Dialog, DialogContent, Typography, Button } from '@mui/material'
+import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { FadeTransition } from '~/components/Common/Dialog'
 import Image from 'next/image'
 import OctagonIcon from 'public/images/alert-octagon-outline.svg'
@@ -7,7 +7,7 @@ import HomeIcon from 'public/images/mobile/home.svg'
 import TwitterIcon from 'public/images/mobile/twitter.svg'
 import DiscordIcon from 'public/images/mobile/discord.svg'
 import { Stack } from '@mui/system'
-import { DISCORD_URL, OFFICIAL_WEB, TWITTER_URL, MARKETS_APP } from '~/data/social'
+import { DISCORD_URL, OFFICIAL_WEB, TWITTER_URL } from '~/data/social'
 
 const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   return (
@@ -28,7 +28,6 @@ const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose
               <a href={TWITTER_URL} target="_blank" rel="noreferrer"><Image src={TwitterIcon} alt='twitter' /></a>
               <a href={DISCORD_URL} target="_blank" rel="noreferrer"><Image src={DiscordIcon} alt='discord' /></a>
             </Stack>
-            <a href={MARKETS_APP} target="_blank" rel="noreferrer"><GoToMarketBtn><Typography variant='p'>Go to Markets App - Mobile Compatible</Typography></GoToMarketBtn></a>
           </BoxWrapper>
         </DialogContent>
       </Dialog>
@@ -41,17 +40,6 @@ const BoxWrapper = styled(Box)`
   padding: 20px; 
   color: #fff;
   text-align: center;
-`
-const GoToMarketBtn = styled(Button)`
-  width: 255px;
-  height: 39px;
-  padding: 8px 4px 8px 5px;
-  margin-top: 18px;
-  border-radius: 10px;
-  background-color: #c4b5fd;
-  &:hover {
-    background-color: #8070ad;
-  }
 `
 
 export default MobileWarningDialog

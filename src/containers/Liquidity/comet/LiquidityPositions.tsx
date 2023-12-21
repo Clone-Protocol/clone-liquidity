@@ -28,7 +28,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   }
 
   const redirectAddCometPage = () => {
-    router.push(`/comet/assets/gold`)
+    router.push(`/comet/assets/euro`)
   }
 
   const handleRowClick: GridEventListener<'rowClick'> = useCallback((

@@ -2,7 +2,7 @@ import { useQuery, Query } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
-import { AssetType, assetMapping } from '~/data/assets'
+import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
@@ -77,11 +77,6 @@ export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetch
 			enabled,
 			select: (assets) => {
 				let filteredAssets = assets
-				if (filteredAssets) {
-					filteredAssets = filteredAssets.filter((asset) => {
-						return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
-					})
-				}
 				if (filteredAssets && searchTerm && searchTerm.length > 0) {
 					filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
 				}
