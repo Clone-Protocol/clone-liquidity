@@ -23,7 +23,6 @@ export const enum GridType {
 
 export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, hasRangeIndicator = false, gridType = GridType.Normal, minHeight = 260, noAutoHeight = false, hasTopBorderRadius = false, onRowClick }) => (
   <DataGrid
-
     sx={{
       width: '100%',
       border: 0,
@@ -101,6 +100,9 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
         borderLeft: '1px solid #ed2525',
         borderRight: '1px solid #ed2525'
       },
+      '& .MuiDataGrid-virtualScroller': {
+        overflow: 'hidden'
+      }
     }}
     components={{
       NoResultsOverlay: customNoRowsOverlay
@@ -125,13 +127,12 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, customNoRowsOverlay, 
     }}
     autoHeight={!noAutoHeight}
     disableColumnFilter
-    disableSelectionOnClick
+    disableRowSelectionOnClick
     disableColumnSelector
     disableColumnMenu
     disableDensitySelector
-    disableExtendRowFullWidth
     hideFooter
-    headerHeight={38}
+    columnHeaderHeight={38}
     rowHeight={72}
     rowCount={20}
     onRowClick={onRowClick}

@@ -76,13 +76,12 @@ export const Grid: React.FC<GridProps> = ({ headers, rows, minHeight = 260, onRo
       return 'super-app-theme--row'
     }}
     disableColumnFilter
-    disableSelectionOnClick
+    disableRowSelectionOnClick
     disableColumnSelector
     disableColumnMenu
     disableDensitySelector
-    disableExtendRowFullWidth
     hideFooter
-    headerHeight={0}
+    columnHeaderHeight={0}
     rowHeight={60}
     rowCount={20}
     onRowClick={onRowClick}
