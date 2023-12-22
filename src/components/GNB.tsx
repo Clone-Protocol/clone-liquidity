@@ -245,7 +245,7 @@ const ConnectButton = styled(Button)`
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
 	box-shadow: 0 0 10px 0 #005874;
-  margin-left: 16px;
+  margin-left: 8px;
 	border-radius: 5px;
 	color: #fff;
   &:hover {
