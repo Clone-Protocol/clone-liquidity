@@ -2,7 +2,7 @@ import { useQuery, Query } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
-import { assetMapping } from '~/data/assets'
+import { Asset, assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getAssociatedTokenAddress } from "@solana/spl-token";
@@ -38,6 +38,11 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 
 	const result: AssetList[] = []
 	for (let index = 0; index < pools.pools.length; index++) {
+		//TODO: temporary, it should be removed later
+		if (index === Asset.Sui || index === Asset.Aptos || index === Asset.Cardano) {
+			continue;
+		}
+
 		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
 		result.push({
 			id: index,

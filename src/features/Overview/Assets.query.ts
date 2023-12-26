@@ -1,6 +1,6 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
-import { assetMapping, AssetType } from '~/data/assets'
+import { Asset, assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetch24hourVolume, getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
@@ -44,6 +44,12 @@ export const fetchAssets = async ({ mainCloneClient }: { mainCloneClient?: Clone
 
 	for (let i = 0; i < iassetInfos.length; i++) {
 		const info = iassetInfos[i]
+
+		//TODO: temporary, it should be removed later
+		if (info.poolIndex === Asset.Sui || info.poolIndex === Asset.Aptos || info.poolIndex === Asset.Cardano) {
+			continue;
+		}
+
 		const { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
 		const stats = poolStats[info.poolIndex]
 
