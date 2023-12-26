@@ -4,7 +4,7 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from "~/hooks/useClone"
 import { REFETCH_CYCLE } from "~/components/Common/DataLoadingIndicator"
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
-import { assetMapping } from "~/data/assets"
+import { Asset, assetMapping } from "~/data/assets"
 import { useAnchorWallet } from "@solana/wallet-adapter-react"
 
 export const fetchPools = async ({
@@ -41,6 +41,10 @@ export const fetchPools = async ({
   for (const asset of assetInfos) {
     if (!noFilter && currentPoolSet.has(asset.poolIndex)) {
       continue
+    }
+    //TODO: temporary, it should be removed later
+    if (asset.poolIndex === Asset.Sui || asset.poolIndex === Asset.Aptos || asset.poolIndex === Asset.Cardano) {
+      continue;
     }
     const { tickerIcon, tickerSymbol, tickerName } = assetMapping(asset.poolIndex)
     const stats = poolStats[asset.poolIndex]
