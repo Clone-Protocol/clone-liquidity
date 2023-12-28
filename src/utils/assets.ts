@@ -4,6 +4,7 @@ import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client
 import { assetMapping } from "~/data/assets";
 import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats, fetchPoolApy } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
+import { IS_DEV } from "~/data/networks";
 
 export type Interval = 'day' | 'hour';
 export type Filter = 'day' | 'week' | 'month' | 'year';
@@ -38,7 +39,7 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
 
 
 export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ status: Status, poolIndex: number, poolPrice: number, liquidity: number, oraclePrice: number }[]> => {
-  const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster("devnet")));
+  const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster(IS_DEV ? "devnet" : "mainnet-beta")));
   const data = await pythClient.getData();
   const pools = await program.getPools();
   const oracles = await program.getOracles();
@@ -91,22 +92,26 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
 
   // Sorted by time_interval ascending
   const poolStatsData = await fetchStatsData("hour", "week", false)
+  console.log('poolStatsData', poolStatsData)
 
   poolStatsData.forEach((item) => {
-
     const dt = new Date(item.time_interval)
     const poolIndex = Number(item.pool_index)
     const hoursDifference = hoursDiff(dt)
     const tradingFees = fromScale(item.trading_fees, 7)
     const liquidity = fromScale(item.total_committed_collateral_liquidity, 7) * 2
 
-    if (hoursDifference <= 24) {
-      result[poolIndex].fees += tradingFees
-    } else if (hoursDifference > 24) {
-      result[poolIndex].previousLiquidity = liquidity
-      if (hoursDifference <= 48) {
-        result[poolIndex].previousFees += tradingFees
+    try {
+      if (hoursDifference <= 24) {
+        result[poolIndex].fees += tradingFees
+      } else if (hoursDifference > 24) {
+        result[poolIndex].previousLiquidity = liquidity
+        if (hoursDifference <= 48) {
+          result[poolIndex].previousFees += tradingFees
+        }
       }
+    } catch (e) {
+      console.error('error', e)
     }
   })
 
@@ -118,19 +123,28 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
     const poolIndex = Number(item.pool_index)
     const tradingVolume = convertToNumber(item.volume)
     const tradingFees = convertToNumber(item.trading_fees)
-    if (hoursDifference <= 24) {
-      result[poolIndex].volumeUSD += tradingVolume
-      result[poolIndex].fees += tradingFees
-    } else if (hoursDifference <= 48 && hoursDifference > 24) {
-      result[poolIndex].previousVolumeUSD += tradingVolume
-      result[poolIndex].previousFees += tradingFees
+
+    try {
+      if (hoursDifference <= 24) {
+        result[poolIndex].volumeUSD += tradingVolume
+        result[poolIndex].fees += tradingFees
+      } else if (hoursDifference <= 48 && hoursDifference > 24) {
+        result[poolIndex].previousVolumeUSD += tradingVolume
+        result[poolIndex].previousFees += tradingFees
+      }
+    } catch (e) {
+      console.error('error', e)
     }
   })
 
   const apyData = await fetchPoolApy();
 
   apyData.forEach((item) => {
-    result[Number(item.pool_index)].apy = item.apy_24hr
+    try {
+      result[Number(item.pool_index)].apy = item.apy_24hr
+    } catch (e) {
+      console.error('error', e)
+    }
   })
 
   return result

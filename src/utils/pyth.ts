@@ -55,6 +55,7 @@ export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): P
 // If the price isn't found in the pyth data, or the source is not pyth, it will return the last
 // saved oracle price from the onchain account.
 export const fetchPythOraclePrices = async (connection: Connection, oracles: Oracles, cluster: PythCluster = "devnet"): Promise<number[]> => {
+    console.log('c', cluster)
     const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster(cluster)));
     const pythData = await pythClient.getData();
 
