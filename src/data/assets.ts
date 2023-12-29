@@ -20,6 +20,9 @@ export enum AssetType {
     Commodities,
 }
 
+export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
+export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
+
 export const ASSETS = [
     {
         tickerName: 'Clone Arbitrum',
@@ -65,7 +68,7 @@ export const collateralMapping = (index: number) => {
             collateralName = IS_DEV ? 'Clone USD' : 'USD Coin'
             collateralType = Collateral.onUSD
             collateralSymbol = ON_USD
-            collateralIcon = '/images/assets/on-usd.svg'
+            collateralIcon = IS_DEV ? '/images/assets/on-usd.svg' : '/images/assets/usdc.svg'
             break
         case Collateral.mockUSDC:
             collateralName = 'USD Coin'

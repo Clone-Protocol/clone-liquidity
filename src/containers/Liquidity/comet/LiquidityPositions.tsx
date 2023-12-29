@@ -13,6 +13,7 @@ import { AddIcon } from '~/components/Common/SvgIcons'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
+import { DEFAULT_ASSET_LINK } from '~/data/assets'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -30,7 +31,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   }
 
   const redirectAddCometPage = () => {
-    router.push(`/comet/assets/gold`)
+    router.push(DEFAULT_ASSET_LINK)
   }
 
   const handleRowClick: GridEventListener<'rowClick'> = useCallback((

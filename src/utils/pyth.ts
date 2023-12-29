@@ -4,6 +4,7 @@ import { PythHttpClient, getPythProgramKeyForCluster, PythCluster } from "@pythn
 import { Connection, PublicKey } from "@solana/web3.js"
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone';
 import { Oracles, OracleSource } from 'clone-protocol-sdk/sdk/generated/clone'
+import { IS_DEV } from '~/data/networks';
 
 export type Network = "devnet" | "mainnet-beta" | "pythnet" | "testnet" | "pythtest";
 export type Range = "1H" | "1D" | "1W" | "1M" | "1Y"
@@ -54,8 +55,8 @@ export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): P
 // Fetches the latest oracle prices from Pyth ordered by the order of the oracles in the program,
 // If the price isn't found in the pyth data, or the source is not pyth, it will return the last
 // saved oracle price from the onchain account.
-export const fetchPythOraclePrices = async (connection: Connection, oracles: Oracles, cluster: PythCluster = "devnet"): Promise<number[]> => {
-    console.log('c', cluster)
+export const fetchPythOraclePrices = async (connection: Connection, oracles: Oracles): Promise<number[]> => {
+    const cluster = IS_DEV ? "devnet" : "mainnet-beta";
     const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster(cluster)));
     const pythData = await pythClient.getData();
 

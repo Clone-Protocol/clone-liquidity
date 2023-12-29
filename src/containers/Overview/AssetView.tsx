@@ -13,7 +13,7 @@ import PoolAnalytics from '~/components/Overview/PoolAnalytics'
 import TipMsg from '~/components/Common/TipMsg'
 import InfoIcon from 'public/images/info-icon.svg'
 import { GoBackButton } from '~/components/Common/CommonButtons'
-import { ASSETS, AssetTickers } from '~/data/assets'
+import { ASSETS, AssetTickers, DEFAULT_ASSET_ID, DEFAULT_ASSET_LINK } from '~/data/assets'
 import dynamic from 'next/dynamic'
 
 const AssetView = ({ assetTicker }: { assetTicker: string }) => {
@@ -28,8 +28,8 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 			if (AssetTickers[assetTicker as keyof typeof AssetTickers]) {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
-				setAssetIndex(AssetTickers.gold)
-				router.replace('/comet/assets/gold')
+				setAssetIndex(DEFAULT_ASSET_ID)
+				router.replace(DEFAULT_ASSET_LINK)
 			}
 		}
 	}, [assetTicker])
