@@ -201,11 +201,12 @@ export const fetchInitializeCometDetail = async ({ program, index }: { program: 
 	const pool = pools.pools[index];
 	const oracles = await program.getOracles()
 	const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+	const usdcOracle = oracles.oracles[Number(program.clone.collateral.oracleInfoIndex)]
 	const { poolOnasset, poolCollateral } = calculatePoolAmounts(
 		fromCloneScale(pool.collateralIld),
 		fromCloneScale(pool.onassetIld),
 		fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale),
-		fromScale(oracle.price, oracle.expo),
+		fromScale(oracle.price, oracle.expo) / fromScale(usdcOracle.price, usdcOracle.expo),
 		program.clone.collateral
 	)
 	const price = poolCollateral / poolOnasset

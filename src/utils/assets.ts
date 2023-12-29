@@ -39,7 +39,7 @@ export const generateDates = (start: Date, interval: Interval): Date[] => {
 
 
 export const getiAssetInfos = async (connection: Connection, program: CloneClient): Promise<{ status: Status, poolIndex: number, poolPrice: number, liquidity: number, oraclePrice: number }[]> => {
-  const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster(IS_DEV ? "devnet" : "mainnet-beta")));
+  const pythClient = new PythHttpClient(connection, new PublicKey(getPythProgramKeyForCluster(process.env.NEXT_PUBLIC_USE_NETWORK === "MAIN_NET" ? "mainnet-beta" : "devnet")));
   const data = await pythClient.getData();
   const pools = await program.getPools();
   const oracles = await program.getOracles();
@@ -49,11 +49,12 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
     const pool = pools.pools[poolIndex];
     const status = pool.status
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
+    const usdcOracle = oracles.oracles[Number(program.clone.collateral.oracleInfoIndex)];
     const committedCollateral = fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale)
     const poolCollateralIld = fromScale(pool.collateralIld, program.clone.collateral.scale)
     const poolOnassetIld = fromCloneScale(pool.onassetIld)
     const { pythSymbol } = assetMapping(poolIndex)
-    const oraclePrice = data.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo);
+    const oraclePrice = data.productPrice.get(pythSymbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo) / fromScale(usdcOracle.price, usdcOracle.expo);
     const poolPrice = (committedCollateral - poolCollateralIld) / (committedCollateral / oraclePrice - poolOnassetIld)
     const liquidity = committedCollateral * 2;
     iassetInfo.push({ status, poolIndex, poolPrice, liquidity, oraclePrice });
@@ -80,7 +81,7 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
   let result = pools.pools.map((pool) => {
     return {
       volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0,
-      liquidityUSD: fromScale(pool.committedCollateralLiquidity, 7) * 2,
+      liquidityUSD: fromScale(pool.committedCollateralLiquidity, 6) * 2,
       previousLiquidity: 0, apy: 0
     }
   });
@@ -98,8 +99,8 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
     const dt = new Date(item.time_interval)
     const poolIndex = Number(item.pool_index)
     const hoursDifference = hoursDiff(dt)
-    const tradingFees = fromScale(item.trading_fees, 7)
-    const liquidity = fromScale(item.total_committed_collateral_liquidity, 7) * 2
+    const tradingFees = fromScale(item.trading_fees, 6)
+    const liquidity = fromScale(item.total_committed_collateral_liquidity, 6) * 2
 
     try {
       if (hoursDifference <= 24) {
@@ -226,7 +227,7 @@ const parseBorrowData = (data: BorrowStats[]): BorrowResult => {
   } else if (data.length === 1) {
     const latestEntry = data[0]
     const currentAmount = fromCloneScale(latestEntry.cumulative_borrowed_delta)
-    const currentTVL = fromScale(latestEntry.cumulative_collateral_delta, 7)
+    const currentTVL = fromScale(latestEntry.cumulative_collateral_delta, 6)
     const latestEntryDate = new Date(latestEntry.time_interval)
     const now = new Date();
     const hoursElapsed = (now.getTime() - latestEntryDate.getTime()) / 3600000
@@ -239,10 +240,10 @@ const parseBorrowData = (data: BorrowStats[]): BorrowResult => {
     // Should only be two entries.
     const firstEntry = data[0]
     const previousAmount = fromCloneScale(firstEntry.cumulative_borrowed_delta)
-    const previousTVL = fromScale(firstEntry.cumulative_collateral_delta, 7)
+    const previousTVL = fromScale(firstEntry.cumulative_collateral_delta, 6)
     const latestEntry = data.at(-1)!
     const currentAmount = fromCloneScale(latestEntry.cumulative_borrowed_delta)
-    const currentTVL = fromScale(latestEntry.cumulative_collateral_delta, 7)
+    const currentTVL = fromScale(latestEntry.cumulative_collateral_delta, 6)
     return { currentAmount, previousAmount, currentTVL, previousTVL }
   }
 }
