@@ -45,7 +45,7 @@ export const fetchTotalLiquidity = async ({ mainCloneClient, timeframe, networkE
   const aggregatedData = await netlifyFetchTotalLiquidity(interval, filter)
   const dataMap = new Map<number, number>()
   aggregatedData.forEach((item) => {
-    dataMap.set((new Date(item.time_interval)).getTime(), 2 * item.total_liquidity * Math.pow(10, -7))
+    dataMap.set((new Date(item.time_interval)).getTime(), 2 * item.total_liquidity * Math.pow(10, -6))
   })
 
   const now = new Date()
@@ -70,7 +70,7 @@ export const fetchTotalLiquidity = async ({ mainCloneClient, timeframe, networkE
   const pools = await Pools.fromAccountAddress(connection, poolAddress)
   let latestLiquidity = 0;
   pools.pools.forEach((pool) => {
-    latestLiquidity += pool.committedCollateralLiquidity * Math.pow(10, -7) * 2
+    latestLiquidity += pool.committedCollateralLiquidity * Math.pow(10, -6) * 2
   });
   chartData.push({ time: now.toISOString(), value: latestLiquidity })
 
