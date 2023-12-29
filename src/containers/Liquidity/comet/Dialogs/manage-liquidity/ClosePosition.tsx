@@ -31,7 +31,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
     let liquidity = 0
     if (positionInfo) {
       const position = positionInfo.comet.positions[positionIndex]
-      liquidity += fromScale(position.committedCollateralLiquidity, 7) * 2
+      liquidity += fromScale(position.committedCollateralLiquidity, 6) * 2
     }
     return liquidity
   }

@@ -34,7 +34,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
     if (positionInfo && positionInfo.comet) {
       const position = positionInfo.comet.positions[positionIndex]
       const healthCoefficient = fromScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient, 2)
-      const currentPosition = fromScale(position.committedCollateralLiquidity, 7)
+      const currentPosition = fromScale(position.committedCollateralLiquidity, 6)
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
