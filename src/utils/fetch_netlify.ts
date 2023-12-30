@@ -17,7 +17,12 @@ export interface StatsData {
 }
 
 export const fetchStatsData = async (interval: string, filter: string, aggregated: boolean = false): Promise<StatsData[]> => {
-
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=300',
+            'Netlify-Vary': 'query'
+          }
+    }
     let endpoint = (() => {
         if (aggregated) {
             return `/.netlify/functions/get-aggregated-stats?interval=${interval}&filter=${filter}`
@@ -26,7 +31,7 @@ export const fetchStatsData = async (interval: string, filter: string, aggregate
         }
     })()
 
-    const response = await axios.get(endpoint)
+    const response = await axios.get(endpoint, config)
     return response.data as StatsData[]
 }
 
@@ -42,12 +47,18 @@ export interface OHLCVResponse {
 }
 
 export const fetchOHLCV = async (interval: string, filter: string, pool?: number | string): Promise<OHLCVResponse[]> => {
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=300',
+            'Netlify-Vary': 'query'
+          }
+    }
     let endpoint = `/.netlify/functions/get-ohlcv?interval=${interval}&filter=${filter}`
 
     if (pool !== undefined)
         endpoint += `&pool=${pool}`
 
-    const response = await axios.get(endpoint)
+    const response = await axios.get(endpoint, config)
     return response.data as OHLCVResponse[]
 }
 
@@ -59,22 +70,46 @@ export interface BorrowStats {
 }
 
 export const fetchBorrowStats = async (): Promise<BorrowStats[]> => {
-    const response = await axios.get(`/.netlify/functions/get-borrow-stats`)
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=300',
+            'Netlify-Vary': 'query'
+          }
+    }
+    const response = await axios.get(`/.netlify/functions/get-borrow-stats`, config)
     return response.data as BorrowStats[]
 }
 
 export const fetchPoolApy = async (): Promise<{ pool_index: number, apy_24hr: number }[]> => {
-    const response = await axios.get(`/.netlify/functions/get-pool-apy`)
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=300',
+            'Netlify-Vary': 'query'
+          }
+    }
+    const response = await axios.get(`/.netlify/functions/get-pool-apy`, config)
     return response.data as { pool_index: number, apy_24hr: number }[]
 }
 
 export const fetchUserApy = async (user_address: string): Promise<number> => {
-    const response = await axios.get(`/.netlify/functions/get-user-apy?user_address=${user_address}`)
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=30',
+            'Netlify-Vary': 'query'
+          }
+    }
+    const response = await axios.get(`/.netlify/functions/get-user-apy?user_address=${user_address}`, config)
     return response.data as number
 }
 
 export const fetchTotalLiquidity = async (interval: string, filter: string): Promise<{ time_interval: string, total_liquidity: number }[]> => {
-    const response = await axios.get(`/.netlify/functions/get-total-liquidity?interval=${interval}&filter=${filter}`)
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=300',
+            'Netlify-Vary': 'query'
+          }
+    }
+    const response = await axios.get(`/.netlify/functions/get-total-liquidity?interval=${interval}&filter=${filter}`, config)
     return response.data as { time_interval: string, total_liquidity: number }[]
 }
 

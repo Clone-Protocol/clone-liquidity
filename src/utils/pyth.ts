@@ -46,8 +46,13 @@ export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): P
     let queryString = `symbol=${symbol}&from=${from}`
     if (filterDaily)
         queryString = queryString.concat('&dailyClose=true')
-
-    let response = await axios.get(`/.netlify/functions/pyth-data-fetch?${queryString}`)
+    const config = {
+        headers: {
+            'Cache-Control': 'max-age=60',
+            'Netlify-Vary': 'query=symbol'
+            }
+    }
+    let response = await axios.get(`/.netlify/functions/pyth-data-fetch?${queryString}`, config)
 
     return response.data
 }
