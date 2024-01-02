@@ -166,9 +166,9 @@ const RightMenu: React.FC = () => {
 						!connected ?
 							<ConnectButton
 								onClick={handleWalletClick}
-								disabled={connecting}
+							// disabled={connecting}
 							>
-								<Typography variant='p_lg'>Connect Wallet</Typography>
+								<Typography variant='p_lg'>{connecting ? 'Connecting...' : 'Connect Wallet'}</Typography>
 							</ConnectButton>
 							:
 							<ConnectedButton onClick={handleWalletClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
@@ -252,6 +252,10 @@ const ConnectButton = styled(Button)`
 		background: transparent;
 		border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
   }
+	&:disabled {
+		background: transparent;
+		border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
+	}
 `
 const ConnectedButton = styled(Button)`
 	width: 142px;

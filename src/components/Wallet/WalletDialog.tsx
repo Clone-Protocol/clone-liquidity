@@ -105,7 +105,7 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 	useEffect(() => {
 		if (walletClicked) {
 			if (connecting) {
-				enqueueSnackbar('Wallet Connecting')
+				// enqueueSnackbar('Wallet Connecting')
 			} else if (connected) {
 				enqueueSnackbar('Wallet Connected')
 			}
