@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { FC, ReactElement, SyntheticEvent, useCallback, useMemo, useState } from 'react'
+import React, { FC, ReactElement, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { WalletListItem } from './WalletListItem'
 import { useSnackbar } from 'notistack'
@@ -96,10 +96,22 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 	onClose,
 	...props
 }) => {
-	const { wallets, select } = useWallet()
+	const { wallets, select, connecting, connected } = useWallet()
 	const { open, setOpen } = useWalletDialog()
 	const { enqueueSnackbar } = useSnackbar()
+	const [walletClicked, setWalletClicked] = useState(false)
 	const [expanded, setExpanded] = useState(false)
+
+	useEffect(() => {
+		if (walletClicked) {
+			if (connecting) {
+				enqueueSnackbar('Wallet Connecting')
+			} else if (connected) {
+				enqueueSnackbar('Wallet Connected')
+			}
+			setWalletClicked(true)
+		}
+	}, [connecting, connected])
 
 	const [featured, more] = useMemo(
 		() => [wallets.slice(0, featuredWallets), wallets.slice(featuredWallets)],
@@ -118,8 +130,7 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 		(event: SyntheticEvent, walletName: WalletName) => {
 			select(walletName)
 			handleClose(event)
-
-			enqueueSnackbar('Wallet connected')
+			setWalletClicked(true)
 		},
 		[select, handleClose]
 	)

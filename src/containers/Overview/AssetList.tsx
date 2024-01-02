@@ -73,6 +73,7 @@ const AssetList: React.FC = () => {
 				headers={columns}
 				rows={assets || []}
 				minHeight={110}
+				noAutoHeight={true}
 				hasTopBorderRadius={true}
 				customNoRowsOverlay={() => CustomNoRowsOverlay('No assets')}
 				onRowClick={handleRowClick}

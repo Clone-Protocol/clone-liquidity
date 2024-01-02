@@ -231,7 +231,7 @@ const NavPlaceholder = styled('div')`
 const HeaderButton = styled(Button)`
 	padding: 8px;
   margin-left: 6px;
-	color: ${(props) => props.theme.palette.text.secondary};
+	color: rgb(102, 112, 126);
 	height: 42px;
 	border-radius: 5px;
   &:hover {

@@ -40,11 +40,11 @@ const ReturnButton = styled(Button)`
   height: 42px;
   border-radius: 5px;
   box-shadow: 0 0 15px 0 #005874;
-  border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
+  border: solid 1px #4fe5ff;
   background-color: #000;
   color: #fff;
   &:hover {
-    border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
+    border: solid 1px #24abc2;
     background-color: #000;
   }
 `
