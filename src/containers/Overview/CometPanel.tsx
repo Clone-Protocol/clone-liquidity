@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
-import { LoadingProgress } from '~/components/Common/Loading'
+import { LoadingButton, LoadingProgress } from '~/components/Common/Loading'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, Stack, FormHelperText, Typography } from '@mui/material'
 import { useForm } from 'react-hook-form'
@@ -51,7 +51,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
       const healthCoefficient = fromScale(assetInfo.positionHealthScoreCoefficient, 2);
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
-      setMaxMintable(positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / ( 100 * healthCoefficient ))
+      setMaxMintable(positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / (100 * healthCoefficient))
       initData()
     }
   }, [positionInfo])
@@ -116,7 +116,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
         changeAmount: mintAmount,
       })
 
-      if (data) {
+      if (data.result) {
         console.log('data', data)
         refetch()
         initData()
@@ -170,9 +170,17 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
     )
   } else {
     actionButton = (
-      <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
-        <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
-      </SubmitButton>
+      <Box>
+        {isSubmitting ?
+          <Box display='flex' justifyContent='center'>
+            <LoadingButton width='100%' height='52px' />
+          </Box>
+          :
+          <SubmitButton onClick={handleSubmit(onNewLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
+            <Typography variant='p_lg'>{hasRiskScore && 'Accept Risk and '} Open New Comet Liquidity Position</Typography>
+          </SubmitButton>
+        }
+      </Box>
     )
   }
 

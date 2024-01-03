@@ -16,6 +16,7 @@ import { InfoMsg } from '~/components/Common/WarningMsg'
 import { useRouter } from 'next/navigation'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { LoadingButton } from '~/components/Common/Loading'
 
 const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -145,7 +146,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
     }
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && !isSubmitting && collAmount > 0
 
   return (
     <>
@@ -245,11 +246,17 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
 
             {isFullWithdrawal && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
 
-            <SubmitButton onClick={handleSubmit((isFullWithdrawal && isFullRepaid) ? onClose : onEdit)} disabled={!isDirty || !isValid || isSubmitting} hasRisk={hasRiskRatio && !isFullRepaid}>
-              <Typography variant='p_lg'>
-                {(isFullWithdrawal && isFullRepaid) ? 'Withdraw and Close This Borrow Position' : `${hasRiskRatio ? 'Accept Risk and ' : ''} Edit Collateral`}
-              </Typography>
-            </SubmitButton>
+            {isSubmitting ?
+              <Box display='flex' justifyContent='center' my='15px'>
+                <LoadingButton width='100%' height='52px' />
+              </Box>
+              :
+              <SubmitButton onClick={handleSubmit((isFullWithdrawal && isFullRepaid) ? onClose : onEdit)} disabled={!isValid} hasRisk={hasRiskRatio && !isFullRepaid}>
+                <Typography variant='p_lg'>
+                  {(isFullWithdrawal && isFullRepaid) ? 'Withdraw and Close This Borrow Position' : `${hasRiskRatio ? 'Accept Risk and ' : ''} Edit Collateral`}
+                </Typography>
+              </SubmitButton>
+            }
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
               <CloseButton handleClose={onHideEditForm} />

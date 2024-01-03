@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form'
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import withSuspense from '~/hocs/withSuspense'
-import { LoadingProgress } from '~/components/Common/Loading'
+import { LoadingButton, LoadingProgress } from '~/components/Common/Loading'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onRefetchData: () => void }) => {
@@ -38,7 +38,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
 
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
-      const maxMintable = positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / ( 100 * healthCoefficient ) + currentPosition
+      const maxMintable = positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / (100 * healthCoefficient) + currentPosition
       setMaxMintable(maxMintable)
 
       setDefaultMintRatio(100 * currentPosition / maxMintable)
@@ -176,9 +176,15 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
           }
         </>
 
-        <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
-          <Typography variant='p_xlg'>{hasRiskScore && 'Accept Risk and '}Adjust Liquidity</Typography>
-        </SubmitButton>
+        {isSubmitting ?
+          <Box display='flex' justifyContent='center'>
+            <LoadingButton width='100%' height='52px' />
+          </Box>
+          :
+          <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
+            <Typography variant='p_xlg'>{hasRiskScore && 'Accept Risk and '}Adjust Liquidity</Typography>
+          </SubmitButton>
+        }
       </Box>
     </>
   )

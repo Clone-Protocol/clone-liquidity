@@ -32,14 +32,14 @@ export const MAIN_RPCs: RPCType[] = [
     rpc_name: 'Helius RPC',
     rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELIUS!,  //clusterApiUrl(WalletAdapterNetwork.Mainnet) 
   },
-  {
-    rpc_name: 'Quicknode RPC',
-    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
-  },
-  {
-    rpc_name: 'HelloMoon RPC',
-    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELLOMOON!,
-  },
+  // {
+  //   rpc_name: 'Quicknode RPC',
+  //   rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
+  // },
+  // {
+  //   rpc_name: 'HelloMoon RPC',
+  //   rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELLOMOON!,
+  // },
   // {
   //   rpc_name: 'Solana Mainnet',
   //   rpc_url: 'https://api.devnet.solana.com',
