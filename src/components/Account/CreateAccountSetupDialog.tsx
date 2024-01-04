@@ -28,11 +28,13 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
       <Box width='474px' sx={{ backgroundColor: '#000916', borderRadius: '10px', position: 'relative', padding: '25px' }}>
         <BoxWrapper>
           <TextHead>Welcome! Lets get you started.</TextHead>
-          <Box mt='15px' display='flex' justifyContent='center' borderRadius='10px'>
-            <video id="video" autoPlay loop muted width='360px'>
-              <source src="/videos/clone_liquidity.mp4" type="video/mp4" />
-              <source src="/videos/clone_liquidity.ogv" type="video/ogg" />
-            </video>
+          <Box mt='15px' display='flex' justifyContent='center'>
+            <div style={{ width: '360px', overflow: 'hidden', borderRadius: '10px' }}>
+              <video id="video" autoPlay loop muted width='360px'>
+                <source src="/videos/clone_liquidity.mp4" type="video/mp4" />
+                <source src="/videos/clone_liquidity.ogv" type="video/ogg" />
+              </video>
+            </div>
           </Box>
           <TxtBox my='20px' lineHeight={1}>
             <Typography variant='p'>Open your Clone Liquidity account on Solana Network by pressing the button below. A wallet popup will appear, requesting a transaction. Note that Solana Network requires a one-time fee of </Typography><Typography variant='p' color='#4fe5ff'>~0.07 SOL</Typography><Typography variant='p'> for the best experience with Clone Liquidity. The fee is paid to Solana Network, not Clone Protocol.</Typography>

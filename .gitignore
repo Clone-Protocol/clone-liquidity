@@ -42,3 +42,6 @@ yarn-error.log*
 .vscode
 # Local Netlify folder
 .netlify
+
+# Sentry Config File
+.sentryclirc
