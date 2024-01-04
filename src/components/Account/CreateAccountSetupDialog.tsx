@@ -28,7 +28,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
       <Box width='474px' sx={{ backgroundColor: '#000916', borderRadius: '10px', position: 'relative', padding: '25px' }}>
         <BoxWrapper>
           <TextHead>Welcome! Lets get you started.</TextHead>
-          <Box mt='15px' display='flex' justifyContent='center'>
+          <Box mt='15px' display='flex' justifyContent='center' borderRadius='10px'>
             <video id="video" autoPlay loop muted width='360px'>
               <source src="/videos/clone_liquidity.mp4" type="video/mp4" />
               <source src="/videos/clone_liquidity.ogv" type="video/ogg" />
@@ -39,7 +39,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
           </TxtBox>
           {isCreatingAccount ?
             <Box display='flex' justifyContent='center'>
-              <LoadingButton width='206px' height='42px' />
+              <LoadingButton width='206px' height='42px' buttonTxt='Creating Account...' />
             </Box>
             :
             <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_lg'>Open {NETWORK_NAME} Account</Typography></EnterButton>
