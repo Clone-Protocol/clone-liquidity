@@ -46,7 +46,7 @@
     "clone-protocol-sdk": "git+https://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:x-oauth-basic@github.com/Clone-Protocol/clone-protocol.git#develop",
     "dayjs": "^1.11.0",
     "jotai": "^2.2.2",
-    "next": "13.3.4",
+    "next": "^13.5.2",
     "notistack": "^2.0.3",
     "polished": "^4.2.2",
     "react": "^18.2.0",
