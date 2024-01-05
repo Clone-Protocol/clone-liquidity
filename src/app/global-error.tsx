@@ -4,14 +4,15 @@ import { Container, Stack, Box, Typography } from '@mui/material'
 import { FailedStatusBox } from '~/components/Common/TransactionStateSnackbar';
 import SupportDiscordIcon from 'public/images/support-button-discord.svg'
 import Image from 'next/image';
+import * as Sentry from "@sentry/nextjs";
+import Error from "next/error";
+import { useEffect } from "react";
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error
-  reset: () => void
-}) {
+export default function GlobalError({ error }: { error: Error }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
+
   return (
     <StyledSection>
       <Container>

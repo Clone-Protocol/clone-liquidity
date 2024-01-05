@@ -13,6 +13,7 @@ import IconSmile from 'public/images/icon-smile.svg'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
+import { LoadingButton } from '~/components/Common/Loading'
 
 const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -121,7 +122,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
 
   }
 
-  const isValid = Object.keys(errors).length === 0
+  const isValid = Object.keys(errors).length === 0 && !isSubmitting && borrowAmount > 0
 
   return (
     <>
@@ -155,8 +156,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                 control={control}
                 rules={{
                   validate(value) {
-                    if (!value || value <= 0) {
-                      return ''
+                    if (!value || isNaN(value) || value <= 0) {
+                      return 'Please enter a valid amount'
                     } else if (value > maxCollVal) {
                       if (editType === 0) {
                         return 'The borrow amount cannot exceed the max borrowable amount.'
@@ -218,10 +219,16 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
                 </Box>}
             </RatioBox>
 
-            <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting} hasRisk={hasRiskRatio}>
-              {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
-                : <Typography variant='p_lg'>Repay all borrowed amount</Typography>}
-            </SubmitButton>
+            {isSubmitting ?
+              <Box display='flex' justifyContent='center' my='15px'>
+                <LoadingButton width='100%' height='52px' />
+              </Box>
+              :
+              <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isValid} hasRisk={hasRiskRatio}>
+                {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
+                  : <Typography variant='p_lg'>Repay all borrowed amount</Typography>}
+              </SubmitButton>
+            }
 
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
               <CloseButton handleClose={onHideEditForm} />

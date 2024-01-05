@@ -23,10 +23,10 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 		program.addLiquidityToCometInstruction(toScale(changeAmount, program.clone.collateral.scale), poolIndex)
 	]
 	const ixns = await Promise.all(ixnCalls)
-	await sendAndConfirm(program.provider, ixns, setTxState)
+	const result = await sendAndConfirm(program.provider, ixns, setTxState)
 
 	return {
-		result: true
+		result
 	}
 }
 

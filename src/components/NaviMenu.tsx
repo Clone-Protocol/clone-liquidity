@@ -51,7 +51,7 @@ const StyledListItemButton = styled(ListItemButton)`
   color: ${(props) => props.theme.basis.slug};
   &:hover {
     border-radius: 5px;
-    background-color: rgba(196, 181, 253, 0.1);
+    background-color: ${(props) => props.theme.basis.jurassicGrey};
   }
   &.selected {
     color: #fff;

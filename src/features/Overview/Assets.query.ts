@@ -11,7 +11,7 @@ import { fetchPythPriceHistory } from '~/utils/pyth'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
 export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
-	console.log('fetchAssets')
+	console.log('fetchAssets - Overview')
 
 	let program
 	if (mainCloneClient) {

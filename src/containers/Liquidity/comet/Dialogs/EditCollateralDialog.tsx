@@ -14,6 +14,7 @@ import { CloseButton, RiskSubmitButton, SubmitButton } from '~/components/Common
 import HealthscoreView, { RISK_HEALTH_SCORE } from '~/components/Liquidity/comet/HealthscoreView'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
+import { LoadingButton } from '~/components/Common/Loading'
 
 const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -114,7 +115,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
     }
   }
 
-  const isValid = (() => {
+  let isValid = (() => {
     let valid = Object.keys(errors).length === 0
     if (collData?.hasCometPositions) {
       valid = valid && healthScore > 0.5
@@ -127,12 +128,16 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
   let submitButtonText = tab === 0 ? 'Deposit Collateral' : 'Withdraw Collateral'
   if (!collAmount || collAmount === 0) {
     submitButtonText = tab === 0 ? 'Enter Deposit Amount' : 'Enter Withdraw Amount'
+    isValid = false
   } else if (tab === 0 && collData?.hasCometPositions && collAmount > collData?.balance) {
     submitButtonText = 'Exceeded Deposit Amount'
+    isValid = false
   } else if (tab === 1 && collData?.hasCometPositions && collAmount >= maxWithdrawable) {
     submitButtonText = 'Exceeded Withdrawable Amount'
+    isValid = false
   } else if (tab === 1 && maxWithdrawable === 0) {
     submitButtonText = 'Withdrawable Amount is Zero'
+    isValid = false
   }
 
   return collData ? (
@@ -240,11 +245,16 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
                     </Typography>
                   </RiskSubmitButton>
                   :
-                  <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
-                    <Typography variant='p_xlg'>
-                      {submitButtonText}
-                    </Typography>
-                  </SubmitButton>
+                  isSubmitting ?
+                    <Box display='flex' justifyContent='center'>
+                      <LoadingButton width='100%' height='52px' />
+                    </Box>
+                    :
+                    <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isDirty || !isValid || isSubmitting}>
+                      <Typography variant='p_xlg'>
+                        {submitButtonText}
+                      </Typography>
+                    </SubmitButton>
                 }
               </>
             }

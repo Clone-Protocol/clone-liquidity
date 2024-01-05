@@ -7,7 +7,7 @@ import TwitterIcon from 'public/images/more/twitter.svg'
 import DiscordIcon from 'public/images/more/discord.svg'
 import ShareLinkIcon from 'public/images/more/call-made.svg'
 import { Stack } from '@mui/system';
-import { CAREER_URL, DISCORD_URL, DOCS_URL, MARKETS_APP, OFFICIAL_WEB, TWITTER_URL } from '~/data/social';
+import { CAREER_URL, DISCORD_URL, DOCS_URL, MARKETS_APP, OFFICIAL_WEB, TWITTER_URL, AUDIT_URL } from '~/data/social';
 import { NETWORK_NAME } from '~/utils/constants'
 import { IS_DEV } from '~/data/networks'
 
@@ -85,7 +85,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
       </StyledMenuItem>
     </a>
     <StyledDivider />
-    <a href="#" target='_blank' rel="noreferrer">
+    <a href={AUDIT_URL} target='_blank' rel="noreferrer">
       <LinkStack direction='row' alignItems='center' gap={1}>
         <Typography variant='p_sm'>Audit Report</Typography>
         <Image src={ShareLinkIcon} alt='audit' />

@@ -4,7 +4,8 @@ import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
 import { CloseButton } from '../Common/CommonButtons'
 import { useAtomValue } from 'jotai'
 import { isCreatingAccountState } from '~/features/globalAtom'
-import BgDialog from 'public/images/open-account.png'
+import { LoadingButton } from '../Common/Loading'
+
 
 interface CreateAccountSetupScreenProps {
   state: CreateAccountDialogStates
@@ -23,14 +24,28 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
   }
 
   return (
-    <Dialog open={shouldDialogOpen()} maxWidth={742} sx={{ boxShadow: 'none' }}>
-      <Box width='742px' sx={{ backgroundImage: `url(${BgDialog.src})`, position: 'relative', padding: '52px 33px' }}>
+    <Dialog open={shouldDialogOpen()} maxWidth={474} sx={{ boxShadow: 'none' }}>
+      <Box width='474px' sx={{ backgroundColor: '#000916', borderRadius: '10px', position: 'relative', padding: '25px' }}>
         <BoxWrapper>
-          <TextHead>Open Account</TextHead>
-          <Box my='20px' lineHeight={1.5} color='#989898'>
-            <Typography variant='p_xlg'>Welcome! This is your first time connecting this wallet to Clone Liquidity. Please open your Clone Liquidity account on Solana Network by simply pressing the button below. Afterwards, you will see a wallet popup requesting a transaction. Keep in mind that Solana Network requires one time fee of </Typography><Typography variant='p_xlg' color='#4fe5ff'>~0.07 SOL</Typography><Typography variant='p_xlg'> for most optimal experience using Clone Liquidity. The fee is paid to the Solana Network not Clone Protocol.</Typography>
+          <TextHead>Welcome! Lets get you started.</TextHead>
+          <Box mt='15px' display='flex' justifyContent='center'>
+            <div style={{ width: '360px', overflow: 'hidden', borderRadius: '10px' }}>
+              <video id="video" autoPlay loop muted width='360px'>
+                <source src="/videos/clone_liquidity.mp4" type="video/mp4" />
+                <source src="/videos/clone_liquidity.ogv" type="video/ogg" />
+              </video>
+            </div>
           </Box>
-          <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_xlg'>Open {NETWORK_NAME} Account</Typography></EnterButton>
+          <TxtBox my='20px' lineHeight={1}>
+            <Typography variant='p'>Open your Clone Liquidity account on Solana Network by pressing the button below. A wallet popup will appear, requesting a transaction. Note that Solana Network requires a one-time fee of </Typography><Typography variant='p' color='#4fe5ff'>~0.07 SOL</Typography><Typography variant='p'> for the best experience with Clone Liquidity. The fee is paid to Solana Network, not Clone Protocol.</Typography>
+          </TxtBox>
+          {isCreatingAccount ?
+            <Box display='flex' justifyContent='center'>
+              <LoadingButton width='206px' height='42px' buttonTxt='Creating Account...' />
+            </Box>
+            :
+            <EnterButton onClick={handleCreateAccount} disabled={isCreatingAccount}><Typography variant='p_lg'>Open {NETWORK_NAME} Account</Typography></EnterButton>
+          }
         </BoxWrapper>
         <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
           <CloseButton handleClose={handleClose} />
@@ -41,21 +56,32 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
 }
 
 const BoxWrapper = styled(Box)`
-  width: 500px;
+  width: 402px;
   color: #fff;
   margin: 0 auto;
-  text-align: left;
 `
 const TextHead = styled(Box)`
-  font-size: 36px;
+  font-size: 20px;
   font-weight: 600;
+  text-align: center;
+  margin-top: 10px;
   color: ${(props) => props.theme.basis.skylight};
 `
+const TxtBox = styled(Box)`
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.8);
+`
 const EnterButton = styled(Button)`
-  width: 100%;
-  height: 52px;
+  width: 206px;
+  height: 42px;
   color: #000;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
   margin-top: 10px;
+  margin-bottom: 10px;
   background: ${(props) => props.theme.basis.liquidityBlue};
   &:hover {
     background: ${(props) => props.theme.basis.gloomyBlue};

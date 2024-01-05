@@ -32,7 +32,7 @@ const fetchIassetBalances = async (program: CloneClient, pools: Pools): Promise<
 
 export const fetchAssets = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return null
-	console.log('fetchAssets')
+	console.log('fetchAssets - Borrow')
 
 	const pools = await program.getPools()
 	const balances = await fetchIassetBalances(program, pools);
