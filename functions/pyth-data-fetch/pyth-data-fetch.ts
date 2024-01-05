@@ -5,21 +5,39 @@ export const handler: Handler = async (event, context) => {
   const params = event.queryStringParameters!
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
+  const currentTimestamp = Math.floor((new Date()).getTime() / 1000)
+  const [from, filterDaily] = (() => {
+      switch (params.range) {
+          case "1H":
+              return [currentTimestamp - 3600, false]
+          case "1D":
+              return [currentTimestamp - 86400, false]
+          case "1W":
+              return [currentTimestamp - 7 * 86400, false]
+          case "1M":
+              return [currentTimestamp - 30 * 86400, true]
+          case "1Y":
+              return [currentTimestamp - 365 * 86400, true]
+          default:
+              throw new Error(`Unknown range: ${params.range}`)
+      }
+  })()
+
   let { data, error } = await (async () => {
-    if (Boolean(params.dailyClose)) {
+    if (filterDaily) {
       return await supabase.from(
         "pyth-historical-hourly"
       ).select()
         .eq('symbol', params.symbol)
         .eq("dailyClose", true)
-        .gt('timestamp', params.from)
+        .gt('timestamp', from)
         .order('timestamp', { ascending: true })
     } else {
       return await supabase.from(
         "pyth-historical-hourly"
       ).select()
         .eq('symbol', params.symbol)
-        .gt('timestamp', params.from)
+        .gt('timestamp', from)
         .order('timestamp', { ascending: true })
     }
   })()
@@ -44,7 +62,6 @@ export const handler: Handler = async (event, context) => {
     headers: {
       'Cache-Control': 'public, max-age=300',
       'Content-Type': 'application/json',
-      'Netlify-Vary': 'query=symbol'
     }
   }
 }
