@@ -44,7 +44,7 @@ export const handler: Handler = async (event, context) => {
     headers: {
       'Cache-Control': 'public, max-age=300',
       'Content-Type': 'application/json',
-      'Netlify-Vary': 'query'
+      'Netlify-Vary': 'query=symbol'
     }
   }
 }
