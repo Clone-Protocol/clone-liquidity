@@ -19,7 +19,8 @@ export interface StatsData {
 export const fetchStatsData = async (interval: string, filter: string, aggregated: boolean = false): Promise<StatsData[]> => {
     const config = {
         headers: {
-            'Cache-Control': 'max-age=300',
+            //'Netlify-CDN-Cache-Control': 'public, max-age=0, stale-while-revalidate=604800',
+            'Cache-Control': 'public, max-age=300',
             'Netlify-Vary': 'query'
           }
     }
@@ -49,7 +50,7 @@ export interface OHLCVResponse {
 export const fetchOHLCV = async (interval: string, filter: string, pool?: number | string): Promise<OHLCVResponse[]> => {
     const config = {
         headers: {
-            'Cache-Control': 'max-age=300',
+            'Cache-Control': 'public, max-age=300',
             'Netlify-Vary': 'query'
           }
     }
@@ -72,7 +73,7 @@ export interface BorrowStats {
 export const fetchBorrowStats = async (): Promise<BorrowStats[]> => {
     const config = {
         headers: {
-            'Cache-Control': 'max-age=300',
+            'Cache-Control': 'public, max-age=300',
             'Netlify-Vary': 'query'
           }
     }
@@ -83,7 +84,7 @@ export const fetchBorrowStats = async (): Promise<BorrowStats[]> => {
 export const fetchPoolApy = async (): Promise<{ pool_index: number, apy_24hr: number }[]> => {
     const config = {
         headers: {
-            'Cache-Control': 'max-age=300',
+            'Cache-Control': 'public, max-age=300',
             'Netlify-Vary': 'query'
           }
     }
@@ -94,7 +95,7 @@ export const fetchPoolApy = async (): Promise<{ pool_index: number, apy_24hr: nu
 export const fetchUserApy = async (user_address: string): Promise<number> => {
     const config = {
         headers: {
-            'Cache-Control': 'max-age=30',
+            'Cache-Control': 'public, max-age=30',
             'Netlify-Vary': 'query'
           }
     }
@@ -105,7 +106,7 @@ export const fetchUserApy = async (user_address: string): Promise<number> => {
 export const fetchTotalLiquidity = async (interval: string, filter: string): Promise<{ time_interval: string, total_liquidity: number }[]> => {
     const config = {
         headers: {
-            'Cache-Control': 'max-age=300',
+            'Cache-Control': 'public, max-age=300',
             'Netlify-Vary': 'query'
           }
     }

@@ -48,7 +48,7 @@ export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): P
         queryString = queryString.concat('&dailyClose=true')
     const config = {
         headers: {
-            'Cache-Control': 'max-age=60',
+            'Cache-Control': 'public, max-age=60',
             'Netlify-Vary': 'query=symbol'
             }
     }
