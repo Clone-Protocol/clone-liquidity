@@ -16,7 +16,7 @@ export const handler: Handler = async (event, context) => {
 
   if (error !== null) {
     console.log(error)
-    return { statusCode: 500, body: JSON.stringify(error)}
+    return { statusCode: 500, body: JSON.stringify(error) }
   }
 
   return {

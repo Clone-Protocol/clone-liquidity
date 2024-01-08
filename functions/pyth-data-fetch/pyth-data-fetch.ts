@@ -7,20 +7,20 @@ export const handler: Handler = async (event, context) => {
 
   const currentTimestamp = Math.floor((new Date()).getTime() / 1000)
   const [from, filterDaily] = (() => {
-      switch (params.range) {
-          case "1H":
-              return [currentTimestamp - 3600, false]
-          case "1D":
-              return [currentTimestamp - 86400, false]
-          case "1W":
-              return [currentTimestamp - 7 * 86400, false]
-          case "1M":
-              return [currentTimestamp - 30 * 86400, true]
-          case "1Y":
-              return [currentTimestamp - 365 * 86400, true]
-          default:
-              throw new Error(`Unknown range: ${params.range}`)
-      }
+    switch (params.range) {
+      case "1H":
+        return [currentTimestamp - 3600, false]
+      case "1D":
+        return [currentTimestamp - 86400, false]
+      case "1W":
+        return [currentTimestamp - 7 * 86400, false]
+      case "1M":
+        return [currentTimestamp - 30 * 86400, true]
+      case "1Y":
+        return [currentTimestamp - 365 * 86400, true]
+      default:
+        throw new Error(`Unknown range: ${params.range}`)
+    }
   })()
 
   let { data, error } = await (async () => {
