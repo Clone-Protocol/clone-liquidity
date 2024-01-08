@@ -26,13 +26,8 @@ export const convertPythSymbolToSupabaseSymbol = (pythSymbol: string): string =>
 export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): Promise<PythData[]> => {
     const symbol = convertPythSymbolToSupabaseSymbol(pythSymbol)
     let queryString = `symbol=${symbol}&range=${range}`
-    const config = {
-        headers: {
-            'Cache-Control': 'max-age=60',
-            'Netlify-Vary': 'query=symbol'
-        }
-    }
-    let response = await axios.get(`/.netlify/functions/pyth-data-fetch?${queryString}`, config)
+
+    let response = await axios.get(`/.netlify/functions/pyth-data-fetch?${queryString}`)
 
     return response.data
 }
