@@ -15,5 +15,10 @@ export const handler: Handler = async (event, context) => {
   return {
     statusCode: 200,
     body: JSON.stringify(data),
+    headers: {
+      'Cache-Control': 'public, max-age=3600',
+      'Content-Type': 'application/json',
+      'Netlify-Vary': 'query'
+    }
   }
 }
