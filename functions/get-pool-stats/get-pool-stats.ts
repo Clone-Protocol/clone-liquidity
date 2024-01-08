@@ -9,11 +9,16 @@ export const handler: Handler = async (event, context) => {
 
   if (error !== null) {
     console.log(error)
-    return { statusCode: 500, body: JSON.stringify(error)}
+    return { statusCode: 500, body: JSON.stringify(error) }
   }
 
   return {
     statusCode: 200,
     body: JSON.stringify(data),
+    headers: {
+      'Cache-Control': 'public, max-age=3600',
+      'Content-Type': 'application/json',
+      'Netlify-Vary': 'query'
+    }
   }
 }

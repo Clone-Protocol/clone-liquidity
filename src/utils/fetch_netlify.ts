@@ -21,7 +21,7 @@ export const fetchStatsData = async (interval: string, filter: string, aggregate
         headers: {
             'Cache-Control': 'max-age=300',
             'Netlify-Vary': 'query'
-          }
+        }
     }
     let endpoint = (() => {
         if (aggregated) {
@@ -51,7 +51,7 @@ export const fetchOHLCV = async (interval: string, filter: string, pool?: number
         headers: {
             'Cache-Control': 'max-age=300',
             'Netlify-Vary': 'query'
-          }
+        }
     }
     let endpoint = `/.netlify/functions/get-ohlcv?interval=${interval}&filter=${filter}`
 
@@ -74,7 +74,7 @@ export const fetchBorrowStats = async (): Promise<BorrowStats[]> => {
         headers: {
             'Cache-Control': 'max-age=300',
             'Netlify-Vary': 'query'
-          }
+        }
     }
     const response = await axios.get(`/.netlify/functions/get-borrow-stats`, config)
     return response.data as BorrowStats[]
@@ -85,7 +85,7 @@ export const fetchPoolApy = async (): Promise<{ pool_index: number, apy_24hr: nu
         headers: {
             'Cache-Control': 'max-age=300',
             'Netlify-Vary': 'query'
-          }
+        }
     }
     const response = await axios.get(`/.netlify/functions/get-pool-apy`, config)
     return response.data as { pool_index: number, apy_24hr: number }[]
@@ -96,7 +96,7 @@ export const fetchUserApy = async (user_address: string): Promise<number> => {
         headers: {
             'Cache-Control': 'max-age=30',
             'Netlify-Vary': 'query'
-          }
+        }
     }
     const response = await axios.get(`/.netlify/functions/get-user-apy?user_address=${user_address}`, config)
     return response.data as number
@@ -107,7 +107,7 @@ export const fetchTotalLiquidity = async (interval: string, filter: string): Pro
         headers: {
             'Cache-Control': 'max-age=300',
             'Netlify-Vary': 'query'
-          }
+        }
     }
     const response = await axios.get(`/.netlify/functions/get-total-liquidity?interval=${interval}&filter=${filter}`, config)
     return response.data as { time_interval: string, total_liquidity: number }[]
@@ -137,6 +137,6 @@ export const fetchUserPoints = async (userAddress?: string): Promise<UserPointsV
 }
 
 export const fetchGeoBlock = async (): Promise<{ result: boolean }> => {
-    const response = await axios.post(`/api`)
+    const response = await axios.post(`/api/route`)
     return response.data
 }

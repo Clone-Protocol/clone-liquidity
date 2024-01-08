@@ -25,32 +25,12 @@ export const convertPythSymbolToSupabaseSymbol = (pythSymbol: string): string =>
 
 export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): Promise<PythData[]> => {
     const symbol = convertPythSymbolToSupabaseSymbol(pythSymbol)
-    const currentTimestamp = Math.floor((new Date()).getTime() / 1000)
-    const [from, filterDaily] = (() => {
-        switch (range) {
-            case "1H":
-                return [currentTimestamp - 3600, false]
-            case "1D":
-                return [currentTimestamp - 86400, false]
-            case "1W":
-                return [currentTimestamp - 7 * 86400, false]
-            case "1M":
-                return [currentTimestamp - 30 * 86400, true]
-            case "1Y":
-                return [currentTimestamp - 365 * 86400, true]
-            default:
-                throw new Error("Unknown range", range)
-        }
-    })()
-
-    let queryString = `symbol=${symbol}&from=${from}`
-    if (filterDaily)
-        queryString = queryString.concat('&dailyClose=true')
+    let queryString = `symbol=${symbol}&range=${range}`
     const config = {
         headers: {
             'Cache-Control': 'max-age=60',
             'Netlify-Vary': 'query=symbol'
-            }
+        }
     }
     let response = await axios.get(`/.netlify/functions/pyth-data-fetch?${queryString}`, config)
 

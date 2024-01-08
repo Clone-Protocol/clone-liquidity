@@ -22,6 +22,7 @@ import { isMobile } from 'react-device-detect';
 import MoreMenu from './Common/MoreMenu'
 import WalletSelectBox from './Common/WalletSelectBox'
 import SettingDialog from './Common/SettingDialog'
+import TempWarningMsg from '~/components/Common/TempWarningMsg'
 import { IS_DEV } from '~/data/networks'
 import { fetchGeoBlock } from '~/utils/fetch_netlify'
 
@@ -30,7 +31,6 @@ const GNB: React.FC = () => {
 	const [openMobileWarningDialog, setOpenMobileWarningDialog] = useState(false)
 
 	const MobileWarningDialog = dynamic(() => import('./Common/MobileWarningDialog'))
-	const TempWarningMsg = dynamic(() => import('~/components/Common/TempWarningMsg'), { ssr: false })
 
 	useEffect(() => {
 		if (isMobile || isMobileOnSize) {
