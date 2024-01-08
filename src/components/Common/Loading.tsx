@@ -19,7 +19,7 @@ const useCircleStyles = makeStyles(() => ({
   },
 }));
 
-export const LoadingButton = ({ width, height, buttonTxt = 'Execute' }: { width?: string, height?: string, buttonTxt?: string }) => {
+export const LoadingButton = ({ width, height, buttonTxt = 'Confirming' }: { width?: string, height?: string, buttonTxt?: string }) => {
   const classes = useCircleStyles({});
   return (
     <Button sx={{ display: 'flex', alignItems: 'center', background: '#000e22', border: 'solid 1px #24abc2', borderRadius: '5px', width, height }} disabled>

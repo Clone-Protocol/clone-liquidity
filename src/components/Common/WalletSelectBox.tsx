@@ -98,6 +98,10 @@ const PopupButton = styled(Box)`
 	border-radius: 100px;
   background-color: ${(props) => props.theme.basis.jurassicGrey};
 	cursor: pointer;
+  &:hover {
+    background: transparent;
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.gloomyBlue};
+	}
 `
 const AssetBox = styled(Box)`
 	width: 100%;
