@@ -42,7 +42,7 @@ const useCircleStyles = makeStyles(() => ({
 }));
 
 
-const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boolean }) => {
+const ConfirmingWrapper = ({ txState = TransactionState.PENDING, txHash, isFocus }: { txState?: TransactionState, txHash: string, isFocus: boolean }) => {
   const classes = useCircleStyles({});
   const [longTimeStatus, setLongTimeStatus] = useState<JSX.Element>()
   const StatusWrap = (<LongTimeStatus><Typography variant='p'>This transaction is taking unusually long.</Typography></LongTimeStatus>)
@@ -63,13 +63,15 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
           <CircularProgress classes={{ circle: classes.circle }} size={36} thickness={5} />
         </Box>
         <Box>
-          <Box><Typography variant='p_xlg'>Confirming transaction...</Typography></Box>
-          <Box my='6px' lineHeight={1.1}>
-            <Box sx={{ textDecoration: 'underline', color: '#4fe5ff' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#4fe5ff'>View Transaction</Typography></a></Box>
-          </Box>
+          <Box><Typography variant='p_xlg'>{txState === TransactionState.PENDING ? 'Confirming transaction...' : 'Preparing transaction...'}</Typography></Box>
+          {txState === TransactionState.PENDING &&
+            <Box my='6px' lineHeight={1.1}>
+              <Box sx={{ textDecoration: 'underline', color: '#4fe5ff' }}><a href={getTxnURL(txHash)} target='_blank' rel="noreferrer"><Typography variant='p' color='#4fe5ff'>View Transaction</Typography></a></Box>
+            </Box>
+          }
         </Box>
       </Stack>
-      {longTimeStatus}
+      {txState === TransactionState.PENDING && longTimeStatus}
     </ConfirmBoxWrapper>
   )
 }
@@ -77,13 +79,14 @@ const ConfirmingWrapper = ({ txHash, isFocus }: { txHash: string, isFocus: boole
 const TransactionStateSnackbar = ({ txState, txHash, open, handleClose }: { txState: TransactionState, txHash: string, open: boolean, handleClose: () => void }) => {
   const [isFocusWarning, setIsFocusWarning] = useState(false)
 
+  const isPending = txState === TransactionState.PENDING || txState === TransactionState.PRE_PENDING
   const hideDuration = txState === TransactionState.PENDING ? 60000 : 5000
 
   return (
     <Box zIndex={999999}>
-      {txState === TransactionState.PENDING && <BackLayer onClick={() => setIsFocusWarning(true)} />}
+      {isPending && <BackLayer onClick={() => setIsFocusWarning(true)} />}
       <Slide direction="left" in={true} mountOnEnter unmountOnExit>
-        <Snackbar open={open} autoHideDuration={hideDuration} onClose={txState === TransactionState.PENDING ? () => { } : handleClose}>
+        <Snackbar open={open} autoHideDuration={hideDuration} onClose={isPending ? () => { } : handleClose}>
           <Box>
             {txState === TransactionState.SUCCESS &&
               <BoxWrapper sx={{ border: '1px solid #4fe5ff' }}>
@@ -97,8 +100,8 @@ const TransactionStateSnackbar = ({ txState, txHash, open, handleClose }: { txSt
                 <SuccessFailureWrapper isSuccess={false} txHash={txHash} />
               </BoxWrapper>
             }
-            {txState === TransactionState.PENDING &&
-              <ConfirmingWrapper txHash={txHash} isFocus={isFocusWarning} />
+            {isPending &&
+              <ConfirmingWrapper txState={txState} txHash={txHash} isFocus={isFocusWarning} />
             }
           </Box>
         </Snackbar>

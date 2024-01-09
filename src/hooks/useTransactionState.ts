@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react'
 
 export enum TransactionState {
   INIT,
+  PRE_PENDING,
   PENDING,
   SUCCESS,
   FAIL,
