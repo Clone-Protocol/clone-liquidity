@@ -76,6 +76,10 @@ export const PRIORITY_FEES: PriorityFeeType[] = [
     fee: 0
   },
   {
+    fee_name: 'Normal',
+    fee: 0.00001
+  },
+  {
     fee_name: 'High',
     fee: 0.00005
   },
