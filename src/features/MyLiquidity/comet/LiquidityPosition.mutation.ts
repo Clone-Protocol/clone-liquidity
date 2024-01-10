@@ -9,8 +9,10 @@ import { sendAndConfirm } from '~/utils/tx_helper';
 import { getTokenAccount, getCollateralAccount } from '~/utils/token_accounts'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from "@solana/spl-token"
 import { PaymentType } from 'clone-protocol-sdk/sdk/generated/clone'
+import { useAtomValue } from 'jotai'
+import { priorityFee } from '~/features/globalAtom'
 
-export const callNew = async ({ program, userPubKey, setTxState, data }: CallNewProps) => {
+export const callNew = async ({ program, userPubKey, setTxState, data, payerFee }: CallNewProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('new input data', data)
@@ -23,7 +25,7 @@ export const callNew = async ({ program, userPubKey, setTxState, data }: CallNew
 		program.addLiquidityToCometInstruction(toScale(changeAmount, program.clone.collateral.scale), poolIndex)
 	]
 	const ixns = await Promise.all(ixnCalls)
-	const result = await sendAndConfirm(program.provider, ixns, setTxState)
+	const result = await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
 
 	return {
 		result
@@ -39,21 +41,23 @@ interface CallNewProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: NewFormData
+	payerFee: number
 }
 export function useNewPositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
+	const payerFee = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
 	} else {
 		return useMutation((_: NewFormData) => funcNoWallet())
 	}
 }
 
 
-export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
+export const callEdit = async ({ program, userPubKey, setTxState, data, payerFee }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('edit input data', data)
@@ -93,7 +97,7 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	}
 
 	const ixns = await Promise.all(ixnCalls)
-	await sendAndConfirm(program.provider, ixns, setTxState)
+	await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
 
 	return {
 		result: true
@@ -110,20 +114,22 @@ interface CallEditProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
+	payerFee: number
 }
 export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
+	const payerFee = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 }
 
-export const callPayILD = async ({ program, userPubKey, setTxState, data }: CallPayILDProps) => {
+export const callPayILD = async ({ program, userPubKey, setTxState, data, payerFee }: CallPayILDProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	// NOTE: we shouldn't need to initialize either account here since we're paying from it.
@@ -175,7 +181,7 @@ export const callPayILD = async ({ program, userPubKey, setTxState, data }: Call
 			)
 		)
 	}
-	await sendAndConfirm(program.provider, ixnCalls, setTxState)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState, payerFee)
 
 	return {
 		result: true
@@ -192,15 +198,16 @@ export function usePayILDMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
+	const payerFee = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: PayILDFormData) => callPayILD({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: PayILDFormData) => callPayILD({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
 	} else {
 		return useMutation((_: PayILDFormData) => funcNoWallet())
 	}
 }
 
-export const callRewards = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
+export const callRewards = async ({ program, userPubKey, setTxState, data, payerFee }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const [onassetAssociatedToken, collateralAssociatedTokenAddress] = await Promise.all([
@@ -244,7 +251,7 @@ export const callRewards = async ({ program, userPubKey, setTxState, data }: Cal
 			data.positionIndex
 		)
 	)
-	await sendAndConfirm(program.provider, ixnCalls, setTxState)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState, payerFee)
 
 	return {
 		result: true
@@ -255,15 +262,16 @@ export function useRewardsMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
+	const payerFee = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: CloseFormData) => callRewards({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: CloseFormData) => callRewards({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
 }
 
-export const callClose = async ({ program, userPubKey, setTxState, data }: CallCloseProps) => {
+export const callClose = async ({ program, userPubKey, setTxState, data, payerFee }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const [onassetAssociatedToken] = await Promise.all([
@@ -301,7 +309,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data }: CallC
 	ixnCalls.push(
 		program.removeCometPositionInstruction(data.positionIndex)
 	)
-	await sendAndConfirm(program.provider, ixnCalls, setTxState)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState, payerFee)
 
 	return {
 		result: true
@@ -322,14 +330,16 @@ interface CallCloseProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: CloseFormData
+	payerFee: number
 }
 export function useClosePositionMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
+	const payerFee = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}

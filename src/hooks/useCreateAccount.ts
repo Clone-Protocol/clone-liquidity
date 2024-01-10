@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useSnackbar } from 'notistack'
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { TransactionInstruction } from "@solana/web3.js";
@@ -9,7 +9,7 @@ import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } fr
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { CURRENT_ACCOUNT } from '~/data/localstorage';
 import { CreateAccountDialogStates } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, priorityFee } from '~/features/globalAtom'
 import { useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
 
@@ -18,6 +18,7 @@ export function useCreateAccount() {
 	const { getCloneApp } = useClone()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
+	const payerFee = useAtomValue(priorityFee)
 	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogStatus = useSetAtom(createAccountDialogState)
 	const setDeclinedAccountCreation = useSetAtom(declinedAccountCreationState)
@@ -57,7 +58,7 @@ export function useCreateAccount() {
 
 					let ixns = await Promise.all(ixnCalls)
 
-					const txHash = await sendAndConfirm(program.provider, ixns, setTxState)
+					const txHash = await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
 
 					console.log('txHash', txHash)
 

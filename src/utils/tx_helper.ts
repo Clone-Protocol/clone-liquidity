@@ -21,7 +21,7 @@ const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | Ve
       }
     }
   }
-  
+
   tx = await provider.wallet.signTransaction(tx);
   const rawTx = tx.serialize();
   const sendOptions = opts && {
@@ -38,7 +38,10 @@ const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | Ve
 
 }
 
-export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
+export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, priorityFee: number, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
+  // MEMO: if payerFee is zero, it's automatic
+  console.log('priorityFee', priorityFee)
+
   const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash('finalized');
 
   let tx = await (async () => {
@@ -83,9 +86,11 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
     }, 'confirmed')
     setTxState({ state: TransactionState.SUCCESS, txHash })
 
+    return txHash
   } catch (e: any) {
     console.log("TX ERROR:", e)
     setTxState({ state: TransactionState.FAIL, txHash })
     // throw new Error(e)
+    return false
   }
 }

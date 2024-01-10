@@ -7,8 +7,10 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
 import { TransactionStateType, useTransactionState } from "~/hooks/useTransactionState"
 import { sendAndConfirm } from '~/utils/tx_helper';
+import { useAtomValue } from 'jotai'
+import { priorityFee } from '~/features/globalAtom'
 
-export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEditProps) => {
+export const callEdit = async ({ program, userPubKey, setTxState, data, payerFee }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('edit input data', data)
@@ -35,7 +37,7 @@ export const callEdit = async ({ program, userPubKey, setTxState, data }: CallEd
 	}
 
 	const ixns = await Promise.all(ixnCalls)
-	await sendAndConfirm(program.provider, ixns, setTxState)
+	await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
 
 	return {
 		result: true
@@ -51,14 +53,16 @@ interface CallEditProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
+	payerFee: number
 }
 export function useCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
+	const payerFee = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data }))
+		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
