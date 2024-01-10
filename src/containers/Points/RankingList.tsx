@@ -31,7 +31,7 @@ const RankingList: React.FC = () => {
 
 let columns: GridColDef[] = [
   {
-    field: 'id',
+    field: 'rank',
     headerClassName: 'super-app-theme--header',
     cellClassName: 'super-app-theme--cell',
     headerName: 'Ranking',
