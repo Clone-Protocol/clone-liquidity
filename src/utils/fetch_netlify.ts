@@ -1,4 +1,5 @@
 import axios from "axios";
+import { FeeLevel } from "~/data/networks";
 
 export const fetchFromCloneIndex = async (method: string, params: Object) => {
     let queryString = `method=${method}`
@@ -103,4 +104,14 @@ export const fetchUserPoints = async (userAddress?: string): Promise<UserPointsV
 export const fetchGeoBlock = async (): Promise<{ result: boolean }> => {
     const response = await axios.post(`/api/route`)
     return response.data
+}
+
+export type PriorityFeeEstimate = Record<FeeLevel, number>
+export type PriorityFeeEstimateResponse = {
+    priorityFeeLevels: PriorityFeeEstimate
+}
+
+export const getHeliusPriorityFeeEstimate = async () => {
+    const response = await axios.get(`/.netlify/functions/get-priority-fee-estimate`)
+    return response.data.priorityFeeLevels as PriorityFeeEstimate
 }

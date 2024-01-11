@@ -65,7 +65,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
   const handleChangePriorityFee = (event: SelectChangeEvent) => {
     const feeIndex = Number(event.target.value)
     setAtomPriorityFeeIndex(feeIndex);
-    setAtomPriorityFee(PRIORITY_FEES[feeIndex].fee)
+    setAtomPriorityFee(PRIORITY_FEES[feeIndex].fee_level)
   }
 
   // const StatusIndicator = ({ status, speed }: { status: IndicatorStatus, speed: number }) => {

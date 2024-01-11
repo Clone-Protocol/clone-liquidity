@@ -16,7 +16,7 @@ export default function useFaucet() {
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
   const [mintUsdi, setMintUsdi] = useAtom(mintUSDi)
-  const payerFee = useAtomValue(priorityFee)
+  const feeLevel = useAtomValue(priorityFee)
   const { setTxState } = useTransactionState()
   const MOCK_FAUCET_PROGRAM_ID = process.env.NEXT_PUBLIC_MOCK_FAUCET_PROGRAM_ID!
 
@@ -59,7 +59,7 @@ export default function useFaucet() {
             }, { amount: toScale(onusdToMint, program.clone.collateral.scale) })
           )
 
-          await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
+          await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
         } finally {
           setMintUsdi(false)
         }

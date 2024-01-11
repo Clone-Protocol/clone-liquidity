@@ -11,8 +11,9 @@ import { TransactionStateType, useTransactionState } from "~/hooks/useTransactio
 import { sendAndConfirm } from '~/utils/tx_helper';
 import { useAtomValue } from 'jotai';
 import { priorityFee } from '../globalAtom';
+import { FeeLevel } from '~/data/networks';
 
-export const callClose = async ({ program, userPubKey, setTxState, data, payerFee }: CallCloseProps) => {
+export const callClose = async ({ program, userPubKey, setTxState, data, feeLevel }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const { borrowIndex } = data
@@ -35,7 +36,7 @@ export const callClose = async ({ program, userPubKey, setTxState, data, payerFe
 	]
 
 	const ixns = await Promise.all(ixnCalls)
-	await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
+	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 	return {
 		result: true,
@@ -50,22 +51,22 @@ interface CallCloseProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: CloseFormData
-	payerFee: number
+	feeLevel: FeeLevel
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
-	const payerFee = useAtomValue(priorityFee)
+	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
+		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
 }
 
-export const callEditCollateral = async ({ program, userPubKey, setTxState, data, payerFee }: CallEditProps) => {
+export const callEditCollateral = async ({ program, userPubKey, setTxState, data, feeLevel }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const { borrowIndex, collateralAmount, editType } = data
@@ -127,12 +128,12 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 
 	const ixns = await Promise.all(ixnCalls)
 	console.log("n ixns:", ixns.length);
-	await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
+	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 	return result;
 }
 
-export const callEditBorrow = async ({ program, userPubKey, setTxState, data, payerFee }: CallEditProps) => {
+export const callEditBorrow = async ({ program, userPubKey, setTxState, data, feeLevel }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const { borrowIndex, borrowAmount, editType } = data
@@ -207,7 +208,7 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data, pa
 	}
 
 	const ixns = await Promise.all(ixnCalls)
-	await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
+	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 	return result
 }
@@ -223,16 +224,16 @@ interface CallEditProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
-	payerFee: number
+	feeLevel: FeeLevel
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
-	const payerFee = useAtomValue(priorityFee)
+	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
+		return useMutation(async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -242,16 +243,16 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
-	const payerFee = useAtomValue(priorityFee)
+	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
+		return useMutation(async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 }
 
-export const callBorrow = async ({ program, userPubKey, setTxState, data, payerFee }: CallBorrowProps) => {
+export const callBorrow = async ({ program, userPubKey, setTxState, data, feeLevel }: CallBorrowProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	console.log('borrow input data', data)
@@ -293,7 +294,7 @@ export const callBorrow = async ({ program, userPubKey, setTxState, data, payerF
 			onassetIndex
 		)
 	)
-	await sendAndConfirm(program.provider, ixnCalls, setTxState, payerFee)
+	await sendAndConfirm(program.provider, ixnCalls, setTxState, feeLevel)
 
 	return {
 		result: true
@@ -310,16 +311,16 @@ interface CallBorrowProps {
 	userPubKey: PublicKey | null
 	setTxState: (state: TransactionStateType) => void
 	data: BorrowFormData
-	payerFee: number
+	feeLevel: FeeLevel
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
-	const payerFee = useAtomValue(priorityFee)
+	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: BorrowFormData) => callBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, payerFee }))
+		return useMutation(async (data: BorrowFormData) => callBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
 	} else {
 		return useMutation((_: BorrowFormData) => funcNoWallet())
 	}

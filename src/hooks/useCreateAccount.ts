@@ -18,7 +18,7 @@ export function useCreateAccount() {
 	const { getCloneApp } = useClone()
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
-	const payerFee = useAtomValue(priorityFee)
+	const feeLevel = useAtomValue(priorityFee)
 	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogStatus = useSetAtom(createAccountDialogState)
 	const setDeclinedAccountCreation = useSetAtom(declinedAccountCreationState)
@@ -58,7 +58,7 @@ export function useCreateAccount() {
 
 					let ixns = await Promise.all(ixnCalls)
 
-					const txHash = await sendAndConfirm(program.provider, ixns, setTxState, payerFee)
+					const txHash = await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 					console.log('txHash', txHash)
 

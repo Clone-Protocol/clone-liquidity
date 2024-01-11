@@ -1,7 +1,8 @@
 import { AnchorProvider, Provider } from "@coral-xyz/anchor";
 import { Transaction, Signer, TransactionInstruction, PublicKey, TransactionMessage, VersionedTransaction, AddressLookupTableAccount, ConfirmOptions, TransactionSignature, ComputeBudgetProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { TransactionStateType, TransactionState } from "~/hooks/useTransactionState"
-
+import { getHeliusPriorityFeeEstimate } from "./fetch_netlify";
+import { FeeLevel } from "~/data/networks"
 
 const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | VersionedTransaction,
   signers?: Signer[],
@@ -38,25 +39,16 @@ const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | Ve
 
 }
 
-export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, priorityFee: number, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
-  // MEMO: if payerFee is zero, it's automatic
-  console.log('priorityFee', priorityFee)
+export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, priorityFeeLevel: FeeLevel, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
+  const priorityFeeEstimate = await getHeliusPriorityFeeEstimate();
+  const priorityFee = priorityFeeEstimate[priorityFeeLevel];
 
   const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash('finalized');
   const extraInstructions: TransactionInstruction[] = [];
 
   if (priorityFee > 0) {
-    const units = 200_000;
-
     // NOTE: we may want to also set Unit limit, will leave out for now.
-    const priorityFeeMicroLamports = priorityFee * LAMPORTS_PER_SOL * Math.pow(10, 6)
-    const unitPrice = Math.floor(priorityFeeMicroLamports / units)
-
-    extraInstructions.push(
-      ComputeBudgetProgram.setComputeUnitLimit({
-        units
-      })
-    )
+    const unitPrice = Math.floor(priorityFee)
     extraInstructions.push(
       ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: unitPrice
@@ -106,11 +98,9 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
     }, 'confirmed')
     setTxState({ state: TransactionState.SUCCESS, txHash })
 
-    return txHash
   } catch (e: any) {
     console.log("TX ERROR:", e)
     setTxState({ state: TransactionState.FAIL, txHash })
     // throw new Error(e)
-    return false
   }
 }
