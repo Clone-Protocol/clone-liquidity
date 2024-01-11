@@ -1,17 +1,14 @@
 import { Query, useQuery } from '@tanstack/react-query'
-import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { useAtomValue } from 'jotai'
-import { getCloneClient } from '../baseQuery';
-import { cloneClient, rpcEndpoint } from '../globalAtom'
-import { fetchUserPoints, UserPointsView } from '~/utils/fetch_netlify'
+import { fetchUserPoints } from '~/utils/fetch_netlify'
 
-export const fetchRanking = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
+export const fetchRanking = async () => {
   console.log('fetchRanking')
 
-  const userPoints = await fetchUserPoints()
+  let userPoints = await fetchUserPoints()
   let result: RankingList[] = []
 
+  userPoints = userPoints.slice(0, 100)
   userPoints.forEach((user, id) => {
     result.push({
       id,
@@ -35,7 +32,7 @@ interface GetProps {
 export interface RankingList {
   id: number
   rank: number
-  user: {name: string | undefined, address: string }
+  user: { name: string | undefined, address: string }
   lpPoints: number
   tradePoints: number
   socialPoints: number
@@ -43,12 +40,9 @@ export interface RankingList {
 }
 
 export function useRankingQuery({ refetchOnMount, enabled = true }: GetProps) {
-  const mainCloneClient = useAtomValue(cloneClient)
-  const networkEndpoint = useAtomValue(rpcEndpoint)
-
   let queryFunc
   try {
-    queryFunc = () => fetchRanking({ mainCloneClient, networkEndpoint })
+    queryFunc = () => fetchRanking()
   } catch (e) {
     console.error(e)
     queryFunc = () => []

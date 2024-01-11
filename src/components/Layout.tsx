@@ -1,7 +1,6 @@
 //layout for page-router
 'use client'
 import React, { useEffect, useState } from 'react'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import QueryProvider from '~/hocs/QueryClient'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -59,7 +58,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </SnackbarProvider>
         </ThemeProvider>
       </JotaiProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryProvider>
   )
 }
