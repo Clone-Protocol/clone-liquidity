@@ -25,6 +25,8 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
 
   const handleChooseEditPosition = (positionIndex: number) => {
+    console.log('positions', positions)
+    console.log('positionIndex', positionIndex)
     setPoolIndex(Number(positions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenEditLiquidity(true)
@@ -38,7 +40,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
     params
   ) => {
     if (params.row.status !== Status.Frozen) {
-      handleChooseEditPosition(params.row.id)
+      handleChooseEditPosition(params.row.positionIndex)
     }
   }, [])
 
