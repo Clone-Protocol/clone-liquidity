@@ -1,7 +1,8 @@
 import { AnchorProvider, Provider } from "@coral-xyz/anchor";
-import { Transaction, Signer, TransactionInstruction, PublicKey, TransactionMessage, VersionedTransaction, AddressLookupTableAccount, ConfirmOptions, TransactionSignature } from "@solana/web3.js";
+import { Transaction, Signer, TransactionInstruction, PublicKey, TransactionMessage, VersionedTransaction, AddressLookupTableAccount, ConfirmOptions, TransactionSignature, ComputeBudgetProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { TransactionStateType, TransactionState } from "~/hooks/useTransactionState"
-
+import { getHeliusPriorityFeeEstimate } from "./fetch_netlify";
+import { FeeLevel } from "~/data/networks"
 
 const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | VersionedTransaction,
   signers?: Signer[],
@@ -21,7 +22,7 @@ const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | Ve
       }
     }
   }
-  
+
   tx = await provider.wallet.signTransaction(tx);
   const rawTx = tx.serialize();
   const sendOptions = opts && {
@@ -38,8 +39,22 @@ const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | Ve
 
 }
 
-export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
+export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, priorityFeeLevel: FeeLevel, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
+  const priorityFeeEstimate = await getHeliusPriorityFeeEstimate();
+  const priorityFee = priorityFeeEstimate[priorityFeeLevel];
+
   const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash('finalized');
+  const extraInstructions: TransactionInstruction[] = [];
+
+  if (priorityFee > 0) {
+    // NOTE: we may want to also set Unit limit, will leave out for now.
+    const unitPrice = Math.floor(priorityFee)
+    extraInstructions.push(
+      ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: unitPrice
+      })
+    )
+  }
 
   let tx = await (async () => {
     if (addressLookupTables !== undefined) {
@@ -58,14 +73,14 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
       const messageV0 = new TransactionMessage({
         payerKey: provider.publicKey!,
         recentBlockhash: blockhash,
-        instructions: instructions,
+        instructions: [...extraInstructions, ...instructions],
       }).compileToV0Message(lookupTableAccounts);
       // create a v0 transaction from the v0 message
       const transactionV0 = new VersionedTransaction(messageV0);
       return transactionV0
     } else {
       let updatedTx = new Transaction({ blockhash, lastValidBlockHeight }) as Transaction;
-      instructions.forEach(ix => updatedTx.add(ix));
+      [...extraInstructions, ...instructions].forEach(ix => updatedTx.add(ix));
       updatedTx.feePayer = provider.publicKey!;
       return updatedTx;
     }

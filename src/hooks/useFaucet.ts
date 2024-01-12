@@ -8,14 +8,15 @@ import { useTransactionState } from './useTransactionState';
 import { useClone } from './useClone';
 import { createMintAssetInstruction } from 'clone-protocol-sdk/sdk/generated/mock-asset-faucet'
 import { getTokenAccount } from '~/utils/token_accounts';
-import { useAtom } from 'jotai';
-import { mintUSDi } from '~/features/globalAtom';
+import { useAtom, useAtomValue } from 'jotai';
+import { mintUSDi, priorityFee } from '~/features/globalAtom';
 
 export default function useFaucet() {
   const { connected, publicKey } = useWallet()
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
   const [mintUsdi, setMintUsdi] = useAtom(mintUSDi)
+  const feeLevel = useAtomValue(priorityFee)
   const { setTxState } = useTransactionState()
   const MOCK_FAUCET_PROGRAM_ID = process.env.NEXT_PUBLIC_MOCK_FAUCET_PROGRAM_ID!
 
@@ -58,7 +59,7 @@ export default function useFaucet() {
             }, { amount: toScale(onusdToMint, program.clone.collateral.scale) })
           )
 
-          await sendAndConfirm(program.provider, ixns, setTxState)
+          await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
         } finally {
           setMintUsdi(false)
         }

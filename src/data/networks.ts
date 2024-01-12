@@ -64,3 +64,37 @@ export const getTxnURL = (txHash: string) => {
 
   return `https://solana.fm/tx/${txHash}?cluster=${cluster}`
 }
+
+export type FeeLevel = "min" | "low" | "medium" | "high" | "veryHigh" | "unsafeMax"
+
+export type PriorityFeeType = {
+  fee_name: string
+  fee_level: FeeLevel
+}
+
+export const PRIORITY_FEES: PriorityFeeType[] = [
+  {
+    fee_name: "Min",
+    fee_level: "min"
+  },
+  {
+    fee_name: "Low",
+    fee_level: "low"
+  },
+  {
+    fee_name: "Medium",
+    fee_level: "medium",
+  },
+  {
+    fee_name: "High",
+    fee_level: "high"
+  },
+  {
+    fee_name: "Very High",
+    fee_level: "veryHigh"
+  },
+  {
+    fee_name: "Max",
+    fee_level: "unsafeMax"
+  },
+]
