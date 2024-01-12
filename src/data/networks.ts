@@ -32,10 +32,10 @@ export const MAIN_RPCs: RPCType[] = [
     rpc_name: 'Helius RPC',
     rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELIUS!,  //clusterApiUrl(WalletAdapterNetwork.Mainnet) 
   },
-  // {
-  //   rpc_name: 'Quicknode RPC',
-  //   rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
-  // },
+  {
+    rpc_name: 'Quicknode RPC',
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
+  },
   // {
   //   rpc_name: 'HelloMoon RPC',
   //   rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELLOMOON!,
@@ -71,6 +71,8 @@ export type PriorityFeeType = {
   fee_name: string
   fee_level: FeeLevel
 }
+
+export const DEFAULT_PRIORITY_FEE_INDEX = 3
 
 export const PRIORITY_FEES: PriorityFeeType[] = [
   {

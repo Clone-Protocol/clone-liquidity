@@ -143,7 +143,7 @@ let columns: GridColDef[] = [
 		field: '24hVolume',
 		headerClassName: 'super-app-theme--header right--header',
 		cellClassName: 'super-app-theme--cell right--cell',
-		headerName: 'Volume',
+		headerName: '24hr Volume',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return !showPoolStatus(params.row.status) ?
