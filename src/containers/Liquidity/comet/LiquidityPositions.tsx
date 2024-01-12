@@ -1,6 +1,6 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
@@ -22,12 +22,19 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
   const [isBtnHover, setIsBtnHover] = useState(false)
+  const [renderPositions, setRenderPositions] = useState<LiquidityPosition[]>([])
   const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
 
+  useEffect(() => {
+    if (positions) {
+      setRenderPositions(positions)
+    }
+  }, [positions])
+
   const handleChooseEditPosition = (positionIndex: number) => {
-    console.log('positions', positions)
+    console.log('positions', renderPositions)
     console.log('positionIndex', positionIndex)
-    setPoolIndex(Number(positions[positionIndex].poolIndex))
+    setPoolIndex(Number(renderPositions[positionIndex].poolIndex))
     setEditAssetId(positionIndex)
     setOpenEditLiquidity(true)
   }
@@ -36,15 +43,15 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
     router.push(DEFAULT_ASSET_LINK)
   }
 
-  const handleRowClick: GridEventListener<'rowClick'> = useCallback((
+  const handleRowClick: GridEventListener<'rowClick'> = (
     params
   ) => {
     if (params.row.status !== Status.Frozen) {
       handleChooseEditPosition(params.row.positionIndex)
     }
-  }, [])
+  }
 
-  const rowsPositions = positions.map((position, id) => ({
+  const rowsPositions = renderPositions.map((position, id) => ({
     ...position,
     id,
   }))

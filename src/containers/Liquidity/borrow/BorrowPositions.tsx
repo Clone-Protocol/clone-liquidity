@@ -30,13 +30,13 @@ const BorrowPositions = () => {
 		enabled: publicKey != null
 	})
 
-	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
+	const handleRowClick: GridEventListener<'rowClick'> = (
 		params,
 	) => {
 		if (params.row.status !== Status.Frozen) {
 			router.push(`/borrow/myliquidity/${params.row.id}`)
 		}
-	}, [])
+	}
 
 	const moveNewBorrowPositionPage = () => {
 		router.push('/borrow')
