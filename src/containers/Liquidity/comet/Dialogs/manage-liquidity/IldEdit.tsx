@@ -115,7 +115,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   let warningMsgForColl = ''
   if (balanceColl === 0) {
     warningMsgForColl = 'You wallet balance is zero'
-  } else if (positionInfo && Math.max(0, positionInfo.collateralILD) - ildCollAmount > 0) {
+  } else if (positionInfo && Math.max(0, positionInfo.collateralILD) - balanceColl > 0) {
     warningMsgForColl = `Not enough wallet balance to fully payoff ${ON_USD} ILD Amount. You can acquire more on ${NETWORK_NAME} faucet.`
   }
 
@@ -191,6 +191,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAssetAmount) || ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
               </Box>
             </StackWithBorder>
+
             {ildAssetAmount > balanceOnAsset &&
               <Box mb='10px'>
                 <WarningMsg>
@@ -252,6 +253,14 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildCollAmount) || ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
                 </Box>
               </StackWithBorder>
+
+              {ildCollAmount > Math.max(0, positionInfo.collateralILD) &&
+                <Box mb='10px'>
+                  <WarningMsg>
+                    Exceeded ILD Amount. Please lower the payment amount.
+                  </WarningMsg>
+                </Box>
+              }
               {ildCollAmount > balanceColl &&
                 <Box mb='10px'>
                   <WarningMsg>
