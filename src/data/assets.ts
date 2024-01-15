@@ -8,10 +8,12 @@ export enum Collateral {
 
 export enum AssetTickers {
     arbitrum = 0,
+    optimism = 1
 }
 
 export enum Asset {
-    Arbitrum
+    Arbitrum,
+    Optimism
 }
 
 export enum AssetType {
@@ -30,6 +32,13 @@ export const ASSETS = [
         tickerIcon: '/images/assets/on-arb.svg',
         ticker: 'arbitrum',
         pythSymbol: 'Crypto.ARB/USD'
+    },
+    {
+        tickerName: 'Clone Optimism',
+        tickerSymbol: 'clOP',
+        tickerIcon: '/images/assets/on-arb.svg',
+        ticker: 'optimism',
+        pythSymbol: 'Crypto.OP/USD'
     }
 ]
 
@@ -49,6 +58,15 @@ export const assetMapping = (index: number) => {
             ticker = 'arbitrum'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.ARB/USD'
+            supabaseSymbol = pythSymbol
+            break
+        case Asset.Optimism:
+            tickerName = 'Clone Optimism'
+            tickerSymbol = 'clOP'
+            tickerIcon = '/images/assets/on-arb.svg'
+            ticker = 'optimism'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.OP/USD'
             supabaseSymbol = pythSymbol
             break
         default:
