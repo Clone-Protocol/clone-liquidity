@@ -1,6 +1,6 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'

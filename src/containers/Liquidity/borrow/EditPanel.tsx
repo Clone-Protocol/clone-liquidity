@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import PositionInfo from '~/components/Liquidity/borrow/PositionInfo'
 import { PositionInfo as BorrowDetail } from '~/features/MyLiquidity/BorrowPosition.query'
-import dynamic from 'next/dynamic'
+import EditDetailDialog from './EditDetailDialog'
+import EditBorrowMoreDialog from './EditBorrowMoreDialog'
 
 const EditPanel = ({ assetId, borrowDetail, showRepayPosition, showWithdrawCollateral, onRefetchData }: { assetId: string, borrowDetail: BorrowDetail, showRepayPosition: boolean, showWithdrawCollateral: boolean, onRefetchData: () => void }) => {
   const [openEditDetail, setOpenEditDetail] = useState(false)
   const [openBorrowMore, setOpenBorrowMore] = useState(false)
   const borrowIndex = parseInt(assetId)
-  const EditDetailDialog = dynamic(() => import('./EditDetailDialog'))
-  const EditBorrowMoreDialog = dynamic(() => import('./EditBorrowMoreDialog'))
 
   useEffect(() => {
     if (showRepayPosition) {

@@ -36,7 +36,7 @@ export const ASSETS = [
     {
         tickerName: 'Clone Optimism',
         tickerSymbol: 'clOP',
-        tickerIcon: '/images/assets/on-arb.svg',
+        tickerIcon: '/images/assets/on-op.svg',
         ticker: 'optimism',
         pythSymbol: 'Crypto.OP/USD'
     }
@@ -63,7 +63,7 @@ export const assetMapping = (index: number) => {
         case Asset.Optimism:
             tickerName = 'Clone Optimism'
             tickerSymbol = 'clOP'
-            tickerIcon = '/images/assets/on-arb.svg'
+            tickerIcon = '/images/assets/on-op.svg'
             ticker = 'optimism'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.OP/USD'

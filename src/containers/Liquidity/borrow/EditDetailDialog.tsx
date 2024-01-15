@@ -12,7 +12,7 @@ import { CloseButton, SubmitButton } from '~/components/Common/CommonButtons'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import Image from 'next/image'
 import IconSmile from 'public/images/icon-smile.svg'
-import { InfoMsg } from '~/components/Common/WarningMsg'
+import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import { useRouter } from 'next/navigation'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
@@ -148,6 +148,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
   }
 
   const isValid = Object.keys(errors).length === 0 && !isSubmitting && collAmount > 0
+  const isClose = isFullWithdrawal && isFullRepaid
 
   return (
     <>
@@ -245,17 +246,30 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
                 </Box>}
             </RatioBox>
 
-            {isFullWithdrawal && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
+            {isClose && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
+            {(hasRiskRatio && collAmount <= maxCollVal) && <Box my='20px'><WarningMsg>
+              Due to the lower collateral ratio, this borrow position will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.
+            </WarningMsg></Box>}
 
             {isSubmitting ?
               <Box display='flex' justifyContent='center' my='15px'>
                 <LoadingButton width='100%' height='52px' />
               </Box>
               :
-              <SubmitButton onClick={handleSubmit((isFullWithdrawal && isFullRepaid) ? onClose : onEdit)} disabled={!isValid} hasRisk={hasRiskRatio && !isFullRepaid}>
-                <Typography variant='p_lg'>
-                  {(isFullWithdrawal && isFullRepaid) ? 'Withdraw and Close This Borrow Position' : `${hasRiskRatio ? 'Accept Risk and ' : ''} Edit Collateral`}
-                </Typography>
+              <SubmitButton onClick={handleSubmit(isClose ? onClose : onEdit)} disabled={!isValid} hasRisk={hasRiskRatio && !isFullRepaid}>
+                {isClose ?
+                  <Typography variant='p_lg'>
+                    Withdraw and Close This Borrow Position
+                  </Typography>
+                  :
+                  <Typography variant='p_lg'>
+                    {editType === 0 ?
+                      collAmount > maxCollVal ? 'Exceeded Wallet Balance' : 'Deposit More Collateral'
+                      :
+                      collAmount > maxCollVal ? 'Exceeded Max Withdrawable Amount' :
+                        `${hasRiskRatio ? 'Accept Risk and ' : ''} Withdraw Collateral`}
+                  </Typography>
+                }
               </SubmitButton>
             }
 

@@ -225,8 +225,8 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
               </Box>
               :
               <SubmitButton onClick={handleSubmit(onEdit)} disabled={!isValid} hasRisk={hasRiskRatio}>
-                {!isFullRepaid ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Edit Borrowed Amount</Typography>
-                  : <Typography variant='p_lg'>Repay all borrowed amount</Typography>}
+                {editType === 0 ? <Typography variant='p_lg'>{hasRiskRatio && 'Accept Risk and '}Borrow More</Typography>
+                  : <Typography variant='p_lg'>Repay {isFullRepaid && 'Full Amount'}</Typography>}
               </SubmitButton>
             }
 
