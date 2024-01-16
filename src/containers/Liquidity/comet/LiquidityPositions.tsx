@@ -5,7 +5,6 @@ import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic'
 import AddIconOn from 'public/images/add-icon-on.svg'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -14,6 +13,7 @@ import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { DEFAULT_ASSET_LINK } from '~/data/assets'
+import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -23,7 +23,6 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   const [poolIndex, setPoolIndex] = useState(0)
   const [isBtnHover, setIsBtnHover] = useState(false)
   const [renderPositions, setRenderPositions] = useState<LiquidityPosition[]>([])
-  const EditLiquidityDialog = dynamic(() => import('./Dialogs/EditLiquidityDialog'))
 
   useEffect(() => {
     if (positions) {

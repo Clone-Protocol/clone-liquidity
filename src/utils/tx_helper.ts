@@ -99,6 +99,9 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
       blockhash, lastValidBlockHeight, signature: txHash,
     }, 'confirmed')
     setTxState({ state: TransactionState.SUCCESS, txHash })
+
+    // MEMO : it should not removed
+    return txHash
   } catch (e: any) {
     console.log("TX ERROR:", e)
     setTxState({ state: TransactionState.FAIL, txHash })

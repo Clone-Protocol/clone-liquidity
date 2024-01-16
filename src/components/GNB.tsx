@@ -25,6 +25,7 @@ import SettingDialog from './Common/SettingDialog'
 import TempWarningMsg from '~/components/Common/TempWarningMsg'
 import { IS_DEV } from '~/data/networks'
 import { fetchGeoBlock } from '~/utils/fetch_netlify'
+import CreateAccountSetupDialog from './Account/CreateAccountSetupDialog'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -74,7 +75,6 @@ const RightMenu: React.FC = () => {
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
 	const [showGeoblock, setShowGeoblock] = useState(false)
 
-	const CreateAccountSetupDialog = dynamic(() => import('./Account/CreateAccountSetupDialog'))
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
 	const GeoblockDialog = dynamic(() => import('~/components/Common/GeoblockDialog'), { ssr: false })
 

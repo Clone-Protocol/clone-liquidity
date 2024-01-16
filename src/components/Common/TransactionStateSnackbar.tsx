@@ -48,7 +48,7 @@ const ConfirmingWrapper = ({ txState = TransactionState.PENDING, txHash, isFocus
   const StatusWrap = (<LongTimeStatus><Typography variant='p'>This transaction is taking unusually long.</Typography></LongTimeStatus>)
   setTimeout(() => {
     setLongTimeStatus(StatusWrap)
-  }, 15000)
+  }, 20000)
 
   return (
     <ConfirmBoxWrapper className={isFocus ? 'animate__animated animate__shakeX' : ''}>
