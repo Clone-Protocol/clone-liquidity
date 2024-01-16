@@ -40,7 +40,7 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
 
   //max borrowable
   useEffect(() => {
-    setMaxCollVal(editType === 0 ? ((Number(borrowDetail.effectiveCollateralValue) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedOnasset) : borrowDetail.iassetVal)
+    setMaxCollVal(editType === 0 ? Math.max(0, ((Number(borrowDetail.effectiveCollateralValue) * 100) / (borrowDetail.price * borrowDetail.minCollateralRatio)) - Number(borrowDetail.borrowedOnasset)) : borrowDetail.iassetVal)
   }, [borrowDetail.usdiVal, borrowDetail.iassetVal, editType])
 
   const handleChangeType = useCallback((event: React.SyntheticEvent, newValue: number) => {

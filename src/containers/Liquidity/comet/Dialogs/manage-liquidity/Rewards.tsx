@@ -72,7 +72,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
             {Math.max(0, -positionInfo.onassetILD).toLocaleString(undefined, {
               maximumFractionDigits: 8,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${Math.abs(-positionInfo.onassetILD * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD)</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${Math.abs(-positionInfo.onassetILD * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>
