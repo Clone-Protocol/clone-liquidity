@@ -63,9 +63,9 @@ export const fetchBorrowStats = async (): Promise<BorrowStats[]> => {
     return response.data as BorrowStats[]
 }
 
-export const fetchPoolApy = async (): Promise<{ pool_index: number, apy_24hr: number }[]> => {
+export const fetchPoolApy = async (): Promise<{ pool_index: number, apy_24hr?: number }[]> => {
     const response = await axios.get(`/.netlify/functions/get-pool-apy`)
-    return response.data as { pool_index: number, apy_24hr: number }[]
+    return response.data as { pool_index: number, apy_24hr?: number }[]
 }
 
 export const fetchUserApy = async (user_address: string): Promise<number> => {

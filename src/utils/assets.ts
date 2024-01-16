@@ -142,7 +142,7 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
 
   apyData.forEach((item) => {
     try {
-      result[Number(item.pool_index)].apy = item.apy_24hr
+      result[Number(item.pool_index)].apy = item.apy_24hr ?? 0
     } catch (e) {
       console.error('error', e)
     }
