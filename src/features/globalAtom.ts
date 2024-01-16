@@ -1,6 +1,6 @@
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { atom } from 'jotai'
-import { DEFAULT_PRIORITY_FEE_INDEX, DEV_RPCs, IS_DEV, MAIN_RPCs } from '~/data/networks'
+import { DEFAULT_PRIORITY_FEE_INDEX, PRIORITY_FEES, DEV_RPCs, IS_DEV, MAIN_RPCs } from '~/data/networks'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { FeeLevel } from '~/data/networks'
 
@@ -28,4 +28,4 @@ export const rpcEndpoint = atom(IS_DEV ? DEV_RPCs[0].rpc_url : MAIN_RPCs[0].rpc_
 
 export const priorityFeeIndex = atom(DEFAULT_PRIORITY_FEE_INDEX)
 
-export const priorityFee = atom<FeeLevel>("high")
+export const priorityFee = atom<FeeLevel>(PRIORITY_FEES[DEFAULT_PRIORITY_FEE_INDEX].fee_level)

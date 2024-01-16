@@ -72,27 +72,27 @@ export type PriorityFeeType = {
   fee_level: FeeLevel
 }
 
-export const DEFAULT_PRIORITY_FEE_INDEX = 3
+export const DEFAULT_PRIORITY_FEE_INDEX = 2
 
 export const PRIORITY_FEES: PriorityFeeType[] = [
   {
     fee_name: "Min",
     fee_level: "min"
   },
+  // {
+  //   fee_name: "Low",
+  //   fee_level: "low"
+  // },
+  // {
+  //   fee_name: "Medium",
+  //   fee_level: "medium",
+  // },
   {
-    fee_name: "Low",
-    fee_level: "low"
-  },
-  {
-    fee_name: "Medium",
-    fee_level: "medium",
-  },
-  {
-    fee_name: "High",
+    fee_name: "Normal",
     fee_level: "high"
   },
   {
-    fee_name: "Very High",
+    fee_name: "High",
     fee_level: "veryHigh"
   },
   {
