@@ -12,12 +12,12 @@ export const funcNoWallet = async () => {
 }
 
 export const getCloneClient = async (networkEndpoint: string, wallet?: AnchorWallet) => {
-  const connection = new Connection(networkEndpoint)
+  const connection = new Connection(networkEndpoint, { commitment: 'confirmed' })
 
   let provider
   if (wallet) {
     const opts = {
-      preflightCommitment: "processed" as Commitment,
+      preflightCommitment: "confirmed" as Commitment,
     }
     provider = new AnchorProvider(connection, wallet, opts)
   } else {

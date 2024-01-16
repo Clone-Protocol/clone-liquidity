@@ -97,7 +97,7 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
 
     await provider.connection.confirmTransaction({
       blockhash, lastValidBlockHeight, signature: txHash,
-    }, 'finalized')
+    }, 'confirmed')
     setTxState({ state: TransactionState.SUCCESS, txHash })
   } catch (e: any) {
     console.log("TX ERROR:", e)
