@@ -117,11 +117,11 @@ let columns: GridColDef[] = [
 			return !showPoolStatus(params.row.status) ?
 				params.row.change24h >= 0 ?
 					<Box color='#4fe5ff' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>+{params.row.change24h.toFixed(2)}%</Typography>
+						<Typography variant='p_xlg'>+{params.row.change24h?.toFixed(2)}%</Typography>
 						<Image src={ArrowUpward} alt='arrowUp' />
 					</Box>
 					: <Box color='#ff0084' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>{params.row.change24h.toFixed(2)}%</Typography>
+						<Typography variant='p_xlg'>{params.row.change24h?.toFixed(2)}%</Typography>
 						<Image src={ArrowDownward} alt='arrowDown' />
 					</Box>
 				: <></>
@@ -162,10 +162,10 @@ let columns: GridColDef[] = [
 				:
 				params.row.avgAPY24h >= 0 ?
 					<Box color='#4fe5ff' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>+{params.row.avgAPY24h.toFixed(2)}%</Typography>
+						<Typography variant='p_xlg'>+{params.row.avgAPY24h?.toFixed(2)}%</Typography>
 					</Box>
 					: <Box color='#ff0084' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>{params.row.avgAPY24h.toFixed(2)}%</Typography>
+						<Typography variant='p_xlg'>{params.row.avgAPY24h?.toFixed(2)}%</Typography>
 					</Box>
 		},
 	},
