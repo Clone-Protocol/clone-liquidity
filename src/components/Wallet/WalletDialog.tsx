@@ -109,7 +109,7 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 			} else if (connected) {
 				enqueueSnackbar('Wallet Connected')
 			}
-			setWalletClicked(true)
+			setWalletClicked(false)
 		}
 	}, [connecting, connected])
 

@@ -4,18 +4,16 @@ import { useCallback, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CellTicker, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { Collateral } from '~/features/MyLiquidity/comet/CometInfo.query'
-import dynamic from 'next/dynamic'
 import { useSetAtom } from 'jotai'
 import { mintUSDi } from '~/features/globalAtom'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ON_USD } from '~/utils/constants'
+import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const setMintUsdi = useSetAtom(mintUSDi)
-  const EditCollateralDialog = dynamic(() => import('./Dialogs/EditCollateralDialog'))
 
   let dataCollaterals = collaterals
   if (publicKey && hasNoCollateral) {
