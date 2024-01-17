@@ -139,7 +139,7 @@ let columns: GridColDef[] = [
     headerName: 'ILD',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.ildValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+      return <Typography variant='p_xlg'>${params.row.ildDollarPrice.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
     },
   },
   {

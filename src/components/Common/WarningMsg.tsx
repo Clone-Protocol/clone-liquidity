@@ -22,9 +22,9 @@ const InfoStack = styled(Stack)`
   line-height: 1.33;
   border-radius: 5px;
   background-color: rgba(79, 229, 255, 0.1);
-  &:hover {
-    background-color: rgba(79, 229, 255, 0.05);
-  }
+  // &:hover {
+  //   background-color: rgba(79, 229, 255, 0.05);
+  // }
 `
 
 export const WarningMsg = ({ children }: { children?: React.ReactNode }) => {

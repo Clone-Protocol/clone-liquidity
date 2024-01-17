@@ -106,8 +106,8 @@ export interface LiquidityPosition {
 	liquidityDollarPrice: number
 	positionIndex: number
 	poolIndex: number
-	ildValue: number,
-	ildInUsdi: boolean
+	ildValue: number
+	ildDollarPrice: boolean
 	rewards: number
 	apy: number
 	status: Status
@@ -125,7 +125,7 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 		const pool = pools.pools[Number(position.poolIndex)];
 		const status = pool.status
 
-		const [ildValue, ildInUsdi] = (() => {
+		const [ildValue, _] = (() => {
 			const info = ildInfo[i];
 			if (info.onAssetILD > 0) {
 				return [info.onAssetILD, false]
@@ -145,6 +145,7 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 		}
 
 		const liquidityDollarPrice = fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale) * 2
+		const ildDollarPrice = Math.max(0, ildInfo[i].onAssetILD) * ildInfo[i].oraclePrice
 		const apy = poolStats[poolIndex].apy
 
 		result.push(
@@ -156,7 +157,7 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 				ildValue,
 				positionIndex: i,
 				poolIndex,
-				ildInUsdi,
+				ildDollarPrice,
 				rewards,
 				apy,
 				status

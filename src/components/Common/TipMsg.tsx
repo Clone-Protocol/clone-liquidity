@@ -20,6 +20,9 @@ const StyledBox = styled(Box)`
 	color: rgba(255, 255, 255, 0.8);
 	border-radius: 5px;
 	height: 38px;
+	&:hover {
+    background-color: ${(props) => props.theme.basis.jurassicGrey};
+  }
 `
 
 export default TipMsg
