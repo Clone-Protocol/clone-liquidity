@@ -29,7 +29,7 @@ export const fetchDefaultCollateral = async ({
 	let hasCometPositions = false
 	const collateralizationRatio = fromScale(program.clone.collateral.collateralizationRatio, 2)
 
-	if (collateralAccountResult.status === 'fulfilled' && collateralAccountResult.value !== undefined) {
+	if (collateralAccountResult.status === 'fulfilled' && collateralAccountResult.value.isInitialized) {
 		const tokenBalance = await program.provider.connection.getTokenAccountBalance(collateralAccountResult.value.address)
 		balance = tokenBalance.value.uiAmount!
 	}
@@ -37,7 +37,7 @@ export const fetchDefaultCollateral = async ({
 	if (userAccountData.status === 'fulfilled') {
 		const comet = userAccountData.value.comet
 		collAmount = fromScale(comet.collateralAmount, program.clone.collateral.scale)
-		
+
 		hasCometPositions = comet.positions.length > 0
 		if (poolsData.status === 'fulfilled' && oraclesData.status === 'fulfilled') {
 			prevHealthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
