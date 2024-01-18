@@ -1,3 +1,4 @@
+import { PublicKey } from "@solana/web3.js"
 import { ON_USD } from "~/utils/constants"
 import { IS_DEV } from "./networks"
 
@@ -50,6 +51,7 @@ export const assetMapping = (index: number) => {
     let assetType: number
     let pythSymbol = ''
     let supabaseSymbol = ''
+    let underlyingTokenMint = PublicKey.default
     switch (index) {
         case Asset.Arbitrum:
             tickerName = 'Clone Arbitrum'
@@ -59,6 +61,7 @@ export const assetMapping = (index: number) => {
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.ARB/USD'
             supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("9Bv59s4i393sqPysTEKA8xx47DQJ73EoBCS1DBbW9EWy")
             break
         case Asset.Optimism:
             tickerName = 'Clone Optimism'
@@ -68,12 +71,13 @@ export const assetMapping = (index: number) => {
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.OP/USD'
             supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("7QDfgP97Knwzz7uWrvzMEwFNLNT5Cbe2YPVKUY4WpBFa")
             break
         default:
             throw new Error('Not supported')
     }
 
-    return { tickerName, tickerSymbol, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol }
+    return { tickerName, tickerSymbol, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, underlyingTokenMint }
 }
 
 export const collateralMapping = (index: number) => {

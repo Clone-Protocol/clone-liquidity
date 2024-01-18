@@ -4,18 +4,26 @@ import { PublicKey } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { assetMapping } from "~/data/assets";
+import { getAssociatedTokenAddress } from '@solana/spl-token';
 
 export const fetchBalance = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return null
 
 	console.log('fetchBalance')
 
-	let wrapAssetVal = 0.0
-	let onassetVal = 0.0
+	const { underlyingTokenMint } = assetMapping(index);
+
+	const tokenAccount = await getAssociatedTokenAddress(underlyingTokenMint, userPubKey);
+
+    let underlyingAssetVal = 0.0
+
+	try {
+		underlyingAssetVal = (await program.provider.connection.getTokenAccountBalance(tokenAccount)).value.uiAmount!;
+	} catch {}
 
 	return {
-		wrapAssetVal,
-		onassetVal
+		underlyingAssetVal
 	}
 }
 
@@ -27,8 +35,7 @@ interface GetProps {
 }
 
 export interface Balance {
-	wrapAssetVal: number
-	onassetVal: number
+	underlyingAssetVal: number
 }
 
 export function useBalanceQuery({ userPubKey, index = -1, refetchOnMount, enabled = true }: GetProps) {
@@ -43,6 +50,6 @@ export function useBalanceQuery({ userPubKey, index = -1, refetchOnMount, enable
 			enabled
 		})
 	} else {
-		return useQuery(['wrapperBalance'], () => ({ wrapAssetVal: 0, onassetVal: 0 }))
+		return useQuery(['wrapperBalance'], () => ({ underlyingAssetVal: 0 }))
 	}
 }
