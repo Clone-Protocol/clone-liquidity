@@ -16,6 +16,8 @@ export const fetchDefaultCollateral = async ({
 }) => {
 	if (!userPubKey) return
 
+	console.log('fetchInfos :: fetchDefaultCollateral.query')
+
 	const [userAccountData, poolsData, oraclesData, collateralAccountResult] = await Promise.allSettled([
 		program.getUserAccount(),
 		program.getPools(),

@@ -57,6 +57,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
   useEffect(() => {
     async function fetch() {
       if (open && collData) {
+        refetch()
         initData()
         setHealthScore(collData.prevHealthScore)
         // setTotalCollValue(collData.totalCollValue)

@@ -50,7 +50,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           <StatusValue>
             {infos && infos.positions.length > 0 &&
               <Box>
-                {infos.totalApy && infos.totalApy >= 0 ?
+                {infos?.totalApy >= 0 ?
                   <Box color='#4fe5ff'>
                     <Box display='flex' justifyContent='center' alignItems='center'>
                       <Typography variant='p_xlg'>+{infos?.totalApy.toFixed(2)}%</Typography>

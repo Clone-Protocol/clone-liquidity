@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FadeTransition } from '~/components/Common/Dialog'
@@ -20,9 +20,18 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: poolIndex,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     enabled: open && publicKey != null,
   })
+
+  useEffect(() => {
+    async function fetch() {
+      if (open && positionInfo) {
+        refetch()
+      }
+    }
+    fetch()
+  }, [open])
 
   const moveTab = (index: number) => {
     setTab(index)
