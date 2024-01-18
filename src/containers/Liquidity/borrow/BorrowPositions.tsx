@@ -70,7 +70,7 @@ const BorrowPositions = () => {
 						<AddButton onClick={moveNewBorrowPositionPage} sx={isBtnHover ? { color: '#fff' } : { color: '#414e66' }} disableRipple>
 							<Stack direction='row'>
 								<AddIcon color={isBtnHover ? '#fff' : '#414e66'} />
-								<Typography variant='p_lg' ml='10px' color={isBtnHover ? '#fff' : '#414e66'}>Add new liquidity position</Typography>
+								<Typography variant='p_lg' ml='10px' color={isBtnHover ? '#fff' : '#414e66'}>Add new borrow position</Typography>
 							</Stack>
 						</AddButton>
 						:
