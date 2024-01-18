@@ -6,27 +6,13 @@ import Image from 'next/image'
 import oneWaySwapIcon from 'public/images/oneway-swap.svg'
 import { useForm, Controller } from 'react-hook-form'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useTradingMutation } from '~/containers/Wrapper/Trading.mutation'
-import { useBalanceQuery } from '~/containers/Wrapper/Balance.query'
+import { useTradingMutation } from '~/features/Wrapper/Trading.mutation'
+import { useBalanceQuery } from '~/features/Wrapper/Balance.query'
 import { useWrapperDetailQuery, PairData } from '~/features/Wrapper/MarketDetail.query'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '../Common/CommonButtons'
-
-export enum ComponentEffect {
-  iAssetAmount,
-  onusdAmount,
-  BarValue,
-  TabIndex,
-}
-
-export interface TradingData {
-  tabIdx: number
-  fromAmount: number
-  fromBalance: number
-  convertVal: number
-}
 
 interface Props {
   assetIndex: number
