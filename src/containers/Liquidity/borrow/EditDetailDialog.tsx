@@ -140,7 +140,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
         onRefetchData()
         onHideEditForm()
         router.replace(`/borrow/myliquidity`)
-        location.reload()
+        // location.reload()
       }
     } catch (err) {
       console.error(err)

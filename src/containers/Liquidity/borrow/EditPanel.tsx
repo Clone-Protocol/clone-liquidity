@@ -36,7 +36,7 @@ const EditPanel = ({ assetId, borrowDetail, showRepayPosition, showWithdrawColla
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenEditDetail(false)}
-        onRefetchData={() => onRefetchData()}
+        onRefetchData={onRefetchData}
       />
 
       <EditBorrowMoreDialog
@@ -45,7 +45,7 @@ const EditPanel = ({ assetId, borrowDetail, showRepayPosition, showWithdrawColla
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenBorrowMore(false)}
-        onRefetchData={() => onRefetchData()}
+        onRefetchData={onRefetchData}
       />
     </Box>
   ) : <></>

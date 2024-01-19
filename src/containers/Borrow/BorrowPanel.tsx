@@ -132,7 +132,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
       if (data) {
         console.log('data', data)
         initData()
-        router.replace(`/borrow/myliquidity`)
+        // router.replace(`/borrow/myliquidity`)
       }
     } catch (err) {
       console.error(err)
