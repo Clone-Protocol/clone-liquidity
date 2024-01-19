@@ -149,7 +149,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
   } else if (positionInfo?.hasFullPool) {
     actionButton = (
       <SelectButton>
-        <Typography variant='p_xlg'>Exhausted all available pool</Typography>
+        <Typography variant='p_xlg'>Exhausted All Available Pools</Typography>
       </SelectButton>
     )
   } else if (positionInfo?.hasNoCollateral) {

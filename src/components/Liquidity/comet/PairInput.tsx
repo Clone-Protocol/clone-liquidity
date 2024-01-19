@@ -112,7 +112,7 @@ const MaxButton = styled(Box)`
   cursor: pointer;
 `
 const InputAmount = styled(`input`)`
-  width: 200px;
+  width: 230px;
   border: 0px;
   background-color: transparent;
   font-size: 26px;

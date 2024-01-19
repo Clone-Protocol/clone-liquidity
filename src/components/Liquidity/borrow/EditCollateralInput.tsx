@@ -65,7 +65,7 @@ const EditCollateralInput: React.FC<Props> = ({
           value={collAmount}
           valueDollarPrice={collAmountDollarPrice}
           balance={maxCollVal}
-          hideMaxButton={editType === 1}
+          hideMaxButton={editType === 1 && !isFullRepaid}
           onChange={onChangeAmount}
           onMax={onMax}
         />
