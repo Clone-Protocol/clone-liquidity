@@ -4,33 +4,35 @@ import { useState } from 'react'
 import TradingComp from '~/components/Wrapper/TradingComp'
 import { useRouter } from 'next/navigation'
 import { ASSETS } from '~/data/assets'
+import dynamic from 'next/dynamic'
 
 interface Props {
 	assetId: number
 }
 
-const TradingBox: React.FC<Props> = ({ assetId }) => {
+const TradingBox: React.FC<Props> = () => {
 	// const router = useRouter()
-	const [showSearchAssetDlog, setShowSearchAssetDlog] = useState(false)
-	const assetIndex = assetId
+	const ChooseAssetDialog = dynamic(() => import('~/containers/Borrow/Dialogs/ChooseAssetDialog'))
+	const [openChooseAsset, setOpenChooseAsset] = useState(false)
+	const [assetIndex, setAssetIndex] = useState(0)
 
-	const chooseAsset = (id: number) => {
-		setShowSearchAssetDlog(false)
-		// router.push(`/trade/${ASSETS[id].ticker}`)
+	const handleChooseAsset = (assetId: number) => {
+		setAssetIndex(assetId)
+		setOpenChooseAsset(false)
 	}
 
 	return (
 		<StyledPaper>
 			<TradingComp
 				assetIndex={assetIndex}
-				onShowSearchAsset={() => setShowSearchAssetDlog(true)}
+				onShowSearchAsset={() => setOpenChooseAsset(true)}
 			/>
 
-			{/* <SearchAssetDialog
-				open={showSearchAssetDlog}
-				onChooseAsset={(id) => chooseAsset(id)}
-				onHide={() => setShowSearchAssetDlog(false)}
-			/> */}
+			<ChooseAssetDialog
+				open={openChooseAsset}
+				handleChooseAsset={handleChooseAsset}
+				handleClose={() => setOpenChooseAsset(false)}
+			/>
 		</StyledPaper>
 	)
 }

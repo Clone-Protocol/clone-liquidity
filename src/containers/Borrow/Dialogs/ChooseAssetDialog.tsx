@@ -20,7 +20,7 @@ const ChooseAssetDialog = ({ open, handleChooseAsset, handleClose }: { open: boo
   return (
     <>
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={375}>
-        <DialogContent sx={{ backgroundColor: '#000e22', padding: '0', borderRadius: '20px', border: '1px solid #414166' }}>
+        <DialogContent sx={{ backgroundColor: '#000e22', width: '100%', padding: '0', borderRadius: '20px', border: '1px solid #414166' }}>
           <BoxWrapper>
             <Box ml='25px' my='21px' mb="19px"><Typography variant='h3' fontWeight={500}>Search clAssets</Typography></Box>
             <Box mb='25px' px='11px' display='flex' justifyContent='center'>
@@ -41,7 +41,9 @@ const ChooseAssetDialog = ({ open, handleChooseAsset, handleClose }: { open: boo
 
 const BoxWrapper = styled(Box)`
   color: #fff; 
-  min-width: 375px;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
 `
 const StyledDivider = styled(Divider)`
   background-color: #414166;

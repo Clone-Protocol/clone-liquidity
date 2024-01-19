@@ -16,11 +16,12 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
 
 	const tokenAccount = await getAssociatedTokenAddress(underlyingTokenMint, userPubKey);
 
-    let underlyingAssetVal = 0.0
-
+	let underlyingAssetVal = 0.0
 	try {
 		underlyingAssetVal = (await program.provider.connection.getTokenAccountBalance(tokenAccount)).value.uiAmount!;
-	} catch {}
+	} catch (e) {
+		console.error(e)
+	}
 
 	return {
 		underlyingAssetVal

@@ -49,23 +49,23 @@ let columns: GridColDef[] = [
 				<Box display="flex" justifyContent="flex-start" ml='4px'>
 					<Image src={params.row.tickerIcon} width={28} height={28} alt={params.row.tickerSymbol} />
 					<Box ml='10px' mt='3px'>
-						<Typography variant='p_xlg'>{params.row.tickerName}</Typography>
-						<Typography variant='p_xlg' color='#989898' ml='10px'>{params.row.tickerSymbol}</Typography>
+						<Typography variant='p_lg'>{params.row.tickerName}</Typography>
+						<Typography variant='p_lg' color='#989898' ml='10px'>{params.row.tickerSymbol}</Typography>
 					</Box>
 				</Box>
 			)
 		},
 	},
-	{
-		field: 'balance',
-		headerClassName: 'last--header',
-		cellClassName: 'last--cell',
-		headerName: '',
-		flex: 1,
-		renderCell(params: GridRenderCellParams<string>) {
-			return <Box mr='5px'><Typography variant='p_xlg' color='#c5c7d9'>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
-		},
-	},
+	// {
+	// 	field: 'balance',
+	// 	headerClassName: 'last--header',
+	// 	cellClassName: 'last--cell',
+	// 	headerName: '',
+	// 	flex: 1,
+	// 	renderCell(params: GridRenderCellParams<string>) {
+	// 		return <Box mr='5px'><Typography variant='p_lg' color='#c5c7d9'>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
+	// 	},
+	// },
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))

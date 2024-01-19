@@ -22,9 +22,7 @@ interface Props {
 const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const [loading, setLoading] = useState(false)
   const { publicKey } = useWallet()
-  const [isBuy, setisBuy] = useState(true)
   const { setOpen } = useWalletDialog()
-  const [estimatedSwapResult, setEstimatedSwapResult] = useState(0.0)
 
   const fromPair: PairData = {
     tickerIcon: '/images/assets/on-arb.svg',
@@ -56,30 +54,20 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
     mode: 'onChange',
     defaultValues: {
       amountWrapAsset: NaN,
-      amountOnasset: NaN,
     }
   })
 
-  const [amountWrapAsset, amountOnasset] = watch([
-    'amountWrapAsset',
-    'amountOnasset',
+  const [amountWrapAsset] = watch([
+    'amountWrapAsset'
   ])
 
   const initData = () => {
     setValue('amountWrapAsset', NaN)
-    setValue('amountOnasset', NaN)
     refetch()
   }
 
-  // const handleChangeOrderType = () => {
-  //   setisBuy(!isBuy)
-  //   initData()
-  //   trigger()
-  // }
-
   useEffect(() => {
     if (assetIndex) {
-      setisBuy(true)
       initData()
       trigger()
     }
@@ -88,14 +76,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const { mutateAsync } = useTradingMutation(publicKey)
 
   const calculateTotalAmountByFrom = (newValue: number) => {
-    //@TODO: calculate total amount
-    const resultVal = 1
-    setEstimatedSwapResult(0)
-    if (isBuy) {
-      setValue('amountOnasset', resultVal)
-    } else {
-      setValue('amountWrapAsset', resultVal)
-    }
+    setValue('amountWrapAsset', newValue)
   }
 
   const onConfirm = async () => {
@@ -103,11 +84,8 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
       setLoading(true)
       const data = await mutateAsync(
         {
-          quantity: isBuy ? amountWrapAsset : amountOnasset,
-          quantityIsCollateral: isBuy,
-          quantityIsInput: true,
+          quantity: amountWrapAsset,
           poolIndex: assetIndex,
-          estimatedSwapResult,
         }
       )
 
@@ -125,7 +103,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const invalidMsg = () => {
     if (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset) {
       return 'Enter Amount'
-    } else if (isBuy && amountWrapAsset > myBalance?.wrapAssetVal!) {
+    } else if (amountWrapAsset > myBalance?.underlyingAssetVal!) {
       return `Insufficient Amount`
     } else {
       return ''
@@ -139,85 +117,44 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
       <div style={{ width: '100%', height: '100%' }}>
         <Box p='18px' sx={{ paddingBottom: { xs: '150px', md: '18px' } }}>
           <Box>
-            {
-              // ::Buy
-              isBuy ?
-                <Box>
-                  <Controller
-                    name="amountWrapAsset"
-                    control={control}
-                    rules={{
-                      validate(value) {
-                        if (!value || isNaN(value) || value <= 0) {
-                          return 'the amount should not empty'
-                        } else if (value > myBalance?.wrapAssetVal!) {
-                          return 'The amount cannot exceed the balance.'
-                        }
-                      }
+            <Box>
+              <Controller
+                name="amountWrapAsset"
+                control={control}
+                rules={{
+                  validate(value) {
+                    if (!value || isNaN(value) || value <= 0) {
+                      return 'the amount should not empty'
+                    } else if (value > myBalance?.underlyingAssetVal!) {
+                      return 'The amount cannot exceed the balance.'
+                    }
+                  }
+                }}
+                render={({ field }) => (
+                  <PairInput
+                    title="You’re Wrapping"
+                    tickerIcon={fromPair.tickerIcon}
+                    ticker={fromPair.tickerSymbol}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const wrapAmt = parseFloat(event.currentTarget.value)
+                      field.onChange(event.currentTarget.value)
+                      calculateTotalAmountByFrom(wrapAmt)
                     }}
-                    render={({ field }) => (
-                      <PairInput
-                        title="You’re Wrapping"
-                        tickerIcon={fromPair.tickerIcon}
-                        ticker={fromPair.tickerSymbol}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          const wrapAmt = parseFloat(event.currentTarget.value)
-                          field.onChange(event.currentTarget.value)
-                          calculateTotalAmountByFrom(wrapAmt)
-                        }}
-                        onMax={(balance: number) => {
-                          field.onChange(balance)
-                          calculateTotalAmountByFrom(balance)
-                        }}
-                        value={field.value}
-                        dollarValue={field.value}
-                        balance={myBalance?.wrapAssetVal}
-                        balanceDisabled={!publicKey}
-                        tickerClickable={true}
-                        onTickerClick={onShowSearchAsset}
-                        max={myBalance?.wrapAssetVal}
-                      />
-                    )}
-                  />
-                </Box>
-                :
-                <Box>
-                  <Controller
-                    name="amountOnasset"
-                    control={control}
-                    rules={{
-                      validate(value) {
-                        if (!value || isNaN(value) || value <= 0) {
-                          return 'the amount should not empty'
-                        } else if (value > myBalance?.onassetVal!) {
-                          return 'The amount cannot exceed the balance.'
-                        }
-                      }
+                    onMax={(balance: number) => {
+                      field.onChange(balance)
+                      calculateTotalAmountByFrom(balance)
                     }}
-                    render={({ field }) => (
-                      <PairInput
-                        title="You Pay"
-                        tickerIcon={assetData?.tickerIcon!}
-                        ticker={assetData?.tickerSymbol!}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          const onassetAmt = parseFloat(event.currentTarget.value)
-                          field.onChange(event.currentTarget.value)
-                          calculateTotalAmountByFrom(onassetAmt)
-                        }}
-                        onMax={(balance: number) => {
-                          field.onChange(balance)
-                          calculateTotalAmountByFrom(balance)
-                        }}
-                        value={field.value}
-                        balance={myBalance?.onassetVal}
-                        balanceDisabled={!publicKey}
-                        tickerClickable={false}
-                        max={myBalance?.onassetVal}
-                      />
-                    )}
+                    value={field.value}
+                    dollarValue={field.value}
+                    balance={myBalance?.underlyingAssetVal}
+                    balanceDisabled={!publicKey}
+                    tickerClickable={true}
+                    onTickerClick={onShowSearchAsset}
+                    max={myBalance?.underlyingAssetVal}
                   />
-                </Box>
-            }
+                )}
+              />
+            </Box>
           </Box>
 
           <Box height='100%'>
@@ -227,9 +164,9 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
             <PairInput
               title="To Receive"
-              tickerIcon={isBuy ? assetData?.tickerIcon! : fromPair.tickerIcon}
-              ticker={isBuy ? assetData?.tickerSymbol! : fromPair.tickerSymbol}
-              value={isBuy ? amountOnasset : amountWrapAsset}
+              tickerIcon={assetData?.tickerIcon!}
+              ticker={assetData?.tickerSymbol!}
+              value={amountWrapAsset}
               balanceDisabled={true}
               valueDisabled={true}
               tickerClickable={false}

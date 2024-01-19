@@ -20,7 +20,7 @@ const Wrapper = () => {
             </Box>
           </Stack>
           <Box mt='60px' display='flex' justifyContent='center'>
-            <TradingBox assetId={0} />
+            <TradingBox />
           </Box>
         </Box>
       </Container>

@@ -22,10 +22,7 @@ export const callTrading = async ({
 
 	let {
 		quantity,
-		quantityIsCollateral,
-		quantityIsInput,
 		poolIndex,
-		estimatedSwapResult
 	} = data
 	quantity = Number(quantity)
 
@@ -43,10 +40,7 @@ export const callTrading = async ({
 
 type FormData = {
 	quantity: number,
-	quantityIsCollateral: boolean,
-	quantityIsInput: boolean,
 	poolIndex: number,
-	estimatedSwapResult: number,
 }
 interface CallTradingProps {
 	program: CloneClient
