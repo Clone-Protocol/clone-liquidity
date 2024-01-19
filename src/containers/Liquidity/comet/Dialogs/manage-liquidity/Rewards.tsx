@@ -10,7 +10,7 @@ import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { ON_USD } from "~/utils/constants"
 
-const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData?: () => void }) => {
+const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -39,6 +39,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
       if (data) {
         console.log("data", data)
         refetch()
+        onRefetchData()
       }
     } catch (err) {
       console.error(err)
@@ -72,7 +73,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
             {Math.max(0, -positionInfo.onassetILD).toLocaleString(undefined, {
               maximumFractionDigits: 8,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${Math.abs(-positionInfo.onassetILD * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD)</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>

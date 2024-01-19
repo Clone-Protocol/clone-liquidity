@@ -107,7 +107,7 @@ export interface LiquidityPosition {
 	positionIndex: number
 	poolIndex: number
 	ildValue: number
-	ildDollarPrice: boolean
+	ildDollarPrice: number
 	rewards: number
 	apy: number
 	status: Status
