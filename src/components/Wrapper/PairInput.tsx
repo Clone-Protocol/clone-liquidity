@@ -11,7 +11,6 @@ interface Props {
 	balance?: number
 	balanceDisabled?: boolean
 	value?: number
-	dollarValue?: number
 	valueDisabled?: boolean
 	max?: number
 	tickerClickable?: boolean
@@ -20,19 +19,18 @@ interface Props {
 	onMax?: (balance: number) => void
 }
 
-const PairInput: React.FC<Props> = ({ title, tickerIcon, ticker, balance, balanceDisabled, value, dollarValue, valueDisabled = false, tickerClickable = false, onTickerClick, onChange, onMax, max }) => {
+const PairInput: React.FC<Props> = ({ title, tickerIcon, ticker, balance, balanceDisabled, value, valueDisabled = false, tickerClickable = false, onTickerClick, onChange, onMax, max }) => {
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="space-between">
-				<Box><Typography variant='p_lg' color='#8988a3'>{title}</Typography></Box>
+				<Box><Typography variant='p_lg' color='#66707e'>{title}</Typography></Box>
 				{!balanceDisabled ? <Box display='flex' alignItems='center'>
-					<Typography variant='p' color='#8988a3'>Balance: </Typography> <Typography variant='p' color='#b5fdf9' ml='5px'>{balance?.toLocaleString(undefined, { maximumFractionDigits: 4 })}</Typography>
-					<MaxButton onClick={() => onMax && onMax(balance!)}>Max</MaxButton></Box> : <></>}
+					<Typography variant='p' color='#66707e'>Balance: </Typography> <Typography variant='p' color='#b5fdf9' ml='5px'>{balance?.toLocaleString(undefined, { maximumFractionDigits: 4 })}</Typography>
+					<MaxButton onClick={() => onMax && onMax(balance!)}>MAX</MaxButton></Box> : <></>}
 			</Stack>
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display='flex' flexDirection='column' alignItems='flex-start' pl='5px' sx={valueDisabled ? { cursor: 'not-allowed' } : { cursor: 'default' }}>
 					<InputAmount id="ip-amount" type="number" sx={value && value > 0 ? { color: '#fff' } : { color: '#8988a3' }} placeholder="0.00" min={0} max={max} value={value} disabled={valueDisabled} onChange={onChange} />
-					{/* <Box><Typography variant='p' color='#8988a3'>${!dollarValue || isNaN(dollarValue) ? 0 : dollarValue?.toLocaleString()}</Typography></Box> */}
 				</Box>
 
 				{!tickerClickable ?
@@ -62,10 +60,10 @@ const FormStack = styled(Stack)`
 	height: 84px;
 	padding: 12px;
 	border-radius: 10px;
-	color: ${(props) => props.theme.basis.textRaven};
+	color: #fff;
 	background-color: rgba(255, 255, 255, 0.1);
 	&:hover {
-		box-shadow: 0 3px 20px 0 rgba(67, 48, 119, 0.52), 0 0 0 1px ${(props) => props.theme.basis.portGore} inset;
+		box-shadow: 0 3px 20px 0 rgba(67, 48, 119, 0.52), 0 0 0 1px ${(props) => props.theme.basis.shadowGloom} inset;
 	}
 `
 
@@ -88,7 +86,7 @@ const SelectTickerButton = styled(Button)`
 
 	&:hover {
 		background-color: rgba(65, 65, 102, 0.5);
-		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.melrose} inset;
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.shadowGloom} inset;
 	}
 `
 
@@ -105,19 +103,19 @@ const InputAmount = styled(`input`)`
 	padding: 0;
 `
 
-const MaxButton = styled(Button)`
-	border-radius: 4px;
+const MaxButton = styled(Box)`
+	width: 38px;
 	background-color: ${(props) => props.theme.basis.jurassicGrey};
 	margin-left: 6px;
-	margin-bottom: 5px;
 	font-size: 10px;
 	font-weight: 600;
-	padding: 2px 7px;
+	padding: 2px 0px;
 	border-radius: 5px;
 	color: #fff;
 	cursor: pointer;
 	&:hover {
-		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue};
+		background-color: ${(props) => props.theme.basis.jurassicGrey};
+		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.shadowGloom} inset;
 	}
 `
 

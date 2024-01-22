@@ -43,9 +43,28 @@ export const ASSETS = [
     }
 ]
 
+// export const WRAP_ASSETS = [
+//     {
+//         tickerName: 'DeBridge Arbitrum',
+//         tickerSymbol: 'dARB',
+//         tickerIcon: '/images/assets/on-arb.svg',
+//         ticker: 'arbitrum',
+//         pythSymbol: 'Crypto.ARB/USD'
+//     },
+//     {
+//         tickerName: 'Clone Optimism',
+//         tickerSymbol: 'clOP',
+//         tickerIcon: '/images/assets/on-op.svg',
+//         ticker: 'optimism',
+//         pythSymbol: 'Crypto.OP/USD'
+//     }
+// ]
+
 export const assetMapping = (index: number) => {
     let tickerName = ''
     let tickerSymbol = ''
+    let wrapTickerName = ''
+    let wrapTickerSymbol = ''
     let tickerIcon = ''
     let ticker = ''
     let assetType: number
@@ -56,6 +75,8 @@ export const assetMapping = (index: number) => {
         case Asset.Arbitrum:
             tickerName = 'Clone Arbitrum'
             tickerSymbol = 'clARB'
+            wrapTickerName = 'DeBridge Arbitrum'
+            wrapTickerSymbol = 'dARB'
             tickerIcon = '/images/assets/on-arb.svg'
             ticker = 'arbitrum'
             assetType = AssetType.Crypto
@@ -66,6 +87,8 @@ export const assetMapping = (index: number) => {
         case Asset.Optimism:
             tickerName = 'Clone Optimism'
             tickerSymbol = 'clOP'
+            wrapTickerName = 'DeBridge Optimism'
+            wrapTickerSymbol = 'dOP'
             tickerIcon = '/images/assets/on-op.svg'
             ticker = 'optimism'
             assetType = AssetType.Crypto
@@ -77,7 +100,7 @@ export const assetMapping = (index: number) => {
             throw new Error('Not supported')
     }
 
-    return { tickerName, tickerSymbol, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, underlyingTokenMint }
+    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, underlyingTokenMint }
 }
 
 export const collateralMapping = (index: number) => {

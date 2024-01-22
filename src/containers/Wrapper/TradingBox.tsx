@@ -2,8 +2,6 @@ import { Paper } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useState } from 'react'
 import TradingComp from '~/components/Wrapper/TradingComp'
-import { useRouter } from 'next/navigation'
-import { ASSETS } from '~/data/assets'
 import dynamic from 'next/dynamic'
 
 interface Props {
@@ -11,8 +9,7 @@ interface Props {
 }
 
 const TradingBox: React.FC<Props> = () => {
-	// const router = useRouter()
-	const ChooseAssetDialog = dynamic(() => import('~/containers/Borrow/Dialogs/ChooseAssetDialog'))
+	const ChooseAssetDialog = dynamic(() => import('./Dialogs/ChooseAssetDialog'))
 	const [openChooseAsset, setOpenChooseAsset] = useState(false)
 	const [assetIndex, setAssetIndex] = useState(0)
 

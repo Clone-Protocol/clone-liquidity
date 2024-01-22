@@ -172,7 +172,7 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 								</List>
 							</Collapse>
 							<Box sx={{ display: 'flex', justifyContent: 'end', marginTop: '15px', marginBottom: '15px' }}>
-								<Button sx={{ color: '#fff', fontWeight: 'bold', background: '#10141f' }} onClick={handleExpandClick}>
+								<Button sx={{ color: '#fff', fontWeight: 'bold', background: 'transparent', ':hover': { background: '#2d3858' } }} onClick={handleExpandClick}>
 									{expanded ? 'Less' : 'More'} options
 									{expanded ? <ExpandLess /> : <ExpandMore />}
 								</Button>

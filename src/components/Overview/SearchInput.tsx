@@ -5,13 +5,14 @@ import SearchIcon from 'public/images/search-icon.svg'
 
 interface Props {
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
+  placeholderTxt?: string
 }
-const SearchInput: React.FC<Props> = ({ onChange }) => {
+const SearchInput: React.FC<Props> = ({ placeholderTxt = 'Search clAssets', onChange }) => {
   return <StyledBox>
     <Box sx={{ position: 'relative', left: '0px', top: '-6px' }}>
       <Image src={SearchIcon} alt='search' />
     </Box>
-    <StyledInput placeholder="Search clAssets" disableUnderline onChange={onChange} />
+    <StyledInput placeholder={placeholderTxt} disableUnderline onChange={onChange} />
   </StyledBox>
 }
 
