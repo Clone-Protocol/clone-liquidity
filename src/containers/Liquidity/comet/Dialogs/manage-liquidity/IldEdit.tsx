@@ -182,16 +182,18 @@ const IldEdit = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
                 />
               )}
             />
-            <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
-              <Box>
-                <Typography variant='p'>Projected Remaining clAsset ILD</Typography>
-                <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
-              </Box>
-              <Box>
-                <Typography variant='p_lg'>{isNaN(ildAssetAmount) || ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-                <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildAssetAmount) || ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
-              </Box>
-            </StackWithBorder>
+            {!isNaN(ildAssetAmount) &&
+              <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
+                <Box>
+                  <Typography variant='p'>Projected Remaining clAsset ILD</Typography>
+                  <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
+                </Box>
+                <Box>
+                  <Typography variant='p_lg'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+                  <Typography variant='p_lg' color='#66707e' ml='5px'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+                </Box>
+              </StackWithBorder>
+            }
 
             {ildAssetAmount > balanceOnAsset &&
               <Box mb='10px'>
@@ -244,16 +246,18 @@ const IldEdit = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
                   />
                 )}
               />
-              <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
-                <Box>
-                  <Typography variant='p'>Projected Remaining {ON_USD} ILD</Typography>
-                  <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
-                </Box>
-                <Box>
-                  <Typography variant='p_lg'>{isNaN(ildCollAmount) || ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-                  <Typography variant='p_lg' color='#66707e' ml='5px'>{isNaN(ildCollAmount) || ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
-                </Box>
-              </StackWithBorder>
+              {!isNaN(ildCollAmount) &&
+                <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
+                  <Box>
+                    <Typography variant='p'>Projected Remaining {ON_USD} ILD</Typography>
+                    <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
+                  </Box>
+                  <Box>
+                    <Typography variant='p_lg'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+                    <Typography variant='p_lg' color='#66707e' ml='5px'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+                  </Box>
+                </StackWithBorder>
+              }
 
               {ildCollAmount > Math.max(0, positionInfo.collateralILD) &&
                 <Box mb='10px'>
