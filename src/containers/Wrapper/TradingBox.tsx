@@ -4,11 +4,7 @@ import { useState } from 'react'
 import TradingComp from '~/components/Wrapper/TradingComp'
 import dynamic from 'next/dynamic'
 
-interface Props {
-	assetId: number
-}
-
-const TradingBox: React.FC<Props> = () => {
+const TradingBox: React.FC = () => {
 	const ChooseAssetDialog = dynamic(() => import('./Dialogs/ChooseAssetDialog'))
 	const [openChooseAsset, setOpenChooseAsset] = useState(false)
 	const [assetIndex, setAssetIndex] = useState(0)

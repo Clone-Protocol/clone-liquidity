@@ -138,7 +138,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                     balance={myBalance?.underlyingAssetVal}
                     balanceDisabled={!publicKey}
                     tickerClickable={true}
-                    onTickerClick={onShowSearchAsset}
+                    onTickerClick={publicKey ? () => onShowSearchAsset() : () => setOpen(true)}
                     max={myBalance?.underlyingAssetVal}
                   />
                 )}
