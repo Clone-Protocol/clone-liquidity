@@ -60,11 +60,12 @@ const AssetList: React.FC = () => {
 	return (
 		<PanelBox sx={{ '& .non-hover-row': { ':hover': { background: '#000' } } }}>
 			<Stack mb={2} direction="row" justifyContent="space-between" alignItems="center">
-				<PageTabs value={filter} onChange={handleFilterChange}>
+				{/* <PageTabs value={filter} onChange={handleFilterChange}>
 					{Object.keys(FilterTypeMap).map((f) => (
 						<PageTab key={f} value={f} label={FilterTypeMap[f as FilterType]} />
 					))}
-				</PageTabs>
+				</PageTabs> */}
+				<Box></Box>
 				<Box width='320px'>
 					<SearchInput onChange={handleSearch} />
 				</Box>
