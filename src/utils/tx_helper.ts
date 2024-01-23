@@ -95,8 +95,9 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
     console.log('txHash', txHash)
     setTxState({ state: TransactionState.PENDING, txHash })
 
+    const extraBlockHeight = Number(process.env.NEXT_PUBLIC_EXTRA_BLOCKHEIGHT ?? 100);
     await provider.connection.confirmTransaction({
-      blockhash, lastValidBlockHeight, signature: txHash,
+      blockhash, lastValidBlockHeight: lastValidBlockHeight + extraBlockHeight, signature: txHash,
     }, 'confirmed')
     setTxState({ state: TransactionState.SUCCESS, txHash })
 
