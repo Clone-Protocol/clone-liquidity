@@ -59,7 +59,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
   if (!publicKey) {
     customOverlay = () => CustomNoRowsOverlay('Please connect wallet.')
   } else if (hasNoCollateral) {
-    customOverlay = () => CustomNoRowsOverlay('Please add collateral first to initiate liquidity positions.', '#fff')
+    customOverlay = () => CustomNoRowsOverlay('Add collateral in order to start providing liquidity!', '#fff')
   }
 
   return (
