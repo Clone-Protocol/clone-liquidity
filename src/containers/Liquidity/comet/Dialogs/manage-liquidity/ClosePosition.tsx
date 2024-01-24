@@ -84,7 +84,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
 
       if (data) {
         console.log("data", data)
-        refetch()
+        // refetch()
         onRefetchData()
         handleClose()
       }

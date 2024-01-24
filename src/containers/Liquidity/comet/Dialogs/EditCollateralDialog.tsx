@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, styled, Dialog, DialogContent, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Image from 'next/image'
-import { useEditCollateralQuery } from '~/features/MyLiquidity/comet/EditCollateral.query'
+import { DetailInfo, useEditCollateralQuery } from '~/features/MyLiquidity/comet/EditCollateral.query'
 import { useCollateralMutation } from '~/features/MyLiquidity/comet/Collateral.mutation'
 import { useForm, Controller } from 'react-hook-form'
 import { StyledTabs, StyledTab } from '~/components/Common/StyledTab'
@@ -16,7 +16,7 @@ import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import { LoadingButton } from '~/components/Common/Loading'
 
-const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }: { open: boolean, isNewDeposit: boolean, onRefetchData: () => void, handleClose: () => void }) => {
+const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boolean, isNewDeposit: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -53,6 +53,24 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
     setMaxWithdrawable(0)
   }
 
+  const setDetailValues = (collData: DetailInfo) => {
+    if (!isNaN(collData.prevHealthScore)) {
+      let loss = (100 - collData.prevHealthScore) * collData.effectiveCollateral;
+      let collDelta = (tab === 0 ? 1 : -1) * collAmount;
+
+      setHealthScore(100 - loss / (collData.effectiveCollateral + collData.collateralizationRatio * collDelta))
+      setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
+    } else {
+      if (tab === 0) {
+        setHealthScore(100)
+      } else {
+        setHealthScore(0)
+      }
+    }
+
+    trigger()
+  }
+
   // initialize state data
   useEffect(() => {
     async function fetch() {
@@ -69,22 +87,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
   useEffect(() => {
     async function fetch() {
       if (open && collData) {
-        // console.log('prevHealth', collData.prevHealthScore)
-        if (!isNaN(collData.prevHealthScore)) {
-          let loss = (100 - collData.prevHealthScore) * collData.effectiveCollateral;
-          let collDelta = (tab === 0 ? 1 : -1) * collAmount;
-
-          setHealthScore(100 - loss / (collData.effectiveCollateral + collData.collateralizationRatio * collDelta))
-          setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
-        } else {
-          if (tab === 0) {
-            setHealthScore(100)
-          } else {
-            setHealthScore(0)
-          }
-        }
-
-        trigger()
+        console.log('collData', collData)
+        setDetailValues(collData)
       }
     }
     fetch()
@@ -103,7 +107,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
         console.log('data', data)
         refetch()
         initData()
-        onRefetchData()
+        // onRefetchData()
         handleClose()
       }
     } catch (err) {

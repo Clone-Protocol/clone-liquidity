@@ -55,7 +55,7 @@ export function useNewPositionMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+				// queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 			}
 		})
 	} else {
@@ -134,6 +134,8 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
+				// queryClient.invalidateQueries({ queryKey: ['editCollateral'] }) 
+				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
 			}
 		})
@@ -218,6 +220,8 @@ export function usePayILDMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: PayILDFormData) => callPayILD({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
 				queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
 			}
 		})
@@ -288,6 +292,8 @@ export function useRewardsMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: CloseFormData) => callRewards({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
 				queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
 			}
 		})

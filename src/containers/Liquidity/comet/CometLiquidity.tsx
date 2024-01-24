@@ -33,7 +33,7 @@ const CometLiquidity = () => {
         </StyledTabs>
 
         <PanelBox>
-          <Collaterals hasNoCollateral={infos ? infos.hasNoCollateral : false} collaterals={infos?.collaterals || []} onRefetchData={() => refetch()} />
+          <Collaterals hasNoCollateral={infos ? infos.hasNoCollateral : false} collaterals={infos?.collaterals || []} />
         </PanelBox>
       </Box>
 

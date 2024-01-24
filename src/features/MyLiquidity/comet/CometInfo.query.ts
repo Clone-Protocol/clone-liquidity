@@ -55,6 +55,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 		totalApy,
 		positions
 	}
+	console.log('result', result)
 
 	return result
 }

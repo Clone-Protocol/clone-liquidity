@@ -67,8 +67,8 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                     positionIndex={positionIndex}
                     poolIndex={poolIndex}
                     onRefetchData={() => {
-                      refetch()
-                      onRefetchData()
+                      // refetch()
+                      // onRefetchData()
                     }}
                   />
                 </TabPanelForEdit>
@@ -76,16 +76,16 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                   <IldEdit
                     positionIndex={positionIndex}
                     onRefetchData={() => {
-                      refetch()
-                      onRefetchData()
+                      // refetch()
+                      // onRefetchData()
                     }} />
                 </TabPanelForEdit>
                 <TabPanelForEdit value={tab} index={2}>
                   <Rewards
                     positionIndex={positionIndex}
                     onRefetchData={() => {
-                      refetch()
-                      onRefetchData()
+                      // refetch()
+                      // onRefetchData()
                     }} />
                 </TabPanelForEdit>
                 <TabPanelForEdit value={tab} index={3}>
@@ -93,8 +93,8 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                     positionIndex={positionIndex}
                     onMoveTab={moveTab}
                     onRefetchData={() => {
-                      refetch()
-                      onRefetchData()
+                      // refetch()
+                      // onRefetchData()
                     }}
                     handleClose={handleClose}
                   />

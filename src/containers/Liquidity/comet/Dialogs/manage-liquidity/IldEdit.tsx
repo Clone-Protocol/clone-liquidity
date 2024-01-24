@@ -89,7 +89,7 @@ const IldEdit = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
 
       if (data) {
         console.log("data", data)
-        refetch()
+        // refetch()
         onRefetchData()
         initData()
       }
