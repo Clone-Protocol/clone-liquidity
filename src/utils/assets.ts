@@ -93,7 +93,7 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
 
   // Sorted by time_interval ascending
   const poolStatsData = await fetchStatsData("hour", "week", false)
-  console.log('poolStatsData', poolStatsData)
+  // console.log('poolStatsData', poolStatsData)
 
   poolStatsData.forEach((item) => {
     const dt = new Date(item.time_interval)
