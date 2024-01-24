@@ -10,7 +10,7 @@ import { getAssociatedTokenAddress } from '@solana/spl-token';
 export const fetchBalance = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
 	if (!userPubKey) return null
 
-	console.log('fetchBalance')
+	console.log('fetchBalance :: Balance.query')
 
 	const { underlyingTokenMint } = assetMapping(index);
 

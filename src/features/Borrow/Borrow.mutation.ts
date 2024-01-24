@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
@@ -54,13 +54,19 @@ interface CallCloseProps {
 	feeLevel: FeeLevel
 }
 export function useCloseMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['borrowAssets'] })
+			}
+		})
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
@@ -227,26 +233,38 @@ interface CallEditProps {
 	feeLevel: FeeLevel
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			}
+		})
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
 
 }
 export function useEditBorrowMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			}
+		})
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -314,13 +332,19 @@ interface CallBorrowProps {
 	feeLevel: FeeLevel
 }
 export function useBorrowMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: BorrowFormData) => callBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: BorrowFormData) => callBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['cometBalance'] })
+			}
+		})
 	} else {
 		return useMutation((_: BorrowFormData) => funcNoWallet())
 	}

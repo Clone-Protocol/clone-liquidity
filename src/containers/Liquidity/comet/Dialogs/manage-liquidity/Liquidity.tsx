@@ -57,11 +57,13 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
   const initData = () => {
     setValue('mintAmount', 0.0)
     onRefetchData()
+    trigger()
   }
 
   const {
     handleSubmit,
     setValue,
+    trigger,
     formState: { errors, isSubmitting },
     watch,
   } = useForm({

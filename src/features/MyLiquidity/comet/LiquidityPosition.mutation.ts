@@ -1,6 +1,6 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
@@ -45,13 +45,19 @@ interface CallNewProps {
 	feeLevel: FeeLevel
 }
 export function useNewPositionMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+			}
+		})
 	} else {
 		return useMutation((_: NewFormData) => funcNoWallet())
 	}
@@ -118,13 +124,19 @@ interface CallEditProps {
 	feeLevel: FeeLevel
 }
 export function useEditPositionMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSettled: () => {
+				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+			}
+		})
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}
@@ -196,13 +208,19 @@ interface CallPayILDProps extends CallCloseProps {
 	data: PayILDFormData
 }
 export function usePayILDMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: PayILDFormData) => callPayILD({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: PayILDFormData) => callPayILD({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
+			}
+		})
 	} else {
 		return useMutation((_: PayILDFormData) => funcNoWallet())
 	}
@@ -260,13 +278,19 @@ export const callRewards = async ({ program, userPubKey, setTxState, data, feeLe
 }
 
 export function useRewardsMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: CloseFormData) => callRewards({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: CloseFormData) => callRewards({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
+			}
+		})
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}
@@ -334,13 +358,19 @@ interface CallCloseProps {
 	feeLevel: FeeLevel
 }
 export function useClosePositionMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+			}
+		})
 	} else {
 		return useMutation((_: CloseFormData) => funcNoWallet())
 	}

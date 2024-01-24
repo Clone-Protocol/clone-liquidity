@@ -27,7 +27,6 @@ const RISK_RATIO_VAL = 170
 
 const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIndex: number, borrowDetail: DetailInfo, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
-  const router = useRouter()
   const onUSDInfo = collateralMapping(StableCollateral.onUSD)
   const fromPair: PairData = {
     tickerIcon: onUSDInfo.collateralIcon,

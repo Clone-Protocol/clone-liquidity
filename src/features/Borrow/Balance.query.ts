@@ -10,7 +10,7 @@ import { getTokenAccount } from '~/utils/token_accounts'
 export const fetchBalance = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return null
 
-  console.log('fetchBalance')
+  console.log('fetchBalance :: Balance.query')
 
   let onusdVal = 0.0
   let onassetVal = 0.0

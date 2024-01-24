@@ -23,7 +23,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
     setTab(newValue)
   }
   const [healthScore, setHealthScore] = useState(0)
-  // const [totalCollValue, setTotalCollValue] = useState(0)
   const [maxWithdrawable, setMaxWithdrawable] = useState(0)
 
   const { data: collData, refetch } = useEditCollateralQuery({
@@ -51,6 +50,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
 
   const initData = () => {
     setValue('collAmount', NaN)
+    setMaxWithdrawable(0)
   }
 
   // initialize state data
@@ -60,7 +60,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
         refetch()
         initData()
         setHealthScore(collData.prevHealthScore)
-        // setTotalCollValue(collData.totalCollValue)
       }
     }
     fetch()
@@ -70,7 +69,8 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
   useEffect(() => {
     async function fetch() {
       if (open && collData) {
-        if (collData.prevHealthScore) {
+        // console.log('prevHealth', collData.prevHealthScore)
+        if (!isNaN(collData.prevHealthScore)) {
           let loss = (100 - collData.prevHealthScore) * collData.effectiveCollateral;
           let collDelta = (tab === 0 ? 1 : -1) * collAmount;
 
@@ -83,12 +83,6 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
             setHealthScore(0)
           }
         }
-
-        // if (tab === 0) {
-        //   setTotalCollValue(collData.totalCollValue + (collAmount * collData.collAmountDollarPrice))
-        // } else {
-        //   setTotalCollValue(collData.totalCollValue - (collAmount * collData.collAmountDollarPrice))
-        // }
 
         trigger()
       }
@@ -110,6 +104,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
         refetch()
         initData()
         onRefetchData()
+        handleClose()
       }
     } catch (err) {
       console.error(err)

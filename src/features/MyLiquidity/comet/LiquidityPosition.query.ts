@@ -22,6 +22,8 @@ export const fetchLiquidityDetail = async ({
 }) => {
 	if (!userPubKey) return
 
+	console.log('fetchLiquidityDetail :: LiquidityPosition.query',)
+
 	const [poolsData, oraclesData, userAccountData] = await Promise.allSettled([
 		program.getPools(), program.getOracles(), program.getUserAccount()
 	]);
@@ -146,6 +148,8 @@ export const fetchCloseLiquidityPosition = async ({
 	index: number
 }) => {
 	if (!userPubKey) return
+
+	console.log('fetchCloseLiquidityPosition :: LiquidityPosition.query')
 
 	const [poolsData, oraclesData, accountData] = await Promise.allSettled([program.getPools(), program.getOracles(), program.getUserAccount()])
 

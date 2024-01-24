@@ -1,6 +1,6 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CloneClient, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { getCollateralAccount } from '~/utils/token_accounts'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
@@ -57,13 +57,19 @@ interface CallEditProps {
 	feeLevel: FeeLevel
 }
 export function useCollateralMutation(userPubKey: PublicKey | null) {
+	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({
+			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			onSettled: () => {
+				queryClient.invalidateQueries({ queryKey: ['editCollateral'] })
+			}
+		})
 	} else {
 		return useMutation((_: EditFormData) => funcNoWallet())
 	}

@@ -118,7 +118,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
       if (data) {
         console.log('data', data)
         initData()
-        setEditType(0)
+        // setEditType(0)
         onRefetchData()
         onHideEditForm()
       }

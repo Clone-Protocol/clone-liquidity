@@ -52,7 +52,7 @@ export interface DetailInfo {
 const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: CloneClient, userPubKey: PublicKey | null, index: number }) => {
   if (!userPubKey) return
 
-  console.log('fetchBorrowPosition')
+  console.log('fetchBorrowPosition :: BorrowPosition.query')
 
   const [poolsData, oraclesData, userAccountData, assetInfos] = await Promise.allSettled([
     program.getPools(), program.getOracles(), program.getUserAccount(), getiAssetInfos(program.provider.connection, program)
