@@ -62,7 +62,8 @@ export const getTxnURL = (txHash: string) => {
     throw new Error(`Network ${network} not yet supported!`)
   })();
 
-  return `https://solana.fm/tx/${txHash}?cluster=${cluster}`
+  // return `https://solana.fm/tx/${txHash}?cluster=${cluster}`
+  return `https://solscan.io/tx/${txHash}`
 }
 
 export type FeeLevel = "min" | "low" | "medium" | "high" | "veryHigh" | "unsafeMax"

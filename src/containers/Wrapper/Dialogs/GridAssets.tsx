@@ -1,11 +1,11 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import { Box, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
 import { Grid } from '~/components/Liquidity/comet/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { useAssetsQuery } from '~/features/Borrow/Assets.query'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useAssetsQuery } from '~/features/Wrapper/Assets.query'
 
 interface Props {
 	onChoose: (id: number) => void
@@ -56,16 +56,6 @@ let columns: GridColDef[] = [
 			)
 		},
 	},
-	// {
-	// 	field: 'balance',
-	// 	headerClassName: 'last--header',
-	// 	cellClassName: 'last--cell',
-	// 	headerName: '',
-	// 	flex: 1,
-	// 	renderCell(params: GridRenderCellParams<string>) {
-	// 		return <Box mr='5px'><Typography variant='p_lg' color='#c5c7d9'>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
-	// 	},
-	// },
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))

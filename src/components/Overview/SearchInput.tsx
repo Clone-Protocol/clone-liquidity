@@ -5,22 +5,23 @@ import SearchIcon from 'public/images/search-icon.svg'
 
 interface Props {
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
+  placeholderTxt?: string
 }
-const SearchInput: React.FC<Props> = ({ onChange }) => {
+const SearchInput: React.FC<Props> = ({ placeholderTxt = 'Search clAssets', onChange }) => {
   return <StyledBox>
     <Box sx={{ position: 'relative', left: '0px', top: '-6px' }}>
       <Image src={SearchIcon} alt='search' />
     </Box>
-    <StyledInput placeholder="Search clAssets" disableUnderline onChange={onChange} />
+    <StyledInput placeholder={placeholderTxt} disableUnderline onChange={onChange} />
   </StyledBox>
 }
 
 const StyledBox = styled(Box)`
   display: flex;
   width: 100%;
-  height: 46px;
+  height: 36px;
   color: #fff;
-  padding: 18px 11px;
+  padding: 14px 11px;
   border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.05);

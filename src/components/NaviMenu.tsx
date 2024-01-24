@@ -15,6 +15,11 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Home</Typography>
           </StyledListItemButton>
         </Link>
+        <Link href="/wrapper">
+          <StyledListItemButton className={pathname?.startsWith('/wrapper') ? 'selected' : ''}>
+            <Typography variant="p_lg">Wrapper</Typography>
+          </StyledListItemButton>
+        </Link>
         <Link href="/comet/myliquidity">
           <StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''}>
             <Typography variant="p_lg">Comet</Typography>
@@ -25,12 +30,6 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Borrow</Typography>
           </StyledListItemButton>
         </Link>
-        {/* @TODO : implement this after mainnet
-        <Link href="/bridge">
-          <StyledListItemButton className={pathname?.startsWith('/bridge') ? 'selected' : ''}>
-            <Typography variant="p_lg">Bridge</Typography>
-          </StyledListItemButton>
-        </Link> */}
         {!IS_DEV &&
           <Link href="/points">
             <StyledListItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
