@@ -21,6 +21,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
   const { publicKey } = useWallet()
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
+  const [isLastPool, setIsLastPool] = useState(false)
   const [mintRatio, setMintRatio] = useState(50)
   const [disableRatio, setDisableRatio] = useState(false)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
@@ -36,6 +37,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
       const healthCoefficient = fromScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient, 2)
       const currentPosition = fromScale(position.committedCollateralLiquidity, 6)
 
+      setIsLastPool(positionInfo.comet.positions.length <= 1)
       setAssetHealthCoefficient(healthCoefficient)
       setHealthScore(positionInfo.totalHealthScore)
       const maxMintable = positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / (100 * healthCoefficient) + currentPosition
@@ -145,20 +147,20 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
       </BoxWithBorder>
 
       <Box mt='38px'>
-        {mintRatio > 0 ?
+        {(mintRatio === 0 && isLastPool) ?
+          <CometHealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+            <Image src={IconHealthScoreGraph} alt='healthscore' />
+            <Box mt='7px'>
+              <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
+            </Box>
+          </CometHealthBox>
+          :
           <CometHealthBox padding='15px 20px'>
             <Box display='flex' justifyContent='center'>
               <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
             </Box>
             <Box mt='15px' display='flex' justifyContent='center'>
               <HealthscoreView score={healthScore ?? positionInfo.totalHealthScore} />
-            </Box>
-          </CometHealthBox>
-          :
-          <CometHealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
-            <Image src={IconHealthScoreGraph} alt='healthscore' />
-            <Box mt='7px'>
-              <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
             </Box>
           </CometHealthBox>
         }

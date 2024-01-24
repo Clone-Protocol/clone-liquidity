@@ -59,7 +59,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
     return Math.max(0, reward)
   }
 
-  const isValidToRewards = rewardNotional() > 0 && !isSubmitting
+  const isValidToRewards = rewardNotional() > 0
 
   return positionInfo ? (
     <>
@@ -88,8 +88,8 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
             })} {ON_USD}</Typography>
         </BoxWithBorder>
       </Box>
-      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards}>
-        <Typography variant='p_xlg'>{positionInfo.isValidToClose ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
+      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
+        <Typography variant='p_xlg'>{isValidToRewards ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
       </SubmitButton>
     </>
   ) : <></>
