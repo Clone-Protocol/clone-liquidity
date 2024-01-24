@@ -155,7 +155,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, onRefetchData, handleClose }
               <Box mt='7px'><Typography variant='h2' fontWeight={500}>${collData.collAmount.toLocaleString()}</Typography></Box>
             </Box>
 
-            {isNewDeposit && collData.balance === 0 ?
+            {isNewDeposit && tab === 1 && collData.collAmount === 0 ?
               <ZeroAmountBox><Typography variant='h4'>Collateral Amount is Zero</Typography></ZeroAmountBox>
               :
               <>

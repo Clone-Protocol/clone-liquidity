@@ -106,7 +106,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={positionLiquidity > 0 ? '#fff' : '#66707e'}>
-            ${positionLiquidity.toLocaleString(undefined, { maximumFractionDigits: 5 })}
+            ${positionLiquidity.toLocaleString(undefined, { maximumFractionDigits: 8 })}
           </Typography>
 
           {positionLiquidity === 0 ?
