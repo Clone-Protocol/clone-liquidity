@@ -87,6 +87,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
         // refetch()
         onRefetchData()
         handleClose()
+        location.reload()
       }
     } catch (err) {
       console.error(err)

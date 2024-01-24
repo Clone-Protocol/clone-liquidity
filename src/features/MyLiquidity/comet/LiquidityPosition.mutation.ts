@@ -374,7 +374,7 @@ export function useClosePositionMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: CloseFormData) => callClose({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+				// queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 			}
 		})
 	} else {
