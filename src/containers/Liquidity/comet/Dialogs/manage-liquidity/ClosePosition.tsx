@@ -12,7 +12,7 @@ import { fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 
-const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, onRefetchData: () => void, handleClose: () => void }) => {
+const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -85,7 +85,6 @@ const ClosePosition = ({ positionIndex, onMoveTab, onRefetchData, handleClose }:
       if (data) {
         console.log("data", data)
         // refetch()
-        onRefetchData()
         handleClose()
         location.reload()
       }

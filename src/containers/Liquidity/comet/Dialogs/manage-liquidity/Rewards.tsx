@@ -10,7 +10,7 @@ import { LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { ON_USD } from "~/utils/constants"
 
-const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData: () => void }) => {
+const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -38,8 +38,7 @@ const Rewards = ({ positionIndex, onRefetchData }: { positionIndex: number, onRe
 
       if (data) {
         console.log("data", data)
-        refetch()
-        onRefetchData()
+        // refetch()
       }
     } catch (err) {
       console.error(err)

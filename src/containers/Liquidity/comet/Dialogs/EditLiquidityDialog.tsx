@@ -11,27 +11,27 @@ import Rewards from './manage-liquidity/Rewards'
 import ClosePosition from './manage-liquidity/ClosePosition'
 import { CloseButton } from '~/components/Common/CommonButtons'
 
-const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, onRefetchData: () => void, handleClose: () => void }) => {
+const EditLiquidityDialog = ({ open, positionIndex, poolIndex, handleClose }: { open: boolean, positionIndex: number, poolIndex: number, handleClose: () => void }) => {
   const { publicKey } = useWallet()
   const [tab, setTab] = useState(0) // 0 : liquidity , 1: ild , 2: rewards , 3: close position
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
-  const { data: positionInfo, refetch } = useLiquidityDetailQuery({
+  const { data: positionInfo } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: poolIndex,
     refetchOnMount: "always",
     enabled: open && publicKey != null,
   })
 
-  useEffect(() => {
-    async function fetch() {
-      if (open && positionInfo) {
-        refetch()
-      }
-    }
-    fetch()
-  }, [open])
+  // useEffect(() => {
+  //   async function fetch() {
+  //     if (open && positionInfo) {
+  //       refetch()
+  //     }
+  //   }
+  //   fetch()
+  // }, [open])
 
   const moveTab = (index: number) => {
     setTab(index)
@@ -66,36 +66,22 @@ const EditLiquidityDialog = ({ open, positionIndex, poolIndex, onRefetchData, ha
                     positionInfo={positionInfo}
                     positionIndex={positionIndex}
                     poolIndex={poolIndex}
-                    onRefetchData={() => {
-                      // refetch()
-                      // onRefetchData()
-                    }}
                   />
                 </TabPanelForEdit>
                 <TabPanelForEdit value={tab} index={1}>
                   <IldEdit
                     positionIndex={positionIndex}
-                    onRefetchData={() => {
-                      // refetch()
-                      // onRefetchData()
-                    }} />
+                  />
                 </TabPanelForEdit>
                 <TabPanelForEdit value={tab} index={2}>
                   <Rewards
                     positionIndex={positionIndex}
-                    onRefetchData={() => {
-                      // refetch()
-                      // onRefetchData()
-                    }} />
+                  />
                 </TabPanelForEdit>
                 <TabPanelForEdit value={tab} index={3}>
                   <ClosePosition
                     positionIndex={positionIndex}
                     onMoveTab={moveTab}
-                    onRefetchData={() => {
-                      // refetch()
-                      // onRefetchData()
-                    }}
                     handleClose={handleClose}
                   />
                 </TabPanelForEdit>

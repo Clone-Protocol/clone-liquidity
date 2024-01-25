@@ -124,13 +124,14 @@ interface GetProps {
 export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, enabled = true }: GetProps) {
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
+	console.log('useLiquidityDetailQuery start')
 	if (wallet) {
 		return useQuery(
 			['liquidityPosition', wallet, userPubKey, index],
 			async () => fetchLiquidityDetail({ program: await getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
-				refetchInterval: REFETCH_SHORT_CYCLE,
+				refetchInterval: REFETCH_CYCLE,
 				refetchIntervalInBackground: true,
 				enabled,
 			}

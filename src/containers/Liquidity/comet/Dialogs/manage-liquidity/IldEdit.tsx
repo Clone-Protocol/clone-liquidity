@@ -18,7 +18,7 @@ import withSuspense from "~/hocs/withSuspense"
 import { Collateral as StableCollateral, collateralMapping } from "~/data/assets"
 import { NETWORK_NAME, ON_USD } from "~/utils/constants"
 
-const IldEdit = ({ positionIndex, onRefetchData }: { positionIndex: number, onRefetchData: () => void }) => {
+const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const { publicKey } = useWallet()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [healthScore, setHealthScore] = useState(0)

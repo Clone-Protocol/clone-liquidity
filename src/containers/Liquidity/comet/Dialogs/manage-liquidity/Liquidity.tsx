@@ -17,7 +17,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingButton, LoadingProgress } from '~/components/Common/Loading'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
-const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number, onRefetchData: () => void }) => {
+const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number }) => {
   const { publicKey } = useWallet()
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
@@ -58,7 +58,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
 
   const initData = () => {
     // setValue('mintAmount', 0.0)
-    // onRefetchData()
     // trigger()
   }
 
