@@ -35,6 +35,7 @@ export const fetchLiquidityDetail = async ({
 
 	const pools = poolsData.value
 	const pool = pools.pools[index]
+	if (!pool) return;
 
 	const assetId = index
 	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
