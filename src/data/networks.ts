@@ -29,6 +29,10 @@ export const DEV_RPCs: RPCType[] = [
 
 export const MAIN_RPCs: RPCType[] = [
   {
+    rpc_name: 'Triton RPC',
+    rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_TRITON!,
+  },
+  {
     rpc_name: 'Helius RPC',
     rpc_url: process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELIUS!,  //clusterApiUrl(WalletAdapterNetwork.Mainnet) 
   },
