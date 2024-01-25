@@ -16,8 +16,16 @@ export async function middleware(req: NextRequest) {
       result: false
     })
   } else {
+
+    // Hardcoded whitelist address
+    const whitelistAddr = [
+      '7Fq28FWhTdBHZd6ibs1TABMWZDUTJaJ9qB2hxkRHdXFD',
+      'GAbNoD8buH33yvfXoXuZQkdytr3j6t1eXRBXFiGKesYY'
+    ]
+
     return NextResponse.json({
-      result: true
+      result: true,
+      whitelistAddr
     })
   }
 }

@@ -26,6 +26,8 @@ import TempWarningMsg from '~/components/Common/TempWarningMsg'
 import { IS_DEV } from '~/data/networks'
 import { fetchGeoBlock } from '~/utils/fetch_netlify'
 import CreateAccountSetupDialog from './Account/CreateAccountSetupDialog'
+import useLocalStorage from '~/hooks/useLocalStorage'
+import { IS_COMPLETE_WHITELISTED } from '~/data/localstorage'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
@@ -74,9 +76,13 @@ const RightMenu: React.FC = () => {
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useAtom(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
 	const [showGeoblock, setShowGeoblock] = useState(false)
+	const [showWhitelist, setShowWhitelist] = useState(false)
+	const [isWhitelisted, setIsWhitelisted] = useState(false)
+	const [isCompleteWhitelisted, setIsCompleteWhitelisted] = useLocalStorage(IS_COMPLETE_WHITELISTED, false)
 
 	const ConnectWalletGuideDialog = dynamic(() => import('./Common/ConnectWalletGuideDialog'))
 	const GeoblockDialog = dynamic(() => import('~/components/Common/GeoblockDialog'), { ssr: false })
+	const WhitelistDialog = dynamic(() => import('~/components/Common/WhitelistDialog'), { ssr: false })
 
 	// on initialize, set to open account creation
 	useInitialized(connected, publicKey, wallet)
@@ -92,6 +98,21 @@ const RightMenu: React.FC = () => {
 				if (!geoblock.result) {
 					setShowGeoblock(true)
 					disconnect()
+				} else {
+					// validate whitelist
+					if (publicKey && geoblock.whitelistAddr?.includes(publicKey.toString())) {
+						console.log('whitelisted')
+						setIsWhitelisted(true)
+						if (!isCompleteWhitelisted) {
+							setShowWhitelist(true)
+						}
+					} else {
+						console.log('no whitelisted')
+						setIsWhitelisted(false)
+						setShowWhitelist(true)
+						disconnect()
+						setIsCompleteWhitelisted(false)
+					}
 				}
 			}
 		}
@@ -190,6 +211,7 @@ const RightMenu: React.FC = () => {
 			/>
 
 			<ConnectWalletGuideDialog open={openConnectWalletGuideDlog} connectWallet={handleWalletClick} handleClose={() => setOpenConnectWalletGuideDialog(false)} />
+			<WhitelistDialog open={showWhitelist} isWhitelisted={isWhitelisted} handleClose={() => setShowWhitelist(false)} />
 			{showGeoblock && <GeoblockDialog open={showGeoblock} handleClose={() => setShowGeoblock(false)} />}
 		</>
 	)

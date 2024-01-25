@@ -101,7 +101,7 @@ export const fetchUserPoints = async (userAddress?: string): Promise<UserPointsV
     return response.data as UserPointsView[]
 }
 
-export const fetchGeoBlock = async (): Promise<{ result: boolean }> => {
+export const fetchGeoBlock = async (): Promise<{ result: boolean, whitelistAddr?: string[] }> => {
     const response = await axios.post(`/api/route`)
     return response.data
 }
