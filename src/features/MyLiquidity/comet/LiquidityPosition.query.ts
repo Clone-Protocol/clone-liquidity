@@ -5,7 +5,7 @@ import { ASSETS, assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { Comet, Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
@@ -129,6 +129,8 @@ export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, ena
 			async () => fetchLiquidityDetail({ program: await getCloneApp(wallet), userPubKey, index }),
 			{
 				refetchOnMount,
+				refetchInterval: REFETCH_SHORT_CYCLE,
+				refetchIntervalInBackground: true,
 				enabled,
 			}
 		)

@@ -6,7 +6,7 @@ import { getCollateralAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
-import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchDefaultCollateral = async ({
 	program,
@@ -98,7 +98,7 @@ export function useEditCollateralQuery({ userPubKey, refetchOnMount, enabled = t
 			async () => fetchDefaultCollateral({ program: await getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
-				refetchInterval: REFETCH_CYCLE,
+				refetchInterval: REFETCH_SHORT_CYCLE,
 				refetchIntervalInBackground: true,
 				enabled,
 			}

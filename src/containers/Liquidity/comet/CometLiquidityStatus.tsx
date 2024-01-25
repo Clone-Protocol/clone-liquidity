@@ -48,9 +48,9 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
           </Box>
           <StatusValue>
-            {(infos && infos.positions.length > 0 && infos?.totalApy) &&
+            {(infos && infos.positions.length > 0 && infos.totalApy) &&
               <Box>
-                {infos?.totalApy >= 0 ?
+                {infos.totalApy >= 0 ?
                   <Box color='#4fe5ff'>
                     <Box display='flex' justifyContent='center' alignItems='center'>
                       <Typography variant='p_xlg'>+{infos.totalApy?.toFixed(2)}%</Typography>
@@ -59,7 +59,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
                   :
                   <Box color='#ff0084'>
                     <Box display='flex' alignItems='center'>
-                      <Typography variant='p_xlg'>-{infos && Math.abs(infos?.totalApy).toFixed(2)}%</Typography>
+                      <Typography variant='p_xlg'>-{infos && Math.abs(infos.totalApy).toFixed(2)}%</Typography>
                     </Box>
                   </Box>
                 }
