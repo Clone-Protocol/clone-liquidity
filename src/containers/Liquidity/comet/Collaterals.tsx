@@ -10,7 +10,7 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 import { useWallet } from '@solana/wallet-adapter-react'
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 
-const Collaterals = ({ hasNoCollateral, collaterals }: { hasNoCollateral: boolean, collaterals: Collateral[] }) => {
+const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
   const setMintUsdi = useSetAtom(mintUSDi)
@@ -56,7 +56,10 @@ const Collaterals = ({ hasNoCollateral, collaterals }: { hasNoCollateral: boolea
       <EditCollateralDialog
         open={openEditCollateral}
         isNewDeposit={hasNoCollateral}
-        handleClose={() => setOpenEditCollateral(false)}
+        handleClose={() => {
+          setOpenEditCollateral(false)
+          onRefetchData()
+        }}
       />
     </>
   )

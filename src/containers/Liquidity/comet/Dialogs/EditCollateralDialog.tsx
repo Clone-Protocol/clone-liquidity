@@ -105,10 +105,10 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
       )
       if (data) {
         console.log('data', data)
-        refetch()
+        // refetch()
         initData()
         // onRefetchData()
-        handleClose()
+        // handleClose()
       }
     } catch (err) {
       console.error(err)

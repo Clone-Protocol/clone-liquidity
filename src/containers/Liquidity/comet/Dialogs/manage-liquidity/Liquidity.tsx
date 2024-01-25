@@ -57,9 +57,9 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex, onRefetchData }: { 
   }, [positionInfo])
 
   const initData = () => {
-    setValue('mintAmount', 0.0)
-    onRefetchData()
-    trigger()
+    // setValue('mintAmount', 0.0)
+    // onRefetchData()
+    // trigger()
   }
 
   const {

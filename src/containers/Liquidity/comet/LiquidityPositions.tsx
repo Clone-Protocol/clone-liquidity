@@ -98,7 +98,10 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
           positionIndex={editAssetId}
           poolIndex={poolIndex}
           onRefetchData={onRefetchData}
-          handleClose={() => setOpenEditLiquidity(false)}
+          handleClose={() => {
+            setOpenEditLiquidity(false)
+            onRefetchData()
+          }}
         />
       }
     </>

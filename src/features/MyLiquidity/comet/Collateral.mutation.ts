@@ -67,6 +67,7 @@ export function useCollateralMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ['editCollateral'] })
 				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 			}
 		})

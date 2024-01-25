@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { CircularProgress, styled, Box } from '@mui/material'
 import { useDataLoading } from '~/hooks/useDataLoading'
 
-export const REFETCH_CYCLE = 30000
+export const REFETCH_CYCLE = 35000
+export const REFETCH_SHORT_CYCLE = 10000
 
 const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
   const { startTimer } = useDataLoading()
