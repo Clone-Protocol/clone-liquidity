@@ -18,7 +18,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { LoadingButton } from '~/components/Common/Loading'
 
-const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
+const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void }) => {
   const { publicKey } = useWallet()
   const borrowIndex = borrowId
   const router = useRouter()
@@ -119,7 +119,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
         console.log('data', data)
         initData()
         // setEditType(0)
-        onRefetchData()
         onHideEditForm()
       }
     } catch (err) {
@@ -137,7 +136,6 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
       if (data) {
         console.log('data', data)
         initData()
-        onRefetchData()
         onHideEditForm()
         router.replace(`/borrow/myliquidity`)
         // location.reload()

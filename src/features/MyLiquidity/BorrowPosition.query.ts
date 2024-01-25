@@ -4,7 +4,7 @@ import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
-import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { getiAssetInfos } from '~/utils/assets'
@@ -151,7 +151,7 @@ export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enab
   if (wallet) {
     return useQuery(['borrowPosition', userPubKey, index], async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index }), {
       refetchOnMount,
-      refetchInterval: REFETCH_CYCLE,
+      refetchInterval: REFETCH_SHORT_CYCLE,
       refetchIntervalInBackground: true,
       enabled
     })

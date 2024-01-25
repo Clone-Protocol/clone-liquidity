@@ -4,7 +4,7 @@ import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/s
 import { Comet, Oracles, Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
-import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
@@ -180,7 +180,7 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 			async () => fetchInfos({ program: await getCloneApp(wallet), userPubKey }),
 			{
 				refetchOnMount,
-				refetchInterval: REFETCH_CYCLE,
+				refetchInterval: REFETCH_SHORT_CYCLE,
 				refetchIntervalInBackground: true,
 				enabled,
 			}

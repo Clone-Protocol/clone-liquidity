@@ -15,7 +15,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { LoadingButton } from '~/components/Common/Loading'
 
-const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm, onRefetchData }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void, onRefetchData: () => void }) => {
+const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEditForm }: { borrowId: number, borrowDetail: BorrowDetail, initEditType: number, open: boolean, onHideEditForm: () => void }) => {
   const { publicKey } = useWallet()
   const borrowIndex = borrowId
   const [editType, setEditType] = useState(initEditType) // 0 : borrow more , 1: repay
@@ -113,7 +113,6 @@ const EditBorrowMoreDialog = ({ borrowId, borrowDetail, initEditType, open, onHi
       if (data) {
         console.log('data', data)
         initData()
-        onRefetchData()
         onHideEditForm()
       }
     } catch (err) {

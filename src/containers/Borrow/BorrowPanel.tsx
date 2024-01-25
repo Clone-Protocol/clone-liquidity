@@ -66,7 +66,6 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
   const initData = () => {
     setValue('collAmount', NaN)
     setValue('borrowAmount', NaN)
-    refetch()
   }
 
   const calculateBorrowAmount = (inputCollAmount: number, inputCollRatio: number) => {
@@ -103,6 +102,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
     setOpenChooseAsset(false)
 
     initData()
+    refetch()
   }
 
   const handleChangeCollRatio = useCallback((event: React.ChangeEvent<HTMLInputElement>, newValue: number | number[]) => {
