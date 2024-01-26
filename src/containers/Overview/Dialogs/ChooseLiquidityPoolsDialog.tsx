@@ -22,7 +22,7 @@ const ChooseLiquidityPoolsDialog = ({ open, handleChoosePool, handleClose }: { o
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={375}>
         <DialogContent sx={{ backgroundColor: '#000e22', padding: '0', borderRadius: '20px', border: '1px solid #414166' }}>
           <BoxWrapper>
-            <Box ml='25px' my='21px' mb="19px"><Typography variant='h3' fontWeight={500}>Search Liquidity Pool</Typography></Box>
+            <Box ml='25px' my='21px' mb="19px"><Typography variant='h3' fontWeight={500}>Search Liquidity Pools</Typography></Box>
             <Box mb='25px' px='11px' display='flex' justifyContent='center'>
               <SearchInput onChange={handleSearch} />
             </Box>

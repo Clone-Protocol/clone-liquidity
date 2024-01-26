@@ -14,7 +14,7 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
   const canCloseComet = borrowDetail.borrowedOnasset === 0  //Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedOnasset)
 
   return (
-    <>
+    <BoxWithBorder>
       <Box mt='24px'>
         <Box>
           <Typography variant='p_lg'>Step 1: Repay full borrowed amount</Typography>
@@ -49,10 +49,14 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
           <GoButton onClick={onMoveWithdrawCollateral} disabled={!canCloseComet}><Typography variant="p" noWrap>{canCloseComet ? 'Withdraw Collateral' : 'Complete Step 1'}</Typography></GoButton>
         </StackWithBorder>
       </Box>
-    </>
+    </BoxWithBorder>
   )
 }
 
+const BoxWithBorder = styled(Box)`
+  border: solid 1px ${(props) => props.theme.basis.jurassicGrey};
+  padding: 0px 24px;
+`
 const StackWithBorder = styled(Stack)`
   width: 100%;
   height: 52px;

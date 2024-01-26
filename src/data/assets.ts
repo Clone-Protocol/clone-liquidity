@@ -76,7 +76,7 @@ export const assetMapping = (index: number) => {
             tickerName = 'Clone Arbitrum'
             tickerSymbol = 'clARB'
             wrapTickerName = 'DeBridge Arbitrum'
-            wrapTickerSymbol = 'dARB'
+            wrapTickerSymbol = 'deARB'
             tickerIcon = '/images/assets/on-arb.svg'
             ticker = 'arbitrum'
             assetType = AssetType.Crypto
@@ -88,7 +88,7 @@ export const assetMapping = (index: number) => {
             tickerName = 'Clone Optimism'
             tickerSymbol = 'clOP'
             wrapTickerName = 'DeBridge Optimism'
-            wrapTickerSymbol = 'dOP'
+            wrapTickerSymbol = 'deOP'
             tickerIcon = '/images/assets/on-op.svg'
             ticker = 'optimism'
             assetType = AssetType.Crypto

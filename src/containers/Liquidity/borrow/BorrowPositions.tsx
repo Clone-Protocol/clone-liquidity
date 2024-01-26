@@ -108,7 +108,7 @@ let columns: GridColDef[] = [
 			return Number(params.value) > 0 ?
 				<Stack direction='column' alignItems='flex-end'>
 					<Box><CellDigitValue value={params.value} symbol={params.row.tickerSymbol} /></Box>
-					<Box><Typography variant='p_lg' color='#66707e'>${params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })} USD</Typography></Box>
+					<Box><Typography variant='p_lg' color='#66707e'>${(Number(params.value) * params.row.oPrice).toLocaleString(undefined, { maximumFractionDigits: 5 })} USD</Typography></Box>
 				</Stack>
 				: <Box></Box>
 		},
