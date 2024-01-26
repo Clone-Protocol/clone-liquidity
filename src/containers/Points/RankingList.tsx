@@ -30,8 +30,8 @@ const RankingList: React.FC = () => {
 }
 
 const formatUserDisplayName = ({ name, address }: { name: string | undefined, address: string }) => {
-    const displayName = name ?? address;
-    return shortenAddress(displayName, 15, 6)
+  const displayName = name ?? address;
+  return shortenAddress(displayName, 15, 6)
 }
 
 let columns: GridColDef[] = [
@@ -55,7 +55,7 @@ let columns: GridColDef[] = [
     cellClassName: 'super-app-theme--cell',
     headerName: `User`,
     flex: 1,
-    renderCell(params: GridRenderCellParams<{name: string | undefined, address: string}>) {
+    renderCell(params: GridRenderCellParams<{ name: string | undefined, address: string }>) {
       return <a href={`https://solana.fm/address/${params.value!.address.toString()}`} target='_blank' rel='noreferrer' style={{ color: '#fff' }}>
         <Typography variant='p_xlg' sx={{ ':hover': { color: '#4fe5ff' } }}>{formatUserDisplayName(params.value!)}</Typography>
       </a>
@@ -65,7 +65,7 @@ let columns: GridColDef[] = [
     field: 'lpPoints',
     headerClassName: 'super-app-theme--header right--header',
     cellClassName: 'super-app-theme--cell right--cell',
-    headerName: 'LP Points',
+    headerName: 'Liquidity Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>

@@ -74,9 +74,9 @@ export const TooltipTexts = {
     feeRevenue24h: 'Fee Revenue (24h)',
     avgAPY24h: '24hr Average APY',
     points: {
-        totalPoints: 'Your Total Points',
-        lpPoints: 'Your LP Points',
-        tradePoints: 'Your Trade Points',
-        socialPoints: 'Your Social Points',
+        totalPoints: 'The sum of all points earned through liquidity provision, trading, and social engagement.',
+        lpPoints: 'Points earned by providing liquidity using comets.',
+        tradePoints: 'Points earned by trading cloned assets.',
+        socialPoints: 'Points earned from participating in Clone’s Zealy campaign.',
     }
 }

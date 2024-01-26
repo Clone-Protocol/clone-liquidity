@@ -31,7 +31,7 @@ const MyPointStatus = () => {
         </BorderBox>
         <BorderBox width='350px' position='relative'>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p_lg'>Your Total Points</Typography>
+            <Typography variant='p_lg'>My Total Points</Typography>
             <InfoTooltip title={TooltipTexts.points.totalPoints} color='#66707e' />
           </Box>
           <StatusValue>
@@ -44,7 +44,7 @@ const MyPointStatus = () => {
       <Stack direction='row' gap={2} mt='18px'>
         <BorderBox width='250px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Your LP Points</Typography>
+            <Typography variant='p'>My Liquidity Points</Typography>
             <InfoTooltip title={TooltipTexts.points.lpPoints} color='#66707e' />
           </Box>
           <StatusValue>
@@ -55,7 +55,7 @@ const MyPointStatus = () => {
         </BorderBox>
         <BorderBox width='250px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Your Trade Points</Typography>
+            <Typography variant='p'>My Trade Points</Typography>
             <InfoTooltip title={TooltipTexts.points.tradePoints} color='#66707e' />
           </Box>
           <StatusValue>
@@ -66,7 +66,7 @@ const MyPointStatus = () => {
         </BorderBox>
         <BorderBox width='250px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Your Social Points</Typography>
+            <Typography variant='p'>My Social Points</Typography>
             <InfoTooltip title={TooltipTexts.points.socialPoints} color='#66707e' />
           </Box>
           <StatusValue>
