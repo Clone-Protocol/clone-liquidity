@@ -2,7 +2,7 @@ import { Pools, Status } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { assetMapping } from "~/data/assets";
-import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats, fetchPoolApy } from "./fetch_netlify";
+import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats, fetchPoolApy, fetchUserApy } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
 import { IS_DEV } from "~/data/networks";
 
@@ -76,8 +76,8 @@ const convertToNumber = (val: string | number) => {
   return Number(val) * Math.pow(10, -CLONE_TOKEN_SCALE)
 }
 
-export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedStats[]> => {
-
+export const getAggregatedPoolStats = async (pools: Pools, userAddressForApy?: PublicKey): Promise<AggregatedStats[]> => {
+  // If userAddressForApy is passed the APY will be of the user's pool APY
   let result = pools.pools.map((pool) => {
     return {
       volumeUSD: 0, fees: 0, previousVolumeUSD: 0, previousFees: 0,
@@ -138,15 +138,26 @@ export const getAggregatedPoolStats = async (pools: Pools): Promise<AggregatedSt
     }
   })
 
-  const apyData = await fetchPoolApy();
+  if (userAddress) {
+    const poolIndices: number[] = []
+    pools.pools.forEach((_, index) => {poolIndices.push(index)})
+    const userApyData = await fetchUserApy(userAddress.toString(), poolIndices)
+    userApyData.poolApy.forEach((apy, index) => {
+      result[index].apy = apy
+    })
 
-  apyData.forEach((item) => {
-    try {
-      result[Number(item.pool_index)].apy = item.apy_24hr ?? 0
-    } catch (e) {
-      console.error('error', e)
-    }
-  })
+  } else {
+    const apyData = await fetchPoolApy();
+
+    apyData.forEach((item) => {
+      try {
+        result[Number(item.pool_index)].apy = item.apy_24hr ?? 0
+      } catch (e) {
+        console.error('error', e)
+      }
+    })
+  }
+
 
   return result
 }
