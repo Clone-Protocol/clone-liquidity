@@ -91,7 +91,7 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
   setTxState({ state: TransactionState.INIT, txHash: '' })
   let txHash = ''
   try {
-    txHash = await sendRawTransaction(provider, tx, signers, { commitment: 'processed' })
+    txHash = await sendRawTransaction(provider, tx, signers, { commitment: 'processed', maxRetries: 5 })
     console.log('txHash', txHash)
     setTxState({ state: TransactionState.PENDING, txHash })
 
