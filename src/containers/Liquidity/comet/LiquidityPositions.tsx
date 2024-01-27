@@ -1,7 +1,7 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { useEffect, useState } from 'react'
-import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
+import { GridColDef, GridEventListener, GridRenderCellParams, GridColumnHeaderParams } from '@mui/x-data-grid'
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { useRouter } from 'next/navigation'
@@ -14,6 +14,8 @@ import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { DEFAULT_ASSET_LINK } from '~/data/assets'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -130,6 +132,12 @@ let columns: GridColDef[] = [
     cellClassName: 'right--cell',
     headerName: 'Liquidity Amount',
     flex: 1,
+    renderHeader(params: GridColumnHeaderParams<string>) {
+      return <Stack direction='row' alignItems='center'>
+        <Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
+        <InfoTooltip title={TooltipTexts.myPositions.liquidityAmount} color='#66707e' />
+      </Stack>
+    },
     renderCell(params: GridRenderCellParams<string>) {
       return <Typography variant='p_xlg'>${params.row.liquidityDollarPrice.toLocaleString()}</Typography>
     },
@@ -140,6 +148,12 @@ let columns: GridColDef[] = [
     cellClassName: 'right--cell',
     headerName: 'ILD',
     flex: 1,
+    renderHeader(params: GridColumnHeaderParams<string>) {
+      return <Stack direction='row' alignItems='center'>
+        <Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
+        <InfoTooltip title={TooltipTexts.myPositions.ild} color='#66707e' />
+      </Stack>
+    },
     renderCell(params: GridRenderCellParams<string>) {
       return <Typography variant='p_xlg'>${params.row.ildDollarPrice.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
     },
@@ -150,6 +164,12 @@ let columns: GridColDef[] = [
     cellClassName: 'right--cell',
     headerName: 'Rewards',
     flex: 1,
+    renderHeader(params: GridColumnHeaderParams<string>) {
+      return <Stack direction='row' alignItems='center'>
+        <Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
+        <InfoTooltip title={TooltipTexts.myPositions.rewards} color='#66707e' />
+      </Stack>
+    },
     renderCell(params: GridRenderCellParams<string>) {
       return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
     },
@@ -160,6 +180,12 @@ let columns: GridColDef[] = [
     cellClassName: 'right--cell',
     headerName: 'APY',
     flex: 1,
+    renderHeader(params: GridColumnHeaderParams<string>) {
+      return <Stack direction='row' alignItems='center'>
+        <Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
+        <InfoTooltip title={TooltipTexts.myPositions.apy} color='#66707e' />
+      </Stack>
+    },
     renderCell(params: GridRenderCellParams<string>) {
       return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
         :

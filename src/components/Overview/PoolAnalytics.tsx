@@ -50,7 +50,6 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
       <DataBox>
         <Box>
           <Typography variant="p" color='#66707e'>24h Trading Volume</Typography>
-          <InfoTooltip title={TooltipTexts.tradingVolume24h} color='#66707e' />
         </Box>
         <Box><Typography variant="p_xlg">${resultData?.tradingVol24h.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.tradingVolGainPct} /></Box>
       </DataBox>

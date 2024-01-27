@@ -13,7 +13,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
       <Stack direction='row' gap={16}>
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Comet Health Score</Typography>
+            <Typography variant='p'>Health Score</Typography>
             <InfoTooltip title={TooltipTexts.cometdHealthScore} color='#66707e' />
           </Box>
           <Box mt='15px'>
@@ -22,7 +22,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
         </Box>
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Your Liquidity</Typography>
+            <Typography variant='p'>My Liquidity</Typography>
             <InfoTooltip title={TooltipTexts.totalLiquidity} color='#66707e' />
           </Box>
           <StatusValue>
@@ -33,7 +33,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
         </Box>
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Your Collateral</Typography>
+            <Typography variant='p'>My Collateral</Typography>
             <InfoTooltip title={TooltipTexts.totalCollateralValue} color='#66707e' />
           </Box>
           <StatusValue>
@@ -44,7 +44,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
         </Box>
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>Your APY</Typography>
+            <Typography variant='p'>My APY</Typography>
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
           </Box>
           <StatusValue>

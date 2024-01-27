@@ -90,7 +90,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
       if (data) {
         console.log("data", data)
         // refetch()
-        onRefetchData()
+        // onRefetchData()
         initData()
       }
     } catch (err) {
@@ -140,7 +140,6 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Box>
             <Typography variant='p_lg'>{positionInfo.tickerSymbol} ILD</Typography>
-            <InfoTooltip title={TooltipTexts.ildDebt} color='#66707e' />
           </Box>
           <Box>
             <Typography variant='p_lg'>
@@ -250,7 +249,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 <StackWithBorder direction='row' justifyContent='space-between' sx={{ background: 'transparent' }}>
                   <Box>
                     <Typography variant='p'>Projected Remaining {ON_USD} ILD</Typography>
-                    <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
+                    {/* <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' /> */}
                   </Box>
                   <Box>
                     <Typography variant='p_lg'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
@@ -281,7 +280,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
             (ildAssetAmount > 0 || ildCollAmount > 0) ?
               <HealthBox padding='15px 20px'>
                 <Box display='flex' justifyContent='center'>
-                  <Typography variant='p'>Projected Comet Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
+                  <Typography variant='p'>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
                 </Box>
                 <Box mt='10px' display='flex' justifyContent='center'>
                   <HealthscoreView score={healthScore ? healthScore : positionInfo.healthScore} />

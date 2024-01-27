@@ -7,6 +7,8 @@ import RightArrowIcon from 'public/images/right-arrow.svg'
 import { useState } from 'react'
 import { ON_USD } from '~/utils/constants'
 import { Collateral, collateralMapping } from '~/data/assets'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 interface Props {
   positionInfo: PI
@@ -26,7 +28,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
         <Box>
           <Stack direction='row' gap={3}>
             <ValueBox width='220px'>
-              <Box mb='6px'><Typography variant='p'>Borrowed Asset</Typography></Box>
+              <Box mb='6px'><Typography variant='p'>Borrowed clAsset</Typography></Box>
               <Box display="flex" alignItems='center'>
                 <Image src={positionInfo.tickerIcon} width={28} height={28} alt={positionInfo.tickerSymbol!} />
                 <Typography variant="h4" ml='10px'>
@@ -35,7 +37,10 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
               </Box>
             </ValueBox>
             <ValueBox width='300px'>
-              <Box mb='6px'><Typography variant='p'>Collateral Ratio</Typography></Box>
+              <Box mb='6px'>
+                <Typography variant='p'>Collateral Ratio</Typography>
+                <InfoTooltip title={TooltipTexts.borrowedCollRatio} color='#66707e' />
+              </Box>
               <Stack direction='row' gap={1} alignItems='center'>
                 <Typography variant='h3'>{positionInfo.collateralRatio.toFixed(2)}%</Typography>
                 <Typography variant='p_lg' color='#66707e'>(min {positionInfo.minCollateralRatio}%)</Typography>

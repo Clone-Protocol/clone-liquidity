@@ -78,7 +78,7 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
       <Box>
         <Box>
           <Typography variant='p_lg'>{ON_USD} Rewards</Typography>
-          <InfoTooltip title={TooltipTexts.rewards} color='#66707e' />
+          <InfoTooltip title={TooltipTexts.usdRewards} color='#66707e' />
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>

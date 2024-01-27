@@ -101,7 +101,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
     <>
       <Box>
         <Box>
-          <Typography variant='p_lg'>Step 1: Withdraw Liquidity (0% Liquidity)</Typography>
+          <Typography variant='p_lg'>Step 1: Withdraw All Liquidity</Typography>
           <InfoTooltip title={TooltipTexts.withdrawLiquidity} color="#66707e" />
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
@@ -159,7 +159,6 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
 
       <Box>
         <Typography variant='p_lg'>Step 4 (Final Step): Close This Liquidity Position</Typography>
-        <InfoTooltip title={TooltipTexts.closeThisLiquidityPosition} color="#66707e" />
       </Box>
       <SubmitButton onClick={() => handleClosePosition()} disabled={!isValidClose}>
         <Typography variant='p_xlg'>{isValidClose ? 'Close This Liquidity Position' : 'Please Complete Step 1,2, and 3'}</Typography>

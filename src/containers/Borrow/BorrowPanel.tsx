@@ -199,7 +199,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
 
           <Box mt='25px' mb='5px'>
             <Typography variant='p_lg'>Collateral Ratio</Typography>
-            <InfoTooltip title={TooltipTexts.collateralRatio} color='#66707e' />
+            <InfoTooltip title={TooltipTexts.borrowedCollRatio} color='#66707e' />
           </Box>
           <Box>
             {!isNaN(collAmount) && collAmount > 0 ?

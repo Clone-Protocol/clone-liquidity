@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { Stack, Typography, Button, Box } from '@mui/material'
 import { styled } from '@mui/system'
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { GridColDef, GridRenderCellParams, GridColumnHeaderParams } from '@mui/x-data-grid'
 import { CellDigitValue, Grid, CellTicker, GridType } from '~/components/Common/DataGrid'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
@@ -17,6 +17,8 @@ import BorrowLiquidityStatus from './BorrowLiquidityStatus'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
+import InfoTooltip from '~/components/Common/InfoTooltip'
+import { TooltipTexts } from '~/data/tooltipTexts'
 
 const BorrowPositions = () => {
 	const { publicKey } = useWallet()
@@ -134,6 +136,12 @@ let columns: GridColDef[] = [
 		cellClassName: 'right--cell',
 		headerName: 'Collateral Ratio',
 		flex: 1,
+		renderHeader(params: GridColumnHeaderParams<string>) {
+			return <Stack direction='row' alignItems='center'>
+				<Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
+				<InfoTooltip title={TooltipTexts.borrowedCollRatio} color='#66707e' />
+			</Stack>
+		},
 		renderCell(params: GridRenderCellParams<string>) {
 			const isRisk = params.row.collateralRatio - params.row.minCollateralRatio < 20
 			return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
