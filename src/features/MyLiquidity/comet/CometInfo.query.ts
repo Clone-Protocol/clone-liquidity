@@ -29,8 +29,8 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 	]);
 
 	if (userAccountData.status === "fulfilled" && poolsData.status === "fulfilled" && oraclesData.status === "fulfilled") {
-		const poolStats = await getAggregatedPoolStats(poolsData.value)
-		totalApy = (await fetchUserApy(userPubKey.toString()))
+		const poolStats = await getAggregatedPoolStats(poolsData.value, userPubKey)
+		totalApy = (await fetchUserApy(userPubKey.toString(), userAccountData.value.comet.positions.map(p => p.poolIndex))).apy
 
 		const comet = userAccountData.value.comet
 		collaterals = extractCollateralInfo(program, comet)
@@ -55,7 +55,6 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 		totalApy,
 		positions
 	}
-	console.log('result', result)
 
 	return result
 }

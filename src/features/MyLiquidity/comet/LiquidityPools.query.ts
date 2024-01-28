@@ -29,7 +29,7 @@ export const fetchPools = async ({
   const pools = poolsData.value
   const comet = userAccountData.value.comet
   const assetInfos = await getiAssetInfos(program.provider.connection, program)
-  const poolStats = await getAggregatedPoolStats(pools)
+  const poolStats = await getAggregatedPoolStats(pools, userPubKey)
   const currentPoolSet = new Set()
 
   for (let i = 0; i < Number(comet.positions.length); i++) {
@@ -52,7 +52,7 @@ export const fetchPools = async ({
       tickerIcon,
       totalLiquidity: asset.liquidity,
       volume24H: stats.volumeUSD,
-      averageAPY: 0,
+      averageAPY: poolStats[asset.poolIndex].apy,
       isEnabled: true,
     })
   }
