@@ -1,69 +1,124 @@
-import { AnchorProvider, Provider } from "@coral-xyz/anchor";
-import { Transaction, Signer, TransactionInstruction, PublicKey, TransactionMessage, VersionedTransaction, AddressLookupTableAccount, ConfirmOptions, TransactionSignature, ComputeBudgetProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { AnchorProvider } from "@coral-xyz/anchor"
+import {
+  TransactionConfirmationStrategy,
+  Connection,
+  Transaction,
+  Signer,
+  TransactionInstruction,
+  PublicKey,
+  TransactionMessage,
+  VersionedTransaction,
+  AddressLookupTableAccount,
+  ConfirmOptions,
+  TransactionSignature,
+  ComputeBudgetProgram,
+} from "@solana/web3.js"
 import { TransactionStateType, TransactionState } from "~/hooks/useTransactionState"
-import { getHeliusPriorityFeeEstimate } from "./fetch_netlify";
+import { getHeliusPriorityFeeEstimate } from "./fetch_netlify"
 import { FeeLevel } from "~/data/networks"
 
-const sendRawTransaction = async (provider: AnchorProvider, tx: Transaction | VersionedTransaction,
-  signers?: Signer[],
-  opts?: ConfirmOptions
-): Promise<TransactionSignature> => {
+const PROVIDERS = [
+  process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_TRITON!,
+  process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_HELIUS!,
+  process.env.NEXT_PUBLIC_NETWORK_ENDPOINT_QUICKNODE!,
+]
 
+const sendRawTransaction = async (
+  provider: AnchorProvider,
+  tx: Transaction | VersionedTransaction,
+  signers?: Signer[],
+  opts?: ConfirmOptions,
+  useMultipleProviders?: boolean
+): Promise<TransactionSignature> => {
   if (opts === undefined) {
-    opts = provider.opts;
+    opts = provider.opts
   }
 
   if (signers) {
     if (tx instanceof VersionedTransaction) {
-      tx.sign(signers);
+      tx.sign(signers)
     } else {
       for (const signer of signers) {
-        tx.partialSign(signer);
+        tx.partialSign(signer)
       }
     }
   }
 
-  tx = await provider.wallet.signTransaction(tx);
-  const rawTx = tx.serialize();
+  tx = await provider.wallet.signTransaction(tx)
+  const rawTx = tx.serialize()
   const sendOptions = opts && {
     skipPreflight: opts.skipPreflight,
     preflightCommitment: opts.preflightCommitment || opts.commitment,
-  };
+  }
 
-  const signature = await provider.connection.sendRawTransaction(
-    rawTx,
-    sendOptions
-  );
+  let signature: string
+  if (useMultipleProviders) {
+    signature = await Promise.any(
+      PROVIDERS.map(async (endpoint) => {
+        const connection = new Connection(endpoint, { commitment: "confirmed" })
+        return await connection.sendRawTransaction(rawTx, sendOptions)
+      })
+    )
+  } else {
+    signature = await provider.connection.sendRawTransaction(rawTx, sendOptions)
+  }
 
-  return signature;
-
+  return signature
 }
 
-export const sendAndConfirm = async (provider: AnchorProvider, instructions: TransactionInstruction[], setTxState: (state: TransactionStateType) => void, priorityFeeLevel: FeeLevel, signers?: Signer[], addressLookupTables?: PublicKey[]) => {
-  const priorityFeeEstimate = await getHeliusPriorityFeeEstimate();
-  const baseUnitPrice = (priorityFeeLevel === "high" || priorityFeeLevel === "veryHigh") ? Number(process.env.NEXT_PUBLIC_ADDITIONAL_PRIORITY_FEE_MICRO_LAMPORTS ?? 1000) : 0;
-  const priorityFee = priorityFeeEstimate[priorityFeeLevel] + baseUnitPrice;
+const confirmTransaction = async (
+  provider: AnchorProvider,
+  strategy: TransactionConfirmationStrategy,
+  useMultipleProviders?: boolean
+) => {
+  if (useMultipleProviders) {
+    return await Promise.any(
+      PROVIDERS.map(async (endpoint) => {
+        const connection = new Connection(endpoint, { commitment: "confirmed" })
+        return await connection.confirmTransaction(strategy, "confirmed")
+      })
+    )
+  } else {
+    return await provider.connection.confirmTransaction(strategy, "confirmed")
+  }
+}
 
-  const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash();
-  const extraInstructions: TransactionInstruction[] = [];
+export const sendAndConfirm = async (
+  provider: AnchorProvider,
+  instructions: TransactionInstruction[],
+  setTxState: (state: TransactionStateType) => void,
+  priorityFeeLevel: FeeLevel,
+  signers?: Signer[],
+  addressLookupTables?: PublicKey[]
+) => {
+  // MEMO: if payerFee is zero, it's automatic
+  const priorityFeeEstimate = await getHeliusPriorityFeeEstimate()
+  const baseUnitPrice =
+    priorityFeeLevel === "high" || priorityFeeLevel === "veryHigh"
+      ? Number(process.env.NEXT_PUBLIC_ADDITIONAL_PRIORITY_FEE_MICRO_LAMPORTS ?? 1000)
+      : 0
+  const priorityFee = priorityFeeEstimate[priorityFeeLevel] + baseUnitPrice
+
+  const { blockhash, lastValidBlockHeight } = await provider.connection.getLatestBlockhash()
+  const extraInstructions: TransactionInstruction[] = []
 
   if (priorityFee > 0) {
     // NOTE: we may want to also set Unit limit, will leave out for now.
-    let unitPrice = Math.floor(priorityFee)
-
+    const unitPrice = Math.floor(priorityFee)
     extraInstructions.push(
       ComputeBudgetProgram.setComputeUnitPrice({
-        microLamports: unitPrice
+        microLamports: unitPrice,
       })
     )
   }
 
   let tx = await (async () => {
     if (addressLookupTables !== undefined) {
-      const lookupTableAccountsResult = await Promise.allSettled(addressLookupTables.map((addr) => {
-        return provider.connection
-          .getAddressLookupTable(addr).then((res) => res.value)
-      }));
+      const lookupTableAccountsResult = await Promise.allSettled(
+        addressLookupTables.map((addr) => {
+          return provider.connection.getAddressLookupTable(addr).then((res) => res.value)
+        })
+      )
 
       const lookupTableAccounts: AddressLookupTableAccount[] = []
       lookupTableAccountsResult.forEach((r) => {
@@ -76,33 +131,38 @@ export const sendAndConfirm = async (provider: AnchorProvider, instructions: Tra
         payerKey: provider.publicKey!,
         recentBlockhash: blockhash,
         instructions: [...extraInstructions, ...instructions],
-      }).compileToV0Message(lookupTableAccounts);
+      }).compileToV0Message(lookupTableAccounts)
       // create a v0 transaction from the v0 message
-      const transactionV0 = new VersionedTransaction(messageV0);
+      const transactionV0 = new VersionedTransaction(messageV0)
       return transactionV0
     } else {
-      let updatedTx = new Transaction({ blockhash, lastValidBlockHeight }) as Transaction;
-      [...extraInstructions, ...instructions].forEach(ix => updatedTx.add(ix));
-      updatedTx.feePayer = provider.publicKey!;
-      return updatedTx;
+      let updatedTx = new Transaction({ blockhash, lastValidBlockHeight }) as Transaction
+      ;[...extraInstructions, ...instructions].forEach((ix) => updatedTx.add(ix))
+      updatedTx.feePayer = provider.publicKey!
+      return updatedTx
     }
   })()
 
-  setTxState({ state: TransactionState.INIT, txHash: '' })
-  let txHash = ''
+  setTxState({ state: TransactionState.INIT, txHash: "" })
+  let txHash = ""
   try {
-    txHash = await sendRawTransaction(provider, tx, signers, { commitment: 'processed', maxRetries: 5 })
-    console.log('txHash', txHash)
+    txHash = await sendRawTransaction(provider, tx, signers, {
+      commitment: "processed",
+      maxRetries: 5,
+    }, true)
+    console.log("txHash", txHash)
     setTxState({ state: TransactionState.PENDING, txHash })
 
-    const extraBlockHeight = Number(process.env.NEXT_PUBLIC_EXTRA_BLOCKHEIGHT ?? 100);
-    await provider.connection.confirmTransaction({
-      blockhash, lastValidBlockHeight: lastValidBlockHeight + extraBlockHeight, signature: txHash,
-    }, 'confirmed')
-    setTxState({ state: TransactionState.SUCCESS, txHash })
+    const extraBlockHeight = Number(process.env.NEXT_PUBLIC_EXTRA_BLOCKHEIGHT ?? 100)
+    const strategy = {
+      blockhash,
+      lastValidBlockHeight: lastValidBlockHeight + extraBlockHeight,
+      signature: txHash,
+    }
+    // Confirm the transaction
+    await confirmTransaction(provider, strategy, true)
 
-    // MEMO : it should not removed
-    return txHash
+    setTxState({ state: TransactionState.SUCCESS, txHash })
   } catch (e: any) {
     console.log("TX ERROR:", e)
     setTxState({ state: TransactionState.FAIL, txHash })
