@@ -158,7 +158,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
               <Box>
                 <Box my='20px'>
                   <Box><Typography variant="p_lg">RPC Endpoint</Typography></Box>
-                  <Box lineHeight={1.1} mb='7px'><Typography variant="p" color="#8988a3">At anytime, choose the fastest RPC for most optimal experience!</Typography></Box>
+                  <Box lineHeight={1.1} mb='7px'><Typography variant="p" color="#8988a3">At anytime, choose the fastest RPC for the most optimal experience!</Typography></Box>
                   <CommonSelectBox value={atomRpcEndpointIndex} handleChange={handleChangeRpcEndpoint}>
                     {RPCs.map((rpc, index) => (
                       <SelectMenuItem key={index} value={index}>
@@ -181,7 +181,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
 
                 <Box my='20px'>
                   <Box><Typography variant="p_lg">Priority Fee Setting</Typography></Box>
-                  <Box lineHeight={1} mb='7px'><Typography variant="p" color="#8988a3">Expedite your transaction with higher priority fee. Please visit Helius web page to <a href="https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api" target='_blank' style={{ color: '#fff', textDecoration: 'underline' }}>learn more.</a></Typography></Box>
+                  <Box lineHeight={1} mb='7px'><Typography variant="p" color="#8988a3">Expedite your transaction with higher priority fees. Please visit Helius web page to <a href="https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api" target='_blank' style={{ color: '#fff', textDecoration: 'underline' }}>learn more.</a></Typography></Box>
                   <CommonSelectBox value={atomPriorityFeeIndex} handleChange={handleChangePriorityFee}>
                     {PRIORITY_FEES.map((fee, index) => (
                       <SelectMenuItem key={index} value={index}>
@@ -198,7 +198,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
             }
             <Box my='20px'>
               <Box><Typography variant="p_lg">Network Switching</Typography></Box>
-              <Box lineHeight={1.1} mb='10px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more about it <a href="#" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>
+              <Box lineHeight={1.1} mb='10px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more <a href="#" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>
               <ChangeNetworkButton onClick={goNetwork}><Typography variant='p'>Go to Solana {IS_DEV ? 'Mainnet' : 'Devnet'}</Typography> <Image src={IconShare} alt='icon-share' /></ChangeNetworkButton>
             </Box>
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
