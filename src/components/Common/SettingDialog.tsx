@@ -117,10 +117,10 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
               border: '1px solid #343441',
             },
             "&:hover fieldset": {
-              borderColor: "#4fe5ff"
+              borderColor: "#4fe5ff !important"
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#4fe5ff"
+              borderColor: "#343441"
             }
           }
         }}
