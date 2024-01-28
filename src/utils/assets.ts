@@ -138,10 +138,10 @@ export const getAggregatedPoolStats = async (pools: Pools, userAddressForApy?: P
     }
   })
 
-  if (userAddress) {
+  if (userAddressForApy) {
     const poolIndices: number[] = []
     pools.pools.forEach((_, index) => {poolIndices.push(index)})
-    const userApyData = await fetchUserApy(userAddress.toString(), poolIndices)
+    const userApyData = await fetchUserApy(userAddressForApy.toString(), poolIndices)
     userApyData.poolApy.forEach((apy, index) => {
       result[index].apy = apy
     })
