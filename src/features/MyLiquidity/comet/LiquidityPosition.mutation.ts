@@ -295,6 +295,11 @@ export function useRewardsMutation(userPubKey: PublicKey | null) {
 				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
 				queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
+
+				//hacky retry query
+				setTimeout(() => {
+					queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
+				}, 4000)
 			}
 		})
 	} else {
