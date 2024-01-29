@@ -3,7 +3,7 @@ import { CircularProgress, styled, Box } from '@mui/material'
 import { useDataLoading } from '~/hooks/useDataLoading'
 
 export const REFETCH_CYCLE = 35000
-export const REFETCH_SHORT_CYCLE = 10000
+export const REFETCH_SHORT_CYCLE = 12000
 
 const DataLoadingIndicator = ({ onRefresh }: { onRefresh?: () => void }) => {
   const { startTimer } = useDataLoading()

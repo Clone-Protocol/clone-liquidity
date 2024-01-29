@@ -21,6 +21,8 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const [showWithdrawCollateral, setShowWithdrawCollateral] = useState(false)
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
+    setShowEditRepay(false)
+    setShowWithdrawCollateral(false)
   }
 
   const borrowIndex = parseInt(assetId)

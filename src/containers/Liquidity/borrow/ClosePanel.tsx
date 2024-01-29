@@ -11,7 +11,7 @@ import CheckIcon from 'public/images/check-icon.svg'
 import { ON_USD } from '~/utils/constants'
 
 const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollateral }: { borrowDetail: BorrowDetail, onMoveRepayPosition: () => void, onMoveWithdrawCollateral: () => void }) => {
-  const canCloseComet = borrowDetail.borrowedOnasset === 0  //Number(borrowDetail.iassetVal) >= Number(borrowDetail.borrowedOnasset)
+  const canCloseComet = borrowDetail.borrowedOnasset === 0
 
   return (
     <BoxWithBorder>

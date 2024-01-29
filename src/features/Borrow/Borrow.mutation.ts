@@ -244,6 +244,11 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 			mutationFn: async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+
+				// hacky retry
+				setTimeout(() => {
+					queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+				}, 3000)
 			}
 		})
 	} else {
@@ -263,6 +268,11 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 			mutationFn: async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+
+				// hacky retry
+				setTimeout(() => {
+					queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+				}, 3000)
 			}
 		})
 	} else {
