@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { WHITELIST_ADDRESSES } from './utils/whitelist_addresses'
 
 export async function middleware(req: NextRequest) {
   const { nextUrl: url, geo } = req
@@ -16,8 +17,13 @@ export async function middleware(req: NextRequest) {
       result: false
     })
   } else {
+
+    // Hardcoded whitelist address
+    const whitelistAddr = WHITELIST_ADDRESSES
+
     return NextResponse.json({
-      result: true
+      result: true,
+      whitelistAddr
     })
   }
 }
