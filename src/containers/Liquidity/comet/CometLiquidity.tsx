@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { StyledTabs, CommonTab } from '~/components/Common/StyledTab'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -6,9 +6,10 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
 import Collaterals from './Collaterals'
-
+import LearnMoreIcon from 'public/images/learn-more.svg'
 import LiquidityPositions from './LiquidityPositions'
 import CometLiquidityStatus from './CometLiquidityStatus'
+import Image from 'next/image'
 
 // export const TAB_COLLATERAL = 0
 // export const TAB_POSITIONS = 1
@@ -24,7 +25,17 @@ const CometLiquidity = () => {
 
   return (
     <div>
-      <Typography variant='h3' fontWeight={500}>Comet Liquidity</Typography>
+      <Box>
+        <Typography variant='h3' fontWeight={500}>Comet Liquidity</Typography>
+        <Stack direction='row' alignItems='center' gap={1}>
+          <Typography variant='p' color='#66707e'>While Comet excels in capital-efficiency, users need advanced knowledge to maximize yield and minimize risk.</Typography>
+          <Box display='flex' color='#b5fdf9' sx={{ cursor: 'pointer', ":hover": { color: '#4fe5ff' } }}>
+            <Typography variant='p' mr='3px'>Learn more</Typography>
+            <Image src={LearnMoreIcon} alt='learnMore' />
+          </Box>
+        </Stack>
+      </Box>
+
       <CometLiquidityStatus infos={infos} />
 
       <Box>
