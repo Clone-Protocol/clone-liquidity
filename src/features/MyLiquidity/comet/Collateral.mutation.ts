@@ -69,6 +69,10 @@ export function useCollateralMutation(userPubKey: PublicKey | null) {
 			onSuccess: () => {
 				queryClient.invalidateQueries({ queryKey: ['editCollateral'] })
 				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+
+				setTimeout(() => {
+					queryClient.invalidateQueries({ queryKey: ['editCollateral'] })
+				}, 3000)
 			}
 		})
 	} else {

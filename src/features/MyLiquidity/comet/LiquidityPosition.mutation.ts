@@ -134,9 +134,13 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 		return useMutation({
 			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
 			onSuccess: () => {
-				// queryClient.invalidateQueries({ queryKey: ['editCollateral'] }) 
 				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+
+				//hacky retry query
+				setTimeout(() => {
+					queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+				}, 3000)
 			}
 		})
 	} else {
@@ -223,6 +227,11 @@ export function usePayILDMutation(userPubKey: PublicKey | null) {
 				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
 				queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
+
+				//hacky retry query
+				setTimeout(() => {
+					queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
+				}, 3000)
 			}
 		})
 	} else {
@@ -299,7 +308,7 @@ export function useRewardsMutation(userPubKey: PublicKey | null) {
 				//hacky retry query
 				setTimeout(() => {
 					queryClient.invalidateQueries({ queryKey: ['closeLiquidityPosition'] })
-				}, 4000)
+				}, 3000)
 			}
 		})
 	} else {
