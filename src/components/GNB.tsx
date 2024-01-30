@@ -92,7 +92,8 @@ const RightMenu: React.FC = () => {
 	// validate geoblock if connected
 	useEffect(() => {
 		const validateGeoblock = async () => {
-			if (connected) {
+			if (connected && publicKey) {
+				console.log('validate')
 				const geoblock = await fetchGeoBlock()
 
 				if (!geoblock.result) {
@@ -100,7 +101,7 @@ const RightMenu: React.FC = () => {
 					disconnect()
 				} else {
 					// validate whitelist
-					if (publicKey && geoblock.whitelistAddr?.includes(publicKey.toString())) {
+					if (geoblock.whitelistAddr?.includes(publicKey.toString())) {
 						console.log('whitelisted')
 						setIsWhitelisted(true)
 						if (!isCompleteWhitelisted) {
@@ -117,7 +118,7 @@ const RightMenu: React.FC = () => {
 			}
 		}
 		validateGeoblock()
-	}, [connected])
+	}, [connected, publicKey])
 
 	// create the account when the user clicks the create account button
 	const handleCreateAccount = () => {
