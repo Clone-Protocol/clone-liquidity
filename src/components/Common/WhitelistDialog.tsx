@@ -29,7 +29,7 @@ const WhitelistDialog = ({ open, isWhitelisted, handleClose }: { open: boolean, 
 
                 <Box lineHeight={1} my='20px'>
                   <Typography variant='p_lg' lineHeight={1.7}>
-                    Unfortunately, this wallet is not whitelisted for the private mainnet. Please try a different wallet or stay in the loop with the latest updates for the public mainnet launch announcement.
+                    Unfortunately, this wallet is not whitelisted for private mainnet. Please try a different wallet or follow our socials for the latest updates on our public mainnet launch.
                   </Typography>
                 </Box>
 
