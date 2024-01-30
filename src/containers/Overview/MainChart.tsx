@@ -13,6 +13,9 @@ const MainChart: React.FC = () => {
   const [tab, setTab] = useState(0)
   const [filterTime, setFilterTime] = useState<FilterTime>('7d')
   const [chartHover, setChartHover] = useState<number | undefined>()
+  //temporary
+  const isTvlTab = tab === 2
+
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
@@ -20,12 +23,13 @@ const MainChart: React.FC = () => {
     setFilterTime(newValue)
   }
 
-  const { data: totalLiquidityDay } = useTotalLiquidityQuery({
+  const { data: totalVolumeDay } = useTotalVolumeQuery({
     timeframe: filterTime,
     refetchOnMount: false,
     enabled: tab === 0
   })
-  const { data: totalVolumeDay } = useTotalVolumeQuery({
+
+  const { data: totalLiquidityDay } = useTotalLiquidityQuery({
     timeframe: filterTime,
     refetchOnMount: false,
     enabled: tab === 1
@@ -33,39 +37,41 @@ const MainChart: React.FC = () => {
 
   useEffect(() => {
     if (tab === 0) {
-      setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
-    } else {
       setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
+    } else if (tab === 1) {
+      setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
     }
   }, [totalLiquidityDay, totalVolumeDay, tab])
 
   useMemo(() => {
     if (chartHover === undefined) {
       if (tab === 0) {
-        setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
-      } else {
         setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
+      } else if (tab === 1) {
+        setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
       }
     }
   }, [chartHover, tab, totalLiquidityDay, totalVolumeDay])
 
   return (
     <LineChartAlt
-      data={tab === 0 ? totalLiquidityDay?.chartData : totalVolumeDay?.chartData}
+      data={tab === 0 ? totalVolumeDay?.chartData : totalLiquidityDay?.chartData}
       value={chartHover}
       setValue={setChartHover}
-      maxY={tab === 0 ? totalLiquidityDay?.maxValue : totalVolumeDay?.maxValue}
-      minY={tab === 0 ? totalLiquidityDay?.minValue : totalVolumeDay?.minValue}
-      defaultValue={tab === 0 ? 0 : totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value}
+      maxY={tab === 0 ? totalVolumeDay?.maxValue : tab === 1 ? totalLiquidityDay?.maxValue : 0}
+      minY={tab === 0 ? totalVolumeDay?.minValue : tab === 1 ? totalLiquidityDay?.minValue : 0}
+      defaultValue={tab === 0 ? totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value : 0}
+      isTvlTab={isTvlTab}
       topLeft={
         <Box>
           <Box ml='20px'>
             <StyledTabs value={tab} onChange={handleChangeTab}>
-              <StyledTab value={0} label="Total Liquidity"></StyledTab>
-              <StyledTab value={1} label="Total Volume"></StyledTab>
+              <StyledTab value={0} label="Total Volume"></StyledTab>
+              <StyledTab value={1} label="Total Liquidity"></StyledTab>
+              <StyledTab value={2} label="TVL"></StyledTab>
             </StyledTabs>
           </Box>
-          <SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>
+          {!isTvlTab && <SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>}
         </Box>
       }
       topRight={
