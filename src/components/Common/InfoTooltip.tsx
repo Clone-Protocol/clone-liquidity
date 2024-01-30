@@ -8,10 +8,13 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#a9a9a9',
-    color: '#000',
+    backgroundColor: '#151515',
+    color: '#BEBEBE',
     boxShadow: theme.shadows[1],
     fontSize: 11,
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: '#151515',
   },
 }));
 

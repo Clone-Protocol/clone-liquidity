@@ -14,6 +14,7 @@ import Image from 'next/image'
 import AddIconOn from 'public/images/add-icon-on.svg'
 import { AddIcon } from '~/components/Common/SvgIcons'
 import BorrowLiquidityStatus from './BorrowLiquidityStatus'
+import LearnMoreIcon from 'public/images/learn-more.svg'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
@@ -51,7 +52,16 @@ const BorrowPositions = () => {
 
 	return (
 		<>
-			<Typography variant='h3' fontWeight={500} mb='20px'>Borrow</Typography>
+			<Box mb='20px'>
+				<Typography variant='h3' fontWeight={500}>Borrow</Typography>
+				<Stack direction='row' alignItems='center' gap={1}>
+					<Typography variant='p' color='#66707e'>Borrow function enable LPs to leverage creative liquidity strategies.</Typography>
+					<Box display='flex' color='#b5fdf9' sx={{ cursor: 'pointer', ":hover": { color: '#4fe5ff' } }}>
+						<Typography variant='p' mr='3px'>Learn more</Typography>
+						<Image src={LearnMoreIcon} alt='learnMore' />
+					</Box>
+				</Stack>
+			</Box>
 			<BorrowLiquidityStatus hasNoPosition={positions && positions.length > 0 ? false : true} />
 
 			<Grid

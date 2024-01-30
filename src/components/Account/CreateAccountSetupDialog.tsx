@@ -40,7 +40,7 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
             <Typography variant='p'>Open your Clone Liquidity account on Solana Network by pressing the button below. A wallet popup will appear, requesting a transaction. Note that Solana Network requires a one-time fee of </Typography><Typography variant='p' color='#4fe5ff'>~0.07 SOL</Typography><Typography variant='p'> for the best experience with Clone Liquidity. The fee is paid to Solana Network, not Clone Protocol.</Typography>
           </TxtBox>
           {isCreatingAccount ?
-            <Box display='flex' justifyContent='center'>
+            <Box display='flex' justifyContent='center' my='10px'>
               <LoadingButton width='206px' height='42px' buttonTxt='Creating Account...' />
             </Box>
             :

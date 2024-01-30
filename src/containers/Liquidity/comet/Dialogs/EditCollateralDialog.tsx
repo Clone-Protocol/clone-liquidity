@@ -246,7 +246,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
                   </RiskSubmitButton>
                   :
                   isSubmitting ?
-                    <Box display='flex' justifyContent='center'>
+                    <Box display='flex' justifyContent='center' my='15px'>
                       <LoadingButton width='100%' height='52px' />
                     </Box>
                     :

@@ -137,7 +137,7 @@ export const sendAndConfirm = async (
       return transactionV0
     } else {
       let updatedTx = new Transaction({ blockhash, lastValidBlockHeight }) as Transaction
-      ;[...extraInstructions, ...instructions].forEach((ix) => updatedTx.add(ix))
+        ;[...extraInstructions, ...instructions].forEach((ix) => updatedTx.add(ix))
       updatedTx.feePayer = provider.publicKey!
       return updatedTx
     }
@@ -163,6 +163,8 @@ export const sendAndConfirm = async (
     await confirmTransaction(provider, strategy, true)
 
     setTxState({ state: TransactionState.SUCCESS, txHash })
+
+    return txHash
   } catch (e: any) {
     console.log("TX ERROR:", e)
     setTxState({ state: TransactionState.FAIL, txHash })

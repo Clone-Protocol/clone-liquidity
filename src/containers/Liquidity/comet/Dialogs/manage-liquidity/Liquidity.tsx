@@ -180,7 +180,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
         </>
 
         {isSubmitting ?
-          <Box display='flex' justifyContent='center'>
+          <Box display='flex' justifyContent='center' my='15px'>
             <LoadingButton width='100%' height='52px' />
           </Box>
           :

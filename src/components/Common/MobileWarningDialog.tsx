@@ -13,7 +13,7 @@ const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose
   return (
     <>
       <Dialog open={open} TransitionComponent={FadeTransition} maxWidth={324}>
-        <DialogContent sx={{ backgroundColor: '#000e22', border: '1px solid #414e66', borderRadius: '10px', padding: '15px', width: '324px' }}>
+        <DialogContent sx={{ backgroundColor: '#000', border: '1px solid #414e66', borderRadius: '10px', padding: '15px', width: '324px' }}>
           <BoxWrapper>
             <Image src={OctagonIcon} width={73} height={73} alt='alert-octagon-outline' />
 

@@ -17,7 +17,6 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 import dynamic from 'next/dynamic'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
-import { useRouter } from 'next/navigation'
 import { formatNumberToString } from '~/utils/numbers'
 import DisabledRatioSlider from '~/components/Borrow/DisabledRatioSlider'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
@@ -256,7 +255,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
             </Box>
             :
             isSubmitting ?
-              <Box display='flex' justifyContent='center'>
+              <Box display='flex' justifyContent='center' my='15px'>
                 <LoadingButton width='100%' height='52px' />
               </Box>
               :
