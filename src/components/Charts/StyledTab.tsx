@@ -40,6 +40,7 @@ export const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple ic
 		maxHeight: '29px',
 		paddingLeft: '2px',
 		display: 'flex',
+		justifyContent: 'flex-start',
 		gap: '5px'
 	},
 	textTransform: 'none',

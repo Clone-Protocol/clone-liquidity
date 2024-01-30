@@ -21,11 +21,13 @@ import { formatNumberToString } from '~/utils/numbers'
 import DisabledRatioSlider from '~/components/Borrow/DisabledRatioSlider'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { LoadingButton } from '~/components/Common/Loading'
+import { useRouter } from 'next/navigation'
 
 const RISK_RATIO_VAL = 170
 
 const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIndex: number, borrowDetail: DetailInfo, onChooseAssetIndex: (index: number) => void }) => {
   const { publicKey } = useWallet()
+  const router = useRouter()
   const onUSDInfo = collateralMapping(StableCollateral.onUSD)
   const fromPair: PairData = {
     tickerIcon: onUSDInfo.collateralIcon,
@@ -130,7 +132,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
       if (data) {
         console.log('data', data)
         initData()
-        // router.replace(`/borrow/myliquidity`)
+        router.replace(`/borrow/myliquidity`)
       }
     } catch (err) {
       console.error(err)
