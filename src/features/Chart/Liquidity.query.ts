@@ -1,7 +1,7 @@
 import { Query, useQuery } from '@tanstack/react-query'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 import { Interval } from 'src/utils/assets'
-import { fetchStatsData, fetchTotalLiquidity as netlifyFetchTotalLiquidity } from 'src/utils/fetch_netlify'
+import { fetchStatsData, fetchTotalCumulativeVolume, fetchTotalLiquidity as netlifyFetchTotalLiquidity } from 'src/utils/fetch_netlify'
 import { PublicKey } from '@solana/web3.js'
 import { Pools } from 'clone-protocol-sdk/sdk/generated/clone'
 import { useAtomValue } from 'jotai'
@@ -90,22 +90,32 @@ export const fetchTotalLiquidity = async ({ mainCloneClient, timeframe, networkE
 
 export const fetchTotalVolume = async ({ timeframe }: { timeframe: FilterTime }) => {
   const [daysLookback, filter, interval, intervalMs] = getTimeFrames(timeframe)
-  const aggregatedData = await fetchStatsData(interval, filter, true)
-  const dataMap = new Map<number, number>()
-  aggregatedData.forEach((item) => {
-    dataMap.set((new Date(item.time_interval)).getTime(), item.volume * Math.pow(10, -7))
+  const nowInMs = new Date().getTime();
+  const lookbackInMs = (nowInMs) - daysLookback * 86400000
+
+  const aggregatedData = (await fetchTotalCumulativeVolume(interval)).map((item) => {
+    return {
+      ms: (new Date(item.time_interval)).getTime(),
+      cumulativeVolume : item.cumulative_volume
+    }
   })
 
-  const now = new Date()
-  const currentIntervalDt = new Date(now.getTime() - now.getTime() % intervalMs)
-  const startDate = new Date(currentIntervalDt.getTime() - daysLookback * 86400000)
+  let chartData: TimeSeriesValue[] = [];
 
-  let chartData = backfillWithZeroValue(startDate, currentIntervalDt, intervalMs)
-  for (const item of chartData) {
-    const value = dataMap.get((new Date(item.time)).getTime())
-    if (value) {
-      item.value = value
+  let currentVolume = 0;
+  let currentTimeMs = lookbackInMs;
+  for (let i = 0; i < aggregatedData.length; i++) {
+    const item = aggregatedData[i];
+    while (currentTimeMs < item.ms) {
+      chartData.push({time: new Date(currentTimeMs).toISOString(), value: currentVolume})
+      currentTimeMs += intervalMs
     }
+    currentVolume = item.cumulativeVolume
+  }
+
+  while (currentTimeMs < nowInMs) { 
+    chartData.push({time: new Date(currentTimeMs).toISOString(), value: currentVolume})
+    currentTimeMs += intervalMs
   }
 
   const sumAllValue = chartData.reduce((a, b) => a + b.value, 0)

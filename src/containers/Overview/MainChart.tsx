@@ -35,7 +35,7 @@ const MainChart: React.FC = () => {
     if (tab === 0) {
       setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
     } else {
-      setChartHover(totalVolumeDay?.sumAllValue)
+      setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
     }
   }, [totalLiquidityDay, totalVolumeDay, tab])
 
@@ -44,7 +44,7 @@ const MainChart: React.FC = () => {
       if (tab === 0) {
         setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
       } else {
-        setChartHover(totalVolumeDay?.sumAllValue)
+        setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
       }
     }
   }, [chartHover, tab, totalLiquidityDay, totalVolumeDay])
@@ -56,7 +56,7 @@ const MainChart: React.FC = () => {
       setValue={setChartHover}
       maxY={tab === 0 ? totalLiquidityDay?.maxValue : totalVolumeDay?.maxValue}
       minY={tab === 0 ? totalLiquidityDay?.minValue : totalVolumeDay?.minValue}
-      defaultValue={tab === 0 ? 0 : totalVolumeDay?.sumAllValue}
+      defaultValue={tab === 0 ? 0 : totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value}
       topLeft={
         <Box>
           <Box ml='20px'>

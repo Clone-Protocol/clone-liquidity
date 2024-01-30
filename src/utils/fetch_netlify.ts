@@ -121,3 +121,8 @@ export const getHeliusPriorityFeeEstimate = async () => {
     const response = await axios.get(`/.netlify/functions/get-priority-fee-estimate`)
     return response.data.priorityFeeLevels as PriorityFeeEstimate
 }
+
+export const fetchTotalCumulativeVolume = async (interval: string): Promise<{ time_interval: string, cumulative_volume: number }[]> => {
+    const response = await axios.get(`/.netlify/functions/get-cumulative-volume?interval=${interval}`)
+    return response.data as { time_interval: string, cumulative_volume: number }[]
+}
