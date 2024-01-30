@@ -54,17 +54,22 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
   }
 
   const setDetailValues = (collData: DetailInfo) => {
-    if (!isNaN(collData.prevHealthScore)) {
-      let loss = (100 - collData.prevHealthScore) * collData.effectiveCollateral;
-      let collDelta = (tab === 0 ? 1 : -1) * collAmount;
-
-      setHealthScore(100 - loss / (collData.effectiveCollateral + collData.collateralizationRatio * collDelta))
-      setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
+    if (tab === 1 && collData.collAmount === 0) {
+      setHealthScore(0)
+      setMaxWithdrawable(0)
     } else {
-      if (tab === 0) {
-        setHealthScore(100)
+      if (!isNaN(collData.prevHealthScore)) {
+        let loss = (100 - collData.prevHealthScore) * collData.effectiveCollateral;
+        let collDelta = (tab === 0 ? 1 : -1) * collAmount;
+
+        setHealthScore(100 - loss / (collData.effectiveCollateral + collData.collateralizationRatio * collDelta))
+        setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
       } else {
-        setHealthScore(0)
+        if (tab === 0) {
+          setHealthScore(100)
+        } else {
+          setHealthScore(0)
+        }
       }
     }
 
