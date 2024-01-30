@@ -7,7 +7,7 @@ import { formatDollarAmount } from '~/utils/numbers'
 import LineChartAlt from '~/components/Charts/LineChartAlt'
 import { StyledTabs, StyledTab } from '~/components/Charts/StyledTab'
 import { TimeTabs, TimeTab, FilterTimeMap, FilterTime } from '~/components/Charts/TimeTabs'
-import { useTotalLiquidityQuery, useTotalVolumeQuery } from '~/features/Chart/Liquidity.query'
+import { useTotalLiquidityQuery, useTotalValueLockedQuery, useTotalVolumeQuery } from '~/features/Chart/Liquidity.query'
 
 const MainChart: React.FC = () => {
   const [tab, setTab] = useState(0)
@@ -35,11 +35,19 @@ const MainChart: React.FC = () => {
     enabled: tab === 1
   })
 
+  const { data: totalTVL } = useTotalValueLockedQuery({
+    timeframe: filterTime,
+    refetchOnMount: false,
+    enabled: isTvlTab
+  })
+
   useEffect(() => {
     if (tab === 0) {
       setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
     } else if (tab === 1) {
       setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
+    } else if (isTvlTab) {
+      setChartHover(totalTVL ?? 0)
     }
   }, [totalLiquidityDay, totalVolumeDay, tab])
 
@@ -49,6 +57,8 @@ const MainChart: React.FC = () => {
         setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
       } else if (tab === 1) {
         setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
+      } else if (isTvlTab) {
+        setChartHover(totalTVL ?? 0)
       }
     }
   }, [chartHover, tab, totalLiquidityDay, totalVolumeDay])
@@ -71,7 +81,7 @@ const MainChart: React.FC = () => {
               <StyledTab value={2} label="TVL"></StyledTab>
             </StyledTabs>
           </Box>
-          {!isTvlTab && <SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>}
+          {<SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>}
         </Box>
       }
       topRight={
