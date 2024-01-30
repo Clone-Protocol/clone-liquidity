@@ -3,7 +3,7 @@ import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { fetch24hourVolume, getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
+import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
 import { useAtomValue } from 'jotai'
 import { getCloneClient } from '../baseQuery';
 import { cloneClient, rpcEndpoint } from '../globalAtom'
@@ -24,7 +24,6 @@ export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCl
 	const pools = await program.getPools();
 	const iassetInfos = await getiAssetInfos(program.provider.connection, program);
 	const poolStats = await getAggregatedPoolStats(pools)
-	const dailyVolumeStats = await fetch24hourVolume()
 
 	// Fetch Pyth
 	let pythData
@@ -66,7 +65,7 @@ export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCl
 			price: info.poolPrice,
 			assetType,
 			liquidity: parseInt(info.liquidity.toString()),
-			volume24h: dailyVolumeStats.get(info.poolIndex) ?? 0,
+			volume24h: stats.volumeUSD,
 			change24h,
 			feeRevenue24h: stats.fees,
 			avgAPY24h: stats.apy,

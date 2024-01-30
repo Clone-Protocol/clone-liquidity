@@ -52,7 +52,7 @@ export const fetchPools = async ({
       tickerIcon,
       totalLiquidity: asset.liquidity,
       volume24H: stats.volumeUSD,
-      averageAPY: poolStats[asset.poolIndex].apy,
+      averageAPY: stats.apy,
       isEnabled: true,
     })
   }

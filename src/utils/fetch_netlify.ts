@@ -126,3 +126,17 @@ export const fetchTotalCumulativeVolume = async (interval: string): Promise<{ ti
     const response = await axios.get(`/.netlify/functions/get-cumulative-volume?interval=${interval}`)
     return response.data as { time_interval: string, cumulative_volume: number }[]
 }
+
+export type PoolAnalytics = {
+    pool_index: number
+    current_volume: number
+    current_fees: number
+    current_liquidity: number
+    previous_volume: number
+    previous_fees: number
+    previous_liquidity: number
+}
+export const fetchPoolAnalytics = async (): Promise<PoolAnalytics[]> => { 
+    const response = await axios.get(`/.netlify/functions/get-pool-analytics`)
+    return response.data as PoolAnalytics[]
+}

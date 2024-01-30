@@ -2,7 +2,7 @@ import { Pools, Status } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { assetMapping } from "~/data/assets";
-import { fetchBorrowStats, fetchStatsData, fetchOHLCV, BorrowStats, fetchPoolApy, fetchUserApy } from "./fetch_netlify";
+import { fetchBorrowStats, fetchOHLCV, BorrowStats, fetchPoolApy, fetchUserApy, fetchPoolAnalytics } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
 import { IS_DEV } from "~/data/networks";
 
@@ -86,56 +86,14 @@ export const getAggregatedPoolStats = async (pools: Pools, userAddressForApy?: P
     }
   });
 
-  const now = (new Date()).getTime(); // Get current timestamp
-  const hoursDiff = (dt: Date) => {
-    return (now - dt.getTime()) / 3600000
-  }
+  let analytics = await fetchPoolAnalytics();
 
-  // Sorted by time_interval ascending
-  const poolStatsData = await fetchStatsData("hour", "week", false)
-  // console.log('poolStatsData', poolStatsData)
-
-  poolStatsData.forEach((item) => {
-    const dt = new Date(item.time_interval)
-    const poolIndex = Number(item.pool_index)
-    const hoursDifference = hoursDiff(dt)
-    const tradingFees = fromScale(item.trading_fees, 6)
-    const liquidity = fromScale(item.total_committed_collateral_liquidity, 6) * 2
-
-    try {
-      if (hoursDifference <= 24) {
-        result[poolIndex].fees += tradingFees
-      } else if (hoursDifference > 24) {
-        result[poolIndex].previousLiquidity = liquidity
-        if (hoursDifference <= 48) {
-          result[poolIndex].previousFees += tradingFees
-        }
-      }
-    } catch (e) {
-      console.error('error', e)
-    }
-  })
-
-  const data = await fetchOHLCV("hour", "week");
-
-  data.forEach((item) => {
-    const dt = new Date(item.time_interval)
-    const hoursDifference = hoursDiff(dt)
-    const poolIndex = Number(item.pool_index)
-    const tradingVolume = convertToNumber(item.volume)
-    const tradingFees = convertToNumber(item.trading_fees)
-
-    try {
-      if (hoursDifference <= 24) {
-        result[poolIndex].volumeUSD += tradingVolume
-        result[poolIndex].fees += tradingFees
-      } else if (hoursDifference <= 48 && hoursDifference > 24) {
-        result[poolIndex].previousVolumeUSD += tradingVolume
-        result[poolIndex].previousFees += tradingFees
-      }
-    } catch (e) {
-      console.error('error', e)
-    }
+  analytics.forEach((item) => {
+    result[item.pool_index].volumeUSD = item.current_volume
+    result[item.pool_index].previousVolumeUSD = item.previous_volume
+    result[item.pool_index].fees = item.current_fees
+    result[item.pool_index].previousFees = item.previous_fees
+    result[item.pool_index].previousLiquidity = item.previous_liquidity
   })
 
   if (userAddressForApy) {
@@ -195,26 +153,6 @@ export const getDailyPoolPrices30Day = async (poolIndex: number) => {
   }
 
   return prices
-}
-
-export const fetch24hourVolume = async () => {
-
-  let data = await fetchOHLCV("hour", "month");
-
-  let result: Map<number, number> = new Map()
-  const now = new Date()
-  const isWithin24hrs = (date: Date) => {
-    return (date.getTime() >= (now.getTime() - 86400000))
-  }
-  const conversion = Math.pow(10, -CLONE_TOKEN_SCALE)
-  data.forEach((response) => {
-    if (!isWithin24hrs(new Date(response.time_interval))) {
-      return;
-    }
-    const poolIndex = Number(response.pool_index)
-    result.set(poolIndex, (result.get(poolIndex) ?? 0) + Number(response.volume) * conversion)
-  })
-  return result
 }
 
 type BorrowResult = { currentAmount: number, previousAmount: number, currentTVL: number, previousTVL: number }
