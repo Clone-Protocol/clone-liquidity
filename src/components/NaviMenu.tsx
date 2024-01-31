@@ -3,6 +3,9 @@ import { List, ListItemButton, Fade, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Link from 'next/link'
 import { IS_DEV } from '~/data/networks'
+import pointsStarIcon from 'public/images/points-star.svg'
+import pointsStarIconSelected from 'public/images/points-star-selected.svg'
+import Image from 'next/image'
 
 const NaviMenu = () => {
   const pathname = usePathname()
@@ -32,9 +35,10 @@ const NaviMenu = () => {
         </Link>
         {!IS_DEV &&
           <Link href="/points">
-            <StyledListItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
+            <StyledPointsItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
               <Typography variant="p_lg">Points</Typography>
-            </StyledListItemButton>
+              <Image src={pathname?.startsWith('/points') ? pointsStarIconSelected : pointsStarIcon} width={14} height={14} alt="clone" />
+            </StyledPointsItemButton>
           </Link>
         }
       </List>
@@ -55,6 +59,15 @@ const StyledListItemButton = styled(ListItemButton)`
   &.selected {
     color: #fff;
     transition: all 0.3s ease 0.2s;
+  }
+`
+const StyledPointsItemButton = styled(StyledListItemButton)`
+  color: #927e2f;
+  &:hover {
+    background-color: #181509;
+  }
+  &.selected {
+    color: #fbdc5f;
   }
 `
 
