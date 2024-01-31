@@ -3,12 +3,11 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import IconAlertComet from 'public/images/alert-comet.svg'
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { RISK_RATIO_VAL } from '~/data/riskfactors';
 
 interface Props {
   score?: number
 }
-
-export const RISK_HEALTH_SCORE = 30
 
 const enum HealthScoreType {
   Fair = 'Fair',
@@ -30,10 +29,10 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
 
   useEffect(() => {
     if (score) {
-      if (score < RISK_HEALTH_SCORE) {
+      if (score < RISK_RATIO_VAL) {
         setScoreType(HealthScoreType.Poor)
         setScoreTypeColor(HealthScoreTypeColor.Poor)
-      } else if (score >= RISK_HEALTH_SCORE && score < 70) {
+      } else if (score >= RISK_RATIO_VAL && score < 70) {
         setScoreType(HealthScoreType.Fair)
         setScoreTypeColor(HealthScoreTypeColor.Fair)
       } else {

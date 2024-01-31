@@ -3,7 +3,7 @@ import { Box, styled, Stack, Typography } from '@mui/material'
 import { useWallet } from '@solana/wallet-adapter-react'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import { SubmitButton } from '~/components/Common/CommonButtons'
-import HealthscoreView, { RISK_HEALTH_SCORE } from '~/components/Liquidity/comet/HealthscoreView'
+import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import EditLiquidityRatioSlider from '~/components/Liquidity/comet/EditLiquidityRatioSlider'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import Image from 'next/image'
@@ -16,6 +16,7 @@ import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingButton, LoadingProgress } from '~/components/Common/Loading'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
+import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number }) => {
   const { publicKey } = useWallet()
@@ -118,7 +119,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
 
   const isValid = Object.keys(errors).length === 0 && validMintAmount && !isSubmitting
   const differentLiquidityVal = totalLiquidity - (defaultMintAmount * 2)
-  const hasRiskScore = healthScore < RISK_HEALTH_SCORE
+  const hasRiskScore = healthScore < RISK_RATIO_VAL
 
   return (
     <>

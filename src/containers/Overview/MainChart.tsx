@@ -38,7 +38,7 @@ const MainChart: React.FC = () => {
   const { data: totalTVL } = useTotalValueLockedQuery({
     timeframe: filterTime,
     refetchOnMount: false,
-    enabled: isTvlTab
+    enabled: tab === 2
   })
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const MainChart: React.FC = () => {
       setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
     } else if (tab === 1) {
       setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
-    } else if (isTvlTab) {
+    } else if (tab === 2) {
       setChartHover(totalTVL ?? 0)
     }
   }, [totalLiquidityDay, totalVolumeDay, tab])
@@ -57,7 +57,7 @@ const MainChart: React.FC = () => {
         setChartHover(totalVolumeDay?.chartData[totalVolumeDay?.chartData.length - 1].value)
       } else if (tab === 1) {
         setChartHover(totalLiquidityDay?.chartData[totalLiquidityDay?.chartData.length - 1].value)
-      } else if (isTvlTab) {
+      } else if (tab === 2) {
         setChartHover(totalTVL ?? 0)
       }
     }
@@ -81,7 +81,7 @@ const MainChart: React.FC = () => {
               <StyledTab value={2} label="TVL"></StyledTab>
             </StyledTabs>
           </Box>
-          {<SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>}
+          <SelectValue>{formatDollarAmount(chartHover, 0, true)}</SelectValue>
         </Box>
       }
       topRight={

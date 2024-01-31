@@ -11,10 +11,11 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import PairInput from '~/components/Liquidity/comet/PairInput'
 import { CloseButton, RiskSubmitButton, SubmitButton } from '~/components/Common/CommonButtons'
-import HealthscoreView, { RISK_HEALTH_SCORE } from '~/components/Liquidity/comet/HealthscoreView'
+import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import { LoadingButton } from '~/components/Common/Loading'
+import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boolean, isNewDeposit: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -128,7 +129,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
     return valid
   })()
 
-  const hasRiskScore = healthScore < RISK_HEALTH_SCORE
+  const hasRiskScore = healthScore < RISK_RATIO_VAL
 
   let submitButtonText = tab === 0 ? 'Deposit Collateral' : 'Withdraw Collateral'
   if (!collAmount || collAmount === 0) {

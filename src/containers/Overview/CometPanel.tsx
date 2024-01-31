@@ -24,8 +24,7 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { InfoMsg } from '~/components/Common/WarningMsg'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
-
-const RISK_SCORE_VAL = 20
+import { RISK_RATIO_VAL } from '~/data/riskfactors'
 
 const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetchData }: { assetIndex: number, assetData: any, openChooseLiquidityDialog: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -128,7 +127,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
   }
 
   const isValid = Object.keys(errors).length === 0 && !isSubmitting && validMintValue
-  const hasRiskScore = healthScore < RISK_SCORE_VAL
+  const hasRiskScore = healthScore < RISK_RATIO_VAL
 
   let opaqueArea = null
   let actionButton = null
