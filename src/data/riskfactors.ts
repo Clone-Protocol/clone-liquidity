@@ -1,1 +1,1 @@
-export const RISK_RATIO_VAL = 30
+export const RISK_RATIO_VAL = 25
