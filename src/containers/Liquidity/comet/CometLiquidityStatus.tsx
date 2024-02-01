@@ -50,16 +50,16 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           <StatusValue>
             {(infos && infos.positions.length > 0 && !isNaN(infos.totalApy)) &&
               <Box>
-                {infos.totalApy >= 0 ?
+                {infos.totalApy > 0 ?
                   <Box color='#4fe5ff'>
                     <Box display='flex' justifyContent='center' alignItems='center'>
-                      <Typography variant='p_xlg'>+{infos.totalApy?.toFixed(2)}%</Typography>
+                      <Typography variant='p_xlg'>{infos.totalApy >= 0.01 ? `+${infos.totalApy?.toFixed(2)}` : '<0.01'}%</Typography>
                     </Box>
                   </Box>
                   :
-                  <Box color='#ff0084'>
+                  <Box color='white'>
                     <Box display='flex' alignItems='center'>
-                      <Typography variant='p_xlg'>-{Math.abs(infos.totalApy).toFixed(2)}%</Typography>
+                      <Typography variant='p_xlg'>{'0.00'}%</Typography>
                     </Box>
                   </Box>
                 }
