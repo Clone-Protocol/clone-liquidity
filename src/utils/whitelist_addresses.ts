@@ -348,5 +348,18 @@ export const WHITELIST_ADDRESSES = [
   "DoVNx5yrD6h9RUoYWFVLMJbWFRhxJVuCzg5EQgHXBxRz",
   "G57GFYe7Z2ghFNMpz61wx8AcFyK97UfV2ht9wpJpwKef",
   "C8N3W4FkMLQdAQF4ZWixGLhvQVB3h6ZiJ9LkJEzcVaBt",
-  "2yaNYBsrsdKcxcs6okPXJmZE8SKi3te7xhR1sENk4W5r"
+  "2yaNYBsrsdKcxcs6okPXJmZE8SKi3te7xhR1sENk4W5r",
+	"BKXQSQDHbdJLitM3FthG52bS84jFABPUEhBv5YahssSk", // cosmic officers
+	"HaVvvZ4TQpBVZVLsqDqJGQdNB1SD1TJYGNosNiSkwmZn",
+	"3C1ydanbaMbYiWFWxGcc5oi4DUgbyHonbDPqUKMnYZpf",
+	"9cLbEL4YBB3sevh7JrN5AxTpkkyHEeii9ri9CQsZXBkn",
+	"F98so5GHZkGnYMsiyHE1hahaXaNPC6Rot5TEmxGxR74o",
+	"5uXVGF8JPf6Hhcyu7GWSSLXGsJF8vz6XBBJg6A3ytoMH",
+	"Cph4oLiFfKhyKRcc9sGE7q4pDWnX7oWSDpZC1TNDxPUu",
+	"Hja4RAjXmMHVbREmNJxhH8FCtXSkvxqfhLc5zrkgdj2R",
+	"uMdmyDfATFRiHQQ4VLbZM8n3yT5bb3FGvdutSsdroTR",
+	"A5ka1M2QmxjxaCrwabe6eo44cSok5h2ziHB8EAWbvsgP",
+	"Eug1Xhe1BNAyu5qe2KatArWpPBd45yp7QzTuVCHoscsN",
+	"DxRYXJb8GNeYs6M3Z7wBfnhArCW7oJBc3CtFQLLTLx6B",
+	"Zkf9bWvisY6vy3GmZdfvsSbXAo9T8fWdqg4N3DesAhJ"
 ]
