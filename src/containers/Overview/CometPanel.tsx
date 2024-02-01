@@ -256,10 +256,12 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
                   <Box mb="15px"><Typography variant="p_lg">Projected Health Score</Typography> <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Box>
                   <HealthscoreBar score={healthScore} width={470} hasRiskScore={hasRiskScore} hiddenThumbTitle={true} />
                   {hasRiskScore &&
-                    <WarningStack direction='row'>
-                      <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
-                      <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
-                    </WarningStack>
+                    <a href="https://docs.clone.so/clone-mainnet-guide/clone-liquidity-or-for-lps/comets" target='_blank'>
+                      <WarningStack direction='row'>
+                        <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
+                        <Typography variant='p' ml='8px'>Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+                      </WarningStack>
+                    </a>
                   }
                 </Box>
               </Box>
