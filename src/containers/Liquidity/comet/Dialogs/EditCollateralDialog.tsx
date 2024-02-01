@@ -64,7 +64,11 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
         let collDelta = (tab === 0 ? 1 : -1) * collAmount;
 
         setHealthScore(100 - loss / (collData.effectiveCollateral + collData.collateralizationRatio * collDelta))
-        setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
+        if (collData.hasCometPositions || loss > 0) {
+          setMaxWithdrawable((collData.effectiveCollateral - loss / 100) / collData.collateralizationRatio)
+        } else {
+          setMaxWithdrawable(collData.collAmount)
+        }
       } else {
         if (tab === 0) {
           setHealthScore(100)

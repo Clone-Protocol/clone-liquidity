@@ -55,7 +55,7 @@ export const TooltipTexts = {
     concentrationRange: `The range within which the designated comet position will remain active. If the clAsset price leaves this range it is likely that the position will be subject to liquidation.`,
     rewards: `Claimable clAsset rewards from providing liquidity`,
     usdRewards: `Claimable ${ON_USD} rewards from providing liquidity`,
-    yourApy: 'My APY value is the current (24h yield * 365.25) / 24h average collateral',
+    yourApy: 'Estimated APR from the trading fees earned and your provided collateral for the past 24 hours',
     collateralInBorrow: 'The total amount of collateral in your borrow positions',
     borrowedAmount: 'The total amount of your borrowed clAsset in USD',
     onAssetToBorrow: 'Choose the clAsset you would like to borrow.',
@@ -71,7 +71,7 @@ export const TooltipTexts = {
     claimAllRewards: 'All rewards must be claimed before the position can be closed',
     selectLiquidityPool: 'Choose the liquidity pool you would like to add liquidity to.',
     feeRevenue24h: 'Fee Revenue (24h)',
-    avgAPY24h: 'The projected yield for providing liquidity to this pool for a year',
+    avgAPY24h: 'The projected rate for providing liquidity to this pool for a year',
     borrowedCollRatio: 'Designates the ratio of the value of the collateral and the borrowed clAsset. For example, if you borrow $100 of clARB with 400 USDC, then the collateral ratio is 400%. A borrow position is subject to liquidation if the ratio falls below 250%, but we recommend opening a position with a safer ratio of at least 300%.',
     repayFullBorrow: 'All borrowed clAsset must be repaid before the position can be closed',
     withdrawEntire: 'All collateral must be withdrawn before the position can be closed',
@@ -79,7 +79,7 @@ export const TooltipTexts = {
         liquidityAmount: 'The total amount of liquidity in USD provided for this position',
         ild: "Stands for impermanent loss debt, the total debt you owe for this liquidity position in USD",
         rewards: "The total reward you can claim for this liquidity position in USD",
-        apy: "The projected yield for this liquidity position over a year"
+        apy: "The projected rate for this liquidity position over a year"
     },
     points: {
         totalPoints: 'The sum of all points earned through liquidity provision, trading, and social engagement.',
