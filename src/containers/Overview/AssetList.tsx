@@ -156,7 +156,7 @@ let columns: GridColDef[] = [
 		field: 'avgAPY24h',
 		headerClassName: 'super-app-theme--header right--header',
 		cellClassName: 'super-app-theme--cell right--cell',
-		headerName: 'APY',
+		headerName: 'APR',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />

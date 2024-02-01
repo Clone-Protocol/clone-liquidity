@@ -44,7 +44,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
         </Box>
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p'>My APY</Typography>
+            <Typography variant='p'>My APR</Typography>
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
           </Box>
           <StatusValue>

@@ -178,7 +178,7 @@ let columns: GridColDef[] = [
     field: 'apy',
     headerClassName: 'right--header',
     cellClassName: 'right--cell',
-    headerName: 'APY',
+    headerName: 'APR',
     flex: 1,
     renderHeader(params: GridColumnHeaderParams<string>) {
       return <Stack direction='row' alignItems='center'>

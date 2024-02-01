@@ -45,7 +45,7 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
           <Typography variant="p" color='#66707e'>Total Liquidity</Typography>
           <InfoTooltip title={TooltipTexts.totalLiquidity} color='#66707e' />
         </Box>
-        <Box><Typography variant="p_xlg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.liquidityGainPct} /></Box>
+        <Box mt='-4px'><Typography variant="p_xlg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.liquidityGainPct} /></Box>
       </DataBox>
       <DataBox>
         <Box>
@@ -55,10 +55,10 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
       </DataBox>
       <DataBox>
         <Box>
-          <Typography variant="p" color='#66707e'>APY</Typography>
+          <Typography variant="p" color='#66707e'>APR</Typography>
           <InfoTooltip title={TooltipTexts.avgAPY24h} color='#66707e' />
         </Box>
-        <Box><Typography variant="p_xlg" color={resultData?.avgAPY24hr >= 0 ? '#4fe5ff' : '#258ded'}>{resultData?.avgAPY24hr >= 0 ? '+' : '-'}{Math.abs(resultData?.avgAPY24hr).toLocaleString()}%</Typography></Box>
+        <Box mt='-4px'><Typography variant="p_xlg" color={resultData?.avgAPY24hr >= 0 ? '#4fe5ff' : '#258ded'}>{resultData?.avgAPY24hr >= 0 ? '+' : '-'}{Math.abs(resultData?.avgAPY24hr).toLocaleString()}%</Typography></Box>
       </DataBox>
     </Box>
   )
