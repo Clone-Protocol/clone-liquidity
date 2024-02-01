@@ -85,7 +85,7 @@ const RightMenu: React.FC = () => {
 	const WhitelistDialog = dynamic(() => import('~/components/Common/WhitelistDialog'), { ssr: false })
 
 	// on initialize, set to open account creation
-	useInitialized(connected, publicKey, wallet)
+	useInitialized(connected, publicKey, wallet, isWhitelisted)
 	useCreateAccount()
 	const { setMintUsdi } = useFaucet()
 
@@ -93,7 +93,6 @@ const RightMenu: React.FC = () => {
 	useEffect(() => {
 		const validateGeoblock = async () => {
 			if (connected && publicKey) {
-				console.log('validate')
 				const geoblock = await fetchGeoBlock()
 
 				if (!geoblock.result) {
