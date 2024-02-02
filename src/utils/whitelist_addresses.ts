@@ -361,5 +361,7 @@ export const WHITELIST_ADDRESSES = [
 	"A5ka1M2QmxjxaCrwabe6eo44cSok5h2ziHB8EAWbvsgP",
 	"Eug1Xhe1BNAyu5qe2KatArWpPBd45yp7QzTuVCHoscsN",
 	"DxRYXJb8GNeYs6M3Z7wBfnhArCW7oJBc3CtFQLLTLx6B",
-	"Zkf9bWvisY6vy3GmZdfvsSbXAo9T8fWdqg4N3DesAhJ"
+	"Zkf9bWvisY6vy3GmZdfvsSbXAo9T8fWdqg4N3DesAhJ",
+	"GfqH9pfeocg4dX5uZFjoq8sjSEahmmu2zYbRFNt2YBZt,
+	"FRb1tt3XAucN64dcwGDJ8LS6mCU3V1WkqEWLzRfp6dTM"
 ]
