@@ -32,7 +32,15 @@ export const WHITELIST_ADDRESSES = [
 	"QuLWFDsYsrnjvgkT4XKYn5p2tkr4h6UUBB2Q8QfZu9E",
 	"7xiDa6Aj1MKWHWLJqYEtiigTuo8Wsvn1FyemwcWGYsXW", 
 	"FZohsHm1qeD2yMHTdkyhmkDNBkiGZEpCc9m5b815MtD3", 
-	"8qjggboTZ92Y3yP31i24MYnD2ewqcVKXmqEdxV4kU1Nm", // partners
+	"8qjggboTZ92Y3yP31i24MYnD2ewqcVKXmqEdxV4kU1Nm",
+	"8kNhLDNbmiD1CnEtLv9zakip1h2xx7j51nspH1n2v2rP",
+	"3WN9zTMRRy1yGqKUaegMJ7huQuFQZyZkBtiu2uHn1USS",
+	"Az4vJwhYBD8HMNGW2xDMF6ybhSWNwynZuzaDbdSHEK59",
+	"Cb2xRC5wU7Grk39nTWk2Pk57BvYEPGeHRvnWTxGrbFg6",
+	"2f8Z1F7YXmti4T2aub79Zvw3pkGKmkwpVLa2uYwRNfeX",
+	"9da7DXpr8Ydn1dazCdXy4v9kB8r7aW7BvezNaeZ6iUzx",
+	"DHnNyD74QRDKjzvma8zf625pcZRCB5UAuRFeZfpEmVxE",
+	"Agf2Fktj3X4uAPYmFchquoY96sAXPQisjxBMjAMQD9W", // partners
   "D82kLfTQ4ntrbGGnwkqP9gKLvRhGoiAHWjCLwRh2PHRo",
   "8M6obuLq8jZ3hKYW5u2XH9hpQ4BWhEz2oGzhsK1RN8Fc",
   "DoaWfppuysM296o7HkF8XrpNCpTDrDYxVteNWY9XvqRk",
