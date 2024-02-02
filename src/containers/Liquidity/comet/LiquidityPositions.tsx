@@ -189,13 +189,13 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
         :
-        Number(params.value) >= 0 ?
+        Number(params.value) > 0 ?
           <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
-            <Typography variant='p_xlg'>+{Number(params.value).toFixed(2)}%</Typography>
+            <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}`: '<0.01'}%</Typography>
           </Box>
           :
-          <Box display='flex' alignItems='center' color='#ff0084'>
-            <Typography variant='p_xlg'>-{Number(params.value).toFixed(2)}%</Typography>
+          <Box display='flex' alignItems='center' color='white'>
+            <Typography variant='p_xlg'>{'0.00'}%</Typography>
           </Box>
     },
   },

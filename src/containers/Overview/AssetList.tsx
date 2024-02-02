@@ -161,12 +161,12 @@ let columns: GridColDef[] = [
 		renderCell(params: GridRenderCellParams<string>) {
 			return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
 				:
-				params.row.avgAPY24h >= 0 ?
+				params.row.avgAPY24h > 0 ?
 					<Box color='#4fe5ff' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>+{params.row.avgAPY24h?.toFixed(2)}%</Typography>
+						<Typography variant='p_xlg'>{params.row.avgAPY24h >= 0.01 ? `+${params.row.avgAPY24h?.toFixed(2)}`: '<0.01'}%</Typography>
 					</Box>
-					: <Box color='#ff0084' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>{params.row.avgAPY24h?.toFixed(2)}%</Typography>
+					: <Box color='white' display='flex' alignItems='center'>
+						<Typography variant='p_xlg'>{'0.00'}%</Typography>
 					</Box>
 		},
 	},

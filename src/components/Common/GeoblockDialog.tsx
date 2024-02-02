@@ -17,7 +17,7 @@ const GeoblockDialog = ({ open, handleClose }: { open: boolean, handleClose: () 
               </Typography>
             </Box>
 
-            <Box><Typography variant='p'>More on </Typography><a href="#" target="_blank" rel="noreferrer"><Typography variant='p' color='#4fe5ff'>Clone Terms and Conditions.</Typography></a></Box>
+            <Box><Typography variant='p'>More on </Typography><a href="https://docs.clone.so/legal-and-regulations/terms-of-use" target="_blank" rel="noreferrer"><Typography variant='p' color='#4fe5ff'>Clone Terms of Use.</Typography></a></Box>
 
             <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
               <CloseButton handleClose={handleClose} />

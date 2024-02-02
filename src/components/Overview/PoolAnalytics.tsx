@@ -58,7 +58,11 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
           <Typography variant="p" color='#66707e'>APR</Typography>
           <InfoTooltip title={TooltipTexts.avgAPY24h} color='#66707e' />
         </Box>
-        <Box mt='-4px'><Typography variant="p_xlg" color={resultData?.avgAPY24hr >= 0 ? '#4fe5ff' : '#258ded'}>{resultData?.avgAPY24hr >= 0 ? '+' : '-'}{Math.abs(resultData?.avgAPY24hr).toLocaleString()}%</Typography></Box>
+        <Box mt='-4px'><Typography variant="p_xlg" color={resultData?.avgAPY24hr! > 0 ? '#4fe5ff' : 'white'}>
+          {
+            resultData?.avgAPY24hr! >= 0.01 ? `+${Math.abs(resultData?.avgAPY24hr!).toLocaleString()}` : resultData?.avgAPY24hr! > 0 ? '<0.01' : '0.00'
+          }%
+        </Typography></Box>
       </DataBox>
     </Box>
   )
