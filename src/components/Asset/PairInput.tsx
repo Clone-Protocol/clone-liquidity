@@ -1,5 +1,6 @@
 import { FormControl, styled, Stack, Box, Typography } from '@mui/material'
 import Image from 'next/image'
+import { useRef } from 'react'
 
 interface Props {
 	tickerIcon: string
@@ -28,6 +29,8 @@ const PairInput: React.FC<Props> = ({
 	onMax,
 	onTickerClicked
 }) => {
+	const ipAmount = useRef(null)
+
 	return (
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="space-between">
@@ -46,9 +49,10 @@ const PairInput: React.FC<Props> = ({
 				)}
 			</Stack>
 			<CenterBox>
-				<FormStack direction="row" justifyContent="space-between" alignItems="center" noHover={disabledInput} sx={disabledInput ? { border: '1px solid #414166', background: 'transparent' } : {}}>
+				<FormStack direction="row" justifyContent="space-between" alignItems="center" noHover={disabledInput} onClick={() => ipAmount.current?.focus()} sx={disabledInput ? { border: '1px solid #414166', background: 'transparent' } : {}}>
 					<Box>
 						<InputAmount
+							ref={ipAmount}
 							type="number"
 							placeholder='0.00'
 							step='any'
