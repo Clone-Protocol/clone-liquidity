@@ -23,7 +23,9 @@ export const WHITELIST_ADDRESSES = [
   'HKpaSpoCtz1uJUhS7HZTgKo1Lf26D6ZMJi6SDntCpaf8',
   "FvM7jcnxbLLhZtgfXNBHskKAq4HJWctLY1n3AVDqNTGo",
   "GZuCx7ztUA4W1znJSxmT8YknsnEGZsKhKFLNqSHSgjHd",
-  "7C8f8dxxqQEZyKpHMWaQtfGckrkLgUYmfEH9tjcwB8HT", // partners
+  "7C8f8dxxqQEZyKpHMWaQtfGckrkLgUYmfEH9tjcwB8HT",
+	"GYpFo2YSBQMZefhR9bTTTx7YAugvgKyodX7tUG1pDCux",
+	"4dcB3kF4aEeTvz5CuUz7NFxV7xCF3129SADHmbmvN2Ch", // partners
   "D82kLfTQ4ntrbGGnwkqP9gKLvRhGoiAHWjCLwRh2PHRo",
   "8M6obuLq8jZ3hKYW5u2XH9hpQ4BWhEz2oGzhsK1RN8Fc",
   "DoaWfppuysM296o7HkF8XrpNCpTDrDYxVteNWY9XvqRk",
