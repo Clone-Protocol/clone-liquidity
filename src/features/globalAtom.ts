@@ -4,6 +4,8 @@ import { DEFAULT_PRIORITY_FEE_INDEX, PRIORITY_FEES, DEV_RPCs, IS_DEV, MAIN_RPCs 
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { FeeLevel } from '~/data/networks'
 
+export const showPythBanner = atom(false)
+
 export const mintUSDi = atom(false)
 
 export const syncFetchNetworkState = atom(false)

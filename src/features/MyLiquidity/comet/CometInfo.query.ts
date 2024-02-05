@@ -43,7 +43,7 @@ export const fetchInfos = async ({ program, userPubKey }: { program: CloneClient
 			totalLiquidity += p.liquidityDollarPrice
 		})
 		hasNoCollateral = totalCollValue === 0
-		healthScore = getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore
+		healthScore = Math.ceil(getHealthScore(oraclesData.value, poolsData.value, comet, program.clone.collateral).healthScore)
 	}
 
 	const result = {

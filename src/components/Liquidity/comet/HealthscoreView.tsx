@@ -57,7 +57,7 @@ const HealthscoreView: React.FC<Props> = ({ score }) => {
           </Box>
         }
         <Box display='flex' height='100%'>
-          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 5px)` }} />
+          <PlayArrowIcon sx={{ width: '12px', height: '12px', position: 'relative', top: `calc(${scorePercent}% - 6px)` }} />
           <ScoreBar />
           <Box height='100%'>
             <Box sx={{ position: 'relative', top: '-10px', left: '5px' }}><Typography variant='p_sm'>100 (Excellent)</Typography></Box>

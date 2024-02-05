@@ -88,6 +88,10 @@ export const fetchFromSupabaseNotice = async () => {
     return await axios.get(`/.netlify/functions/supabase-notice-fetch`)
 }
 
+export const fetchFromSupabasePyth = async () => {
+    return await axios.get(`/.netlify/functions/supabase-pyth-fetch`)
+}
+
 export type UserPointsView = {
     rank: number
     user_address: string
@@ -136,7 +140,7 @@ export type PoolAnalytics = {
     previous_fees: number
     previous_liquidity: number
 }
-export const fetchPoolAnalytics = async (): Promise<PoolAnalytics[]> => { 
+export const fetchPoolAnalytics = async (): Promise<PoolAnalytics[]> => {
     const response = await axios.get(`/.netlify/functions/get-pool-analytics`)
     return response.data as PoolAnalytics[]
 }

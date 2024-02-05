@@ -2,7 +2,7 @@
 import { styled } from '@mui/system'
 import { Container, Typography, Box, Button } from '@mui/material'
 import Image from 'next/image'
-import logoIcon from 'public/images/logo-liquidity.png'
+import logoIcon from 'public/images/logo-liquidity.svg'
 
 const NotFound = () => {
   return (
