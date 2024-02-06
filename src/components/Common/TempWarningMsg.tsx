@@ -4,13 +4,16 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CloseIcon from 'public/images/close.svg'
 import { Info, Warning } from '@mui/icons-material';
-import { fetchFromSupabaseNotice } from '~/utils/fetch_netlify';
+import { fetchFromSupabaseNotice, fetchFromSupabasePyth } from '~/utils/fetch_netlify';
+import { useAtomValue } from 'jotai';
+import { showPythBanner } from '~/features/globalAtom';
 
 interface NoticeItem {
   is_general: boolean
   message: string
 }
 const TempWarningMsg: React.FC = () => {
+  const showPythBannerStatus = useAtomValue(showPythBanner)
   const [isShowGeneralMsg, setIsShowGeneralMsg] = useState(false)
   const [isShowWarnMsg, setIsShowWarnMsg] = useState(false)
   const [generalMsg, setGeneralMsg] = useState('')
@@ -33,6 +36,21 @@ const TempWarningMsg: React.FC = () => {
     }
     getNoticeMsg()
   }, [])
+
+  useEffect(() => {
+    const getNoticeMsg = async () => {
+      const response = await fetchFromSupabasePyth()
+      const data = response.data
+      if (data.length > 0) {
+        setWarnMsg('Oracle error is detected. Number of pools maybe temporarily frozen.')
+        setIsShowWarnMsg(true)
+      }
+    }
+
+    if (showPythBannerStatus) {
+      getNoticeMsg()
+    }
+  }, [showPythBannerStatus])
 
   const CloseButton = ({ onClick }: { onClick: () => void }) => {
     return (
