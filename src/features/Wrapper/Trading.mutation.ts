@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { CloneClient, toScale } from 'clone-protocol-sdk/sdk/src/clone'
+import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useMutation } from '@tanstack/react-query'
 import { useClone } from '~/hooks/useClone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -30,20 +30,22 @@ export const callTrading = async ({
 	} = data
 	quantity = Number(quantity)
 
+	const pools = await program.getPools()
+	const pool = pools.pools[poolIndex]
+	const { underlyingTokenMint } = assetMapping(poolIndex);
+	const underlyingMintDecimal = await getMint(program.provider.connection, underlyingTokenMint).then(mint => mint.decimals)
+	const userAssetAta = await getTokenAccount(
+		underlyingTokenMint,
+		program.provider.publicKey!,
+		program.provider.connection);
+	const userclAssetAta = await getTokenAccount(
+		pool.assetInfo.onassetMint,
+		program.provider.publicKey!,
+		program.provider.connection
+	)
+	let ixns: TransactionInstruction[] = []
+
 	if (isWrap) {
-		let ixns: TransactionInstruction[] = []
-
-		const pools = await program.getPools()
-		const pool = pools.pools[poolIndex]
-		const { underlyingTokenMint } = assetMapping(poolIndex);
-		const underlyingMintDecimal = await getMint(program.provider.connection, underlyingTokenMint).then(mint => mint.decimals)
-		const userAssetAta = await getAssociatedTokenAddress(underlyingTokenMint, userPubKey);
-		const userclAssetAta = await getTokenAccount(
-			pool.assetInfo.onassetMint,
-			program.provider.publicKey!,
-			program.provider.connection
-		)
-
 		// Check if the user has a clAsset ata
 		if (!userclAssetAta.isInitialized) {
 			ixns.push(
@@ -62,15 +64,37 @@ export const callTrading = async ({
 				toScale(quantity, underlyingMintDecimal),
 				poolIndex,
 				underlyingTokenMint,
-				userAssetAta,
+				userAssetAta.address,
 				userclAssetAta.address
 			)
 		)
 
-		await sendAndConfirm(program.provider as AnchorProvider, ixns, setTxState, feeLevel)
 	} else {
-		// @TODO : for unwrap
+		// Check if the user has a underlying ata
+		if (!userAssetAta.isInitialized) {
+			ixns.push(
+				createAssociatedTokenAccountInstruction(
+					program.provider.publicKey!,
+					userAssetAta.address,
+					program.provider.publicKey!,
+					underlyingTokenMint
+				)
+			)
+		}
+		// Create wrap instruction
+		ixns.push(
+			program.unwrapOnassetInstruction(
+				pools,
+				toCloneScale(quantity),
+				poolIndex,
+				underlyingTokenMint,
+				userAssetAta.address,
+				userclAssetAta.address
+			)
+		)
 	}
+
+	await sendAndConfirm(program.provider as AnchorProvider, ixns, setTxState, feeLevel)
 
 	return {
 		result: true
