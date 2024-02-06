@@ -247,7 +247,7 @@ const BorrowPanel = ({ assetIndex, borrowDetail, onChooseAssetIndex }: { assetIn
           {hasRiskRatio && !hasLowerMin &&
             <WarningStack direction='row'>
               <WarningAmberIcon sx={{ color: '#ff0084', width: '15px' }} />
-              <Typography variant='p' ml='8px'>Due to low collateral ratio, this borrow position will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.</Typography>
+              <Typography variant='p' ml='8px'>Due to low collateral ratio, this borrow position will have high possibility to become subject to liquidation.</Typography>
             </WarningStack>
           }
 

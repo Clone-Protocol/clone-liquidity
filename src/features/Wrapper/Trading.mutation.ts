@@ -26,46 +26,52 @@ export const callTrading = async ({
 	let {
 		quantity,
 		poolIndex,
+		isWrap
 	} = data
 	quantity = Number(quantity)
 
-	let ixns: TransactionInstruction[] = []
+	if (isWrap) {
+		let ixns: TransactionInstruction[] = []
 
-	const pools = await program.getPools()
-	const pool = pools.pools[poolIndex]
-	const { underlyingTokenMint } = assetMapping(poolIndex);
-	const underlyingMintDecimal = await getMint(program.provider.connection, underlyingTokenMint).then(mint => mint.decimals)
-	const userAssetAta = await getAssociatedTokenAddress(underlyingTokenMint, userPubKey);
-	const userclAssetAta = await getTokenAccount(
-		pool.assetInfo.onassetMint,
-		program.provider.publicKey!,
-		program.provider.connection
-	)
+		const pools = await program.getPools()
+		const pool = pools.pools[poolIndex]
+		const { underlyingTokenMint } = assetMapping(poolIndex);
+		const underlyingMintDecimal = await getMint(program.provider.connection, underlyingTokenMint).then(mint => mint.decimals)
+		const userAssetAta = await getAssociatedTokenAddress(underlyingTokenMint, userPubKey);
+		const userclAssetAta = await getTokenAccount(
+			pool.assetInfo.onassetMint,
+			program.provider.publicKey!,
+			program.provider.connection
+		)
 
-	// Check if the user has a clAsset ata
-	if (!userclAssetAta.isInitialized) {
+		// Check if the user has a clAsset ata
+		if (!userclAssetAta.isInitialized) {
+			ixns.push(
+				createAssociatedTokenAccountInstruction(
+					program.provider.publicKey!,
+					userclAssetAta.address,
+					program.provider.publicKey!,
+					pool.assetInfo.onassetMint
+				)
+			)
+		}
+		// Create wrap instruction
 		ixns.push(
-			createAssociatedTokenAccountInstruction(
-				program.provider.publicKey!,
-				userclAssetAta.address,
-				program.provider.publicKey!,
-				pool.assetInfo.onassetMint
+			program.wrapAssetInstruction(
+				pools,
+				toScale(quantity, underlyingMintDecimal),
+				poolIndex,
+				underlyingTokenMint,
+				userAssetAta,
+				userclAssetAta.address
 			)
 		)
-	}
-	// Create wrap instruction
-	ixns.push(
-		program.wrapAssetInstruction(
-			pools,
-			toScale(quantity, underlyingMintDecimal),
-			poolIndex,
-			underlyingTokenMint,
-			userAssetAta,
-			userclAssetAta.address
-		)
-	)
 
-	await sendAndConfirm(program.provider as AnchorProvider, ixns, setTxState, feeLevel)
+		await sendAndConfirm(program.provider as AnchorProvider, ixns, setTxState, feeLevel)
+	} else {
+		// @TODO : for unwrap
+	}
+
 	return {
 		result: true
 	}
@@ -73,6 +79,7 @@ export const callTrading = async ({
 
 type FormData = {
 	quantity: number,
+	isWrap: boolean,
 	poolIndex: number,
 }
 interface CallTradingProps {

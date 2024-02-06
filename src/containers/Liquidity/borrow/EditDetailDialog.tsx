@@ -246,7 +246,7 @@ const EditDetailDialog = ({ borrowId, borrowDetail, initEditType, open, onHideEd
 
             {isClose && <Box my='20px'><InfoMsg>By withdrawing entire collateral amount, you will be closing this borrow position.</InfoMsg></Box>}
             {(hasRiskRatio && collAmount <= maxCollVal) && <Box my='20px'><WarningMsg>
-              Due to the lower collateral ratio, this borrow position will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.
+              Due to the lower collateral ratio, this borrow position will have high possibility to become subject to liquidation.
             </WarningMsg></Box>}
 
             {isSubmitting ?
