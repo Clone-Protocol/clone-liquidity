@@ -103,6 +103,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
         setLoading(false)
         console.log('data', data)
         initData()
+        refetch()
       }
     } catch (err) {
       console.error(err)
