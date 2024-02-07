@@ -81,7 +81,11 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const { mutateAsync } = useTradingMutation(publicKey)
 
   const calculateTotalAmountByFrom = (newValue: number) => {
-    setValue('amountWrapAsset', newValue)
+    if (isWrap) {
+      setValue('amountWrapAsset', newValue)
+    } else {
+      setValue('amountUnwrapAsset', newValue)
+    }
   }
 
   const onConfirm = async () => {
@@ -107,7 +111,9 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   }
 
   const invalidMsg = () => {
-    if (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset) {
+    if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
+      return 'Enter Amount'
+    } else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'
     } else if (isWrap && amountWrapAsset > myBalance?.underlyingAssetVal!) {
       return `Insufficient ${pairData.wrapTickerSymbol}`
@@ -179,7 +185,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                     validate(value) {
                       if (!value || isNaN(value) || value <= 0) {
                         return 'the amount should not empty'
-                      } else if (value > myBalance?.underlyingAssetVal!) {
+                      } else if (value > myBalance?.onassetVal!) {
                         return 'The amount cannot exceed the balance.'
                       }
                     }
