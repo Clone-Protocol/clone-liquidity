@@ -174,7 +174,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
               :
               hasRiskScore ?
                 <WarningMsg>
-                  Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.
+                  Due to low health score, you will have high possibility to become subject to liquidation.
                 </WarningMsg>
                 : <></>
           }

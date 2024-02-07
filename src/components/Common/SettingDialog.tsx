@@ -198,7 +198,7 @@ const SettingDialog = ({ open, handleClose }: { open: boolean, handleClose: () =
             }
             <Box my='20px'>
               <Box><Typography variant="p_lg">Network Switching</Typography></Box>
-              <Box lineHeight={1.1} mb='10px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more <a href="#" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>
+              <Box lineHeight={1.1} mb='10px'><Typography variant="p" color="#8988a3">Choose between Solana mainnet and devnet. Learn more <a href="https://docs.clone.so/clone-mainnet-guide/initial-setup" target="_blank" style={{ textDecoration: 'underline', color: '#fff' }}>here</a>.</Typography></Box>
               <ChangeNetworkButton onClick={goNetwork}><Typography variant='p'>Go to Solana {IS_DEV ? 'Mainnet' : 'Devnet'}</Typography> <Image src={IconShare} alt='icon-share' /></ChangeNetworkButton>
             </Box>
             <Box sx={{ position: 'absolute', right: '20px', top: '20px' }}>
