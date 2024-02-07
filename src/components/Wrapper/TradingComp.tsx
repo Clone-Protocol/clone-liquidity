@@ -280,6 +280,7 @@ const SwapButton = styled(IconButton)`
   cursor: pointer;
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
+    border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
   }
 `
 const ConnectButton = styled(Button)`
