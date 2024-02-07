@@ -236,12 +236,12 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
                   {
                     collAmount >= collData.collAmount ?
                       <InfoMsg>
-                        If you are looking to withdraw all of your collateral, please close all of your liquidity positions first. Click here to learn more.
+                        If you are looking to withdraw all of your collateral, please close all of your liquidity positions first.
                       </InfoMsg>
                       :
                       hasRiskScore ?
                         <WarningMsg>
-                          Due to low health score, you will have high possibility to become subject to liquidation. Click to learn more about our liquidation process.
+                          Due to low health score, you will have high possibility to become subject to liquidation.
                         </WarningMsg>
                         : <></>
                   }
