@@ -4,13 +4,13 @@ import { assetMapping, AssetType } from '~/data/assets'
 import { FilterType } from '~/data/filter'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getAggregatedPoolStats, getiAssetInfos } from '~/utils/assets';
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { getCloneClient } from '../baseQuery';
-import { cloneClient, rpcEndpoint } from '../globalAtom'
+import { cloneClient, rpcEndpoint, showPythBanner } from '../globalAtom'
 import { fetchPythPriceHistory } from '~/utils/pyth'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
-export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
+export const fetchAssets = async ({ setShowPythBanner, mainCloneClient, networkEndpoint }: { setShowPythBanner: (show: boolean) => void, mainCloneClient?: CloneClient | null, networkEndpoint: string }) => {
 	console.log('fetchAssets - Overview')
 
 	let program
@@ -72,6 +72,13 @@ export const fetchAssets = async ({ mainCloneClient, networkEndpoint }: { mainCl
 			status: info.status
 		})
 	}
+
+	//show pyth banner if found that the status is frozen
+	const isFrozenFoundIndex = result.findIndex((asset) => asset.status === Status.Frozen)
+	if (isFrozenFoundIndex !== -1) {
+		setShowPythBanner(true)
+	}
+
 	return result
 }
 
@@ -99,12 +106,13 @@ export interface AssetList {
 }
 
 export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = true }: GetAssetsProps) {
+	const setShowPythBanner = useSetAtom(showPythBanner)
 	const mainCloneClient = useAtomValue(cloneClient)
 	const networkEndpoint = useAtomValue(rpcEndpoint)
 
 	let queryFunc
 	try {
-		queryFunc = () => fetchAssets({ mainCloneClient, networkEndpoint })
+		queryFunc = () => fetchAssets({ setShowPythBanner, mainCloneClient, networkEndpoint })
 	} catch (e) {
 		console.error(e)
 		queryFunc = () => []
