@@ -119,6 +119,7 @@ const LineChartAlt: React.FC<LineChartProps> = ({
             <Tooltip
               cursor={{ stroke: '#8988a3', strokeDasharray: '4 4' }}
               content={CustomTooltip}
+              isAnimationActive={false}
               wrapperStyle={{ outline: "none" }}
               contentStyle={{ display: 'block', background: 'transparent' }}
             // formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {

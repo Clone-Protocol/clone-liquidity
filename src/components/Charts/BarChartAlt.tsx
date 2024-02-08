@@ -109,6 +109,7 @@ const BarChartAlt: React.FC<LineChartProps> = ({
           <Tooltip
             cursor={{ fill: '#2C2F36' }}
             contentStyle={{ display: 'none' }}
+            isAnimationActive={false}
             formatter={(value: number, name: string, props: { payload: { time: string; value: number } }) => {
               if (setValue && parsedValue !== props.payload.value) {
                 setValue(props.payload.value)
