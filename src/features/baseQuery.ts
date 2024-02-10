@@ -20,7 +20,7 @@ export const getCloneClient = async (networkEndpoint: string, wallet?: AnchorWal
       preflightCommitment: "confirmed" as Commitment,
     }
     //Mocking specific pub key
-    // wallet.publicKey = new PublicKey("AJsbNKxcyXyAFFGpqjF1gYQ3Usr8b92Cy1xtSXZZ8dnt")
+    // wallet.publicKey = new PublicKey("5uXVGF8JPf6Hhcyu7GWSSLXGsJF8vz6XBBJg6A3ytoMH")
     provider = new AnchorProvider(connection, wallet, opts)
   } else {
     // MEMO: to support provider without wallet adapter

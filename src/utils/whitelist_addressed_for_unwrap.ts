@@ -1,5 +1,4 @@
 export const WHITELIST_ADDRESSES_FOR_UNWRAP = [
-  'FjkKvFpazSfZXNw5JG3cKvkdQzTSmMuTyj9P37uuMapg',
   '3b1BL7uyGWPpsNJoX2hyBe8TkcYEXJU8oB3qcwX3Ygo2',
   '4yyaBRYouqPjURvmwZcwcCiB6sQjPtxvzqJ4yDQTCPt9',
   'HAME72nSC1pSyi9aYYzbSVkfT2ckvSbwGw2YXBWNyE8X',
