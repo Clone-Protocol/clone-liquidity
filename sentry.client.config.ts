@@ -5,6 +5,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 if (process.env.NEXT_PUBLIC_IS_DEBUG_SENTRY !== 'true') {
+  console.log('sentry enabled')
   Sentry.init({
     dsn: "https://a3f881f2cc7427055a3f6de2646ade05@o4506395017216000.ingest.sentry.io/4506511611396096",
 
