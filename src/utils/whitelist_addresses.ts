@@ -372,6 +372,10 @@ export const WHITELIST_ADDRESSES = [
   "C8N3W4FkMLQdAQF4ZWixGLhvQVB3h6ZiJ9LkJEzcVaBt",
   "2yaNYBsrsdKcxcs6okPXJmZE8SKi3te7xhR1sENk4W5r",
   "BKXQSQDHbdJLitM3FthG52bS84jFABPUEhBv5YahssSk", // cosmic officers
+	"BJR9X8THwAXUwNhRESLznoVqMuKr6DTWrfRph8JTpPAf",
+	"5DZZCiq6rDX5akrDVxezyUgSgyR4Scbznc2iTC2dhy2T",
+	"694AHLg7gSsgVmv1cCEdSVWZDWR3MdWkKfV8qpLxp17Y",
+	"2sqGaESGoeAhTo16z4Tzmuy6fbnHgo9qBEucU1uGgh1a",
   "HaVvvZ4TQpBVZVLsqDqJGQdNB1SD1TJYGNosNiSkwmZn",
   "3C1ydanbaMbYiWFWxGcc5oi4DUgbyHonbDPqUKMnYZpf",
   "9cLbEL4YBB3sevh7JrN5AxTpkkyHEeii9ri9CQsZXBkn",
