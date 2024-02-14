@@ -33,9 +33,9 @@ const AssetList: React.FC = () => {
 		enabled: true
 	})
 
-	const handleFilterChange = useCallback((event: React.SyntheticEvent, newValue: FilterType) => {
-		setFilter(newValue)
-	}, [filter])
+	// const handleFilterChange = useCallback((event: React.SyntheticEvent, newValue: FilterType) => {
+	// 	setFilter(newValue)
+	// }, [filter])
 
 	const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const newVal = e.currentTarget.value
@@ -163,7 +163,7 @@ let columns: GridColDef[] = [
 				:
 				params.row.avgAPY24h > 0 ?
 					<Box color='#4fe5ff' display='flex' alignItems='center'>
-						<Typography variant='p_xlg'>{params.row.avgAPY24h >= 0.01 ? `+${params.row.avgAPY24h?.toFixed(2)}`: '<0.01'}%</Typography>
+						<Typography variant='p_xlg'>{params.row.avgAPY24h >= 0.01 ? `+${params.row.avgAPY24h?.toFixed(2)}` : '<0.01'}%</Typography>
 					</Box>
 					: <Box color='white' display='flex' alignItems='center'>
 						<Typography variant='p_xlg'>{'0.00'}%</Typography>
