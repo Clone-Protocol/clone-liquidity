@@ -688,5 +688,6 @@ export const WHITELIST_ADDRESSES = [
 	"9A3yP19paSV5mGsgT6wb9CJ8Yj2ZLtyHKcfMwEGKBewB",
 	"4nddoNhcnYcmeWtHdMMoLYK9a7dW3PvjiPR9s2S8QSdw",
 	"827kL4scax9BNYvzRrgRkmNqLKLv1FtABDjZkQotxpP9",
-	"4TXYd7jPe5tQbgo5ujveUJ2S7XSeRUMVpEVg4v7rTV99"
+	"4TXYd7jPe5tQbgo5ujveUJ2S7XSeRUMVpEVg4v7rTV99",
+	"CJP3U7xPdpySVZavzexBfa3CW24jJzgaXtJrTtjRiyfR"
 ]
