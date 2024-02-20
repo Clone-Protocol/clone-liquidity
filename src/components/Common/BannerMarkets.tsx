@@ -12,7 +12,7 @@ const BannerMarkets = ({ open, handleClose }: Props) => {
   return open ? (
     <Box zIndex={9999} position='absolute' right={isMobileOnSize ? '12px' : '36px'} bottom={isMobileOnSize ? '66px' : '36px'} sx={{ background: '#000' }}>
       <StackWrapper direction='row' alignItems='center'>
-        <Box width='109px' height='100%' display='flex' justifyContent='center' alignItems='center' sx={{ background: 'rgba(153, 126, 255, 0.15)' }}>
+        <Box width='109px' height='100%' display='flex' justifyContent='center' alignItems='center' sx={{ background: '#000', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
           <Image src={MarketsIcon} alt='liquidity' width={82} height={22} />
         </Box>
         <Box width='218px' padding='15px'>
