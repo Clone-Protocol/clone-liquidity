@@ -12,7 +12,9 @@ export const funcNoWallet = async () => {
 }
 
 export const getCloneClient = async (networkEndpoint: string, wallet?: AnchorWallet) => {
-  const connection = new Connection(networkEndpoint, { commitment: 'confirmed' })
+  const connection = new Connection(networkEndpoint, {
+    commitment: 'confirmed', wsEndpoint: process.env.NEXT_PUBLIC_NETWORK_WSS_HELIUS,
+  })
 
   let provider
   if (wallet) {

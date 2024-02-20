@@ -16,7 +16,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 
 	console.log('edit input data', data)
 
-	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const collateralTokenAccountInfo = await getCollateralAccount(program)
 
 	const { collAmount, editType } = data
@@ -32,13 +31,15 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 	} else {
 		ixnCalls.push(
 			program.withdrawCollateralFromCometInstruction(
-				collateralAssociatedTokenAccount.address,
+				collateralTokenAccountInfo.address,
 				toScale(collAmount, program.clone.collateral.scale)
 			))
 	}
 
 	const ixns = await Promise.all(ixnCalls)
 	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
+
+	//
 
 	return {
 		result: true
