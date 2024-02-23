@@ -79,7 +79,7 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 
 	if (!collateralAmount) throw new Error('no collateral amount')
 
-	console.log('edit input data', data)
+	// console.log('edit input data', data)
 
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const oracles = await program.getOracles()
@@ -146,7 +146,7 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data, fe
 
 	if (!borrowAmount) throw new Error('no borrow more amount')
 
-	console.log('edit input data', data)
+	// console.log('edit input data', data)
 	const userAccount = await program.getUserAccount()
 	const pools = await program.getPools()
 	const oracles = await program.getOracles()

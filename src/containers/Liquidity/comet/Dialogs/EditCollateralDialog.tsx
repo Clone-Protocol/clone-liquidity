@@ -97,7 +97,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
   useEffect(() => {
     async function fetch() {
       if (open && collData) {
-        console.log('collData', collData)
+        // console.log('collData', collData)
         setDetailValues(collData)
       }
     }

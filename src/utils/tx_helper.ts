@@ -55,7 +55,7 @@ const sendRawTransaction = async (
   if (useMultipleProviders) {
     signature = await Promise.any(
       PROVIDERS.map(async (endpoint) => {
-        const connection = new Connection(endpoint, { commitment: "confirmed", wsEndpoint: process.env.NEXT_PUBLIC_NETWORK_WSS_HELIUS })
+        const connection = new Connection(endpoint, { commitment: "confirmed" })
         return await connection.sendRawTransaction(rawTx, sendOptions)
       })
     )
@@ -74,7 +74,7 @@ const confirmTransaction = async (
   if (useMultipleProviders) {
     return await Promise.any(
       PROVIDERS.map(async (endpoint) => {
-        const connection = new Connection(endpoint, { commitment: "confirmed", wsEndpoint: process.env.NEXT_PUBLIC_NETWORK_WSS_HELIUS })
+        const connection = new Connection(endpoint, { commitment: "confirmed" })
         return await connection.confirmTransaction(strategy, "confirmed")
       })
     )
