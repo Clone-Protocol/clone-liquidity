@@ -811,5 +811,13 @@ export const WHITELIST_ADDRESSES = [
 	"9DVnSrdXUN6xe2fhNPwGhmFuoGv7Z2AU2WEq9hDtQuZC",
 	"HVn348aburUGQMpfL73fKwJGqBM5tT1G4irCKohcv5ZW",
 	"DxKnwAm4DbocvQC2MmZHccHKetYzLZwBSH9b52oqtPhw",
-	"BonReYTNxXwxn4RaazWcf3zUX8u2pYUQVCPjWpzhiZsC"
+	"BonReYTNxXwxn4RaazWcf3zUX8u2pYUQVCPjWpzhiZsC",
+	"AUgAF37aXjLbAA1RVkQt18TBPv7vfmyBRDhi2JE2gJv",
+	"ANc2C8XvEu1NPibxS9KRPwrhruZGKmetk4fS6uiDZeXx",
+	"AcNSmd5CxwLs21TYUmhWt7CW2v159TdYRkvQxb1iBYRj",
+	"A5dqZeZvrPF13bkxvcCdugWp1N8PYqXNPqTJmKPoGQEN",
+	"GHAzzBHB744TLpQNBwuiyceSgWrnsuNgCVwNiBt96rVS",
+	"9iF1kGHFmfv3tmDh8izbJhqvw59rizZCtw8eykr2kYgo",
+	"5nL7FQDH5p1FnrUfQwSGMm9zRiEztYmeyXadW5ikyMf1",
+	"3qwftsZviUumPumYpYuSmS5srHz2ViEHKAch5ypR8sVY"
 ]
