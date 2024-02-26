@@ -79,7 +79,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 		throw new Error('Failed to fetch data!')
 	}
 
-
 	const { positionIndex, changeAmount, editType } = data
 	const comet = userAccountData.value.comet
 	const cometPosition = comet.positions[positionIndex]

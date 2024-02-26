@@ -57,11 +57,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
     }
   }, [positionInfo])
 
-  const initData = () => {
-    // setValue('mintAmount', 0.0)
-    // trigger()
-  }
-
   const {
     handleSubmit,
     setValue,
@@ -110,7 +105,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
 
       if (data) {
         console.log('data', data)
-        initData()
       }
     } catch (err) {
       console.error(err)
