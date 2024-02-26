@@ -591,7 +591,6 @@ export const WHITELIST_ADDRESSES = [
 	"9quxT2BQFPd8j4y6yMJQPB9oBX75jifptWypbzQ88onB",
 	"G5YeCfHvvvtwBWGww2dWCPYX4qoyxtUZH7cYPFW4sjJM",
 	"8mUqwmSL5J91gjcvskjFjjdaHjz6gQXhLAEyXhw6f79E",
-	"EwEHm3AeBFLJpq8PP1VxxF8PEy3eEWpJunxAZjEoY2MG",
 	"zyQjqxdTMSkJykJtFwnVZbxen9oFRhtZJmrJ1eQYKA1",
 	"5KAwFNLcf4US4QrwfXvvA2CcbCLYNCagXz7AQ7EW1Baq",
 	"8sv1oLu1uqcpcNeb6UChnDZ8fLbhN79yCAAyPdUyNYeb",
@@ -819,5 +818,17 @@ export const WHITELIST_ADDRESSES = [
 	"GHAzzBHB744TLpQNBwuiyceSgWrnsuNgCVwNiBt96rVS",
 	"9iF1kGHFmfv3tmDh8izbJhqvw59rizZCtw8eykr2kYgo",
 	"5nL7FQDH5p1FnrUfQwSGMm9zRiEztYmeyXadW5ikyMf1",
-	"3qwftsZviUumPumYpYuSmS5srHz2ViEHKAch5ypR8sVY"
+	"3qwftsZviUumPumYpYuSmS5srHz2ViEHKAch5ypR8sVY",
+	"6J3fzUNnAkvjh9eqrrPMpEAHCJrAmSp5mczCzKXFHRd7",
+	"8vnMYi3USW9xQpgqeNogzwHHyC95Mr2Rj2mRi5qxJFk2",
+	"xzRwdFjd3QfiUP3GptGQ3oed98YeDGWBjmX7hhxditT",
+	"6Skn2fJ45xtvsnaHKVbJ64RTvysDQvN95zoL4pSg3Xj5",
+	"HTtKTUsQhWEjKX6pgiARRuFNoTAo4NrUaqA9VnHa6N8E",
+	"FSKNEuwgYegEmJveDvPMLr5PQShJYqeituw1uRpRx2o5",
+	"DH4wBF6rDcGg4kwyUVBbWqycDRhA8Sxro9EE5rAJxroF",
+	"HZ4sRuoaGmkhwVwe2iX27rR7e9pYksss6QbYbkyh9ynP",
+	"6Sa7DZvnvvUSCrHVyR2NCc7aVJeShcSnXwnmcgpnS49W",
+	"7ymhGKQuwJT8JomTgAxk8QUcCEmSxy7LhAbCUTCWWyn2",
+	"AoyxKntC4NnBFngD5mwXPay5M7Y9TzYV5V9HnmFL5EAf",
+	"EkaNLzCbJpBWfkgu3q8uWuMJhfnnjXKzbed69LapSQeG"
 ]
