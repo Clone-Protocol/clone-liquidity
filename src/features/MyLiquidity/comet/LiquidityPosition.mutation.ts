@@ -109,6 +109,10 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 			//if success, invalidate query
 			queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 			queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+			//hacky retry query
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+			}, 3000)
 
 			await program.provider.connection.removeAccountChangeListener(subscriptionId);
 		},
