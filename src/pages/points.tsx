@@ -1,12 +1,36 @@
 'use client'
+import { DehydratedState, Hydrate, QueryClient, dehydrate } from '@tanstack/react-query'
 import { StyledSection } from './index'
 import { Container, Box, Typography, Stack } from '@mui/material'
 import Image from 'next/image'
 import LearnMoreIcon from 'public/images/learn-more.svg'
 import MyPointStatus from '~/containers/Points/MyPointStatus'
 import RankingList from '~/containers/Points/RankingList'
+import { IS_NOT_LOCAL_DEVELOPMENT } from '~/utils/constants'
+import { fetchRanking } from '~/features/Points/Ranking.query'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 
-const Points = () => {
+//SSR
+export const getStaticProps = (async () => {
+  const queryClient = new QueryClient()
+
+  if (IS_NOT_LOCAL_DEVELOPMENT) {
+    console.log('prefetch')
+    await queryClient.prefetchQuery(['ranks'], () => fetchRanking())
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+      //cached time
+      revalidate: 30,
+    },
+  }
+}) satisfies GetStaticProps<{
+  dehydratedState: DehydratedState
+}>
+
+const Points = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   return (
     <StyledSection>
@@ -25,7 +49,9 @@ const Points = () => {
           <Box mt='10px'>
             <MyPointStatus />
 
-            <RankingList />
+            <Hydrate state={dehydratedState}>
+              <RankingList />
+            </Hydrate>
           </Box>
         </Box>
       </Container>

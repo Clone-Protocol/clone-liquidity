@@ -75,10 +75,7 @@ export const fetchTotalLiquidity = async ({
   // Fetch latest record
   // const connection = new Connection(networkEndpoint, 'confirmed')
   const connection = program.provider.connection
-  const poolAddress = PublicKey.findProgramAddressSync(
-    [Buffer.from("pools")],
-    new PublicKey(process.env.NEXT_PUBLIC_CLONE_PROGRAM_ID!)
-  )[0]
+  const poolAddress = program.getPoolsAddress()
   const pools = await Pools.fromAccountAddress(connection, poolAddress)
   let latestLiquidity = 0
   pools.pools.forEach((pool) => {

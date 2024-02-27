@@ -1,7 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useState } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { Grid } from '~/components/Common/DataGrid'

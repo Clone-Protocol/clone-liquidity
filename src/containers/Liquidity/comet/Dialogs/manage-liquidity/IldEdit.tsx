@@ -13,7 +13,7 @@ import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/Liquidit
 import { useEffect, useState } from "react"
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { usePayILDMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
-import { LoadingProgress } from "~/components/Common/Loading"
+import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { Collateral as StableCollateral, collateralMapping } from "~/data/assets"
 import { NETWORK_NAME, ON_USD } from "~/utils/constants"
@@ -295,9 +295,16 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               </HealthBox>
           }
         </Box>
-        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNotValid}>
-          <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : (!ildAssetAmount && !ildCollAmount) ? 'Please adjust payment amount' : (remainingAssetILD === 0 && remainingCollILD === 0) ? 'Pay Entire ILD Balance' : 'Adjust ILD'}</Typography>
-        </SubmitButton>
+
+        {isSubmitting ?
+          <Box display='flex' justifyContent='center' my='15px'>
+            <LoadingButton width='100%' height='52px' />
+          </Box>
+          :
+          <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNotValid}>
+            <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : (!ildAssetAmount && !ildCollAmount) ? 'Please adjust payment amount' : (remainingAssetILD === 0 && remainingCollILD === 0) ? 'Pay Entire ILD Balance' : 'Adjust ILD'}</Typography>
+          </SubmitButton>
+        }
       </Box>
     </>
   ) : (

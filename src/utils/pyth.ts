@@ -27,7 +27,7 @@ export const fetchPythPriceHistory = async (pythSymbol: string, range: Range): P
     const symbol = convertPythSymbolToSupabaseSymbol(pythSymbol)
     let queryString = `symbol=${symbol}&range=${range}`
 
-    let response = await axios.get(`/.netlify/functions/pyth-data-fetch?${queryString}`)
+    let response = await axios.get(`${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/pyth-data-fetch?${queryString}`)
 
     return response.data
 }

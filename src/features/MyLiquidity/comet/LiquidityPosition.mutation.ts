@@ -1,6 +1,6 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { funcNoWallet } from '~/features/baseQuery'
@@ -45,7 +45,6 @@ interface CallNewProps {
 	feeLevel: FeeLevel
 }
 export function useNewPositionMutation(userPubKey: PublicKey | null) {
-	const queryClient = useQueryClient()
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	const { setTxState } = useTransactionState()
@@ -53,10 +52,7 @@ export function useNewPositionMutation(userPubKey: PublicKey | null) {
 
 	if (wallet) {
 		return useMutation({
-			mutationFn: async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
-			onSuccess: () => {
-				// queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
-			}
+			mutationFn: async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel })
 		})
 	} else {
 		return useMutation((_: NewFormData) => funcNoWallet())
@@ -64,10 +60,10 @@ export function useNewPositionMutation(userPubKey: PublicKey | null) {
 }
 
 
-export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel }: CallEditProps) => {
+export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel, queryClient }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-	console.log('edit input data', data)
+	// console.log('edit input data', data)
 
 	const [userAccountData, poolsData, collateralAccountResult] = await Promise.allSettled([
 		program.getUserAccount(),
@@ -82,7 +78,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 	) {
 		throw new Error('Failed to fetch data!')
 	}
-
 
 	const { positionIndex, changeAmount, editType } = data
 	const comet = userAccountData.value.comet
@@ -104,6 +99,23 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 	}
 
 	const ixns = await Promise.all(ixnCalls)
+
+	//socket handler
+	const subscriptionId = program.provider.connection.onAccountChange(
+		program.getPoolsAddress(),
+		async (updatedAccountInfo) => {
+			console.log("Updated account info: ", updatedAccountInfo)
+
+			//if success, invalidate query
+			queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+			queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+
+			await program.provider.connection.removeAccountChangeListener(subscriptionId);
+		},
+		"confirmed"
+	)
+	console.log('Starting web socket, subscription ID: ', subscriptionId);
+
 	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 	return {
@@ -122,6 +134,7 @@ interface CallEditProps {
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
 	feeLevel: FeeLevel
+	queryClient: QueryClient
 }
 export function useEditPositionMutation(userPubKey: PublicKey | null) {
 	const queryClient = useQueryClient()
@@ -132,15 +145,15 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 
 	if (wallet) {
 		return useMutation({
-			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			mutationFn: async (data: EditFormData) => callEdit({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel, queryClient }),
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
-				queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+				// queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+				// queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
 
-				//hacky retry query
-				setTimeout(() => {
-					queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
-				}, 3000)
+				// //hacky retry query
+				// setTimeout(() => {
+				// 	queryClient.invalidateQueries({ queryKey: ['liquidityPosition'] })
+				// }, 3000)
 			}
 		})
 	} else {

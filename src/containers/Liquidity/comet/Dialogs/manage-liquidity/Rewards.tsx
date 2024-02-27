@@ -6,7 +6,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import { useState } from "react"
-import { LoadingProgress } from "~/components/Common/Loading"
+import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { ON_USD } from "~/utils/constants"
 
@@ -87,9 +87,16 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
             })} {ON_USD}</Typography>
         </BoxWithBorder>
       </Box>
-      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
-        <Typography variant='p_xlg'>{isValidToRewards ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
-      </SubmitButton>
+
+      {isSubmitting ?
+        <Box display='flex' justifyContent='center' my='15px'>
+          <LoadingButton width='100%' height='52px' />
+        </Box>
+        :
+        <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
+          <Typography variant='p_xlg'>{isValidToRewards ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
+        </SubmitButton>
+      }
     </>
   ) : <></>
 }

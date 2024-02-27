@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CloneClient, toCloneScale, toScale } from 'clone-protocol-sdk/sdk/src/clone'
 import * as anchor from "@coral-xyz/anchor";
 import { useClone } from '~/hooks/useClone'
@@ -72,14 +72,14 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 	}
 }
 
-export const callEditCollateral = async ({ program, userPubKey, setTxState, data, feeLevel }: CallEditProps) => {
+export const callEditCollateral = async ({ program, userPubKey, setTxState, data, feeLevel, queryClient }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const { borrowIndex, collateralAmount, editType } = data
 
 	if (!collateralAmount) throw new Error('no collateral amount')
 
-	console.log('edit input data', data)
+	// console.log('edit input data', data)
 
 	const collateralAssociatedTokenAccount = await getCollateralAccount(program)
 	const oracles = await program.getOracles()
@@ -133,20 +133,38 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 	}
 
 	const ixns = await Promise.all(ixnCalls)
-	console.log("n ixns:", ixns.length);
+
+	//socket handler
+	const subscriptionId = program.provider.connection.onAccountChange(
+		collateralAssociatedTokenAccount.address,
+		async (updatedAccountInfo) => {
+			console.log("Updated account info: ", updatedAccountInfo)
+
+			//if success, invalidate query
+			queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			}, 3000)
+
+			await program.provider.connection.removeAccountChangeListener(subscriptionId);
+		},
+		"confirmed"
+	)
+	console.log('Starting web socket, subscription ID: ', subscriptionId);
+
 	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 	return result;
 }
 
-export const callEditBorrow = async ({ program, userPubKey, setTxState, data, feeLevel }: CallEditProps) => {
+export const callEditBorrow = async ({ program, userPubKey, setTxState, data, feeLevel, queryClient }: CallEditProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
 	const { borrowIndex, borrowAmount, editType } = data
 
 	if (!borrowAmount) throw new Error('no borrow more amount')
 
-	console.log('edit input data', data)
+	// console.log('edit input data', data)
 	const userAccount = await program.getUserAccount()
 	const pools = await program.getPools()
 	const oracles = await program.getOracles()
@@ -214,6 +232,25 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data, fe
 	}
 
 	const ixns = await Promise.all(ixnCalls)
+
+	//socket handler
+	const subscriptionId = program.provider.connection.onAccountChange(
+		program.getUserAccountAddress(),
+		async (updatedAccountInfo) => {
+			console.log("Updated account info: ", updatedAccountInfo)
+
+			//if success, invalidate query
+			queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			}, 3000)
+
+			await program.provider.connection.removeAccountChangeListener(subscriptionId);
+		},
+		"confirmed"
+	)
+	console.log('Starting web socket, subscription ID: ', subscriptionId);
+
 	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
 
 	return result
@@ -231,6 +268,7 @@ interface CallEditProps {
 	setTxState: (state: TransactionStateType) => void
 	data: EditFormData
 	feeLevel: FeeLevel
+	queryClient: QueryClient
 }
 export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 	const queryClient = useQueryClient()
@@ -241,14 +279,14 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 
 	if (wallet) {
 		return useMutation({
-			mutationFn: async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			mutationFn: async (data: EditFormData) => callEditCollateral({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel, queryClient }),
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+				// queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
 
-				// hacky retry
-				setTimeout(() => {
-					queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
-				}, 3000)
+				// // hacky retry
+				// setTimeout(() => {
+				// 	queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+				// }, 3000)
 			}
 		})
 	} else {
@@ -265,14 +303,14 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 
 	if (wallet) {
 		return useMutation({
-			mutationFn: async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }),
+			mutationFn: async (data: EditFormData) => callEditBorrow({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel, queryClient }),
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+				// queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
 
-				// hacky retry
-				setTimeout(() => {
-					queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
-				}, 3000)
+				// // hacky retry
+				// setTimeout(() => {
+				// 	queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+				// }, 3000)
 			}
 		})
 	} else {
