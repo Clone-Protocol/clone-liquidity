@@ -46,7 +46,7 @@ const PairInput: React.FC<Props> = ({
             </Typography>
             <MaxPointerValue>
               <Typography variant="p">
-                {balance?.toLocaleString(undefined, { maximumFractionDigits: 6 })}
+                {balance?.toLocaleString('en-US', { maximumFractionDigits: 6 })}
               </Typography>
               {!hideMaxButton && <MaxButton onClick={() => onMax && onMax(balance!)}>MAX</MaxButton>}
             </MaxPointerValue>

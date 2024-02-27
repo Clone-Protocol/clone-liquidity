@@ -9,7 +9,7 @@ import { useClosePositionMutation } from "~/features/MyLiquidity/comet/Liquidity
 import Image from "next/image"
 import CheckIcon from 'public/images/check-icon.svg'
 import { fromScale } from "clone-protocol-sdk/sdk/src/clone"
-import { LoadingProgress } from "~/components/Common/Loading"
+import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 
 const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, handleClose: () => void }) => {
@@ -106,7 +106,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={positionLiquidity > 0 ? '#fff' : '#66707e'}>
-            ${positionLiquidity.toLocaleString(undefined, { maximumFractionDigits: 8 })}
+            ${positionLiquidity.toLocaleString('en-US', { maximumFractionDigits: 8 })}
           </Typography>
 
           {positionLiquidity === 0 ?
@@ -126,7 +126,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={ildBalance > 0 ? '#fff' : '#66707e'}>
-            ${ildBalance.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+            ${ildBalance.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
 
           {ildBalance === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
@@ -145,7 +145,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={remainRewards > 0 ? '#fff' : '#66707e'}>
-            ${remainRewards.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
+            ${remainRewards.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
           {remainRewards === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
               <Image src={CheckIcon} alt='check' />
@@ -160,9 +160,16 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
       <Box>
         <Typography variant='p_lg'>Step 4 (Final Step): Close This Liquidity Position</Typography>
       </Box>
-      <SubmitButton onClick={() => handleClosePosition()} disabled={!isValidClose}>
-        <Typography variant='p_xlg'>{isValidClose ? 'Close This Liquidity Position' : 'Please Complete Step 1,2, and 3'}</Typography>
-      </SubmitButton>
+
+      {isSubmitting ?
+        <Box display='flex' justifyContent='center' my='15px'>
+          <LoadingButton width='100%' height='52px' />
+        </Box>
+        :
+        <SubmitButton onClick={() => handleClosePosition()} disabled={!isValidClose}>
+          <Typography variant='p_xlg'>{isValidClose ? 'Close This Liquidity Position' : 'Please Complete Step 1,2, and 3'}</Typography>
+        </SubmitButton>
+      }
     </>
   ) : <></>
 }

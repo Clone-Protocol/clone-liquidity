@@ -68,7 +68,7 @@ const RatioSlider: React.FC<Props> = ({ min = 0, value, hideValueBox = false, sh
 				{!hideValueBox ? <ValueBox><Typography variant='p_xlg'>{valueLabelFormat(value)}</Typography></ValueBox> : <></>}
 				{showChangeRatio &&
 					<Box display='flex'>
-						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { border: '1px solid #ff0084' } : {}} placeholder="0.00" value={value >= 1000 ? Number(value).toFixed(0) : Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
+						<InputAmount id="ip-amount" type="number" min={0} style={hasLowerMin ? { border: '1px solid #ff0084' } : {}} placeholder="0.00" value={value >= 1000 ? Number(value).toFixed(0) : Number(value).toLocaleString('en-US', { maximumFractionDigits: 1 })} onChange={(event) => onChange && onChange(event, parseFloat(event.currentTarget.value))} />
 						<div style={{ marginLeft: '-23px', marginRight: '5px', marginTop: '10px' }}><Typography fontSize='26px' color={value > 0 ? '#fff' : '#66707e'}>%</Typography></div>
 					</Box>
 				}

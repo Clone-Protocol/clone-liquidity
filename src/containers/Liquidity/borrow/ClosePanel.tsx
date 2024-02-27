@@ -22,7 +22,7 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg'>
-            {borrowDetail.borrowedOnasset.toLocaleString(undefined, { maximumFractionDigits: 6 })} {borrowDetail.tickerSymbol}
+            {borrowDetail.borrowedOnasset.toLocaleString('en-US', { maximumFractionDigits: 6 })} {borrowDetail.tickerSymbol}
           </Typography>
 
           {canCloseComet ?

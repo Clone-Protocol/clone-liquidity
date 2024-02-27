@@ -13,7 +13,7 @@ import { useLiquidityPositionQuery } from "~/features/MyLiquidity/comet/Liquidit
 import { useEffect, useState } from "react"
 import { fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { usePayILDMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
-import { LoadingProgress } from "~/components/Common/Loading"
+import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { Collateral as StableCollateral, collateralMapping } from "~/data/assets"
 import { NETWORK_NAME, ON_USD } from "~/utils/constants"
@@ -143,12 +143,12 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           </Box>
           <Box>
             <Typography variant='p_lg'>
-              {Math.max(0, positionInfo.onassetILD).toLocaleString(undefined, {
+              {Math.max(0, positionInfo.onassetILD).toLocaleString('en-US', {
                 maximumFractionDigits: 8,
               })} {positionInfo.tickerSymbol}
             </Typography>
             <Typography variant='p_lg' color='#66707e' ml='10px'>
-              {`($${(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString(undefined, {
+              {`($${(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString('en-US', {
                 maximumFractionDigits: 8
               })})`}
             </Typography>
@@ -188,8 +188,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
                 </Box>
                 <Box>
-                  <Typography variant='p_lg'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-                  <Typography variant='p_lg' color='#66707e' ml='5px'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+                  <Typography variant='p_lg'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
+                  <Typography variant='p_lg' color='#66707e' ml='5px'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString('en-US', { maximumFractionDigits: 8 })})`}</Typography>
                 </Box>
               </StackWithBorder>
             }
@@ -213,7 +213,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <StackWithBorder direction='row' justifyContent='space-between'>
             <Typography variant='p_lg'>{ON_USD} ILD</Typography>
             <Typography variant='p_lg'>
-              {Math.max(0, positionInfo.collateralILD).toLocaleString(undefined, {
+              {Math.max(0, positionInfo.collateralILD).toLocaleString('en-US', {
                 maximumFractionDigits: 8,
               })} {ON_USD}
             </Typography>
@@ -252,8 +252,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                     {/* <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' /> */}
                   </Box>
                   <Box>
-                    <Typography variant='p_lg'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })}</Typography>
-                    <Typography variant='p_lg' color='#66707e' ml='5px'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString(undefined, { maximumFractionDigits: 8 })})`}</Typography>
+                    <Typography variant='p_lg'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
+                    <Typography variant='p_lg' color='#66707e' ml='5px'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString('en-US', { maximumFractionDigits: 8 })})`}</Typography>
                   </Box>
                 </StackWithBorder>
               }
@@ -295,9 +295,16 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               </HealthBox>
           }
         </Box>
-        <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNotValid}>
-          <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : (!ildAssetAmount && !ildCollAmount) ? 'Please adjust payment amount' : (remainingAssetILD === 0 && remainingCollILD === 0) ? 'Pay Entire ILD Balance' : 'Adjust ILD'}</Typography>
-        </SubmitButton>
+
+        {isSubmitting ?
+          <Box display='flex' justifyContent='center' my='15px'>
+            <LoadingButton width='100%' height='52px' />
+          </Box>
+          :
+          <SubmitButton onClick={handleSubmit(onEdit)} disabled={isNotValid}>
+            <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : (!ildAssetAmount && !ildCollAmount) ? 'Please adjust payment amount' : (remainingAssetILD === 0 && remainingCollILD === 0) ? 'Pay Entire ILD Balance' : 'Adjust ILD'}</Typography>
+          </SubmitButton>
+        }
       </Box>
     </>
   ) : (

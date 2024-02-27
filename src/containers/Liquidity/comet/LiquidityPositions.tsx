@@ -155,7 +155,7 @@ let columns: GridColDef[] = [
       </Stack>
     },
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.ildDollarPrice.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+      return <Typography variant='p_xlg'>${params.row.ildDollarPrice.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography>
     },
   },
   {
@@ -171,7 +171,7 @@ let columns: GridColDef[] = [
       </Stack>
     },
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography>
     },
   },
   {
@@ -191,7 +191,7 @@ let columns: GridColDef[] = [
         :
         Number(params.value) > 0 ?
           <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
-            <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}`: '<0.01'}%</Typography>
+            <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}` : '<0.01'}%</Typography>
           </Box>
           :
           <Box display='flex' alignItems='center' color='white'>

@@ -49,7 +49,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 
 const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, currentRatio, disableHandleRatio = false, onChangeRatio }) => {
   const valueLabelFormat = (value: number) => {
-    return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
+    return `${value.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
   }
 
   const handleChangeMintRatio = (event: Event, newValue: number | number[]) => {
@@ -79,7 +79,7 @@ const EditLiquidityRatioSlider: React.FC<Props> = ({ min = 0, max = 100, ratio, 
           />
           <PrevBox sx={{ left: `calc(${currentRatio.toFixed(1)}% - 30px)` }}>
             <Pointer>▲</Pointer>
-            <FixValueLabel><Typography variant='p_lg'>{currentRatio.toLocaleString(undefined, { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
+            <FixValueLabel><Typography variant='p_lg'>{currentRatio.toLocaleString('en-US', { maximumFractionDigits: 2 })}%</Typography></FixValueLabel>
             <Box mt='-4px'><Typography variant='p' color='#66707e'>Current</Typography></Box>
           </PrevBox>
         </Box>

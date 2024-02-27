@@ -52,7 +52,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
           <EditRowBox sx={isEditBorrowHover ? { background: '#1b1b1b' } : {}}>
             <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='14px'>
               <Box textAlign='left'>
-                <Box><Typography fontSize='26px'>{positionInfo.borrowedOnasset.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
+                <Box><Typography fontSize='26px'>{positionInfo.borrowedOnasset.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography></Box>
                 <Box mt='-5px'><Typography variant='p' color='#66707e'>${borrowedDollarPrice.toLocaleString()}</Typography></Box>
               </Box>
               <TickerBox display="flex" alignItems='center'>
@@ -73,7 +73,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
       <EditRowBox sx={isEditCollHover ? { background: '#1b1b1b' } : {}}>
         <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='14px'>
           <Box textAlign='left'>
-            <Box><Typography fontSize='26px'>{positionInfo.collateralAmount.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
+            <Box><Typography fontSize='26px'>{positionInfo.collateralAmount.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography></Box>
             <Box mt='-5px'><Typography variant='p' color='#66707e'>${positionInfo.collateralAmount.toLocaleString()}</Typography></Box>
           </Box>
           <TickerBox display="flex" alignItems='center'>

@@ -6,7 +6,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useRewardsMutation } from "~/features/MyLiquidity/comet/LiquidityPosition.mutation"
 import { useState } from "react"
-import { LoadingProgress } from "~/components/Common/Loading"
+import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { ON_USD } from "~/utils/constants"
 
@@ -69,10 +69,10 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo.onassetILD).toLocaleString(undefined, {
+            {Math.max(0, -positionInfo.onassetILD).toLocaleString('en-US', {
               maximumFractionDigits: 8,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD)</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString('en-US', { maximumFractionDigits: 6 })} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>
@@ -82,14 +82,21 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo.collateralILD).toLocaleString(undefined, {
+            {Math.max(0, -positionInfo.collateralILD).toLocaleString('en-US', {
               maximumFractionDigits: 8,
             })} {ON_USD}</Typography>
         </BoxWithBorder>
       </Box>
-      <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
-        <Typography variant='p_xlg'>{isValidToRewards ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
-      </SubmitButton>
+
+      {isSubmitting ?
+        <Box display='flex' justifyContent='center' my='15px'>
+          <LoadingButton width='100%' height='52px' />
+        </Box>
+        :
+        <SubmitButton onClick={() => handleClaim()} disabled={!isValidToRewards || isSubmitting}>
+          <Typography variant='p_xlg'>{isValidToRewards ? 'Claim Rewards' : 'No Rewards to Claim'}</Typography>
+        </SubmitButton>
+      }
     </>
   ) : <></>
 }

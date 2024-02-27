@@ -33,7 +33,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
 
   // initialized state
   useEffect(() => {
-    if (positionInfo && positionInfo.comet) {
+    if (positionInfo && positionInfo.comet && positionInfo.comet.positions[positionIndex]) {
       const position = positionInfo.comet.positions[positionIndex]
       const healthCoefficient = fromScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient, 2)
       const currentPosition = fromScale(position.committedCollateralLiquidity, 6)
@@ -56,11 +56,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
       }
     }
   }, [positionInfo])
-
-  const initData = () => {
-    // setValue('mintAmount', 0.0)
-    // trigger()
-  }
 
   const {
     handleSubmit,
@@ -110,7 +105,6 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
 
       if (data) {
         console.log('data', data)
-        initData()
       }
     } catch (err) {
       console.error(err)
@@ -138,7 +132,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
             <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
           </Box>
           <Box>
-            <Typography variant='p_lg'>${totalLiquidity.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography>
+            <Typography variant='p_lg'>${totalLiquidity.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography>
             <Typography variant='p_lg' ml='9px' sx={differentLiquidityVal >= 0 ? { color: '#4fe5ff' } : { color: '#ff0084' }}>
               {differentLiquidityVal >= 0 ? '+' : '-'}${Math.abs(differentLiquidityVal).toLocaleString()}
             </Typography>
