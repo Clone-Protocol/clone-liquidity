@@ -63,7 +63,7 @@ let columns: GridColDef[] = [
 	// 	headerName: '',
 	// 	flex: 1,
 	// 	renderCell(params: GridRenderCellParams<string>) {
-	// 		return <Box mr='5px'><Typography variant='p_lg' color='#c5c7d9'>{params.value?.toLocaleString(undefined, { maximumFractionDigits: 5 })}</Typography></Box>
+	// 		return <Box mr='5px'><Typography variant='p_lg' color='#c5c7d9'>{params.value?.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography></Box>
 	// 	},
 	// },
 ]

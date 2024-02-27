@@ -25,7 +25,7 @@ const PairInput: React.FC<Props> = ({ title, tickerIcon, ticker, balance, balanc
 			<Stack direction="row" justifyContent="space-between">
 				<Box><Typography variant='p_lg' color='#66707e'>{title}</Typography></Box>
 				{!balanceDisabled ? <Box display='flex' alignItems='center'>
-					<Typography variant='p' color='#66707e'>Balance: </Typography> <Typography variant='p' color='#b5fdf9' ml='5px'>{balance?.toLocaleString(undefined, { maximumFractionDigits: 4 })}</Typography>
+					<Typography variant='p' color='#66707e'>Balance: </Typography> <Typography variant='p' color='#b5fdf9' ml='5px'>{balance?.toLocaleString('en-US', { maximumFractionDigits: 4 })}</Typography>
 					<MaxButton onClick={() => onMax && onMax(balance!)}>MAX</MaxButton></Box> : <></>}
 			</Stack>
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">

@@ -40,7 +40,7 @@ const PairInput: React.FC<Props> = ({
 				{headerTitle ? (
 					<Stack direction="row" justifyContent="flex-end">
 						<Typography variant='p' color='#66707e'>
-							{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString(undefined, { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
+							{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString('en-US', { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
 						</Typography>
 						{(headerValue || headerValue == 0) && <MaxButton onClick={() => onMax && onMax(headerValue)}>MAX</MaxButton>}
 					</Stack>

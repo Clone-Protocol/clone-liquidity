@@ -69,10 +69,10 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo.onassetILD).toLocaleString(undefined, {
+            {Math.max(0, -positionInfo.onassetILD).toLocaleString('en-US', {
               maximumFractionDigits: 8,
             })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString(undefined, { maximumFractionDigits: 6 })} USD)</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString('en-US', { maximumFractionDigits: 6 })} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>
@@ -82,7 +82,7 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo.collateralILD).toLocaleString(undefined, {
+            {Math.max(0, -positionInfo.collateralILD).toLocaleString('en-US', {
               maximumFractionDigits: 8,
             })} {ON_USD}</Typography>
         </BoxWithBorder>
