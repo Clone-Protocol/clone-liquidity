@@ -33,7 +33,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
 
   // initialized state
   useEffect(() => {
-    if (positionInfo && positionInfo.comet) {
+    if (positionInfo && positionInfo.comet && positionInfo.comet.positions[positionIndex]) {
       const position = positionInfo.comet.positions[positionIndex]
       const healthCoefficient = fromScale(positionInfo.pools.pools[poolIndex].assetInfo.positionHealthScoreCoefficient, 2)
       const currentPosition = fromScale(position.committedCollateralLiquidity, 6)

@@ -142,6 +142,9 @@ export const callEditCollateral = async ({ program, userPubKey, setTxState, data
 
 			//if success, invalidate query
 			queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			}, 3000)
 
 			await program.provider.connection.removeAccountChangeListener(subscriptionId);
 		},
@@ -238,6 +241,9 @@ export const callEditBorrow = async ({ program, userPubKey, setTxState, data, fe
 
 			//if success, invalidate query
 			queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['borrowPosition'] })
+			}, 3000)
 
 			await program.provider.connection.removeAccountChangeListener(subscriptionId);
 		},

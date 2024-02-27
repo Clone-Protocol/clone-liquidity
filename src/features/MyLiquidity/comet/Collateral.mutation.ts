@@ -48,6 +48,11 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 			queryClient.invalidateQueries({ queryKey: ['editCollateral'] })
 			queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
 
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['editCollateral'] })
+				queryClient.invalidateQueries({ queryKey: ['cometInfos'] })
+			}, 3500)
+
 			await program.provider.connection.removeAccountChangeListener(subscriptionId);
 		},
 		"confirmed"
