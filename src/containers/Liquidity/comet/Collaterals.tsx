@@ -4,16 +4,16 @@ import { useCallback, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams } from '@mui/x-data-grid'
 import { Grid, CellTicker, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { Collateral } from '~/features/MyLiquidity/comet/CometInfo.query'
-import { useSetAtom } from 'jotai'
-import { mintUSDi } from '~/features/globalAtom'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
 import { useWallet } from '@solana/wallet-adapter-react'
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
+import { ON_USD } from '~/utils/constants'
+import BridgeDialog from '~/components/Bridge/BridgeDialog'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
   const [openEditCollateral, setOpenEditCollateral] = useState(false)
-  const setMintUsdi = useSetAtom(mintUSDi)
+  const [showBridge, setShowBridge] = useState(false)
 
   let dataCollaterals = collaterals
   if (publicKey && hasNoCollateral) {
@@ -30,7 +30,7 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
   const rowsCollateral = dataCollaterals.map((coll, id) => ({
     ...coll,
     id,
-    setMintUsdi
+    setShowBridge
   }))
 
   const handleRowClick: GridEventListener<'rowClick'> = useCallback(() => {
@@ -61,6 +61,8 @@ const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCol
           onRefetchData()
         }}
       />
+
+      <BridgeDialog open={showBridge} handleClose={() => { setShowBridge(false) }} />
     </>
   )
 
@@ -109,8 +111,7 @@ let columns: GridColDef[] = [
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        // <GetButton onClick={(e) => { e.stopPropagation(); params.row.setMintUsdi(true) }}><Typography variant='p'>Get {ON_USD}</Typography></GetButton>
-        <></>
+        <GetButton onClick={(e) => { e.stopPropagation(); params.row.setShowBridge(true) }}><Typography variant='p'>Get more {ON_USD}</Typography></GetButton>
       )
     },
   },
@@ -119,10 +120,10 @@ let columns: GridColDef[] = [
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
 
 const GetButton = styled(Button)`
-  width: 130px;
-  height: 30px;
+  width: 110px;
+  height: 28px;
   flex-grow: 0;
-  border-radius: 5px;
+  border-radius: 100px;
   color: #fff;
   border: solid 1px ${(props) => props.theme.basis.shadowGloom};
   background: ${(props) => props.theme.basis.jurassicGrey};
