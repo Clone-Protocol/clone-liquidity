@@ -42,7 +42,7 @@ export const fetchAssets = async ({ setShowPythBanner, mainCloneClient, networkE
 
 	const result: AssetList[] = []
 
-	for (let i = 0; i < iassetInfos.length; i++) {
+	for (let i = 0; i < 2; i++) {
 		const info = iassetInfos[i]
 		const { tickerName, tickerSymbol, tickerIcon, ticker, assetType } = assetMapping(info.poolIndex)
 		const stats = poolStats[info.poolIndex]

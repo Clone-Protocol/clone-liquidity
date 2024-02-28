@@ -9,12 +9,14 @@ export enum Collateral {
 
 export enum AssetTickers {
     arbitrum = 0,
-    optimism = 1
+    optimism = 1,
+    sui = 2
 }
 
 export enum Asset {
     Arbitrum,
-    Optimism
+    Optimism,
+    Sui
 }
 
 export enum AssetType {
@@ -40,6 +42,14 @@ export const ASSETS = [
         tickerIcon: '/images/assets/on-op.svg',
         ticker: 'optimism',
         pythSymbol: 'Crypto.OP/USD'
+    },
+    {
+        tickerName: 'Clone Sui',
+        tickerSymbol: 'clSui',
+        tickerIcon: '/images/assets/on-sui.svg',
+        ticker: 'sui',
+        pythSymbol: 'Crypto.SUI/USD',
+        mainColor: '#e24e4c',
     }
 ]
 
@@ -95,6 +105,15 @@ export const assetMapping = (index: number) => {
             pythSymbol = 'Crypto.OP/USD'
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("7QDfgP97Knwzz7uWrvzMEwFNLNT5Cbe2YPVKUY4WpBFa")
+            break
+        case Asset.Sui:
+            tickerName = 'Clone Sui'
+            tickerSymbol = 'clSUI'
+            tickerIcon = '/images/assets/on-sui.svg'
+            ticker = 'sui'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.SUI/USD'
+            supabaseSymbol = pythSymbol
             break
         default:
             throw new Error('Not supported')
