@@ -7,12 +7,14 @@ import { usePointStatusQuery } from '~/features/Points/PointStatus.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
+import withSuspense from '~/hocs/withSuspense'
+import { LoadingProgress } from '~/components/Common/Loading'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
   const { setOpen } = useWalletDialog()
 
-  const { data: infos, refetch } = usePointStatusQuery({
+  const { data: infos } = usePointStatusQuery({
     userPubKey: publicKey,
     refetchOnMount: "always",
     enabled: publicKey != null
@@ -135,4 +137,4 @@ const ConnectWallet = styled(Button)`
   }
 `
 
-export default MyPointStatus
+export default withSuspense(MyPointStatus, <LoadingProgress />)
