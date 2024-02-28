@@ -14,6 +14,8 @@ import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '../Common/CommonButtons'
 import { assetMapping } from '~/data/assets'
 import { WHITELIST_ADDRESSES_FOR_UNWRAP } from '~/utils/whitelist_addressed_for_unwrap'
+import DebridgeIcon from 'public/images/sponsors/debridge-ic.svg'
+import { LearnMoreIcon } from '../Common/SvgIcons'
 
 interface Props {
   assetIndex: number
@@ -132,10 +134,23 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   return (
     <>
       <div style={{ width: '100%', height: '100%' }}>
-        <Box p='18px' sx={{ paddingBottom: { xs: '150px', md: '18px' } }}>
+        <Box sx={{ paddingBottom: { xs: '150px', md: '18px' } }}>
           <Box>
             {isWrap ?
               <Box>
+                <a href={pairData.wrapPortUrl} target='_blank'>
+                  <GetMoreStack direction="row" justifyContent="space-between" alignItems="center" px='20px'>
+                    <Box display='flex' flexDirection='column' alignItems='flex-start'>
+                      <Box display='flex' gap={1} alignItems='center' mb='4px'>
+                        <Typography variant='p_lg' color='#fff'>Get more {pairData.wrapTickerSymbol}</Typography>
+                        <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>
+                      </Box>
+                      <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol} as {pairData.wrapTickerSymbol} to Solana</Typography>
+                    </Box>
+                    <Image src={DebridgeIcon} alt='debridge' />
+                  </GetMoreStack>
+                </a>
+
                 <Controller
                   name="amountWrapAsset"
                   control={control}
@@ -261,6 +276,18 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   )
 }
 
+const GetMoreStack = styled(Stack)`
+  width: 100%;
+  height: 80px;
+  border-radius: 10px;
+  border: solid 1px ${(props) => props.theme.basis.slug};
+  background-color: rgba(255, 255, 255, 0.05);
+  margin-bottom: 30px;
+  cursor: pointer;
+  &:hover {
+    border: solid 1px ${(props) => props.theme.basis.skylight};
+  }
+`
 const MaxStack = styled(Stack)`
   width: 100%;
   height: 66px;

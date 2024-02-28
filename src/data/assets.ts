@@ -29,7 +29,7 @@ export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
 //@MEMO: to add more asset, need to adjust here
-export const MAX_POOLS_FOR_SHOW = 3
+export const MAX_POOLS_FOR_SHOW = 2
 
 export const ASSETS = [
     {
@@ -77,6 +77,7 @@ export const assetMapping = (index: number) => {
     let tickerSymbol = ''
     let wrapTickerName = ''
     let wrapTickerSymbol = ''
+    let wrapPortUrl = ''
     let tickerIcon = ''
     let ticker = ''
     let assetType: number
@@ -89,6 +90,7 @@ export const assetMapping = (index: number) => {
             tickerSymbol = 'clARB'
             wrapTickerName = 'DeBridge Arbitrum'
             wrapTickerSymbol = 'deARB'
+            wrapPortUrl = 'https://app.debridge.finance/deport?inputChain=42161&outputChain=7565164&inputCurrency=0x912ce59144191c1204e64559fe8253a0e49e6548&outputCurrency='
             tickerIcon = '/images/assets/on-arb.svg'
             ticker = 'arbitrum'
             assetType = AssetType.Crypto
@@ -101,6 +103,7 @@ export const assetMapping = (index: number) => {
             tickerSymbol = 'clOP'
             wrapTickerName = 'DeBridge Optimism'
             wrapTickerSymbol = 'deOP'
+            wrapPortUrl = 'https://app.debridge.finance/deport?inputChain=10&outputChain=7565164&inputCurrency=0x4200000000000000000000000000000000000042&outputCurrency='
             tickerIcon = '/images/assets/on-op.svg'
             ticker = 'optimism'
             assetType = AssetType.Crypto
@@ -111,6 +114,9 @@ export const assetMapping = (index: number) => {
         case Asset.Sui:
             tickerName = 'Clone Sui'
             tickerSymbol = 'clSUI'
+            wrapTickerName = 'Wormhole Sui'
+            wrapTickerSymbol = 'wSui'
+            wrapPortUrl = 'https://portalbridge.com/'
             tickerIcon = '/images/assets/on-sui.svg'
             ticker = 'sui'
             assetType = AssetType.Crypto
@@ -121,7 +127,7 @@ export const assetMapping = (index: number) => {
             throw new Error('Not supported')
     }
 
-    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, underlyingTokenMint }
+    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, wrapPortUrl, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, underlyingTokenMint }
 }
 
 export const collateralMapping = (index: number) => {
