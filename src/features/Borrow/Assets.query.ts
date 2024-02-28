@@ -38,7 +38,8 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	const balances = await fetchIassetBalances(program, pools);
 
 	const result: AssetList[] = []
-	for (let index = 0; index < pools.pools.length; index++) {
+	//for (let index = 0; index < pools.pools.length; index++) {
+	for (let index = 0; index < 2; index++) {
 		const { tickerName, tickerSymbol, tickerIcon, assetType } = assetMapping(index)
 		const status = pools.pools[index].status
 		result.push({

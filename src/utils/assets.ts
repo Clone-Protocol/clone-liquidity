@@ -45,7 +45,8 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
   const oracles = await program.getOracles();
 
   const iassetInfo = [];
-  for (let poolIndex = 0; poolIndex < Number(pools.pools.length); poolIndex++) {
+  // for (let poolIndex = 0; poolIndex < Number(pools.pools.length); poolIndex++) {
+  for (let poolIndex = 0; poolIndex < 2; poolIndex++) {
     const pool = pools.pools[poolIndex];
     const status = pool.status
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
@@ -98,7 +99,7 @@ export const getAggregatedPoolStats = async (pools: Pools, userAddressForApy?: P
 
   if (userAddressForApy) {
     const poolIndices: number[] = []
-    pools.pools.forEach((_, index) => {poolIndices.push(index)})
+    pools.pools.forEach((_, index) => { poolIndices.push(index) })
     const userApyData = await fetchUserApy(userAddressForApy.toString(), poolIndices)
     userApyData.poolApy.forEach((apy, index) => {
       result[index].apy = apy
