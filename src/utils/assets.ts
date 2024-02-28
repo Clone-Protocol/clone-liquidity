@@ -1,7 +1,7 @@
 import { Pools, Status } from "clone-protocol-sdk/sdk/generated/clone";
 import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
-import { assetMapping } from "~/data/assets";
+import { MAX_POOLS_FOR_SHOW, assetMapping } from "~/data/assets";
 import { fetchBorrowStats, fetchOHLCV, BorrowStats, fetchPoolApy, fetchUserApy, fetchPoolAnalytics } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
 import { IS_DEV } from "~/data/networks";
@@ -46,7 +46,7 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
 
   const iassetInfo = [];
   // for (let poolIndex = 0; poolIndex < Number(pools.pools.length); poolIndex++) {
-  for (let poolIndex = 0; poolIndex < 2; poolIndex++) {
+  for (let poolIndex = 0; poolIndex < MAX_POOLS_FOR_SHOW; poolIndex++) {
     const pool = pools.pools[poolIndex];
     const status = pool.status
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];

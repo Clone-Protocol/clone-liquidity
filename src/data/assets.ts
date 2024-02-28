@@ -28,6 +28,9 @@ export enum AssetType {
 export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
+//@MEMO: to add more asset, need to adjust here
+export const MAX_POOLS_FOR_SHOW = 2
+
 export const ASSETS = [
     {
         tickerName: 'Clone Arbitrum',
