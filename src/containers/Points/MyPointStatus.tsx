@@ -11,7 +11,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 import BoltIcon from '@mui/icons-material/Bolt';
 import PromoteDialog from '~/components/Points/PromoteDialog'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
@@ -134,6 +134,7 @@ const PromoteBox = styled(Box)`
   border: solid 1px #000;
   cursor: pointer;
   border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   background-color: rgba(255, 255, 255, 0.07);
 `
 const ColoredText = styled('div')`
