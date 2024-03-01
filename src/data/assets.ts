@@ -113,7 +113,7 @@ export const assetMapping = (index: number) => {
             break
         case Asset.Sui:
             tickerName = 'Clone Sui'
-            tickerSymbol = 'clSUI'
+            tickerSymbol = 'clSui'
             wrapTickerName = 'Wormhole Sui'
             wrapTickerSymbol = 'wSUI'
             wrapPortUrl = 'https://portalbridge.com/'
