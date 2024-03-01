@@ -62,6 +62,7 @@ export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetch
 				if (filteredAssets) {
 					filteredAssets = filteredAssets.filter((asset) => {
 						return !showPoolStatus(asset.status) && (asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities)
+						// return (asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities)
 					})
 				}
 				if (filteredAssets && searchTerm && searchTerm.length > 0) {

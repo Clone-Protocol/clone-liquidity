@@ -29,7 +29,7 @@ export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
 //@MEMO: to add more asset, need to adjust here
-export const MAX_POOLS_FOR_SHOW = 2
+export const MAX_POOLS_FOR_SHOW = 3
 
 export const ASSETS = [
     {
@@ -48,7 +48,7 @@ export const ASSETS = [
     },
     {
         tickerName: 'Clone Sui',
-        tickerSymbol: 'clSui',
+        tickerSymbol: 'clSUI',
         tickerIcon: '/images/assets/on-sui.svg',
         ticker: 'sui',
         pythSymbol: 'Crypto.SUI/USD'
@@ -115,13 +115,14 @@ export const assetMapping = (index: number) => {
             tickerName = 'Clone Sui'
             tickerSymbol = 'clSUI'
             wrapTickerName = 'Wormhole Sui'
-            wrapTickerSymbol = 'wSui'
+            wrapTickerSymbol = 'wSUI'
             wrapPortUrl = 'https://portalbridge.com/'
             tickerIcon = '/images/assets/on-sui.svg'
             ticker = 'sui'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.SUI/USD'
             supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
             break
         default:
             throw new Error('Not supported')

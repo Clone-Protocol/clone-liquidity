@@ -15,6 +15,7 @@ import { SubmitButton } from '../Common/CommonButtons'
 import { assetMapping } from '~/data/assets'
 import { WHITELIST_ADDRESSES_FOR_UNWRAP } from '~/utils/whitelist_addressed_for_unwrap'
 import DebridgeIcon from 'public/images/sponsors/debridge-ic.svg'
+import WormholeIcon from 'public/images/sponsors/wormhole-ic.svg'
 import { LearnMoreIcon } from '../Common/SvgIcons'
 
 interface Props {
@@ -145,9 +146,9 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                         <Typography variant='p_lg' color='#fff'>Get more {pairData.wrapTickerSymbol}</Typography>
                         <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>
                       </Box>
-                      <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol} as {pairData.wrapTickerSymbol} to Solana</Typography>
+                      <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol.slice(2).toUpperCase()} as {pairData.wrapTickerSymbol} to Solana</Typography>
                     </Box>
-                    <Image src={DebridgeIcon} alt='debridge' />
+                    <Image src={pairData.wrapTickerSymbol.slice(0, 1) === 'w' ? WormholeIcon : DebridgeIcon} alt='debridge' />
                   </GetMoreStack>
                 </a>
 
