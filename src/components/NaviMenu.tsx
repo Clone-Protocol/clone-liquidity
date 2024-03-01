@@ -3,7 +3,7 @@ import { List, ListItemButton, Fade, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Link from 'next/link'
 import { IS_DEV } from '~/data/networks'
-import { PointsStarIcon } from './Common/SvgIcons'
+import { PointsStarIconOff, PointsStarIconOn } from './Common/SvgIcons'
 
 const NaviMenu = () => {
   const pathname = usePathname()
@@ -34,8 +34,8 @@ const NaviMenu = () => {
         {!IS_DEV &&
           <Link href="/points">
             <StyledPointsItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
-              <Typography variant="p_lg">Points</Typography>
-              <PointsStarIcon />
+              <ColoredText className={pathname?.startsWith('/points') ? 'selected' : ''}><Typography variant="p_lg" mr='3px'>Points</Typography></ColoredText>
+              {pathname?.startsWith('/points') ? <PointsStarIconOn /> : <PointsStarIconOff />}
             </StyledPointsItemButton>
           </Link>
         }
@@ -60,12 +60,21 @@ const StyledListItemButton = styled(ListItemButton)`
   }
 `
 const StyledPointsItemButton = styled(StyledListItemButton)`
-  color: #927e2f;
   &:hover {
-    background-color: #181509;
+    background-color: transparent;
+    background-image: linear-gradient(to right, #1c1704 49%, #03181c 97%);
+  }
+`
+const ColoredText = styled('div')`
+  background-image: linear-gradient(to right, #a58e35 31%, #26869a 88%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  &:hover {
+    background-image: linear-gradient(106deg, #fbdc5f 42%, #3dddff 89%);
   }
   &.selected {
-    color: #fbdc5f;
+    background-image: linear-gradient(106deg, #fbdc5f 42%, #3dddff 89%);
   }
 `
 

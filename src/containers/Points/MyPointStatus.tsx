@@ -9,10 +9,14 @@ import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
+import BoltIcon from '@mui/icons-material/Bolt';
+import PromoteDialog from '~/components/Points/PromoteDialog'
+import { useEffect, useState } from 'react'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
   const { setOpen } = useWalletDialog()
+  const [showPromoteDialog, setShowPromoteDialog] = useState(true)
 
   const { data: infos } = usePointStatusQuery({
     userPubKey: publicKey,
@@ -44,7 +48,7 @@ const MyPointStatus = () => {
         </BorderBox>
       </Stack>
       <Stack direction='row' gap={2} mt='18px'>
-        <BorderBox width='250px'>
+        <BorderBox width='250px' position='relative'>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>My Liquidity Points</Typography>
             <InfoTooltip title={TooltipTexts.points.lpPoints} color='#66707e' />
@@ -54,6 +58,10 @@ const MyPointStatus = () => {
               {infos?.lpPoints ? infos.lpPoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
+          <PromoteBox onClick={() => setShowPromoteDialog(true)}>
+            <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
+            <ColoredText><Typography variant='p_sm'>2x Multiplier</Typography></ColoredText>
+          </PromoteBox>
         </BorderBox>
         <BorderBox width='250px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
@@ -85,6 +93,8 @@ const MyPointStatus = () => {
           <ConnectWallet onClick={() => setOpen(true)}><Typography variant='p_xlg'>Connect Wallet</Typography></ConnectWallet>
         </Box>
       </>}
+
+      {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />}
     </Wrapper>
   )
 
@@ -112,15 +122,27 @@ const BorderBox = styled(Box)`
   padding-top: 14px;
   padding-bottom: 22px;
 `
-const ClickBox = styled(Box)`
+const PromoteBox = styled(Box)`
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
-  font-size: 10px;
-  font-weight: 500;
-  margin: 4px 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 110px;
+  height: 24px;
+  border: solid 1px #000;
   cursor: pointer;
-  color: ${(props) => props.theme.basis.slug};
+  border-top-left-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.07);
+`
+const ColoredText = styled('div')`
+  text-shadow: 0 0 5px rgba(252, 220, 95, 0.42);
+  background-image: linear-gradient(to right, #fbdc5f 45%, #3dddff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 3px;
 `
 const ConnectWallet = styled(Button)`
   width: 266px;

@@ -26,8 +26,8 @@ import TempWarningMsg from '~/components/Common/TempWarningMsg'
 import { IS_DEV } from '~/data/networks'
 import { fetchGeoBlock } from '~/utils/fetch_netlify'
 import CreateAccountSetupDialog from './Account/CreateAccountSetupDialog'
-import useLocalStorage from '~/hooks/useLocalStorage'
-import { IS_COMPLETE_WHITELISTED } from '~/data/localstorage'
+// import useLocalStorage from '~/hooks/useLocalStorage'
+// import { IS_COMPLETE_WHITELISTED } from '~/data/localstorage'
 
 const GNB: React.FC = () => {
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
