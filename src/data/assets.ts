@@ -48,7 +48,7 @@ export const ASSETS = [
     },
     {
         tickerName: 'Clone Sui',
-        tickerSymbol: 'clSui',
+        tickerSymbol: 'clSUI',
         tickerIcon: '/images/assets/on-sui.svg',
         ticker: 'sui',
         pythSymbol: 'Crypto.SUI/USD'
@@ -113,7 +113,7 @@ export const assetMapping = (index: number) => {
             break
         case Asset.Sui:
             tickerName = 'Clone Sui'
-            tickerSymbol = 'clSui'
+            tickerSymbol = 'clSUI'
             wrapTickerName = 'Wormhole Sui'
             wrapTickerSymbol = 'wSUI'
             wrapPortUrl = 'https://portalbridge.com/'
