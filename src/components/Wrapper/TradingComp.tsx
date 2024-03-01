@@ -146,7 +146,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                         <Typography variant='p_lg' color='#fff'>Get more {pairData.wrapTickerSymbol}</Typography>
                         <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>
                       </Box>
-                      <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol.slice(2)} as {pairData.wrapTickerSymbol} to Solana</Typography>
+                      <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol.slice(2).toUpperCase()} as {pairData.wrapTickerSymbol} to Solana</Typography>
                     </Box>
                     <Image src={pairData.wrapTickerSymbol.slice(0, 1) === 'w' ? WormholeIcon : DebridgeIcon} alt='debridge' />
                   </GetMoreStack>

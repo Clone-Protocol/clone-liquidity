@@ -19,7 +19,6 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymb
 
   for (let poolIndex = 0; poolIndex < pools.pools.length; poolIndex++) {
     const info = assetMapping(poolIndex)
-    console.log('tick', tickerSymbol + "/" + info.tickerSymbol)
     if (tickerSymbol === info.tickerSymbol) {
       const stats = poolStats[poolIndex]
       const borrowedStats = borrowData[poolIndex]
