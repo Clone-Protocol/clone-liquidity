@@ -131,10 +131,9 @@ const PromoteBox = styled(Box)`
   align-items: center;
   width: 110px;
   height: 24px;
-  border: solid 1px #000;
   cursor: pointer;
   border-top-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 8px;
   background-color: rgba(255, 255, 255, 0.07);
 `
 const ColoredText = styled('div')`

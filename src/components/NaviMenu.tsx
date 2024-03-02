@@ -70,9 +70,6 @@ const ColoredText = styled('div')`
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  &:hover {
-    background-image: linear-gradient(106deg, #fbdc5f 42%, #3dddff 89%);
-  }
   &.selected {
     background-image: linear-gradient(106deg, #fbdc5f 42%, #3dddff 89%);
   }
