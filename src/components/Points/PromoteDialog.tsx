@@ -18,10 +18,10 @@ const PromoteDialog = ({ onClose }: { onClose: () => void }) => {
       <AnimWrapper className={addedOut}>
         <BoxWrapper>
 
-          <TextHead>LP Point 2x Multiplier</TextHead>
+          <TextHead>Liquidity Point 2x Multiplier</TextHead>
           <Box my='20px' lineHeight={0.9}>
             <Typography variant='p_lg' lineHeight={1.5}>
-              For limited amount of time, your LP points are cloned!
+              For limited amount of time, your Liquidity points are cloned!
             </Typography>
           </Box>
           <EnterButton onClick={() => close()}><Image src={RocketPromoteIcon} alt='promote' /></EnterButton>
