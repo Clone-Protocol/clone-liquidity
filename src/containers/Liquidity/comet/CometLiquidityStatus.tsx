@@ -1,12 +1,14 @@
 import { styled } from '@mui/system'
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import { CometInfoStatus } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined }) => {
+  const { publicKey } = useWallet()
 
   return (
     <Wrapper>
@@ -68,8 +70,14 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           </StatusValue>
         </Box>
       </Stack >
-      {(!infos || infos.hasNoCollateral) && <OpaqueDefault />}
-    </Wrapper >
+      {!publicKey && <OpaqueDefault />}
+      {publicKey && infos && infos.hasNoCollateral &&
+        <Box>
+          <ViewVideoBox><Typography variant='p'>New to Comets?</Typography><a href="https://vimeo.com/918532309?share=copy" target='_blank'><WatchButton>Watch Tutorial</WatchButton></a></ViewVideoBox>
+          <OpaqueDefault />
+        </Box>
+      }
+    </Wrapper>
   )
 
 }
@@ -88,5 +96,29 @@ const StatusValue = styled(Box)`
   align-items: center;
   height: 80px;
 `
-
+const ViewVideoBox = styled(Box)`
+  position: absolute;
+  left: calc(50% - 193px / 2);
+  top: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 193px;
+  height: 79px;
+  padding: 12px 22px 11px;
+  border-radius: 10px;
+  background-color: #000e22;
+  z-index: 999;
+`
+const WatchButton = styled(Button)`
+  width: 149px;
+  height: 32px;
+  margin: 8px 0 0;
+  padding: 8px 33px;
+  border-radius: 5px;
+  background-color: #4fe5ff;
+  font-size: 12px;
+  font-weight: 500;
+`
 export default CometLiquidityStatus
