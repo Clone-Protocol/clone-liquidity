@@ -36,7 +36,7 @@ const Points = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticPro
     <StyledSection>
       <Container>
         <Box px='20px'>
-          <Box><Typography fontSize='20px' fontWeight={500}>Points</Typography></Box>
+          <Box><Typography fontSize='20px' fontWeight={500}>Points: Season 1</Typography></Box>
           <Stack direction='row' alignItems='center' gap={1}>
             <Typography variant='p' color='#66707e'>Earn points by participating in Clone ecosystem.</Typography>
             <a href="https://docs.clone.so/clone-mainnet-guide/points-program/season-1" target='_blank'>
