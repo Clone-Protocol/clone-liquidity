@@ -16,8 +16,7 @@ const PromoteDialog = ({ onClose }: { onClose: () => void }) => {
   return (
     <BackScreen>
       <AnimWrapper className={addedOut}>
-        <BoxWrapper>
-
+        <BoxWrapper sx={{ width: { xs: '100%', md: '463px' }, paddingTop: { xs: '30px', md: '20px' } }}>
           <TextHead>Liquidity Point 2x Multiplier</TextHead>
           <Box my='20px' lineHeight={0.9}>
             <Typography variant='p_lg' lineHeight={1.5}>
@@ -79,7 +78,6 @@ const AnimWrapper = styled('div')`
 `
 const BoxWrapper = styled(Box)`
   position: relative;
-  width: 463px;
   color: #fff; 
   text-align: center;
   border-radius: 20px;
