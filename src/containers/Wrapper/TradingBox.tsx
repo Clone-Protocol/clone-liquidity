@@ -3,15 +3,26 @@ import { styled } from '@mui/material/styles'
 import { useState } from 'react'
 import TradingComp from '~/components/Wrapper/TradingComp'
 import dynamic from 'next/dynamic'
+import WrapBridgeDialog from '~/components/Wrapper/WrapBridgeDialog'
+import { ARB_Widget, OP_Widget } from '~/utils/debridge_widgets'
 
 const TradingBox: React.FC = () => {
 	const ChooseAssetDialog = dynamic(() => import('./Dialogs/ChooseAssetDialog'))
 	const [openChooseAsset, setOpenChooseAsset] = useState(false)
 	const [assetIndex, setAssetIndex] = useState(0)
+	const [openWrapBridge, setOpenWrapBridge] = useState(false)
+	const [widgetType, setWidgetType] = useState(ARB_Widget)
 
 	const handleChooseAsset = (assetId: number) => {
 		setAssetIndex(assetId)
 		setOpenChooseAsset(false)
+
+		// MEMO: hardcoding for this. but need to be refactored
+		if (assetId === 0) {
+			setWidgetType(ARB_Widget)
+		} else if (assetId === 1) {
+			setWidgetType(OP_Widget)
+		}
 	}
 
 	return (
@@ -19,12 +30,19 @@ const TradingBox: React.FC = () => {
 			<TradingComp
 				assetIndex={assetIndex}
 				onShowSearchAsset={() => setOpenChooseAsset(true)}
+				onShowWrapBridge={() => setOpenWrapBridge(true)}
 			/>
 
 			<ChooseAssetDialog
 				open={openChooseAsset}
 				handleChooseAsset={handleChooseAsset}
 				handleClose={() => setOpenChooseAsset(false)}
+			/>
+
+			<WrapBridgeDialog
+				open={openWrapBridge}
+				widgetType={widgetType}
+				handleClose={() => setOpenWrapBridge(false)}
 			/>
 		</StyledPaper>
 	)

@@ -23,7 +23,7 @@ interface Props {
   onShowSearchAsset: () => void
 }
 
-const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
+const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWrapBridge }) => {
   const [loading, setLoading] = useState(false)
   const { publicKey } = useWallet()
   const [isWrap, setIsWrap] = useState(true)
@@ -131,6 +131,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   }
 
   const isValid = invalidMsg() === ''
+  const isWormholeAsset = pairData.wrapTickerSymbol.slice(0, 1) === 'w'
 
   return (
     <>
@@ -139,18 +140,18 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
           <Box>
             {isWrap ?
               <Box>
-                <a href={pairData.wrapPortUrl} target='_blank'>
-                  <GetMoreStack direction="row" justifyContent="space-between" alignItems="center" px='20px'>
-                    <Box display='flex' flexDirection='column' alignItems='flex-start'>
-                      <Box display='flex' gap={1} alignItems='center' mb='4px'>
-                        <Typography variant='p_lg' color='#fff'>Get more {pairData.wrapTickerSymbol}</Typography>
-                        <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>
-                      </Box>
-                      <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol.slice(2).toUpperCase()} as {pairData.wrapTickerSymbol} to Solana</Typography>
+                {/* <a href={isWormholeAsset ? pairData.wrapPortUrl : '#'} target='_blank'> */}
+                <GetMoreStack direction="row" justifyContent="space-between" alignItems="center" px='20px' onClick={!isWormholeAsset ? onShowWrapBridge : () => window.open(pairData.wrapPortUrl)}>
+                  <Box display='flex' flexDirection='column' alignItems='flex-start'>
+                    <Box display='flex' gap={1} alignItems='center' mb='4px'>
+                      <Typography variant='p_lg' color='#fff'>Get more {pairData.wrapTickerSymbol}</Typography>
+                      {isWormholeAsset && <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>}
                     </Box>
-                    <Image src={pairData.wrapTickerSymbol.slice(0, 1) === 'w' ? WormholeIcon : DebridgeIcon} alt='debridge' />
-                  </GetMoreStack>
-                </a>
+                    <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol.slice(2).toUpperCase()} as {pairData.wrapTickerSymbol} to Solana</Typography>
+                  </Box>
+                  <Image src={isWormholeAsset ? WormholeIcon : DebridgeIcon} alt='debridge' />
+                </GetMoreStack>
+                {/* </a> */}
 
                 <Controller
                   name="amountWrapAsset"
