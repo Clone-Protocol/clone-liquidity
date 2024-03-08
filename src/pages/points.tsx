@@ -7,30 +7,55 @@ import LearnMoreIcon from 'public/images/learn-more.svg'
 import MyPointStatus from '~/containers/Points/MyPointStatus'
 import RankingList from '~/containers/Points/RankingList'
 import { IS_NOT_LOCAL_DEVELOPMENT } from '~/utils/constants'
-import { fetchRanking } from '~/features/Points/Ranking.query'
+import { RankingList as RankingListType, fetchRanking } from '~/features/Points/Ranking.query'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 
 //SSR
 export const getStaticProps = (async () => {
-  const queryClient = new QueryClient()
+  // const queryClient = new QueryClient()
 
   if (IS_NOT_LOCAL_DEVELOPMENT) {
     console.log('prefetch')
-    await queryClient.prefetchQuery(['ranks'], () => fetchRanking())
+    // await queryClient.prefetchQuery(['ranks'], () => fetchRanking())
+  }
+
+  //get pyth data
+  let pythResult = { result: [] }
+  try {
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/api/points_pythlist`)
+    // pythResult = await res.json() 
+    const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/data/pythSnapshot.json`)
+    const fileContents = await fetchData.json()
+    pythResult = {
+      result: fileContents
+    }
+    // console.log('pythResult', pythResult)
+  } catch (error) {
+    console.error('err', error)
+  }
+
+  // get ranking
+  let rankingList: RankingListType[] = []
+  try {
+    rankingList = await fetchRanking(pythResult)
+  } catch (error) {
+    console.error('err', error)
   }
 
   return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      // dehydratedState: dehydrate(queryClient),
+      rankingList,
       //cached time
       revalidate: 30,
     },
   }
 }) satisfies GetStaticProps<{
-  dehydratedState: DehydratedState
+  // dehydratedState: DehydratedState
+  rankingList: RankingListType[]
 }>
 
-const Points = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Points = ({ rankingList }: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   return (
     <StyledSection>
@@ -49,9 +74,9 @@ const Points = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticPro
           <Box mt='10px'>
             <MyPointStatus />
 
-            <Hydrate state={dehydratedState}>
-              <RankingList />
-            </Hydrate>
+            {/* <Hydrate state={dehydratedState}> */}
+            <RankingList rankList={rankingList} />
+            {/* </Hydrate> */}
           </Box>
         </Box>
       </Container>

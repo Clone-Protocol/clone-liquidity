@@ -7,6 +7,7 @@ import BridgeIcon from 'public/images/debug-step-over.svg'
 import Image from 'next/image'
 import PoweredByDebridge from 'public/images/powered_by_debridge.svg'
 import DebridgeWidget from './DebridgeWidget'
+import { DefaultWidget } from '~/utils/debridge_widgets'
 
 const BridgeDialog = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
   const [isInitStep, setIsInitStep] = useState(true)
@@ -54,7 +55,7 @@ const BridgeDialog = ({ open, handleClose }: { open: boolean, handleClose: () =>
               </>
               :
               <Box mt='10px'>
-                <DebridgeWidget />
+                <DebridgeWidget widgetType={DefaultWidget} />
               </Box>
             }
           </BoxWrapper>
