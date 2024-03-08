@@ -12,7 +12,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 
 //SSR
 export const getStaticProps = (async () => {
-  const queryClient = new QueryClient()
+  // const queryClient = new QueryClient()
 
   if (IS_NOT_LOCAL_DEVELOPMENT) {
     console.log('prefetch')
@@ -44,18 +44,18 @@ export const getStaticProps = (async () => {
 
   return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      // dehydratedState: dehydrate(queryClient),
       rankingList,
       //cached time
       revalidate: 30,
     },
   }
 }) satisfies GetStaticProps<{
-  dehydratedState: DehydratedState
+  // dehydratedState: DehydratedState
   rankingList: RankingListType[]
 }>
 
-const Points = ({ dehydratedState, rankingList }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Points = ({ rankingList }: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   return (
     <StyledSection>
@@ -74,9 +74,9 @@ const Points = ({ dehydratedState, rankingList }: InferGetStaticPropsType<typeof
           <Box mt='10px'>
             <MyPointStatus />
 
-            <Hydrate state={dehydratedState}>
-              <RankingList rankList={rankingList} />
-            </Hydrate>
+            {/* <Hydrate state={dehydratedState}> */}
+            <RankingList rankList={rankingList} />
+            {/* </Hydrate> */}
           </Box>
         </Box>
       </Container>
