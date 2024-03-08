@@ -1,5 +1,5 @@
 import { styled } from '@mui/system'
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Tooltip, Typography } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { RankIndexForStatus } from '~/components/Points/RankItems'
@@ -12,6 +12,8 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import BoltIcon from '@mui/icons-material/Bolt';
 import PromoteDialog from '~/components/Points/PromoteDialog'
 import { useState } from 'react'
+import { PythSymbolIcon } from '~/components/Common/SvgIcons'
+import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
@@ -20,7 +22,7 @@ const MyPointStatus = () => {
 
   const { data: infos } = usePointStatusQuery({
     userPubKey: publicKey,
-    refetchOnMount: "always",
+    refetchOnMount: true,
     enabled: publicKey != null
   })
 
@@ -41,10 +43,25 @@ const MyPointStatus = () => {
             <InfoTooltip title={TooltipTexts.points.totalPoints} color='#66707e' />
           </Box>
           <StatusValue>
+            {infos?.hasPythPoint &&
+              <Box width='42px'></Box>
+            }
             <Typography variant='h3' fontWeight={500}>
               {infos?.totalPoints ? infos.totalPoints.toLocaleString() : '0'}
             </Typography>
+            {infos?.hasPythPoint &&
+              <Tooltip title={TooltipTexts.points.multiplier} placement="top">
+                <Box width='42px'><PointTextForPyth pythPointTier={infos?.pythPointTier} /></Box>
+              </Tooltip>
+            }
           </StatusValue>
+          {infos?.hasPythPoint &&
+            <Tooltip title={TooltipTexts.points.pythSymbol} placement="top">
+              <PythBox>
+                <PythSymbolIcon />
+              </PythBox>
+            </Tooltip>
+          }
         </BorderBox>
       </Stack>
       <Stack direction='row' gap={2} mt='18px'>
@@ -114,6 +131,7 @@ const StatusValue = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 14px;
   margin-top: 22px;
 `
 const BorderBox = styled(Box)`
@@ -132,6 +150,20 @@ const PromoteBox = styled(Box)`
   width: 110px;
   height: 24px;
   cursor: pointer;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.07);
+`
+const PythBox = styled(Box)`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 38px;
+  height: 37px;
+  color: #e6dafe;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 8px;
   background-color: rgba(255, 255, 255, 0.07);
