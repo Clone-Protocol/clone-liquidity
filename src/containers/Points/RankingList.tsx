@@ -7,17 +7,17 @@ import { Grid } from '~/components/Common/DataGrid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { RankIndex } from '~/components/Points/RankItems'
 import { shortenAddress } from '~/utils/address'
-// import { useRankingQuery } from '~/features/Points/Ranking.query'
+import { useRankingQuery } from '~/features/Points/Ranking.query'
 import { RankingList } from '~/features/Points/Ranking.query'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 import { TooltipTexts } from '~/data/tooltipTexts'
 
-const RankingList = ({ rankList }: { rankList: RankingList[] }) => {
-  // const { data: rankList } = useRankingQuery({
-  //   refetchOnMount: true,
-  //   enabled: true
-  // })
+const RankingList = () => {
+  const { data: rankList } = useRankingQuery({
+    refetchOnMount: true,
+    enabled: true
+  })
 
   return (
     <PanelBox>
