@@ -9,6 +9,7 @@ import { useState } from "react"
 import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { ON_USD } from "~/utils/constants"
+import { formatLocaleAmount } from "~/utils/numbers"
 
 const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
   const { publicKey } = useWallet()
@@ -69,10 +70,8 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo.onassetILD).toLocaleString('en-US', {
-              maximumFractionDigits: 8,
-            })} {positionInfo.tickerSymbol}</Typography>
-          <Typography variant='p_lg' color='#66707e'>(${Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString('en-US', { maximumFractionDigits: 6 })} USD)</Typography>
+            {formatLocaleAmount(Math.max(0, -positionInfo.onassetILD), 8)} {positionInfo.tickerSymbol}</Typography>
+          <Typography variant='p_lg' color='#66707e'>(${formatLocaleAmount(Math.abs(Math.max(0, -positionInfo.onassetILD) * positionInfo.oraclePrice), 6)} USD)</Typography>
         </BoxWithBorder>
       </Box>
       <Box>
@@ -82,9 +81,7 @@ const Rewards = ({ positionIndex }: { positionIndex: number, }) => {
         </Box>
         <BoxWithBorder>
           <Typography variant='p_lg'>
-            {Math.max(0, -positionInfo.collateralILD).toLocaleString('en-US', {
-              maximumFractionDigits: 8,
-            })} {ON_USD}</Typography>
+            {formatLocaleAmount(Math.max(0, -positionInfo.collateralILD), 8)} {ON_USD}</Typography>
         </BoxWithBorder>
       </Box>
 

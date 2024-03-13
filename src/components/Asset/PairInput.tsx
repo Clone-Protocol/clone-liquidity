@@ -1,6 +1,7 @@
 import { FormControl, styled, Stack, Box, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useRef } from 'react'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 interface Props {
 	tickerIcon: string
@@ -40,7 +41,7 @@ const PairInput: React.FC<Props> = ({
 				{headerTitle ? (
 					<Stack direction="row" justifyContent="flex-end">
 						<Typography variant='p' color='#66707e'>
-							{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{headerValue.toLocaleString('en-US', { maximumFractionDigits: 5 })}</MaxValue>) : '_'}
+							{headerTitle}: {headerValue || headerValue == 0 ? (<MaxValue onClick={() => onMax && onMax(headerValue)}>{formatLocaleAmount(headerValue, 5)}</MaxValue>) : '_'}
 						</Typography>
 						{(headerValue || headerValue == 0) && <MaxButton onClick={() => onMax && onMax(headerValue)}>MAX</MaxButton>}
 					</Stack>
@@ -63,7 +64,7 @@ const PairInput: React.FC<Props> = ({
 							disabled={disabledInput}
 							onChange={onChange} />
 						<DollarAmount>
-							{dollarPrice ? "$" + dollarPrice?.toLocaleString() : ""}
+							{dollarPrice ? "$" + formatLocaleAmount(dollarPrice) : ""}
 						</DollarAmount>
 					</Box>
 					<TickerBox display="flex" alignItems='center' onClick={onTickerClicked} style={onTickerClicked ? { cursor: 'pointer' } : {}}>

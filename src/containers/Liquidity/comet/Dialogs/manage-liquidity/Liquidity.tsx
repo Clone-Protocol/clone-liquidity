@@ -17,6 +17,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingButton, LoadingProgress } from '~/components/Common/Loading'
 import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: PositionInfo, positionIndex: number, poolIndex: number }) => {
   const { publicKey } = useWallet()
@@ -132,7 +133,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
             <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
           </Box>
           <Box>
-            <Typography variant='p_lg'>${totalLiquidity.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography>
+            <Typography variant='p_lg'>${formatLocaleAmount(totalLiquidity, 5)}</Typography>
             <Typography variant='p_lg' ml='9px' sx={differentLiquidityVal >= 0 ? { color: '#4fe5ff' } : { color: '#ff0084' }}>
               {differentLiquidityVal >= 0 ? '+' : '-'}${Math.abs(differentLiquidityVal).toLocaleString()}
             </Typography>

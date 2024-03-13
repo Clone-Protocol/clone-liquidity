@@ -11,6 +11,7 @@ import CheckIcon from 'public/images/check-icon.svg'
 import { fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
+import { formatLocaleAmount } from "~/utils/numbers"
 
 const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionIndex: number, onMoveTab: (index: number) => void, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -106,7 +107,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={positionLiquidity > 0 ? '#fff' : '#66707e'}>
-            ${positionLiquidity.toLocaleString('en-US', { maximumFractionDigits: 8 })}
+            ${formatLocaleAmount(positionLiquidity, 8)}
           </Typography>
 
           {positionLiquidity === 0 ?
@@ -126,7 +127,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={ildBalance > 0 ? '#fff' : '#66707e'}>
-            ${ildBalance.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
+            ${formatLocaleAmount(ildBalance, 8)}</Typography>
 
           {ildBalance === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
@@ -145,7 +146,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg' color={remainRewards > 0 ? '#fff' : '#66707e'}>
-            ${remainRewards.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
+            ${formatLocaleAmount(remainRewards, 8)}</Typography>
           {remainRewards === 0 ?
             <Stack direction='row' gap={1} alignItems='center'>
               <Image src={CheckIcon} alt='check' />

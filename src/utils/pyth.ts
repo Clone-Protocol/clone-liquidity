@@ -44,7 +44,8 @@ export const fetchPythOraclePrices = async (connection: Connection, oracles: Ora
         if (oracle.source === OracleSource.PYTH) {
             const feedAddress = oracle.address.toString()
             const product = pythData.products.find((p) => p.price_account === feedAddress)!
-            return pythData.productPrice.get(product.symbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo)
+            const rescaleFactor = Math.pow(10, oracle.rescaleFactor)
+            return rescaleFactor * (pythData.productPrice.get(product.symbol)?.aggregate.price ?? fromScale(oracle.price, oracle.expo))
         }
         return fromScale(oracle.price, oracle.expo)
     })

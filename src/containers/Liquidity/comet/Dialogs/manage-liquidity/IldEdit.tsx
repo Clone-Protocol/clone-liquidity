@@ -17,6 +17,7 @@ import { LoadingButton, LoadingProgress } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { Collateral as StableCollateral, collateralMapping } from "~/data/assets"
 import { NETWORK_NAME, ON_USD } from "~/utils/constants"
+import { formatLocaleAmount } from "~/utils/numbers"
 
 const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   const { publicKey } = useWallet()
@@ -143,14 +144,10 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           </Box>
           <Box>
             <Typography variant='p_lg'>
-              {Math.max(0, positionInfo.onassetILD).toLocaleString('en-US', {
-                maximumFractionDigits: 8,
-              })} {positionInfo.tickerSymbol}
+              {formatLocaleAmount(Math.max(0, positionInfo.onassetILD), 8)} {positionInfo.tickerSymbol}
             </Typography>
             <Typography variant='p_lg' color='#66707e' ml='10px'>
-              {`($${(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice).toLocaleString('en-US', {
-                maximumFractionDigits: 8
-              })})`}
+              {`($${formatLocaleAmount(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice), 8})`}
             </Typography>
           </Box>
         </StackWithBorder>
@@ -188,8 +185,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                   <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' />
                 </Box>
                 <Box>
-                  <Typography variant='p_lg'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
-                  <Typography variant='p_lg' color='#66707e' ml='5px'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${remainingAssetILD.toLocaleString('en-US', { maximumFractionDigits: 8 })})`}</Typography>
+                  <Typography variant='p_lg'>{ildAssetAmount > balanceOnAsset ? 'N/A' : formatLocaleAmount(remainingAssetILD, 8)}</Typography>
+                  <Typography variant='p_lg' color='#66707e' ml='5px'>{ildAssetAmount > balanceOnAsset ? 'N/A' : remainingAssetILD === 0 ? '(Paid Off)' : `($${formatLocaleAmount(remainingAssetILD, 8)})`}</Typography>
                 </Box>
               </StackWithBorder>
             }
@@ -213,9 +210,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           <StackWithBorder direction='row' justifyContent='space-between'>
             <Typography variant='p_lg'>{ON_USD} ILD</Typography>
             <Typography variant='p_lg'>
-              {Math.max(0, positionInfo.collateralILD).toLocaleString('en-US', {
-                maximumFractionDigits: 8,
-              })} {ON_USD}
+              {formatLocaleAmount(Math.max(0, positionInfo.collateralILD), 8)} {ON_USD}
             </Typography>
           </StackWithBorder>
 
@@ -252,8 +247,8 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                     {/* <InfoTooltip title={TooltipTexts.projectedRemainingILD} color='#66707e' /> */}
                   </Box>
                   <Box>
-                    <Typography variant='p_lg'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Typography>
-                    <Typography variant='p_lg' color='#66707e' ml='5px'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${remainingCollILD.toLocaleString('en-US', { maximumFractionDigits: 8 })})`}</Typography>
+                    <Typography variant='p_lg'>{ildCollAmount > balanceColl ? 'N/A' : formatLocaleAmount(remainingCollILD, 8)}</Typography>
+                    <Typography variant='p_lg' color='#66707e' ml='5px'>{ildCollAmount > balanceColl ? 'N/A' : remainingCollILD === 0 ? '(Paid Off)' : `($${formatLocaleAmount(remainingCollILD, 8)})`}</Typography>
                   </Box>
                 </StackWithBorder>
               }
