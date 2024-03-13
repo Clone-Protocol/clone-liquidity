@@ -1,16 +1,28 @@
-// import { Query, useQuery } from '@tanstack/react-query'
+import { Query, useQuery } from '@tanstack/react-query'
 // import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { PythResponseData } from '~/pages/api/points_pythlist'
+import { PythObj, PythResponseData } from '~/pages/api/points_pythlist'
 import { fetchAllUserPoints, UserPointsView } from '~/utils/fetch_netlify'
 
 //Only for SSR function
-export const fetchRanking = async (pythResult: PythResponseData) => {
+export const fetchRanking = async () => {
   console.log('fetchRanking')
 
   let userPoints: UserPointsView[] = await fetchAllUserPoints();
 
-  let result: RankingList[] = []
+  //pyth point system
+  let pythResult: { result: PythObj[] } = { result: [] }
+  try {
+    const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/data/pythSnapshot.json`)
+    const fileContents = await fetchData.json()
+    pythResult = {
+      result: fileContents
+    }
+    // console.log('pythResult', pythResult)
+  } catch (error) {
+    console.error('err', error)
+  }
 
+  let result: RankingList[] = []
   userPoints = userPoints.slice(0, 100)
   userPoints.forEach((user, id) => {
     //check if the address is included in pythResult
@@ -34,10 +46,10 @@ export const fetchRanking = async (pythResult: PythResponseData) => {
   return result
 }
 
-// interface GetProps {
-//   refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
-//   enabled?: boolean
-// }
+interface GetProps {
+  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  enabled?: boolean
+}
 
 export interface RankingList {
   id: number
@@ -51,19 +63,19 @@ export interface RankingList {
   pythPointTier: number
 }
 
-// export function useRankingQuery({ refetchOnMount, enabled = true }: GetProps) {
-//   let queryFunc
-//   try {
-//     queryFunc = () => fetchRanking()
-//   } catch (e) {
-//     console.error(e)
-//     queryFunc = () => []
-//   }
+export function useRankingQuery({ refetchOnMount, enabled = true }: GetProps) {
+  let queryFunc
+  try {
+    queryFunc = () => fetchRanking()
+  } catch (e) {
+    console.error(e)
+    queryFunc = () => []
+  }
 
-//   return useQuery(['ranks'], queryFunc, {
-//     refetchOnMount,
-//     refetchInterval: REFETCH_CYCLE,
-//     refetchIntervalInBackground: true,
-//     enabled
-//   })
-// }
+  return useQuery(['ranks'], queryFunc, {
+    refetchOnMount,
+    // refetchInterval: REFETCH_CYCLE,
+    // refetchIntervalInBackground: true,
+    enabled
+  })
+}

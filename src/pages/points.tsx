@@ -12,18 +12,18 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next'
 
 //SSR
 export const getStaticProps = (async () => {
-  // const queryClient = new QueryClient()
+  const queryClient = new QueryClient()
 
   if (IS_NOT_LOCAL_DEVELOPMENT) {
     console.log('prefetch')
-    // await queryClient.prefetchQuery(['ranks'], () => fetchRanking())
+    await queryClient.prefetchQuery(['ranks'], () => fetchRanking())
   }
 
+  /*
+  // SSR : there's netlify issue
   //get pyth data
   let pythResult = { result: [] }
   try {
-    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/api/points_pythlist`)
-    // pythResult = await res.json() 
     const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/data/pythSnapshot.json`)
     const fileContents = await fetchData.json()
     pythResult = {
@@ -41,21 +41,22 @@ export const getStaticProps = (async () => {
   } catch (error) {
     console.error('err', error)
   }
+  */
 
   return {
     props: {
-      // dehydratedState: dehydrate(queryClient),
-      rankingList,
+      dehydratedState: dehydrate(queryClient),
+      // rankingList,
       //cached time
       revalidate: 30,
     },
   }
 }) satisfies GetStaticProps<{
-  // dehydratedState: DehydratedState
-  rankingList: RankingListType[]
+  dehydratedState: DehydratedState
+  // rankingList: RankingListType[]
 }>
 
-const Points = ({ rankingList }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Points = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   return (
     <StyledSection>
@@ -74,9 +75,9 @@ const Points = ({ rankingList }: InferGetStaticPropsType<typeof getStaticProps>)
           <Box mt='10px'>
             <MyPointStatus />
 
-            {/* <Hydrate state={dehydratedState}> */}
-            <RankingList rankList={rankingList} />
-            {/* </Hydrate> */}
+            <Hydrate state={dehydratedState}>
+              <RankingList />
+            </Hydrate>
           </Box>
         </Box>
       </Container>

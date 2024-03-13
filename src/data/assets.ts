@@ -10,18 +10,19 @@ export enum Collateral {
 export enum AssetTickers {
     arbitrum = 0,
     optimism = 1,
-    sui = 2
+    sui = 2,
+    pepe = 3,
 }
 
 export enum Asset {
     Arbitrum,
     Optimism,
-    Sui
+    Sui,
+    Pepe
 }
 
 export enum AssetType {
     Crypto,
-    Fx,
     Commodities,
 }
 
@@ -52,25 +53,15 @@ export const ASSETS = [
         tickerIcon: '/images/assets/on-sui.svg',
         ticker: 'sui',
         pythSymbol: 'Crypto.SUI/USD'
+    },
+    {
+        tickerName: 'Clone Pepe',
+        tickerSymbol: 'clPepe',
+        tickerIcon: '/images/assets/on-pepe.svg',
+        ticker: 'pepe',
+        pythSymbol: 'Crypto.PEPE/USD',
     }
 ]
-
-// export const WRAP_ASSETS = [
-//     {
-//         tickerName: 'DeBridge Arbitrum',
-//         tickerSymbol: 'dARB',
-//         tickerIcon: '/images/assets/on-arb.svg',
-//         ticker: 'arbitrum',
-//         pythSymbol: 'Crypto.ARB/USD'
-//     },
-//     {
-//         tickerName: 'Clone Optimism',
-//         tickerSymbol: 'clOP',
-//         tickerIcon: '/images/assets/on-op.svg',
-//         ticker: 'optimism',
-//         pythSymbol: 'Crypto.OP/USD'
-//     }
-// ]
 
 export const assetMapping = (index: number) => {
     let tickerName = ''
@@ -121,6 +112,19 @@ export const assetMapping = (index: number) => {
             ticker = 'sui'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.SUI/USD'
+            supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
+            break
+        case Asset.Pepe:
+            tickerName = 'Clone Pepe'
+            tickerSymbol = 'clPEPE'
+            wrapTickerName = 'Wormhole Pepe'
+            wrapTickerSymbol = 'wPEPE'
+            wrapPortUrl = 'https://portalbridge.com/'
+            tickerIcon = '/images/assets/on-pepe.svg'
+            ticker = 'pepe'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.PEPE/USD'
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
             break
