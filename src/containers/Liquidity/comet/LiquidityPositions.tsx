@@ -16,6 +16,7 @@ import { DEFAULT_ASSET_LINK } from '~/data/assets'
 import EditLiquidityDialog from './Dialogs/EditLiquidityDialog'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
   const router = useRouter()
@@ -155,7 +156,7 @@ let columns: GridColDef[] = [
       </Stack>
     },
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.ildDollarPrice.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography>
+      return <Typography variant='p_xlg'>${formatLocaleAmount(Number(params.row.ildDollarPrice), 5)}</Typography>
     },
   },
   {
@@ -171,7 +172,7 @@ let columns: GridColDef[] = [
       </Stack>
     },
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.rewards.toLocaleString('en-US', { maximumFractionDigits: 5 })}</Typography>
+      return <Typography variant='p_xlg'>${formatLocaleAmount(params.row.rewards, 5)}</Typography>
     },
   },
   {

@@ -2,6 +2,7 @@ import { styled, Typography, Box } from '@mui/material'
 import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
 import InfoTooltip from '../Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const TxtPriceRate = ({ val, rate }: { val: number, rate: number }) => {
   if (isFinite(rate)) {
@@ -41,7 +42,7 @@ const PositionAnalytics = ({ price, tickerSymbol }: { price: number, tickerSymbo
           <Typography variant="p" color='#66707e'>Total Borrowed</Typography>
           <InfoTooltip title={TooltipTexts.totalBorrowed} color='#66707e' />
         </Box>
-        <Box whiteSpace='nowrap'><Typography variant="p_xlg">{(resultData?.currentAmountBorrowed).toLocaleString('en-US', { maximumFractionDigits: 5 })} {tickerSymbol}</Typography> <Typography variant='p_xlg' color='#66707e' mx='10px'>${(price * resultData?.currentAmountBorrowed).toLocaleString()} USD</Typography> <TxtPriceRate val={relativeVal(resultData!.currentAmountBorrowed, resultData!.amountBorrowedRate)} rate={resultData!.amountBorrowedRate} /></Box>
+        <Box whiteSpace='nowrap'><Typography variant="p_xlg">{formatLocaleAmount(resultData?.currentAmountBorrowed, 5)} {tickerSymbol}</Typography> <Typography variant='p_xlg' color='#66707e' mx='10px'>${(price * resultData?.currentAmountBorrowed).toLocaleString()} USD</Typography> <TxtPriceRate val={relativeVal(resultData!.currentAmountBorrowed, resultData!.amountBorrowedRate)} rate={resultData!.amountBorrowedRate} /></Box>
       </DataBox>
       <DataBox>
         <Box>

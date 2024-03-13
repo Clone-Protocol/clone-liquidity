@@ -25,6 +25,8 @@ import { InfoMsg } from '~/components/Common/WarningMsg'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
+import { useAtomValue } from 'jotai'
+import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
 
 const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetchData }: { assetIndex: number, assetData: any, openChooseLiquidityDialog: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -36,12 +38,13 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
   const [healthScore, setHealthScore] = useState(0)
   const [assetHealthCoefficient, setAssetHealthCoefficient] = useState(0)
   const [validMintValue, setValidMintValue] = useState(false)
+  const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
 
   const { data: positionInfo, refetch } = useLiquidityDetailQuery({
     userPubKey: publicKey,
     index: assetIndex,
     refetchOnMount: "always",
-    enabled: publicKey != null
+    enabled: publicKey != null && isAlreadyInitializedAccount
   })
 
   useEffect(() => {

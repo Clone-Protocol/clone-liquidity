@@ -2,6 +2,7 @@ import { DataGrid, GridColDef, GridEventListener } from '@mui/x-data-grid'
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 import { showPoolStatus } from './PoolStatus'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 interface GridProps {
   headers: GridColDef[],
@@ -168,5 +169,5 @@ export const CellTicker: React.FC<TickerType> = ({ tickerIcon, tickerName, ticke
 )
 
 export const CellDigitValue = ({ value, symbol }: { value: string | undefined, symbol?: string }) => (
-  <Typography variant='p_xlg'>{value && value.toLocaleString('en-US', { maximumFractionDigits: 5 })} {symbol}</Typography>
+  <Typography variant='p_xlg'>{value && formatLocaleAmount(value, 5)} {symbol}</Typography>
 )

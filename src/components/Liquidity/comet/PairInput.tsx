@@ -1,6 +1,7 @@
 import { FormControl, styled, Stack, Box, Typography, Button } from "@mui/material"
 import Image from "next/image"
 import { useRef } from "react"
+import { formatLocaleAmount } from "~/utils/numbers"
 
 interface Props {
   tickerIcon: string
@@ -46,7 +47,7 @@ const PairInput: React.FC<Props> = ({
             </Typography>
             <MaxPointerValue>
               <Typography variant="p">
-                {balance?.toLocaleString('en-US', { maximumFractionDigits: 6 })}
+                {formatLocaleAmount(balance, 6)}
               </Typography>
               {!hideMaxButton && <MaxButton onClick={() => onMax && onMax(balance!)}>MAX</MaxButton>}
             </MaxPointerValue>
