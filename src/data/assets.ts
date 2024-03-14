@@ -34,28 +34,28 @@ export const MAX_POOLS_FOR_SHOW = 3
 
 export const ASSETS = [
     {
-        tickerName: 'Clone Arbitrum',
+        tickerName: 'Cloned Arbitrum',
         tickerSymbol: 'clARB',
         tickerIcon: '/images/assets/on-arb.svg',
         ticker: 'arbitrum',
         pythSymbol: 'Crypto.ARB/USD'
     },
     {
-        tickerName: 'Clone Optimism',
+        tickerName: 'Cloned Optimism',
         tickerSymbol: 'clOP',
         tickerIcon: '/images/assets/on-op.svg',
         ticker: 'optimism',
         pythSymbol: 'Crypto.OP/USD'
     },
     {
-        tickerName: 'Clone Sui',
+        tickerName: 'Cloned Sui',
         tickerSymbol: 'clSUI',
         tickerIcon: '/images/assets/on-sui.svg',
         ticker: 'sui',
         pythSymbol: 'Crypto.SUI/USD'
     },
     {
-        tickerName: 'Clone Pepe',
+        tickerName: 'Cloned Pepe',
         tickerSymbol: 'clPepe',
         tickerIcon: '/images/assets/on-pepe.svg',
         ticker: 'pepe',
@@ -77,7 +77,7 @@ export const assetMapping = (index: number) => {
     let underlyingTokenMint = PublicKey.default
     switch (index) {
         case Asset.Arbitrum:
-            tickerName = 'Clone Arbitrum'
+            tickerName = 'Cloned Arbitrum'
             tickerSymbol = 'clARB'
             wrapTickerName = 'DeBridge Arbitrum'
             wrapTickerSymbol = 'deARB'
@@ -90,7 +90,7 @@ export const assetMapping = (index: number) => {
             underlyingTokenMint = new PublicKey("9Bv59s4i393sqPysTEKA8xx47DQJ73EoBCS1DBbW9EWy")
             break
         case Asset.Optimism:
-            tickerName = 'Clone Optimism'
+            tickerName = 'Cloned Optimism'
             tickerSymbol = 'clOP'
             wrapTickerName = 'DeBridge Optimism'
             wrapTickerSymbol = 'deOP'
@@ -103,7 +103,7 @@ export const assetMapping = (index: number) => {
             underlyingTokenMint = new PublicKey("7QDfgP97Knwzz7uWrvzMEwFNLNT5Cbe2YPVKUY4WpBFa")
             break
         case Asset.Sui:
-            tickerName = 'Clone Sui'
+            tickerName = 'Cloned Sui'
             tickerSymbol = 'clSUI'
             wrapTickerName = 'Wormhole Sui'
             wrapTickerSymbol = 'wSUI'
@@ -116,7 +116,7 @@ export const assetMapping = (index: number) => {
             underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
             break
         case Asset.Pepe:
-            tickerName = 'Clone Pepe'
+            tickerName = 'Cloned Pepe'
             tickerSymbol = 'clPEPE'
             wrapTickerName = 'Wormhole Pepe'
             wrapTickerSymbol = 'wPEPE'
