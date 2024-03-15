@@ -11,14 +11,14 @@ export enum AssetTickers {
     arbitrum = 0,
     optimism = 1,
     sui = 2,
-    pepe = 3,
+    doge = 3,
 }
 
 export enum Asset {
     Arbitrum,
     Optimism,
     Sui,
-    Pepe
+    Doge
 }
 
 export enum AssetType {
@@ -34,32 +34,32 @@ export const MAX_POOLS_FOR_SHOW = 3
 
 export const ASSETS = [
     {
-        tickerName: 'Clone Arbitrum',
+        tickerName: 'Cloned Arbitrum',
         tickerSymbol: 'clARB',
         tickerIcon: '/images/assets/on-arb.svg',
         ticker: 'arbitrum',
         pythSymbol: 'Crypto.ARB/USD'
     },
     {
-        tickerName: 'Clone Optimism',
+        tickerName: 'Cloned Optimism',
         tickerSymbol: 'clOP',
         tickerIcon: '/images/assets/on-op.svg',
         ticker: 'optimism',
         pythSymbol: 'Crypto.OP/USD'
     },
     {
-        tickerName: 'Clone Sui',
+        tickerName: 'Cloned Sui',
         tickerSymbol: 'clSUI',
         tickerIcon: '/images/assets/on-sui.svg',
         ticker: 'sui',
         pythSymbol: 'Crypto.SUI/USD'
     },
     {
-        tickerName: 'Clone Pepe',
-        tickerSymbol: 'clPepe',
-        tickerIcon: '/images/assets/on-ada.svg',
-        ticker: 'pepe',
-        pythSymbol: 'Crypto.PEPE/USD',
+        tickerName: 'Cloned Doge',
+        tickerSymbol: 'clDOGE',
+        tickerIcon: '/images/assets/on-doge.svg',
+        ticker: 'doge',
+        pythSymbol: 'Crypto.DOGE/USD',
     }
 ]
 
@@ -77,7 +77,7 @@ export const assetMapping = (index: number) => {
     let underlyingTokenMint = PublicKey.default
     switch (index) {
         case Asset.Arbitrum:
-            tickerName = 'Clone Arbitrum'
+            tickerName = 'Cloned Arbitrum'
             tickerSymbol = 'clARB'
             wrapTickerName = 'DeBridge Arbitrum'
             wrapTickerSymbol = 'deARB'
@@ -90,7 +90,7 @@ export const assetMapping = (index: number) => {
             underlyingTokenMint = new PublicKey("9Bv59s4i393sqPysTEKA8xx47DQJ73EoBCS1DBbW9EWy")
             break
         case Asset.Optimism:
-            tickerName = 'Clone Optimism'
+            tickerName = 'Cloned Optimism'
             tickerSymbol = 'clOP'
             wrapTickerName = 'DeBridge Optimism'
             wrapTickerSymbol = 'deOP'
@@ -103,7 +103,7 @@ export const assetMapping = (index: number) => {
             underlyingTokenMint = new PublicKey("7QDfgP97Knwzz7uWrvzMEwFNLNT5Cbe2YPVKUY4WpBFa")
             break
         case Asset.Sui:
-            tickerName = 'Clone Sui'
+            tickerName = 'Cloned Sui'
             tickerSymbol = 'clSUI'
             wrapTickerName = 'Wormhole Sui'
             wrapTickerSymbol = 'wSUI'
@@ -115,18 +115,18 @@ export const assetMapping = (index: number) => {
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
             break
-        case Asset.Pepe:
-            tickerName = 'Clone Pepe'
-            tickerSymbol = 'clPEPE'
-            wrapTickerName = 'Wormhole Pepe'
-            wrapTickerSymbol = 'wPEPE'
-            wrapPortUrl = 'https://portalbridge.com/'
-            tickerIcon = '/images/assets/on-ada.svg'
-            ticker = 'pepe'
+        case Asset.Doge:
+            tickerName = 'Cloned Doge'
+            tickerSymbol = 'clDOGE'
+            wrapTickerName = 'DeBridge Doge'
+            wrapTickerSymbol = 'deDOGE'
+            wrapPortUrl = 'https://app.debridge.finance/deport?inputChain=56&outputChain=7565164&inputCurrency=0xba2ae424d960c26247dd6c32edc70b295c744c43&outputCurrency='
+            tickerIcon = '/images/assets/on-doge.svg'
+            ticker = 'doge'
             assetType = AssetType.Crypto
-            pythSymbol = 'Crypto.PEPE/USD'
+            pythSymbol = 'Crypto.DOGE/USD'
             supabaseSymbol = pythSymbol
-            underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
+            underlyingTokenMint = new PublicKey("H7ijetaTKRQbN3GSpxiW46sSpT8Rw3xHfdiDQN9Lx9LX")
             break
         default:
             throw new Error('Not supported')

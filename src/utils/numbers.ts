@@ -18,6 +18,10 @@ export const formatDollarAmount = (num: number | undefined, digits = 2, round = 
   })
 }
 
+export const formatLocaleAmount = (num: number | string | undefined | never[], maxFractionDigits = 3) => {
+  return num?.toLocaleString('en-US', { maximumFractionDigits: maxFractionDigits })
+}
+
 export const formatHealthScore = (score: number): string => {
   score = (isNaN(score)) ? 0 : score
 

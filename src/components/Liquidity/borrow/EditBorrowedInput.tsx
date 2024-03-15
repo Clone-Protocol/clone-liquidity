@@ -1,6 +1,7 @@
 import { FormControl, styled, Stack, Box, Typography } from "@mui/material"
 import { StyledTabs, StyledTab } from "~/components/Common/StyledTab"
 import PairInput from '~/components/Liquidity/comet/PairInput'
+import { formatLocaleAmount } from "~/utils/numbers"
 
 interface Props {
   editType: number
@@ -46,8 +47,8 @@ const EditBorrowedInput: React.FC<Props> = ({
       <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' mt='38px'>
         <Typography variant="p">Current borrowed amount</Typography>
         <Stack direction='row' gap={1}>
-          <Typography variant="p_lg">{currentCollAmount?.toLocaleString('en-US', { maximumFractionDigits: 5 })} {tickerSymbol}</Typography>
-          <Typography variant="p_lg" color='#66707e'>(${dollarPrice?.toLocaleString('en-US', { maximumFractionDigits: 5 })} USD)</Typography>
+          <Typography variant="p_lg">{formatLocaleAmount(currentCollAmount, 5)} {tickerSymbol}</Typography>
+          <Typography variant="p_lg" color='#66707e'>(${formatLocaleAmount(dollarPrice, 5)} USD)</Typography>
         </Stack>
       </StackWithBorder>
 
@@ -69,8 +70,8 @@ const EditBorrowedInput: React.FC<Props> = ({
         <StackWithBorder direction='row' justifyContent="space-between" alignItems='center' sx={{ background: 'transparent' }}>
           <Typography variant="p">Borrow amount after {editType === 0 ? "borrowing" : "repaying"}</Typography>
           <Stack direction='row' gap={1}>
-            <Typography variant="p_lg">{`${isAfterNoBorrowedRemaining ? '0' : afterBorrowedAmount.toLocaleString('en-US', { maximumFractionDigits: 5 }) + " " + tickerSymbol}`}</Typography>
-            <Typography variant="p_lg" color='#66707e'>{`${isAfterNoBorrowedRemaining ? '(Paid in Full)' : '$' + afterBorrowedDollarPrice.toLocaleString('en-US', { maximumFractionDigits: 5 })}`}</Typography>
+            <Typography variant="p_lg">{`${isAfterNoBorrowedRemaining ? '0' : formatLocaleAmount(afterBorrowedAmount, 5) + " " + tickerSymbol}`}</Typography>
+            <Typography variant="p_lg" color='#66707e'>{`${isAfterNoBorrowedRemaining ? '(Paid in Full)' : '$' + formatLocaleAmount(afterBorrowedDollarPrice, 5)}`}</Typography>
           </Stack>
         </StackWithBorder>
       </CenterBox>

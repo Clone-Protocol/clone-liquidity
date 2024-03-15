@@ -8,6 +8,8 @@ import withSuspense from "~/hocs/withSuspense"
 import { LoadingProgress } from "~/components/Common/Loading"
 import AnalyticsIcon from 'public/images/analytics-sketch.svg'
 import { PublicKey } from "@solana/web3.js"
+import { formatLocaleAmount } from "~/utils/numbers"
+import { AssetTickers, assetMapping } from "~/data/assets"
 
 interface Props {
   assetData: PositionInfo
@@ -51,7 +53,7 @@ const PriceChart: React.FC<Props> = ({ assetData, publicKey, isOraclePrice = fal
         <Typography variant="h2" fontWeight={500}>
           $
           {isOraclePrice
-            ? priceHistory.currentPrice?.toLocaleString('en-US', { maximumFractionDigits: 3 })
+            ? formatLocaleAmount(priceHistory.currentPrice, 3)
             : assetData.price.toLocaleString()}
         </Typography>
         <Typography variant="p_lg" color="#66707e" ml="10px">

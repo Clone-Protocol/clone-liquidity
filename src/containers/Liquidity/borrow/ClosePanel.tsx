@@ -9,6 +9,7 @@ import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from "~/components/Common/CommonButtons"
 import CheckIcon from 'public/images/check-icon.svg'
 import { ON_USD } from '~/utils/constants'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollateral }: { borrowDetail: BorrowDetail, onMoveRepayPosition: () => void, onMoveWithdrawCollateral: () => void }) => {
   const canCloseComet = borrowDetail.borrowedOnasset === 0
@@ -22,7 +23,7 @@ const ClosePanel = ({ borrowDetail, onMoveRepayPosition, onMoveWithdrawCollatera
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
           <Typography variant='p_lg'>
-            {borrowDetail.borrowedOnasset.toLocaleString('en-US', { maximumFractionDigits: 6 })} {borrowDetail.tickerSymbol}
+            {formatLocaleAmount(Number(borrowDetail.borrowedOnasset), 6)} {borrowDetail.tickerSymbol}
           </Typography>
 
           {canCloseComet ?

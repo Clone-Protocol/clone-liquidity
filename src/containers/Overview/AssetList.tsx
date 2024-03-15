@@ -16,9 +16,10 @@ import useDebounce from '~/hooks/useDebounce'
 import { GridEventListener } from '@mui/x-data-grid'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { useRouter } from 'next/navigation'
-import { formatDollarAmount } from '~/utils/numbers'
+import { formatDollarAmount, formatLocaleAmount } from '~/utils/numbers'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
+import { AssetTickers } from '~/data/assets'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')
@@ -104,7 +105,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return !showPoolStatus(params.row.status) ?
-				<Typography variant='p_xlg'>${params.value?.toLocaleString()}</Typography>
+				<Typography variant='p_xlg'>${formatLocaleAmount(params.value)}</Typography>
 				: <></>
 		},
 	},
