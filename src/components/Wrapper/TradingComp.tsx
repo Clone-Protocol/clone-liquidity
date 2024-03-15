@@ -12,7 +12,7 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '../Common/CommonButtons'
-import { assetMapping } from '~/data/assets'
+import { AssetTickers, assetMapping } from '~/data/assets'
 import { WHITELIST_ADDRESSES_FOR_UNWRAP } from '~/utils/whitelist_addressed_for_unwrap'
 import DebridgeIcon from 'public/images/sponsors/debridge-ic.svg'
 import WormholeIcon from 'public/images/sponsors/wormhole-ic.svg'
@@ -21,6 +21,7 @@ import { LearnMoreIcon } from '../Common/SvgIcons'
 interface Props {
   assetIndex: number
   onShowSearchAsset: () => void
+  onShowWrapBridge: () => void
 }
 
 const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWrapBridge }) => {
@@ -132,6 +133,7 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
 
   const isValid = invalidMsg() === ''
   const isWormholeAsset = pairData.wrapTickerSymbol.slice(0, 1) === 'w'
+  const hasLinkForWrapPortUrl = isWormholeAsset || assetIndex === AssetTickers.doge
 
   return (
     <>
@@ -141,11 +143,11 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
             {isWrap ?
               <Box>
                 {/* <a href={isWormholeAsset ? pairData.wrapPortUrl : '#'} target='_blank'> */}
-                <GetMoreStack direction="row" justifyContent="space-between" alignItems="center" px='20px' onClick={!isWormholeAsset ? onShowWrapBridge : () => window.open(pairData.wrapPortUrl)}>
+                <GetMoreStack direction="row" justifyContent="space-between" alignItems="center" px='20px' onClick={!hasLinkForWrapPortUrl ? onShowWrapBridge : () => window.open(pairData.wrapPortUrl)}>
                   <Box display='flex' flexDirection='column' alignItems='flex-start'>
                     <Box display='flex' gap={1} alignItems='center' mb='4px'>
                       <Typography variant='p_lg' color='#fff'>Get more {pairData.wrapTickerSymbol}</Typography>
-                      {isWormholeAsset && <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>}
+                      {hasLinkForWrapPortUrl && <Box color='#66707e' mb='-3px'><LearnMoreIcon /></Box>}
                     </Box>
                     <Typography variant='p' color='#66707e' textAlign='left' whiteSpace='nowrap'>Port over {pairData.tickerSymbol.slice(2).toUpperCase()} as {pairData.wrapTickerSymbol} to Solana</Typography>
                   </Box>

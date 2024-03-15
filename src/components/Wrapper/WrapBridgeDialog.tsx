@@ -34,6 +34,7 @@ const WrapBridgeDialog = ({ open, widgetType, handleClose }: { open: boolean, wi
   )
 }
 
+
 const BoxWrapper = styled(Box)`
   padding: 12px 0px; 
   color: #fff;

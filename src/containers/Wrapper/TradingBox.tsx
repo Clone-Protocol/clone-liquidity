@@ -5,6 +5,7 @@ import TradingComp from '~/components/Wrapper/TradingComp'
 import dynamic from 'next/dynamic'
 import WrapBridgeDialog from '~/components/Wrapper/WrapBridgeDialog'
 import { ARB_Widget, OP_Widget } from '~/utils/debridge_widgets'
+import { AssetTickers } from '~/data/assets'
 
 const TradingBox: React.FC = () => {
 	const ChooseAssetDialog = dynamic(() => import('./Dialogs/ChooseAssetDialog'))
@@ -17,10 +18,9 @@ const TradingBox: React.FC = () => {
 		setAssetIndex(assetId)
 		setOpenChooseAsset(false)
 
-		// MEMO: hardcoding for this. but need to be refactored
-		if (assetId === 0) {
+		if (assetId === AssetTickers.arbitrum) {
 			setWidgetType(ARB_Widget)
-		} else if (assetId === 1) {
+		} else if (assetId === AssetTickers.optimism) {
 			setWidgetType(OP_Widget)
 		}
 	}
