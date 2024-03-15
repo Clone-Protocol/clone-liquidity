@@ -105,7 +105,7 @@ let columns: GridColDef[] = [
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
 			return !showPoolStatus(params.row.status) ?
-				<Typography variant='p_xlg'>${params.row.id === AssetTickers.pepe ? formatLocaleAmount(params.value, 7) : formatLocaleAmount(params.value)}</Typography>
+				<Typography variant='p_xlg'>${formatLocaleAmount(params.value)}</Typography>
 				: <></>
 		},
 	},

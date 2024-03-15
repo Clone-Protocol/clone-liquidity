@@ -11,14 +11,14 @@ export enum AssetTickers {
     arbitrum = 0,
     optimism = 1,
     sui = 2,
-    pepe = 3,
+    doge = 3,
 }
 
 export enum Asset {
     Arbitrum,
     Optimism,
     Sui,
-    Pepe
+    Doge
 }
 
 export enum AssetType {
@@ -55,11 +55,11 @@ export const ASSETS = [
         pythSymbol: 'Crypto.SUI/USD'
     },
     {
-        tickerName: 'Cloned Pepe',
-        tickerSymbol: 'clPepe',
-        tickerIcon: '/images/assets/on-pepe.svg',
-        ticker: 'pepe',
-        pythSymbol: 'Crypto.PEPE/USD',
+        tickerName: 'Cloned Doge',
+        tickerSymbol: 'clDOGE',
+        tickerIcon: '/images/assets/on-doge.svg',
+        ticker: 'doge',
+        pythSymbol: 'Crypto.DOGE/USD',
     }
 ]
 
@@ -115,18 +115,18 @@ export const assetMapping = (index: number) => {
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
             break
-        case Asset.Pepe:
-            tickerName = 'Cloned Pepe'
-            tickerSymbol = 'clPEPE'
-            wrapTickerName = 'Wormhole Pepe'
-            wrapTickerSymbol = 'wPEPE'
-            wrapPortUrl = 'https://portalbridge.com/'
-            tickerIcon = '/images/assets/on-pepe.svg'
-            ticker = 'pepe'
+        case Asset.Doge:
+            tickerName = 'Cloned Doge'
+            tickerSymbol = 'clDOGE'
+            wrapTickerName = 'DeBridge Doge'
+            wrapTickerSymbol = 'deDOGE'
+            wrapPortUrl = 'https://app.debridge.finance/deport?inputChain=56&outputChain=7565164&inputCurrency=0xba2ae424d960c26247dd6c32edc70b295c744c43&outputCurrency='
+            tickerIcon = '/images/assets/on-doge.svg'
+            ticker = 'doge'
             assetType = AssetType.Crypto
-            pythSymbol = 'Crypto.PEPE/USD'
+            pythSymbol = 'Crypto.DOGE/USD'
             supabaseSymbol = pythSymbol
-            underlyingTokenMint = new PublicKey("G1vJEgzepqhnVu35BN4jrkv3wVwkujYWFFCxhbEZ1CZr")
+            underlyingTokenMint = new PublicKey("H7ijetaTKRQbN3GSpxiW46sSpT8Rw3xHfdiDQN9Lx9LX")
             break
         default:
             throw new Error('Not supported')
