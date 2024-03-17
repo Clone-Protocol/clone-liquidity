@@ -9,8 +9,8 @@ import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import BoltIcon from '@mui/icons-material/Bolt';
-import PromoteDialog from '~/components/Points/PromoteDialog'
+// import BoltIcon from '@mui/icons-material/Bolt';
+// import PromoteDialog from '~/components/Points/PromoteDialog'
 import { useState } from 'react'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
@@ -18,7 +18,7 @@ import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
   const { setOpen } = useWalletDialog()
-  const [showPromoteDialog, setShowPromoteDialog] = useState(true)
+  // const [showPromoteDialog, setShowPromoteDialog] = useState(true)
 
   const { data: infos } = usePointStatusQuery({
     userPubKey: publicKey,
@@ -75,10 +75,10 @@ const MyPointStatus = () => {
               {infos?.lpPoints ? infos.lpPoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
-          <PromoteBox onClick={() => setShowPromoteDialog(true)}>
+          {/* <PromoteBox onClick={() => setShowPromoteDialog(true)}>
             <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
             <ColoredText><Typography variant='p_sm'>2x Multiplier</Typography></ColoredText>
-          </PromoteBox>
+          </PromoteBox> */}
         </BorderBox>
         <BorderBox width='250px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
@@ -111,7 +111,7 @@ const MyPointStatus = () => {
         </Box>
       </>}
 
-      {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />}
+      {/* {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />} */}
     </Wrapper>
   )
 
