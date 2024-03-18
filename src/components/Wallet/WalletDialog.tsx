@@ -114,7 +114,18 @@ export const WalletDialog: FC<WalletDialogProps> = ({
 	}, [connecting, connected])
 
 	const [featured, more] = useMemo(
-		() => [wallets.slice(0, featuredWallets), wallets.slice(featuredWallets)],
+		() => {
+			const braveWalletIdx = wallets.findIndex(wallet => wallet.adapter.name === 'Brave Wallet')
+			// for brave browser
+			if (braveWalletIdx !== -1) {
+				const braveWalletObj = wallets[braveWalletIdx]
+				const newWallets = wallets.filter((wallet, idx) => idx !== braveWalletIdx)
+				newWallets.push(braveWalletObj)
+				return [newWallets.slice(0, featuredWallets), newWallets.slice(featuredWallets)]
+			} else {
+				return [wallets.slice(0, featuredWallets), wallets.slice(featuredWallets)]
+			}
+		},
 		[wallets, featuredWallets]
 	)
 

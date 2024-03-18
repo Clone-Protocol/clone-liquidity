@@ -11,7 +11,6 @@ import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
 // import BoltIcon from '@mui/icons-material/Bolt';
 // import PromoteDialog from '~/components/Points/PromoteDialog'
-import { useState } from 'react'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 
