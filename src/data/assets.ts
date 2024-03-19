@@ -30,7 +30,7 @@ export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
 //@MEMO: to add more asset, need to adjust here
-export const MAX_POOLS_FOR_SHOW = 3
+export const MAX_POOLS_FOR_SHOW = 4
 
 export const ASSETS = [
     {

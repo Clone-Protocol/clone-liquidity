@@ -68,7 +68,7 @@ export function useCloseMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: CloseFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: CloseFormData) => funcNoWallet() })
 	}
 }
 
@@ -290,7 +290,7 @@ export function useEditCollateralMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: EditFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: EditFormData) => funcNoWallet() })
 	}
 
 }
@@ -394,6 +394,6 @@ export function useBorrowMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: BorrowFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: BorrowFormData) => funcNoWallet() })
 	}
 }

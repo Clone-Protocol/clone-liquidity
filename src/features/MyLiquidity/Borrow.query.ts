@@ -1,10 +1,10 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { FilterType } from '~/data/filter'
 import { assetMapping, collateralMapping, AssetType } from '~/data/assets'
-import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral } from '~/data/assets'
@@ -53,7 +53,7 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 interface GetAssetsProps {
 	userPubKey: PublicKey | null
 	filter: FilterType
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 	enabled?: boolean
 }
 
@@ -77,7 +77,9 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(['borrowAssets', wallet, userPubKey, filter], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
+		return useQuery({
+			queryKey: ['borrowAssets', wallet, userPubKey, filter],
+			queryFn: async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }),
 			refetchOnMount,
 			refetchInterval: REFETCH_SHORT_CYCLE,
 			refetchIntervalInBackground: true,
@@ -96,6 +98,6 @@ export function useBorrowQuery({ userPubKey, filter, refetchOnMount, enabled = t
 			}
 		})
 	} else {
-		return useQuery(['borrowAssets'], () => [])
+		return useQuery({ queryKey: ['borrowAssets'], queryFn: () => [] })
 	}
 }

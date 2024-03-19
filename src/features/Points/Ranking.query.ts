@@ -1,6 +1,6 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 // import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
-import { PythObj, PythResponseData } from '~/pages/api/points_pythlist'
+import { PythObj } from '~/pages/api/points_pythlist'
 import { fetchAllUserPoints, UserPointsView } from '~/utils/fetch_netlify'
 
 //Only for SSR function
@@ -47,7 +47,7 @@ export const fetchRanking = async () => {
 }
 
 interface GetProps {
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
 }
 
@@ -72,7 +72,9 @@ export function useRankingQuery({ refetchOnMount, enabled = true }: GetProps) {
     queryFunc = () => []
   }
 
-  return useQuery(['ranks'], queryFunc, {
+  return useQuery({
+    queryKey: ['ranks'],
+    queryFn: queryFunc,
     refetchOnMount,
     // refetchInterval: REFETCH_CYCLE,
     // refetchIntervalInBackground: true,

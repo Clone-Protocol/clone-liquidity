@@ -1,10 +1,10 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
-import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { getUserMintInfos } from '~/utils/user';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { getiAssetInfos } from '~/utils/assets'
@@ -103,7 +103,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
 interface GetProps {
   userPubKey: PublicKey | null
   index: number
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
 }
 
@@ -135,12 +135,14 @@ export function useBorrowDetailQuery({ userPubKey, index, refetchOnMount, enable
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
   if (wallet) {
-    return useQuery(['borrowDetail', userPubKey, index], async () => fetchBorrowDetail({ program: await getCloneApp(wallet), userPubKey, index }), {
+    return useQuery({
+      queryKey: ['borrowDetail', userPubKey, index],
+      queryFn: async () => fetchBorrowDetail({ program: await getCloneApp(wallet), userPubKey, index }),
       refetchOnMount,
       enabled
     })
   } else {
-    return useQuery(['borrowDetail'], () => { return null })
+    return useQuery({ queryKey: ['borrowDetail'], queryFn: () => { return null } })
   }
 }
 
@@ -149,13 +151,15 @@ export function useBorrowPositionQuery({ userPubKey, index, refetchOnMount, enab
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['borrowPosition', userPubKey, index], async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index }), {
+    return useQuery({
+      queryKey: ['borrowPosition', userPubKey, index],
+      queryFn: async () => fetchBorrowPosition({ program: await getCloneApp(wallet), userPubKey, index }),
       refetchOnMount,
       refetchInterval: REFETCH_SHORT_CYCLE,
       refetchIntervalInBackground: true,
       enabled
     })
   } else {
-    return useQuery(['borrowPosition'], () => { return null })
+    return useQuery({ queryKey: ['borrowPosition'], queryFn: () => { return null } })
   }
 }

@@ -1,5 +1,5 @@
-import { QueryObserverOptions, useQuery } from '@tanstack/react-query'
-import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale } from "clone-protocol-sdk/sdk/src/clone"
+import { useQuery } from '@tanstack/react-query'
+import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { PublicKey } from '@solana/web3.js'
 import { useClone } from '~/hooks/useClone'
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -15,7 +15,7 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
 
 	const { underlyingTokenMint } = assetMapping(index);
 	const pools = await program.getPools();
-	const pool = pools.pools[index]; 
+	const pool = pools.pools[index];
 	const underlyingAssetTokenAccount = await getAssociatedTokenAddress(underlyingTokenMint, userPubKey);
 
 	const getAccountBalance = async (tokenAccount: PublicKey) => {
@@ -30,7 +30,7 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
 	let onassetVal = await getAccountBalance(classetTokenAccountInfo.address);
 
 	let underlyingAssetVal = await getAccountBalance(underlyingAssetTokenAccount);
-	let maxUnwrappableVal = await getAccountBalance(pool.underlyingAssetTokenAccount); 
+	let maxUnwrappableVal = await getAccountBalance(pool.underlyingAssetTokenAccount);
 
 	return {
 		underlyingAssetVal,
@@ -42,7 +42,7 @@ export const fetchBalance = async ({ program, userPubKey, index }: { program: Cl
 interface GetProps {
 	userPubKey: PublicKey | null
 	index?: number
-	refetchOnMount?: QueryObserverOptions['refetchOnMount']
+	refetchOnMount?: boolean | "always"
 	enabled?: boolean
 }
 
@@ -57,13 +57,15 @@ export function useBalanceQuery({ userPubKey, index = -1, refetchOnMount, enable
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(['wrapperBalance', wallet, userPubKey, index], async () => fetchBalance({ program: await getCloneApp(wallet), userPubKey, index }), {
+		return useQuery({
+			queryKey: ['wrapperBalance', wallet, userPubKey, index],
+			queryFn: async () => fetchBalance({ program: await getCloneApp(wallet), userPubKey, index }),
 			refetchOnMount,
 			refetchInterval: REFETCH_CYCLE,
 			refetchIntervalInBackground: true,
 			enabled
 		})
 	} else {
-		return useQuery(['wrapperBalance'], () => ({ underlyingAssetVal: 0, maxUnwrappableVal: 0, onassetVal: 0 }))
+		return useQuery({ queryKey: ['wrapperBalance'], queryFn: () => ({ underlyingAssetVal: 0, maxUnwrappableVal: 0, onassetVal: 0 }) })
 	}
 }

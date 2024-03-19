@@ -1,4 +1,4 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
@@ -6,7 +6,7 @@ import { getCollateralAccount } from '~/utils/token_accounts'
 import { getHealthScore } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
-import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 
 export const fetchDefaultCollateral = async ({
 	program,
@@ -85,7 +85,7 @@ export interface DetailInfo {
 
 interface GetProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 	enabled?: boolean
 }
 
@@ -93,17 +93,15 @@ export function useEditCollateralQuery({ userPubKey, refetchOnMount, enabled = t
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(
-			['editCollateral', wallet, userPubKey],
-			async () => fetchDefaultCollateral({ program: await getCloneApp(wallet), userPubKey }),
-			{
-				refetchOnMount,
-				refetchInterval: REFETCH_SHORT_CYCLE,
-				refetchIntervalInBackground: true,
-				enabled,
-			}
-		)
+		return useQuery({
+			queryKey: ['editCollateral', wallet, userPubKey],
+			queryFn: async () => fetchDefaultCollateral({ program: await getCloneApp(wallet), userPubKey }),
+			refetchOnMount,
+			refetchInterval: REFETCH_SHORT_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+		})
 	} else {
-		return useQuery(['editCollateral'], () => { return null })
+		return useQuery({ queryKey: ['editCollateral'], queryFn: () => { return null } })
 	}
 }
