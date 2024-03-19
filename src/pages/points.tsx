@@ -1,5 +1,5 @@
 'use client'
-import { DehydratedState, Hydrate, QueryClient, dehydrate } from '@tanstack/react-query'
+import { DehydratedState, HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
 import { StyledSection } from './index'
 import { Container, Box, Typography, Stack } from '@mui/material'
 import Image from 'next/image'
@@ -7,7 +7,7 @@ import LearnMoreIcon from 'public/images/learn-more.svg'
 import MyPointStatus from '~/containers/Points/MyPointStatus'
 import RankingList from '~/containers/Points/RankingList'
 import { IS_NOT_LOCAL_DEVELOPMENT } from '~/utils/constants'
-import { RankingList as RankingListType, fetchRanking } from '~/features/Points/Ranking.query'
+import { fetchRanking } from '~/features/Points/Ranking.query'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 
 //SSR
@@ -16,7 +16,7 @@ export const getStaticProps = (async () => {
 
   if (IS_NOT_LOCAL_DEVELOPMENT) {
     console.log('prefetch')
-    await queryClient.prefetchQuery(['ranks'], () => fetchRanking())
+    await queryClient.prefetchQuery({ queryKey: ['ranks'], queryFn: () => fetchRanking() })
   }
 
   /*
@@ -75,9 +75,9 @@ const Points = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticPro
           <Box mt='10px'>
             <MyPointStatus />
 
-            <Hydrate state={dehydratedState}>
+            <HydrationBoundary state={dehydratedState}>
               <RankingList />
-            </Hydrate>
+            </HydrationBoundary>
           </Box>
         </Box>
       </Container>

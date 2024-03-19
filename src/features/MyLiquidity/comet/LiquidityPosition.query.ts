@@ -1,11 +1,11 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { ASSETS, assetMapping } from 'src/data/assets'
 import { useClone } from '~/hooks/useClone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { fetchBalance } from '~/features/Borrow/Balance.query'
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { Comet, Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
@@ -117,7 +117,7 @@ export interface PositionInfo {
 interface GetProps {
 	userPubKey: PublicKey | null
 	index: number
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 	enabled?: boolean
 }
 
@@ -126,18 +126,16 @@ export function useLiquidityDetailQuery({ userPubKey, index, refetchOnMount, ena
 	const { getCloneApp } = useClone()
 	// console.log('useLiquidityDetailQuery start')
 	if (wallet) {
-		return useQuery(
-			['liquidityPosition', wallet, userPubKey, index],
-			async () => fetchLiquidityDetail({ program: await getCloneApp(wallet), userPubKey, index }),
-			{
-				refetchOnMount,
-				refetchInterval: REFETCH_CYCLE,
-				refetchIntervalInBackground: true,
-				enabled,
-			}
-		)
+		return useQuery({
+			queryKey: ['liquidityPosition', wallet, userPubKey, index],
+			queryFn: async () => fetchLiquidityDetail({ program: await getCloneApp(wallet), userPubKey, index }),
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+		})
 	} else {
-		return useQuery(['liquidityPosition'], () => { return null })
+		return useQuery({ queryKey: ['liquidityPosition'], queryFn: () => { return null } })
 	}
 }
 
@@ -246,18 +244,16 @@ export function useLiquidityPositionQuery({ userPubKey, index, refetchOnMount, e
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(
-			['closeLiquidityPosition', wallet, userPubKey, index],
-			async () => fetchCloseLiquidityPosition({ program: await getCloneApp(wallet), userPubKey, index }),
-			{
-				refetchOnMount,
-				refetchInterval: REFETCH_CYCLE,
-				refetchIntervalInBackground: true,
-				enabled,
-			}
-		)
+		return useQuery({
+			queryKey: ['closeLiquidityPosition', wallet, userPubKey, index],
+			queryFn: async () => fetchCloseLiquidityPosition({ program: await getCloneApp(wallet), userPubKey, index }),
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+		})
 	} else {
-		return useQuery(['closeLiquidityPosition'], () => { return null })
+		return useQuery({ queryKey: ['closeLiquidityPosition'], queryFn: () => { return null } })
 	}
 }
 

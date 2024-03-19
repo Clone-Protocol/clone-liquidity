@@ -1,4 +1,4 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CLONE_TOKEN_SCALE, CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
@@ -63,7 +63,7 @@ export const fetchBalances = async ({ program, userPubKey }: { program: CloneCli
 
 interface GetProps {
   userPubKey: PublicKey | null
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
 }
 
@@ -76,13 +76,15 @@ export function useBalanceQuery({ userPubKey, refetchOnMount, enabled = true }: 
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['cometBalance', wallet, userPubKey], async () => fetchBalances({ program: await getCloneApp(wallet), userPubKey }), {
+    return useQuery({
+      queryKey: ['cometBalance', wallet, userPubKey],
+      queryFn: async () => fetchBalances({ program: await getCloneApp(wallet), userPubKey }),
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,
       enabled
     })
   } else {
-    return useQuery(['cometBalance'], () => ({ balanceVal: 0 }))
+    return useQuery({ queryKey: ['cometBalance'], queryFn: () => ({ balanceVal: 0 }) })
   }
 }

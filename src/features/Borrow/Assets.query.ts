@@ -1,4 +1,4 @@
-import { useQuery, Query } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
@@ -59,7 +59,7 @@ interface GetAssetsProps {
 	searchTerm: string
 	userPubKey: PublicKey | null
 	enabled?: boolean
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 }
 
 interface AssetList {
@@ -77,7 +77,9 @@ export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetch
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(['assets', wallet, userPubKey], async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }), {
+		return useQuery({
+			queryKey: ['assets', wallet, userPubKey],
+			queryFn: async () => fetchAssets({ program: await getCloneApp(wallet), userPubKey }),
 			refetchOnMount,
 			enabled,
 			select: (assets) => {
@@ -95,6 +97,6 @@ export function useAssetsQuery({ searchTerm, userPubKey, enabled = true, refetch
 			}
 		})
 	} else {
-		return useQuery(['assets'], () => [])
+		return useQuery({ queryKey: ['assets'], queryFn: () => [] })
 	}
 }

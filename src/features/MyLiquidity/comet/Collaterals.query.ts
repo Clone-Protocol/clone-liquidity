@@ -1,4 +1,4 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient } from 'clone-protocol-sdk/sdk/src/clone'
 import { useClone } from '~/hooks/useClone'
@@ -42,7 +42,7 @@ export const fetchCollaterals = async ({
 
 interface GetProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 	enabled?: boolean
 }
 
@@ -60,17 +60,16 @@ export function useCollateralsQuery({ userPubKey, refetchOnMount, enabled = true
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(
-			['collaterals', wallet, userPubKey],
-			async () => fetchCollaterals({ program: await getCloneApp(wallet), userPubKey }),
-			{
-				refetchOnMount,
-				refetchInterval: REFETCH_CYCLE,
-				refetchIntervalInBackground: true,
-				enabled,
-			}
-		)
+		return useQuery({
+			queryKey: ['collaterals', wallet, userPubKey],
+			queryFn: async () => fetchCollaterals({ program: await getCloneApp(wallet), userPubKey }),
+
+			refetchOnMount,
+			refetchInterval: REFETCH_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+		})
 	} else {
-		return useQuery(['collaterals'], () => [])
+		return useQuery({ queryKey: ['collaterals'], queryFn: () => [] })
 	}
 }

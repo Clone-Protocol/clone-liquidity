@@ -6,7 +6,7 @@ import MainChart from '~/containers/Overview/MainChart'
 import AssetList from '~/containers/Overview/AssetList'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DEV_RPCs, IS_DEV, MAIN_RPCs } from '~/data/networks'
-import { DehydratedState, Hydrate, QueryClient, dehydrate } from '@tanstack/react-query'
+import { DehydratedState, HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
 import { IS_NOT_LOCAL_DEVELOPMENT } from '~/utils/constants'
 import { fetchAssets } from '~/features/Overview/Assets.query'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
@@ -18,8 +18,8 @@ export const getStaticProps = (async () => {
 
   if (IS_NOT_LOCAL_DEVELOPMENT) {
     console.log('prefetch')
-    await queryClient.prefetchQuery(['totalVolume'], () => fetchTotalVolume({ timeframe: '7d' }))
-    await queryClient.prefetchQuery(['assets'], () => fetchAssets({ setShowPythBanner: () => { }, mainCloneClient: null, networkEndpoint: IS_DEV ? DEV_RPCs[0].rpc_url : MAIN_RPCs[0].rpc_url }))
+    await queryClient.prefetchQuery({ queryKey: ['totalVolume'], queryFn: () => fetchTotalVolume({ timeframe: '7d' }) })
+    await queryClient.prefetchQuery({ queryKey: ['assets'], queryFn: () => fetchAssets({ setShowPythBanner: () => { }, mainCloneClient: null, networkEndpoint: IS_DEV ? DEV_RPCs[0].rpc_url : MAIN_RPCs[0].rpc_url }) })
   }
 
   return {
@@ -45,9 +45,9 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
           <Box mb='19px'>
             <MainChart />
           </Box>
-          <Hydrate state={dehydratedState}>
+          <HydrationBoundary state={dehydratedState}>
             <AssetList />
-          </Hydrate>
+          </HydrationBoundary>
         </Box>
       </Box>
     </StyledSection>

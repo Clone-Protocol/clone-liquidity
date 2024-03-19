@@ -1,10 +1,10 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { PublicKey } from '@solana/web3.js'
 import { CloneClient, fromCloneScale, fromScale } from 'clone-protocol-sdk/sdk/src/clone'
 import { Comet, Oracles, Pools, Status } from 'clone-protocol-sdk/sdk/generated/clone'
 import { getHealthScore, getILD } from "clone-protocol-sdk/sdk/src/healthscore"
 import { useClone } from '~/hooks/useClone'
-import { REFETCH_CYCLE, REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
+import { REFETCH_SHORT_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { assetMapping } from '~/data/assets'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { Collateral as StableCollateral, collateralMapping } from '~/data/assets'
@@ -71,7 +71,7 @@ export interface CometInfoStatus {
 
 interface GetPoolsProps {
 	userPubKey: PublicKey | null
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 	index?: number
 	enabled?: boolean
 }
@@ -174,25 +174,27 @@ export function useCometInfoQuery({ userPubKey, refetchOnMount, enabled = true }
 	const { getCloneApp } = useClone()
 
 	if (wallet) {
-		return useQuery(
-			['cometInfos', wallet, userPubKey],
-			async () => fetchInfos({ program: await getCloneApp(wallet), userPubKey }),
-			{
-				refetchOnMount,
-				refetchInterval: REFETCH_SHORT_CYCLE,
-				refetchIntervalInBackground: true,
-				enabled,
-			}
-		)
+		return useQuery({
+			queryKey: ['cometInfos', wallet, userPubKey],
+			queryFn: async () => fetchInfos({ program: await getCloneApp(wallet), userPubKey }),
+
+			refetchOnMount,
+			refetchInterval: REFETCH_SHORT_CYCLE,
+			refetchIntervalInBackground: true,
+			enabled,
+		})
 	} else {
-		return useQuery(['cometInfos'], () => {
-			return {
-				healthScore: 0,
-				totalCollValue: 0,
-				totalLiquidity: 0,
-				collaterals: [],
-				hasNoCollateral: true,
-				positions: []
+		return useQuery({
+			queryKey: ['cometInfos'],
+			queryFn: () => {
+				return {
+					healthScore: 0,
+					totalCollValue: 0,
+					totalLiquidity: 0,
+					collaterals: [],
+					hasNoCollateral: true,
+					positions: []
+				}
 			}
 		})
 	}
@@ -249,11 +251,13 @@ export function useInitCometDetailQuery({ index, refetchOnMount, enabled = true 
 	const wallet = useAnchorWallet()
 	const { getCloneApp } = useClone()
 	if (wallet) {
-		return useQuery(['initComet', wallet, index], async () => fetchInitializeCometDetail({ program: await getCloneApp(wallet), index }), {
+		return useQuery({
+			queryKey: ['initComet', wallet, index],
+			queryFn: async () => fetchInitializeCometDetail({ program: await getCloneApp(wallet), index }),
 			refetchOnMount,
 			enabled
 		})
 	} else {
-		return useQuery(['initComet'], () => { return fetchInitCometDetailDefault() })
+		return useQuery({ queryKey: ['initComet'], queryFn: () => { return fetchInitCometDetailDefault() } })
 	}
 }
