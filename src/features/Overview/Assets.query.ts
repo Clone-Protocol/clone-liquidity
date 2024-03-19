@@ -1,4 +1,4 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { assetMapping, AssetType, MAX_POOLS_FOR_SHOW } from '~/data/assets'
 import { FilterType } from '~/data/filter'
@@ -86,7 +86,7 @@ export const fetchAssets = async ({ setShowPythBanner, mainCloneClient, networkE
 interface GetAssetsProps {
 	filter: FilterType
 	searchTerm: string
-	refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+	refetchOnMount?: boolean | "always"
 	enabled?: boolean
 }
 
@@ -119,7 +119,9 @@ export function useAssetsQuery({ filter, searchTerm, refetchOnMount, enabled = t
 		queryFunc = () => []
 	}
 
-	return useQuery(['assets'], queryFunc, {
+	return useQuery({
+		queryKey: ['assets'],
+		queryFn: queryFunc,
 		refetchOnMount,
 		refetchInterval: REFETCH_CYCLE,
 		refetchIntervalInBackground: true,

@@ -1,4 +1,4 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from '~/hooks/useClone'
 import { assetMapping } from '~/data/assets'
@@ -46,7 +46,7 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymb
 
 interface GetAssetsProps {
   tickerSymbol: string
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
 }
 
@@ -55,13 +55,15 @@ export function usePoolAnalyticsQuery({ tickerSymbol, refetchOnMount, enabled = 
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(['poolAnalytics', tickerSymbol], async () => fetchPoolAnalytics({ tickerSymbol, program: await getCloneApp(wallet) }), {
+    return useQuery({
+      queryKey: ['poolAnalytics', tickerSymbol],
+      queryFn: async () => fetchPoolAnalytics({ tickerSymbol, program: await getCloneApp(wallet) }),
       refetchOnMount,
       refetchInterval: REFETCH_CYCLE,
       refetchIntervalInBackground: true,
       enabled
     })
   } else {
-    return useQuery(['poolAnalytics'], () => { return null })
+    return useQuery({ queryKey: ['poolAnalytics'], queryFn: () => { return null } })
   }
 }

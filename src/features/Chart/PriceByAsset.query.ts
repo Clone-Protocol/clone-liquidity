@@ -1,4 +1,4 @@
-import { Query, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { ChartElem } from './Liquidity.query'
 import { Range, fetchPythPriceHistory } from '~/utils/pyth'
 import { getDailyPoolPrices30Day } from '~/utils/assets'
@@ -87,12 +87,14 @@ interface GetProps {
   timeframe: FilterTime
   pythSymbol: string | undefined
   isOraclePrice?: boolean
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
 }
 
 export function usePriceHistoryQuery({ timeframe, pythSymbol, isOraclePrice = false, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(['oraclePriceHistory', timeframe, pythSymbol], () => fetchOraclePriceHistory({ timeframe, pythSymbol, isOraclePrice }), {
+  return useQuery({
+    queryKey: ['oraclePriceHistory', timeframe, pythSymbol],
+    queryFn: () => fetchOraclePriceHistory({ timeframe, pythSymbol, isOraclePrice }),
     refetchOnMount,
     enabled
   })

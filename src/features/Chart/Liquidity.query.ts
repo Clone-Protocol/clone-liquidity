@@ -1,12 +1,10 @@
-import { Query, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { FilterTime } from "~/components/Charts/TimeTabs"
 import { Interval } from "src/utils/assets"
 import {
-  fetchStatsData,
   fetchTotalCumulativeVolume,
   fetchTotalLiquidity as netlifyFetchTotalLiquidity,
 } from "src/utils/fetch_netlify"
-import { PublicKey } from "@solana/web3.js"
 import { Pools } from "clone-protocol-sdk/sdk/generated/clone"
 import { useAtomValue } from "jotai"
 import { cloneClient, rpcEndpoint } from "../globalAtom"
@@ -173,25 +171,25 @@ const backfillWithZeroValue = (start: Date, end: Date, intervalMs: number): Time
 
 interface GetProps {
   timeframe: FilterTime
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
 }
 
 export function useTotalLiquidityQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
   const mainCloneClient = useAtomValue(cloneClient)
   const networkEndpoint = useAtomValue(rpcEndpoint)
-  return useQuery(
-    ["totalLiquidity", timeframe],
-    () => fetchTotalLiquidity({ mainCloneClient, timeframe, networkEndpoint }),
-    {
-      refetchOnMount,
-      enabled,
-    }
-  )
+  return useQuery({
+    queryKey: ["totalLiquidity", timeframe],
+    queryFn: () => fetchTotalLiquidity({ mainCloneClient, timeframe, networkEndpoint }),
+    refetchOnMount,
+    enabled,
+  })
 }
 
 export function useTotalVolumeQuery({ timeframe, refetchOnMount, enabled = true }: GetProps) {
-  return useQuery(["totalVolume", timeframe], () => fetchTotalVolume({ timeframe }), {
+  return useQuery({
+    queryKey: ["totalVolume", timeframe],
+    queryFn: () => fetchTotalVolume({ timeframe }),
     refetchOnMount,
     enabled,
   })
@@ -201,12 +199,10 @@ export function useTotalValueLockedQuery({ timeframe, refetchOnMount, enabled = 
   const mainCloneClient = useAtomValue(cloneClient)!
   const networkEndpoint = useAtomValue(rpcEndpoint)
 
-  return useQuery(
-    ["totalValueLocked"],
-    () => fetchCurrentTVL({ mainCloneClient, networkEndpoint }),
-    {
-      refetchOnMount,
-      enabled,
-    }
-  )
+  return useQuery({
+    queryKey: ["totalValueLocked"],
+    queryFn: () => fetchCurrentTVL({ mainCloneClient, networkEndpoint }),
+    refetchOnMount,
+    enabled,
+  })
 }

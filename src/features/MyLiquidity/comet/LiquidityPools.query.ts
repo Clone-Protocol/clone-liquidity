@@ -1,4 +1,4 @@
-import { Query, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { PublicKey } from "@solana/web3.js"
 import { CloneClient } from "clone-protocol-sdk/sdk/src/clone"
 import { useClone } from "~/hooks/useClone"
@@ -62,7 +62,7 @@ export const fetchPools = async ({
 
 interface GetPoolsProps {
   userPubKey: PublicKey | null
-  refetchOnMount?: boolean | "always" | ((query: Query) => boolean | "always")
+  refetchOnMount?: boolean | "always"
   enabled?: boolean
   searchTerm: string
   noFilter?: boolean
@@ -89,30 +89,29 @@ export function useLiquidityPoolsQuery({
   const { getCloneApp } = useClone()
 
   if (wallet) {
-    return useQuery(
-      ["liquidityPools", wallet, userPubKey],
-      async () => fetchPools({ program: await getCloneApp(wallet), userPubKey, noFilter }),
-      {
-        refetchOnMount,
-        refetchInterval: REFETCH_CYCLE,
-        refetchIntervalInBackground: true,
-        enabled,
-        select: (assets) => {
-          let filteredAssets = assets
-          if (filteredAssets) {
-            filteredAssets = filteredAssets.filter((asset) => {
-              return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
-            })
-          }
-          if (filteredAssets && searchTerm && searchTerm.length > 0) {
-            filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
-          }
-
-          return filteredAssets
+    return useQuery({
+      queryKey: ["liquidityPools", wallet, userPubKey],
+      queryFn: async () => fetchPools({ program: await getCloneApp(wallet), userPubKey, noFilter }),
+      refetchOnMount,
+      refetchInterval: REFETCH_CYCLE,
+      refetchIntervalInBackground: true,
+      enabled,
+      select: (assets) => {
+        let filteredAssets = assets
+        if (filteredAssets) {
+          filteredAssets = filteredAssets.filter((asset) => {
+            return asset.assetType === AssetType.Crypto || asset.assetType === AssetType.Commodities
+          })
         }
+        if (filteredAssets && searchTerm && searchTerm.length > 0) {
+          filteredAssets = filteredAssets.filter((asset) => asset.tickerName.toLowerCase().includes(searchTerm.toLowerCase()) || asset.tickerSymbol.toLowerCase().includes(searchTerm.toLowerCase()))
+        }
+
+        return filteredAssets
       }
+    }
     )
   } else {
-    return useQuery(["liquidityPools"], () => [])
+    return useQuery({ queryKey: ["liquidityPools"], queryFn: () => [] })
   }
 }

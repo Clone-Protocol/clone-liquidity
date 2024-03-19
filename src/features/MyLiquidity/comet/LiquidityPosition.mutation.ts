@@ -409,7 +409,7 @@ export function useClosePositionMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: CloseFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: CloseFormData) => funcNoWallet() })
 	}
 }
 
