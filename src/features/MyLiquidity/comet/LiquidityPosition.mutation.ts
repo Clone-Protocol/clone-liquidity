@@ -55,7 +55,7 @@ export function useNewPositionMutation(userPubKey: PublicKey | null) {
 			mutationFn: async (data: NewFormData) => callNew({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel })
 		})
 	} else {
-		return useMutation((_: NewFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: NewFormData) => funcNoWallet() })
 	}
 }
 
@@ -161,7 +161,7 @@ export function useEditPositionMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: EditFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: EditFormData) => funcNoWallet() })
 	}
 }
 
@@ -252,7 +252,7 @@ export function usePayILDMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: PayILDFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: PayILDFormData) => funcNoWallet() })
 	}
 }
 
@@ -329,7 +329,7 @@ export function useRewardsMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: CloseFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: CloseFormData) => funcNoWallet() })
 	}
 }
 

@@ -10,7 +10,7 @@ import { funcNoWallet } from '~/features/baseQuery'
 import { FeeLevel } from '~/data/networks'
 import { priorityFee } from '~/features/globalAtom'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, getMint } from '@solana/spl-token';
+import { createAssociatedTokenAccountInstruction, getMint } from '@solana/spl-token';
 import { assetMapping } from "~/data/assets";
 import { getTokenAccount } from '~/utils/token_accounts';
 
@@ -120,8 +120,8 @@ export function useTradingMutation(userPubKey: PublicKey | null) {
 	const feeLevel = useAtomValue(priorityFee)
 
 	if (wallet) {
-		return useMutation(async (data: FormData) => callTrading({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }))
+		return useMutation({ mutationFn: async (data: FormData) => callTrading({ program: await getCloneApp(wallet), userPubKey, setTxState, data, feeLevel }) })
 	} else {
-		return useMutation((_: FormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: FormData) => funcNoWallet() })
 	}
 }

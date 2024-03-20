@@ -314,7 +314,7 @@ export function useEditBorrowMutation(userPubKey: PublicKey | null) {
 			}
 		})
 	} else {
-		return useMutation((_: EditFormData) => funcNoWallet())
+		return useMutation({ mutationFn: (_: EditFormData) => funcNoWallet() })
 	}
 }
 
