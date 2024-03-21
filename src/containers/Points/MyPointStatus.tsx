@@ -9,15 +9,16 @@ import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-// import BoltIcon from '@mui/icons-material/Bolt';
-// import PromoteDialog from '~/components/Points/PromoteDialog'
+import BoltIcon from '@mui/icons-material/Bolt';
+import PromoteDialog from '~/components/Points/PromoteDialog'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
+import { useState } from 'react'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
   const { setOpen } = useWalletDialog()
-  // const [showPromoteDialog, setShowPromoteDialog] = useState(true)
+  const [showPromoteDialog, setShowPromoteDialog] = useState(true)
 
   const { data: infos } = usePointStatusQuery({
     userPubKey: publicKey,
@@ -74,12 +75,8 @@ const MyPointStatus = () => {
               {infos?.lpPoints ? infos.lpPoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
-          {/* <PromoteBox onClick={() => setShowPromoteDialog(true)}>
-            <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
-            <ColoredText><Typography variant='p_sm'>2x Multiplier</Typography></ColoredText>
-          </PromoteBox> */}
         </BorderBox>
-        <BorderBox width='250px'>
+        <BorderBox width='250px' position='relative'>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>My Trade Points</Typography>
             <InfoTooltip title={TooltipTexts.points.tradePoints} color='#66707e' />
@@ -89,6 +86,10 @@ const MyPointStatus = () => {
               {infos?.tradePoints ? infos.tradePoints.toLocaleString() : '0'}
             </Typography>
           </StatusValue>
+          <PromoteBox onClick={() => setShowPromoteDialog(true)}>
+            <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
+            <ColoredText><Typography variant='p_sm'>1.5x Multiplier</Typography></ColoredText>
+          </PromoteBox>
         </BorderBox>
         <BorderBox width='250px'>
           <Box display='flex' justifyContent='center' alignItems='center'>
@@ -110,7 +111,7 @@ const MyPointStatus = () => {
         </Box>
       </>}
 
-      {/* {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />} */}
+      {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />}
     </Wrapper>
   )
 

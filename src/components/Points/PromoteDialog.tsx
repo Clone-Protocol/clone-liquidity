@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Box, styled, Typography, Button } from '@mui/material'
 import { CloseButton } from '../Common/CommonButtons'
-import RocketPromoteIcon from 'public/images/points-rocket.svg'
-import Image from 'next/image'
+// import RocketPromoteIcon from 'public/images/points-rocket.svg'
+// import Image from 'next/image'
 
 const PromoteDialog = ({ onClose }: { onClose: () => void }) => {
   const [addedOut, setAddedOut] = useState('')
@@ -17,13 +17,13 @@ const PromoteDialog = ({ onClose }: { onClose: () => void }) => {
     <BackScreen>
       <AnimWrapper className={addedOut}>
         <BoxWrapper sx={{ width: { xs: '100%', md: '463px' }, paddingTop: { xs: '30px', md: '20px' } }}>
-          <TextHead>Liquidity Point 2x Multiplier</TextHead>
+          <TextHead>Trade Point 1.5x Multiplier</TextHead>
           <Box my='20px' lineHeight={0.9}>
             <Typography variant='p_lg' lineHeight={1.5}>
-              For limited amount of time, your Liquidity points are cloned!
+              For limited amount of time, your Trade points are multiplied!
             </Typography>
           </Box>
-          <EnterButton onClick={() => close()}><Image src={RocketPromoteIcon} alt='promote' /></EnterButton>
+          {/* <EnterButton onClick={() => close()}><Image src={RocketPromoteIcon} alt='promote' /></EnterButton> */}
 
           <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
             <CloseButton handleClose={() => close()} />
