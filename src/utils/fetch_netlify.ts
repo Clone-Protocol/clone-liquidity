@@ -109,6 +109,25 @@ export const fetchUserPoints = async (userAddress: string): Promise<UserPointsVi
     return response.data as UserPointsView[]
 }
 
+export type UserGiveaway = {
+    user_address: string
+    name?: string
+    tickets: number
+}
+
+export const fetchAllUserGiveaway = async (): Promise<UserGiveaway[]> => {
+    let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-users-all-tickets`;
+    const response = await axios.get(url)
+    return response.data as UserGiveaway[]
+}
+
+export const fetchUserGiveaway = async (userAddress: string): Promise<UserGiveaway[]> => {
+    let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-user-tickets`;
+    url += `?userAddress=${userAddress}`;
+    const response = await axios.get(url)
+    return response.data as UserGiveaway[]
+}
+
 export const fetchGeoBlock = async (): Promise<{ result: boolean, whitelistAddr?: string[] }> => {
     const response = await axios.post(`/api/route`)
     return response.data
