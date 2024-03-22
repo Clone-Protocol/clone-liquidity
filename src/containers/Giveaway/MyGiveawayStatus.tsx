@@ -75,7 +75,6 @@ const MyGiveawayStatus = () => {
       {!publicKey && <>
         {isMobileOnSize ? <BlackDefault /> : <OpaqueDefault />}
         <Box position='absolute' top='20px' marginY='55px' left="0px" right="0px" marginX='auto'>
-          <Box display='flex' justifyContent='center' mb='7px'><Typography variant='p_lg'>To see your points: </Typography></Box>
           <Box display='flex' justifyContent='center'>
             <ConnectWallet onClick={() => setOpen(true)}><Typography variant='p_xlg'>Connect Wallet</Typography></ConnectWallet>
           </Box>

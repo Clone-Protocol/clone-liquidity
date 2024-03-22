@@ -12,7 +12,7 @@ export const fetchTicketRanking = async () => {
   userPoints.forEach((user, id) => {
     result.push({
       id,
-      user: { address: user.user_address },
+      user: { name: user.name, address: user.user_address },
       totalTickets: user.tickets,
     })
   })
@@ -27,7 +27,7 @@ interface GetProps {
 
 export interface RankingList {
   id: number
-  user: { address: string }
+  user: { name?: string, address: string }
   totalTickets: number
 }
 
