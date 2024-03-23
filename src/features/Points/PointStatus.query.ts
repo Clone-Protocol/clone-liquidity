@@ -46,7 +46,7 @@ export function usePointStatusQuery({ userPubKey, refetchOnMount, enabled = true
 
   if (wallet) {
     return useQuery({
-      queryKey: ['statusData', wallet, userPubKey],
+      queryKey: ['pStatusData', wallet, userPubKey],
       queryFn: async () => fetchStatus({ userPubKey }),
       refetchOnMount,
       // refetchInterval: REFETCH_CYCLE,
@@ -54,6 +54,6 @@ export function usePointStatusQuery({ userPubKey, refetchOnMount, enabled = true
       enabled
     })
   } else {
-    return useQuery({ queryKey: ['statusData'], queryFn: () => { return null } })
+    return useQuery({ queryKey: ['pStatusData'], queryFn: () => { return null } })
   }
 }

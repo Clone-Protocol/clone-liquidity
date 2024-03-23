@@ -1,7 +1,5 @@
 import { Handler } from '@netlify/functions'
 import { createClient } from '@supabase/supabase-js'
-import path from 'path';
-import { promises as fs } from 'fs';
 import { PythObj } from '~/pages/api/points_pythlist';
 
 export const handler: Handler = async (event, context) => {
@@ -35,7 +33,6 @@ export const handler: Handler = async (event, context) => {
       })
       newData[0].hasPythPoint = pythUser !== undefined ? true : false
       newData[0].pythPointTier = pythUser !== undefined ? pythUser.tier : -1
-      console.log('new', newData)
     } catch (error) {
       console.error('e', error)
     }

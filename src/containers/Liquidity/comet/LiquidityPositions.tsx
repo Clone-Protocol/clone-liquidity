@@ -140,7 +140,7 @@ let columns: GridColDef[] = [
       </Stack>
     },
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_xlg'>${params.row.liquidityDollarPrice.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg'>${formatLocaleAmount(params.row.liquidityDollarPrice)}</Typography>
     },
   },
   {
