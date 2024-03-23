@@ -13,6 +13,7 @@ import { ON_USD } from '~/utils/constants';
 import { useSetAtom } from 'jotai'
 import { cloneClient } from '~/features/globalAtom'
 import { useClone } from '~/hooks/useClone';
+import { formatLocaleAmount } from '~/utils/numbers';
 
 const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
@@ -58,7 +59,7 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
     <WalletWrapper>
       <Stack direction='row' justifyContent='space-between' alignItems='center' padding='13px'>
         <Box lineHeight={1}>
-          <Box><Typography variant='p' fontWeight={600} color='#fff'>{solBalance.toLocaleString()} SOL</Typography></Box>
+          <Box><Typography variant='p' fontWeight={600} color='#fff'>{formatLocaleAmount(solBalance)} SOL</Typography></Box>
           {publicKey && (
             <Box><Typography variant='p' color='#c5c7d9'>{shortenAddress(publicKey.toString())}</Typography></Box>
           )}
@@ -72,7 +73,7 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
         </Stack>
       </Stack>
       <AssetBox>
-        <Typography variant='h3'>${balance?.onusdVal.toLocaleString()}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
+        <Typography variant='h3'>${formatLocaleAmount(balance?.onusdVal)}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
       </AssetBox>
     </WalletWrapper >
   ) : <></>
