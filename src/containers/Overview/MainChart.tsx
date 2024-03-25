@@ -11,7 +11,7 @@ import { useTotalLiquidityQuery, useTotalValueLockedQuery, useTotalVolumeQuery }
 
 const MainChart: React.FC = () => {
   const [tab, setTab] = useState(0)
-  const [filterTime, setFilterTime] = useState<FilterTime>('7d')
+  const [filterTime, setFilterTime] = useState<FilterTime>('30d')
   const [chartHover, setChartHover] = useState<number | undefined>()
   //temporary
   const isTvlTab = tab === 2
