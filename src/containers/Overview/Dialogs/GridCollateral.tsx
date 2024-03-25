@@ -6,6 +6,7 @@ import withSuspense from '~/hocs/withSuspense'
 import Image from 'next/image'
 import { LoadingProgress } from '~/components/Common/Loading'
 import { useCollateralsQuery } from '~/features/MyLiquidity/comet/Collaterals.query'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 interface Props {
 	onChoose: (id: number) => void
@@ -62,7 +63,7 @@ let columns: GridColDef[] = [
 		headerName: 'Wallet Balance',
 		flex: 1,
 		renderCell(params: GridRenderCellParams<string>) {
-			return <Box><Typography variant='p_lg'>{params.value?.toLocaleString()} USD</Typography></Box>
+			return <Box><Typography variant='p_lg'>{formatLocaleAmount(params.value)} USD</Typography></Box>
 		},
 	},
 ]

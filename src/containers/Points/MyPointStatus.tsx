@@ -14,6 +14,7 @@ import PromoteDialog from '~/components/Points/PromoteDialog'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 import { useState } from 'react'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
@@ -47,7 +48,7 @@ const MyPointStatus = () => {
               <Box width='42px'></Box>
             }
             <Typography variant='h3' fontWeight={500}>
-              {infos?.totalPoints ? infos.totalPoints.toLocaleString() : '0'}
+              {infos?.totalPoints ? formatLocaleAmount(infos.totalPoints) : '0'}
             </Typography>
             {infos?.hasPythPoint &&
               <Tooltip title={TooltipTexts.points.multiplier} placement="top">
@@ -72,7 +73,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos?.lpPoints ? infos.lpPoints.toLocaleString() : '0'}
+              {infos?.lpPoints ? formatLocaleAmount(infos.lpPoints) : '0'}
             </Typography>
           </StatusValue>
         </BorderBox>
@@ -83,7 +84,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos?.tradePoints ? infos.tradePoints.toLocaleString() : '0'}
+              {infos?.tradePoints ? formatLocaleAmount(infos.tradePoints) : '0'}
             </Typography>
           </StatusValue>
           <PromoteBox onClick={() => setShowPromoteDialog(true)}>
@@ -98,7 +99,7 @@ const MyPointStatus = () => {
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos?.socialPoints ? infos.socialPoints.toLocaleString() : '0'}
+              {infos?.socialPoints ? formatLocaleAmount(infos.socialPoints) : '0'}
             </Typography>
           </StatusValue>
         </BorderBox>

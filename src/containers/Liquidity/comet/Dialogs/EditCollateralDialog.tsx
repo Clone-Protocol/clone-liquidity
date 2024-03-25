@@ -16,6 +16,7 @@ import IconHealthScoreGraph from 'public/images/healthscore-graph.svg'
 import WarningMsg, { InfoMsg } from '~/components/Common/WarningMsg'
 import { LoadingButton } from '~/components/Common/Loading'
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boolean, isNewDeposit: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
@@ -166,7 +167,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
 
             <Box my='36px'>
               <Box><Typography variant='p_lg' color='#fff'>Current Collateral</Typography></Box>
-              <Box mt='7px'><Typography variant='h2' fontWeight={500}>${collData.collAmount.toLocaleString()}</Typography></Box>
+              <Box mt='7px'><Typography variant='h2' fontWeight={500}>${formatLocaleAmount(collData.collAmount)}</Typography></Box>
             </Box>
 
             {isNewDeposit && tab === 1 && collData.collAmount === 0 ?

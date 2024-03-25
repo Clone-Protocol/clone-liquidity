@@ -138,7 +138,7 @@ let columns: GridColDef[] = [
 			return (
 				<Stack direction='column' alignItems='flex-end'>
 					<Box><CellDigitValue value={params.value} symbol={ON_USD} /></Box>
-					<Box><Typography variant='p_lg' color='#66707e'>${params.value?.toLocaleString()} USD</Typography></Box>
+					<Box><Typography variant='p_lg' color='#66707e'>${formatLocaleAmount(params.value)} USD</Typography></Box>
 				</Stack>
 			)
 		},

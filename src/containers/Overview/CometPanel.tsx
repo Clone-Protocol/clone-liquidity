@@ -27,6 +27,7 @@ import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus
 import { RISK_RATIO_VAL } from '~/data/riskfactors'
 import { useAtomValue } from 'jotai'
 import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetchData }: { assetIndex: number, assetData: any, openChooseLiquidityDialog: () => void, onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -204,7 +205,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
                   </DepositCollateralButton>
                 </Link>
                 :
-                <Box><Typography variant='h3' fontWeight={500}>${positionInfo?.totalCollValue.toLocaleString()}</Typography></Box>
+                <Box><Typography variant='h3' fontWeight={500}>${formatLocaleAmount(positionInfo?.totalCollValue)}</Typography></Box>
               }
             </Box>
             <Box>
@@ -252,7 +253,7 @@ const CometPanel = ({ assetIndex, assetData, openChooseLiquidityDialog, onRefetc
                     <Typography variant="p">Liquidity Value</Typography>
                     <InfoTooltip title={TooltipTexts.newLiquidityValue} color='#66707e' />
                   </Box>
-                  <Box display='flex' alignItems='center'><Typography variant="p_lg">${totalLiquidity.toLocaleString()}</Typography></Box>
+                  <Box display='flex' alignItems='center'><Typography variant="p_lg">${formatLocaleAmount(totalLiquidity)}</Typography></Box>
                 </StackWithBorder>
 
                 <Box mt='25px'>

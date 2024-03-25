@@ -71,7 +71,7 @@ const PairInput: React.FC<Props> = ({
             />
             <DollarAmount>
               {valueDollarPrice && valueDollarPrice > 0
-                ? "$" + valueDollarPrice?.toLocaleString()
+                ? "$" + formatLocaleAmount(valueDollarPrice)
                 : ""}
             </DollarAmount>
           </Box>

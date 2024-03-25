@@ -6,6 +6,7 @@ import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined }) => {
   const { publicKey } = useWallet()
@@ -29,7 +30,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.totalLiquidity > 0 ? `$${infos.totalLiquidity.toLocaleString()}` : '$0'}
+              {infos && infos.totalLiquidity > 0 ? `$${formatLocaleAmount(infos.totalLiquidity)}` : '$0'}
             </Typography>
           </StatusValue>
         </Box>
@@ -40,7 +41,7 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
           </Box>
           <StatusValue>
             <Typography variant='p_xlg'>
-              {infos && infos.totalCollValue > 0 ? `$${infos.totalCollValue.toLocaleString()}` : '0'}
+              {infos && infos.totalCollValue > 0 ? `$${formatLocaleAmount(infos.totalCollValue)}` : '0'}
             </Typography>
           </StatusValue>
         </Box>
