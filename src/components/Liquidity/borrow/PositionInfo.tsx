@@ -54,7 +54,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
             <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='14px'>
               <Box textAlign='left'>
                 <Box><Typography fontSize='26px'>{formatLocaleAmount(Number(positionInfo.borrowedOnasset), 5)}</Typography></Box>
-                <Box mt='-5px'><Typography variant='p' color='#66707e'>${borrowedDollarPrice.toLocaleString()}</Typography></Box>
+                <Box mt='-5px'><Typography variant='p' color='#66707e'>${formatLocaleAmount(borrowedDollarPrice)}</Typography></Box>
               </Box>
               <TickerBox display="flex" alignItems='center'>
                 <Image src={positionInfo.tickerIcon} width={22} height={22} alt={positionInfo.tickerSymbol!} />
@@ -75,7 +75,7 @@ const PositionInfo: React.FC<Props> = ({ positionInfo, onShowEditForm, onShowBor
         <Stack width='100%' direction='row' justifyContent='space-between' alignItems='center' padding='14px'>
           <Box textAlign='left'>
             <Box><Typography fontSize='26px'>{formatLocaleAmount(Number(positionInfo.collateralAmount), 5)}</Typography></Box>
-            <Box mt='-5px'><Typography variant='p' color='#66707e'>${positionInfo.collateralAmount.toLocaleString()}</Typography></Box>
+            <Box mt='-5px'><Typography variant='p' color='#66707e'>${formatLocaleAmount(Number(positionInfo.collateralAmount))}</Typography></Box>
           </Box>
           <TickerBox display="flex" alignItems='center'>
             <Image src={collateralMapping(Collateral.onUSD).collateralIcon} width={22} height={22} alt={'dev-usd'} />

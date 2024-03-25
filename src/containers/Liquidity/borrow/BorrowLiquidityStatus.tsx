@@ -4,6 +4,7 @@ import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import InfoTooltip from '~/components/Common/InfoTooltip'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolean }) => {
   const { publicKey } = useWallet()
@@ -26,7 +27,7 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
               <Typography variant='p_xlg'>
                 {
                   status.statusValues.totalBorrowLiquidity > 0 ?
-                    `$${status.statusValues.totalBorrowLiquidity.toLocaleString()}`
+                    `$${formatLocaleAmount(status.statusValues.totalBorrowLiquidity)}`
                     : ''
                 }
               </Typography>
@@ -43,7 +44,7 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
               <Typography variant='p_xlg'>
                 {
                   status.statusValues.totalBorrowCollateralVal > 0 ?
-                    `$${status.statusValues.totalBorrowCollateralVal.toLocaleString()}`
+                    `$${formatLocaleAmount(status.statusValues.totalBorrowCollateralVal)}`
                     : ''
                 }
               </Typography>

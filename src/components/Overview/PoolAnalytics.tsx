@@ -3,6 +3,7 @@ import { usePoolAnalyticsQuery } from '~/features/Overview/PoolAnalytics.query'
 import InfoTooltip from '../Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { ON_USD } from '~/utils/constants'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const TxtPriceRateComparePast = ({ val, rate }: { val: number, rate: number }) => {
   if (isFinite(rate)) {
@@ -45,13 +46,13 @@ const PoolAnalytics = ({ tickerSymbol }: { tickerSymbol: string }) => {
           <Typography variant="p" color='#66707e'>Total Liquidity</Typography>
           <InfoTooltip title={TooltipTexts.totalLiquidity} color='#66707e' />
         </Box>
-        <Box mt='-4px'><Typography variant="p_xlg">${resultData?.totalLiquidity.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.liquidityGainPct} /></Box>
+        <Box mt='-4px'><Typography variant="p_xlg">${formatLocaleAmount(resultData?.totalLiquidity)} USD</Typography> <TxtPriceRate rate={resultData!.liquidityGainPct} /></Box>
       </DataBox>
       <DataBox>
         <Box>
           <Typography variant="p" color='#66707e'>24h Trading Volume</Typography>
         </Box>
-        <Box><Typography variant="p_xlg">${resultData?.tradingVol24h.toLocaleString()} USD</Typography> <TxtPriceRate rate={resultData!.tradingVolGainPct} /></Box>
+        <Box><Typography variant="p_xlg">${formatLocaleAmount(resultData?.tradingVol24h)} USD</Typography> <TxtPriceRate rate={resultData!.tradingVolGainPct} /></Box>
       </DataBox>
       <DataBox>
         <Box>

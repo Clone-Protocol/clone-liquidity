@@ -12,6 +12,7 @@ import { RankingList } from '~/features/Points/Ranking.query'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 import { TooltipTexts } from '~/data/tooltipTexts'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const RankingList = () => {
   const { data: rankList } = useRankingQuery({
@@ -81,7 +82,7 @@ let columns: GridColDef[] = [
     headerName: 'Liquidity Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
     },
   },
   {
@@ -91,7 +92,7 @@ let columns: GridColDef[] = [
     headerName: 'Trade Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
     },
   },
   {
@@ -101,7 +102,7 @@ let columns: GridColDef[] = [
     headerName: 'Social Points',
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+      return <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
     },
   },
   {
@@ -114,7 +115,7 @@ let columns: GridColDef[] = [
       const hasPythPoint = params.row.hasPythPoint
       const pythPointTier = params.row.pythPointTier
       return <Box display='flex' alignItems='center' gap='7px'>
-        <Typography variant='p_lg'>{params.value?.toLocaleString()}</Typography>
+        <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
         {hasPythPoint &&
           <Tooltip title={TooltipTexts.points.multiplier} placement="top">
             <Box><PointTextForPyth pythPointTier={pythPointTier} /></Box>

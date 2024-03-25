@@ -9,6 +9,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import EditCollateralDialog from './Dialogs/EditCollateralDialog'
 import { ON_USD } from '~/utils/constants'
 import BridgeDialog from '~/components/Bridge/BridgeDialog'
+import { formatLocaleAmount } from '~/utils/numbers'
 
 const Collaterals = ({ hasNoCollateral, collaterals, onRefetchData }: { hasNoCollateral: boolean, collaterals: Collateral[], onRefetchData: () => void }) => {
   const { publicKey } = useWallet()
@@ -89,7 +90,7 @@ let columns: GridColDef[] = [
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       const collAmount = params.row.collAmount
-      return <Typography variant='p_xlg' color={collAmount === 0 ? '#66707e' : '#fff'}>{collAmount.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg' color={collAmount === 0 ? '#66707e' : '#fff'}>{formatLocaleAmount(collAmount)}</Typography>
     },
   },
   {
@@ -100,7 +101,7 @@ let columns: GridColDef[] = [
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       const collUsdValue = params.row.collAmountDollarPrice * params.row.collAmount
-      return <Typography variant='p_xlg' color={collUsdValue === 0 ? '#66707e' : '#fff'}>${collUsdValue.toLocaleString()}</Typography>
+      return <Typography variant='p_xlg' color={collUsdValue === 0 ? '#66707e' : '#fff'}>${formatLocaleAmount(collUsdValue)}</Typography>
     },
   },
   {

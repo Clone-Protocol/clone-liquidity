@@ -7,7 +7,7 @@ export const handler: Handler = async (event, context) => {
 
   const rpcCall = supabase.from(
     "user_points_view"
-  ).select();
+  ).select().limit(100);
 
   let { data, error } = await rpcCall;
 
