@@ -90,6 +90,7 @@ export type UserPointsView = {
     trading_points: number
     lp_points: number
     social_points: number
+    referral_points: number
     total_points: number
     name?: string
     hasPythPoint?: boolean
@@ -126,6 +127,20 @@ export const fetchUserGiveaway = async (userAddress: string): Promise<UserGiveaw
     url += `?userAddress=${userAddress}`;
     const response = await axios.get(url)
     return response.data as UserGiveaway[]
+}
+
+export const fetchGenerateReferralCode = async (userAddress: string) => {
+    let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-or-generate-referral-code`;
+    url += `?userAddress=${userAddress}`;
+    const response = await axios.get(url)
+    return response.data
+}
+
+export const fetchLinkReferralCode = async (userAddress: string, referralCode: string) => {
+    let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/link-referral-code`;
+    url += `?userAddress=${userAddress}&referralCode=${referralCode}`;
+    const response = await axios.get(url)
+    return response.data
 }
 
 export const fetchGeoBlock = async (): Promise<{ result: boolean, whitelistAddr?: string[] }> => {

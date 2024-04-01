@@ -86,6 +86,7 @@ export const TooltipTexts = {
         lpPoints: 'Points earned by providing liquidity using comets.',
         tradePoints: 'Points earned by trading cloned assets.',
         socialPoints: 'Points earned from participating in Clone’s Zealy campaign.',
+        referralPoints: 'Points earned from referring users to Clone.',
         pythSymbol: 'We have noticed that you are staking $PYTH, making you a Pythian Cloner and giving you a points multiplier!',
         multiplier: 'The multiplier you receive for staking $PYTH, the more you stake, the higher the multiplier!'
     }

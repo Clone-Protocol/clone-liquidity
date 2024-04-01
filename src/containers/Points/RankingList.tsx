@@ -43,8 +43,8 @@ let columns: GridColDef[] = [
     field: 'rank',
     headerClassName: 'super-app-theme--header',
     cellClassName: 'super-app-theme--cell',
-    headerName: 'Ranking',
-    flex: 0,
+    headerName: 'Rank',
+    flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
         <Box display='flex' justifyContent='center' width='50px'>
@@ -58,12 +58,12 @@ let columns: GridColDef[] = [
     headerClassName: 'super-app-theme--header',
     cellClassName: 'super-app-theme--cell',
     headerName: `User`,
-    flex: 1,
+    flex: 3,
     renderCell(params: GridRenderCellParams<{ name: string | undefined, address: string }>) {
       const hasPythPoint = params.row.hasPythPoint
       return <Box display='flex' alignItems='center' gap={1}>
         <a href={`https://solana.fm/address/${params.value!.address.toString()}`} target='_blank' rel='noreferrer' style={{ color: '#fff' }}>
-          <Typography variant='p_xlg' sx={{ ':hover': { color: '#4fe5ff' } }}>{formatUserDisplayName(params.value!)}</Typography>
+          <Typography variant='p_lg' sx={{ ':hover': { color: '#4fe5ff' } }}>{formatUserDisplayName(params.value!)}</Typography>
         </a>
         {hasPythPoint &&
           <Tooltip title={TooltipTexts.points.pythSymbol} placement="top">
@@ -79,10 +79,10 @@ let columns: GridColDef[] = [
     field: 'lpPoints',
     headerClassName: 'super-app-theme--header right--header',
     cellClassName: 'super-app-theme--cell right--cell',
-    headerName: 'Liquidity Points',
-    flex: 1,
+    headerName: 'LP Points',
+    flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
+      return <Typography variant='p'>{formatLocaleAmount(params.value)}</Typography>
     },
   },
   {
@@ -90,9 +90,9 @@ let columns: GridColDef[] = [
     headerClassName: 'super-app-theme--header right--header',
     cellClassName: 'super-app-theme--cell right--cell',
     headerName: 'Trade Points',
-    flex: 1,
+    flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
+      return <Typography variant='p'>{formatLocaleAmount(params.value)}</Typography>
     },
   },
   {
@@ -100,9 +100,19 @@ let columns: GridColDef[] = [
     headerClassName: 'super-app-theme--header right--header',
     cellClassName: 'super-app-theme--cell right--cell',
     headerName: 'Social Points',
-    flex: 1,
+    flex: 2,
     renderCell(params: GridRenderCellParams<string>) {
-      return <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
+      return <Typography variant='p'>{formatLocaleAmount(params.value)}</Typography>
+    },
+  },
+  {
+    field: 'referralPoints',
+    headerClassName: 'super-app-theme--header right--header',
+    cellClassName: 'super-app-theme--cell right--cell',
+    headerName: 'Referral Points',
+    flex: 2,
+    renderCell(params: GridRenderCellParams<string>) {
+      return <Typography variant='p'>{formatLocaleAmount(params.value)}</Typography>
     },
   },
   {
@@ -110,12 +120,12 @@ let columns: GridColDef[] = [
     headerClassName: 'super-app-theme--header right--header',
     cellClassName: 'super-app-theme--cell right--cell',
     headerName: 'Total Points',
-    flex: 1,
+    flex: 3,
     renderCell(params: GridRenderCellParams<string>) {
       const hasPythPoint = params.row.hasPythPoint
       const pythPointTier = params.row.pythPointTier
       return <Box display='flex' alignItems='center' gap='7px'>
-        <Typography variant='p_lg'>{formatLocaleAmount(params.value)}</Typography>
+        <Typography variant='p'>{formatLocaleAmount(params.value)}</Typography>
         {hasPythPoint &&
           <Tooltip title={TooltipTexts.points.multiplier} placement="top">
             <Box><PointTextForPyth pythPointTier={pythPointTier} /></Box>
@@ -132,6 +142,9 @@ const PanelBox = styled(Box)`
   & .super-app-theme--header { 
     color: #9d9d9d; 
     font-size: 11px; 
+  }
+  & .MuiDataGrid-columnHeaderTitle {
+    text-overflow: initial !important;
   }
 `
 

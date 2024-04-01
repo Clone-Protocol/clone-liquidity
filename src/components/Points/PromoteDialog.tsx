@@ -43,7 +43,7 @@ const BackScreen = styled('div')`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 99999;
+  z-index: 999;
 `
 const AnimWrapper = styled('div')`
   transform: translateX(-1500px);
@@ -81,8 +81,8 @@ const BoxWrapper = styled(Box)`
   color: #fff; 
   text-align: center;
   border-radius: 20px;
-  border: solid 1px #343434;
-  background-color: #000;
+  border: solid 1px #191919;
+  background-color: #0c0c0c;
   padding: 20px;
   z-index: 99999;
 `
