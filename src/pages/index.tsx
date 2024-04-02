@@ -12,7 +12,7 @@ import { fetchAssets } from '~/features/Overview/Assets.query'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { fetchTotalVolume } from '~/features/Chart/Liquidity.query'
 import { useSearchParams } from 'next/navigation'
-import { fetchLinkReferralCode } from '~/utils/fetch_netlify'
+import { fetchCheckReferralCode, fetchLinkReferralCode } from '~/utils/fetch_netlify'
 import ReferralTextDialog from '~/components/Points/ReferralTextDialog'
 import { useEffect, useState } from 'react'
 import ReferralCodePutDialog from '~/components/Points/ReferralCodePutDialog'
@@ -66,7 +66,12 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
           setShowReferralTextDialog(true)
         })
       } else {
-        setShowReferralCodePutDlog(true)
+        fetchCheckReferralCode(publicKey.toString()).then((res) => {
+          console.log('res', res)
+          if (res.successful) {
+            setShowReferralCodePutDlog(true)
+          }
+        })
       }
     }
   }, [connected, publicKey, refCode])

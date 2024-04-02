@@ -129,6 +129,13 @@ export const fetchUserGiveaway = async (userAddress: string): Promise<UserGiveaw
     return response.data as UserGiveaway[]
 }
 
+export const fetchCheckReferralCode = async (userAddress: string) => {
+    let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-check-referral-code`;
+    url += `?userAddress=${userAddress}`;
+    const response = await axios.get(url)
+    return response.data
+}
+
 export const fetchGenerateReferralCode = async (userAddress: string) => {
     let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-or-generate-referral-code`;
     url += `?userAddress=${userAddress}`;

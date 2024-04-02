@@ -22,9 +22,10 @@ const ReferralTextDialog = ({ referralStatus, open, handleClose }: { referralSta
       <BoxWrapper sx={{ width: { xs: '100%', md: '400px' }, paddingTop: { xs: '30px', md: '20px' } }}>
         <Image src={StarsIcon} alt='star' />
         <Typography variant='p_lg'>
-          {referralStatus === 0 || referralStatus === 2 ? 'You have already been referred!' :
+          {referralStatus === 0 ? 'You are successfully referred!' :
             referralStatus === 1 ? 'Only new users can be referred!' :
-              referralStatus === 3 ? 'Invalid referral link' : 'You can’t refer yourself'
+              referralStatus === 2 ? 'You have already been referred!' :
+                referralStatus === 3 ? 'Invalid referral link' : 'You can’t refer yourself'
           }</Typography>
         <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
           <CloseButton handleClose={() => handleClose()} />
