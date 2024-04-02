@@ -19,7 +19,7 @@ export const handler: Handler = async (event, context) => {
   // If we find this user in this query, they're not eligible to link to a referrer.
   let { data, error } = await supabase.from(
     "user_points_view_materialized"
-  ).select().eq('user_address', userAddress).gt("total_points", 0)
+  ).select().eq('user_address', userAddress).gt("total_points", 0).gt("lp_points", 0)
 
   console.log("user_points_view request", data, error)
 

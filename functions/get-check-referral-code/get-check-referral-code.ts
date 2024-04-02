@@ -20,7 +20,7 @@ export const handler: Handler = async (event, context) => {
 
     const { data, error } = await supabase.from(
       "user_points_view_materialized"
-    ).select().eq('user_address', userAddress).gt("total_points", 0)
+    ).select().eq('user_address', userAddress).gt("total_points", 0).gt("lp_points", 0)
 
     // no-point user
     if (error || data?.length === 0) {
