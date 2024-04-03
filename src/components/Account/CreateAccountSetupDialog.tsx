@@ -5,6 +5,7 @@ import { CloseButton } from '../Common/CommonButtons'
 import { useAtomValue } from 'jotai'
 import { isCreatingAccountState } from '~/features/globalAtom'
 import { LoadingButton } from '../Common/Loading'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 
 interface CreateAccountSetupScreenProps {
@@ -17,10 +18,11 @@ const CreateAccountSetupDialog: React.FC<CreateAccountSetupScreenProps> = ({
   handleCreateAccount,
   handleClose
 }) => {
+  const { connected } = useWallet()
   const isCreatingAccount = useAtomValue(isCreatingAccountState)
 
   const shouldDialogOpen = (): boolean => {
-    return state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder
+    return connected && (state === CreateAccountDialogStates.Initial || state === CreateAccountDialogStates.Reminder)
   }
 
   return (

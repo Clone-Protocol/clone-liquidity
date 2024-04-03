@@ -1,3 +1,4 @@
+//@DEPRECATED
 import React from 'react'
 import { Box, styled, Typography, Button } from '@mui/material'
 import useLocalStorage from '~/hooks/useLocalStorage'
