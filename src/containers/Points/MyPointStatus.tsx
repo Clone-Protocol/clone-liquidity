@@ -211,7 +211,6 @@ const MyPointStatus = () => {
       {!publicKey && <>
         <OpaqueDefault />
         <Box position='absolute' top='20px' marginY='55px' marginX='213px'>
-          <Box display='flex' justifyContent='center' mb='7px'><Typography variant='p_lg'>To see your points: </Typography></Box>
           <ConnectWallet onClick={() => setOpen(true)}><Typography variant='p_xlg'>Connect Wallet</Typography></ConnectWallet>
         </Box>
       </>}
