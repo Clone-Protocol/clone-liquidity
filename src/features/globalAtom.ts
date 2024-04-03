@@ -12,6 +12,8 @@ export const syncFetchNetworkState = atom(false)
 
 export const isAlreadyInitializedAccountState = atom(true)
 
+export const showReferralCodeDlog = atom(false)
+
 export const createAccountDialogState = atom(CreateAccountDialogStates.Closed)
 
 export const declinedAccountCreationState = atom(false)

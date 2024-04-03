@@ -4,7 +4,7 @@ import { IconButton } from '@mui/material'
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import HelpOutlineRounded from '@mui/icons-material/HelpOutlineRounded'
 
-const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {

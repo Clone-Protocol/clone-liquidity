@@ -18,8 +18,8 @@ import { useEffect, useState } from 'react'
 import ReferralCodePutDialog from '~/components/Points/ReferralCodePutDialog'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
-import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
-import { useAtomValue } from 'jotai'
+import { showReferralCodeDlog } from '~/features/globalAtom'
+import { useSetAtom } from 'jotai'
 
 //SSR
 export const getStaticProps = (async () => {
@@ -44,7 +44,7 @@ export const getStaticProps = (async () => {
 
 const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { publicKey, connected } = useWallet()
-  const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
+  const setAtomShowReferralCodeDlog = useSetAtom(showReferralCodeDlog)
 
   //for referral 
   const [isCompleteInitRefer, _] = useLocalStorage(IS_COMPLETE_INIT_REFER, false)
@@ -70,6 +70,11 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
           console.log('res', res)
           if (res.successful) {
             setShowReferralCodePutDlog(true)
+
+            if (!isCompleteInitRefer) {
+              // show referral code dialog before open account
+              setAtomShowReferralCodeDlog(true)
+            }
           }
         })
       }
@@ -92,7 +97,7 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
         </Box>
 
         <ReferralTextDialog referralStatus={referralStatus} open={showReferralTextDialog} handleClose={() => setShowReferralTextDialog(false)} />
-        <ReferralCodePutDialog open={showReferralCodePutDlog && !isCompleteInitRefer && isAlreadyInitializedAccount} handleClose={() => { setShowReferralCodePutDlog(false); }} />
+        <ReferralCodePutDialog open={showReferralCodePutDlog && !isCompleteInitRefer} handleClose={() => { setAtomShowReferralCodeDlog(false); setShowReferralCodePutDlog(false); }} />
       </Box>
     </StyledSection>
   )
