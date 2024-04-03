@@ -23,6 +23,7 @@ import { WalletListItem } from './WalletListItem'
 import { useSnackbar } from 'notistack'
 
 const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
+	zIndex: 999999,
 	'& .MuiDialog-paper': {
 		width: 400,
 		margin: 0,

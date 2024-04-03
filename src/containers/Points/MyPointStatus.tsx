@@ -1,9 +1,9 @@
 import { styled } from '@mui/system'
-import { Box, Button, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Stack, Tooltip, Typography } from '@mui/material'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { RankIndexForStatus } from '~/components/Points/RankItems'
-import { usePointStatusQuery } from '~/features/Points/PointStatus.query'
+import { fetchReferralCode, usePointStatusQuery } from '~/features/Points/PointStatus.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
@@ -13,13 +13,24 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import PromoteDialog from '~/components/Points/PromoteDialog'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatLocaleAmount } from '~/utils/numbers'
+import ContentCopyIcon from 'public/images/content-copy.svg'
+import Image from 'next/image'
+import { ReferralStatus } from '~/utils/constants'
+import { useSnackbar } from 'notistack'
+import CopyToClipboard from 'react-copy-to-clipboard'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
   const { setOpen } = useWalletDialog()
+  const { enqueueSnackbar } = useSnackbar()
+  const [showReferralPanel, setShowReferralPanel] = useState(false)
   const [showPromoteDialog, setShowPromoteDialog] = useState(true)
+  const [referralStatus, setReferralStatus] = useState(ReferralStatus.NotGenerated)
+  const [isGeneratingRefCode, setIsGeneratingRefCode] = useState(false)
+  const [referralCode, setReferralCode] = useState('000000')
+  const [isRefCodeButtonMouseEnter, setIsRefCodeButtonMouseEnter] = useState(false)
 
   const { data: infos } = usePointStatusQuery({
     userPubKey: publicKey,
@@ -27,11 +38,57 @@ const MyPointStatus = () => {
     enabled: publicKey != null
   })
 
+  useEffect(() => {
+    if (!infos?.totalPoints) {
+      console.log('t', infos?.totalPoints)
+      setReferralStatus(ReferralStatus.NotAllowed)
+    } else {
+      setReferralStatus(ReferralStatus.NotGenerated)
+    }
+  }, [infos])
+
+  const getReferralCode = async () => {
+    try {
+      setIsGeneratingRefCode(true)
+      const result = await fetchReferralCode({ userPubKey: publicKey })
+      if (result?.referralCode) {
+        setReferralCode(result.referralCode.toString().padStart(6, '0'))
+        setReferralStatus(ReferralStatus.Generated)
+      }
+    } catch (e) {
+      console.error('e', e)
+    } finally {
+      setIsGeneratingRefCode(false)
+    }
+  }
+
+  const clickReferralCode = async () => {
+    // if (referralStatus === ReferralStatus.Generated) {
+    //   setShowReferralPanel(false)
+    //   setReferralStatus(ReferralStatus.NotGenerated)
+    // } else {
+    setShowReferralPanel(true)
+    setIsRefCodeButtonMouseEnter(false)
+
+    if (referralStatus === ReferralStatus.NotGenerated) {
+      getReferralCode()
+    }
+    // }
+  }
+
+  const goBackShowReferral = (e: any) => {
+    if (showReferralPanel) {
+      e.stopPropagation()
+
+      setShowReferralPanel(false)
+    }
+  }
+
   return (
     <Wrapper>
       <Stack direction='row' gap={2}>
         <BorderBox width='176px'>
-          <Box display='flex' justifyContent='center' alignItems='center'>
+          <Box display='flex' justifyContent='center' alignItems='center' height='20px'>
             <Typography variant='p_lg'>Global Rank</Typography>
           </Box>
           <StatusValue>
@@ -39,7 +96,7 @@ const MyPointStatus = () => {
           </StatusValue>
         </BorderBox>
         <BorderBox width='350px' position='relative'>
-          <Box display='flex' justifyContent='center' alignItems='center'>
+          <Box display='flex' justifyContent='center' alignItems='center' height='20px'>
             <Typography variant='p_lg'>My Total Points</Typography>
             <InfoTooltip title={TooltipTexts.points.totalPoints} color='#66707e' />
           </Box>
@@ -66,8 +123,8 @@ const MyPointStatus = () => {
         </BorderBox>
       </Stack>
       <Stack direction='row' gap={2} mt='18px'>
-        <BorderBox width='250px' position='relative'>
-          <Box display='flex' justifyContent='center' alignItems='center'>
+        <BorderBox width='200px' position='relative'>
+          <Box display='flex' justifyContent='center' alignItems='center' ml='10px'>
             <Typography variant='p'>My Liquidity Points</Typography>
             <InfoTooltip title={TooltipTexts.points.lpPoints} color='#66707e' />
           </Box>
@@ -77,8 +134,8 @@ const MyPointStatus = () => {
             </Typography>
           </StatusValue>
         </BorderBox>
-        <BorderBox width='250px' position='relative'>
-          <Box display='flex' justifyContent='center' alignItems='center'>
+        <BorderBox width='200px' position='relative'>
+          <Box display='flex' justifyContent='center' alignItems='center' ml='10px'>
             <Typography variant='p'>My Trade Points</Typography>
             <InfoTooltip title={TooltipTexts.points.tradePoints} color='#66707e' />
           </Box>
@@ -92,8 +149,8 @@ const MyPointStatus = () => {
             <ColoredText><Typography variant='p_sm'>1.5x Multiplier</Typography></ColoredText>
           </PromoteBox>
         </BorderBox>
-        <BorderBox width='250px'>
-          <Box display='flex' justifyContent='center' alignItems='center'>
+        <BorderBox width='200px'>
+          <Box display='flex' justifyContent='center' alignItems='center' ml='10px'>
             <Typography variant='p'>My Social Points</Typography>
             <InfoTooltip title={TooltipTexts.points.socialPoints} color='#66707e' />
           </Box>
@@ -103,6 +160,53 @@ const MyPointStatus = () => {
             </Typography>
           </StatusValue>
         </BorderBox>
+        <GenerateReferralBorderBox className={isRefCodeButtonMouseEnter ? 'hover' : ''} width='200px' position='relative' onClick={goBackShowReferral}>
+          {isGeneratingRefCode ?
+            <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
+              <Box sx={{ width: '32px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#1c1c1c', borderRadius: '10px' }}><CircularProgress sx={{ color: '#fff' }} size={15} thickness={4} /></Box>
+            </Box>
+            :
+            !showReferralPanel || referralStatus === ReferralStatus.NotGenerated ?
+              <Box mt='8px'>
+                <Box display='flex' justifyContent='center' alignItems='center' ml='10px'>
+                  <Typography variant='p'>My Referral Points</Typography>
+                  <InfoTooltip title={TooltipTexts.points.referralPoints} color='#66707e' />
+                </Box>
+                <StatusValue>
+                  <Typography variant='p_xlg'>
+                    {infos?.referralPoints ? formatLocaleAmount(infos.referralPoints) : '0'}
+                  </Typography>
+                </StatusValue>
+                <ReferralBox onMouseEnter={() => setIsRefCodeButtonMouseEnter(true)} onMouseLeave={() => setIsRefCodeButtonMouseEnter(false)} onClick={clickReferralCode}>
+                  <Typography variant='p_sm'>Click for referral code</Typography>
+                </ReferralBox>
+              </Box>
+              :
+              <Box height='100%'>
+                {referralStatus === ReferralStatus.Generated ?
+                  <Box mt='3px'>
+                    <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+                      <Box><Typography variant='p_sm'>My Referral Link</Typography></Box>
+                      <CopyToClipboard text={process.env.NEXT_PUBLIC_API_ROOT + '?referralCode=' + referralCode} onCopy={() => enqueueSnackbar('Referral link copied')}>
+                        <ReferralButton onClick={(e) => e.stopPropagation()}><Image src={ContentCopyIcon} alt='copy' /> <Typography variant='p'>Copy Link</Typography></ReferralButton>
+                      </CopyToClipboard>
+                    </Box>
+                    <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+                      <Box><Typography variant='p_sm'>My Referral Code</Typography></Box>
+                      <CopyToClipboard text={referralCode} onCopy={() => enqueueSnackbar('Referral code copied')}>
+                        <ReferralButton onClick={(e) => e.stopPropagation()}><Image src={ContentCopyIcon} alt='copy' /> <Typography variant='p'>{referralCode}</Typography></ReferralButton>
+                      </CopyToClipboard>
+                    </Box>
+                  </Box>
+                  :
+                  <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
+                    <Typography variant='p_sm' color='#cacaca' width='145px' lineHeight={1.2}>You are not eligible for referral link yet! Please use Clone Markets app and/or Clone Liquidity app first.</Typography>
+                  </Box>
+                }
+              </Box>
+          }
+        </GenerateReferralBorderBox>
+
       </Stack>
       {!publicKey && <>
         <OpaqueDefault />
@@ -133,13 +237,27 @@ const StatusValue = styled(Box)`
   justify-content: center;
   align-items: center;
   gap: 14px;
-  margin-top: 22px;
+  margin-top: 18px;
 `
 const BorderBox = styled(Box)`
   border-radius: 10px;
   border: solid 1px rgba(255, 255, 255, 0.1);
-  padding-top: 14px;
-  padding-bottom: 22px;
+  padding-top: 8px;
+  padding-bottom: 25px;
+`
+const GenerateReferralBorderBox = styled(BorderBox)`
+  padding: 0px;
+  background-color: #000;
+  &.hover {
+    background-color: #000;
+    border-style: solid;
+    border-width: 1px;
+    border-image-source: linear-gradient(to bottom, #fbdc5f, #3dddff);
+    border-image-slice: 1;
+    background-image: linear-gradient(to bottom, #000, #000), linear-gradient(to bottom, #fbdc5f, #3dddff);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
 `
 const PromoteBox = styled(Box)`
   position: absolute;
@@ -154,6 +272,9 @@ const PromoteBox = styled(Box)`
   border-top-left-radius: 10px;
   border-bottom-right-radius: 8px;
   background-color: rgba(255, 255, 255, 0.07);
+`
+const ReferralBox = styled(PromoteBox)`
+  width: 140px;
 `
 const PythBox = styled(Box)`
   position: absolute;
@@ -189,6 +310,28 @@ const ConnectWallet = styled(Button)`
   &:hover {
     background-color: #000;
     border-color: ${(props) => props.theme.basis.gloomyBlue}};
+  }
+`
+const ReferralButton = styled(Button)`
+  width: 87px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  border-radius: 5px;
+  background-color: #1c1c1c;
+  color: #fff;
+  padding: 0;
+  &:hover {
+    background-color: #1c1c1c;
+    border-style: solid;
+    border-width: 1px;
+    border-image-source: linear-gradient(to bottom, #fbdc5f, #3dddff);
+    border-image-slice: 1;
+    background-image: linear-gradient(to bottom, #1c1c1c, #1c1c1c), linear-gradient(to bottom, #fbdc5f, #3dddff);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
   }
 `
 

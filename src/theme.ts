@@ -99,7 +99,7 @@ export const theme: ReturnType<typeof createTheme> = createTheme({
 						borderRadius: '5px'
 					},
 					'& .MuiBackdrop-root': {
-						background: 'rgba(54, 54, 54, 0.4)',
+						background: 'rgba(13, 13, 13, 0.4)',
 						backdropFilter: 'blur(3px)',
 					}
 				}

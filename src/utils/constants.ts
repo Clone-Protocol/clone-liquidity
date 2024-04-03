@@ -6,6 +6,12 @@ export enum CreateAccountDialogStates {
 	Reminder
 }
 
+export enum ReferralStatus {
+	NotAllowed,
+	NotGenerated,
+	Generated
+}
+
 export const NETWORK_NAME = IS_DEV ? "Devnet" : ""
 
 export const ON_USD = IS_DEV ? "devUSD" : "USDC"

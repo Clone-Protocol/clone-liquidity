@@ -11,6 +11,15 @@ import { IS_NOT_LOCAL_DEVELOPMENT } from '~/utils/constants'
 import { fetchAssets } from '~/features/Overview/Assets.query'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { fetchTotalVolume } from '~/features/Chart/Liquidity.query'
+import { useSearchParams } from 'next/navigation'
+import { fetchCheckReferralCode, fetchLinkReferralCode } from '~/utils/fetch_netlify'
+import ReferralTextDialog from '~/components/Points/ReferralTextDialog'
+import { useEffect, useState } from 'react'
+import ReferralCodePutDialog from '~/components/Points/ReferralCodePutDialog'
+import useLocalStorage from '~/hooks/useLocalStorage'
+import { IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
+import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
+import { useAtomValue } from 'jotai'
 
 //SSR
 export const getStaticProps = (async () => {
@@ -34,7 +43,39 @@ export const getStaticProps = (async () => {
 }>
 
 const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const { publicKey } = useWallet()
+  const { publicKey, connected } = useWallet()
+  const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
+
+  //for referral 
+  const [isCompleteInitRefer, _] = useLocalStorage(IS_COMPLETE_INIT_REFER, false)
+  const params = useSearchParams()
+  const refCode = params.get('referralCode')
+  const [showReferralTextDialog, setShowReferralTextDialog] = useState(false)
+  const [showReferralCodePutDlog, setShowReferralCodePutDlog] = useState(false)
+  const [referralStatus, setReferralStatus] = useState(0)
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      if (refCode) {
+        console.log('refCode', refCode)
+        fetchLinkReferralCode(publicKey.toString(), parseInt(refCode).toString()).then((res) => {
+          console.log('res', res)
+          const { status } = res
+          setReferralStatus(status)
+          setShowReferralCodePutDlog(false)
+          setShowReferralTextDialog(true)
+        })
+      } else {
+        fetchCheckReferralCode(publicKey.toString()).then((res) => {
+          console.log('res', res)
+          if (res.successful) {
+            setShowReferralCodePutDlog(true)
+          }
+        })
+      }
+    }
+  }, [connected, publicKey, refCode])
+
   return (
     <StyledSection>
       <Box sx={{ maxWidth: '1270px' }} margin='0 auto'>
@@ -49,6 +90,9 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
             <AssetList />
           </HydrationBoundary>
         </Box>
+
+        <ReferralTextDialog referralStatus={referralStatus} open={showReferralTextDialog} handleClose={() => setShowReferralTextDialog(false)} />
+        <ReferralCodePutDialog open={showReferralCodePutDlog && !isCompleteInitRefer && isAlreadyInitializedAccount} handleClose={() => { setShowReferralCodePutDlog(false); }} />
       </Box>
     </StyledSection>
   )
