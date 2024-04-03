@@ -11,7 +11,7 @@ export const handler: Handler = async (event, context) => {
   let successful = false;
 
   const { data: data2, error: error2 } = await supabase.from(
-    "user_referral_codes"
+    "linked_referral_codes"
   ).select("referral_code").eq("user_address", userAddress);
 
 
