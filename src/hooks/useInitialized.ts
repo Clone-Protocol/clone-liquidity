@@ -1,15 +1,18 @@
 import { useEffect } from 'react'
 import { useSetAtom } from 'jotai'
-import { AnchorWallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet, useLocalStorage } from '@solana/wallet-adapter-react'
 import { useClone } from '~/hooks/useClone'
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, isAlreadyInitializedAccountState } from '~/features/globalAtom'
 import { PublicKey } from '@solana/web3.js'
+import { CURRENT_ACCOUNT, IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
 
 export default function useInitialized(connected: boolean, publicKey: PublicKey | null, wallet: AnchorWallet | undefined, isWhitelisted: boolean) {
 	const { getCloneApp } = useClone()
+	const [localAccount, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogState = useSetAtom(createAccountDialogState)
 	const setIsAlreadyInitializedAccountState = useSetAtom(isAlreadyInitializedAccountState)
+	const [_, setIsCompleteInitRefer] = useLocalStorage(IS_COMPLETE_INIT_REFER, false)
 
 	useEffect(() => {
 		async function getAccount() {
@@ -34,6 +37,12 @@ export default function useInitialized(connected: boolean, publicKey: PublicKey 
 					console.log('err', 'Account does not exist')
 					setIsAlreadyInitializedAccountState(false);
 					setCreateAccountDialogState(CreateAccountDialogStates.Initial)
+				}
+
+				if (localAccount !== publicKey!.toString()) {
+					console.log('account changed')
+					setLocalAccount(publicKey!.toString())
+					setIsCompleteInitRefer(false)
 				}
 			}
 		}

@@ -17,7 +17,7 @@ import ReferralTextDialog from '~/components/Points/ReferralTextDialog'
 import { useEffect, useState } from 'react'
 import ReferralCodePutDialog from '~/components/Points/ReferralCodePutDialog'
 import useLocalStorage from '~/hooks/useLocalStorage'
-import { IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
+import { CURRENT_ACCOUNT, IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
 import { isFetchingReferralCode, showReferralCodeDlog } from '~/features/globalAtom'
 import { useSetAtom } from 'jotai'
 
@@ -49,6 +49,7 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
 
   //for referral 
   const [isCompleteInitRefer, _] = useLocalStorage(IS_COMPLETE_INIT_REFER, false)
+  const [localAccount, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
   const params = useSearchParams()
   const refCode = params.get('referralCode')
   const [showReferralTextDialog, setShowReferralTextDialog] = useState(false)
@@ -73,7 +74,8 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
           if (res.successful) {
             setShowReferralCodePutDlog(true)
 
-            if (!isCompleteInitRefer) {
+            // check if already clicked "No" or localAccount is changed
+            if (!isCompleteInitRefer || localAccount !== publicKey.toString()) {
               // show referral code dialog before open account
               setAtomShowReferralCodeDlog(true)
             }

@@ -13,7 +13,6 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '../Common/CommonButtons'
 import { AssetTickers, assetMapping } from '~/data/assets'
-import { WHITELIST_ADDRESSES_FOR_UNWRAP } from '~/utils/whitelist_addressed_for_unwrap'
 import DebridgeIcon from 'public/images/sponsors/debridge-ic.svg'
 import WormholeIcon from 'public/images/sponsors/wormhole-ic.svg'
 import { LearnMoreIcon } from '../Common/SvgIcons'
@@ -66,13 +65,10 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
   }
 
   const handleChangeWrapType = () => {
-    //validate if the account is in whitelist for unwrapping
-    if (publicKey && WHITELIST_ADDRESSES_FOR_UNWRAP.includes(publicKey.toString())) {
-      setIsWrap(!isWrap)
-      initData()
-      refetch()
-      trigger()
-    }
+    setIsWrap(!isWrap)
+    initData()
+    refetch()
+    trigger()
   }
 
   useEffect(() => {
