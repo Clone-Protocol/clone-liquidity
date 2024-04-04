@@ -17,9 +17,9 @@ import ReferralTextDialog from '~/components/Points/ReferralTextDialog'
 import { useEffect, useState } from 'react'
 import ReferralCodePutDialog from '~/components/Points/ReferralCodePutDialog'
 import useLocalStorage from '~/hooks/useLocalStorage'
-import { IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
-import { isAlreadyInitializedAccountState } from '~/features/globalAtom'
-import { useAtomValue } from 'jotai'
+import { CURRENT_ACCOUNT, IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
+import { isFetchingReferralCode, showReferralCodeDlog } from '~/features/globalAtom'
+import { useSetAtom } from 'jotai'
 
 //SSR
 export const getStaticProps = (async () => {
@@ -44,10 +44,12 @@ export const getStaticProps = (async () => {
 
 const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { publicKey, connected } = useWallet()
-  const isAlreadyInitializedAccount = useAtomValue(isAlreadyInitializedAccountState)
+  const setAtomShowReferralCodeDlog = useSetAtom(showReferralCodeDlog)
+  const setAtomIsFetchingReferralCode = useSetAtom(isFetchingReferralCode)
 
   //for referral 
   const [isCompleteInitRefer, _] = useLocalStorage(IS_COMPLETE_INIT_REFER, false)
+  const [localAccount, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
   const params = useSearchParams()
   const refCode = params.get('referralCode')
   const [showReferralTextDialog, setShowReferralTextDialog] = useState(false)
@@ -66,15 +68,24 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
           setShowReferralTextDialog(true)
         })
       } else {
+        setAtomIsFetchingReferralCode(true)
         fetchCheckReferralCode(publicKey.toString()).then((res) => {
           console.log('res', res)
           if (res.successful) {
             setShowReferralCodePutDlog(true)
+
+            // check if already clicked "No" or localAccount is changed
+            if (!isCompleteInitRefer || localAccount !== publicKey.toString()) {
+              // show referral code dialog before open account
+              setAtomShowReferralCodeDlog(true)
+            }
           }
+        }).finally(() => {
+          setAtomIsFetchingReferralCode(false)
         })
       }
     }
-  }, [connected, publicKey, refCode])
+  }, [connected, publicKey, refCode, isCompleteInitRefer])
 
   return (
     <StyledSection>
@@ -92,7 +103,7 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
         </Box>
 
         <ReferralTextDialog referralStatus={referralStatus} open={showReferralTextDialog} handleClose={() => setShowReferralTextDialog(false)} />
-        <ReferralCodePutDialog open={showReferralCodePutDlog && !isCompleteInitRefer && isAlreadyInitializedAccount} handleClose={() => { setShowReferralCodePutDlog(false); }} />
+        <ReferralCodePutDialog open={showReferralCodePutDlog && !isCompleteInitRefer} handleClose={() => { setAtomShowReferralCodeDlog(false); setShowReferralCodePutDlog(false); }} />
       </Box>
     </StyledSection>
   )

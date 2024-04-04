@@ -13,6 +13,7 @@ import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { formatLocaleAmount } from '~/utils/numbers'
+import { LightTooltip } from '~/components/Common/InfoTooltip'
 
 const RankingList = () => {
   const { data: rankList } = useRankingQuery({
@@ -66,11 +67,11 @@ let columns: GridColDef[] = [
           <Typography variant='p_lg' sx={{ ':hover': { color: '#4fe5ff' } }}>{formatUserDisplayName(params.value!)}</Typography>
         </a>
         {hasPythPoint &&
-          <Tooltip title={TooltipTexts.points.pythSymbol} placement="top">
+          <LightTooltip title={TooltipTexts.points.pythSymbol} placement="top">
             <Box display='flex' alignItems='center' sx={{ color: '#e6dafe', ':hover': { color: '#9b90b1' } }}>
               <PythSymbolIcon />
             </Box>
-          </Tooltip>
+          </LightTooltip>
         }
       </Box>
     },
@@ -127,9 +128,9 @@ let columns: GridColDef[] = [
       return <Box display='flex' alignItems='center' gap='7px'>
         <Typography variant='p'>{formatLocaleAmount(params.value)}</Typography>
         {hasPythPoint &&
-          <Tooltip title={TooltipTexts.points.multiplier} placement="top">
+          <LightTooltip title={TooltipTexts.points.multiplier} placement="top">
             <Box><PointTextForPyth pythPointTier={pythPointTier} /></Box>
-          </Tooltip>
+          </LightTooltip>
         }
       </Box>
     },

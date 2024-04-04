@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { AppBar, Box, Button, Toolbar, Container, Typography, styled, Theme, useMediaQuery } from '@mui/material'
 import Image from 'next/image'
 import logoIcon from 'public/images/logo-liquidity.svg'
@@ -13,7 +13,7 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, isFetchingReferralCode, openConnectWalletGuideDlogState, showReferralCodeDlog } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
@@ -50,7 +50,7 @@ const GNB: React.FC = () => {
 				<TempWarningMsg />
 				<Container maxWidth={false}>
 					<Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Image src={IS_DEV ? logoIconDev : logoIcon} width={IS_DEV ? 121 : 100} height={IS_DEV ? 25 : 26} alt="clone" />
+						<a href="/"><Image src={IS_DEV ? logoIconDev : logoIcon} width={IS_DEV ? 121 : 100} height={IS_DEV ? 25 : 26} alt="clone" /></a>
 						<Box ml='60px'><NaviMenu /></Box>
 						<RightMenu />
 					</Toolbar>
@@ -76,6 +76,8 @@ const RightMenu: React.FC = () => {
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useAtom(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
 	const [showGeoblock, setShowGeoblock] = useState(false)
+	const atomIsFetchingReferralCode = useAtomValue(isFetchingReferralCode)
+	const atomShowReferralCodeDlog = useAtomValue(showReferralCodeDlog)
 	// const [showWhitelist, setShowWhitelist] = useState(false)
 	// const [isWhitelisted, setIsWhitelisted] = useState(false)
 	// const [isCompleteWhitelisted, setIsCompleteWhitelisted] = useLocalStorage(IS_COMPLETE_WHITELISTED, false)
@@ -168,11 +170,12 @@ const RightMenu: React.FC = () => {
 
 	return (
 		<>
-			<CreateAccountSetupDialog
-				state={createAccountDialogStatus}
-				handleCreateAccount={handleCreateAccount}
-				handleClose={closeAccountSetupDialog} />
-
+			{!atomIsFetchingReferralCode && !atomShowReferralCodeDlog &&
+				<CreateAccountSetupDialog
+					state={createAccountDialogStatus}
+					handleCreateAccount={handleCreateAccount}
+					handleClose={closeAccountSetupDialog} />
+			}
 			<Box display="flex">
 				{IS_DEV &&
 					<HeaderButton onClick={() => setOpenTokenFaucet(true)}>

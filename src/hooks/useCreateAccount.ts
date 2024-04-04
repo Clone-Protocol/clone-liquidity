@@ -6,8 +6,6 @@ import { TransactionInstruction } from "@solana/web3.js";
 import { useClone } from '~/hooks/useClone'
 import { getTokenAccount } from '~/utils/token_accounts'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token"
-import useLocalStorage from '~/hooks/useLocalStorage'
-import { CURRENT_ACCOUNT } from '~/data/localstorage';
 import { CreateAccountDialogStates } from '~/utils/constants'
 import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, priorityFee } from '~/features/globalAtom'
 import { useTransactionState } from "~/hooks/useTransactionState"
@@ -19,7 +17,6 @@ export function useCreateAccount() {
 	const { publicKey } = useWallet()
 	const wallet = useAnchorWallet()
 	const feeLevel = useAtomValue(priorityFee)
-	const [_, setLocalAccount] = useLocalStorage(CURRENT_ACCOUNT, '')
 	const setCreateAccountDialogStatus = useSetAtom(createAccountDialogState)
 	const setDeclinedAccountCreation = useSetAtom(declinedAccountCreationState)
 	const { enqueueSnackbar } = useSnackbar()
@@ -65,7 +62,6 @@ export function useCreateAccount() {
 					// store account to localstorage
 					if (txHash) {
 						console.log('store account')
-						setLocalAccount(publicKey!.toString())
 						setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 						//hacky sync
 						location.reload()
