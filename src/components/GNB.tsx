@@ -13,7 +13,7 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import useInitialized from '~/hooks/useInitialized'
 import { useCreateAccount } from '~/hooks/useCreateAccount'
 import { CreateAccountDialogStates, NETWORK_NAME } from '~/utils/constants'
-import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, openConnectWalletGuideDlogState, showReferralCodeDlog } from '~/features/globalAtom'
+import { createAccountDialogState, declinedAccountCreationState, isCreatingAccountState, isFetchingReferralCode, openConnectWalletGuideDlogState, showReferralCodeDlog } from '~/features/globalAtom'
 import dynamic from 'next/dynamic'
 import useFaucet from '~/hooks/useFaucet'
 import TokenFaucetDialog from './Account/TokenFaucetDialog'
@@ -76,6 +76,7 @@ const RightMenu: React.FC = () => {
 	const [openConnectWalletGuideDlog, setOpenConnectWalletGuideDialog] = useAtom(openConnectWalletGuideDlogState)
 	const setIsCreatingAccount = useSetAtom(isCreatingAccountState)
 	const [showGeoblock, setShowGeoblock] = useState(false)
+	const atomIsFetchingReferralCode = useAtomValue(isFetchingReferralCode)
 	const atomShowReferralCodeDlog = useAtomValue(showReferralCodeDlog)
 	// const [showWhitelist, setShowWhitelist] = useState(false)
 	// const [isWhitelisted, setIsWhitelisted] = useState(false)
@@ -169,7 +170,7 @@ const RightMenu: React.FC = () => {
 
 	return (
 		<>
-			{!atomShowReferralCodeDlog &&
+			{!atomIsFetchingReferralCode && !atomShowReferralCodeDlog &&
 				<CreateAccountSetupDialog
 					state={createAccountDialogStatus}
 					handleCreateAccount={handleCreateAccount}

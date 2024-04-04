@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 import ReferralCodePutDialog from '~/components/Points/ReferralCodePutDialog'
 import useLocalStorage from '~/hooks/useLocalStorage'
 import { IS_COMPLETE_INIT_REFER } from '~/data/localstorage'
-import { showReferralCodeDlog } from '~/features/globalAtom'
+import { isFetchingReferralCode, showReferralCodeDlog } from '~/features/globalAtom'
 import { useSetAtom } from 'jotai'
 
 //SSR
@@ -45,6 +45,7 @@ export const getStaticProps = (async () => {
 const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { publicKey, connected } = useWallet()
   const setAtomShowReferralCodeDlog = useSetAtom(showReferralCodeDlog)
+  const setAtomIsFetchingReferralCode = useSetAtom(isFetchingReferralCode)
 
   //for referral 
   const [isCompleteInitRefer, _] = useLocalStorage(IS_COMPLETE_INIT_REFER, false)
@@ -66,6 +67,7 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
           setShowReferralTextDialog(true)
         })
       } else {
+        setAtomIsFetchingReferralCode(true)
         fetchCheckReferralCode(publicKey.toString()).then((res) => {
           console.log('res', res)
           if (res.successful) {
@@ -76,10 +78,12 @@ const Overview = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
               setAtomShowReferralCodeDlog(true)
             }
           }
+        }).finally(() => {
+          setAtomIsFetchingReferralCode(false)
         })
       }
     }
-  }, [connected, publicKey, refCode])
+  }, [connected, publicKey, refCode, isCompleteInitRefer])
 
   return (
     <StyledSection>
