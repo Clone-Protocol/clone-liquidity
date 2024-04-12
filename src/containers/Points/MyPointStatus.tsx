@@ -9,8 +9,8 @@ import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-import BoltIcon from '@mui/icons-material/Bolt';
-import PromoteDialog from '~/components/Points/PromoteDialog'
+// import BoltIcon from '@mui/icons-material/Bolt';
+// import PromoteDialog from '~/components/Points/PromoteDialog'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 import { useEffect, useState } from 'react'
@@ -26,7 +26,7 @@ const MyPointStatus = () => {
   const { setOpen } = useWalletDialog()
   const { enqueueSnackbar } = useSnackbar()
   const [showReferralPanel, setShowReferralPanel] = useState(false)
-  const [showPromoteDialog, setShowPromoteDialog] = useState(true)
+  // const [showPromoteDialog, setShowPromoteDialog] = useState(true)
   const [referralStatus, setReferralStatus] = useState(ReferralStatus.NotGenerated)
   const [isGeneratingRefCode, setIsGeneratingRefCode] = useState(false)
   const [referralCode, setReferralCode] = useState('000000')
@@ -144,10 +144,10 @@ const MyPointStatus = () => {
               {infos?.tradePoints ? formatLocaleAmount(infos.tradePoints) : '0'}
             </Typography>
           </StatusValue>
-          <PromoteBox onClick={() => setShowPromoteDialog(true)}>
+          {/* <PromoteBox onClick={() => setShowPromoteDialog(true)}>
             <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
             <ColoredText><Typography variant='p_sm'>1.5x Multiplier</Typography></ColoredText>
-          </PromoteBox>
+          </PromoteBox> */}
         </BorderBox>
         <BorderBox width='200px'>
           <Box display='flex' justifyContent='center' alignItems='center' ml='10px'>
@@ -215,7 +215,7 @@ const MyPointStatus = () => {
         </Box>
       </>}
 
-      {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />}
+      {/* {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />} */}
     </Wrapper>
   )
 

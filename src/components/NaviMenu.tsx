@@ -39,11 +39,11 @@ const NaviMenu = () => {
             </StyledPointsItemButton>
           </Link>
         }
-        {/* <Link href="/giveaway">
+        <Link href="/giveaway">
           <StyledGiveawayItemButton className={pathname?.startsWith('/giveaway') ? 'selected' : ''}>
             {pathname?.startsWith('/giveaway') ? <TrophyIconOn /> : <TrophyIconOff />}
           </StyledGiveawayItemButton>
-        </Link> */}
+        </Link>
       </List>
     </Fade>
   )
