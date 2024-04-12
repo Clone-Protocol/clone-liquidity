@@ -7,7 +7,7 @@ const CompleteRound = () => {
   const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
   return (
-    <Stack direction='row' justifyContent='center' alignItems='center' width='100%' mt='23px'>
+    <Stack direction='row' justifyContent='center' alignItems='center' width='100%' mt='23px' mb='10px'>
       <BorderBox width={isMobileOnSize ? '100%' : '474px'} height='104px' position='relative'>
         <Box display='flex' justifyContent='center' alignItems='center'>
           <Typography variant='p_xlg' fontWeight={500}>Round 1 draw is now complete</Typography>
