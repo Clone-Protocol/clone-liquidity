@@ -43,6 +43,10 @@ const BorderBox = styled(Box)`
   background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #a18e3f -19%, #7336a2 102%);
   background-origin: border-box;
   background-clip: content-box, border-box;
+  &:hover {
+    border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+    background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+  }
 `
 
 export default CompleteRound
