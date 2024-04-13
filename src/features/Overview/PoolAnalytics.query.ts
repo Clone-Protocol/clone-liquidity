@@ -5,6 +5,7 @@ import { assetMapping } from '~/data/assets'
 import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
 import { getAggregatedPoolStats, fetchBorrowData } from '~/utils/assets'
+import { MAX_POOLS_FOR_SHOW } from '~/data/assets'
 
 export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymbol: string, program: CloneClient }) => {
   console.log('fetchPoolAnalytics')
@@ -15,9 +16,9 @@ export const fetchPoolAnalytics = async ({ tickerSymbol, program }: { tickerSymb
     return 100 * (current - prev) / prev
   }
 
-  const borrowData = await fetchBorrowData(Number(pools.pools.length))
-
-  for (let poolIndex = 0; poolIndex < pools.pools.length; poolIndex++) {
+  const poolLength = MAX_POOLS_FOR_SHOW
+  const borrowData = await fetchBorrowData(Number(poolLength))
+  for (let poolIndex = 0; poolIndex < poolLength; poolIndex++) {
     const info = assetMapping(poolIndex)
     if (tickerSymbol === info.tickerSymbol) {
       const stats = poolStats[poolIndex]

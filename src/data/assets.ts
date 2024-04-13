@@ -12,13 +12,15 @@ export enum AssetTickers {
     optimism = 1,
     sui = 2,
     doge = 3,
+    bnb = 4,
 }
 
 export enum Asset {
     Arbitrum,
     Optimism,
     Sui,
-    Doge
+    Doge,
+    Bnb,
 }
 
 export enum AssetType {
@@ -60,6 +62,14 @@ export const ASSETS = [
         tickerIcon: '/images/assets/on-doge.svg',
         ticker: 'doge',
         pythSymbol: 'Crypto.DOGE/USD',
+    },
+    {
+        tickerName: 'Cloned BNB',
+        tickerSymbol: 'clBNB',
+        tickerIcon: '/images/assets/on-bnb.svg',
+        ticker: 'bnb',
+        pythSymbol: 'Crypto.BNB/USD',
+        mainColor: '#FFFF00',
     }
 ]
 
@@ -125,6 +135,18 @@ export const assetMapping = (index: number) => {
             ticker = 'doge'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.DOGE/USD'
+            supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("H7ijetaTKRQbN3GSpxiW46sSpT8Rw3xHfdiDQN9Lx9LX")
+            break
+        case Asset.Bnb:
+            tickerName = 'Cloned BNB'
+            tickerSymbol = 'clBNB'
+            wrapTickerName = 'DeBridge BNB'
+            wrapTickerSymbol = 'deBNB'
+            tickerIcon = '/images/assets/on-bnb.svg'
+            ticker = 'bnb'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.BNB/USD'
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("H7ijetaTKRQbN3GSpxiW46sSpT8Rw3xHfdiDQN9Lx9LX")
             break
