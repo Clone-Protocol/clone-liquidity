@@ -32,7 +32,7 @@ export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
 //@MEMO: to add more asset, need to adjust here
-export const MAX_POOLS_FOR_SHOW = 4
+export const MAX_POOLS_FOR_SHOW = 5
 
 export const ASSETS = [
     {
@@ -143,12 +143,13 @@ export const assetMapping = (index: number) => {
             tickerSymbol = 'clBNB'
             wrapTickerName = 'DeBridge BNB'
             wrapTickerSymbol = 'deBNB'
+            wrapPortUrl = 'https://app.debridge.finance/deport?inputChain=56&outputChain=7565164&inputCurrency=&outputCurrency='
             tickerIcon = '/images/assets/on-bnb.svg'
             ticker = 'bnb'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.BNB/USD'
             supabaseSymbol = pythSymbol
-            underlyingTokenMint = new PublicKey("H7ijetaTKRQbN3GSpxiW46sSpT8Rw3xHfdiDQN9Lx9LX")
+            underlyingTokenMint = new PublicKey("HYi7mwm4mGMjxEB94coLeTqVYMw6YmUk4Y8irUMFdoTc")
             break
         default:
             throw new Error('Not supported')

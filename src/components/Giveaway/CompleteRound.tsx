@@ -36,18 +36,31 @@ const BorderBox = styled(Box)`
   justify-content: center;
   gap: 10px;
   color: #fff;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 1px;
-  border-image-source: linear-gradient(103deg, #a18e3f -19%, #7336a2 102%);
-  border-image-slice: 1;
-  background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #a18e3f -19%, #7336a2 102%);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
   cursor: pointer;
+  &::before {
+    content: "";
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: transparent;
+    border-image-source: linear-gradient(103deg, #a18e3f -19%, #7336a2 102%);
+    border-image-slice: 1;
+    background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #a18e3f -19%, #7336a2 102%);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    position: absolute;
+    inset: 0;
+    -webkit-mask: /*4*/
+     linear-gradient(#fff 0 0) padding-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; /*5'*/
+          mask-composite: exclude; /*5*/
+  }
   &:hover {
-    border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
-    background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+    &::before {
+      border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+      background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+    }
   }
 `
 
