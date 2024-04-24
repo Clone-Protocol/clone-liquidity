@@ -9,8 +9,8 @@ import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import withSuspense from '~/hocs/withSuspense'
 import { LoadingProgress } from '~/components/Common/Loading'
-// import BoltIcon from '@mui/icons-material/Bolt';
-// import PromoteDialog from '~/components/Points/PromoteDialog'
+import BoltIcon from '@mui/icons-material/Bolt';
+import PromoteDialog from '~/components/Points/PromoteDialog'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
 import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
 import { useEffect, useState } from 'react'
@@ -26,7 +26,7 @@ const MyPointStatus = () => {
   const { setOpen } = useWalletDialog()
   const { enqueueSnackbar } = useSnackbar()
   const [showReferralPanel, setShowReferralPanel] = useState(false)
-  // const [showPromoteDialog, setShowPromoteDialog] = useState(true)
+  const [showPromoteDialog, setShowPromoteDialog] = useState(true)
   const [referralStatus, setReferralStatus] = useState(ReferralStatus.NotGenerated)
   const [isGeneratingRefCode, setIsGeneratingRefCode] = useState(false)
   const [referralCode, setReferralCode] = useState('000000')
@@ -177,6 +177,10 @@ const MyPointStatus = () => {
                     {infos?.referralPoints ? formatLocaleAmount(infos.referralPoints) : '0'}
                   </Typography>
                 </StatusValue>
+                <PromoteBox>
+                  <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
+                  <ColoredText><Typography variant='p_sm'>2x</Typography></ColoredText>
+                </PromoteBox>
                 <ReferralBox onMouseEnter={() => setIsRefCodeButtonMouseEnter(true)} onMouseLeave={() => setIsRefCodeButtonMouseEnter(false)} onClick={clickReferralCode}>
                   <Typography variant='p_sm'>Click for referral code</Typography>
                 </ReferralBox>
@@ -215,7 +219,7 @@ const MyPointStatus = () => {
         </Box>
       </>}
 
-      {/* {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />} */}
+      {showPromoteDialog && <PromoteDialog onClose={() => setShowPromoteDialog(false)} />}
     </Wrapper>
   )
 
@@ -265,15 +269,25 @@ const PromoteBox = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 110px;
+  width: 44px;
+  height: 24px;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.07);
+`
+const ReferralBox = styled(Box)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 140px;
   height: 24px;
   cursor: pointer;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 8px;
   background-color: rgba(255, 255, 255, 0.07);
-`
-const ReferralBox = styled(PromoteBox)`
-  width: 140px;
 `
 const PythBox = styled(Box)`
   position: absolute;
