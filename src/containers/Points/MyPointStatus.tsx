@@ -133,6 +133,10 @@ const MyPointStatus = () => {
               {infos?.lpPoints ? formatLocaleAmount(infos.lpPoints) : '0'}
             </Typography>
           </StatusValue>
+          <PromoteBox>
+            <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
+            <ColoredText><Typography variant='p_sm'>2x</Typography></ColoredText>
+          </PromoteBox>
         </BorderBox>
         <BorderBox width='200px' position='relative'>
           <Box display='flex' justifyContent='center' alignItems='center' ml='10px'>
@@ -177,10 +181,10 @@ const MyPointStatus = () => {
                     {infos?.referralPoints ? formatLocaleAmount(infos.referralPoints) : '0'}
                   </Typography>
                 </StatusValue>
-                <PromoteBox>
+                {/* <PromoteBox>
                   <BoltIcon sx={{ fontSize: '16px', color: '#fbdc5f' }} />
                   <ColoredText><Typography variant='p_sm'>2x</Typography></ColoredText>
-                </PromoteBox>
+                </PromoteBox> */}
                 <ReferralBox onMouseEnter={() => setIsRefCodeButtonMouseEnter(true)} onMouseLeave={() => setIsRefCodeButtonMouseEnter(false)} onClick={clickReferralCode}>
                   <Typography variant='p_sm'>Click for referral code</Typography>
                 </ReferralBox>

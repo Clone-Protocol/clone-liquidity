@@ -17,10 +17,10 @@ const PromoteDialog = ({ onClose }: { onClose: () => void }) => {
     <BackScreen>
       <AnimWrapper className={addedOut}>
         <BoxWrapper sx={{ width: { xs: '100%', md: '463px' }, paddingTop: { xs: '30px', md: '20px' } }}>
-          <TextHead>Referral Point 2x Multiplier</TextHead>
+          <TextHead>Liquidity Point 2x Multiplier</TextHead>
           <Box my='20px' lineHeight={0.9}>
             <Typography variant='p_lg' lineHeight={1.5}>
-              For limited amount of time, your referral points are multiplied!
+              For limited amount of time, your liquidity points are multiplied!
             </Typography>
           </Box>
           {/* <EnterButton onClick={() => close()}><Image src={RocketPromoteIcon} alt='promote' /></EnterButton> */}
