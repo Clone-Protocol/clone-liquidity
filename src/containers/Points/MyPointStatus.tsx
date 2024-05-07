@@ -256,6 +256,7 @@ const GenerateReferralBorderBox = styled(BorderBox)`
   padding: 0px;
   background-color: #000;
   &.hover {
+    content: "";
     background-color: #000;
     border-style: solid;
     border-width: 1px;
@@ -264,6 +265,9 @@ const GenerateReferralBorderBox = styled(BorderBox)`
     background-image: linear-gradient(to bottom, #000, #000), linear-gradient(to bottom, #fbdc5f, #3dddff);
     background-origin: border-box;
     background-clip: content-box, border-box;
+    -webkit-mask: /*4*/
+     linear-gradient(#fff 0 0) padding-box, 
+     linear-gradient(#fff 0 0);
   }
 `
 const PromoteBox = styled(Box)`
@@ -341,6 +345,7 @@ const ReferralButton = styled(Button)`
   color: #fff;
   padding: 0;
   &:hover {
+    content: "";
     background-color: #1c1c1c;
     border-style: solid;
     border-width: 1px;
@@ -349,6 +354,9 @@ const ReferralButton = styled(Button)`
     background-image: linear-gradient(to bottom, #1c1c1c, #1c1c1c), linear-gradient(to bottom, #fbdc5f, #3dddff);
     background-origin: border-box;
     background-clip: content-box, border-box;
+    -webkit-mask: /*4*/
+     linear-gradient(#fff 0 0) padding-box, 
+     linear-gradient(#fff 0 0);
   }
 `
 
