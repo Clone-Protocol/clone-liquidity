@@ -5,11 +5,11 @@ import ArrowLink from 'public/images/giveaway/arrow-link.svg'
 import ArrowLinkOn from 'public/images/giveaway/arrow-link-on.svg'
 import { useState } from "react"
 
-const CompleteRound = () => {
+const CompleteRound = ({ version = 1 }: { version: number }) => {
   const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
   const [hoverArrow, setHoverArrow] = useState(false)
 
-  return (
+  return version === 1 ? (
     <Stack direction='row' justifyContent='center' alignItems='center' width='100%' mt='23px' mb='10px'>
       <a href="https://docs.clone.so/clone-mainnet-guide/points-program/season-1/cloner-classic-giveaway#past-ccg-winners" target='_blank'>
         <BorderBox width={isMobileOnSize ? '100%' : '474px'} height='104px' position='relative' onMouseEnter={() => setHoverArrow(true)} onMouseLeave={() => setHoverArrow(false)}>
@@ -27,6 +27,19 @@ const CompleteRound = () => {
         </BorderBox>
       </a>
     </Stack>
+  ) : (
+    <Stack direction='row' justifyContent='center' alignItems='center' width='100%' mt='23px' mb='10px'>
+      <BorderBox width={isMobileOnSize ? '100%' : '474px'} height='104px' position='relative' onMouseEnter={() => setHoverArrow(true)} onMouseLeave={() => setHoverArrow(false)}>
+        <Box display='flex' justifyContent='center' alignItems='center'>
+          <Typography variant='p_xlg' fontWeight={500}>Round 2 has ended</Typography>
+        </Box>
+        <Box display='flex' justifyContent='center' alignItems='center' padding='5px 15px'>
+          <Typography variant='p' fontWeight={500} color='#c5c7d9'>
+            Winners will be announced soon!
+          </Typography>
+        </Box>
+      </BorderBox>
+    </Stack>
   )
 }
 
@@ -36,7 +49,7 @@ const BorderBox = styled(Box)`
   justify-content: center;
   gap: 10px;
   color: #fff;
-  cursor: pointer;
+  // cursor: pointer;
   &::before {
     content: "";
     border-radius: 10px;
@@ -56,12 +69,12 @@ const BorderBox = styled(Box)`
   -webkit-mask-composite: xor; /*5'*/
           mask-composite: exclude; /*5*/
   }
-  &:hover {
-    &::before {
-      border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
-      background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
-    }
-  }
+  // &:hover {
+  //   &::before {
+  //     border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+  //     background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+  //   }
+  // }
 `
 
 export default CompleteRound
