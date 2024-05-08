@@ -93,8 +93,8 @@ export type UserPointsView = {
     referral_points: number
     total_points: number
     name?: string
-    hasPythPoint?: boolean
-    pythPointTier?: number
+    // hasPythPoint?: boolean
+    // pythPointTier?: number
 }
 
 export const fetchAllUserPoints = async (): Promise<UserPointsView[]> => {
@@ -108,6 +108,22 @@ export const fetchUserPoints = async (userAddress: string): Promise<UserPointsVi
     url += `?userAddress=${userAddress}`;
     const response = await axios.get(url)
     return response.data as UserPointsView[]
+}
+
+export type StakersInfo = {
+    user_address: string
+    amount: number
+    tier: Tier
+}
+export type Tier = 0 | 1 | 2
+export type UserBonus = {
+    pyth: StakersInfo[],
+    jup: StakersInfo[]
+}
+export const fetchAllUserBonus = async (): Promise<UserBonus> => {
+    let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-users-all-bonus`;
+    const response = await axios.get(url)
+    return response.data as UserBonus
 }
 
 export type UserGiveaway = {
