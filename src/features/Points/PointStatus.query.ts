@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 // import { useClone } from '~/hooks/useClone'
 // import { REFETCH_CYCLE } from '~/components/Common/DataLoadingIndicator'
 import { useAnchorWallet } from '@solana/wallet-adapter-react'
-import { fetchAllUserBonus, fetchCheckReferralCode, fetchGenerateReferralCode, fetchUserPoints, UserBonus, UserPointsView } from '~/utils/fetch_netlify'
+import { fetchAllUserBonus, fetchCheckReferralCode, fetchGenerateReferralCode, fetchStakingUserBonus, fetchUserPoints, UserBonus, UserPointsView } from '~/utils/fetch_netlify'
 import { calculateMultiplierForUser } from './Ranking.query'
 
 export const fetchReferralCode = async ({ userPubKey }: { userPubKey: PublicKey | null }) => {
@@ -27,16 +27,21 @@ export const fetchStatus = async ({ userPubKey }: { userPubKey: PublicKey | null
 
   const userPoints: UserPointsView[] = await fetchUserPoints(userPubKey.toString())
 
-  const userBonus: UserBonus = await fetchAllUserBonus();
+  // const userBonus: UserBonus = await fetchAllUserBonus();
   const userAddress = userPoints[0].user_address
 
-  const matchPythUser = userBonus.pyth.find((pythUser) => {
-    return pythUser.user_address === userAddress
-  })
+  const userBonus: UserBonus = await fetchStakingUserBonus(userAddress);
 
-  const matchJupUser = userBonus.jup.find((jupUser) => {
-    return jupUser.user_address === userAddress
-  })
+  const matchPythUser = userBonus.pyth.length > 0 ? userBonus.pyth[0] : undefined;
+  const matchJupUser = userBonus.jup.length > 0 ? userBonus.jup[0] : undefined;
+
+  // const matchPythUser = userBonus.pyth.find((pythUser) => {
+  //   return pythUser.user_address === userAddress
+  // })
+
+  // const matchJupUser = userBonus.jup.find((jupUser) => {
+  //   return jupUser.user_address === userAddress
+  // })
 
   const multipleTier = calculateMultiplierForUser(matchJupUser?.tier, matchPythUser?.tier)
 
