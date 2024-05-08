@@ -62,9 +62,9 @@ export const fetchRanking = async () => {
 export const calculateMultiplierForUser = (jup?: Tier, pyth?: Tier) => {
   const multiplier = (t: Tier) => {
     switch (t) {
-      case 0: return 0.2
-      case 1: return 0.4
-      case 2: return 0.6
+      case 0: return 20
+      case 1: return 40
+      case 2: return 60
       default:
         return 0
     }
@@ -72,7 +72,7 @@ export const calculateMultiplierForUser = (jup?: Tier, pyth?: Tier) => {
   const jupMul = jup !== undefined ? multiplier(jup) : 0
   const pythMul = pyth !== undefined ? multiplier(pyth) : 0
 
-  return 1 + jupMul + pythMul
+  return 1 + (jupMul + pythMul) / 100
 }
 
 interface GetProps {
