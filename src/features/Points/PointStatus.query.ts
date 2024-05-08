@@ -28,7 +28,8 @@ export const fetchStatus = async ({ userPubKey }: { userPubKey: PublicKey | null
   const userPoints: UserPointsView[] = await fetchUserPoints(userPubKey.toString())
 
   // const userBonus: UserBonus = await fetchAllUserBonus();
-  const userAddress = userPoints[0].user_address
+  // const userAddress = userPoints[0].user_address
+  const userAddress = userPubKey.toString()
 
   const userBonus: UserBonus = await fetchStakingUserBonus(userAddress);
 
