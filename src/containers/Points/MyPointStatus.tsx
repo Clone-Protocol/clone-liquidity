@@ -12,7 +12,7 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import BoltIcon from '@mui/icons-material/Bolt';
 import PromoteDialog from '~/components/Points/PromoteDialog'
 import { PythSymbolIcon } from '~/components/Common/SvgIcons'
-import { PointTextForPyth } from '~/components/Points/PointMultiplierText'
+import { PointTextForBonus } from '~/components/Points/PointMultiplierText'
 import { useEffect, useState } from 'react'
 import { formatLocaleAmount } from '~/utils/numbers'
 import ContentCopyIcon from 'public/images/content-copy.svg'
@@ -20,6 +20,7 @@ import Image from 'next/image'
 import { ReferralStatus } from '~/utils/constants'
 import { useSnackbar } from 'notistack'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import IconJupSymbol from 'public/images/jup_symbol.svg'
 
 const MyPointStatus = () => {
   const { publicKey } = useWallet()
@@ -97,29 +98,38 @@ const MyPointStatus = () => {
         </BorderBox>
         <BorderBox width='350px' position='relative'>
           <Box display='flex' justifyContent='center' alignItems='center' height='20px'>
-            <Typography variant='p_lg'>My Total Points</Typography>
+            <Typography variant='p'>My Total Points</Typography>
             <InfoTooltip title={TooltipTexts.points.totalPoints} color='#66707e' />
           </Box>
           <StatusValue>
-            {infos?.hasPythPoint &&
+            {(infos?.hasPythPoint || infos?.hasJupPoint) &&
               <Box width='42px'></Box>
             }
             <Typography variant='h3' fontWeight={500}>
               {infos?.totalPoints ? formatLocaleAmount(infos.totalPoints) : '0'}
             </Typography>
-            {infos?.hasPythPoint &&
+            {(infos?.hasPythPoint || infos?.hasJupPoint) &&
               <Tooltip title={TooltipTexts.points.multiplier} placement="top">
-                <Box width='42px'><PointTextForPyth pythPointTier={infos?.pythPointTier} /></Box>
+                <Box width='42px'><PointTextForBonus multipleTier={infos?.multipleTier} /></Box>
               </Tooltip>
             }
           </StatusValue>
-          {infos?.hasPythPoint &&
-            <Tooltip title={TooltipTexts.points.pythSymbol} placement="top">
-              <PythBox>
-                <PythSymbolIcon />
-              </PythBox>
-            </Tooltip>
-          }
+          <BottomSymbolBox>
+            {infos?.hasPythPoint &&
+              <Tooltip title={TooltipTexts.points.pythSymbol} placement="top">
+                <Box width='38px' height='37px' display='flex' alignItems='center' justifyContent='center'>
+                  <PythSymbolIcon />
+                </Box>
+              </Tooltip>
+            }
+            {infos?.hasJupPoint &&
+              <Tooltip title={TooltipTexts.points.jupSymbol} placement="top">
+                <Box width='38px' height='37px' display='flex' alignItems='center' justifyContent='center'>
+                  <Image src={IconJupSymbol} alt='jup_symbol' width={20} height={20} />
+                </Box>
+              </Tooltip>
+            }
+          </BottomSymbolBox>
         </BorderBox>
       </Stack>
       <Stack direction='row' gap={2} mt='18px'>
@@ -293,6 +303,17 @@ const ReferralBox = styled(Box)`
   width: 140px;
   height: 24px;
   cursor: pointer;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.07);
+`
+const BottomSymbolBox = styled(Box)`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 8px;
   background-color: rgba(255, 255, 255, 0.07);

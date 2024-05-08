@@ -88,6 +88,7 @@ export const TooltipTexts = {
         socialPoints: 'Points earned from participating in Clone’s Zealy campaign.',
         referralPoints: 'Earn 10% of the points earned by each user you refer!',
         pythSymbol: 'We have noticed that you are staking $PYTH, making you a Pythian Cloner and giving you a points multiplier!',
-        multiplier: 'The multiplier you receive for staking $PYTH, the more you stake, the higher the multiplier!'
+        multiplier: 'The multiplier you receive for staking $PYTH, $JUP, the more you stake, the higher the multiplier!',
+        jupSymbol: 'We have noticed that you are staking $JUP, making you a Jup Cloner and giving you a points multiplier!'
     }
 }

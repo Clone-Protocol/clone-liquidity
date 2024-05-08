@@ -18,27 +18,24 @@ export const handler: Handler = async (event, context) => {
   let newData: any = data
 
   //check if the address is included in pythResult
-  if (params.userAddress) {
-    try {
-      console.log('p', params.userAddress)
-      //pyth points
-      // const dirRelativeToPublicFolder = 'data'
-      // const dir = path.resolve('./public', dirRelativeToPublicFolder);
-      // const fileContents = await fs.readFile(dir + '/pythSnapshot.json', 'utf8');
-      const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/data/pythSnapshot.json`)
-      const fileContents = await fetchData.json()
-      const pythResult: PythObj[] = fileContents
+  // if (params.userAddress) {
+  //   try {
+  //     console.log('p', params.userAddress)
+  //     //pyth points
+  //     const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT}/data/pythSnapshot.json`)
+  //     const fileContents = await fetchData.json()
+  //     const pythResult: PythObj[] = fileContents
 
-      const pythUser = pythResult.find((pythUser) => {
-        return pythUser.address === params.userAddress
-      })
-      newData[0].hasPythPoint = pythUser !== undefined ? true : false
-      newData[0].pythPointTier = pythUser !== undefined ? pythUser.tier : -1
-      console.log('new', newData)
-    } catch (error) {
-      console.error('e', error)
-    }
-  }
+  //     const pythUser = pythResult.find((pythUser) => {
+  //       return pythUser.address === params.userAddress
+  //     })
+  //     newData[0].hasPythPoint = pythUser !== undefined ? true : false
+  //     newData[0].pythPointTier = pythUser !== undefined ? pythUser.tier : -1
+  //     console.log('new', newData)
+  //   } catch (error) {
+  //     console.error('e', error)
+  //   }
+  // }
 
   if (error !== null) {
     console.log(error)
