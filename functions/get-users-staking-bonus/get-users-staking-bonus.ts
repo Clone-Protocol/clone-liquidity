@@ -34,9 +34,9 @@ export const handler: Handler = async (event, context) => {
   return {
     statusCode: 200,
     body: JSON.stringify(resultObj),
-    // headers: {
-    //   'Cache-Control': 'public, max-age=300',
-    //   'Content-Type': 'application/json',
-    // }
+    headers: {
+      'Cache-Control': 'public, max-age=300',
+      'Content-Type': 'application/json',
+    }
   }
 }
