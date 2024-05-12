@@ -118,7 +118,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   if (balanceColl === 0) {
     warningMsgForColl = 'You wallet balance is zero'
   } else if (positionInfo && Math.max(0, positionInfo.collateralILD) - balanceColl > 0) {
-    warningMsgForColl = `Not enough wallet balance to fully payoff ${ON_USD} ILD Amount. You can acquire more on ${NETWORK_NAME} faucet.`
+    warningMsgForColl = `Not enough wallet balance to fully payoff ${ON_USD} ILD Amount.`
   }
 
   const isNotValid = positionInfo ?
