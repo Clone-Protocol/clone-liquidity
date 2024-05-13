@@ -14,7 +14,7 @@ const CompleteRound = ({ version = 1 }: { version: number }) => {
       <a href="https://docs.clone.so/clone-mainnet-guide/points-program/season-1/cloner-classic-giveaway#past-ccg-winners" target='_blank'>
         <BorderBox width={isMobileOnSize ? '100%' : '474px'} height='104px' position='relative' onMouseEnter={() => setHoverArrow(true)} onMouseLeave={() => setHoverArrow(false)}>
           <Box display='flex' justifyContent='center' alignItems='center'>
-            <Typography variant='p_xlg' fontWeight={500}>Round 1 draw is now complete</Typography>
+            <Typography variant='p_xlg' fontWeight={500}>Round 2 draw is now complete</Typography>
           </Box>
           <Box display='flex' justifyContent='center' alignItems='center' padding='5px 15px'>
             <Typography variant='p' fontWeight={500} color='#c5c7d9'>

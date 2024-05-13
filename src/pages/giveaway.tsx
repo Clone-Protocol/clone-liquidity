@@ -49,7 +49,7 @@ const Giveaway = ({ dehydratedState }: InferGetStaticPropsType<typeof getStaticP
             </a>
           </Stack>
           <Box my='30px'>
-            <CompleteRound version={2} />
+            <CompleteRound version={1} />
 
             <MyGiveawayStatus />
 
