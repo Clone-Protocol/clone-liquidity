@@ -147,7 +147,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
               {formatLocaleAmount(Math.max(0, positionInfo.onassetILD), 8)} {positionInfo.tickerSymbol}
             </Typography>
             <Typography variant='p_lg' color='#66707e' ml='10px'>
-              {`($${formatLocaleAmount(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice), 8})`}
+              {`($${formatLocaleAmount(Math.max(0, positionInfo.onassetILD) * positionInfo.oraclePrice, 8)})`}
             </Typography>
           </Box>
         </StackWithBorder>
