@@ -69,12 +69,12 @@ const BorderBox = styled(Box)`
   -webkit-mask-composite: xor; /*5'*/
           mask-composite: exclude; /*5*/
   }
-  // &:hover {
-  //   &::before {
-  //     border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
-  //     background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
-  //   }
-  // }
+  &:hover {
+    &::before {
+      border-image-source: linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+      background-image: linear-gradient(to bottom, #000, #000), linear-gradient(103deg, #fbdc5f -19%, #b557ff 102%);
+    }
+  }
 `
 
 export default CompleteRound
