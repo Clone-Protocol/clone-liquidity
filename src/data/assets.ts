@@ -13,6 +13,7 @@ export enum AssetTickers {
     sui = 2,
     doge = 3,
     bnb = 4,
+    apt = 5,
 }
 
 export enum Asset {
@@ -21,6 +22,7 @@ export enum Asset {
     Sui,
     Doge,
     Bnb,
+    Apt,
 }
 
 export enum AssetType {
@@ -69,8 +71,14 @@ export const ASSETS = [
         tickerIcon: '/images/assets/on-bnb.svg',
         ticker: 'bnb',
         pythSymbol: 'Crypto.BNB/USD',
-        mainColor: '#FFFF00',
-    }
+    },
+    {
+        tickerName: 'Cloned APT',
+        tickerSymbol: 'clAPT',
+        tickerIcon: '/images/assets/on-apt.svg',
+        ticker: 'apt',
+        pythSymbol: 'Crypto.APT/USD',
+    },
 ]
 
 export const assetMapping = (index: number) => {
@@ -150,6 +158,19 @@ export const assetMapping = (index: number) => {
             pythSymbol = 'Crypto.BNB/USD'
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("HYi7mwm4mGMjxEB94coLeTqVYMw6YmUk4Y8irUMFdoTc")
+            break
+        case Asset.Apt:
+            tickerName = 'Cloned APT'
+            tickerSymbol = 'clAPT'
+            wrapTickerName = 'Wormhole APT'
+            wrapTickerSymbol = 'wAPT'
+            wrapPortUrl = 'https://portalbridge.com/'
+            tickerIcon = '/images/assets/on-apt.svg'
+            ticker = 'apt'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.APT/USD'
+            supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("HYi7mwm4mGMjxEB94coLeTqVYMw6YmUk4Y8irUMFdoTc") // @TODO: change this
             break
         default:
             throw new Error('Not supported')
