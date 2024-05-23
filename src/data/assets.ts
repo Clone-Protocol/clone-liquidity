@@ -170,7 +170,7 @@ export const assetMapping = (index: number) => {
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.APT/USD'
             supabaseSymbol = pythSymbol
-            underlyingTokenMint = new PublicKey("HYi7mwm4mGMjxEB94coLeTqVYMw6YmUk4Y8irUMFdoTc") // @TODO: change this
+            underlyingTokenMint = new PublicKey("6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN")
             break
         default:
             throw new Error('Not supported')
