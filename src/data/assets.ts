@@ -73,7 +73,7 @@ export const ASSETS = [
         pythSymbol: 'Crypto.BNB/USD',
     },
     {
-        tickerName: 'Cloned APT',
+        tickerName: 'Cloned Aptos',
         tickerSymbol: 'clAPT',
         tickerIcon: '/images/assets/on-apt.svg',
         ticker: 'apt',
@@ -160,9 +160,9 @@ export const assetMapping = (index: number) => {
             underlyingTokenMint = new PublicKey("HYi7mwm4mGMjxEB94coLeTqVYMw6YmUk4Y8irUMFdoTc")
             break
         case Asset.Apt:
-            tickerName = 'Cloned APT'
+            tickerName = 'Cloned Aptos'
             tickerSymbol = 'clAPT'
-            wrapTickerName = 'Wormhole APT'
+            wrapTickerName = 'Wormhole Aptos'
             wrapTickerSymbol = 'wAPT'
             wrapPortUrl = 'https://portalbridge.com/'
             tickerIcon = '/images/assets/on-apt.svg'
