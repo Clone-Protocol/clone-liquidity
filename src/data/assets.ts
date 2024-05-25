@@ -13,6 +13,7 @@ export enum AssetTickers {
     sui = 2,
     doge = 3,
     bnb = 4,
+    apt = 5,
 }
 
 export enum Asset {
@@ -21,6 +22,7 @@ export enum Asset {
     Sui,
     Doge,
     Bnb,
+    Apt,
 }
 
 export enum AssetType {
@@ -32,7 +34,7 @@ export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
 //@MEMO: to add more asset, need to adjust here
-export const MAX_POOLS_FOR_SHOW = 5
+export const MAX_POOLS_FOR_SHOW = 6
 
 export const ASSETS = [
     {
@@ -69,8 +71,14 @@ export const ASSETS = [
         tickerIcon: '/images/assets/on-bnb.svg',
         ticker: 'bnb',
         pythSymbol: 'Crypto.BNB/USD',
-        mainColor: '#FFFF00',
-    }
+    },
+    {
+        tickerName: 'Cloned Aptos',
+        tickerSymbol: 'clAPT',
+        tickerIcon: '/images/assets/on-apt.svg',
+        ticker: 'apt',
+        pythSymbol: 'Crypto.APT/USD',
+    },
 ]
 
 export const assetMapping = (index: number) => {
@@ -150,6 +158,19 @@ export const assetMapping = (index: number) => {
             pythSymbol = 'Crypto.BNB/USD'
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("HYi7mwm4mGMjxEB94coLeTqVYMw6YmUk4Y8irUMFdoTc")
+            break
+        case Asset.Apt:
+            tickerName = 'Cloned Aptos'
+            tickerSymbol = 'clAPT'
+            wrapTickerName = 'Wormhole Aptos'
+            wrapTickerSymbol = 'wAPT'
+            wrapPortUrl = 'https://portalbridge.com/'
+            tickerIcon = '/images/assets/on-apt.svg'
+            ticker = 'apt'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.APT/USD'
+            supabaseSymbol = pythSymbol
+            underlyingTokenMint = new PublicKey("6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN")
             break
         default:
             throw new Error('Not supported')
