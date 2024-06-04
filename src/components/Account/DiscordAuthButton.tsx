@@ -25,20 +25,26 @@ const DiscordAuthButton = () => {
   };
 
   return !discordUsernameValue ?
-    <LinkButton onClick={discordLogin} style={buttonStyle} >
-      <Typography variant='p'>Link your Discord account</Typography>
-      <Image src={DiscordIcon} alt="discord" />
+    <LinkButton onClick={discordLogin}>
+      <Typography variant='p_sm'>Link your Discord account </Typography><Typography variant='p_lg'>+</Typography>
     </LinkButton>
-    : <Box><Typography variant='p'>Signed with Discord</Typography></Box>
+    : <Box><Typography variant='p_sm' color='#b5fdf9'>Signed with Discord</Typography></Box>
 };
 
 const LinkButton = styled(Button)`
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  &:hover {
-    background: #000;
-  }
+display: flex;
+gap: 5px;
+align-items: center;
+border-radius: 5px;
+background-color: rgba(255, 255, 255, 0.07);
+width: 170px;
+height: 24px;
+padding: 6px 15px;
+color: #b5fdf9;
+font-size: 10px;
+&:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
       `
 
 export default DiscordAuthButton;
