@@ -34,3 +34,5 @@ export const rpcEndpoint = atom(IS_DEV ? DEV_RPCs[0].rpc_url : MAIN_RPCs[0].rpc_
 export const priorityFeeIndex = atom(DEFAULT_PRIORITY_FEE_INDEX)
 
 export const priorityFee = atom<FeeLevel>(PRIORITY_FEES[DEFAULT_PRIORITY_FEE_INDEX].fee_level)
+
+export const discordUsername = atom('')

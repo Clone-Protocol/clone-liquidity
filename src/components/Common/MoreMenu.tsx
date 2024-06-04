@@ -9,7 +9,9 @@ import ShareLinkIcon from 'public/images/more/call-made.svg'
 import { Stack } from '@mui/system';
 import { CAREER_URL, DISCORD_URL, DOCS_URL, MARKETS_APP, OFFICIAL_WEB, TWITTER_URL, AUDIT_URL, TERMS_URL } from '~/data/social';
 import { NETWORK_NAME } from '~/utils/constants'
+import DiscordAuthButton from '../Account/DiscordAuthButton'
 import { IS_DEV } from '~/data/networks'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 interface Props {
   anchorEl: null | HTMLElement
@@ -19,6 +21,7 @@ interface Props {
 
 const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => {
   const open = Boolean(anchorEl);
+  const { publicKey } = useWallet()
 
   return <Menu
     anchorEl={anchorEl}
@@ -84,6 +87,13 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
         </HoverStack>
       </StyledMenuItem>
     </a>
+
+    {publicKey &&
+      <HoverStack direction='row' alignItems='center'>
+        <DiscordAuthButton />
+      </HoverStack>
+    }
+
     <StyledDivider />
     <a href={AUDIT_URL} target='_blank' rel="noreferrer">
       <LinkStack direction='row' alignItems='center' gap={1}>
