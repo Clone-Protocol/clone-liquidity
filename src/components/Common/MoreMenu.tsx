@@ -84,6 +84,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
         </HoverStack>
       </StyledMenuItem>
     </a>
+
     <StyledDivider />
     <a href={AUDIT_URL} target='_blank' rel="noreferrer">
       <LinkStack direction='row' alignItems='center' gap={1}>
