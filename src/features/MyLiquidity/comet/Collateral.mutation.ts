@@ -16,36 +16,32 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 
 	// console.log('edit input data', data)
 	const collateralTokenAccountAddress = getAssociatedTokenAddressSync(
-		userPubKey, program.clone.collateral.mint, true
+		program.clone.collateral.mint, userPubKey, true
 	)
 
 	const { collAmount, editType } = data
 	const oracles = await program.getOracles();
 
-	const ixnCalls: TransactionInstruction[] = [program.updatePricesInstruction(oracles)];
+	const ixns: TransactionInstruction[] = [program.updatePricesInstruction(oracles)];
 	if (editType === 0) {
-		ixnCalls.push(
+		ixns.push(
 			program.addCollateralToCometInstruction(
 				collateralTokenAccountAddress,
 				toScale(collAmount, program.clone.collateral.scale)
 			))
 	} else {
-		ixnCalls.push(
+		ixns.push(
 			createAssociatedTokenAccountIdempotentInstruction(
 				userPubKey,
 				collateralTokenAccountAddress,
 				userPubKey,
 				program.clone.collateral.mint
-			)
-		);
-		ixnCalls.push(
+			),
 			program.withdrawCollateralFromCometInstruction(
 				collateralTokenAccountAddress,
 				toScale(collAmount, program.clone.collateral.scale)
 			))
 	}
-
-	const ixns = await Promise.all(ixnCalls)
 
 	//socket handler
 	const subscriptionId = program.provider.connection.onAccountChange(
@@ -69,8 +65,6 @@ export const callEdit = async ({ program, userPubKey, setTxState, data, feeLevel
 	console.log('Starting web socket, subscription ID: ', subscriptionId);
 
 	await sendAndConfirm(program.provider, ixns, setTxState, feeLevel)
-
-	//
 
 	return {
 		result: true
