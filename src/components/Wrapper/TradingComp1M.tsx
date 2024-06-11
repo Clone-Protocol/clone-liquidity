@@ -1,4 +1,4 @@
-import { Box, Stack, Button, IconButton, Typography, CircularProgress } from '@mui/material'
+import { Box, Stack, Button, IconButton, Typography, CircularProgress, Popover } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import React, { useState, useEffect } from 'react'
 import PairInput from './PairInput'
@@ -13,9 +13,10 @@ import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '../Common/CommonButtons'
-import { AssetTickers, assetMapping } from '~/data/assets'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import { shortenAddress } from '~/utils/address'
+import { assetMapping } from '~/data/assets_evm'
+import WalletOptionSelect from './WalletOptionSelect'
 
 interface Props {
   assetIndex: number
@@ -28,7 +29,11 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
   const { publicKey } = useWallet()
   const [isWrap, setIsWrap] = useState(true)
   const { setOpen } = useWalletDialog()
-  const [connected, setConnected] = useState(false)
+  const [connected, setConnected] = useState(true)
+  const [showWalletOptionPopup, setShowWalletOptionPopup] = useState(false)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const openPopover = Boolean(anchorEl);
+  const popoverId = openPopover ? 'simple-popover' : undefined;
 
   const pairData = assetMapping(assetIndex)
 
@@ -55,8 +60,15 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
   })
 
   const handleWalletClick = () => {
-    //@TODO: wallet connect with EVM wallet
+    // @TODO: use wallet adapter
   }
+
+  const handleWalletOptionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleWalletOptionClose = () => {
+    setAnchorEl(null);
+  };
 
   const [amountWrapAsset, amountUnwrapAsset] = watch([
     'amountWrapAsset',
@@ -122,9 +134,9 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
     } else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'
     } else if (isWrap && amountWrapAsset > myBalance?.underlyingAssetVal!) {
-      return `Insufficient ${pairData.wrapTickerSymbol}`
+      return `Insufficient ${pairData.fromTickerSymbol}`
     } else if (!isWrap && amountUnwrapAsset > myBalance?.onassetVal!) {
-      return `Insufficient ${pairData.tickerSymbol}`
+      return `Insufficient ${pairData.toTickerSymbol}`
     } else if (!isWrap && amountUnwrapAsset > myBalance?.maxUnwrappableVal!) {
       return 'Exceeded Max Unwrap Amount'
     } else {
@@ -137,43 +149,55 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
   return (
     <>
       <div style={{ width: '100%', height: '100%' }}>
-        <Box sx={{ paddingBottom: { xs: '150px', md: '18px' } }}>
+        <Box sx={{ paddingBottom: { xs: '150px', md: '3px' } }}>
           <Box>
+            <Box>
+              <Box display='flex' justifyContent='flex-start'>
+                <Box><Typography variant='p_lg' color='#66707e'>Token</Typography></Box>
+              </Box>
+              <SelectPoolBox onClick={publicKey ? () => onShowSearchAsset() : () => setOpen(true)}>
+                <Stack direction='row' gap={1}>
+                  <Image src={pairData.tickerIcon} width={24} height={24} alt={pairData.tickerName} />
+                  <Typography variant='p_xlg'>{pairData.tickerName}</Typography>
+                </Stack>
+                <Image src={SelectArrowIcon} alt='select' />
+              </SelectPoolBox>
+
+              <Box display='flex' justifyContent='flex-start'>
+                <Box><Typography variant='p_lg' color='#66707e'>Connect Wallet</Typography></Box>
+              </Box>
+              <Stack direction='row' alignItems='center' gap='10px' mb='20px'>
+                <Box>
+                  {
+                    !connected ?
+                      <ConnectWalletButton
+                        onClick={handleWalletClick}
+                      >
+                        <Typography variant='p_lg'>Connect Wallet</Typography>
+                      </ConnectWalletButton>
+                      :
+                      <ConnectedButton aria-describedby={popoverId} onClick={handleWalletOptionClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+                        <Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
+                        <Box ml='10px'><Image src={SelectArrowIcon} alt='select' /></Box>
+                      </ConnectedButton>
+                  }
+                  <Popover
+                    id={popoverId}
+                    open={openPopover}
+                    anchorEl={anchorEl}
+                    onClose={handleWalletOptionClose}
+                    disableRestoreFocus
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                    <WalletOptionSelect onClose={handleWalletOptionClose} />
+                  </Popover>
+                </Box>
+                <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>
+              </Stack>
+            </Box>
+
             {isWrap ?
               <Box>
-                <Box display='flex' justifyContent='flex-start'>
-                  <Box><Typography variant='p_lg' color='#66707e'>Token</Typography></Box>
-                </Box>
-                <SelectPoolBox onClick={publicKey ? () => onShowSearchAsset() : () => setOpen(true)}>
-                  <Stack direction='row' gap={1}>
-                    <Image src={pairData.tickerIcon} width={27} height={27} alt={pairData.tickerSymbol} />
-                    <Typography variant='p_xlg'>{pairData.tickerSymbol}</Typography>
-                  </Stack>
-                  <Image src={SelectArrowIcon} alt='select' />
-                </SelectPoolBox>
-
-                <Box display='flex' justifyContent='flex-start'>
-                  <Box><Typography variant='p_lg' color='#66707e'>Connect Wallet</Typography></Box>
-                </Box>
-                <Stack direction='row' alignItems='center' gap='10px'>
-                  <Box>
-                    {
-                      !connected ?
-                        <ConnectButton
-                          onClick={handleWalletClick}
-                        >
-                          <Typography variant='p_lg'>Connect Wallet</Typography>
-                        </ConnectButton>
-                        :
-                        <ConnectedButton onClick={handleWalletClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-                          <Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
-                        </ConnectedButton>
-                    }
-                    {/* <WalletSelectBox show={showWalletSelectPopup} onHide={() => setShowWalletSelectPopup(false)} /> */}
-                  </Box>
-                  <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>
-                </Stack>
-
                 <Controller
                   name="amountWrapAsset"
                   control={control}
@@ -190,7 +214,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                     <PairInput
                       title="You’re Wrapping"
                       tickerIcon={pairData.tickerIcon}
-                      ticker={pairData.wrapTickerSymbol}
+                      ticker={pairData.fromTickerSymbol}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const wrapAmt = parseFloat(event.currentTarget.value)
                         field.onChange(event.currentTarget.value)
@@ -211,11 +235,6 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
               </Box>
               :
               <Box>
-                <MaxStack direction="row" justifyContent="space-between" alignItems="center" px='20px'>
-                  <Typography variant='p_lg' color='#66707e'>Max Unwrappable</Typography>
-                  <Typography variant='p_xlg'>{myBalance?.maxUnwrappableVal! >= 0.01 ? myBalance?.maxUnwrappableVal.toFixed(2) : '<0.01'} {pairData.tickerSymbol}</Typography>
-                </MaxStack>
-
                 <Controller
                   name="amountUnwrapAsset"
                   control={control}
@@ -232,7 +251,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                     <PairInput
                       title="You’re Unwrapping"
                       tickerIcon={pairData.tickerIcon}
-                      ticker={pairData.tickerSymbol}
+                      ticker={pairData.toTickerSymbol}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const unwrapAmt = parseFloat(event.currentTarget.value)
                         field.onChange(event.currentTarget.value)
@@ -262,7 +281,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
             <PairInput
               title="To Receive"
               tickerIcon={pairData.tickerIcon}
-              ticker={isWrap ? pairData.tickerSymbol : pairData.wrapTickerSymbol}
+              ticker={isWrap ? pairData.toTickerSymbol : pairData.fromTickerSymbol}
               value={isWrap ? amountWrapAsset : amountUnwrapAsset}
               balanceDisabled={true}
               valueDisabled={true}
@@ -270,7 +289,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
               onTickerClick={publicKey ? () => onShowSearchAsset() : () => setOpen(true)}
             />
 
-            <Box my='5px'>
+            <Box mt='5px'>
               {!publicKey ? <ConnectButton onClick={() => setOpen(true)}>
                 <Typography variant='h4'>Connect Wallet</Typography>
               </ConnectButton> :
@@ -302,26 +321,25 @@ const SelectPoolBox = styled(Box)`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: 145px;
-	height: 40px;
-	background-color: rgba(37, 141, 237, 0.15);
-	border-radius: 5px;
+  width: 200px;
+	height: 30px;
+	background-color: rgba(65, 75, 102, 0.5);
+	border-radius: 100px;
 	cursor: pointer;
-	padding: 8px;
-  margin-top: 10px;
-  margin-bottom: 25px;
+	padding: 5px;
+  margin-top: 5px;
+  margin-bottom: 20px;
 	&:hover {
 		box-shadow: 0 0 0 1px ${(props) => props.theme.basis.liquidityBlue} inset;
 		background-color: rgba(37, 141, 237, 0.23);
   }
 `
-const ConnectButton = styled(Button)`
-	width: 142px;
+const ConnectWalletButton = styled(Button)`
+	width: 134px;
 	height: 42px;
 	padding: 9px;
 	border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
 	box-shadow: 0 0 10px 0 #005874;
-  margin-left: 16px;
 	border-radius: 5px;
 	color: #fff;
   &:hover {
@@ -334,10 +352,9 @@ const ConnectButton = styled(Button)`
 	}
 `
 const ConnectedButton = styled(Button)`
-	width: 142px;
+	width: 167px;
 	height: 42px;
 	padding: 9px;
-	margin-left: 16px;
 	border-radius: 5px;
 	color: #fff;
 	border: solid 1px ${(props) => props.theme.basis.shadowGloom};
@@ -355,14 +372,6 @@ const NetworkBox = styled(Box)`
   padding: 6px 7px 6px 9px;
   border-radius: 5px;
   background-color: rgba(65, 78, 102, 0.5);
-`
-const MaxStack = styled(Stack)`
-  width: 100%;
-  height: 66px;
-  border-radius: 10px;
-  border: solid 1px ${(props) => props.theme.basis.slug};
-  background-color: rgba(255, 255, 255, 0.05);
-  margin-bottom: 30px;
 `
 const SwapButton = styled(IconButton)`
   width: 35px;

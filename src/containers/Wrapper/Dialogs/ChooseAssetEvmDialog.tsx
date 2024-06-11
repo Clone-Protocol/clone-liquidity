@@ -1,33 +1,23 @@
-import React, { useCallback, useState } from 'react'
 import { Box, styled, Dialog, DialogContent, Typography, Divider } from '@mui/material'
 import { FadeTransition } from '~/components/Common/Dialog'
 import GridAssets from './GridAssets'
-import SearchInput from '~/components/Overview/SearchInput'
 import { CloseButton } from '~/components/Common/CommonButtons'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useAssetsQuery } from '~/features/Wrapper/Assets.query'
+import { AssetList } from '~/features/Wrapper/Assets.query'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
+import { ASSETS } from '~/data/assets_evm'
+import { Status } from 'clone-protocol-sdk/sdk/generated/clone'
 
-const ChooseAssetDialog = ({ open, handleChooseAsset, handleClose }: { open: boolean, handleChooseAsset: (id: number) => void, handleClose: () => void }) => {
-  const { publicKey } = useWallet()
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const { data: assets } = useAssetsQuery({
-    userPubKey: publicKey,
-    refetchOnMount: true,
-    searchTerm: searchTerm || '',
-    enabled: publicKey != null
-  })
-
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVal = e.currentTarget.value
-    if (newVal) {
-      setSearchTerm(newVal)
-    } else {
-      setSearchTerm('')
-    }
-  }, [searchTerm])
+const ChooseAssetEvmDialog = ({ open, handleChooseAsset, handleClose }: { open: boolean, handleChooseAsset: (id: number) => void, handleClose: () => void }) => {
+  const assets: AssetList[] = ASSETS.map((asset, index) => ({
+    id: index,
+    tickerName: asset.tickerName,
+    tickerSymbol: asset.fromTickerSymbol,
+    tickerIcon: asset.tickerIcon,
+    assetType: 0,
+    balance: 0,
+    status: Status.Active
+  }))
 
   return (
     <>
@@ -35,9 +25,6 @@ const ChooseAssetDialog = ({ open, handleChooseAsset, handleClose }: { open: boo
         <DialogContent sx={{ backgroundColor: '#000e22', width: '100%', padding: '0', borderRadius: '20px', border: '1px solid #414166' }}>
           <BoxWrapper>
             <Box ml='25px' my='21px' mb="19px"><Typography variant='h3' fontWeight={500}>Search Bridged Asset</Typography></Box>
-            <Box mb='25px' px='11px' display='flex' justifyContent='center'>
-              <SearchInput placeholderTxt='Search Bridged Asset' onChange={handleSearch} />
-            </Box>
             <StyledDivider />
             <GridAssets assets={assets} onChoose={handleChooseAsset} />
 
@@ -54,6 +41,7 @@ const ChooseAssetDialog = ({ open, handleChooseAsset, handleClose }: { open: boo
 const BoxWrapper = styled(Box)`
   color: #fff; 
   width: 100%;
+  min-width: 280px;
   overflow-x: hidden;
   overflow-y: hidden;
 `
@@ -61,5 +49,5 @@ const StyledDivider = styled(Divider)`
   background-color: #414166;
 `
 
-export default withSuspense(ChooseAssetDialog, <LoadingProgress />)
+export default withSuspense(ChooseAssetEvmDialog, <LoadingProgress />)
 

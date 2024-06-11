@@ -7,13 +7,17 @@ import WrapBridgeDialog from '~/components/Wrapper/WrapBridgeDialog'
 import { ARB_Widget, OP_Widget } from '~/utils/debridge_widgets'
 import { AssetTickers } from '~/data/assets'
 import TradingComp1M from '~/components/Wrapper/TradingComp1M'
-import { InfoMsg } from '~/components/Common/WarningMsg'
+import { InfoMsg2 } from '~/components/Common/WarningMsg'
 import { StyledTabs, StyledTab } from "~/components/Common/StyledTab"
+import ChooseAssetEvmDialog from './Dialogs/ChooseAssetEvmDialog'
 
 const TradingBox: React.FC = () => {
 	const ChooseAssetDialog = dynamic(() => import('./Dialogs/ChooseAssetDialog'))
 	const [openChooseAsset, setOpenChooseAsset] = useState(false)
 	const [assetIndex, setAssetIndex] = useState(0)
+	//for evm
+	const [assetEvmIndex, setAssetEvmIndex] = useState(0)
+	const [openChooseEvmAsset, setOpenChooseEvmAsset] = useState(false)
 	const [openWrapBridge, setOpenWrapBridge] = useState(false)
 	const [widgetType, setWidgetType] = useState(ARB_Widget)
 	const [tab, setTab] = useState(0)
@@ -33,6 +37,11 @@ const TradingBox: React.FC = () => {
 		}
 	}
 
+	const handleChooseEvmAsset = (assetId: number) => {
+		setAssetEvmIndex(assetId)
+		setOpenChooseEvmAsset(false)
+	}
+
 	return (
 		<StyledPaper>
 			<Box sx={{ backgroundColor: '#1a1c28', borderRadius: '10px' }}>
@@ -43,9 +52,9 @@ const TradingBox: React.FC = () => {
 			</Box>
 
 			<Box mt='21px'>
-				<InfoMsg>
+				<InfoMsg2>
 					{tab === 0 ? 'clAsset Wrapper lets users mint clAssets by wrapping bridged assets, enabling arbitrage on Clone.' : '1M Wrapper lets users convert tokens into 1M tokens at a 1:1,000,000 ratio.'}
-				</InfoMsg>
+				</InfoMsg2>
 			</Box>
 			<Divider />
 
@@ -57,8 +66,8 @@ const TradingBox: React.FC = () => {
 				/>
 				:
 				<TradingComp1M
-					assetIndex={assetIndex}
-					onShowSearchAsset={() => setOpenChooseAsset(true)}
+					assetIndex={assetEvmIndex}
+					onShowSearchAsset={() => setOpenChooseEvmAsset(true)}
 					onShowWrapBridge={() => setOpenWrapBridge(true)}
 				/>
 			}
@@ -67,6 +76,12 @@ const TradingBox: React.FC = () => {
 				open={openChooseAsset}
 				handleChooseAsset={handleChooseAsset}
 				handleClose={() => setOpenChooseAsset(false)}
+			/>
+
+			<ChooseAssetEvmDialog
+				open={openChooseEvmAsset}
+				handleChooseAsset={handleChooseEvmAsset}
+				handleClose={() => setOpenChooseEvmAsset(false)}
 			/>
 
 			<WrapBridgeDialog
@@ -80,9 +95,12 @@ const TradingBox: React.FC = () => {
 
 const StyledPaper = styled(Paper)`
   position: relative;
-	width: 360px;
+	width: 402px;
 	background: transparent;
 	text-align: center;
+	border: 1px solid #414e66;
+	border-radius: 10px;
+	padding: 20px;
 `
 const Divider = styled(Box)`
 	width: 100%;
