@@ -1,27 +1,40 @@
 import { Box, Typography, Stack } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { LoadingProgress } from '~/components/Common/Loading'
-import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { useSnackbar } from 'notistack'
 import withSuspense from '~/hocs/withSuspense'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useClone } from '~/hooks/useClone';
+import { useConnect, useDisconnect, useSwitchAccount } from 'wagmi'
 
-const WalletOptionSelect = ({ onHide }: { onHide: () => void }) => {
+
+const WalletOptionSelect = ({ address, onHide }: { address: string, onHide: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
-  const { publicKey, disconnect } = useWallet()
+  const { disconnect } = useDisconnect()
+  const { connectors, switchAccount } = useSwitchAccount()
+
+  const handleChangeWallet = async () => {
+    //@TODO: show wallet dialog
+    await switchAccount({ connector: connectors[0] })
+    onHide && onHide()
+  }
+
+  const handleDisconnect = async () => {
+    await disconnect()
+    enqueueSnackbar('Wallet disconnected')
+    onHide && onHide()
+  }
 
   return <WalletWrapper>
-    <CopyToClipboard text={publicKey!!.toString()}
+    <CopyToClipboard text={address?.toString()}
       onCopy={() => enqueueSnackbar('Wallet address copied')}>
       <RowBox>
         <Typography variant='p'>Copy address</Typography>
       </RowBox>
     </CopyToClipboard>
-    <RowBox>
+    <RowBox onClick={handleChangeWallet}>
       <Typography variant='p'>Change wallet</Typography>
     </RowBox>
-    <RowBox>
+    <RowBox onClick={handleDisconnect}>
       <Typography variant='p'>Disconnect</Typography>
     </RowBox>
   </WalletWrapper>

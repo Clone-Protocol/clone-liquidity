@@ -17,6 +17,7 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import { shortenAddress } from '~/utils/address'
 import { assetMapping } from '~/data/assets_evm'
 import WalletOptionSelect from './WalletOptionSelect'
+import { useAccount, useConnect, useSwitchChain } from "wagmi";
 
 interface Props {
   assetIndex: number
@@ -29,11 +30,12 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
   const { publicKey } = useWallet()
   const [isWrap, setIsWrap] = useState(true)
   const { setOpen } = useWalletDialog()
-  const [connected, setConnected] = useState(true)
-  const [showWalletOptionPopup, setShowWalletOptionPopup] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const openPopover = Boolean(anchorEl);
   const popoverId = openPopover ? 'simple-popover' : undefined;
+  const { isConnected, address } = useAccount();
+  const { connectors, connect } = useConnect()
+  const { chains, switchChain } = useSwitchChain()
 
   const pairData = assetMapping(assetIndex)
 
@@ -59,8 +61,15 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
     }
   })
 
-  const handleWalletClick = () => {
-    // @TODO: use wallet adapter
+  const handleWalletClick = async () => {
+    try {
+      // @TODO: use wallet adapter - connectors
+      await connect({ connector: connectors[0] })
+
+      switchChain({ chainId: chains[0].id })
+    } catch (error) {
+      console.error('e', error)
+    }
   }
 
   const handleWalletOptionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -169,28 +178,30 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
               <Stack direction='row' alignItems='center' gap='10px' mb='20px'>
                 <Box>
                   {
-                    !connected ?
+                    !isConnected ?
                       <ConnectWalletButton
                         onClick={handleWalletClick}
                       >
                         <Typography variant='p_lg'>Connect Wallet</Typography>
                       </ConnectWalletButton>
                       :
-                      <ConnectedButton aria-describedby={popoverId} onClick={handleWalletOptionClick} startIcon={publicKey ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-                        <Typography variant='p'>{publicKey && shortenAddress(publicKey.toString())}</Typography>
+                      <ConnectedButton aria-describedby={popoverId} onClick={handleWalletOptionClick} startIcon={address ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+                        <Typography variant='p'>{address && shortenAddress(address.toString())}</Typography>
                         <Box ml='10px'><Image src={SelectArrowIcon} alt='select' /></Box>
                       </ConnectedButton>
                   }
-                  <Popover
-                    id={popoverId}
-                    open={openPopover}
-                    anchorEl={anchorEl}
-                    onClose={handleWalletOptionClose}
-                    disableRestoreFocus
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                    <WalletOptionSelect onClose={handleWalletOptionClose} />
-                  </Popover>
+                  {address &&
+                    <Popover
+                      id={popoverId}
+                      open={openPopover}
+                      anchorEl={anchorEl}
+                      onClose={handleWalletOptionClose}
+                      disableRestoreFocus
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                      <WalletOptionSelect address={address} onClose={handleWalletOptionClose} />
+                    </Popover>
+                  }
                 </Box>
                 <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>
               </Stack>
