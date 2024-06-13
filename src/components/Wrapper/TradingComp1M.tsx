@@ -7,8 +7,6 @@ import oneWaySwapIcon from 'public/images/oneway-swap.svg'
 import walletIcon from 'public/images/wallet-icon-small.svg'
 import { useForm, Controller } from 'react-hook-form'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useTradingMutation } from '~/features/Wrapper/Trading.mutation'
-import { useBalanceQuery } from '~/features/Wrapper/Balance.query'
 import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
@@ -17,34 +15,48 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import { shortenAddress } from '~/utils/address'
 import { assetMapping } from '~/data/assets_evm'
 import WalletOptionSelect from './WalletOptionSelect'
-import { useAccount, useConnect, useSwitchChain } from "wagmi";
+import { BaseError, useAccount, useConnect, useReadContract, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { getPEPE1MContractAddress, getPEPEContractAddress } from '~/wrapper/chains'
+import { wrapped1MPEPETokenAbi } from '~/wrapper/contracts/abi/WrappedPepeContract'
 
 interface Props {
   assetIndex: number
   onShowSearchAsset: () => void
-  onShowWrapBridge: () => void
 }
 
-const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWrapBridge }) => {
-  const [loading, setLoading] = useState(false)
+const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const { publicKey } = useWallet()
   const [isWrap, setIsWrap] = useState(true)
   const { setOpen } = useWalletDialog()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const openPopover = Boolean(anchorEl);
   const popoverId = openPopover ? 'simple-popover' : undefined;
-  const { isConnected, address } = useAccount();
+  const { isConnected, address, chain } = useAccount();
   const { connectors, connect } = useConnect()
   const { chains, switchChain } = useSwitchChain()
 
   const pairData = assetMapping(assetIndex)
 
-  const { data: myBalance, refetch } = useBalanceQuery({
-    userPubKey: publicKey,
-    index: assetIndex,
-    refetchOnMount: 'always',
-    enabled: publicKey != null
+  const { data: myBalance, refetch } = useReadContract({
+    address: isWrap ? getPEPEContractAddress(chain) : getPEPE1MContractAddress(chain),
+    abi: wrapped1MPEPETokenAbi,
+    functionName: 'balanceOf',
+    account: address,
+    args: [address],
+    query: {
+      enabled: !!address,
+    }
   })
+  console.log('m', myBalance)
+
+  const { data: hash, writeContract, isPending, error } = useWriteContract()
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+      query: {
+        enabled: !!hash,
+      }
+    });
 
   const {
     handleSubmit,
@@ -61,12 +73,23 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
     }
   })
 
+  useEffect(() => {
+    if (isConfirmed) {
+      initData()
+      refetch()
+    }
+  }, [isConfirmed])
+
   const handleWalletClick = async () => {
     try {
+      const arbitrumChainId = chains[0].id
+      if (chain?.id !== arbitrumChainId) {
+        // await switchChain({ chainId: arbitrumChainId })
+      }
       // @TODO: use wallet adapter - connectors
       await connect({ connector: connectors[0] })
 
-      switchChain({ chainId: chains[0].id })
+      console.log('c', chains[0])
     } catch (error) {
       console.error('e', error)
     }
@@ -104,8 +127,6 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
     }
   }, [assetIndex])
 
-  const { mutateAsync } = useTradingMutation(publicKey)
-
   const calculateTotalAmountByFrom = (newValue: number) => {
     if (isWrap) {
       setValue('amountWrapAsset', newValue)
@@ -116,24 +137,24 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
 
   const onConfirm = async () => {
     try {
-      setLoading(true)
-      const data = await mutateAsync(
-        {
-          quantity: isWrap ? amountWrapAsset : amountUnwrapAsset,
-          isWrap,
-          poolIndex: assetIndex,
-        }
-      )
+      // setLoading(true)
 
-      if (data) {
-        setLoading(false)
-        console.log('data', data)
-        initData()
-        refetch()
-      }
+      await writeContract({
+        address: getPEPE1MContractAddress(chain),
+        abi: wrapped1MPEPETokenAbi,
+        functionName: isWrap ? 'mint' : 'burn',
+        args: [isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
+      })
+
+      // if (result) {
+      //   setLoading(false)
+      // console.log('result', result)
+      // initData()
+      //   // refetch()
+      // }
     } catch (err) {
       console.error(err)
-      setLoading(false)
+      // setLoading(false)
     }
   }
 
@@ -142,12 +163,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
       return 'Enter Amount'
     } else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'
-    } else if (isWrap && amountWrapAsset > myBalance?.underlyingAssetVal!) {
+    } else if (isWrap && amountWrapAsset > myBalance) {
       return `Insufficient ${pairData.fromTickerSymbol}`
-    } else if (!isWrap && amountUnwrapAsset > myBalance?.onassetVal!) {
+    } else if (!isWrap && amountUnwrapAsset > myBalance) {
       return `Insufficient ${pairData.toTickerSymbol}`
-    } else if (!isWrap && amountUnwrapAsset > myBalance?.maxUnwrappableVal!) {
-      return 'Exceeded Max Unwrap Amount'
     } else {
       return ''
     }
@@ -216,7 +235,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                     validate(value) {
                       if (!value || isNaN(value) || value <= 0) {
                         return 'the amount should not empty'
-                      } else if (value > myBalance?.underlyingAssetVal!) {
+                      } else if (value > myBalance) {
                         return 'The amount cannot exceed the balance.'
                       }
                     }
@@ -236,10 +255,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                         calculateTotalAmountByFrom(balance)
                       }}
                       value={field.value}
-                      balance={myBalance?.underlyingAssetVal}
+                      balance={myBalance}
                       balanceDisabled={!publicKey}
                       tickerClickable={false}
-                      max={myBalance?.underlyingAssetVal}
+                      max={myBalance}
                     />
                   )}
                 />
@@ -253,7 +272,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                     validate(value) {
                       if (!value || isNaN(value) || value <= 0) {
                         return 'the amount should not empty'
-                      } else if (value > myBalance?.onassetVal!) {
+                      } else if (value > myBalance) {
                         return 'The amount cannot exceed the balance.'
                       }
                     }
@@ -273,10 +292,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                         calculateTotalAmountByFrom(balance)
                       }}
                       value={field.value}
-                      balance={myBalance?.onassetVal}
+                      balance={myBalance}
                       balanceDisabled={!publicKey}
                       tickerClickable={false}
-                      max={myBalance?.onassetVal}
+                      max={myBalance}
                     />
                   )}
                 />
@@ -305,8 +324,8 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                 <Typography variant='h4'>Connect Wallet</Typography>
               </ConnectButton> :
                 isValid ?
-                  <SubmitButton onClick={handleSubmit(onConfirm)} disabled={loading} sx={loading ? { border: '1px solid #c4b5fd' } : {}}>
-                    {!loading ?
+                  <SubmitButton onClick={handleSubmit(onConfirm)} disabled={isPending} sx={isPending ? { border: '1px solid #c4b5fd' } : {}}>
+                    {!isPending ?
                       <Typography variant='p_xlg'>{isWrap ? 'Wrap' : 'Unwrap'}</Typography>
                       :
                       <Stack direction='row' alignItems='center' gap={2}>
@@ -319,6 +338,13 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowW
                     <Typography variant='p_xlg'>{invalidMsg()}</Typography>
                   </DisableButton>
               }
+            </Box>
+            <Box>
+              {isConfirming && <><Typography variant='p'>Waiting for confirmation...</Typography></>}
+              {isConfirmed && <><Typography variant='p'>Transaction confirmed.</Typography></>}
+              {error && (
+                <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+              )}
             </Box>
 
           </Box>

@@ -9,10 +9,7 @@ interface ChainConfig {
   };
 }
 
-function stringToAddress(string?: string): `0x${string}` | undefined {
-  if (!string) {
-    return undefined;
-  }
+function stringToAddress(string: string): `0x${string}` {
   return ethers.utils.getAddress(string) as `0x${string}`;
 }
 
@@ -90,7 +87,7 @@ export function chainToSupportedChainNativeCurrencySymbol(
 
 export function getPEPEContractAddress(
   chain: Chain | undefined
-): `0x${string}` | undefined {
+): `0x${string}` {
   return stringToAddress(
     chainToSupportedChainConfig(chain).contractAddresses.pepe
   );
@@ -98,7 +95,7 @@ export function getPEPEContractAddress(
 
 export function getPEPE1MContractAddress(
   chain: Chain | undefined
-): `0x${string}` | undefined {
+): `0x${string}` {
   return stringToAddress(
     chainToSupportedChainConfig(chain).contractAddresses.pepe1M
   );
