@@ -4,6 +4,7 @@ import { StyledSection } from './index'
 import LearnMoreIcon from 'public/images/learn-more.svg'
 import { Container, Box, Typography, Stack } from '@mui/material'
 import TradingBox from '~/containers/Wrapper/TradingBox'
+import WagmiWrapper from '~/hocs/WagmiWrapper'
 
 const Wrapper = () => {
 
@@ -22,7 +23,9 @@ const Wrapper = () => {
             </a>
           </Stack>
           <Box mt='60px' display='flex' justifyContent='center'>
-            <TradingBox />
+            <WagmiWrapper>
+              <TradingBox />
+            </WagmiWrapper>
           </Box>
         </Box>
       </Container>

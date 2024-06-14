@@ -39,6 +39,12 @@ export const PointsStarIconOff = () => {
   )
 }
 
+export const InfoOutlineIcon = () => {
+  return (<svg width="23" height="23" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.958 4.875h1.084V3.79H5.959m.541 7.042A4.34 4.34 0 0 1 2.167 6.5 4.34 4.34 0 0 1 6.5 2.166 4.34 4.34 0 0 1 10.834 6.5 4.34 4.34 0 0 1 6.5 10.833zm0-9.75a5.417 5.417 0 1 0 0 10.833 5.417 5.417 0 0 0 0-10.833zm-.542 8.125h1.084v-3.25H5.959v3.25z" fill="currentColor" />
+  </svg>)
+}
+
 export const LearnMoreIcon = () => {
   return (<svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M8.125 3H12.5v4.375M12.5 3l-10 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
