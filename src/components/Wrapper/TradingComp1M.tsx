@@ -16,8 +16,10 @@ import { shortenAddress } from '~/utils/address'
 import { assetMapping } from '~/data/assets_evm'
 import WalletOptionSelect from './WalletOptionSelect'
 import { BaseError, useAccount, useConnect, useReadContract, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useWriteContracts } from 'wagmi/experimental'
 import { getPEPE1MContractAddress, getPEPEContractAddress } from '~/wrapper/chains'
 import { wrapped1MPEPETokenAbi } from '~/wrapper/contracts/abi/WrappedPepeContract'
+import { PEPETokenAbi } from '~/wrapper/contracts/abi/PepeContract'
 
 interface Props {
   assetIndex: number
@@ -47,9 +49,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
       enabled: !!address,
     }
   })
-  console.log('m', myBalance)
+  // console.log('m', myBalance)
 
   const { data: hash, writeContract, isPending, error } = useWriteContract()
+  // const { writeContracts } = useWriteContracts()
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
@@ -137,7 +140,20 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
   const onConfirm = async () => {
     try {
-      // setLoading(true)
+      console.log('dd', amountWrapAsset)
+
+      // await writeContract({
+      //   address: getPEPE1MContractAddress(chain),
+      //   abi: wrapped1MPEPETokenAbi,
+      //   functionName: 'approve',
+      //   args: [getPEPEContractAddress(chain), isWrap ? BigInt(amountWrapAsset * 10 ** 18) : BigInt(amountUnwrapAsset)],
+      // })
+      await writeContract({
+        address: getPEPEContractAddress(chain),
+        abi: PEPETokenAbi,
+        functionName: 'approve',
+        args: [getPEPE1MContractAddress(chain), isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
+      })
 
       await writeContract({
         address: getPEPE1MContractAddress(chain),
@@ -146,12 +162,24 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
         args: [isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
       })
 
-      // if (result) {
-      //   setLoading(false)
-      // console.log('result', result)
-      // initData()
-      //   // refetch()
-      // }
+      // await writeContracts({
+      //   contracts: [
+      //     {
+      //       address: getPEPE1MContractAddress(chain),
+      //       abi: wrapped1MPEPETokenAbi,
+      //       functionName: 'approve',
+      //       args: [getPEPE1MContractAddress(chain), isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
+      //     },
+      //     {
+      //       address: getPEPE1MContractAddress(chain),
+      //       abi: wrapped1MPEPETokenAbi,
+      //       functionName: isWrap ? 'mint' : 'burn',
+      //       args: [isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
+      //     }
+      //   ]
+      // })
+
+
     } catch (err) {
       console.error(err)
       // setLoading(false)
