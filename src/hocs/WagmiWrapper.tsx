@@ -1,14 +1,16 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider, createConfig, http } from 'wagmi'
-import { localhost, arbitrum, arbitrumSepolia } from 'wagmi/chains'
-import { injected, metaMask, walletConnect } from 'wagmi/connectors'
+import { localhost, arbitrum } from 'wagmi/chains'
+import { injected, metaMask, walletConnect, coinbaseWallet } from 'wagmi/connectors'
+
 
 export const WagmiConfig = createConfig({
   chains: [arbitrum], //[localhost, arbitrum, arbitrumSepolia],
   connectors: [
     injected(),
     // metaMask(),
-    // walletConnect({ projectId })
+    // walletConnect({ projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID! }),
+    // coinbaseWallet()
   ],
   transports: {
     // [localhost.id]: http(),

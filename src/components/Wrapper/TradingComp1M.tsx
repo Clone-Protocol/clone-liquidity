@@ -26,6 +26,9 @@ interface Props {
   onShowSearchAsset: () => void
 }
 
+const SCALE_PEPE = 18
+const SCALE_1M = 6
+
 const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const { publicKey } = useWallet()
   const [isWrap, setIsWrap] = useState(true)
@@ -39,7 +42,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
   const pairData = assetMapping(assetIndex)
 
-  const { data: myBalance, refetch } = useReadContract({
+  const { data: cBalance, refetch } = useReadContract({
     address: isWrap ? getPEPEContractAddress(chain) : getPEPE1MContractAddress(chain),
     abi: wrapped1MPEPETokenAbi,
     functionName: 'balanceOf',
@@ -50,9 +53,18 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
     }
   })
   // console.log('m', myBalance)
+  const myBalance = cBalance ? Number(cBalance) / 10 ** SCALE_PEPE : 0
 
-  const { data: hash, writeContract, isPending, error } = useWriteContract()
-  // const { writeContracts } = useWriteContracts()
+  const { data: hashApprove, writeContract: writeContractApprove, isPending: isPendingApprove, error: errorApprove } = useWriteContract()
+  const { data: hash, writeContract, isPending: isPendingProcess, error } = useWriteContract()
+  // const { data: hash, isPending, writeContracts } = useWriteContracts()
+  const { isLoading: isConfirmingApprove, isSuccess: isConfirmedApprove } =
+    useWaitForTransactionReceipt({
+      hash: hashApprove,
+      query: {
+        enabled: !!hashApprove,
+      }
+    });
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
@@ -87,9 +99,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
     try {
       const arbitrumChainId = chains[0].id
       if (chain?.id !== arbitrumChainId) {
-        // await switchChain({ chainId: arbitrumChainId })
+        await switchChain({ chainId: arbitrumChainId })
       }
       // @TODO: use wallet adapter - connectors
+      console.log('connector', connectors[0])
       await connect({ connector: connectors[0] })
 
       console.log('c', chains[0])
@@ -138,37 +151,55 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
     }
   }
 
+  //when approve, call mint process
+  useEffect(() => {
+    if (isConfirmedApprove && isWrap) {
+      console.log('call mint or burn process')
+      writeContract({
+        address: getPEPE1MContractAddress(chain),
+        abi: wrapped1MPEPETokenAbi,
+        functionName: 'mint',
+        args: [BigInt(amountWrapAsset * (10 ** SCALE_PEPE) / (10 ** SCALE_1M))],
+      })
+    }
+  }, [isConfirmedApprove])
+
   const onConfirm = async () => {
     try {
       console.log('dd', amountWrapAsset)
 
-      // await writeContract({
+      // await writeContractApprove({
       //   address: getPEPE1MContractAddress(chain),
       //   abi: wrapped1MPEPETokenAbi,
       //   functionName: 'approve',
-      //   args: [getPEPEContractAddress(chain), isWrap ? BigInt(amountWrapAsset * 10 ** 18) : BigInt(amountUnwrapAsset)],
+      //   args: [getPEPEContractAddress(chain), isWrap ? BigInt(amountWrapAsset * 10 ** SCALE_PEPE) : BigInt(amountUnwrapAsset)],
       // })
-      await writeContract({
-        address: getPEPEContractAddress(chain),
-        abi: PEPETokenAbi,
-        functionName: 'approve',
-        args: [getPEPE1MContractAddress(chain), isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
-      })
 
-      await writeContract({
-        address: getPEPE1MContractAddress(chain),
-        abi: wrapped1MPEPETokenAbi,
-        functionName: isWrap ? 'mint' : 'burn',
-        args: [isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
-      })
+      if (isWrap) {
+        await writeContractApprove({
+          address: getPEPEContractAddress(chain),
+          abi: PEPETokenAbi,
+          functionName: 'approve',
+          args: [getPEPE1MContractAddress(chain), BigInt(amountWrapAsset * 10 ** SCALE_PEPE)],
+        })
+        //after confirmed this, call mint above
+      } else {
+        await writeContract({
+          address: getPEPE1MContractAddress(chain),
+          abi: wrapped1MPEPETokenAbi,
+          functionName: 'burn',
+          args: [BigInt(amountUnwrapAsset * (10 ** SCALE_PEPE))],
+        })
+      }
 
+      //@TODO: using with writeContracts - https://wagmi.sh/core/api/actions/writeContracts#writecontracts
       // await writeContracts({
       //   contracts: [
       //     {
-      //       address: getPEPE1MContractAddress(chain),
-      //       abi: wrapped1MPEPETokenAbi,
+      //       address: getPEPEContractAddress(chain),
+      //       abi: PEPETokenAbi,
       //       functionName: 'approve',
-      //       args: [getPEPE1MContractAddress(chain), isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)],
+      //       args: [getPEPE1MContractAddress(chain), isWrap ? BigInt(amountWrapAsset) : BigInt(amountUnwrapAsset)]
       //     },
       //     {
       //       address: getPEPE1MContractAddress(chain),
@@ -178,7 +209,6 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
       //     }
       //   ]
       // })
-
 
     } catch (err) {
       console.error(err)
@@ -201,6 +231,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   }
 
   const isValid = invalidMsg() === ''
+  const isPending = isPendingApprove || isPendingProcess
 
   return (
     <>
@@ -340,7 +371,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
               title="To Receive"
               tickerIcon={pairData.tickerIcon}
               ticker={isWrap ? pairData.toTickerSymbol : pairData.fromTickerSymbol}
-              value={isWrap ? amountWrapAsset : amountUnwrapAsset}
+              value={isWrap ? amountWrapAsset / 10 ** SCALE_1M : amountUnwrapAsset * 10 ** SCALE_1M}
               balanceDisabled={true}
               valueDisabled={true}
               tickerClickable={!isWrap}
@@ -368,8 +399,11 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
               }
             </Box>
             <Box>
-              {isConfirming && <><Typography variant='p'>Waiting for confirmation...</Typography></>}
-              {isConfirmed && <><Typography variant='p'>Transaction confirmed.</Typography></>}
+              {(isConfirmingApprove || isConfirming) && <><Typography variant='p'>Waiting for confirmation...</Typography></>}
+              {(isConfirmedApprove || isConfirmed) && <><Typography variant='p'>Transaction confirmed.</Typography></>}
+              {errorApprove && (
+                <div>Error: {(errorApprove as BaseError).shortMessage || errorApprove.message}</div>
+              )}
               {error && (
                 <div>Error: {(error as BaseError).shortMessage || error.message}</div>
               )}
