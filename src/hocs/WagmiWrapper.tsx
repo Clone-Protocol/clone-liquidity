@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import { localhost, arbitrum } from 'wagmi/chains'
 import { injected, metaMask, walletConnect, coinbaseWallet } from 'wagmi/connectors'
+import { WalletEvmDialogProvider } from './WalletEvmDialogProvider';
 
 
 export const WagmiConfig = createConfig({
@@ -9,8 +10,8 @@ export const WagmiConfig = createConfig({
   connectors: [
     injected(),
     // metaMask(),
-    // walletConnect({ projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID! }),
-    // coinbaseWallet()
+    walletConnect({ projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID! }),
+    coinbaseWallet()
   ],
   transports: {
     // [localhost.id]: http(),
@@ -26,7 +27,9 @@ const WagmiWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={WagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <WalletEvmDialogProvider>
+          {children}
+        </WalletEvmDialogProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )

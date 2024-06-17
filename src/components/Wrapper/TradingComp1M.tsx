@@ -1,4 +1,4 @@
-import { Box, Stack, Button, IconButton, Typography, CircularProgress, Popover } from '@mui/material'
+import { Box, Stack, Button, IconButton, Typography, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import React, { useState, useEffect } from 'react'
 import PairInput from './PairInput'
@@ -6,20 +6,18 @@ import Image from 'next/image'
 import oneWaySwapIcon from 'public/images/oneway-swap.svg'
 import walletIcon from 'public/images/wallet-icon-small.svg'
 import { useForm, Controller } from 'react-hook-form'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useWalletDialog } from '~/hooks/useWalletDialog'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import { SubmitButton } from '../Common/CommonButtons'
+import { SubmitEvmButton } from '../Common/CommonButtons'
 import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import { shortenAddress } from '~/utils/address'
 import { assetMapping } from '~/data/assets_evm'
 import WalletOptionSelect from './WalletOptionSelect'
-import { BaseError, useAccount, useConnect, useReadContract, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { useWriteContracts } from 'wagmi/experimental'
+import { BaseError, useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { getPEPE1MContractAddress, getPEPEContractAddress } from '~/wrapper/chains'
 import { wrapped1MPEPETokenAbi } from '~/wrapper/contracts/abi/WrappedPepeContract'
 import { PEPETokenAbi } from '~/wrapper/contracts/abi/PepeContract'
+import { useWalletEvmDialog } from '~/hooks/useWalletEvmDialog'
 
 interface Props {
   assetIndex: number
@@ -30,15 +28,10 @@ const SCALE_PEPE = 18
 const SCALE_1M = 6
 
 const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
-  const { publicKey } = useWallet()
   const [isWrap, setIsWrap] = useState(true)
-  const { setOpen } = useWalletDialog()
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const openPopover = Boolean(anchorEl);
-  const popoverId = openPopover ? 'simple-popover' : undefined;
+  const { setOpen } = useWalletEvmDialog()
+  const [openPopover, setOpenPopover] = useState(false);
   const { isConnected, address, chain } = useAccount();
-  const { connectors, connect } = useConnect()
-  const { chains, switchChain } = useSwitchChain()
 
   const pairData = assetMapping(assetIndex)
 
@@ -95,27 +88,27 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
     }
   }, [isConfirmed])
 
-  const handleWalletClick = async () => {
-    try {
-      const arbitrumChainId = chains[0].id
-      if (chain?.id !== arbitrumChainId) {
-        await switchChain({ chainId: arbitrumChainId })
-      }
-      // @TODO: use wallet adapter - connectors
-      console.log('connector', connectors[0])
-      await connect({ connector: connectors[0] })
+  // const handleWalletClick = async () => {
+  //   try {
+  //     const arbitrumChainId = chains[0].id
+  //     if (chain?.id !== arbitrumChainId) {
+  //       console.log('dd', arbitrumChainId)
+  //       await switchChain({ chainId: arbitrumChainId })
+  //     }
+  //     console.log('connector', connectors[0])
+  //     await connect({ connector: connectors[0] })
 
-      console.log('c', chains[0])
-    } catch (error) {
-      console.error('e', error)
-    }
-  }
+  //     console.log('c', chains[0])
+  //   } catch (error) {
+  //     console.error('e', error)
+  //   }
+  // }
 
   const handleWalletOptionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    setOpenPopover(!openPopover)
   }
   const handleWalletOptionClose = () => {
-    setAnchorEl(null);
+    setOpenPopover(false)
   };
 
   const [amountWrapAsset, amountUnwrapAsset] = watch([
@@ -126,6 +119,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const initData = () => {
     setValue('amountWrapAsset', NaN)
     setValue('amountUnwrapAsset', NaN)
+    setOpenPopover(false)
     refetch()
   }
 
@@ -166,7 +160,6 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
   const onConfirm = async () => {
     try {
-      console.log('dd', amountWrapAsset)
 
       // await writeContractApprove({
       //   address: getPEPE1MContractAddress(chain),
@@ -212,7 +205,6 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
     } catch (err) {
       console.error(err)
-      // setLoading(false)
     }
   }
 
@@ -242,7 +234,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
               <Box display='flex' justifyContent='flex-start'>
                 <Box><Typography variant='p_lg' color='#66707e'>Token</Typography></Box>
               </Box>
-              <SelectPoolBox onClick={publicKey ? () => onShowSearchAsset() : () => setOpen(true)}>
+              <SelectPoolBox onClick={() => onShowSearchAsset()}>
                 <Stack direction='row' gap={1}>
                   <Image src={pairData.tickerIcon} width={24} height={24} alt={pairData.tickerName} />
                   <Typography variant='p_xlg'>{pairData.tickerName}</Typography>
@@ -258,30 +250,25 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                   {
                     !isConnected ?
                       <ConnectWalletButton
-                        onClick={handleWalletClick}
+                        onClick={() => setOpen(true)}
                       >
                         <Typography variant='p_lg'>Connect Wallet</Typography>
                       </ConnectWalletButton>
                       :
-                      <ConnectedButton aria-describedby={popoverId} onClick={handleWalletOptionClick} startIcon={address ? <Image src={walletIcon} alt="wallet" /> : <></>}>
-                        <Typography variant='p'>{address && shortenAddress(address.toString())}</Typography>
-                        <Box ml='10px'><Image src={SelectArrowIcon} alt='select' /></Box>
-                      </ConnectedButton>
-                  }
-                  {address &&
-                    <Popover
-                      id={popoverId}
-                      open={openPopover}
-                      anchorEl={anchorEl}
-                      onClose={handleWalletOptionClose}
-                      disableRestoreFocus
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                      <WalletOptionSelect address={address} onClose={handleWalletOptionClose} />
-                    </Popover>
+                      <Box position='relative'>
+                        <ConnectedButton onClick={handleWalletOptionClick} startIcon={address ? <Image src={walletIcon} alt="wallet" /> : <></>}>
+                          <Typography variant='p'>{address && shortenAddress(address.toString())}</Typography>
+                          <Box ml='10px'><Image src={SelectArrowIcon} alt='select' /></Box>
+                        </ConnectedButton>
+                        {openPopover &&
+                          <PopoverBox>
+                            <WalletOptionSelect address={address} onClose={handleWalletOptionClose} />
+                          </PopoverBox>
+                        }
+                      </Box>
                   }
                 </Box>
-                <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>
+                {isConnected && <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>}
               </Stack>
             </Box>
 
@@ -315,7 +302,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                       }}
                       value={field.value}
                       balance={myBalance}
-                      balanceDisabled={!publicKey}
+                      balanceDisabled={!isConnected}
                       tickerClickable={false}
                       max={myBalance}
                     />
@@ -352,7 +339,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                       }}
                       value={field.value}
                       balance={myBalance}
-                      balanceDisabled={!publicKey}
+                      balanceDisabled={!isConnected}
                       tickerClickable={false}
                       max={myBalance}
                     />
@@ -375,30 +362,30 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
               balanceDisabled={true}
               valueDisabled={true}
               tickerClickable={!isWrap}
-              onTickerClick={publicKey ? () => onShowSearchAsset() : () => setOpen(true)}
+              onTickerClick={isConnected ? () => onShowSearchAsset() : () => setOpen(true)}
             />
 
             <Box mt='5px'>
-              {!publicKey ? <ConnectButton onClick={() => setOpen(true)}>
+              {!isConnected ? <ConnectButton onClick={() => setOpen(true)}>
                 <Typography variant='h4'>Connect Wallet</Typography>
               </ConnectButton> :
                 isValid ?
-                  <SubmitButton onClick={handleSubmit(onConfirm)} disabled={isPending} sx={isPending ? { border: '1px solid #c4b5fd' } : {}}>
+                  <SubmitEvmButton onClick={handleSubmit(onConfirm)} disabled={isPending} sx={isPending ? { backgroundColor: '#171717' } : {}}>
                     {!isPending ?
                       <Typography variant='p_xlg'>{isWrap ? 'Wrap' : 'Unwrap'}</Typography>
                       :
                       <Stack direction='row' alignItems='center' gap={2}>
-                        <CircularProgress sx={{ color: '#c4b5fd' }} size={15} thickness={4} />
-                        <Typography variant='p_xlg' color='#fff'>{isWrap ? 'Wrap' : 'Unwrap'}</Typography>
+                        <CircularProgress sx={{ color: '#6cffff' }} size={15} thickness={4} />
+                        <Typography variant='p_xlg' color='#989898'>{isWrap ? 'Wrap' : 'Unwrap'}</Typography>
                       </Stack>}
-                  </SubmitButton>
+                  </SubmitEvmButton>
                   :
                   <DisableButton disabled={true}>
                     <Typography variant='p_xlg'>{invalidMsg()}</Typography>
                   </DisableButton>
               }
             </Box>
-            <Box>
+            <Box my='10px'>
               {(isConfirmingApprove || isConfirming) && <><Typography variant='p'>Waiting for confirmation...</Typography></>}
               {(isConfirmedApprove || isConfirmed) && <><Typography variant='p'>Transaction confirmed.</Typography></>}
               {errorApprove && (
@@ -433,22 +420,23 @@ const SelectPoolBox = styled(Box)`
 		background-color: rgba(37, 141, 237, 0.23);
   }
 `
+const PopoverBox = styled(Box)`
+  position: absolute;
+  top: 50px;
+  right: 0;
+  z-index: 999;
+`
 const ConnectWalletButton = styled(Button)`
 	width: 134px;
 	height: 42px;
 	padding: 9px;
-	border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
-	box-shadow: 0 0 10px 0 #005874;
+	border: solid 1px #fff;
 	border-radius: 5px;
 	color: #fff;
   &:hover {
 		background: transparent;
-		border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
+		opacity: 0.6;
   }
-	&:disabled {
-		background: transparent;
-		border: solid 1px ${(props) => props.theme.basis.gloomyBlue};
-	}
 `
 const ConnectedButton = styled(Button)`
 	width: 167px;
@@ -456,11 +444,11 @@ const ConnectedButton = styled(Button)`
 	padding: 9px;
 	border-radius: 5px;
 	color: #fff;
-	border: solid 1px ${(props) => props.theme.basis.shadowGloom};
-  background: ${(props) => props.theme.basis.jurassicGrey};
+	border: solid 1px #4f4f4f;
+  background: transparent;
 	&:hover {
-		background: ${(props) => props.theme.basis.jurassicGrey};
-    border: solid 1px ${(props) => props.theme.basis.liquidityBlue};
+		background: transparent;
+    border: solid 1px #fff;
   }
 `
 const NetworkBox = styled(Box)`
@@ -490,7 +478,7 @@ const ConnectButton = styled(Button)`
   width: 100%;
   height: 52px;
   color: #fff;
-  border: solid 1px #4fe5ff;
+  border: solid 1px #fff;
   border-radius: 5px;
   margin-top: 10px;
   &:hover {
@@ -505,7 +493,7 @@ const DisableButton = styled(Button)`
   border-radius: 5px;
 	margin-top: 10px;
   &:disabled {
-    border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+    border: solid 1px #4f4f4f;
     background: transparent;
     color: #989898;
   } 

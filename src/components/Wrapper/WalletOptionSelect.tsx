@@ -4,24 +4,25 @@ import { LoadingProgress } from '~/components/Common/Loading'
 import { useSnackbar } from 'notistack'
 import withSuspense from '~/hocs/withSuspense'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useConnect, useDisconnect, useSwitchAccount } from 'wagmi'
+import { useDisconnect } from 'wagmi'
+import { useWalletEvmDialog } from '~/hooks/useWalletEvmDialog'
 
 
-const WalletOptionSelect = ({ address, onHide }: { address: string, onHide: () => void }) => {
+const WalletOptionSelect = ({ address, onClose }: { address: string, onClose: () => void }) => {
   const { enqueueSnackbar } = useSnackbar()
+  const { setOpen } = useWalletEvmDialog()
   const { disconnect } = useDisconnect()
-  const { connectors, switchAccount } = useSwitchAccount()
+  // const { connectors, switchAccount } = useSwitchAccount()
 
   const handleChangeWallet = async () => {
-    //@TODO: show wallet dialog
-    await switchAccount({ connector: connectors[0] })
-    onHide && onHide()
+    setOpen(true)
+    onClose && onClose()
   }
 
   const handleDisconnect = async () => {
     await disconnect()
     enqueueSnackbar('Wallet disconnected')
-    onHide && onHide()
+    onClose && onClose()
   }
 
   return <WalletWrapper>
@@ -44,20 +45,19 @@ export default withSuspense(WalletOptionSelect, <LoadingProgress />)
 
 const WalletWrapper = styled(Stack)`
 	width: 129px;
-	background-color: ${(props) => props.theme.basis.jurassicGrey};
+	background-color: #161616;
 	border-radius: 5px;
-  border: solid 1px ${(props) => props.theme.basis.shadowGloom};
+  border: solid 1px #4f4f4f;
 	z-index: 99;
 `
 const RowBox = styled(Box)`
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 36px;
-  border-bottom: 1px solid ${(props) => props.theme.basis.shadowGloom};
-  text-align: center;
+  border-bottom: 1px solid #4f4f4f;
   cursor: pointer;
+  padding: 10px;
   &:hover {
-    background-color: ${(props) => props.theme.basis.shadowGloom};
+    background-color: #2a2a2a;
   }
 `
