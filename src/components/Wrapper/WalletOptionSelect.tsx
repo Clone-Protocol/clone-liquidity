@@ -54,10 +54,20 @@ const RowBox = styled(Box)`
   display: flex;
   align-items: center;
   height: 36px;
-  border-bottom: 1px solid #4f4f4f;
   cursor: pointer;
   padding: 10px;
   &:hover {
     background-color: #2a2a2a;
+  }
+  &:not(:last-child) {
+    border-bottom: 1px solid #4f4f4f;
+  }
+  &:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  &:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 `

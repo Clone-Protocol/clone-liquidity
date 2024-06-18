@@ -25,9 +25,10 @@ interface WalletEvmListItemProps extends Omit<ListItemProps, 'onClick' | 'button
 	connector: Connector
 }
 export const WalletEvmListItem: FC<WalletEvmListItemProps> = ({ onClick, connector, ...props }) => {
+	console.log('dd', connector)
 	return (
 		<ListItem {...props}>
-			<Button onClick={onClick} endIcon={connector.icon && <Image width={20} height={20} src={connector.icon} alt={connector.name} />} sx={{ borderRadius: '0' }}>
+			<Button onClick={onClick} endIcon={connector.icon && <img width={20} height={20} src={connector.icon} alt={connector.name} />} sx={{ borderRadius: '0' }}>
 				<div style={{ fontSize: '18px', fontWeight: '600' }}>{connector.name}</div>
 			</Button>
 		</ListItem>

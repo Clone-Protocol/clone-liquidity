@@ -258,7 +258,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                       <Box position='relative'>
                         <ConnectedButton onClick={handleWalletOptionClick} startIcon={address ? <Image src={walletIcon} alt="wallet" /> : <></>}>
                           <Typography variant='p'>{address && shortenAddress(address.toString())}</Typography>
-                          <Box ml='10px'><Image src={SelectArrowIcon} alt='select' /></Box>
+                          <Box ml='10px' mt='5px'><Image src={SelectArrowIcon} alt='select' /></Box>
                         </ConnectedButton>
                         {openPopover &&
                           <PopoverBox>
@@ -268,7 +268,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
                       </Box>
                   }
                 </Box>
-                {isConnected && <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>}
+                <NetworkBox><Typography variant='p'>Arbitrum Network</Typography></NetworkBox>
               </Stack>
             </Box>
 
