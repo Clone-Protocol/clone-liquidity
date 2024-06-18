@@ -10,8 +10,8 @@ export const WagmiConfig = createConfig({
   connectors: [
     injected(),
     // metaMask(),
-    walletConnect({ projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID! }),
-    coinbaseWallet()
+    // walletConnect({ projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID! }),
+    // coinbaseWallet()
   ],
   transports: {
     // [localhost.id]: http(),
