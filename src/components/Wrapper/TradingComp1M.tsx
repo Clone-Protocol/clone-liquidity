@@ -13,11 +13,12 @@ import SelectArrowIcon from 'public/images/keyboard-arrow-left.svg'
 import { shortenAddress } from '~/utils/address'
 import { assetMapping } from '~/data/assets_evm'
 import WalletOptionSelect from './WalletOptionSelect'
-import { BaseError, useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { BaseError, useAccount, useEstimateFeesPerGas, useEstimateGas, useEstimateMaxPriorityFeePerGas, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { getPEPE1MContractAddress, getPEPEContractAddress } from '~/wrapper/chains'
 import { wrapped1MPEPETokenAbi } from '~/wrapper/contracts/abi/WrappedPepeContract'
 import { PEPETokenAbi } from '~/wrapper/contracts/abi/PepeContract'
 import { useWalletEvmDialog } from '~/hooks/useWalletEvmDialog'
+import { parseGwei } from 'viem'
 
 interface Props {
   assetIndex: number
@@ -32,6 +33,13 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const { setOpen } = useWalletEvmDialog()
   const [openPopover, setOpenPopover] = useState(false);
   const { isConnected, address, chain } = useAccount();
+  const { data: estimateFees } = useEstimateFeesPerGas({
+    chainId: chain?.id,
+    formatUnits: "gwei",
+  })
+  const { data: estimateGas } = useEstimateGas({
+    chainId: chain?.id,
+  })
 
   const pairData = assetMapping(assetIndex)
 
@@ -147,16 +155,20 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
   //when approve, call mint process
   useEffect(() => {
-    if (isConfirmedApprove && isWrap) {
+    if (isConfirmedApprove && isWrap && estimateFees) {
       console.log('call mint or burn process')
+      console.log('estimateFees', estimateFees)
       writeContract({
         address: getPEPE1MContractAddress(chain),
         abi: wrapped1MPEPETokenAbi,
         functionName: 'mint',
         args: [BigInt(amountWrapAsset * (10 ** SCALE_PEPE) / (10 ** SCALE_1M))],
+        maxFeePerGas: estimateFees?.maxFeePerGas,
+        maxPriorityFeePerGas: estimateFees?.maxPriorityFeePerGas,
+        gas: parseGwei('0.001'), // Error: Execution reverted for an unknown reason when using with estimateGas
       })
     }
-  }, [isConfirmedApprove])
+  }, [estimateFees, isConfirmedApprove])
 
   const onConfirm = async () => {
     try {
@@ -177,11 +189,16 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
         })
         //after confirmed this, call mint above
       } else {
+        // console.log('estimateGas', estimateGas)
         await writeContract({
+          chainId: chain?.id,
           address: getPEPE1MContractAddress(chain),
           abi: wrapped1MPEPETokenAbi,
           functionName: 'burn',
           args: [BigInt(amountUnwrapAsset * (10 ** SCALE_PEPE))],
+          maxFeePerGas: estimateFees?.maxFeePerGas,
+          maxPriorityFeePerGas: estimateFees?.maxPriorityFeePerGas,
+          gas: parseGwei('0.001'), // Error: Execution reverted for an unknown reason when using with estimateGas
         })
       }
 
