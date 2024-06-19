@@ -19,6 +19,7 @@ import { wrapped1MPEPETokenAbi } from '~/wrapper/contracts/abi/WrappedPepeContra
 import { PEPETokenAbi } from '~/wrapper/contracts/abi/PepeContract'
 import { useWalletEvmDialog } from '~/hooks/useWalletEvmDialog'
 import { parseGwei } from 'viem'
+import { TransactionState, useTransactionState } from '~/hooks/useTransactionState'
 
 interface Props {
   assetIndex: number
@@ -37,9 +38,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
     chainId: chain?.id,
     formatUnits: "gwei",
   })
-  const { data: estimateGas } = useEstimateGas({
-    chainId: chain?.id,
-  })
+  // const { data: estimateGas } = useEstimateGas({
+  //   chainId: chain?.id,
+  // })
+  const { setTxState } = useTransactionState()
 
   const pairData = assetMapping(assetIndex)
 
@@ -88,13 +90,6 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
       amountUnwrapAsset: NaN
     }
   })
-
-  useEffect(() => {
-    if (isConfirmed) {
-      initData()
-      refetch()
-    }
-  }, [isConfirmed])
 
   // const handleWalletClick = async () => {
   //   try {
@@ -155,7 +150,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
   //when approve, call mint process
   useEffect(() => {
-    if (isConfirmedApprove && isWrap && estimateFees) {
+    if (isConfirmedApprove && isWrap && estimateFees && isValid) {
       console.log('call mint or burn process')
       console.log('estimateFees', estimateFees)
       writeContract({
@@ -167,8 +162,32 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
         maxPriorityFeePerGas: estimateFees?.maxPriorityFeePerGas,
         gas: parseGwei('0.001'), // Error: Execution reverted for an unknown reason when using with estimateGas
       })
+      setTxState({ state: TransactionState.SUCCESS, txHash: '', networkName: chain?.name, networkScanUrl: chain?.blockExplorers?.default.url })
     }
-  }, [estimateFees, isConfirmedApprove])
+  }, [isConfirmedApprove])
+
+  // for transaction snackbar
+  useEffect(() => {
+    if (isConfirmingApprove || isConfirming) {
+      setTxState({ state: TransactionState.PENDING, txHash: '', networkName: chain?.name, networkScanUrl: chain?.blockExplorers?.default.url })
+    }
+  }, [isConfirmingApprove, isConfirming])
+
+  useEffect(() => {
+    if (errorApprove || error) {
+      setTxState({ state: TransactionState.FAIL, txHash: '', networkName: chain?.name, networkScanUrl: chain?.blockExplorers?.default.url })
+    }
+  }, [errorApprove, error])
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setTxState({ state: TransactionState.SUCCESS, txHash: hash, networkName: chain?.name, networkScanUrl: chain?.blockExplorers?.default.url })
+      initData()
+      refetch()
+    }
+  }, [isConfirmed])
+
+
 
   const onConfirm = async () => {
     try {
@@ -222,6 +241,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
 
     } catch (err) {
       console.error(err)
+      setTxState({ state: TransactionState.FAIL, txHash: '', networkName: chain?.name, networkScanUrl: chain?.blockExplorers?.default.url })
     }
   }
 
@@ -240,7 +260,7 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   }
 
   const isValid = invalidMsg() === ''
-  const isPending = isPendingApprove || isPendingProcess
+  const isPending = isPendingApprove || isPendingProcess || isConfirming || isConfirmingApprove
 
   return (
     <>
@@ -403,8 +423,8 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
               }
             </Box>
             <Box my='10px'>
-              {(isConfirmingApprove || isConfirming) && <><Typography variant='p'>Waiting for confirmation...</Typography></>}
-              {(isConfirmedApprove || isConfirmed) && <><Typography variant='p'>Transaction confirmed.</Typography></>}
+              {/* {(isConfirmingApprove || isConfirming) && <><Typography variant='p'>Waiting for confirmation...</Typography></>}
+              {(isConfirmedApprove || isConfirmed) && <><Typography variant='p'>Transaction confirmed.</Typography></>} */}
               {errorApprove && (
                 <div>Error: {(errorApprove as BaseError).shortMessage || errorApprove.message}</div>
               )}

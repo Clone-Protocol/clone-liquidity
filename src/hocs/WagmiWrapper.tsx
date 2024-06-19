@@ -3,6 +3,7 @@ import { WagmiProvider, createConfig, http } from 'wagmi'
 import { localhost, arbitrum } from 'wagmi/chains'
 import { injected, metaMask, walletConnect, coinbaseWallet } from 'wagmi/connectors'
 import { WalletEvmDialogProvider } from './WalletEvmDialogProvider';
+import { TransactionEvmStateProvider } from './TransactionEvmStateProvider';
 
 
 export const WagmiConfig = createConfig({
@@ -27,9 +28,11 @@ const WagmiWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={WagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <WalletEvmDialogProvider>
-          {children}
-        </WalletEvmDialogProvider>
+        <TransactionEvmStateProvider>
+          <WalletEvmDialogProvider>
+            {children}
+          </WalletEvmDialogProvider>
+        </TransactionEvmStateProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )
