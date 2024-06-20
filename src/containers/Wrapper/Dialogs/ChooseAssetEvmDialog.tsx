@@ -24,7 +24,7 @@ const ChooseAssetEvmDialog = ({ open, handleChooseAsset, handleClose }: { open: 
       <Dialog open={open} onClose={handleClose} TransitionComponent={FadeTransition} maxWidth={375}>
         <DialogContent sx={{ backgroundColor: '#000e22', width: '100%', padding: '0', borderRadius: '20px', border: '1px solid #414166' }}>
           <BoxWrapper>
-            <Box ml='25px' my='21px' mb="19px"><Typography variant='h3' fontWeight={500}>Search Bridged Asset</Typography></Box>
+            <Box ml='25px' my='21px' mb="19px"><Typography variant='h3' fontWeight={500}>Search Token</Typography></Box>
             <StyledDivider />
             <GridAssets assets={assets} onChoose={handleChooseAsset} />
 

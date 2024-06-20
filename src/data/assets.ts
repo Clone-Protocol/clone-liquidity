@@ -14,6 +14,7 @@ export enum AssetTickers {
     doge = 3,
     bnb = 4,
     apt = 5,
+    pepe1m = 6,
 }
 
 export enum Asset {
@@ -23,6 +24,7 @@ export enum Asset {
     Doge,
     Bnb,
     Apt,
+    Pepe1M,
 }
 
 export enum AssetType {
@@ -34,7 +36,7 @@ export const DEFAULT_ASSET_ID = AssetTickers.arbitrum
 export const DEFAULT_ASSET_LINK = "/comet/assets/arbitrum"
 
 //@MEMO: to add more asset, need to adjust here
-export const MAX_POOLS_FOR_SHOW = 6
+export const MAX_POOLS_FOR_SHOW = 7
 
 export const ASSETS = [
     {
@@ -79,6 +81,13 @@ export const ASSETS = [
         ticker: 'apt',
         pythSymbol: 'Crypto.APT/USD',
     },
+    {
+        tickerName: 'Cloned 1MPepe',
+        tickerSymbol: 'cl1MPEPE',
+        tickerIcon: '/images/assets/on-pepe.svg',
+        ticker: 'pepe1m',
+        pythSymbol: 'Crypto.PEPE/USD',
+    },
 ]
 
 export const assetMapping = (index: number) => {
@@ -92,6 +101,7 @@ export const assetMapping = (index: number) => {
     let assetType: number
     let pythSymbol = ''
     let supabaseSymbol = ''
+    let isEvmAsset = false
     let underlyingTokenMint = PublicKey.default
     switch (index) {
         case Asset.Arbitrum:
@@ -172,11 +182,21 @@ export const assetMapping = (index: number) => {
             supabaseSymbol = pythSymbol
             underlyingTokenMint = new PublicKey("6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN")
             break
+        case Asset.Pepe1M:
+            tickerName = 'Cloned 1MPepe'
+            tickerSymbol = 'cl1MPEPE'
+            tickerIcon = '/images/assets/on-pepe.svg'
+            ticker = 'pepe1m'
+            assetType = AssetType.Crypto
+            pythSymbol = 'Crypto.PEPE/USD'
+            supabaseSymbol = pythSymbol
+            isEvmAsset = true
+            break
         default:
             throw new Error('Not supported')
     }
 
-    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, wrapPortUrl, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, underlyingTokenMint }
+    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, wrapPortUrl, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, isEvmAsset, underlyingTokenMint }
 }
 
 export const collateralMapping = (index: number) => {

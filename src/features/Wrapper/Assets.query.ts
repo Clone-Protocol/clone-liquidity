@@ -19,17 +19,19 @@ export const fetchAssets = async ({ program, userPubKey }: { program: CloneClien
 	//MAX_POOLS_FOR_SHOW
 	// for (let index = 0; index < pools.pools.length; index++) {
 	for (let index = 0; index < MAX_POOLS_FOR_SHOW; index++) {
-		const { wrapTickerName, wrapTickerSymbol, tickerIcon, assetType } = assetMapping(index)
+		const { wrapTickerName, wrapTickerSymbol, tickerIcon, assetType, isEvmAsset } = assetMapping(index)
 		const status = pools.pools[index].status
-		result.push({
-			id: index,
-			tickerName: wrapTickerName,
-			tickerSymbol: wrapTickerSymbol,
-			tickerIcon: tickerIcon,
-			assetType: assetType,
-			balance: 0,
-			status
-		})
+		if (!isEvmAsset) {
+			result.push({
+				id: index,
+				tickerName: wrapTickerName,
+				tickerSymbol: wrapTickerSymbol,
+				tickerIcon: tickerIcon,
+				assetType: assetType,
+				balance: 0,
+				status
+			})
+		}
 	}
 	return result
 }

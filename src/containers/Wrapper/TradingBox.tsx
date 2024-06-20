@@ -9,10 +9,10 @@ import { AssetTickers } from '~/data/assets'
 import TradingComp1M from '~/components/Wrapper/TradingComp1M'
 import { InfoMsg2 } from '~/components/Common/WarningMsg'
 import { StyledTabs, StyledTab } from "~/components/Common/StyledTab"
-import ChooseAssetEvmDialog from './Dialogs/ChooseAssetEvmDialog'
 
 const TradingBox: React.FC = () => {
 	const ChooseAssetDialog = dynamic(() => import('./Dialogs/ChooseAssetDialog'))
+	const ChooseAssetEvmDialog = dynamic(() => import('./Dialogs/ChooseAssetEvmDialog'))
 	const [openChooseAsset, setOpenChooseAsset] = useState(false)
 	const [assetIndex, setAssetIndex] = useState(0)
 	//for evm
