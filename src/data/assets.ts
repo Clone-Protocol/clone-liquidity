@@ -185,12 +185,16 @@ export const assetMapping = (index: number) => {
         case Asset.Pepe1M:
             tickerName = 'Cloned 1MPepe'
             tickerSymbol = 'cl1MPEPE'
+            wrapTickerName = 'DeBridge 1MPEPE'
+            wrapTickerSymbol = 'de1MPEPE'
+            wrapPortUrl = 'https://app.debridge.finance/deport'
             tickerIcon = '/images/assets/on-pepe.svg'
             ticker = 'pepe1m'
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.PEPE/USD'
             supabaseSymbol = pythSymbol
             isEvmAsset = true
+            underlyingTokenMint = new PublicKey("2ijeS7j3AN2VgJq5d236cnEuXJkgBvo6gFistHfgzD6x")
             break
         default:
             throw new Error('Not supported')
