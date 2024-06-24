@@ -9,9 +9,9 @@ import { LoadingProgress } from "~/components/Common/Loading"
 import AnalyticsIcon from 'public/images/analytics-sketch.svg'
 import { PublicKey } from "@solana/web3.js"
 import { formatLocaleAmount } from "~/utils/numbers"
-import { AssetTickers, assetMapping } from "~/data/assets"
 
 interface Props {
+  assetIndex: number
   assetData: PositionInfo
   publicKey: PublicKey
   isOraclePrice?: boolean
@@ -29,9 +29,10 @@ interface PositionInfo {
   centerPrice?: number
 }
 
-const PriceChart: React.FC<Props> = ({ assetData, publicKey, isOraclePrice = false, priceTitle }) => {
+const PriceChart: React.FC<Props> = ({ assetIndex, assetData, publicKey, isOraclePrice = false, priceTitle }) => {
   const { data: priceHistory } = usePriceHistoryQuery({
     timeframe: "24h",
+    assetIndex,
     pythSymbol: assetData?.pythSymbol,
     isOraclePrice,
     refetchOnMount: true,

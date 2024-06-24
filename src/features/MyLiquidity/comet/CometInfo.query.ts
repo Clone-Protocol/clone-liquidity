@@ -213,11 +213,11 @@ export const fetchInitializeCometDetail = async ({ program, index }: { program: 
 		fromScale(oracle.price, oracle.expo) / fromScale(usdcOracle.price, usdcOracle.expo),
 		program.clone.collateral
 	)
-	const price = poolCollateral / poolOnasset
+	const { tickerIcon, tickerName, tickerSymbol, pythSymbol, scalingFactor } = assetMapping(index)
+	const price = (poolCollateral / poolOnasset) * scalingFactor
 	const tightRange = price * 0.1
 	const maxRange = 2 * price
 	const centerPrice = price
-	const { tickerIcon, tickerName, tickerSymbol, pythSymbol } = assetMapping(index)
 
 	return {
 		tickerIcon: tickerIcon,

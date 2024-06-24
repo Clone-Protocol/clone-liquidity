@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { ChartElem } from './Liquidity.query'
 import { Range, fetchPythPriceHistory } from '~/utils/pyth'
 import { getDailyPoolPrices30Day } from '~/utils/assets'
-import { ASSETS } from 'src/data/assets'
+import { ASSETS, assetMapping } from 'src/data/assets'
 import { FilterTime } from '~/components/Charts/TimeTabs'
 
-export const fetchOraclePriceHistory = async ({ timeframe, pythSymbol, isOraclePrice }: { timeframe: FilterTime, pythSymbol: string | undefined, isOraclePrice: boolean }) => {
+export const fetchOraclePriceHistory = async ({ assetIndex, timeframe, pythSymbol, isOraclePrice }: { assetIndex: number, timeframe: FilterTime, pythSymbol: string | undefined, isOraclePrice: boolean }) => {
   if (!pythSymbol) return null
 
   let chartData = []
@@ -32,6 +32,7 @@ export const fetchOraclePriceHistory = async ({ timeframe, pythSymbol, isOracleP
       }
     })()
 
+    const { scalingFactor } = assetMapping(assetIndex)
     const history = await fetchPythPriceHistory(pythSymbol, range);
 
     chartData = history.map((data) => {
@@ -40,9 +41,9 @@ export const fetchOraclePriceHistory = async ({ timeframe, pythSymbol, isOracleP
 
     const lastEntry = chartData[chartData.length - 1];
     const firstEntry = chartData[0]
-    const previous24hrPrice = firstEntry.value
+    const previous24hrPrice = firstEntry.value * scalingFactor
 
-    currentPrice = lastEntry.value;
+    currentPrice = lastEntry.value * scalingFactor;
     rateOfPrice = currentPrice - previous24hrPrice
     percentOfRate = 100 * rateOfPrice / previous24hrPrice
 
@@ -84,6 +85,7 @@ export interface PriceHistory {
 }
 
 interface GetProps {
+  assetIndex: number
   timeframe: FilterTime
   pythSymbol: string | undefined
   isOraclePrice?: boolean
@@ -91,10 +93,10 @@ interface GetProps {
   enabled?: boolean
 }
 
-export function usePriceHistoryQuery({ timeframe, pythSymbol, isOraclePrice = false, refetchOnMount, enabled = true }: GetProps) {
+export function usePriceHistoryQuery({ assetIndex, timeframe, pythSymbol, isOraclePrice = false, refetchOnMount, enabled = true }: GetProps) {
   return useQuery({
     queryKey: ['oraclePriceHistory', timeframe, pythSymbol],
-    queryFn: () => fetchOraclePriceHistory({ timeframe, pythSymbol, isOraclePrice }),
+    queryFn: () => fetchOraclePriceHistory({ assetIndex, timeframe, pythSymbol, isOraclePrice }),
     refetchOnMount,
     enabled
   })
