@@ -146,7 +146,7 @@ const extractLiquidityPositionsInfo = (program: CloneClient, comet: Comet, pools
 
 		const liquidityDollarPrice = fromScale(position.committedCollateralLiquidity, program.clone.collateral.scale) * 2
 		// ildValue is summmed both with onAssetILD and collateralILD
-		const ildDollarPrice = (Math.max(0, ildInfo[i].onAssetILD) * ildInfo[i].oraclePrice) + (Math.max(0, ildInfo[i].collateralILD))
+		const ildDollarPrice = (Math.max(0, ildInfo[i].onAssetILD) * ildInfo[i].oraclePrice * info.scalingFactor) + (Math.max(0, ildInfo[i].collateralILD))
 		const apy = poolStats[poolIndex].apy
 
 		result.push(
