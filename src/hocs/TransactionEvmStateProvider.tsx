@@ -7,7 +7,7 @@ export const TransactionEvmStateProvider = ({ children, ...props }: any) => {
     state: TransactionState.INIT,
     txHash: '',
     networkName: 'Arbitrum One',
-    networkScanUrl: 'https://arbiscan.io/',
+    networkScanUrl: 'https://status.arbitrum.io/',
   })
 
   return (
