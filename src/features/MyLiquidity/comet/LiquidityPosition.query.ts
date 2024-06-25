@@ -174,7 +174,7 @@ export const fetchCloseLiquidityPosition = async ({
 
 	const { onAssetILD, collateralILD, oraclePrice } = getILD(collateral, pools, oracles, comet)[index];
 	const assetId = poolIndex
-	const { tickerIcon, tickerName, tickerSymbol } = assetMapping(assetId)
+	const { tickerIcon, tickerName, tickerSymbol, scalingFactor } = assetMapping(assetId)
 	const committedCollateralLiquidity = fromScale(position.committedCollateralLiquidity, collateral.scale)
 	const { poolCollateral, poolOnasset } = calculatePoolAmounts(
 		fromScale(pool.collateralIld, collateral.scale),
@@ -207,7 +207,7 @@ export const fetchCloseLiquidityPosition = async ({
 		prevHealthScore,
 		collateralILD,
 		onassetILD: onAssetILD,
-		oraclePrice,
+		oraclePrice: oraclePrice * scalingFactor,
 		ildDebtNotionalValue,
 		onassetVal: balance?.onassetVal!,
 		onusdVal: balance?.onusdVal!,
