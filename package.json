@@ -55,7 +55,9 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.31.1",
     "react-otp-input": "^3.1.1",
-    "recharts": "^2.4.2"
+    "recharts": "^2.4.2",
+    "viem": "2.x",
+    "wagmi": "^2.9.12"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.7.2",

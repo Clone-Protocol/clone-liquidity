@@ -11,6 +11,8 @@ export enum TransactionState {
 export type TransactionStateType = {
   state: TransactionState,
   txHash: string
+  networkName?: string
+  networkScanUrl?: string
 }
 
 export interface TransactionStateContextState {
