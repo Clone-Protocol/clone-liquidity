@@ -84,6 +84,7 @@ const fetchBorrowPosition = async ({ program, userPubKey, index }: { program: Cl
   const maxWithdrawableColl = positionData.collateralAmount - minCollateralAmount;
 
   return {
+    poolIndex,
     tickerIcon: tickerIcon,
     tickerName: tickerName,
     tickerSymbol: tickerSymbol,

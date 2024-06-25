@@ -47,6 +47,8 @@ export const fetchOraclePriceHistory = async ({ assetIndex, timeframe, pythSymbo
     rateOfPrice = currentPrice - previous24hrPrice
     percentOfRate = 100 * rateOfPrice / previous24hrPrice
 
+    console.log('c', currentPrice + '/' + scalingFactor + '/' + assetIndex)
+
   } else {
     // Get pool index from pythSymbol
     let poolIndex = (() => {
