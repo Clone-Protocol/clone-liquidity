@@ -25,16 +25,16 @@ const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefet
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
   const [isBtnHover, setIsBtnHover] = useState(false)
-  const [renderPositions, setRenderPositions] = useState<LiquidityPosition[]>([])
+  const [renderPositions, setRenderPositions] = useState<LiquidityPosition[]>(positions)
+
+  // useEffect(() => {
+  //   if (positions) {
+  //     setRenderPositions(positions)
+  //   }
+  // }, [positions])
 
   useEffect(() => {
-    if (positions) {
-      setRenderPositions(positions)
-    }
-  }, [positions])
-
-  // lazy apply for apys
-  useEffect(() => {
+    // lazy apply for apys
     if (positions && positionsApys && positionsApys.length > 0 && positions.length === positionsApys.length) {
       console.log('positionsApys', positionsApys)
       const newPositions = positions.map((position, index) => ({
@@ -42,8 +42,10 @@ const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefet
         apy: positionsApys[index] ?? 0
       }))
       setRenderPositions(newPositions)
+    } else if (positions) {
+      setRenderPositions(positions)
     }
-  }, [positionsApys])
+  }, [positions, positionsApys])
 
   const handleChooseEditPosition = (positionIndex: number) => {
     console.log('positions', renderPositions)
