@@ -34,8 +34,8 @@ const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefet
   }, [positions])
 
   // lazy apply for apys
-  useMemo(() => {
-    if (positions && positionsApys && positions.length === positionsApys.length) {
+  useEffect(() => {
+    if (positions && positionsApys && positionsApys.length > 0 && positions.length === positionsApys.length) {
       console.log('positionsApys', positionsApys)
       const newPositions = positions.map((position, index) => ({
         ...position,

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { sleep } from "clone-protocol-sdk/sdk/src/utils";
 import { FeeLevel } from "~/data/networks";
 
 export interface StatsData {
@@ -69,10 +70,11 @@ export type UserApy = {
 export const fetchUserApy = async (user_address: string, poolIndexes: number[]): Promise<UserApy> => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-user-apy?user_address=${user_address}&pool_indexes=${poolIndexes.join(',')}`)
     return response.data as UserApy
+    // await sleep(1000)
     // return {
-    //     apy: 0,
-    //     avgCollateral: 0,
-    //     poolApy: []
+    //     apy: 10,
+    //     avgCollateral: 10,
+    //     poolApy: [1.2, 1.3]
     // }
 }
 
