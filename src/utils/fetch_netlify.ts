@@ -69,6 +69,11 @@ export type UserApy = {
 export const fetchUserApy = async (user_address: string, poolIndexes: number[]): Promise<UserApy> => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-user-apy?user_address=${user_address}&pool_indexes=${poolIndexes.join(',')}`)
     return response.data as UserApy
+    // return {
+    //     apy: 0,
+    //     avgCollateral: 0,
+    //     poolApy: []
+    // }
 }
 
 export const fetchTotalLiquidity = async (interval: string, filter: string): Promise<{ time_interval: string, total_liquidity: number }[]> => {

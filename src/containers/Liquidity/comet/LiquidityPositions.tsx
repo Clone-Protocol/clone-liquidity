@@ -1,6 +1,6 @@
 import { Box, Stack, Button, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams, GridColumnHeaderParams } from '@mui/x-data-grid'
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
@@ -18,7 +18,7 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { formatLocaleAmount } from '~/utils/numbers'
 
-const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
+const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], positionsApys: number[], onRefetchData: () => void }) => {
   const router = useRouter()
   const { publicKey } = useWallet()
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
@@ -32,6 +32,18 @@ const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { has
       setRenderPositions(positions)
     }
   }, [positions])
+
+  // lazy apply for apys
+  useMemo(() => {
+    if (positions && positionsApys && positions.length === positionsApys.length) {
+      console.log('positionsApys', positionsApys)
+      const newPositions = positions.map((position, index) => ({
+        ...position,
+        apy: positionsApys[index] ?? 0
+      }))
+      setRenderPositions(newPositions)
+    }
+  }, [positionsApys])
 
   const handleChooseEditPosition = (positionIndex: number) => {
     console.log('positions', renderPositions)

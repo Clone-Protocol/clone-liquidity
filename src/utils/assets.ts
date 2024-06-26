@@ -1,10 +1,9 @@
 import { Pools, Status } from "clone-protocol-sdk/sdk/generated/clone";
-import { CLONE_TOKEN_SCALE, CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
+import { CloneClient, fromCloneScale, fromScale } from "clone-protocol-sdk/sdk/src/clone"
 import { PythHttpClient, getPythProgramKeyForCluster } from "@pythnetwork/client"
 import { MAX_POOLS_FOR_SHOW, assetMapping } from "~/data/assets";
 import { fetchBorrowStats, fetchOHLCV, BorrowStats, fetchPoolApy, fetchUserApy, fetchPoolAnalytics } from "./fetch_netlify";
 import { Connection, PublicKey } from "@solana/web3.js"
-import { IS_DEV } from "~/data/networks";
 
 export type Interval = 'day' | 'hour';
 export type Filter = 'day' | 'week' | 'month' | 'year';
@@ -50,7 +49,6 @@ export const getiAssetInfos = async (connection: Connection, program: CloneClien
     const pool = pools.pools[poolIndex];
     const status = pool.status
     const oracle = oracles.oracles[Number(pool.assetInfo.oracleInfoIndex)];
-    const usdcOracle = oracles.oracles[Number(program.clone.collateral.oracleInfoIndex)];
     const pythUsdcOraclePrice = data.productPrice.get("Crypto.USDC/USD")?.aggregate.price!
     const committedCollateral = fromScale(pool.committedCollateralLiquidity, program.clone.collateral.scale)
     const poolCollateralIld = fromScale(pool.collateralIld, program.clone.collateral.scale)
@@ -73,10 +71,6 @@ export type AggregatedStats = {
   liquidityUSD: number,
   previousLiquidity: number,
   apy: number
-}
-
-const convertToNumber = (val: string | number) => {
-  return Number(val) * Math.pow(10, -CLONE_TOKEN_SCALE)
 }
 
 export const getAggregatedPoolStats = async (pools: Pools, userAddressForApy?: PublicKey): Promise<AggregatedStats[]> => {
