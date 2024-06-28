@@ -1,5 +1,5 @@
 import { styled } from '@mui/system'
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import { CometInfoStatus } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
@@ -8,7 +8,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { formatLocaleAmount } from '~/utils/numbers'
 
-const CometLiquidityStatus = ({ infos, totalApy = 0 }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
+const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
   const { publicKey } = useWallet()
 
   return (
@@ -51,7 +51,8 @@ const CometLiquidityStatus = ({ infos, totalApy = 0 }: { infos: CometInfoStatus 
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
           </Box>
           <StatusValue>
-            {(infos && infos.positions.length > 0 && totalApy) &&
+            {(infos && infos.positions.length > 0) &&
+              totalApy ?
               <Box>
                 {totalApy > 0 ?
                   <Box color='#4fe5ff'>
@@ -67,6 +68,8 @@ const CometLiquidityStatus = ({ infos, totalApy = 0 }: { infos: CometInfoStatus 
                   </Box>
                 }
               </Box>
+              :
+              <Skeleton variant='rectangular' width={70} height={20} />
             }
           </StatusValue>
         </Box>

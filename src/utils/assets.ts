@@ -113,7 +113,6 @@ export const getAggregatedPoolStats = async (pools: Pools, userAddressForApy?: P
     })
   }
 
-
   return result
 }
 

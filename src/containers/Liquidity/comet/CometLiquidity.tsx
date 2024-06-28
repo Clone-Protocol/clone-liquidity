@@ -25,7 +25,7 @@ const CometLiquidity = () => {
   //   refetchOnMount: false,
   //   enabled: false
   // })
-  const [totalApy, setTotalApy] = useState(0)
+  const [totalApy, setTotalApy] = useState<number | undefined>()
   const [positionsApys, setPositionsApys] = useState<number[]>([])
   const wallet = useAnchorWallet()
   const { getCloneApp } = useClone()
