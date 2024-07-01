@@ -1,5 +1,5 @@
 import { styled } from '@mui/system'
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
 import HealthscoreView from '~/components/Liquidity/comet/HealthscoreView'
 import { CometInfoStatus } from '~/features/MyLiquidity/comet/CometInfo.query'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
@@ -8,7 +8,7 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { formatLocaleAmount } from '~/utils/numbers'
 
-const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined }) => {
+const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
   const { publicKey } = useWallet()
 
   return (
@@ -51,12 +51,13 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
           </Box>
           <StatusValue>
-            {(infos && infos.positions.length > 0 && !isNaN(infos.totalApy)) &&
+            {(infos && infos.positions.length > 0) &&
+              totalApy ?
               <Box>
-                {infos.totalApy > 0 ?
+                {totalApy > 0 ?
                   <Box color='#4fe5ff'>
                     <Box display='flex' justifyContent='center' alignItems='center'>
-                      <Typography variant='p_xlg'>{infos.totalApy >= 0.01 ? `+${infos.totalApy?.toFixed(2)}` : '<0.01'}%</Typography>
+                      <Typography variant='p_xlg'>{totalApy >= 0.01 ? `+${totalApy?.toFixed(2)}` : '<0.01'}%</Typography>
                     </Box>
                   </Box>
                   :
@@ -67,6 +68,8 @@ const CometLiquidityStatus = ({ infos }: { infos: CometInfoStatus | undefined })
                   </Box>
                 }
               </Box>
+              :
+              <Skeleton variant='rectangular' width={70} height={20} />
             }
           </StatusValue>
         </Box>

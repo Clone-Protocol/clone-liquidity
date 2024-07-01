@@ -1,6 +1,6 @@
-import { Box, Stack, Button, Typography } from '@mui/material'
+import { Box, Stack, Button, Typography, Skeleton } from '@mui/material'
 import { styled } from '@mui/system'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { GridColDef, GridEventListener, GridRenderCellParams, GridColumnHeaderParams } from '@mui/x-data-grid'
 import { Grid, CustomNoRowsOverlay } from '~/components/Common/DataGrid'
 import { LiquidityPosition } from '~/features/MyLiquidity/comet/CometInfo.query'
@@ -18,20 +18,34 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { formatLocaleAmount } from '~/utils/numbers'
 
-const LiquidityPositions = ({ hasNoCollateral, positions, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], onRefetchData: () => void }) => {
+const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefetchData }: { hasNoCollateral: boolean, positions: LiquidityPosition[], positionsApys: number[], onRefetchData: () => void }) => {
   const router = useRouter()
   const { publicKey } = useWallet()
   const [openEditLiquidity, setOpenEditLiquidity] = useState(false)
   const [editAssetId, setEditAssetId] = useState(0)
   const [poolIndex, setPoolIndex] = useState(0)
   const [isBtnHover, setIsBtnHover] = useState(false)
-  const [renderPositions, setRenderPositions] = useState<LiquidityPosition[]>([])
+  const [renderPositions, setRenderPositions] = useState<LiquidityPosition[]>(positions)
+
+  // useEffect(() => {
+  //   if (positions) {
+  //     setRenderPositions(positions)
+  //   }
+  // }, [positions])
 
   useEffect(() => {
-    if (positions) {
+    // lazy apply for apys
+    if (positions && positionsApys && positionsApys.length > 0 && positions.length === positionsApys.length) {
+      console.log('positionsApys', positionsApys)
+      const newPositions = positions.map((position, index) => ({
+        ...position,
+        apy: positionsApys[index] ?? 0
+      }))
+      setRenderPositions(newPositions)
+    } else if (positions) {
       setRenderPositions(positions)
     }
-  }, [positions])
+  }, [positions, positionsApys])
 
   const handleChooseEditPosition = (positionIndex: number) => {
     console.log('positions', renderPositions)
@@ -190,14 +204,17 @@ let columns: GridColDef[] = [
     renderCell(params: GridRenderCellParams<string>) {
       return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
         :
-        Number(params.value) > 0 ?
-          <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
-            <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}` : '<0.01'}%</Typography>
-          </Box>
+        params.value ?
+          Number(params.value) > 0 ?
+            <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
+              <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}` : '<0.01'}%</Typography>
+            </Box>
+            :
+            <Box display='flex' alignItems='center' color='white'>
+              <Typography variant='p_xlg'>{'0.00'}%</Typography>
+            </Box>
           :
-          <Box display='flex' alignItems='center' color='white'>
-            <Typography variant='p_xlg'>{'0.00'}%</Typography>
-          </Box>
+          <Skeleton variant='rectangular' width={100} height={20} />
     },
   },
 ]
