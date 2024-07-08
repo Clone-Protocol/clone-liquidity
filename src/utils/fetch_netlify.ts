@@ -103,7 +103,8 @@ export type StakersInfo = {
 export type Tier = 0 | 1 | 2
 export type UserBonus = {
     pyth: StakersInfo[],
-    jup: StakersInfo[]
+    jup: StakersInfo[],
+    drift: StakersInfo[],
 }
 export const fetchAllUserBonus = async (): Promise<UserBonus> => {
     let url = `${process.env.NEXT_PUBLIC_API_ROOT}/.netlify/functions/get-users-all-bonus`;
