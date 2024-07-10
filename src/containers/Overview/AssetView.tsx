@@ -29,7 +29,6 @@ const AssetView = ({ assetTicker }: { assetTicker: string }) => {
 				setAssetIndex(AssetTickers[assetTicker as keyof typeof AssetTickers])
 			} else {
 				setAssetIndex(DEFAULT_ASSET_ID)
-				router.replace(DEFAULT_ASSET_LINK)
 			}
 		}
 	}, [assetTicker])

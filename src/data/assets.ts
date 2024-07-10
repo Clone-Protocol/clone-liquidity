@@ -101,7 +101,6 @@ export const assetMapping = (index: number) => {
     let assetType: number
     let pythSymbol = ''
     let supabaseSymbol = ''
-    let isEvmAsset = false
     let scalingFactor = 1
     let underlyingTokenMint = PublicKey.default
     switch (index) {
@@ -194,7 +193,6 @@ export const assetMapping = (index: number) => {
             assetType = AssetType.Crypto
             pythSymbol = 'Crypto.PEPE/USD'
             supabaseSymbol = pythSymbol
-            isEvmAsset = true
             scalingFactor = 10 ** 6
             underlyingTokenMint = new PublicKey("2ijeS7j3AN2VgJq5d236cnEuXJkgBvo6gFistHfgzD6x")
             break
@@ -202,7 +200,7 @@ export const assetMapping = (index: number) => {
             throw new Error('Not supported')
     }
 
-    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, wrapPortUrl, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, isEvmAsset, scalingFactor, underlyingTokenMint }
+    return { tickerName, tickerSymbol, wrapTickerName, wrapTickerSymbol, wrapPortUrl, tickerIcon, ticker, assetType, pythSymbol, supabaseSymbol, scalingFactor, underlyingTokenMint }
 }
 
 export const collateralMapping = (index: number) => {

@@ -271,16 +271,16 @@ export function usePayILDMutation(userPubKey: PublicKey | null) {
 export const callRewards = async ({ program, userPubKey, setTxState, data, feeLevel }: CallCloseProps) => {
 	if (!userPubKey) throw new Error('no user public key')
 
-		const [onassetAssociatedTokenAddress, collateralAssociatedTokenAddress] = [
-			getAssociatedTokenAddressSync(
-				data.onassetMint,
-				program.provider.publicKey!,
-			),
-			getAssociatedTokenAddressSync(
-				program.clone.collateral.mint,
-				program.provider.publicKey!,
-			)
-		];
+	const [onassetAssociatedTokenAddress, collateralAssociatedTokenAddress] = [
+		getAssociatedTokenAddressSync(
+			data.onassetMint,
+			program.provider.publicKey!,
+		),
+		getAssociatedTokenAddressSync(
+			program.clone.collateral.mint,
+			program.provider.publicKey!,
+		)
+	];
 
 	const pools = await program.getPools()
 	const oracles = await program.getOracles();

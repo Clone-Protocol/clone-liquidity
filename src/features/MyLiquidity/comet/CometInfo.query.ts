@@ -11,7 +11,6 @@ import { Collateral as StableCollateral, collateralMapping } from '~/data/assets
 import { calculatePoolAmounts } from 'clone-protocol-sdk/sdk/src/utils'
 import { getAggregatedPoolStats } from '~/utils/assets'
 
-
 export const fetchPositionsApy = async ({ program, userPubKey }: { program: CloneClient, userPubKey: PublicKey | null }) => {
 	if (!userPubKey) return
 	console.log('fetchTotalApy :: CometInfo.query')
