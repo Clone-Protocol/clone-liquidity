@@ -19,12 +19,11 @@ export const handler: Handler = async (event, context) => {
   let { data: data2 } = await rpcCall2;
   // console.log('data2', data2)
 
-  //@TODO: get drift stakers
-  // const rpcCall3 = supabase.from(
-  //   "drift_stakers_top_100_cloners"
-  // ).select().eq('user_address', params.userAddress);
-  // let { data: data3 } = await rpcCall3;
-  let data3 = []
+  const rpcCall3 = supabase.from(
+    "drift_stakers_top_100_cloners"
+  ).select().lte('rank', 100);
+  let { data: data3 } = await rpcCall3;
+  console.log('data3', data3)
 
   if (error !== null) {
     console.log(error)
