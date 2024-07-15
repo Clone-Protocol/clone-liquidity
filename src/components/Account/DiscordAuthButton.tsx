@@ -27,6 +27,7 @@ const DiscordAuthButton = () => {
       <LinkButton onClick={discordLogin}>
         <Typography variant='p_sm'>Link your Discord account </Typography><Typography variant='p_lg'>+</Typography>
       </LinkButton>
+      <Box display='flex' justifyContent='center'><Typography variant='p_sm' color='#b5fdf9' sx={{ marginTop: '6px' }}>or</Typography></Box>
       <LinkButton onClick={discordWithLedgerLogin} sx={{ marginTop: '10px' }}>
         <Typography variant='p_sm'>Link your Discord account with ledger </Typography><Typography variant='p_lg'>+</Typography>
       </LinkButton>
