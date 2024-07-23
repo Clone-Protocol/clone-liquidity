@@ -6,8 +6,7 @@ import { useState, useCallback } from 'react'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useAssetsQuery } from '~/features/Overview/Assets.query'
-import { FilterType, FilterTypeMap } from '~/data/filter'
-import { PageTabs, PageTab } from '~/components/Overview/Tabs'
+import { FilterType } from '~/data/filter'
 import ArrowUpward from 'public/images/arrow-upward.svg'
 import ArrowDownward from 'public/images/arrow-down-red.svg'
 import { Grid, CellTicker } from '~/components/Common/DataGrid'
@@ -19,7 +18,6 @@ import { useRouter } from 'next/navigation'
 import { formatDollarAmount, formatLocaleAmount } from '~/utils/numbers'
 import { ON_USD } from '~/utils/constants'
 import { PoolStatusButton, showPoolStatus } from '~/components/Common/PoolStatus'
-import { AssetTickers } from '~/data/assets'
 
 const AssetList: React.FC = () => {
 	const [filter, setFilter] = useState<FilterType>('all')

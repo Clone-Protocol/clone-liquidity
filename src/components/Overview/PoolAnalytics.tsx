@@ -5,22 +5,6 @@ import { TooltipTexts } from '~/data/tooltipTexts'
 import { ON_USD } from '~/utils/constants'
 import { formatLocaleAmount } from '~/utils/numbers'
 
-const TxtPriceRateComparePast = ({ val, rate }: { val: number, rate: number }) => {
-  if (isFinite(rate)) {
-    if (rate >= 0) {
-      return (
-        <Typography variant="p_sm" color='#4fe5ff'>+{val.toLocaleString()} ({rate.toLocaleString()}%) past 24h</Typography>
-      )
-    } else {
-      return (
-        <Typography variant="p_sm" color="#258ded">-{Math.abs(val).toLocaleString()} ({rate.toLocaleString()}%) past 24h</Typography>
-      )
-    }
-  } else {
-    return <></>
-  }
-}
-
 const TxtPriceRate = ({ rate }: { rate: number }) => {
   if (isFinite(rate)) {
     return (
