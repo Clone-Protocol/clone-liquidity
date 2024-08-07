@@ -64,7 +64,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
         </HoverStack>
       </StyledMenuItem>
     </a>
-    <a href={MARKETS_APP} target='_blank' rel="noreferrer">
+    {/* <a href={MARKETS_APP} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
           <Box width='184px'>
@@ -73,8 +73,8 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
           </Box>
         </HoverStack>
       </StyledMenuItem>
-    </a>
-    <a href={CAREER_URL} target='_blank' rel="noreferrer">
+    </a> */}
+    {/* <a href={CAREER_URL} target='_blank' rel="noreferrer">
       <StyledMenuItem>
         <HoverStack direction='row' alignItems='center'>
           <Box width='184px'>
@@ -83,7 +83,7 @@ const MoreMenu: React.FC<Props> = ({ anchorEl, onShowTokenFaucet, onClose }) => 
           </Box>
         </HoverStack>
       </StyledMenuItem>
-    </a>
+    </a> */}
 
     <StyledDivider />
     <a href={AUDIT_URL} target='_blank' rel="noreferrer">

@@ -142,7 +142,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
       </BoxWithBorder>
 
       <Box mt='38px'>
-        {(mintRatio === 0 && isLastPool) ?
+        {/* {(mintRatio === 0 && isLastPool) ?
           <CometHealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
             <Image src={IconHealthScoreGraph} alt='healthscore' />
             <Box mt='7px'>
@@ -158,7 +158,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
               <HealthscoreView score={healthScore ?? positionInfo.totalHealthScore} />
             </Box>
           </CometHealthBox>
-        }
+        } */}
 
         <>
           {

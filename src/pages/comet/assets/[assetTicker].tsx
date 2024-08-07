@@ -14,7 +14,7 @@ const AssetPage = () => {
     <StyledSection>
       <Container>
         <Box display='flex' justifyContent='center'>
-          <AssetView assetTicker={assetTicker} />
+          {/* <AssetView assetTicker={assetTicker} /> */}
         </Box>
       </Container>
     </StyledSection>

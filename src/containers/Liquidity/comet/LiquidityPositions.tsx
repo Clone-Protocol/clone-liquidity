@@ -91,7 +91,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefet
           onRowClick={handleRowClick}
         />
       </Box>
-      {publicKey && !hasNoCollateral &&
+      {/* {publicKey && !hasNoCollateral &&
         <Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
           {positions.length > 0 ?
             <AddButton onClick={redirectAddCometPage} disableRipple>
@@ -107,7 +107,7 @@ const LiquidityPositions = ({ hasNoCollateral, positions, positionsApys, onRefet
             </AddButtonNoPosition>
           }
         </Stack>
-      }
+      } */}
 
       {openEditLiquidity &&
         <EditLiquidityDialog

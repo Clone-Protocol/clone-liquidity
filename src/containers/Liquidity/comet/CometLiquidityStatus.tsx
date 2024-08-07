@@ -14,7 +14,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
   return (
     <Wrapper>
       <Stack direction='row' gap={16}>
-        <Box>
+        {/* <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>Health Score</Typography>
             <InfoTooltip title={TooltipTexts.cometdHealthScore} color='#66707e' />
@@ -22,7 +22,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
           <Box mt='15px'>
             <HealthscoreView score={infos && infos.healthScore ? infos.healthScore : 0} />
           </Box>
-        </Box>
+        </Box> */}
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>My Liquidity</Typography>
@@ -45,7 +45,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
             </Typography>
           </StatusValue>
         </Box>
-        <Box>
+        {/* <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>My APR</Typography>
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
@@ -72,7 +72,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
               <Skeleton variant='rectangular' width={70} height={20} />
             }
           </StatusValue>
-        </Box>
+        </Box> */}
       </Stack >
       {!publicKey && <OpaqueDefault />}
       {publicKey && infos && infos.hasNoCollateral &&

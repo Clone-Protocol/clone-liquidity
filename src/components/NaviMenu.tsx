@@ -11,11 +11,11 @@ const NaviMenu = () => {
   return (
     <Fade in timeout={1500}>
       <List component="nav" sx={{ display: 'flex', padding: 0 }}>
-        <Link href="/">
+        {/* <Link href="/">
           <StyledListItemButton className={pathname === '/' || pathname?.startsWith('/assets') ? 'selected' : ''}>
             <Typography variant="p_lg">Home</Typography>
           </StyledListItemButton>
-        </Link>
+        </Link> */}
         <Link href="/wrapper">
           <StyledListItemButton className={pathname?.startsWith('/wrapper') ? 'selected' : ''}>
             <Typography variant="p_lg">Wrapper</Typography>
@@ -31,7 +31,7 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Borrow</Typography>
           </StyledListItemButton>
         </Link>
-        {!IS_DEV &&
+        {/* {!IS_DEV &&
           <Link href="/points">
             <StyledPointsItemButton className={pathname?.startsWith('/points') ? 'selected' : ''}>
               <ColoredText className={pathname?.startsWith('/points') ? 'selected' : ''}><Typography variant="p_lg" mr='3px'>Points</Typography></ColoredText>
@@ -43,7 +43,7 @@ const NaviMenu = () => {
           <StyledGiveawayItemButton className={pathname?.startsWith('/giveaway') ? 'selected' : ''}>
             {pathname?.startsWith('/giveaway') ? <TrophyIconOn /> : <TrophyIconOff />}
           </StyledGiveawayItemButton>
-        </Link>
+        </Link> */}
       </List>
     </Fade>
   )

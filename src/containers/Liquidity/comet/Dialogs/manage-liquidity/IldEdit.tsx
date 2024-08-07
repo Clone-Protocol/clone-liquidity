@@ -272,22 +272,22 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           }
 
           {
-            (ildAssetAmount > 0 || ildCollAmount > 0) ?
-              <HealthBox padding='15px 20px'>
-                <Box display='flex' justifyContent='center'>
-                  <Typography variant='p'>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
-                </Box>
-                <Box mt='10px' display='flex' justifyContent='center'>
-                  <HealthscoreView score={healthScore ? healthScore : positionInfo.healthScore} />
-                </Box>
-              </HealthBox>
-              :
-              <HealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
-                <Image src={IconHealthScoreGraph} alt='healthscore' />
-                <Box mt='7px'>
-                  <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
-                </Box>
-              </HealthBox>
+            // (ildAssetAmount > 0 || ildCollAmount > 0) ?
+            //   <HealthBox padding='15px 20px'>
+            //     <Box display='flex' justifyContent='center'>
+            //       <Typography variant='p'>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
+            //     </Box>
+            //     <Box mt='10px' display='flex' justifyContent='center'>
+            //       <HealthscoreView score={healthScore ? healthScore : positionInfo.healthScore} />
+            //     </Box>
+            //   </HealthBox>
+            //   :
+            //   <HealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+            //     <Image src={IconHealthScoreGraph} alt='healthscore' />
+            //     <Box mt='7px'>
+            //       <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
+            //     </Box>
+            //   </HealthBox>
           }
         </Box>
 

@@ -15,7 +15,7 @@ const Borrow = () => {
           <GoBackButton onClick={() => router.back()} ml='18px'><Typography variant='p'>{'<'} Go back</Typography></GoBackButton>
           <Box ml='18px'><Typography fontSize='20px' fontWeight={500}>New Borrow Position</Typography></Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <BorrowContainer />
+            {/* <BorrowContainer /> */}
           </Box>
         </Box>
       </Container>

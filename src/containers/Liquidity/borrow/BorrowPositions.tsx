@@ -79,7 +79,7 @@ const BorrowPositions = () => {
 				onRowClick={handleRowClick}
 			/>
 
-			{publicKey &&
+			{/* {publicKey &&
 				<Stack direction='row' mt='9px' onMouseOver={() => setIsBtnHover(true)} onMouseLeave={() => setIsBtnHover(false)}>
 					{positions && positions.length > 0 ?
 						<AddButton onClick={moveNewBorrowPositionPage} sx={isBtnHover ? { color: '#fff' } : { color: '#414e66' }} disableRipple>
@@ -95,7 +95,7 @@ const BorrowPositions = () => {
 						</AddButtonNoPosition>
 					}
 				</Stack>
-			}
+			} */}
 		</>
 	)
 }
