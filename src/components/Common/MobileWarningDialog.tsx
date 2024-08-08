@@ -31,7 +31,7 @@ const MobileWarningDialog = ({ open, handleClose }: { open: boolean, handleClose
               <a href={TWITTER_URL} target="_blank" rel="noreferrer"><Image src={TwitterIcon} alt='twitter' /></a>
               <a href={DISCORD_URL} target="_blank" rel="noreferrer"><Image src={DiscordIcon} alt='discord' /></a>
             </Stack>
-            <a href={MARKETS_APP} target="_blank" rel="noreferrer"><GoToMarketBtn><Typography variant='p'>Go to Markets App - Mobile Compatible</Typography></GoToMarketBtn></a>
+            {/* <a href={MARKETS_APP} target="_blank" rel="noreferrer"><GoToMarketBtn><Typography variant='p'>Go to Markets App - Mobile Compatible</Typography></GoToMarketBtn></a> */}
           </BoxWrapper>
         </DialogContent>
       </Dialog>

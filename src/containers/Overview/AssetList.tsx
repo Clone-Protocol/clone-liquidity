@@ -52,7 +52,7 @@ const AssetList: React.FC = () => {
 		params
 	) => {
 		if (!showPoolStatus(params.row.status)) {
-			router.push(`/comet/assets/${params.row.ticker}`)
+			// router.push(`/comet/assets/${params.row.ticker}`)
 		}
 	}, [])
 
