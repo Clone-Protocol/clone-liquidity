@@ -20,7 +20,7 @@ import { formatLocaleAmount } from '~/utils/numbers'
 
 const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boolean, isNewDeposit: boolean, handleClose: () => void }) => {
   const { publicKey } = useWallet()
-  const [tab, setTab] = useState(0) // 0 : deposit , 1: withdraw
+  const [tab, setTab] = useState(1) // 0 : deposit , 1: withdraw
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
@@ -161,7 +161,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
             </Box>
 
             <StyledTabs value={tab} onChange={handleChangeTab}>
-              <StyledTab value={0} label="Deposit" allBorderRadius={true} />
+              {/* <StyledTab value={0} label="Deposit" allBorderRadius={true} /> */}
               <StyledTab value={1} label="Withdraw" allBorderRadius={true} />
             </StyledTabs>
 
@@ -214,7 +214,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
                   {/* <FormHelperText error={!!errors.collAmount?.message}>{errors.collAmount?.message}</FormHelperText> */}
                 </Box>
 
-                {
+                {/* {
                   (tab === 0 && collAmount > 0) || (tab === 1 && collAmount > 0 && collAmount < maxWithdrawable) ?
                     <CometHealthBox padding='15px 20px'>
                       <Box display='flex' justifyContent='center'>
@@ -231,7 +231,7 @@ const EditCollateralDialog = ({ open, isNewDeposit, handleClose }: { open: boole
                         <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
                       </Box>
                     </CometHealthBox>
-                }
+                } */}
 
                 {tab === 1 && <>
                   {

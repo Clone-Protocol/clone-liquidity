@@ -24,7 +24,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
   const [defaultMintRatio, setDefaultMintRatio] = useState(0)
   const [defaultMintAmount, setDefaultMintAmount] = useState(0)
   const [isLastPool, setIsLastPool] = useState(false)
-  const [mintRatio, setMintRatio] = useState(50)
+  const [mintRatio, setMintRatio] = useState(0)
   const [disableRatio, setDisableRatio] = useState(false)
   const [totalLiquidity, setTotalLiquidity] = useState(0)
   const [healthScore, setHealthScore] = useState(0)
@@ -45,16 +45,20 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
       const maxMintable = positionInfo.effectiveCollateralValue * positionInfo.totalHealthScore / (100 * healthCoefficient) + currentPosition
       setMaxMintable(maxMintable)
 
-      setDefaultMintRatio(100 * currentPosition / maxMintable)
+      const prevMintRatio = 100 * currentPosition / maxMintable
+      setDefaultMintRatio(prevMintRatio)
       setDefaultMintAmount(currentPosition)
       setTotalLiquidity(currentPosition * 2)
 
-      if (positionInfo.status === Status.Extraction || positionInfo.status === Status.Liquidation) {
-        setMintRatio(0)
-        setDisableRatio(true)
-      } else {
-        setMintRatio(100 * currentPosition / maxMintable)
+      // if (positionInfo.status === Status.Extraction || positionInfo.status === Status.Liquidation) {
+      setMintRatio(0)
+      setDisableRatio(true)
+      if (prevMintRatio === 0) {
+        setValidMintAmount(false)
       }
+      // } else {
+      //   setMintRatio(100 * currentPosition / maxMintable)
+      // }
     }
   }, [positionInfo])
 
@@ -79,7 +83,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
       const mintAmount = maxMintable * mintRatio / 100
       setHealthScore(positionInfo.totalHealthScore - 100 * (assetHealthCoefficient * (mintAmount - defaultMintAmount)) / positionInfo.effectiveCollateralValue)
       setTotalLiquidity(mintAmount * 2);
-      setValidMintAmount(mintAmount < maxMintable && mintRatio < 100 && mintAmount !== defaultMintAmount && mintRatio !== defaultMintRatio)
+      // setValidMintAmount(mintAmount < maxMintable && mintRatio < 100 && mintAmount !== defaultMintAmount && mintRatio !== defaultMintRatio)
     }
   }, [mintRatio])
 
@@ -181,7 +185,7 @@ const Liquidity = ({ positionInfo, positionIndex, poolIndex }: { positionInfo: P
           </Box>
           :
           <SubmitButton onClick={handleSubmit(onEditLiquidity)} disabled={!isValid} hasRisk={hasRiskScore}>
-            <Typography variant='p_xlg'>{hasRiskScore && 'Accept Risk and '}Adjust Liquidity</Typography>
+            <Typography variant='p_xlg'>{isValid ? 'Adjust Liquidity to 0%' : 'Liquidity already at 0%'}</Typography>
           </SubmitButton>
         }
       </Box>

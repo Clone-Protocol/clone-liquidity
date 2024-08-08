@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation'
 const ManageBorrow = ({ assetId }: { assetId: string }) => {
   const { publicKey } = useWallet()
   const router = useRouter()
-  const [tab, setTab] = useState(0)
+  const [tab, setTab] = useState(1)
   const [showEditRepay, setShowEditRepay] = useState(false)
   const [showWithdrawCollateral, setShowWithdrawCollateral] = useState(false)
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -53,7 +53,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
         <Box mt='5px' mb='25px'><Typography variant='h3' fontWeight={500}>Manage Borrow Position</Typography></Box>
         <LeftBoxWrapper mt='21px'>
           <StyledTabs value={tab} onChange={handleChangeTab}>
-            <CommonTab value={0} label="Manage" />
+            {/* <CommonTab value={0} label="Manage" /> */}
             <CommonTab value={1} label="Close" />
           </StyledTabs>
           <TabPanelForEdit value={tab} index={0}>
@@ -66,7 +66,7 @@ const ManageBorrow = ({ assetId }: { assetId: string }) => {
       </Box>
       <RightBoxWrapper>
         <StickyBox>
-          <PriceChart assetIndex={borrowDetail.poolIndex} assetData={borrowDetail} publicKey={publicKey} isOraclePrice={true} priceTitle='Oracle Price' />
+          {/* <PriceChart assetIndex={borrowDetail.poolIndex} assetData={borrowDetail} publicKey={publicKey} isOraclePrice={true} priceTitle='Oracle Price' /> */}
           <PositionAnalytics price={borrowDetail.price} tickerSymbol={borrowDetail.tickerSymbol} />
         </StickyBox>
       </RightBoxWrapper>

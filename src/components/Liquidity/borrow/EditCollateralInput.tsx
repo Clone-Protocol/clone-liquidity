@@ -44,7 +44,7 @@ const EditCollateralInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Box sx={{ backgroundColor: '#1a1c28' }}>
         <StyledTabs value={editType} onChange={onChangeType}>
-          {!isFullRepaid && <StyledTab value={0} label="Deposit Collateral" width='176px' allBorderRadius={true}></StyledTab>}
+          {/* {!isFullRepaid && <StyledTab value={0} label="Deposit Collateral" width='176px' allBorderRadius={true}></StyledTab>} */}
           <StyledTab value={1} label="Withdraw Collateral" width='176px' allBorderRadius={true}></StyledTab>
         </StyledTabs>
       </Box>

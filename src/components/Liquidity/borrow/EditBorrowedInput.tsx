@@ -39,7 +39,7 @@ const EditBorrowedInput: React.FC<Props> = ({
     <FormControl variant="standard" sx={{ width: "100%" }}>
       <Box sx={{ backgroundColor: '#1a1c28' }}>
         <StyledTabs value={editType} onChange={onChangeType}>
-          <StyledTab value={0} label="Borrow More" width='142px' allBorderRadius={true}></StyledTab>
+          {/* <StyledTab value={0} label="Borrow More" width='142px' allBorderRadius={true}></StyledTab> */}
           <StyledTab value={1} label="Repay" allBorderRadius={true}></StyledTab>
         </StyledTabs>
       </Box>

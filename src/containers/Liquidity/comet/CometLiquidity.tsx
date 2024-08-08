@@ -27,29 +27,29 @@ const CometLiquidity = () => {
   // })
   const [totalApy, setTotalApy] = useState<number | undefined>()
   const [positionsApys, setPositionsApys] = useState<number[]>([])
-  const wallet = useAnchorWallet()
-  const { getCloneApp } = useClone()
+  // const wallet = useAnchorWallet()
+  // const { getCloneApp } = useClone()
 
-  useEffect(() => {
-    const fetchApy = async () => {
-      if (publicKey && infos?.positions && infos.positions.length > 0) {
-        try {
-          const program = await getCloneApp(wallet)
-          const apyInfo = await fetchPositionsApy({ program, userPubKey: publicKey })
+  // useEffect(() => {
+  //   const fetchApy = async () => {
+  //     if (publicKey && infos?.positions && infos.positions.length > 0) {
+  //       try {
+  //         const program = await getCloneApp(wallet)
+  //         const apyInfo = await fetchPositionsApy({ program, userPubKey: publicKey })
 
-          if (apyInfo && apyInfo.totalApy > 0) {
-            setTotalApy(apyInfo.totalApy)
-            setPositionsApys(apyInfo.apys)
-          }
-        } catch (err) {
-          console.error('e', err)
-        }
-      } else {
-        console.log('no positions')
-      }
-    }
-    fetchApy()
-  }, [publicKey])
+  //         if (apyInfo && apyInfo.totalApy > 0) {
+  //           setTotalApy(apyInfo.totalApy)
+  //           setPositionsApys(apyInfo.apys)
+  //         }
+  //       } catch (err) {
+  //         console.error('e', err)
+  //       }
+  //     } else {
+  //       console.log('no positions')
+  //     }
+  //   }
+  //   fetchApy()
+  // }, [publicKey])
 
   return (
     <div>

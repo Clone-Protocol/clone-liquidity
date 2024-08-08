@@ -189,34 +189,34 @@ let columns: GridColDef[] = [
       return <Typography variant='p_xlg'>${formatLocaleAmount(params.row.rewards, 5)}</Typography>
     },
   },
-  {
-    field: 'apy',
-    headerClassName: 'right--header',
-    cellClassName: 'right--cell',
-    headerName: 'APR',
-    flex: 1,
-    renderHeader(params: GridColumnHeaderParams<string>) {
-      return <Stack direction='row' alignItems='center'>
-        <Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
-        <InfoTooltip title={TooltipTexts.myPositions.apy} color='#66707e' />
-      </Stack>
-    },
-    renderCell(params: GridRenderCellParams<string>) {
-      return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
-        :
-        params.value ?
-          Number(params.value) > 0 ?
-            <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
-              <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}` : '<0.01'}%</Typography>
-            </Box>
-            :
-            <Box display='flex' alignItems='center' color='white'>
-              <Typography variant='p_xlg'>{'0.00'}%</Typography>
-            </Box>
-          :
-          <Skeleton variant='rectangular' width={100} height={20} />
-    },
-  },
+  // {
+  //   field: 'apy',
+  //   headerClassName: 'right--header',
+  //   cellClassName: 'right--cell',
+  //   headerName: 'APR',
+  //   flex: 1,
+  //   renderHeader(params: GridColumnHeaderParams<string>) {
+  //     return <Stack direction='row' alignItems='center'>
+  //       <Typography variant='p' color='#989898'>{params.colDef.headerName}</Typography>
+  //       <InfoTooltip title={TooltipTexts.myPositions.apy} color='#66707e' />
+  //     </Stack>
+  //   },
+  //   renderCell(params: GridRenderCellParams<string>) {
+  //     return showPoolStatus(params.row.status) ? <PoolStatusButton status={params.row.status} />
+  //       :
+  //       params.value ?
+  //         Number(params.value) > 0 ?
+  //           <Box display='flex' justifyContent='center' alignItems='center' color='#4fe5ff'>
+  //             <Typography variant='p_xlg'>{Number(params.value) >= 0.01 ? `+${Number(params.value).toFixed(2)}` : '<0.01'}%</Typography>
+  //           </Box>
+  //           :
+  //           <Box display='flex' alignItems='center' color='white'>
+  //             <Typography variant='p_xlg'>{'0.00'}%</Typography>
+  //           </Box>
+  //         :
+  //         <Skeleton variant='rectangular' width={100} height={20} />
+  //   },
+  // },
 ]
 
 columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))

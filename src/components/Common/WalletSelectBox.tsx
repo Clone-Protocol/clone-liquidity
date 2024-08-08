@@ -76,11 +76,11 @@ const WalletSelectBox = ({ show, onHide }: { show: boolean, onHide: () => void }
       <AssetBox>
         <Typography variant='h3'>${formatLocaleAmount(balance?.onusdVal)}</Typography> <Typography variant='p_lg'>{ON_USD}</Typography>
       </AssetBox>
-      {publicKey &&
+      {/* {publicKey &&
         <Box display='flex' justifyContent='center' my='16px'>
           <DiscordAuthButton />
         </Box>
-      }
+      } */}
     </WalletWrapper >
   ) : <></>
 }
