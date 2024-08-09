@@ -8,7 +8,7 @@ const ShutdownDialog = ({ open, handleClose }: { open: boolean, handleClose: () 
   return (
     <>
       <Dialog open={open} TransitionComponent={FadeTransition}>
-        <DialogContent sx={{ backgroundColor: '#080018', width: '480px', padding: '23px', border: '1px solid #414166', borderRadius: '10px' }}>
+        <DialogContent sx={{ backgroundColor: '#080018', width: { xs: '100%', md: '480px' }, padding: { xs: '5px', md: '23px' }, border: '1px solid #414166', borderRadius: '10px' }}>
           <BoxWrapper>
             <DateBox><Typography variant='p'>Aug 9th, 2024</Typography></DateBox>
 

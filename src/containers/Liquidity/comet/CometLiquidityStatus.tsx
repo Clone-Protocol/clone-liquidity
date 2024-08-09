@@ -11,6 +11,10 @@ import { formatLocaleAmount } from '~/utils/numbers'
 const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
   const { publicKey } = useWallet()
 
+  const closeCloneAccount = () => {
+    // TODO
+  }
+
   return (
     <Wrapper>
       <Stack direction='row' gap={16}>
@@ -77,7 +81,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
       {!publicKey && <OpaqueDefault />}
       {publicKey && infos && infos.hasNoCollateral &&
         <Box>
-          <ViewVideoBox><Typography variant='p'>New to Comets?</Typography><a href="https://vimeo.com/918532309?share=copy" target='_blank'><WatchButton>Watch Tutorial</WatchButton></a></ViewVideoBox>
+          <ViewVideoBox><Typography variant='p'>Close your account to get ~0.07 SOL back</Typography><WatchButton onClick={closeCloneAccount}>Close Clone Account</WatchButton></ViewVideoBox>
           <OpaqueDefault />
         </Box>
       }
@@ -108,7 +112,7 @@ const ViewVideoBox = styled(Box)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 193px;
+  width: 293px;
   height: 79px;
   padding: 12px 22px 11px;
   border-radius: 10px;
@@ -116,10 +120,10 @@ const ViewVideoBox = styled(Box)`
   z-index: 999;
 `
 const WatchButton = styled(Button)`
-  width: 149px;
+  width: 169px;
   height: 32px;
   margin: 8px 0 0;
-  padding: 8px 33px;
+  padding: 8px 13px;
   border-radius: 5px;
   background-color: #4fe5ff;
   font-size: 12px;

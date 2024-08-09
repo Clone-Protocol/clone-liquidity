@@ -248,7 +248,12 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   const invalidMsg = () => {
     if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
       return 'Enter Amount'
-    } else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
+    }
+    //@TODO: fix
+    else if (!isWrap) {
+      return 'Unwrap is currently disabled'
+    }
+    else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'
     } else if (isWrap && amountWrapAsset > myBalance) {
       return `Insufficient ${pairData.fromTickerSymbol}`

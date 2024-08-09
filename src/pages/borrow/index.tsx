@@ -1,5 +1,5 @@
 'use client'
-import { StyledSection } from '../index'
+import { StyledSection } from '../index-old'
 import { Container, Box, Typography } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { GoBackButton } from '~/components/Common/CommonButtons'

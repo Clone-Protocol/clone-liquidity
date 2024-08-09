@@ -1,5 +1,5 @@
 'use client'
-import { StyledSection } from '../index'
+import { StyledSection } from '../index-old'
 import { Container, Box } from '@mui/material'
 import CometLiquidity from '~/containers/Liquidity/comet/CometLiquidity'
 

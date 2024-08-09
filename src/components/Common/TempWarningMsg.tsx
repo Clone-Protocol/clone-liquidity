@@ -56,7 +56,8 @@ const TempWarningMsg: React.FC = () => {
     return (
       <IconButton
         aria-label="close"
-        color="inherit"
+        color="default"
+        style={{ color: '#000' }}
         size="small"
         onClick={onClick}
       >

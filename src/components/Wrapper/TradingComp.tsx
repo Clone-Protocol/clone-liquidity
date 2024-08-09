@@ -65,10 +65,10 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
   }
 
   const handleChangeWrapType = () => {
-    // setIsWrap(!isWrap)
-    // initData()
-    // refetch()
-    // trigger()
+    setIsWrap(!isWrap)
+    initData()
+    refetch()
+    trigger()
   }
 
   useEffect(() => {
@@ -114,7 +114,12 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
   const invalidMsg = () => {
     if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
       return 'Enter Amount'
-    } else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
+    }
+    //@TODO: fix
+    else if (!isWrap) {
+      return 'Unwrap is currently disabled'
+    }
+    else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'
     } else if (isWrap && amountWrapAsset > myBalance?.underlyingAssetVal!) {
       return `Insufficient ${pairData.wrapTickerSymbol}`

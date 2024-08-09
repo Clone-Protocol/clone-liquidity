@@ -16,8 +16,8 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Home</Typography>
           </StyledListItemButton>
         </Link> */}
-        <Link href="/wrapper">
-          <StyledListItemButton className={pathname?.startsWith('/wrapper') ? 'selected' : ''}>
+        <Link href="/">
+          <StyledListItemButton className={pathname === '/' ? 'selected' : ''}>
             <Typography variant="p_lg">Wrapper</Typography>
           </StyledListItemButton>
         </Link>
