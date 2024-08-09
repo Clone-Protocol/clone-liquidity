@@ -65,10 +65,10 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
   }
 
   const handleChangeWrapType = () => {
-    setIsWrap(!isWrap)
-    initData()
-    refetch()
-    trigger()
+    // setIsWrap(!isWrap)
+    // initData()
+    // refetch()
+    // trigger()
   }
 
   useEffect(() => {
