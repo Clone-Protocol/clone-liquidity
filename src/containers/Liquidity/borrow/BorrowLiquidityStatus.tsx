@@ -82,7 +82,7 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
           </StatusValue>
         </Box>
       </Stack>
-      {(publicKey && infos && infos.hasNoCollateral && status && status.statusValues.totalBorrowLiquidity === 0) &&
+      {(publicKey && infos && infos.hasNoCollateral && status && status.statusValues.totalBorrowCollateralVal === 0) &&
         <Box>
           <ViewVideoBox>
             {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :

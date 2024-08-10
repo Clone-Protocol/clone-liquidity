@@ -10,6 +10,7 @@ import { funcNoWallet } from '~/features/baseQuery'
 import { FeeLevel } from '~/data/networks'
 import { priorityFee } from '~/features/globalAtom'
 import { AnchorProvider } from '@coral-xyz/anchor'
+import { CloseUserAccountInstructionAccounts, createCloseUserAccountInstruction } from 'clone-protocol-sdk/sdk/generated/clone';
 
 export const callClosingAccount = async ({
   program,
@@ -19,8 +20,15 @@ export const callClosingAccount = async ({
 }: CallTradingProps) => {
   if (!userPubKey) throw new Error('no user public key')
   console.log('closing account')
-  //@todo
-  const ixns: any = []
+
+  const userAccountAddress = program.getUserAccountAddress(userPubKey)
+  const ixns: TransactionInstruction[] = [
+    createCloseUserAccountInstruction({
+      user: userPubKey,
+      userAccount: userAccountAddress,
+      destination: userPubKey,
+    } as CloseUserAccountInstructionAccounts)
+  ]
 
   await sendAndConfirm(program.provider as AnchorProvider, ixns, setTxState, feeLevel)
 
