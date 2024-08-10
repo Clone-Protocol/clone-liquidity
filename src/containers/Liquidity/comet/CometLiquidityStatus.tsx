@@ -7,12 +7,29 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { formatLocaleAmount } from '~/utils/numbers'
+import { useClosingAccountMutation } from '~/features/Overview/ClosingAccount.mutation'
+import { useState } from 'react'
 
 const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
   const { publicKey } = useWallet()
+  const [loading, setLoading] = useState(false)
+  const [completeClose, setCompleteClose] = useState(false)
+  const { mutateAsync } = useClosingAccountMutation(publicKey)
 
-  const closeCloneAccount = () => {
-    // TODO
+  const closeCloneAccount = async () => {
+    try {
+      setLoading(true)
+      const data = await mutateAsync()
+
+      if (data) {
+        setLoading(false)
+        console.log('data', data)
+        setCompleteClose(true)
+      }
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
   }
 
   return (
@@ -81,7 +98,14 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
       {!publicKey && <OpaqueDefault />}
       {publicKey && infos && infos.hasNoCollateral &&
         <Box>
-          <ViewVideoBox><Typography variant='p'>Close your account to get ~0.07 SOL back</Typography><WatchButton onClick={closeCloneAccount}>Close Clone Account</WatchButton></ViewVideoBox>
+          <ViewVideoBox>
+            {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :
+              <>
+                <Typography variant='p'>Close your account to get ~0.07 SOL back</Typography>
+                <WatchButton onClick={closeCloneAccount} disabled={loading} sx={loading ? { backgroundColor: '#4fe5ff', color: '#fff' } : {}}>Close Clone Account</WatchButton>
+              </>
+            }
+          </ViewVideoBox>
           <OpaqueDefault />
         </Box>
       }

@@ -7,9 +7,13 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { formatLocaleAmount } from '~/utils/numbers'
 import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
 import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
+import { useClosingAccountMutation } from '~/features/Overview/ClosingAccount.mutation'
+import { useState } from 'react'
 
 const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolean }) => {
   const { publicKey } = useWallet()
+  const [loading, setLoading] = useState(false)
+  const [completeClose, setCompleteClose] = useState(false)
   const { data: status } = useStatusQuery({
     userPubKey: publicKey,
     refetchOnMount: "always",
@@ -22,8 +26,22 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
     enabled: publicKey != null
   })
 
-  const closeCloneAccount = () => {
-    // TODO
+  const { mutateAsync } = useClosingAccountMutation(publicKey)
+
+  const closeCloneAccount = async () => {
+    try {
+      setLoading(true)
+      const data = await mutateAsync()
+
+      if (data) {
+        setLoading(false)
+        console.log('data', data)
+        setCompleteClose(true)
+      }
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
   }
 
   return (
@@ -66,7 +84,14 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
       </Stack>
       {(publicKey && infos && infos.hasNoCollateral && status && status.statusValues.totalBorrowLiquidity === 0) &&
         <Box>
-          <ViewVideoBox><Typography variant='p'>Close your account to get ~0.07 SOL back</Typography><WatchButton onClick={closeCloneAccount}>Close Clone Account</WatchButton></ViewVideoBox>
+          <ViewVideoBox>
+            {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :
+              <>
+                <Typography variant='p'>Close your account to get ~0.07 SOL back</Typography>
+                <WatchButton onClick={closeCloneAccount} disabled={loading} sx={loading ? { border: '1px solid #c4b5fd', backgroundColor: '#000e22' } : {}}>Close Clone Account</WatchButton>
+              </>
+            }
+          </ViewVideoBox>
           <OpaqueDefault />
         </Box>
       }
