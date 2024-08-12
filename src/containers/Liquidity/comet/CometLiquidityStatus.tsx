@@ -9,12 +9,18 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { formatLocaleAmount } from '~/utils/numbers'
 import { useClosingAccountMutation } from '~/features/Overview/ClosingAccount.mutation'
 import { useState } from 'react'
+import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 
 const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
   const { publicKey } = useWallet()
   const [loading, setLoading] = useState(false)
   const [completeClose, setCompleteClose] = useState(false)
   const { mutateAsync } = useClosingAccountMutation(publicKey)
+  const { data: status } = useStatusQuery({
+    userPubKey: publicKey,
+    refetchOnMount: "always",
+    enabled: publicKey != null
+  })
 
   const closeCloneAccount = async () => {
     try {
@@ -96,7 +102,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
         </Box> */}
       </Stack >
       {!publicKey && <OpaqueDefault />}
-      {publicKey && infos && infos.hasNoCollateral &&
+      {(publicKey && infos && infos.hasNoCollateral && status && status.statusValues.totalBorrowCollateralVal === 0) &&
         <Box>
           <ViewVideoBox>
             {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :

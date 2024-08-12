@@ -88,7 +88,7 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
             {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :
               <>
                 <Typography variant='p'>Close your account to get ~0.07 SOL back</Typography>
-                <WatchButton onClick={closeCloneAccount} disabled={loading} sx={loading ? { border: '1px solid #c4b5fd', backgroundColor: '#000e22' } : {}}>Close Clone Account</WatchButton>
+                <WatchButton onClick={closeCloneAccount} disabled={loading} sx={loading ? { backgroundColor: '#4fe5ff', color: '#fff' } : {}}>Close Clone Account</WatchButton>
               </>
             }
           </ViewVideoBox>
