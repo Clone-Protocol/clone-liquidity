@@ -129,7 +129,7 @@ const RightMenu: React.FC = () => {
 	const closeAccountSetupDialog = async () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
-		await disconnect()
+		// await disconnect()
 	}
 
 	const handleGetUsdiClick = () => {
