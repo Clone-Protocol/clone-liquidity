@@ -82,7 +82,7 @@ const TempWarningMsg: React.FC = () => {
         </InfoStack>
       }
       {isShowWarnMsg &&
-        <a href='https://docs.clone.so/' target="_blank">
+        <a href='https://cloneprotocol.medium.com/6ff85310b458' target="_blank">
           <WarningStack>
             <Box></Box>
             <Stack direction='row' alignItems='center'>
