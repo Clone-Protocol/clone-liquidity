@@ -129,7 +129,7 @@ const RightMenu: React.FC = () => {
 	const closeAccountSetupDialog = async () => {
 		setCreateAccountDialogStatus(CreateAccountDialogStates.Closed)
 		setDeclinedAccountCreation(true)
-		await disconnect()
+		// await disconnect()
 	}
 
 	const handleGetUsdiClick = () => {
@@ -170,12 +170,12 @@ const RightMenu: React.FC = () => {
 
 	return (
 		<>
-			{!atomIsFetchingReferralCode && !atomShowReferralCodeDlog &&
+			{/* {!atomIsFetchingReferralCode && !atomShowReferralCodeDlog &&
 				<CreateAccountSetupDialog
 					state={createAccountDialogStatus}
 					handleCreateAccount={handleCreateAccount}
 					handleClose={closeAccountSetupDialog} />
-			}
+			} */}
 			<Box display="flex">
 				{IS_DEV &&
 					<HeaderButton onClick={() => setOpenTokenFaucet(true)}>
