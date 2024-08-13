@@ -1,10 +1,9 @@
 import React from 'react'
 import { Box, Container, Stack, Typography } from '@mui/material'
-import { StyledSection } from '~/pages/index';
+import { StyledSection } from '~/pages/index-old';
 import { FailedStatusBox } from '~/components/Common/TransactionStateSnackbar';
 import SupportDiscordIcon from 'public/images/support-button-discord.svg'
 import Image from 'next/image';
-import * as Sentry from "@sentry/nextjs";
 
 class ErrorBoundary extends React.Component {
   constructor(props: any) {
@@ -19,7 +18,6 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.log({ error, errorInfo })
     // You can use your own error logging service here
-    Sentry.captureException(error);
   }
 
   render() {

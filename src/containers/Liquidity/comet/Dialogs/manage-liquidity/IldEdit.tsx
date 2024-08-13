@@ -111,7 +111,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
   if (balanceOnAsset === 0) {
     warningMsgForAsset = 'You wallet balance is zero'
   } else if (positionInfo && Math.max(0, positionInfo.onassetILD) - ildAssetAmount > 0) {
-    warningMsgForAsset = 'Not enough wallet balance to fully payoff clAsset ILD Amount. You can acquire more on Clone Markets or borrow on Clone Liquidity.'
+    warningMsgForAsset = 'Not enough wallet balance to fully payoff clAsset ILD Amount. Please see the docs for guidance'
   }
 
   let warningMsgForColl = ''
@@ -198,7 +198,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
                 </WarningMsg>
               </Box>
             }
-            {warningMsgForAsset !== '' && <InfoMsg>{warningMsgForAsset}</InfoMsg>}
+            {warningMsgForAsset !== '' && <a href='https://docs.clone.so/' target='_blank' rel="noreferrer"><InfoMsg>{warningMsgForAsset}</InfoMsg></a>}
           </BoxWithBorder>
         }
 
@@ -272,22 +272,22 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
           }
 
           {
-            (ildAssetAmount > 0 || ildCollAmount > 0) ?
-              <HealthBox padding='15px 20px'>
-                <Box display='flex' justifyContent='center'>
-                  <Typography variant='p'>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
-                </Box>
-                <Box mt='10px' display='flex' justifyContent='center'>
-                  <HealthscoreView score={healthScore ? healthScore : positionInfo.healthScore} />
-                </Box>
-              </HealthBox>
-              :
-              <HealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
-                <Image src={IconHealthScoreGraph} alt='healthscore' />
-                <Box mt='7px'>
-                  <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
-                </Box>
-              </HealthBox>
+            // (ildAssetAmount > 0 || ildCollAmount > 0) ?
+            //   <HealthBox padding='15px 20px'>
+            //     <Box display='flex' justifyContent='center'>
+            //       <Typography variant='p'>Projected Health Score <InfoTooltip title={TooltipTexts.projectedHealthScore} color='#66707e' /></Typography>
+            //     </Box>
+            //     <Box mt='10px' display='flex' justifyContent='center'>
+            //       <HealthscoreView score={healthScore ? healthScore : positionInfo.healthScore} />
+            //     </Box>
+            //   </HealthBox>
+            //   :
+            //   <HealthBox padding='36px 20px' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+            //     <Image src={IconHealthScoreGraph} alt='healthscore' />
+            //     <Box mt='7px'>
+            //       <Typography variant='p' color='#414e66'>Projected health score unavailable</Typography>
+            //     </Box>
+            //   </HealthBox>
           }
         </Box>
 
@@ -300,7 +300,7 @@ const IldEdit = ({ positionIndex }: { positionIndex: number }) => {
             <Typography variant='p_xlg'>{positionInfo.onassetILD <= 0 && positionInfo.collateralILD <= 0 ? 'No ILD Balance' : (!ildAssetAmount && !ildCollAmount) ? 'Please adjust payment amount' : (remainingAssetILD === 0 && remainingCollILD === 0) ? 'Pay Entire ILD Balance' : 'Adjust ILD'}</Typography>
           </SubmitButton>
         }
-      </Box>
+      </Box >
     </>
   ) : (
     <></>

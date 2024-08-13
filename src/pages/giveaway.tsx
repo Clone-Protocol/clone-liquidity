@@ -1,5 +1,5 @@
 'use client'
-import { StyledSection } from './index'
+import { StyledSection } from './index-old'
 import { Container, Box, Typography, Stack } from '@mui/material'
 import Image from 'next/image'
 import LearnMoreIcon from 'public/images/learn-more.svg'

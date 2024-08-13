@@ -17,11 +17,13 @@ import dynamic from 'next/dynamic'
 import ErrorBoundary from '~/components/ErrorBoundary'
 import { IS_DEV } from '~/data/networks'
 import BannerMarkets from './Common/BannerMarkets'
+import ShutdownDialog from './Common/ShutdownDialog'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isCompleteInit, _] = useLocalStorage(IS_COMPLETE_INIT, false)
   const [isOpenInit, setIsOpenInit] = useState(false)
   const [isOpenBanner, setIsOpenBanner] = useState(true)
+  const [isOpenShutdownDlog, setIsOpenShutdownDlog] = useState(true)
   const InitEnterScreen = dynamic(() => import('~/components/Common/InitEnterScreen'), { ssr: false })
 
   useEffect(() => {
@@ -45,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Box
                       component="main"
                       sx={{
+                        pt: '25px',
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
@@ -52,9 +55,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       }}>
                       {children}
                     </Box>
-                    {IS_DEV && isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />}
 
-                    <BannerMarkets open={isOpenBanner} handleClose={() => setIsOpenBanner(false)} />
+                    <ShutdownDialog open={isOpenShutdownDlog} handleClose={() => setIsOpenShutdownDlog(false)} />
+                    {/* {IS_DEV && isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />} */}
+
+                    {/* <BannerMarkets open={isOpenBanner} handleClose={() => setIsOpenBanner(false)} /> */}
                   </Box>
                 </ErrorBoundary>
               </TransactionStateProvider>

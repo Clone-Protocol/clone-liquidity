@@ -1,5 +1,5 @@
 'use client'
-import { StyledSection } from '../../index'
+import { StyledSection } from '../../index-old'
 import Container from '@mui/material/Container'
 import AssetView from '~/containers/Overview/AssetView'
 import { Box } from '@mui/material'
@@ -14,7 +14,7 @@ const AssetPage = () => {
     <StyledSection>
       <Container>
         <Box display='flex' justifyContent='center'>
-          <AssetView assetTicker={assetTicker} />
+          {/* <AssetView assetTicker={assetTicker} /> */}
         </Box>
       </Container>
     </StyledSection>

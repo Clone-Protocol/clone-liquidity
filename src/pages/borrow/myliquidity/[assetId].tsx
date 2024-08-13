@@ -1,5 +1,5 @@
 'use client'
-import { StyledSection } from '../../index'
+import { StyledSection } from '../../index-old'
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import ManageBorrow from '~/containers/Liquidity/borrow/ManageBorrow'

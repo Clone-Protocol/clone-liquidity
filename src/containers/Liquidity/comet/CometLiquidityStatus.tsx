@@ -7,14 +7,41 @@ import InfoTooltip from '~/components/Common/InfoTooltip'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { formatLocaleAmount } from '~/utils/numbers'
+import { useClosingAccountMutation } from '~/features/Overview/ClosingAccount.mutation'
+import { useState } from 'react'
+import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 
 const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | undefined, totalApy?: number }) => {
   const { publicKey } = useWallet()
+  const [loading, setLoading] = useState(false)
+  const [completeClose, setCompleteClose] = useState(false)
+  const { mutateAsync } = useClosingAccountMutation(publicKey)
+  const { data: status } = useStatusQuery({
+    userPubKey: publicKey,
+    refetchOnMount: "always",
+    enabled: publicKey != null
+  })
+
+  const closeCloneAccount = async () => {
+    try {
+      setLoading(true)
+      const data = await mutateAsync()
+
+      if (data) {
+        setLoading(false)
+        console.log('data', data)
+        setCompleteClose(true)
+      }
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
+  }
 
   return (
     <Wrapper>
       <Stack direction='row' gap={16}>
-        <Box>
+        {/* <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>Health Score</Typography>
             <InfoTooltip title={TooltipTexts.cometdHealthScore} color='#66707e' />
@@ -22,7 +49,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
           <Box mt='15px'>
             <HealthscoreView score={infos && infos.healthScore ? infos.healthScore : 0} />
           </Box>
-        </Box>
+        </Box> */}
         <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>My Liquidity</Typography>
@@ -45,7 +72,7 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
             </Typography>
           </StatusValue>
         </Box>
-        <Box>
+        {/* <Box>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Typography variant='p'>My APR</Typography>
             <InfoTooltip title={TooltipTexts.yourApy} color='#66707e' />
@@ -72,12 +99,19 @@ const CometLiquidityStatus = ({ infos, totalApy }: { infos: CometInfoStatus | un
               <Skeleton variant='rectangular' width={70} height={20} />
             }
           </StatusValue>
-        </Box>
+        </Box> */}
       </Stack >
       {!publicKey && <OpaqueDefault />}
-      {publicKey && infos && infos.hasNoCollateral &&
+      {(publicKey && infos && infos.hasNoCollateral && status && status.statusValues.totalBorrowCollateralVal === 0) &&
         <Box>
-          <ViewVideoBox><Typography variant='p'>New to Comets?</Typography><a href="https://vimeo.com/918532309?share=copy" target='_blank'><WatchButton>Watch Tutorial</WatchButton></a></ViewVideoBox>
+          <ViewVideoBox>
+            {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :
+              <>
+                <Typography variant='p'>Close your account to get ~0.07 SOL back</Typography>
+                <WatchButton onClick={closeCloneAccount} disabled={loading} sx={loading ? { backgroundColor: '#4fe5ff', color: '#fff' } : {}}>Close Clone Account</WatchButton>
+              </>
+            }
+          </ViewVideoBox>
           <OpaqueDefault />
         </Box>
       }
@@ -108,7 +142,7 @@ const ViewVideoBox = styled(Box)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 193px;
+  width: 293px;
   height: 79px;
   padding: 12px 22px 11px;
   border-radius: 10px;
@@ -116,10 +150,10 @@ const ViewVideoBox = styled(Box)`
   z-index: 999;
 `
 const WatchButton = styled(Button)`
-  width: 149px;
+  width: 169px;
   height: 32px;
   margin: 8px 0 0;
-  padding: 8px 33px;
+  padding: 8px 13px;
   border-radius: 5px;
   background-color: #4fe5ff;
   font-size: 12px;

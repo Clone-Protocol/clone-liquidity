@@ -15,48 +15,49 @@ interface NoticeItem {
 const TempWarningMsg: React.FC = () => {
   const showPythBannerStatus = useAtomValue(showPythBanner)
   const [isShowGeneralMsg, setIsShowGeneralMsg] = useState(false)
-  const [isShowWarnMsg, setIsShowWarnMsg] = useState(false)
+  const [isShowWarnMsg, setIsShowWarnMsg] = useState(true)
   const [generalMsg, setGeneralMsg] = useState('')
-  const [warnMsg, setWarnMsg] = useState('')
+  const [warnMsg, setWarnMsg] = useState('Clone is shutting down on September 30th, 2024. Please visit our docs for details.')
 
-  useEffect(() => {
-    const getNoticeMsg = async () => {
-      const response = await fetchFromSupabaseNotice()
-      const data = response.data
+  // useEffect(() => {
+  //   const getNoticeMsg = async () => {
+  //     const response = await fetchFromSupabaseNotice()
+  //     const data = response.data
 
-      data?.forEach((item: NoticeItem) => {
-        if (item.is_general) {
-          setIsShowGeneralMsg(true)
-          setGeneralMsg(item.message)
-        } else {
-          setIsShowWarnMsg(true)
-          setWarnMsg(item.message)
-        }
-      })
-    }
-    getNoticeMsg()
-  }, [])
+  //     data?.forEach((item: NoticeItem) => {
+  //       if (item.is_general) {
+  //         setIsShowGeneralMsg(true)
+  //         setGeneralMsg(item.message)
+  //       } else {
+  //         setIsShowWarnMsg(true)
+  //         setWarnMsg(item.message)
+  //       }
+  //     })
+  //   }
+  //   getNoticeMsg()
+  // }, [])
 
-  useEffect(() => {
-    const getNoticeMsg = async () => {
-      const response = await fetchFromSupabasePyth()
-      const data = response.data
-      if (data.length > 0) {
-        setWarnMsg('Oracle error is detected. Number of pools maybe temporarily frozen.')
-        setIsShowWarnMsg(true)
-      }
-    }
+  // useEffect(() => {
+  //   const getNoticeMsg = async () => {
+  //     const response = await fetchFromSupabasePyth()
+  //     const data = response.data
+  //     if (data.length > 0) {
+  //       setWarnMsg('Oracle error is detected. Number of pools maybe temporarily frozen.')
+  //       setIsShowWarnMsg(true)
+  //     }
+  //   }
 
-    if (showPythBannerStatus) {
-      getNoticeMsg()
-    }
-  }, [showPythBannerStatus])
+  //   if (showPythBannerStatus) {
+  //     getNoticeMsg()
+  //   }
+  // }, [showPythBannerStatus])
 
   const CloseButton = ({ onClick }: { onClick: () => void }) => {
     return (
       <IconButton
         aria-label="close"
-        color="inherit"
+        color="default"
+        style={{ color: '#000' }}
         size="small"
         onClick={onClick}
       >
@@ -81,17 +82,19 @@ const TempWarningMsg: React.FC = () => {
         </InfoStack>
       }
       {isShowWarnMsg &&
-        <WarningStack>
-          <Box></Box>
-          <Stack direction='row' alignItems='center'>
-            <Warning />
-            <Box ml='10px'><Typography variant='p' dangerouslySetInnerHTML={{ __html: warnMsg }} /></Box>
-          </Stack>
+        <a href='https://docs.clone.so/' target="_blank">
+          <WarningStack>
+            <Box></Box>
+            <Stack direction='row' alignItems='center'>
+              <Warning />
+              <Box ml='10px'><Typography variant='p' dangerouslySetInnerHTML={{ __html: warnMsg }} /></Box>
+            </Stack>
 
-          <CloseButton onClick={() => {
-            setIsShowWarnMsg(false);
-          }} />
-        </WarningStack>
+            <CloseButton onClick={() => {
+              setIsShowWarnMsg(false);
+            }} />
+          </WarningStack>
+        </a>
       }
     </StackWrapper>
   )
@@ -102,7 +105,7 @@ const StackWrapper = styled(Stack)`
 `
 const InfoStack = styled(Box)`
   width: 100%;
-  height: 32px;
+  height: 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;

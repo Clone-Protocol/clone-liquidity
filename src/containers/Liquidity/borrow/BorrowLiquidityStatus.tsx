@@ -1,18 +1,48 @@
 import { styled } from '@mui/system'
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import { useStatusQuery } from '~/features/MyLiquidity/Status.query'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { TooltipTexts } from '~/data/tooltipTexts'
 import InfoTooltip from '~/components/Common/InfoTooltip'
 import { formatLocaleAmount } from '~/utils/numbers'
+import { OpaqueDefault } from '~/components/Overview/OpaqueArea'
+import { useCometInfoQuery } from '~/features/MyLiquidity/comet/CometInfo.query'
+import { useClosingAccountMutation } from '~/features/Overview/ClosingAccount.mutation'
+import { useState } from 'react'
 
 const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolean }) => {
   const { publicKey } = useWallet()
+  const [loading, setLoading] = useState(false)
+  const [completeClose, setCompleteClose] = useState(false)
   const { data: status } = useStatusQuery({
     userPubKey: publicKey,
     refetchOnMount: "always",
     enabled: publicKey != null
   })
+
+  const { data: infos } = useCometInfoQuery({
+    userPubKey: publicKey,
+    refetchOnMount: "always",
+    enabled: publicKey != null
+  })
+
+  const { mutateAsync } = useClosingAccountMutation(publicKey)
+
+  const closeCloneAccount = async () => {
+    try {
+      setLoading(true)
+      const data = await mutateAsync()
+
+      if (data) {
+        setLoading(false)
+        console.log('data', data)
+        setCompleteClose(true)
+      }
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
+  }
 
   return (
     <Wrapper>
@@ -52,6 +82,19 @@ const BorrowLiquidityStatus = ({ hasNoPosition = true }: { hasNoPosition: boolea
           </StatusValue>
         </Box>
       </Stack>
+      {(publicKey && infos && infos.hasNoCollateral && status && status.statusValues.totalBorrowCollateralVal === 0) &&
+        <Box>
+          <ViewVideoBox>
+            {completeClose ? <Typography variant='p_lg' color='#fff'>Your account has been closed</Typography> :
+              <>
+                <Typography variant='p'>Close your account to get ~0.07 SOL back</Typography>
+                <WatchButton onClick={closeCloneAccount} disabled={loading} sx={loading ? { backgroundColor: '#4fe5ff', color: '#fff' } : {}}>Close Clone Account</WatchButton>
+              </>
+            }
+          </ViewVideoBox>
+          <OpaqueDefault />
+        </Box>
+      }
     </Wrapper>
   )
 
@@ -72,5 +115,29 @@ const StatusValue = styled(Box)`
   align-items: center;
   height: 80px;
 `
-
+const ViewVideoBox = styled(Box)`
+  position: absolute;
+  left: calc(50% - 193px / 2);
+  top: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 293px;
+  height: 79px;
+  padding: 12px 22px 11px;
+  border-radius: 10px;
+  background-color: #000e22;
+  z-index: 999;
+`
+const WatchButton = styled(Button)`
+  width: 169px;
+  height: 32px;
+  margin: 8px 0 0;
+  padding: 8px 13px;
+  border-radius: 5px;
+  background-color: #4fe5ff;
+  font-size: 12px;
+  font-weight: 500;
+`
 export default BorrowLiquidityStatus

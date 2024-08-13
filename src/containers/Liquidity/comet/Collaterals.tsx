@@ -112,7 +112,8 @@ let columns: GridColDef[] = [
     flex: 1,
     renderCell(params: GridRenderCellParams<string>) {
       return (
-        <GetButton onClick={(e) => { e.stopPropagation(); params.row.setShowBridge(true) }}><Typography variant='p'>Get more {ON_USD}</Typography></GetButton>
+        <></>
+        // <GetButton onClick={(e) => { e.stopPropagation(); params.row.setShowBridge(true) }}><Typography variant='p'>Get more {ON_USD}</Typography></GetButton>
       )
     },
   },

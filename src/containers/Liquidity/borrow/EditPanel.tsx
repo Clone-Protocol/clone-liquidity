@@ -32,7 +32,7 @@ const EditPanel = ({ assetId, borrowDetail, showRepayPosition, showWithdrawColla
 
       <EditDetailDialog
         open={openEditDetail}
-        initEditType={showWithdrawCollateral ? 1 : 0}
+        initEditType={1}
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenEditDetail(false)}
@@ -40,7 +40,7 @@ const EditPanel = ({ assetId, borrowDetail, showRepayPosition, showWithdrawColla
 
       <EditBorrowMoreDialog
         open={openBorrowMore}
-        initEditType={showRepayPosition ? 1 : 0}
+        initEditType={1}
         borrowId={borrowIndex}
         borrowDetail={borrowDetail}
         onHideEditForm={() => setOpenBorrowMore(false)}
