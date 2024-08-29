@@ -8,7 +8,7 @@ const MyLiquidity = () => {
     <StyledSection>
       <Container>
         <Box>
-          {/* <CometLiquidity /> */}
+          <CometLiquidity />
         </Box>
       </Container>
     </StyledSection>
