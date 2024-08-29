@@ -26,7 +26,7 @@ interface Props {
 const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWrapBridge }) => {
   const [loading, setLoading] = useState(false)
   const { publicKey } = useWallet()
-  const [isWrap, setIsWrap] = useState(true)
+  const [isWrap, setIsWrap] = useState(false)
   const { setOpen } = useWalletDialog()
 
   const pairData = assetMapping(assetIndex)
@@ -112,12 +112,11 @@ const TradingComp: React.FC<Props> = ({ assetIndex, onShowSearchAsset, onShowWra
   }
 
   const invalidMsg = () => {
-    if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
-      return 'Enter Amount'
+    if (isWrap) {
+      return 'Wrap is currently disabled'
     }
-    //@TODO: fix
-    else if (!isWrap) {
-      return 'Unwrap is currently disabled'
+    else if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
+      return 'Enter Amount'
     }
     else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'

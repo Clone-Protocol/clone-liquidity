@@ -30,7 +30,7 @@ const SCALE_PEPE = 18
 const SCALE_1M = 6
 
 const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
-  const [isWrap, setIsWrap] = useState(true)
+  const [isWrap, setIsWrap] = useState(false)
   const { setOpen } = useWalletEvmDialog()
   const [openPopover, setOpenPopover] = useState(false);
   const { isConnected, address, chain } = useAccount();
@@ -246,12 +246,10 @@ const TradingComp1M: React.FC<Props> = ({ assetIndex, onShowSearchAsset }) => {
   }
 
   const invalidMsg = () => {
-    if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
+    if (isWrap) {
+      return 'Wrap is currently disabled'
+    } else if (isWrap && (amountWrapAsset == 0 || isNaN(amountWrapAsset) || !amountWrapAsset)) {
       return 'Enter Amount'
-    }
-    //@TODO: fix
-    else if (!isWrap) {
-      return 'Unwrap is currently disabled'
     }
     else if (!isWrap && (amountUnwrapAsset == 0 || isNaN(amountUnwrapAsset) || !amountUnwrapAsset)) {
       return 'Enter Amount'

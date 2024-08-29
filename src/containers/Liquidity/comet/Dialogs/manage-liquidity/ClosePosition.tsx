@@ -96,13 +96,13 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
     }
   }
 
-  const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0 && !isSubmitting
+  const isValidClose = positionLiquidity === 0 && remainRewards === 0 && !isSubmitting
 
   return positionInfo ? (
     <>
       <Box>
         <Box>
-          <Typography variant='p_lg'>Step 1: Withdraw All Liquidity</Typography>
+          <Typography variant='p_lg'>Withdraw All Liquidity</Typography>
           <InfoTooltip title={TooltipTexts.withdrawLiquidity} color="#66707e" />
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
@@ -120,7 +120,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
           }
         </StackWithBorder>
       </Box>
-      <Box>
+      {/* <Box>
         <Box>
           <Typography variant='p_lg'>Step 2: Pay Entire ILD Balance</Typography>
           <InfoTooltip title={TooltipTexts.entireILDBalance} color="#66707e" />
@@ -138,10 +138,10 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
             <GoButton onClick={() => onMoveTab(1)}><Typography variant="p_lg">Pay ILD</Typography></GoButton>
           }
         </StackWithBorder>
-      </Box>
+      </Box> */}
       <Box>
         <Box>
-          <Typography variant='p_lg'>Step 3: Claim All Rewards</Typography>
+          <Typography variant='p_lg'>Claim All Rewards</Typography>
           <InfoTooltip title={TooltipTexts.claimAllRewards} color="#66707e" />
         </Box>
         <StackWithBorder direction='row' justifyContent='space-between'>
@@ -159,7 +159,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
       </Box>
 
       <Box>
-        <Typography variant='p_lg'>Step 4 (Final Step): Close This Liquidity Position</Typography>
+        <Typography variant='p_lg'>(Final Step): Close This Liquidity Position</Typography>
       </Box>
 
       {isSubmitting ?
