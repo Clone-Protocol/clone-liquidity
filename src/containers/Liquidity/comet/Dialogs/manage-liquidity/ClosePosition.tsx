@@ -96,7 +96,7 @@ const ClosePosition = ({ positionIndex, onMoveTab, handleClose }: { positionInde
     }
   }
 
-  const isValidClose = positionLiquidity === 0 && ildBalance === 0 && remainRewards === 0 && !isSubmitting
+  const isValidClose = positionLiquidity === 0 && remainRewards === 0 && !isSubmitting
 
   return positionInfo ? (
     <>
