@@ -21,11 +21,11 @@ const NaviMenu = () => {
             <Typography variant="p_lg">Wrapper</Typography>
           </StyledListItemButton>
         </Link>
-        {/* <Link href="/comet/myliquidity">
+        <Link href="/comet/myliquidity">
           <StyledListItemButton className={pathname?.startsWith('/comet/myliquidity') ? 'selected' : ''}>
             <Typography variant="p_lg">Comet</Typography>
           </StyledListItemButton>
-        </Link> */}
+        </Link>
         <Link href="/borrow/myliquidity">
           <StyledListItemButton className={pathname?.startsWith('/borrow') ? 'selected' : ''}>
             <Typography variant="p_lg">Borrow</Typography>
